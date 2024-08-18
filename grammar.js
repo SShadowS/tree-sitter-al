@@ -233,17 +233,17 @@ module.exports = grammar({
       '}'
     ),
 
-    property: $ => seq(
+    property: $ => prec(1, seq(
       field('property_name', $.identifier),
       '=',
       field('property_value', choice($.literal, $.identifier, $.property_option)),
       ';'
-    ),
+    )),
 
-    property_option: $ => seq(
+    property_option: $ => prec.left(seq(
       field('option_name', $.identifier),
       optional(seq(':', field('option_value', $.literal)))
-    ),
+    )),
 
     var_section: $ => prec.right(seq(
       'var',
