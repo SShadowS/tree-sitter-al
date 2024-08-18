@@ -353,6 +353,12 @@ module.exports = grammar({
       '}'
     ),
 
+    query_element: $ => choice(
+      $.dataitem,
+      $.column,
+      $.filter
+    ),
+
     filter: $ => seq(
       'filter',
       '{',
