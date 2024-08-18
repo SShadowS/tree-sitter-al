@@ -894,7 +894,6 @@ module.exports = grammar({
       'Duration',
       'BigInteger',
       'Char',
-      'Option',
       'Record',
       'RecordId',
       'RecordRef',
@@ -928,7 +927,8 @@ module.exports = grammar({
       'Dictionary',
       'DotNet',
       seq('array', '[', ']', 'of', $.data_type),
-      prec.left(seq('Option', '[', $.integer, ']'))
+      prec.left(2, 'Option'),
+      prec.left(3, seq('Option', '[', $.integer, ']'))
     ),
 
     _property_value: $ => choice(
