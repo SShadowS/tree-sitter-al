@@ -143,7 +143,7 @@ module.exports = grammar({
       $.trigger,
       $.procedure,
       $.property,
-      $.var_section
+      optional($.var_section)
     ),
 
     _report_body_element: $ => choice(
@@ -237,10 +237,10 @@ module.exports = grammar({
       ';'
     ),
 
-    var_section: $ => seq(
+    var_section: $ => prec.right(seq(
       'var',
       repeat1($.var_declaration)
-    ),
+    )),
 
     var_declaration: $ => seq(
       field('var_name', $.identifier),
