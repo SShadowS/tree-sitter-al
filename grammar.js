@@ -31,7 +31,7 @@ module.exports = grammar({
     table: $ => seq(
       'table',
       field('table_id', $.integer),
-      field('table_name', $.string),
+      field('table_name', choice($.identifier, $.string)),
       '{',
       repeat($._table_element),
       '}'
