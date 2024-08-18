@@ -251,6 +251,36 @@ module.exports = grammar({
       $.chartpart
     ),
 
+    part: $ => seq(
+      'part',
+      '(',
+      field('part_name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    systempart: $ => seq(
+      'systempart',
+      '(',
+      field('systempart_name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    chartpart: $ => seq(
+      'chartpart',
+      '(',
+      field('chartpart_name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
     group: $ => seq(
       'group',
       '(',
