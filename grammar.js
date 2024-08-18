@@ -300,12 +300,12 @@ module.exports = grammar({
       ';'
     ),
 
-    table_relation_property: $ => seq(
+    table_relation_property: $ => prec(2, seq(
       'TableRelation',
       '=',
       field('table_name', choice($.identifier, $.table_relation_expression)),
       ';'
-    ),
+    )),
 
     table_relation_expression: $ => seq(
       field('table_name', $.identifier),
