@@ -40,13 +40,38 @@ module.exports = grammar({
     _table_element: $ => choice(
       $.fields_block,
       $.keys_block,
+      $.fieldgroups_block,
       $.trigger,
       $.procedure,
       $.property,
       $.table_property,
       $.caption,
       $.lookup_page_id,
-      $.drill_down_page_id
+      $.drill_down_page_id,
+      $.data_classification_property,
+      $.data_caption_fields_property,
+      $.obsolete_state_property
+    ),
+
+    data_classification_property: $ => seq(
+      'DataClassification',
+      '=',
+      field('classification', $.identifier),
+      ';'
+    ),
+
+    data_caption_fields_property: $ => seq(
+      'DataCaptionFields',
+      '=',
+      field('fields', $.identifier_list),
+      ';'
+    ),
+
+    obsolete_state_property: $ => seq(
+      'ObsoleteState',
+      '=',
+      field('state', $.identifier),
+      ';'
     ),
 
     lookup_page_id: $ => seq(
@@ -111,6 +136,13 @@ module.exports = grammar({
       '}'
     ),
 
+    fieldgroup: $ => seq(
+      field('fieldgroup_name', $.identifier),
+      '{',
+      field('fields', $.identifier_list),
+      '}'
+    ),
+
     property: $ => prec(8, seq(
       field('property_name', $.identifier),
       '=',
@@ -151,7 +183,49 @@ module.exports = grammar({
     field_property: $ => choice(
       $.caption,
       $.data_classification,
-      $.table_relation
+      $.table_relation,
+      $.option_caption,
+      $.option_string,
+      $.trigger,
+      $.obsolete_state_property,
+      $.access_by_permission_property,
+      $.enabled_property,
+      $.visible_property
+    ),
+
+    option_caption: $ => seq(
+      'OptionCaption',
+      '=',
+      field('captions', $.string),
+      ';'
+    ),
+
+    option_string: $ => seq(
+      'OptionString',
+      '=',
+      field('options', $.string),
+      ';'
+    ),
+
+    access_by_permission_property: $ => seq(
+      'AccessByPermission',
+      '=',
+      field('permission', $.string),
+      ';'
+    ),
+
+    enabled_property: $ => seq(
+      'Enabled',
+      '=',
+      field('enabled', $.boolean),
+      ';'
+    ),
+
+    visible_property: $ => seq(
+      'Visible',
+      '=',
+      field('visible', $.boolean),
+      ';'
     ),
 
     table_relation: $ => seq(
