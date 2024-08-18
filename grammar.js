@@ -494,27 +494,17 @@ module.exports = grammar({
       'end;'
     ),
 
-    var_section: $ => seq(
-      'var',
-      repeat1($.var_declaration)
-    ),
-
-    var_section: $ => seq(
+    var_section: $ => prec.right(seq(
       'var',
       repeat1($.var_declaration),
-      ';'
-    ),
+      optional(';')
+    )),
 
     procedure_attribute: $ => seq(
       '[',
       choice('IntegrationEvent', 'BusinessEvent', 'InternalEvent'),
       ']'
     ),
-
-    var_section: $ => prec.right(seq(
-      'var',
-      repeat1($.var_declaration)
-    )),
 
     var_declaration: $ => seq(
       field('var_name', $.identifier),
