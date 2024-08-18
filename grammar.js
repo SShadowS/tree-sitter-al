@@ -46,20 +46,27 @@ module.exports = grammar({
       $.trigger,
       $.procedure,
       $.property,
-      $.var_section
+      $.var_section,
+      $.layout
     ),
 
     property: $ => prec(2, seq(
       field('property_name', $.identifier),
       '=',
-      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean)),
+      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list)),
       optional(';')
     )),
 
     property_option: $ => prec.left(1, seq(
       field('option_name', $.identifier),
-      optional(seq(':', field('option_value', choice($.literal, $.boolean))))
+      optional(seq(':', field('option_value', choice($.literal, $.boolean, $.identifier))))
     )),
+
+    property_list: $ => seq(
+      '[',
+      sepBy1(',', $.property_option),
+      ']'
+    ),
 
     field: $ => seq(
       'field',
@@ -74,6 +81,22 @@ module.exports = grammar({
         repeat($.property),
         '}'
       ))
+    ),
+
+    layout: $ => seq(
+      'layout',
+      '{',
+      repeat($.layout_element),
+      '}'
+    ),
+
+    layout_element: $ => choice(
+      $.area,
+      $.group,
+      $.field,
+      $.part,
+      $.systempart,
+      $.chartpart
     ),
 
     key: $ => seq(
