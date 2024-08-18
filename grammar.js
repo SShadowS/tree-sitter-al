@@ -1,6 +1,11 @@
 module.exports = grammar({
   name: 'al',
 
+  extras: $ => [
+    $.comment,
+    /\s/
+  ],
+
   rules: {
     source_file: $ => repeat($._definition),
 
@@ -15,7 +20,11 @@ module.exports = grammar({
       $.xmlport,
       $.enum,
       $.dotnet,
-      $.controladdin
+      $.controladdin,
+      $.profile,
+      $.permissionset,
+      $.permissionsetextension,
+      $.entitlement
     ),
 
     // Object Definitions
@@ -24,6 +33,7 @@ module.exports = grammar({
       field('table_id', $.integer),
       field('table_name', $.identifier),
       optional($.extends_clause),
+      optional($.implements_clause),
       '{',
       repeat($._table_element),
       '}'
@@ -35,7 +45,8 @@ module.exports = grammar({
       $.fieldgroup,
       $.trigger,
       $.procedure,
-      $.property
+      $.property,
+      $.var_section
     ),
 
     property: $ => seq(
@@ -76,6 +87,16 @@ module.exports = grammar({
       '}'
     ),
 
+    fieldgroup: $ => seq(
+      'fieldgroup',
+      '(',
+      field('fieldgroup_name', $.identifier),
+      ')',
+      '{',
+      field('fields', $.identifier_list),
+      '}'
+    ),
+
     tableextension: $ => seq(
       'tableextension',
       field('tableextension_id', $.integer),
@@ -111,6 +132,7 @@ module.exports = grammar({
       'codeunit',
       field('codeunit_id', $.integer),
       field('codeunit_name', $.identifier),
+      optional($.implements_clause),
       '{',
       repeat($._codeunit_body_element),
       '}'
@@ -147,6 +169,7 @@ module.exports = grammar({
       'enum',
       field('enum_id', $.integer),
       field('enum_name', $.identifier),
+      optional($.implements_clause),
       '{',
       repeat($.enum_value),
       '}'
@@ -168,6 +191,42 @@ module.exports = grammar({
       '}'
     ),
 
+    profile: $ => seq(
+      'profile',
+      field('profile_name', $.identifier),
+      '{',
+      repeat($.profile_element),
+      '}'
+    ),
+
+    permissionset: $ => seq(
+      'permissionset',
+      field('permissionset_id', $.integer),
+      field('permissionset_name', $.identifier),
+      '{',
+      repeat($.permission),
+      '}'
+    ),
+
+    permissionsetextension: $ => seq(
+      'permissionsetextension',
+      field('permissionsetextension_id', $.integer),
+      field('permissionsetextension_name', $.identifier),
+      'extends',
+      field('base_permissionset', $.identifier),
+      '{',
+      repeat($.permission),
+      '}'
+    ),
+
+    entitlement: $ => seq(
+      'entitlement',
+      field('entitlement_name', $.identifier),
+      '{',
+      repeat($.entitlement_element),
+      '}'
+    ),
+
     // Common Elements
     _table_body_element: $ => choice(
       $.field,
@@ -175,7 +234,8 @@ module.exports = grammar({
       $.fieldgroup,
       $.trigger,
       $.procedure,
-      $.property
+      $.property,
+      $.var_section
     ),
 
     _page_body_element: $ => choice(
@@ -183,7 +243,8 @@ module.exports = grammar({
       $.actions,
       $.trigger,
       $.procedure,
-      $.property
+      $.property,
+      $.var_section
     ),
 
     _codeunit_body_element: $ => choice(
@@ -198,7 +259,8 @@ module.exports = grammar({
       $.requestpage,
       $.trigger,
       $.procedure,
-      $.property
+      $.property,
+      $.var_section
     ),
 
     _query_body_element: $ => choice(
@@ -214,49 +276,14 @@ module.exports = grammar({
       $.requestpage,
       $.trigger,
       $.procedure,
-      $.property
+      $.property,
+      $.var_section
     ),
 
     _controladdin_body_element: $ => choice(
       $.property,
       $.event,
       $.procedure
-    ),
-
-    field: $ => seq(
-      'field',
-      '(',
-      field('field_id', $.integer),
-      ';',
-      field('field_name', $.identifier),
-      ')',
-      field('data_type', $.data_type),
-      optional(seq(
-        '{',
-        repeat($.property),
-        '}'
-      ))
-    ),
-
-    key: $ => seq(
-      'key',
-      '(',
-      field('key_name', $.identifier),
-      ')',
-      '{',
-      field('fields', $.identifier_list),
-      repeat($.property),
-      '}'
-    ),
-
-    fieldgroup: $ => seq(
-      'fieldgroup',
-      '(',
-      field('fieldgroup_name', $.identifier),
-      ')',
-      '{',
-      field('fields', $.identifier_list),
-      '}'
     ),
 
     trigger: $ => seq(
@@ -272,28 +299,24 @@ module.exports = grammar({
 
     procedure: $ => seq(
       optional('local'),
+      optional($.procedure_attribute),
       'procedure',
       field('procedure_name', $.identifier),
       '(',
       optional($.parameter_list),
       ')',
       optional(seq(':', field('return_type', $.data_type))),
-      '{',
-      repeat($.statement),
-      '}'
+      choice(
+        seq('{', repeat($.statement), '}'),
+        ';'
+      )
     ),
 
-    property: $ => prec(1, seq(
-      field('property_name', $.identifier),
-      '=',
-      field('property_value', choice($.literal, $.identifier, $.property_option)),
-      ';'
-    )),
-
-    property_option: $ => prec.left(seq(
-      field('option_name', $.identifier),
-      optional(seq(':', field('option_value', $.literal)))
-    )),
+    procedure_attribute: $ => seq(
+      '[',
+      choice('IntegrationEvent', 'BusinessEvent', 'InternalEvent'),
+      ']'
+    ),
 
     var_section: $ => prec.right(seq(
       'var',
@@ -304,6 +327,7 @@ module.exports = grammar({
       field('var_name', $.identifier),
       ':',
       field('var_type', $.data_type),
+      optional(seq('temporary')),
       ';'
     ),
 
@@ -318,7 +342,9 @@ module.exports = grammar({
       $.area,
       $.group,
       $.field,
-      $.part
+      $.part,
+      $.systempart,
+      $.chartpart
     ),
 
     area: $ => seq(
@@ -345,6 +371,26 @@ module.exports = grammar({
       'part',
       '(',
       field('part_name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    systempart: $ => seq(
+      'systempart',
+      '(',
+      field('systempart_type', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    chartpart: $ => seq(
+      'chartpart',
+      '(',
+      field('chartpart_name', $.identifier),
       ')',
       '{',
       repeat($.property),
@@ -512,13 +558,98 @@ module.exports = grammar({
       field('base_object', $.identifier)
     ),
 
-    // Statements
-    return_statement: $ => seq(
-      'return',
-      optional(field('value', $.expression)),
+    implements_clause: $ => seq(
+      'implements',
+      sepBy1(',', $.identifier)
+    ),
+
+    profile_element: $ => choice(
+      $.profile_customization,
+      $.profile_apparea
+    ),
+
+    profile_customization: $ => seq(
+      'customizations',
+      '=',
+      $.string,
       ';'
     ),
 
+    profile_apparea: $ => seq(
+      'area',
+      '(',
+      field('area_name', $.identifier),
+      ')',
+      '{',
+      repeat($.profile_apparea_element),
+      '}'
+    ),
+
+    profile_apparea_element: $ => choice(
+      $.profile_rolecenters,
+      $.profile_sections
+    ),
+
+    profile_rolecenters: $ => seq(
+      'rolecenters',
+      '=',
+      '[',
+      sepBy1(',', $.integer),
+      ']',
+      ';'
+    ),
+
+    profile_sections: $ => seq(
+      'sections',
+      '=',
+      '[',
+      sepBy1(',', $.string),
+      ']',
+      ';'
+    ),
+
+    permission: $ => seq(
+      field('object_type', $.identifier),
+      field('object_name', $.string),
+      '=',
+      field('permission_type', $.identifier),
+      ';'
+    ),
+
+    entitlement_element: $ => choice(
+      $.entitlement_object_entitlements,
+      $.entitlement_custom_entitlements
+    ),
+
+    entitlement_object_entitlements: $ => seq(
+      'ObjectEntitlements',
+      '=',
+      '[',
+      sepBy1(',', $.entitlement_object),
+      ']',
+      ';'
+    ),
+
+    entitlement_object: $ => seq(
+      'ObjectType',
+      '=',
+      field('object_type', $.identifier),
+      ',',
+      'ObjectId',
+      '=',
+      field('object_id', $.string)
+    ),
+
+    entitlement_custom_entitlements: $ => seq(
+      'CustomEntitlements',
+      '=',
+      '[',
+      sepBy1(',', $.string),
+      ']',
+      ';'
+    ),
+
+    // Statements
     statement: $ => choice(
       $.assignment_statement,
       $.if_statement,
@@ -530,7 +661,9 @@ module.exports = grammar({
       $.call_statement,
       $.exit_statement,
       $.with_statement,
-      $.return_statement
+      $.return_statement,
+      $.var_declaration,
+      $.try_catch_statement
     ),
 
     assignment_statement: $ => seq(
@@ -584,6 +717,7 @@ module.exports = grammar({
       field('start', $.expression),
       'to',
       field('end', $.expression),
+      optional(seq('step', field('step', $.expression))),
       'do',
       '{',
       repeat($.statement),
@@ -642,6 +776,23 @@ module.exports = grammar({
       '}'
     ),
 
+    return_statement: $ => seq(
+      'return',
+      optional(field('value', $.expression)),
+      ';'
+    ),
+
+    try_catch_statement: $ => seq(
+      'try',
+      '{',
+      repeat($.statement),
+      '}',
+      'catch',
+      '{',
+      repeat($.statement),
+      '}'
+    ),
+
     // Expressions
     expression: $ => choice(
       $.identifier,
@@ -649,7 +800,9 @@ module.exports = grammar({
       $.binary_expression,
       $.unary_expression,
       $.parenthesized_expression,
-      $.function_call
+      $.function_call,
+      $.record_ref_expression,
+      $.field_ref_expression
     ),
 
     binary_expression: $ => prec.left(1, seq(
@@ -676,11 +829,29 @@ module.exports = grammar({
       ')'
     ),
 
+    record_ref_expression: $ => seq(
+      'RecordRef',
+      '.',
+      'Open',
+      '(',
+      field('table_id', $.expression),
+      ')'
+    ),
+
+    field_ref_expression: $ => seq(
+      field('record', $.identifier),
+      '.',
+      'Field',
+      '(',
+      field('field_id', $.expression),
+      ')'
+    ),
+
     // Operators
     binary_operator: $ => choice(
       '+', '-', '*', '/', 'div', 'mod',
       '=', '<>', '<', '<=', '>', '>=',
-      'and', 'or', 'xor'
+      'and', 'or', 'xor', 'in'
     ),
 
     unary_operator: $ => choice(
@@ -725,11 +896,17 @@ module.exports = grammar({
       'Char',
       'Option',
       'Record',
+      'RecordId',
       'RecordRef',
       'FieldRef',
       'DateFormula',
       'Variant',
       'Blob',
+      'Codeunit',
+      'Page',
+      'Report',
+      'Query',
+      'XmlPort',
       'GUID',
       'InStream',
       'OutStream',
@@ -738,7 +915,6 @@ module.exports = grammar({
       'TextConst',
       'Label',
       'Action',
-      'XmlPort',
       'HttpClient',
       'HttpContent',
       'HttpHeaders',
@@ -766,7 +942,16 @@ module.exports = grammar({
     string: $ => /'[^']*'/,
     date: $ => /\d{2}\.\d{2}\.\d{4}/,
     time: $ => /\d{2}:\d{2}:\d{2}/,
-    datetime: $ => seq($.date, $.time)
+    datetime: $ => seq($.date, $.time),
+
+    comment: $ => token(choice(
+      seq('//', /.*/),
+      seq(
+        '/*',
+        /[^*]*\*+([^/*][^*]*\*+)*/,
+        '/'
+      )
+    ))
   }
 });
 
