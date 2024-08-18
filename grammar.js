@@ -56,7 +56,7 @@ module.exports = grammar({
       optional(';')
     )),
 
-    property_option: $ => prec.left(seq(
+    property_option: $ => prec.left(1, seq(
       field('option_name', $.identifier),
       optional(seq(':', field('option_value', choice($.literal, $.boolean))))
     )),
@@ -859,7 +859,7 @@ module.exports = grammar({
     ),
 
     // Literals
-    literal: $ => choice(
+    literal: $ => prec(2, choice(
       $.integer,
       $.decimal,
       $.string,
@@ -867,7 +867,7 @@ module.exports = grammar({
       $.date,
       $.time,
       $.datetime
-    ),
+    )),
 
     // Basic types
     identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
