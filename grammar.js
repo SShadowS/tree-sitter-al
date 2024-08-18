@@ -39,7 +39,7 @@ module.exports = grammar({
     ),
 
     _table_element: $ => choice(
-      $.fields_block,
+      $.fields,
       $.keys_block,
       $.fieldgroups_block,
       $.trigger,
@@ -197,7 +197,7 @@ module.exports = grammar({
       optional(';')
     )),
 
-    fields_block: $ => seq(
+    fields: $ => seq(
       'fields',
       '{',
       repeat($.field),
