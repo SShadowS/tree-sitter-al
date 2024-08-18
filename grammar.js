@@ -307,13 +307,18 @@ module.exports = grammar({
       optional(seq(
         'WHERE',
         '(',
-        sepBy1(
-          ',',
+        seq(
           seq(
             field('field_name', $.identifier),
             '=',
             field('field_value', choice($.identifier, $.literal, $.field_reference))
-          )
+          ),
+          repeat(seq(
+            ',',
+            field('field_name', $.identifier),
+            '=',
+            field('field_value', choice($.identifier, $.literal, $.field_reference))
+          ))
         ),
         ')'
       ))
