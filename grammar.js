@@ -48,30 +48,17 @@ module.exports = grammar({
       $.table_property
     ),
 
-    table_property: $ => seq(
+    table_property: $ => prec(3, seq(
       field('property_name', $.identifier),
       '=',
       field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
       ';'
-    ),
+    )),
 
     page_reference: $ => seq(
       'Page',
       '::',
       field('page_name', $.identifier)
-    ),
-
-    table_property: $ => seq(
-      field('property_name', $.identifier),
-      '=',
-      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
-      ';'
-    ),
-
-    page_reference: $ => seq(
-      'Page',
-      '::',
-      field('page_name', $.string)
     ),
 
     property: $ => prec(2, seq(
