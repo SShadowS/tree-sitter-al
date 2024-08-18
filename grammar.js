@@ -49,7 +49,7 @@ module.exports = grammar({
       $.var_section
     ),
 
-    property: $ => prec(1, seq(
+    property: $ => prec(2, seq(
       field('property_name', $.identifier),
       '=',
       field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean)),
