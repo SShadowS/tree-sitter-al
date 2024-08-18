@@ -19,12 +19,12 @@ module.exports = grammar({
     // Definitions for various AL object types
     // This rule defines all the possible top-level objects in an AL file
     _definition: $ => choice(
-      $.table,
-      $.tableextension,
-      $.page,
-      $.pageextension,
-      $.codeunit,
-      $.report,
+      $.table,              // Table object definition
+      $.tableextension,     // Table extension object definition
+      $.page,               // Page object definition
+      $.pageextension,      // Page extension object definition
+      $.codeunit,           // Codeunit object definition
+      $.report,             // Report object definition
       $.query,
       $.xmlport,
       $.enum,
@@ -37,6 +37,44 @@ module.exports = grammar({
     ),
 
     // Object Definitions
+
+// AL (Application Language) grammar for tree-sitter
+// This grammar defines the structure and syntax for AL, 
+// the programming language used in Microsoft Dynamics 365 Business Central
+
+module.exports = grammar({
+  name: 'al',
+
+  // Define what should be treated as extra (ignored) in the parsing process
+  extras: $ => [
+    $.comment,  // Comments are ignored during parsing
+    /\s/        // Whitespace is ignored
+  ],
+
+  rules: {
+    // The root node of the AST (Abstract Syntax Tree)
+    // A source file in AL consists of one or more object definitions
+    source_file: $ => repeat($._definition),
+
+    // Definitions for various AL object types
+    // This rule defines all the possible top-level objects in an AL file
+    _definition: $ => choice(
+      $.table,              // Table object definition
+      $.tableextension,     // Table extension object definition
+      $.page,               // Page object definition
+      $.pageextension,      // Page extension object definition
+      $.codeunit,           // Codeunit object definition
+      $.report,             // Report object definition
+      $.query,              // Query object definition
+      $.xmlport,            // XMLport object definition
+      $.enum,               // Enum object definition
+      $.dotnet,             // DotNet object definition
+      $.controladdin,       // Control Add-in object definition
+      $.profile,            // Profile object definition
+      $.permissionset,      // Permission Set object definition
+      $.permissionsetextension, // Permission Set Extension object definition
+      $.entitlement         // Entitlement object definition
+    ),
 
     // Table object definition
     // A table in AL represents a database table
@@ -73,6 +111,7 @@ module.exports = grammar({
       $.data_per_company_property
     ),
 
+    // Caption property definition
     caption_property: $ => seq(
       'Caption',
       '=',
@@ -80,6 +119,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // LookupPageID property definition
     lookup_page_id_property: $ => seq(
       'LookupPageID',
       '=',
@@ -87,6 +127,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // DrillDownPageID property definition
     drill_down_page_id_property: $ => seq(
       'DrillDownPageID',
       '=',
@@ -94,6 +135,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // DataPerCompany property definition
     data_per_company_property: $ => seq(
       'DataPerCompany',
       '=',
@@ -101,6 +143,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // LookupPageID property definition (alternative syntax)
     lookup_page_property: $ => seq(
       'LookupPageID',
       '=',
@@ -108,6 +151,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // DrillDownPageID property definition (alternative syntax)
     drill_down_page_property: $ => seq(
       'DrillDownPageID',
       '=',
@@ -115,6 +159,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Permissions property definition
     permissions_property: $ => seq(
       'Permissions',
       '=',
@@ -122,12 +167,14 @@ module.exports = grammar({
       ';'
     ),
 
+    // Permission item definition
     permission_item: $ => seq(
       field('permission_type', $.identifier),
       '=',
       field('permission_value', $.identifier)
     ),
 
+    // Access property definition
     access_property: $ => seq(
       'Access',
       '=',
@@ -135,6 +182,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // PasteIsValid property definition
     paste_is_valid_property: $ => seq(
       'PasteIsValid',
       '=',
@@ -142,6 +190,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Extensible property definition
     extensible_property: $ => seq(
       'Extensible',
       '=',
@@ -149,6 +198,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // DataClassification property definition
     data_classification_property: $ => seq(
       'DataClassification',
       '=',
@@ -156,6 +206,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // DataCaptionFields property definition
     data_caption_fields_property: $ => seq(
       'DataCaptionFields',
       '=',
@@ -163,6 +214,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // ObsoleteState property definition
     obsolete_state_property: $ => seq(
       'ObsoleteState',
       '=',
@@ -170,6 +222,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // LookupPageID property definition (string version)
     lookup_page_id: $ => seq(
       'LookupPageID',
       '=',
@@ -177,6 +230,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // DrillDownPageID property definition (string version)
     drill_down_page_id: $ => seq(
       'DrillDownPageID',
       '=',
@@ -184,6 +238,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Caption property definition (alternative syntax)
     caption: $ => seq(
       'Caption',
       '=',
@@ -191,6 +246,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Table property definition
     table_property: $ => prec(12, seq(
       field('property_name', $.identifier),
       '=',
@@ -198,12 +254,14 @@ module.exports = grammar({
       optional(';')
     )),
 
+    // Page reference definition
     page_reference: $ => seq(
       'Page',
       '::',
       field('page_name', $.identifier)
     ),
 
+    // Generic property definition
     property: $ => prec(11, seq(
       field('property_name', $.identifier),
       '=',
@@ -211,6 +269,7 @@ module.exports = grammar({
       optional(';')
     )),
 
+    // Fields block definition
     fields: $ => seq(
       'fields',
       '{',
@@ -218,6 +277,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Keys block definition
     keys_block: $ => seq(
       'keys',
       '{',
@@ -225,6 +285,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Fieldgroups block definition
     fieldgroups_block: $ => seq(
       'fieldgroups',
       '{',
@@ -232,6 +293,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Fieldgroup definition
     fieldgroup: $ => seq(
       field('fieldgroup_name', $.identifier),
       '{',
@@ -239,17 +301,13 @@ module.exports = grammar({
       '}'
     ),
 
-    page_reference: $ => seq(
-      'Page',
-      '::',
-      field('page_name', $.identifier)
-    ),
-
+    // Property option definition
     property_option: $ => prec.left(8, seq(
       field('option_name', $.identifier),
       optional(seq(':', field('option_value', choice($.literal, $.boolean, $.identifier))))
     )),
 
+    // Property list definition
     property_list: $ => seq(
       '[',
       repeat(seq($.property_option, optional(','))),
@@ -308,6 +366,7 @@ module.exports = grammar({
       $.automatic_caption_property
     ),
 
+    // Access property definition for fields
     access_property: $ => seq(
       'Access',
       '=',
@@ -315,6 +374,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Advanced property definition
     advanced_property: $ => seq(
       'Advanced',
       '=',
@@ -322,6 +382,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // ApplicationArea property definition
     application_area_property: $ => seq(
       'ApplicationArea',
       '=',
@@ -329,6 +390,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // AutoFormat property definition
     auto_format_property: $ => seq(
       'AutoFormat',
       '=',
@@ -336,6 +398,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // AutomaticCaption property definition
     automatic_caption_property: $ => seq(
       'AutomaticCaption',
       '=',
@@ -343,6 +406,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // AssistEdit property definition
     assist_edit_property: $ => seq(
       'AssistEdit',
       '=',
@@ -350,6 +414,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // AutoFormatType property definition
     auto_format_type_property: $ => seq(
       'AutoFormatType',
       '=',
@@ -357,6 +422,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // AutoFormatExpression property definition
     auto_format_expression_property: $ => seq(
       'AutoFormatExpression',
       '=',
@@ -364,6 +430,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // AutoFormatPreserveDecimals property definition
     auto_format_preserve_property: $ => seq(
       'AutoFormatPreserveDecimals',
       '=',
@@ -371,6 +438,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Blob property definition
     blob_type_property: $ => seq(
       'Blob',
       '=',
@@ -378,6 +446,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // OptionCaption property definition
     option_caption_property: $ => seq(
       'OptionCaption',
       '=',
@@ -385,6 +454,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // OptionString property definition
     option_string_property: $ => seq(
       'OptionString',
       '=',
@@ -392,6 +462,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // TableRelation property definition
     table_relation_property: $ => prec(2, seq(
       'TableRelation',
       '=',
@@ -399,6 +470,7 @@ module.exports = grammar({
       ';'
     )),
 
+    // TableRelation expression definition
     table_relation_expression: $ => seq(
       field('table_name', $.identifier),
       optional(seq('.', field('field_name', $.identifier))),
@@ -422,6 +494,7 @@ module.exports = grammar({
       ))
     ),
 
+    // Field reference definition
     field_reference: $ => seq(
       'FIELD',
       '(',
@@ -429,6 +502,7 @@ module.exports = grammar({
       ')'
     ),
 
+    // Width property definition
     width_property: $ => seq(
       'Width',
       '=',
@@ -436,6 +510,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Editable property definition
     editable_property: $ => seq(
       'Editable',
       '=',
@@ -443,6 +518,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // NotifyOnValidate property definition
     notify_on_validate_property: $ => seq(
       'NotifyOnValidate',
       '=',
@@ -450,6 +526,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // ValidateOnValidate property definition
     validate_on_validate_property: $ => seq(
       'ValidateOnValidate',
       '=',
@@ -457,6 +534,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // InitValue property definition
     init_value_property: $ => seq(
       'InitValue',
       '=',
@@ -464,6 +542,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // TestTableRelation property definition
     test_table_relation_property: $ => seq(
       'TestTableRelation',
       '=',
@@ -471,6 +550,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // ValidateTableRelation property definition
     validate_table_relation_property: $ => prec(2, seq(
       'ValidateTableRelation',
       '=',
@@ -478,6 +558,7 @@ module.exports = grammar({
       ';'
     )),
 
+    // SubType property definition for BLOB fields
     blob_sub_type_property: $ => seq(
       'SubType',
       '=',
@@ -485,6 +566,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // FieldClass property definition
     field_class_property: $ => seq(
       'FieldClass',
       '=',
@@ -492,6 +574,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // AutoIncrement property definition
     auto_increment_property: $ => seq(
       'AutoIncrement',
       '=',
@@ -499,6 +582,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Validate property definition
     validate_property: $ => seq(
       'ValidateTableRelation',
       '=',
@@ -506,6 +590,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Description property definition
     description_property: $ => seq(
       'Description',
       '=',
@@ -513,6 +598,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // OptionCaption property definition (alternative syntax)
     option_caption: $ => seq(
       'OptionCaption',
       '=',
@@ -520,6 +606,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // OptionString property definition (alternative syntax)
     option_string: $ => seq(
       'OptionString',
       '=',
@@ -527,6 +614,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // AccessByPermission property definition
     access_by_permission_property: $ => seq(
       'AccessByPermission',
       '=',
@@ -534,6 +622,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Enabled property definition
     enabled_property: $ => seq(
       'Enabled',
       '=',
@@ -541,6 +630,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Visible property definition
     visible_property: $ => seq(
       'Visible',
       '=',
@@ -548,6 +638,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // TableRelation property definition (alternative syntax)
     table_relation: $ => seq(
       'TableRelation',
       '=',
@@ -555,6 +646,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // DataClassification property definition (alternative syntax)
     data_classification: $ => seq(
       'DataClassification',
       '=',
@@ -562,6 +654,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Layout definition for pages
     layout: $ => seq(
       'layout',
       '{',
@@ -569,6 +662,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Layout element definition
     layout_element: $ => choice(
       $.area,
       $.group,
@@ -578,6 +672,7 @@ module.exports = grammar({
       $.chartpart
     ),
 
+    // Part definition in page layout
     part: $ => seq(
       'part',
       '(',
@@ -588,6 +683,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // SystemPart definition in page layout
     systempart: $ => seq(
       'systempart',
       '(',
@@ -598,6 +694,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // ChartPart definition in page layout
     chartpart: $ => seq(
       'chartpart',
       '(',
@@ -608,6 +705,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Group definition in page layout
     group: $ => seq(
       'group',
       '(',
@@ -618,6 +716,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Area definition in page layout
     area: $ => seq(
       'area',
       '(',
@@ -628,6 +727,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Key definition in table
     key: $ => seq(
       'key',
       '(',
@@ -639,6 +739,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Fieldgroup definition
     fieldgroup: $ => seq(
       'fieldgroup',
       '(',
@@ -649,6 +750,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // TableExtension object definition
     tableextension: $ => seq(
       'tableextension',
       field('tableextension_id', $.integer),
@@ -660,6 +762,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Page object definition
     page: $ => seq(
       'page',
       field('page_id', $.integer),
@@ -669,6 +772,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // PageExtension object definition
     pageextension: $ => seq(
       'pageextension',
       field('pageextension_id', $.integer),
@@ -680,6 +784,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Codeunit object definition
     codeunit: $ => seq(
       'codeunit',
       field('codeunit_id', $.integer),
@@ -690,6 +795,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Report object definition
     report: $ => seq(
       'report',
       field('report_id', $.integer),
@@ -699,6 +805,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Query object definition
     query: $ => seq(
       'query',
       field('query_id', $.integer),
@@ -708,6 +815,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // XMLport object definition
     xmlport: $ => seq(
       'xmlport',
       field('xmlport_id', $.integer),
@@ -717,6 +825,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Enum object definition
     enum: $ => seq(
       'enum',
       field('enum_id', $.integer),
@@ -727,6 +836,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // DotNet object definition
     dotnet: $ => seq(
       'dotnet',
       field('dotnet_name', $.identifier),
@@ -735,6 +845,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Control Add-in object definition
     controladdin: $ => seq(
       'controladdin',
       field('controladdin_name', $.identifier),
@@ -743,6 +854,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Profile object definition
     profile: $ => seq(
       'profile',
       field('profile_name', $.identifier),
@@ -751,6 +863,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Permission Set object definition
     permissionset: $ => seq(
       'permissionset',
       field('permissionset_id', $.integer),
@@ -760,6 +873,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Permission Set Extension object definition
     permissionsetextension: $ => seq(
       'permissionsetextension',
       field('permissionsetextension_id', $.integer),
@@ -771,6 +885,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Entitlement object definition
     entitlement: $ => seq(
       'entitlement',
       field('entitlement_name', $.identifier),
@@ -780,6 +895,8 @@ module.exports = grammar({
     ),
 
     // Common Elements
+
+    // Elements that can appear within a table body
     _table_body_element: $ => choice(
       $.field,
       $.key,
@@ -790,6 +907,7 @@ module.exports = grammar({
       $.var_section
     ),
 
+    // Elements that can appear within a page body
     _page_body_element: $ => choice(
       $.layout,
       $.actions,
@@ -799,6 +917,7 @@ module.exports = grammar({
       $.var_section
     ),
 
+    // Elements that can appear within a codeunit body
     _codeunit_body_element: $ => choice(
       $.trigger,
       $.procedure,
@@ -806,6 +925,7 @@ module.exports = grammar({
       $.var_section
     ),
 
+    // Elements that can appear within a report body
     _report_body_element: $ => choice(
       $.dataset,
       $.requestpage,
@@ -815,6 +935,7 @@ module.exports = grammar({
       $.var_section
     ),
 
+    // Elements that can appear within a query body
     _query_body_element: $ => choice(
       $.elements,
       $.filter,
@@ -823,6 +944,7 @@ module.exports = grammar({
       $.property
     ),
 
+    // Elements that can appear within an XMLport body
     _xmlport_body_element: $ => choice(
       $.schema,
       $.requestpage,
@@ -832,12 +954,14 @@ module.exports = grammar({
       $.var_section
     ),
 
+    // Elements that can appear within a control add-in body
     _controladdin_body_element: $ => choice(
       $.property,
       $.event,
       $.procedure
     ),
 
+    // Trigger definition
     trigger: $ => seq(
       'trigger',
       field('trigger_name', $.identifier),
@@ -850,6 +974,7 @@ module.exports = grammar({
       'end;'
     ),
 
+    // Procedure definition
     procedure: $ => seq(
       'procedure',
       field('procedure_name', $.identifier),
@@ -864,18 +989,21 @@ module.exports = grammar({
       'end;'
     ),
 
+    // Variable section definition
     var_section: $ => prec.right(seq(
       'var',
       repeat1($.var_declaration),
       optional(';')
     )),
 
+    // Procedure attribute definition
     procedure_attribute: $ => seq(
       '[',
       choice('IntegrationEvent', 'BusinessEvent', 'InternalEvent'),
       ']'
     ),
 
+    // Variable declaration
     var_declaration: $ => seq(
       field('var_name', $.identifier),
       ':',
@@ -884,8 +1012,7 @@ module.exports = grammar({
       ';'
     ),
 
-    // Removed duplicate layout and layout_element definitions
-
+    // Actions block definition for pages
     actions: $ => seq(
       'actions',
       '{',
@@ -893,6 +1020,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Action definition
     action: $ => seq(
       'action',
       '(',
@@ -903,6 +1031,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Dataset definition for reports
     dataset: $ => seq(
       'dataset',
       '{',
@@ -910,6 +1039,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Dataitem definition
     dataitem: $ => seq(
       'dataitem',
       '(',
@@ -925,6 +1055,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Request page definition
     requestpage: $ => seq(
       'requestpage',
       '{',
@@ -932,6 +1063,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Request page element definition
     requestpage_element: $ => choice(
       $.layout,
       $.actions,
@@ -939,6 +1071,7 @@ module.exports = grammar({
       $.property
     ),
 
+    // Elements block definition for queries
     elements: $ => seq(
       'elements',
       '{',
@@ -946,12 +1079,14 @@ module.exports = grammar({
       '}'
     ),
 
+    // Query element definition
     query_element: $ => choice(
       $.dataitem,
       $.column,
       $.filter
     ),
 
+    // Filter block definition
     filter: $ => seq(
       'filter',
       '{',
@@ -959,6 +1094,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Filter element definition
     filter_element: $ => seq(
       field('field', $.identifier),
       '=',
@@ -966,6 +1102,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Column definition
     column: $ => seq(
       'column',
       '(',
@@ -976,6 +1113,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Schema definition for XMLports
     schema: $ => seq(
       'schema',
       '{',
@@ -983,12 +1121,14 @@ module.exports = grammar({
       '}'
     ),
 
+    // Schema element definition
     schema_element: $ => choice(
       $.textelement,
       $.fieldelement,
       $.tableelement
     ),
 
+    // Text element definition
     textelement: $ => seq(
       'textelement',
       '(',
@@ -999,6 +1139,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Field element definition
     fieldelement: $ => seq(
       'fieldelement',
       '(',
@@ -1009,6 +1150,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Table element definition
     tableelement: $ => seq(
       'tableelement',
       '(',
@@ -1019,6 +1161,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Event definition
     event: $ => seq(
       'event',
       field('event_name', $.identifier),
@@ -1028,12 +1171,14 @@ module.exports = grammar({
       ';'
     ),
 
+    // Enum value definition
     enum_value: $ => seq(
       field('value_name', $.identifier),
       optional(seq('=', field('value', $.integer))),
       ';'
     ),
 
+    // Assembly definition for DotNet objects
     assembly: $ => seq(
       'assembly',
       '(',
@@ -1042,22 +1187,26 @@ module.exports = grammar({
       ';'
     ),
 
+    // Extends clause definition
     extends_clause: $ => seq(
       'extends',
       field('base_object', $.identifier)
     ),
 
+    // Implements clause definition
     implements_clause: $ => seq(
       'implements',
       $.identifier,
       repeat(seq(',', $.identifier))
     ),
 
+    // Profile element definition
     profile_element: $ => choice(
       $.profile_customization,
       $.profile_apparea
     ),
 
+    // Profile customization definition
     profile_customization: $ => seq(
       'customizations',
       '=',
@@ -1065,6 +1214,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Profile app area definition
     profile_apparea: $ => seq(
       'area',
       '(',
@@ -1075,11 +1225,13 @@ module.exports = grammar({
       '}'
     ),
 
+    // Profile app area element definition
     profile_apparea_element: $ => choice(
       $.profile_rolecenters,
       $.profile_sections
     ),
 
+    // Profile role centers definition
     profile_rolecenters: $ => seq(
       'rolecenters',
       '=',
@@ -1090,6 +1242,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Profile sections definition
     profile_sections: $ => seq(
       'sections',
       '=',
@@ -1100,6 +1253,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Permission definition
     permission: $ => seq(
       field('object_type', $.identifier),
       field('object_name', $.string),
@@ -1108,11 +1262,13 @@ module.exports = grammar({
       ';'
     ),
 
+    // Entitlement element definition
     entitlement_element: $ => choice(
       $.entitlement_object_entitlements,
       $.entitlement_custom_entitlements
     ),
 
+    // Entitlement object entitlements definition
     entitlement_object_entitlements: $ => seq(
       'ObjectEntitlements',
       '=',
@@ -1123,6 +1279,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Entitlement object definition
     entitlement_object: $ => seq(
       'ObjectType',
       '=',
@@ -1133,6 +1290,7 @@ module.exports = grammar({
       field('object_id', $.string)
     ),
 
+    // Entitlement custom entitlements definition
     entitlement_custom_entitlements: $ => seq(
       'CustomEntitlements',
       '=',
