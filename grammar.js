@@ -5,16 +5,19 @@
 module.exports = grammar({
   name: 'al',
 
+  // Define what should be treated as extra (ignored) in the parsing process
   extras: $ => [
-    $.comment,
-    /\s/
+    $.comment,  // Comments are ignored during parsing
+    /\s/        // Whitespace is ignored
   ],
 
   rules: {
-    // The root node of the AST
+    // The root node of the AST (Abstract Syntax Tree)
+    // A source file in AL consists of one or more object definitions
     source_file: $ => repeat($._definition),
 
     // Definitions for various AL object types
+    // This rule defines all the possible top-level objects in an AL file
     _definition: $ => choice(
       $.table,
       $.tableextension,
@@ -34,7 +37,9 @@ module.exports = grammar({
     ),
 
     // Object Definitions
+
     // Table object definition
+    // A table in AL represents a database table
     table: $ => seq(
       'table',
       field('table_id', $.integer),
@@ -46,6 +51,7 @@ module.exports = grammar({
     ),
 
     // Elements that can appear within a table definition
+    // This includes fields, keys, fieldgroups, triggers, procedures, and various properties
     _table_element: $ => choice(
       $.fields,
       $.keys_block,
@@ -251,20 +257,22 @@ module.exports = grammar({
     ),
 
     // Field definition within a table
+    // Each field represents a column in the database table
     field: $ => seq(
       'field',
       '(',
-      field('field_id', $.integer),
+      field('field_id', $.integer),  // Unique identifier for the field
       ';',
-      field('field_name', $.string),
+      field('field_name', $.string), // Name of the field
       ')',
-      field('data_type', $.data_type),
+      field('data_type', $.data_type), // Data type of the field
       '{',
-      repeat($.field_property),
+      repeat($.field_property),  // Field properties
       '}'
     ),
 
     // Properties that can be applied to a field
+    // This includes various attributes and behaviors that can be set for a field
     field_property: $ => choice(
       $.caption_property,
       $.data_classification_property,
@@ -1136,6 +1144,7 @@ module.exports = grammar({
     ),
 
     // Statements
+    // This rule defines all the possible statements in AL
     statement: $ => choice(
       $.assignment_statement,
       $.if_statement,
@@ -1159,6 +1168,7 @@ module.exports = grammar({
       $.setfilter_statement
     ),
 
+    // FindLast statement: finds the last record in a table
     findlast_statement: $ => prec(2, seq(
       'FindLast',
       '(',
@@ -1166,6 +1176,7 @@ module.exports = grammar({
       ';'
     )),
 
+    // SetFilter statement: sets a filter on a table
     setfilter_statement: $ => seq(
       'SetFilter',
       '(',
@@ -1176,6 +1187,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Find statement: finds records in a table
     find_statement: $ => prec(1, seq(
       choice('FindFirst', 'FindLast', 'Find', 'FindSet'),
       '(',
@@ -1184,6 +1196,7 @@ module.exports = grammar({
       ';'
     )),
 
+    // Init statement: initializes a record
     init_statement: $ => seq(
       'Init',
       '(',
@@ -1191,6 +1204,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Modify statement: modifies a record
     modify_statement: $ => seq(
       'Modify',
       '(',
@@ -1199,6 +1213,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Insert statement: inserts a new record
     insert_statement: $ => seq(
       'Insert',
       '(',
@@ -1207,6 +1222,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // CalcFields statement: calculates fields in a record
     calcfields_statement: $ => seq(
       'CALCFIELDS',
       '(',
@@ -1215,6 +1231,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Assignment statement: assigns a value to a variable
     assignment_statement: $ => seq(
       field('left_hand_side', $.identifier),
       ':=',
@@ -1222,6 +1239,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // If statement: conditional execution
     if_statement: $ => seq(
       'if',
       field('condition', $.expression),
@@ -1237,6 +1255,7 @@ module.exports = grammar({
       ))
     ),
 
+    // Case statement: multi-way branch
     case_statement: $ => seq(
       'case',
       field('expression', $.expression),
@@ -1251,6 +1270,7 @@ module.exports = grammar({
       'end;'
     ),
 
+    // Case option: individual branch in a case statement
     case_option: $ => seq(
       field('option', $.expression),
       ':',
@@ -1259,6 +1279,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // For statement: loop with a counter
     for_statement: $ => seq(
       'for',
       field('variable', $.identifier),
@@ -1273,6 +1294,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Foreach statement: loop over elements in a collection
     foreach_statement: $ => seq(
       'foreach',
       field('variable', $.identifier),
@@ -1284,6 +1306,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // While statement: loop with a condition
     while_statement: $ => seq(
       'while',
       field('condition', $.expression),
@@ -1293,6 +1316,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Repeat statement: loop that executes at least once
     repeat_statement: $ => seq(
       'repeat',
       '{',
@@ -1303,6 +1327,7 @@ module.exports = grammar({
       ';'
     ),
 
+    // Call statement: calls a function or procedure
     call_statement: $ => seq(
       field('function_name', $.identifier),
       '(',
@@ -1311,11 +1336,13 @@ module.exports = grammar({
       ';'
     ),
 
+    // Exit statement: exits from a loop or procedure
     exit_statement: $ => seq(
       'exit',
       ';'
     ),
 
+    // With statement: sets a default record for field access
     with_statement: $ => seq(
       'with',
       field('record', $.identifier),
@@ -1325,12 +1352,14 @@ module.exports = grammar({
       '}'
     ),
 
+    // Return statement: returns from a function or procedure
     return_statement: $ => seq(
       'return',
       optional(field('value', $.expression)),
       ';'
     ),
 
+    // Try-catch statement: handles exceptions
     try_catch_statement: $ => seq(
       'try',
       '{',
@@ -1343,6 +1372,7 @@ module.exports = grammar({
     ),
 
     // Expressions
+    // This rule defines all the possible expressions in AL
     expression: $ => choice(
       $.identifier,
       $.literal,
@@ -1354,23 +1384,27 @@ module.exports = grammar({
       $.field_ref_expression
     ),
 
+    // Binary expression: expression with two operands and an operator
     binary_expression: $ => prec.left(1, seq(
       field('left', $.expression),
       field('operator', $.binary_operator),
       field('right', $.expression)
     )),
 
+    // Unary expression: expression with one operand and an operator
     unary_expression: $ => prec(2, seq(
       field('operator', $.unary_operator),
       field('operand', $.expression)
     )),
 
+    // Parenthesized expression: expression enclosed in parentheses
     parenthesized_expression: $ => seq(
       '(',
       $.expression,
       ')'
     ),
 
+    // Function call expression
     function_call: $ => seq(
       field('function_name', $.identifier),
       '(',
@@ -1378,6 +1412,7 @@ module.exports = grammar({
       ')'
     ),
 
+    // RecordRef expression: used to open a table
     record_ref_expression: $ => seq(
       'RecordRef',
       '.',
@@ -1387,6 +1422,7 @@ module.exports = grammar({
       ')'
     ),
 
+    // FieldRef expression: used to access a field in a record
     field_ref_expression: $ => seq(
       field('record', $.identifier),
       '.',
@@ -1397,17 +1433,19 @@ module.exports = grammar({
     ),
 
     // Operators
+    // Binary operators: operators that work on two operands
     binary_operator: $ => choice(
-      '+', '-', '*', '/', 'div', 'mod',
-      '=', '<>', '<', '<=', '>', '>=',
-      'and', 'or', 'xor', 'in'
+      '+', '-', '*', '/', 'div', 'mod',  // Arithmetic operators
+      '=', '<>', '<', '<=', '>', '>=',   // Comparison operators
+      'and', 'or', 'xor', 'in'           // Logical operators
     ),
 
+    // Unary operators: operators that work on one operand
     unary_operator: $ => choice(
       '-', 'not'
     ),
 
-    // Literals
+    // Literals: constant values in the code
     literal: $ => prec(7, choice(
       $.integer,
       $.decimal,
@@ -1418,19 +1456,21 @@ module.exports = grammar({
       $.datetime
     )),
 
-    // Basic types
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    identifier_list: $ => seq($.identifier, repeat(seq(',', $.identifier))),
-    argument_list: $ => seq($.expression, repeat(seq(',', $.expression))),
-    parameter_list: $ => seq($.parameter, repeat(seq(',', $.parameter))),
+    // Basic types and constructs
+    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,  // Identifiers: names of variables, functions, etc.
+    identifier_list: $ => seq($.identifier, repeat(seq(',', $.identifier))),  // List of identifiers
+    argument_list: $ => seq($.expression, repeat(seq(',', $.expression))),  // List of arguments in a function call
+    parameter_list: $ => seq($.parameter, repeat(seq(',', $.parameter))),  // List of parameters in a function definition
 
+    // Parameter in a function definition
     parameter: $ => seq(
-      optional('var'),
+      optional('var'),  // 'var' keyword for reference parameters
       field('parameter_name', $.identifier),
       ':',
       field('parameter_type', $.data_type)
     ),
 
+    // Data types in AL
     data_type: $ => choice(
       'Integer',
       'Decimal',
@@ -1486,6 +1526,7 @@ module.exports = grammar({
       $.identifier
     ),
 
+    // Basic literal types
     boolean: $ => choice('true', 'false'),
     integer: $ => /\d+/,
     decimal: $ => /\d+\.\d+/,
@@ -1494,13 +1535,14 @@ module.exports = grammar({
     time: $ => /\d{2}:\d{2}:\d{2}/,
     datetime: $ => seq($.date, $.time),
 
+    // Comments in AL
     comment: $ => token(choice(
-      seq('//', /.*/),
+      seq('//', /.*/),  // Single-line comment
       seq(
         '/*',
         /[^*]*\*+([^/*][^*]*\*+)*/,
         '/'
-      )
+      )  // Multi-line comment
     ))
   }
 });
