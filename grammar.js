@@ -40,22 +40,48 @@ module.exports = grammar({
     ),
 
     _table_element: $ => choice(
-      $.field,
-      $.key,
-      $.fieldgroup,
+      $.fields_block,
+      $.keys_block,
+      $.fieldgroups_block,
       $.trigger,
       $.procedure,
       $.property,
-      $.var_section,
-      $.layout
+      $.var_section
+    ),
+
+    fields_block: $ => seq(
+      'fields',
+      '{',
+      repeat($.field),
+      '}'
+    ),
+
+    keys_block: $ => seq(
+      'keys',
+      '{',
+      repeat($.key),
+      '}'
+    ),
+
+    fieldgroups_block: $ => seq(
+      'fieldgroups',
+      '{',
+      repeat($.fieldgroup),
+      '}'
     ),
 
     property: $ => prec(2, seq(
       field('property_name', $.identifier),
       '=',
-      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list)),
+      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
       optional(';')
     )),
+
+    page_reference: $ => seq(
+      'Page',
+      '::',
+      field('page_name', $.identifier)
+    ),
 
     property_option: $ => prec.left(1, seq(
       field('option_name', $.identifier),
@@ -330,7 +356,13 @@ module.exports = grammar({
       ')',
       optional(seq(':', field('return_type', $.data_type))),
       choice(
-        seq('{', repeat($.statement), '}'),
+        seq(
+          optional('var'),
+          '{',
+          optional($.var_section),
+          repeat($.statement),
+          '}'
+        ),
         ';'
       )
     ),
