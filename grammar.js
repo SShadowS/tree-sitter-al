@@ -277,7 +277,47 @@ module.exports = grammar({
       $.validate_on_validate_property,
       $.init_value_property,
       $.test_table_relation_property,
-      $.validate_table_relation_property
+      $.validate_table_relation_property,
+      $.assist_edit_property,
+      $.auto_format_type_property,
+      $.auto_format_expression_property,
+      $.auto_format_preserve_property,
+      $.blob_type_property
+    ),
+
+    assist_edit_property: $ => seq(
+      'AssistEdit',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    auto_format_type_property: $ => seq(
+      'AutoFormatType',
+      '=',
+      field('value', $.identifier),
+      ';'
+    ),
+
+    auto_format_expression_property: $ => seq(
+      'AutoFormatExpression',
+      '=',
+      field('value', $.string),
+      ';'
+    ),
+
+    auto_format_preserve_property: $ => seq(
+      'AutoFormatPreserveDecimals',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    blob_type_property: $ => seq(
+      'Blob',
+      '=',
+      field('value', $.identifier),
+      ';'
     ),
 
     option_caption_property: $ => seq(
