@@ -339,6 +339,13 @@ module.exports = grammar({
       '}'
     ),
 
+    requestpage_element: $ => choice(
+      $.layout,
+      $.actions,
+      $.trigger,
+      $.property
+    ),
+
     elements: $ => seq(
       'elements',
       '{',
