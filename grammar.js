@@ -143,7 +143,7 @@ module.exports = grammar({
       $.trigger,
       $.procedure,
       $.property,
-      optional($.var_section)
+      $.var_section
     ),
 
     _report_body_element: $ => choice(
