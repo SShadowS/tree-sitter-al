@@ -55,7 +55,23 @@ module.exports = grammar({
       $.paste_is_valid_property,
       $.extensible_property,
       $.permissions_property,
-      $.access_property
+      $.access_property,
+      $.lookup_page_property,
+      $.drill_down_page_property
+    ),
+
+    lookup_page_property: $ => seq(
+      'LookupPageID',
+      '=',
+      field('page_name', $.identifier),
+      ';'
+    ),
+
+    drill_down_page_property: $ => seq(
+      'DrillDownPageID',
+      '=',
+      field('page_name', $.identifier),
+      ';'
     ),
 
     permissions_property: $ => seq(
@@ -232,7 +248,15 @@ module.exports = grammar({
       $.field_class_property,
       $.auto_increment_property,
       $.validate_property,
-      $.description_property
+      $.description_property,
+      $.blob_sub_type_property
+    ),
+
+    blob_sub_type_property: $ => seq(
+      'SubType',
+      '=',
+      field('sub_type', $.identifier),
+      ';'
     ),
 
     field_class_property: $ => seq(
