@@ -48,7 +48,7 @@ module.exports = grammar({
       $.table_property
     ),
 
-    table_property: $ => prec(7, seq(
+    table_property: $ => prec(8, seq(
       field('property_name', $.identifier),
       '=',
       field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
@@ -89,7 +89,7 @@ module.exports = grammar({
       '}'
     ),
 
-    property: $ => prec(2, seq(
+    property: $ => prec(8, seq(
       field('property_name', $.identifier),
       '=',
       field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
@@ -983,7 +983,7 @@ module.exports = grammar({
     ),
 
     // Literals
-    literal: $ => prec(6, choice(
+    literal: $ => prec(7, choice(
       $.integer,
       $.decimal,
       $.string,
