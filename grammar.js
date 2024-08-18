@@ -44,7 +44,23 @@ module.exports = grammar({
       $.procedure,
       $.property,
       $.table_property,
-      $.caption
+      $.caption,
+      $.lookup_page_id,
+      $.drill_down_page_id
+    ),
+
+    lookup_page_id: $ => seq(
+      'LookupPageID',
+      '=',
+      field('page_name', $.string),
+      ';'
+    ),
+
+    drill_down_page_id: $ => seq(
+      'DrillDownPageID',
+      '=',
+      field('page_name', $.string),
+      ';'
     ),
 
     caption: $ => seq(
@@ -134,7 +150,15 @@ module.exports = grammar({
 
     field_property: $ => choice(
       $.caption,
-      $.data_classification
+      $.data_classification,
+      $.table_relation
+    ),
+
+    table_relation: $ => seq(
+      'TableRelation',
+      '=',
+      field('table_name', $.string),
+      ';'
     ),
 
     data_classification: $ => seq(
@@ -375,7 +399,8 @@ module.exports = grammar({
       field('trigger_name', $.identifier),
       '(',
       ')',
-      optional($.var_section),
+      'var',
+      repeat($.var_declaration),
       'begin',
       repeat($.statement),
       'end;'
@@ -388,7 +413,8 @@ module.exports = grammar({
       optional($.parameter_list),
       ')',
       optional(seq(':', field('return_type', $.data_type))),
-      optional($.var_section),
+      'var',
+      repeat($.var_declaration),
       'begin',
       repeat($.statement),
       'end;'
@@ -761,7 +787,26 @@ module.exports = grammar({
       $.modify_statement,
       $.insert_statement,
       $.calcfields_statement,
-      $.find_statement
+      $.find_statement,
+      $.findlast_statement,
+      $.setfilter_statement
+    ),
+
+    findlast_statement: $ => seq(
+      'FindLast',
+      '(',
+      ')',
+      ';'
+    ),
+
+    setfilter_statement: $ => seq(
+      'SetFilter',
+      '(',
+      field('field_name', $.identifier),
+      ',',
+      field('filter_expression', $.string),
+      ')',
+      ';'
     ),
 
     find_statement: $ => seq(
