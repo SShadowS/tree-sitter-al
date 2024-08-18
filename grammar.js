@@ -835,12 +835,12 @@ module.exports = grammar({
       $.setfilter_statement
     ),
 
-    findlast_statement: $ => seq(
+    findlast_statement: $ => prec(2, seq(
       'FindLast',
       '(',
       ')',
       ';'
-    ),
+    )),
 
     setfilter_statement: $ => seq(
       'SetFilter',
@@ -852,13 +852,13 @@ module.exports = grammar({
       ';'
     ),
 
-    find_statement: $ => seq(
+    find_statement: $ => prec(1, seq(
       choice('FindFirst', 'FindLast', 'Find', 'FindSet'),
       '(',
       optional($.boolean),
       ')',
       ';'
-    ),
+    )),
 
     init_statement: $ => seq(
       'Init',
