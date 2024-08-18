@@ -31,7 +31,7 @@ module.exports = grammar({
     table: $ => seq(
       'table',
       field('table_id', $.integer),
-      field('table_name', $.string),
+      field('table_name', $.identifier),
       '{',
       repeat($._table_element),
       '}'
@@ -50,7 +50,23 @@ module.exports = grammar({
       $.drill_down_page_id,
       $.data_classification_property,
       $.data_caption_fields_property,
-      $.obsolete_state_property
+      $.obsolete_state_property,
+      $.paste_is_valid_property,
+      $.extensible_property
+    ),
+
+    paste_is_valid_property: $ => seq(
+      'PasteIsValid',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    extensible_property: $ => seq(
+      'Extensible',
+      '=',
+      field('value', $.boolean),
+      ';'
     ),
 
     data_classification_property: $ => seq(
@@ -1153,7 +1169,8 @@ module.exports = grammar({
       'DotNet',
       seq('array', '[', ']', 'of', $.data_type),
       prec.left(2, 'Option'),
-      prec.left(3, seq('Option', '[', $.integer, ']'))
+      prec.left(3, seq('Option', '[', $.integer, ']')),
+      'BLOB'
     ),
 
     _property_value: $ => choice(
