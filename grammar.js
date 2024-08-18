@@ -366,6 +366,13 @@ module.exports = grammar({
       '}'
     ),
 
+    filter_element: $ => seq(
+      field('field', $.identifier),
+      '=',
+      field('value', $.expression),
+      ';'
+    ),
+
     column: $ => seq(
       'column',
       '(',
