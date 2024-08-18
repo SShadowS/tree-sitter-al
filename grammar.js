@@ -341,9 +341,9 @@ module.exports = grammar({
     tableextension: $ => seq(
       'tableextension',
       field('tableextension_id', $.integer),
-      field('tableextension_name', $.identifier),
+      field('tableextension_name', choice($.string, $.identifier)),
       'extends',
-      field('base_table', $.identifier),
+      field('base_table', choice($.string, $.identifier)),
       '{',
       repeat($._table_body_element),
       '}'
