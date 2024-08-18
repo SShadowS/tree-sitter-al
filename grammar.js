@@ -1415,3 +1415,118 @@ module.exports = grammar({
 function sepBy1(delimiter, rule) {
   return seq(rule, repeat(seq(delimiter, rule)));
 }
+description_property: $ => seq(
+  'Description',
+  '=',
+  field('description', $.string),
+  ';'
+),
+
+obsolete_reason_property: $ => seq(
+  'ObsoleteReason',
+  '=',
+  field('reason', $.string),
+  ';'
+)
+
+replication_method_property: $ => seq(
+  'ReplicateData',
+  '=',
+  field('method', $.identifier),
+  ';'
+),
+
+table_type_property: $ => seq(
+  'TableType',
+  '=',
+  field('type', $.identifier),
+  ';'
+),
+
+data_per_tenant_property: $ => seq(
+  'DataPerTenant',
+  '=',
+  field('value', $.boolean),
+  ';'
+),
+
+implementation_property: $ => seq(
+  'Implementation',
+  '=',
+  field('value', $.identifier),
+  ';'
+),
+
+data_captionfields_property: $ => seq(
+  'DataCaptionFields',
+  '=',
+  field('fields', $.identifier_list),
+  ';'
+),
+
+data_captionindexes_property: $ => seq(
+  'DataCaptionIndexes',
+  '=',
+  field('indexes', $.identifier_list),
+  ';'
+),
+
+deleteallowed_property: $ => seq(
+  'DeleteAllowed',
+  '=',
+  field('value', $.boolean),
+  ';'
+),
+
+insertallowed_property: $ => seq(
+  'InsertAllowed',
+  '=',
+  field('value', $.boolean),
+  ';'
+),
+
+modifyallowed_property: $ => seq(
+  'ModifyAllowed',
+  '=',
+  field('value', $.boolean),
+  ';'
+),
+
+readallowed_property: $ => seq(
+  'ReadAllowed',
+  '=',
+  field('value', $.boolean),
+  ';'
+),
+
+key_property: $ => seq(
+  'Key',
+  '(',
+  field('key_name', $.identifier),
+  ')',
+  '{',
+  field('fields', $.identifier_list),
+  '}'
+),
+
+primarykey_property: $ => seq(
+  'PrimaryKey',
+  '(',
+  field('fields', $.identifier_list),
+  ')',
+  ';'
+),
+
+sqlindexes_property: $ => seq(
+  'SQLIndexes',
+  '=',
+  field('indexes', $.identifier_list),
+  ';'
+),
+
+tableno_property: $ => seq(
+  'TableNo',
+  '=',
+  field('number', $.integer),
+  ';'
+),
