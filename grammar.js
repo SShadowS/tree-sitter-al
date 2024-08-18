@@ -317,6 +317,21 @@ module.exports = grammar({
       '}'
     ),
 
+    dataitem: $ => seq(
+      'dataitem',
+      '(',
+      field('dataitem_name', $.identifier),
+      ')',
+      '{',
+      repeat(choice(
+        $.column,
+        $.dataitem,
+        $.trigger,
+        $.property
+      )),
+      '}'
+    ),
+
     requestpage: $ => seq(
       'requestpage',
       '{',
