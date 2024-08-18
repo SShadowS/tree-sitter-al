@@ -47,7 +47,27 @@ module.exports = grammar({
       $.property
     ),
 
+    table_property: $ => seq(
+      field('property_name', $.identifier),
+      '=',
+      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
+      ';'
+    ),
+
+    page_reference: $ => seq(
+      'Page',
+      '::',
+      field('page_name', $.string)
+    ),
+
     property: $ => prec(2, seq(
+      field('property_name', $.identifier),
+      '=',
+      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
+      ';'
+    )),
+
+    table_property: $ => prec(2, seq(
       field('property_name', $.identifier),
       '=',
       field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
@@ -344,11 +364,14 @@ module.exports = grammar({
       'trigger',
       field('trigger_name', $.identifier),
       '(',
-      optional($.parameter_list),
       ')',
-      '{',
+      optional(seq(
+        'var',
+        repeat1($.var_declaration)
+      )),
+      'begin',
       repeat($.statement),
-      '}'
+      'end;'
     ),
 
     procedure: $ => seq(
@@ -360,10 +383,13 @@ module.exports = grammar({
       optional($.parameter_list),
       ')',
       optional(seq(':', field('return_type', $.data_type))),
-      '{',
-      optional($.var_section),
+      optional(seq(
+        'var',
+        repeat1($.var_declaration)
+      )),
+      'begin',
       repeat($.statement),
-      '}'
+      'end;'
     ),
 
     var_section: $ => seq(
@@ -727,7 +753,16 @@ module.exports = grammar({
       $.init_statement,
       $.modify_statement,
       $.insert_statement,
-      $.calcfields_statement
+      $.calcfields_statement,
+      $.find_statement
+    ),
+
+    find_statement: $ => seq(
+      choice('FindFirst', 'FindLast', 'Find', 'FindSet'),
+      '(',
+      optional($.boolean),
+      ')',
+      ';'
     ),
 
     init_statement: $ => seq(
