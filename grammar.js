@@ -859,7 +859,7 @@ module.exports = grammar({
     ),
 
     // Literals
-    literal: $ => prec(2, choice(
+    literal: $ => prec(3, choice(
       $.integer,
       $.decimal,
       $.string,
