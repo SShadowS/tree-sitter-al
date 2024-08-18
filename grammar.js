@@ -300,6 +300,16 @@ module.exports = grammar({
       '}'
     ),
 
+    action: $ => seq(
+      'action',
+      '(',
+      field('action_name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
     dataset: $ => seq(
       'dataset',
       '{',
