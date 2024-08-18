@@ -30,35 +30,24 @@ module.exports = grammar({
     ),
 
     _table_element: $ => choice(
-      $._table_property,
-      $._table_body_element
+      $.field,
+      $.key,
+      $.fieldgroup,
+      $.trigger,
+      $.procedure,
+      $.property
     ),
 
-    _table_property: $ => choice(
-      $.caption_property,
-      $.dataclassification_property,
-      $.table_property
-    ),
-
-    caption_property: $ => seq(
-      'Caption',
-      '=',
-      field('caption', $.string),
-      ';'
-    ),
-
-    dataclassification_property: $ => seq(
-      'DataClassification',
-      '=',
-      field('classification', $.identifier),
-      ';'
-    ),
-
-    table_property: $ => seq(
+    property: $ => seq(
       field('property_name', $.identifier),
       '=',
-      field('property_value', choice($.literal, $.identifier)),
+      field('property_value', choice($.literal, $.identifier, $.property_option)),
       ';'
+    ),
+
+    property_option: $ => seq(
+      field('option_name', $.identifier),
+      optional(seq(':', field('option_value', $.literal)))
     ),
 
     tableextension: $ => seq(
@@ -218,30 +207,9 @@ module.exports = grammar({
       field('data_type', $.data_type),
       optional(seq(
         '{',
-        repeat($._field_property),
+        repeat($.property),
         '}'
       ))
-    ),
-
-    _field_property: $ => choice(
-      $.caption_property,
-      $.dataclassification_property,
-      $.option_property,
-      $.field_property
-    ),
-
-    option_property: $ => seq(
-      'OptionMembers',
-      '=',
-      field('options', $.string),
-      ';'
-    ),
-
-    field_property: $ => seq(
-      field('property_name', $.identifier),
-      '=',
-      field('property_value', choice($.literal, $.identifier)),
-      ';'
     ),
 
     key: $ => seq(
@@ -251,15 +219,8 @@ module.exports = grammar({
       ')',
       '{',
       field('fields', $.identifier_list),
-      repeat($.key_property),
+      repeat($.property),
       '}'
-    ),
-
-    key_property: $ => seq(
-      field('property_name', $.identifier),
-      '=',
-      field('property_value', choice($.literal, $.identifier)),
-      ';'
     ),
 
     fieldgroup: $ => seq(
