@@ -112,7 +112,7 @@ module.exports = grammar({
       field('property_name', $.identifier),
       '=',
       field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
-      ';'
+      optional(';')
     )),
 
     fields_block: $ => seq(
@@ -142,13 +142,6 @@ module.exports = grammar({
       field('fields', $.identifier_list),
       '}'
     ),
-
-    property: $ => prec(8, seq(
-      field('property_name', $.identifier),
-      '=',
-      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
-      optional(';')
-    )),
 
     page_reference: $ => seq(
       'Page',
@@ -514,71 +507,7 @@ module.exports = grammar({
       ';'
     ),
 
-    layout: $ => seq(
-      'layout',
-      '{',
-      repeat($.layout_element),
-      '}'
-    ),
-
-    layout_element: $ => choice(
-      $.area,
-      $.group,
-      $.field,
-      $.part,
-      $.systempart,
-      $.chartpart
-    ),
-
-    area: $ => seq(
-      'area',
-      '(',
-      field('area_type', $.identifier),
-      ')',
-      '{',
-      repeat($.layout_element),
-      '}'
-    ),
-
-    group: $ => seq(
-      'group',
-      '(',
-      field('group_type', $.identifier),
-      ')',
-      '{',
-      repeat($.layout_element),
-      '}'
-    ),
-
-    part: $ => seq(
-      'part',
-      '(',
-      field('part_name', $.identifier),
-      ')',
-      '{',
-      repeat($.property),
-      '}'
-    ),
-
-    systempart: $ => seq(
-      'systempart',
-      '(',
-      field('systempart_type', $.identifier),
-      ')',
-      '{',
-      repeat($.property),
-      '}'
-    ),
-
-    chartpart: $ => seq(
-      'chartpart',
-      '(',
-      field('chartpart_name', $.identifier),
-      ')',
-      '{',
-      repeat($.property),
-      '}'
-    ),
+    // Removed duplicate layout and layout_element definitions
 
     actions: $ => seq(
       'actions',
