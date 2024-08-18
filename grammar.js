@@ -293,6 +293,13 @@ module.exports = grammar({
       ';'
     ),
 
+    option_string_property: $ => seq(
+      'OptionString',
+      '=',
+      field('option_string', $.string),
+      ';'
+    ),
+
     table_relation_property: $ => seq(
       'TableRelation',
       '=',
