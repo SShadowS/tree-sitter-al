@@ -178,8 +178,11 @@ module.exports = grammar({
 
     field: $ => seq(
       'field',
+      '(',
       field('field_id', $.integer),
+      ';',
       field('field_name', $.identifier),
+      ')',
       field('data_type', $.data_type),
       '{',
       repeat($.property),
@@ -189,10 +192,10 @@ module.exports = grammar({
     key: $ => seq(
       'key',
       '(',
-      field('fields', $.identifier_list),
+      field('key_name', $.identifier),
       ')',
       '{',
-      repeat($.property),
+      field('fields', $.identifier_list),
       '}'
     ),
 
@@ -233,8 +236,13 @@ module.exports = grammar({
     property: $ => seq(
       field('property_name', $.identifier),
       '=',
-      field('property_value', $._property_value),
+      field('property_value', choice($.literal, $.identifier, $.property_option)),
       ';'
+    ),
+
+    property_option: $ => seq(
+      field('option_name', $.identifier),
+      optional(seq(':', field('option_value', $.literal)))
     ),
 
     var_section: $ => prec.right(seq(
