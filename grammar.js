@@ -238,7 +238,7 @@ module.exports = grammar({
 
     property_list: $ => seq(
       '[',
-      sepBy1(',', $.property_option),
+      repeat(seq($.property_option, optional(','))),
       ']'
     ),
 
@@ -946,7 +946,8 @@ module.exports = grammar({
 
     implements_clause: $ => seq(
       'implements',
-      sepBy1(',', $.identifier)
+      $.identifier,
+      repeat(seq(',', $.identifier))
     ),
 
     profile_element: $ => choice(
@@ -980,7 +981,8 @@ module.exports = grammar({
       'rolecenters',
       '=',
       '[',
-      sepBy1(',', $.integer),
+      $.integer,
+      repeat(seq(',', $.integer)),
       ']',
       ';'
     ),
@@ -989,7 +991,8 @@ module.exports = grammar({
       'sections',
       '=',
       '[',
-      sepBy1(',', $.string),
+      $.string,
+      repeat(seq(',', $.string)),
       ']',
       ';'
     ),
@@ -1011,7 +1014,8 @@ module.exports = grammar({
       'ObjectEntitlements',
       '=',
       '[',
-      sepBy1(',', $.entitlement_object),
+      $.entitlement_object,
+      repeat(seq(',', $.entitlement_object)),
       ']',
       ';'
     ),
@@ -1030,7 +1034,8 @@ module.exports = grammar({
       'CustomEntitlements',
       '=',
       '[',
-      sepBy1(',', $.string),
+      $.string,
+      repeat(seq(',', $.string)),
       ']',
       ';'
     ),
@@ -1320,9 +1325,9 @@ module.exports = grammar({
 
     // Basic types
     identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    identifier_list: $ => sepBy1(',', $.identifier),
-    argument_list: $ => sepBy1(',', $.expression),
-    parameter_list: $ => sepBy1(',', $.parameter),
+    identifier_list: $ => seq($.identifier, repeat(seq(',', $.identifier))),
+    argument_list: $ => seq($.expression, repeat(seq(',', $.expression))),
+    parameter_list: $ => seq($.parameter, repeat(seq(',', $.parameter))),
 
     parameter: $ => seq(
       optional('var'),
