@@ -25,8 +25,28 @@ module.exports = grammar({
       field('table_name', $.identifier),
       optional($.extends_clause),
       '{',
+      repeat($._table_property),
       repeat($._table_body_element),
       '}'
+    ),
+
+    _table_property: $ => choice(
+      $.caption_property,
+      $.dataclassification_property
+    ),
+
+    caption_property: $ => seq(
+      'Caption',
+      '=',
+      field('caption', $.string),
+      ';'
+    ),
+
+    dataclassification_property: $ => seq(
+      'DataClassification',
+      '=',
+      field('classification', $.identifier),
+      ';'
     ),
 
     tableextension: $ => seq(
@@ -185,8 +205,21 @@ module.exports = grammar({
       ')',
       field('data_type', $.data_type),
       '{',
-      repeat($.property),
+      repeat($._field_property),
       '}'
+    ),
+
+    _field_property: $ => choice(
+      $.caption_property,
+      $.dataclassification_property,
+      $.option_property
+    ),
+
+    option_property: $ => seq(
+      'OptionMembers',
+      '=',
+      field('options', $.string),
+      ';'
     ),
 
     key: $ => seq(
@@ -196,7 +229,15 @@ module.exports = grammar({
       ')',
       '{',
       field('fields', $.identifier_list),
+      optional($.key_property),
       '}'
+    ),
+
+    key_property: $ => seq(
+      'Clustered',
+      '=',
+      field('clustered', $.boolean),
+      ';'
     ),
 
     fieldgroup: $ => seq(
@@ -701,7 +742,8 @@ module.exports = grammar({
       'List',
       'Dictionary',
       'DotNet',
-      seq('array', '[', ']', 'of', $.data_type)
+      seq('array', '[', ']', 'of', $.data_type),
+      seq('Option', '[', $.integer, ']')
     ),
 
     _property_value: $ => choice(
