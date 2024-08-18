@@ -32,6 +32,7 @@ module.exports = grammar({
       'table',
       field('table_id', $.integer),
       field('table_name', choice($.string, $.identifier)),
+      optional($.extends_clause),
       '{',
       repeat($._table_element),
       '}'
@@ -52,7 +53,35 @@ module.exports = grammar({
       $.data_caption_fields_property,
       $.obsolete_state_property,
       $.paste_is_valid_property,
-      $.extensible_property
+      $.extensible_property,
+      $.permissions_property,
+      $.access_property
+    ),
+
+    permissions_property: $ => seq(
+      'Permissions',
+      '=',
+      field('permissions', $.permission_list),
+      ';'
+    ),
+
+    permission_list: $ => seq(
+      '[',
+      sepBy1(',', $.permission_item),
+      ']'
+    ),
+
+    permission_item: $ => seq(
+      field('permission_type', $.identifier),
+      '=',
+      field('permission_value', $.identifier)
+    ),
+
+    access_property: $ => seq(
+      'Access',
+      '=',
+      field('access_value', $.identifier),
+      ';'
     ),
 
     paste_is_valid_property: $ => seq(
@@ -199,7 +228,39 @@ module.exports = grammar({
       $.obsolete_state_property,
       $.access_by_permission_property,
       $.enabled_property,
-      $.visible_property
+      $.visible_property,
+      $.field_class_property,
+      $.auto_increment_property,
+      $.validate_property,
+      $.description_property
+    ),
+
+    field_class_property: $ => seq(
+      'FieldClass',
+      '=',
+      field('field_class', $.identifier),
+      ';'
+    ),
+
+    auto_increment_property: $ => seq(
+      'AutoIncrement',
+      '=',
+      field('auto_increment', $.boolean),
+      ';'
+    ),
+
+    validate_property: $ => seq(
+      'ValidateTableRelation',
+      '=',
+      field('validate', $.boolean),
+      ';'
+    ),
+
+    description_property: $ => seq(
+      'Description',
+      '=',
+      field('description', $.string),
+      ';'
     ),
 
     option_caption: $ => seq(
