@@ -1,3 +1,7 @@
+// AL (Application Language) grammar for tree-sitter
+// This grammar defines the structure and syntax for AL, 
+// the programming language used in Microsoft Dynamics 365 Business Central
+
 module.exports = grammar({
   name: 'al',
 
@@ -7,8 +11,10 @@ module.exports = grammar({
   ],
 
   rules: {
+    // The root node of the AST
     source_file: $ => repeat($._definition),
 
+    // Definitions for various AL object types
     _definition: $ => choice(
       $.table,
       $.tableextension,
@@ -28,6 +34,7 @@ module.exports = grammar({
     ),
 
     // Object Definitions
+    // Table object definition
     table: $ => seq(
       'table',
       field('table_id', $.integer),
@@ -38,6 +45,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Elements that can appear within a table definition
     _table_element: $ => choice(
       $.fields,
       $.keys_block,
@@ -242,6 +250,7 @@ module.exports = grammar({
       ']'
     ),
 
+    // Field definition within a table
     field: $ => seq(
       'field',
       '(',
@@ -255,6 +264,7 @@ module.exports = grammar({
       '}'
     ),
 
+    // Properties that can be applied to a field
     field_property: $ => choice(
       $.caption_property,
       $.data_classification_property,
