@@ -41,13 +41,39 @@ module.exports = grammar({
     property: $ => seq(
       field('property_name', $.identifier),
       '=',
-      field('property_value', choice($.literal, $.identifier, $.property_option)),
-      ';'
+      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean)),
+      optional(';')
     ),
 
     property_option: $ => seq(
       field('option_name', $.identifier),
-      optional(seq(':', field('option_value', $.literal)))
+      optional(seq(':', field('option_value', choice($.literal, $.boolean))))
+    ),
+
+    field: $ => seq(
+      'field',
+      '(',
+      field('field_id', $.integer),
+      ';',
+      field('field_name', $.identifier),
+      ')',
+      field('data_type', $.data_type),
+      optional(seq(
+        '{',
+        repeat($.property),
+        '}'
+      ))
+    ),
+
+    key: $ => seq(
+      'key',
+      '(',
+      field('key_name', $.identifier),
+      ')',
+      '{',
+      field('fields', $.identifier_list),
+      repeat($.property),
+      '}'
     ),
 
     tableextension: $ => seq(
