@@ -46,9 +46,9 @@ module.exports = grammar({
       $.procedure,
       $.property,
       $.table_property,
-      $.caption,
-      $.lookup_page_id,
-      $.drill_down_page_id,
+      $.caption_property,
+      $.lookup_page_id_property,
+      $.drill_down_page_id_property,
       $.data_classification_property,
       $.data_caption_fields_property,
       $.obsolete_state_property,
@@ -56,8 +56,35 @@ module.exports = grammar({
       $.extensible_property,
       $.permissions_property,
       $.access_property,
-      $.lookup_page_property,
-      $.drill_down_page_property
+      $.data_per_company_property
+    ),
+
+    caption_property: $ => seq(
+      'Caption',
+      '=',
+      field('caption_value', $.string),
+      ';'
+    ),
+
+    lookup_page_id_property: $ => seq(
+      'LookupPageID',
+      '=',
+      field('page_id', choice($.integer, $.identifier)),
+      ';'
+    ),
+
+    drill_down_page_id_property: $ => seq(
+      'DrillDownPageID',
+      '=',
+      field('page_id', choice($.integer, $.identifier)),
+      ';'
+    ),
+
+    data_per_company_property: $ => seq(
+      'DataPerCompany',
+      '=',
+      field('value', $.boolean),
+      ';'
     ),
 
     lookup_page_property: $ => seq(
@@ -235,11 +262,11 @@ module.exports = grammar({
     ),
 
     field_property: $ => choice(
-      $.caption,
-      $.data_classification,
-      $.table_relation,
-      $.option_caption,
-      $.option_string,
+      $.caption_property,
+      $.data_classification_property,
+      $.table_relation_property,
+      $.option_caption_property,
+      $.option_string_property,
       $.trigger,
       $.obsolete_state_property,
       $.access_by_permission_property,
@@ -249,7 +276,95 @@ module.exports = grammar({
       $.auto_increment_property,
       $.validate_property,
       $.description_property,
-      $.blob_sub_type_property
+      $.blob_sub_type_property,
+      $.width_property,
+      $.editable_property,
+      $.notify_on_validate_property,
+      $.validate_on_validate_property,
+      $.init_value_property,
+      $.test_table_relation_property,
+      $.valid_ate_table_relation_property
+    ),
+
+    table_relation_property: $ => seq(
+      'TableRelation',
+      '=',
+      field('table_name', choice($.identifier, $.table_relation_expression)),
+      ';'
+    ),
+
+    table_relation_expression: $ => seq(
+      field('table_name', $.identifier),
+      optional(seq('.', field('field_name', $.identifier))),
+      optional(seq(
+        'WHERE',
+        '(',
+        sepBy1(
+          ',',
+          seq(
+            field('field_name', $.identifier),
+            '=',
+            field('field_value', choice($.identifier, $.literal, $.field_reference))
+          )
+        ),
+        ')'
+      ))
+    ),
+
+    field_reference: $ => seq(
+      'FIELD',
+      '(',
+      field('field_name', $.identifier),
+      ')'
+    ),
+
+    width_property: $ => seq(
+      'Width',
+      '=',
+      field('width', $.integer),
+      ';'
+    ),
+
+    editable_property: $ => seq(
+      'Editable',
+      '=',
+      field('editable', $.boolean),
+      ';'
+    ),
+
+    notify_on_validate_property: $ => seq(
+      'NotifyOnValidate',
+      '=',
+      field('notify', $.boolean),
+      ';'
+    ),
+
+    validate_on_validate_property: $ => seq(
+      'ValidateOnValidate',
+      '=',
+      field('validate', $.boolean),
+      ';'
+    ),
+
+    init_value_property: $ => seq(
+      'InitValue',
+      '=',
+      field('init_value', choice($.literal, $.identifier)),
+      ';'
+    ),
+
+    test_table_relation_property: $ => seq(
+      'TestTableRelation',
+      '=',
+      field('test', $.boolean),
+      ';'
+    ),
+
+    valid_ate_table_relation_property: $ => seq(
+      'ValidateTableRelation',
+      '=',
+      field('validate', $.boolean),
+      ';'
     ),
 
     blob_sub_type_property: $ => seq(
