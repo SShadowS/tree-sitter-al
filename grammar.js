@@ -251,6 +251,16 @@ module.exports = grammar({
       $.chartpart
     ),
 
+    area: $ => seq(
+      'area',
+      '(',
+      field('area_name', $.identifier),
+      ')',
+      '{',
+      repeat($.layout_element),
+      '}'
+    ),
+
     key: $ => seq(
       'key',
       '(',
