@@ -31,9 +31,7 @@ module.exports = grammar({
     table: $ => seq(
       'table',
       field('table_id', $.integer),
-      field('table_name', $.identifier),
-      optional($.extends_clause),
-      optional($.implements_clause),
+      field('table_name', $.string),
       '{',
       repeat($._table_element),
       '}'
@@ -45,14 +43,22 @@ module.exports = grammar({
       $.trigger,
       $.procedure,
       $.property,
-      $.table_property
+      $.table_property,
+      $.caption
+    ),
+
+    caption: $ => seq(
+      'Caption',
+      '=',
+      field('caption_value', $.string),
+      ';'
     ),
 
     table_property: $ => prec(8, seq(
       field('property_name', $.identifier),
       '=',
       field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
-      ';'
+      optional(';')
     )),
 
     page_reference: $ => seq(
@@ -118,14 +124,24 @@ module.exports = grammar({
       '(',
       field('field_id', $.integer),
       ';',
-      field('field_name', $.identifier),
+      field('field_name', $.string),
       ')',
       field('data_type', $.data_type),
-      optional(seq(
-        '{',
-        repeat($.property),
-        '}'
-      ))
+      '{',
+      repeat($.field_property),
+      '}'
+    ),
+
+    field_property: $ => choice(
+      $.caption,
+      $.data_classification
+    ),
+
+    data_classification: $ => seq(
+      'DataClassification',
+      '=',
+      field('classification', $.identifier),
+      ';'
     ),
 
     layout: $ => seq(
@@ -358,7 +374,6 @@ module.exports = grammar({
       'trigger',
       field('trigger_name', $.identifier),
       '(',
-      optional($.parameter_list),
       ')',
       optional($.var_section),
       'begin',
@@ -367,8 +382,6 @@ module.exports = grammar({
     ),
 
     procedure: $ => seq(
-      optional('local'),
-      optional($.procedure_attribute),
       'procedure',
       field('procedure_name', $.identifier),
       '(',
