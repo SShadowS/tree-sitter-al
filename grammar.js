@@ -282,7 +282,47 @@ module.exports = grammar({
       $.auto_format_type_property,
       $.auto_format_expression_property,
       $.auto_format_preserve_property,
-      $.blob_type_property
+      $.blob_type_property,
+      $.access_property,
+      $.advanced_property,
+      $.application_area_property,
+      $.auto_format_property,
+      $.automatic_caption_property
+    ),
+
+    access_property: $ => seq(
+      'Access',
+      '=',
+      field('value', $.identifier),
+      ';'
+    ),
+
+    advanced_property: $ => seq(
+      'Advanced',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    application_area_property: $ => seq(
+      'ApplicationArea',
+      '=',
+      field('value', $.identifier_list),
+      ';'
+    ),
+
+    auto_format_property: $ => seq(
+      'AutoFormat',
+      '=',
+      field('value', $.identifier),
+      ';'
+    ),
+
+    automatic_caption_property: $ => seq(
+      'AutomaticCaption',
+      '=',
+      field('value', $.boolean),
+      ';'
     ),
 
     assist_edit_property: $ => seq(
