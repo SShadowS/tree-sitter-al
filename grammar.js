@@ -778,6 +778,16 @@ module.exports = grammar({
       ')',
       ';'
     ),
+      $.find_statement
+    ),
+
+    find_statement: $ => seq(
+      choice('FindFirst', 'FindLast', 'Find', 'FindSet'),
+      '(',
+      optional($.boolean),
+      ')',
+      ';'
+    ),
 
     init_statement: $ => seq(
       'Init',
