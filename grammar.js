@@ -42,12 +42,17 @@ module.exports = grammar({
     _table_element: $ => choice(
       $.fields_block,
       $.keys_block,
-      $.fieldgroups_block,
       $.trigger,
       $.procedure,
-      $.property,
-      $.var_section
+      $.property
     ),
+
+    property: $ => prec(2, seq(
+      field('property_name', $.identifier),
+      '=',
+      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
+      ';'
+    )),
 
     fields_block: $ => seq(
       'fields',
@@ -355,16 +360,16 @@ module.exports = grammar({
       optional($.parameter_list),
       ')',
       optional(seq(':', field('return_type', $.data_type))),
-      choice(
-        seq(
-          optional('var'),
-          '{',
-          optional($.var_section),
-          repeat($.statement),
-          '}'
-        ),
-        ';'
-      )
+      '{',
+      optional($.var_section),
+      repeat($.statement),
+      '}'
+    ),
+
+    var_section: $ => seq(
+      'var',
+      repeat1($.var_declaration),
+      ';'
     ),
 
     procedure_attribute: $ => seq(
@@ -718,7 +723,42 @@ module.exports = grammar({
       $.with_statement,
       $.return_statement,
       $.var_declaration,
-      $.try_catch_statement
+      $.try_catch_statement,
+      $.init_statement,
+      $.modify_statement,
+      $.insert_statement,
+      $.calcfields_statement
+    ),
+
+    init_statement: $ => seq(
+      'Init',
+      '(',
+      ')',
+      ';'
+    ),
+
+    modify_statement: $ => seq(
+      'Modify',
+      '(',
+      optional($.boolean),
+      ')',
+      ';'
+    ),
+
+    insert_statement: $ => seq(
+      'Insert',
+      '(',
+      optional($.boolean),
+      ')',
+      ';'
+    ),
+
+    calcfields_statement: $ => seq(
+      'CALCFIELDS',
+      '(',
+      field('field_name', $.identifier),
+      ')',
+      ';'
     ),
 
     assignment_statement: $ => seq(
