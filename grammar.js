@@ -286,6 +286,13 @@ module.exports = grammar({
       $.valid_ate_table_relation_property
     ),
 
+    option_caption_property: $ => seq(
+      'OptionCaption',
+      '=',
+      field('captions', $.string),
+      ';'
+    ),
+
     table_relation_property: $ => seq(
       'TableRelation',
       '=',
