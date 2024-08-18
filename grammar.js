@@ -25,14 +25,19 @@ module.exports = grammar({
       field('table_name', $.identifier),
       optional($.extends_clause),
       '{',
-      repeat($._table_property),
-      repeat($._table_body_element),
+      repeat($._table_element),
       '}'
+    ),
+
+    _table_element: $ => choice(
+      $._table_property,
+      $._table_body_element
     ),
 
     _table_property: $ => choice(
       $.caption_property,
-      $.dataclassification_property
+      $.dataclassification_property,
+      $.table_property
     ),
 
     caption_property: $ => seq(
@@ -46,6 +51,13 @@ module.exports = grammar({
       'DataClassification',
       '=',
       field('classification', $.identifier),
+      ';'
+    ),
+
+    table_property: $ => seq(
+      field('property_name', $.identifier),
+      '=',
+      field('property_value', choice($.literal, $.identifier)),
       ';'
     ),
 
@@ -204,21 +216,31 @@ module.exports = grammar({
       field('field_name', $.identifier),
       ')',
       field('data_type', $.data_type),
-      '{',
-      repeat($._field_property),
-      '}'
+      optional(seq(
+        '{',
+        repeat($._field_property),
+        '}'
+      ))
     ),
 
     _field_property: $ => choice(
       $.caption_property,
       $.dataclassification_property,
-      $.option_property
+      $.option_property,
+      $.field_property
     ),
 
     option_property: $ => seq(
       'OptionMembers',
       '=',
       field('options', $.string),
+      ';'
+    ),
+
+    field_property: $ => seq(
+      field('property_name', $.identifier),
+      '=',
+      field('property_value', choice($.literal, $.identifier)),
       ';'
     ),
 
@@ -229,14 +251,14 @@ module.exports = grammar({
       ')',
       '{',
       field('fields', $.identifier_list),
-      optional($.key_property),
+      repeat($.key_property),
       '}'
     ),
 
     key_property: $ => seq(
-      'Clustered',
+      field('property_name', $.identifier),
       '=',
-      field('clustered', $.boolean),
+      field('property_value', choice($.literal, $.identifier)),
       ';'
     ),
 
