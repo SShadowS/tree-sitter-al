@@ -390,6 +390,42 @@ module.exports = grammar({
       '}'
     ),
 
+    schema_element: $ => choice(
+      $.textelement,
+      $.fieldelement,
+      $.tableelement
+    ),
+
+    textelement: $ => seq(
+      'textelement',
+      '(',
+      field('element_name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    fieldelement: $ => seq(
+      'fieldelement',
+      '(',
+      field('element_name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    tableelement: $ => seq(
+      'tableelement',
+      '(',
+      field('element_name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
     event: $ => seq(
       'event',
       field('event_name', $.identifier),
