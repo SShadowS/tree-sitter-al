@@ -44,7 +44,21 @@ module.exports = grammar({
       $.keys_block,
       $.trigger,
       $.procedure,
-      $.property
+      $.property,
+      $.table_property
+    ),
+
+    table_property: $ => seq(
+      field('property_name', $.identifier),
+      '=',
+      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
+      ';'
+    ),
+
+    page_reference: $ => seq(
+      'Page',
+      '::',
+      field('page_name', $.identifier)
     ),
 
     table_property: $ => seq(
@@ -364,11 +378,9 @@ module.exports = grammar({
       'trigger',
       field('trigger_name', $.identifier),
       '(',
+      optional($.parameter_list),
       ')',
-      optional(seq(
-        'var',
-        repeat1($.var_declaration)
-      )),
+      optional($.var_section),
       'begin',
       repeat($.statement),
       'end;'
@@ -383,13 +395,15 @@ module.exports = grammar({
       optional($.parameter_list),
       ')',
       optional(seq(':', field('return_type', $.data_type))),
-      optional(seq(
-        'var',
-        repeat1($.var_declaration)
-      )),
+      optional($.var_section),
       'begin',
       repeat($.statement),
       'end;'
+    ),
+
+    var_section: $ => seq(
+      'var',
+      repeat1($.var_declaration)
     ),
 
     var_section: $ => seq(
