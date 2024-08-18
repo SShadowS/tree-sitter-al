@@ -283,7 +283,7 @@ module.exports = grammar({
       $.validate_on_validate_property,
       $.init_value_property,
       $.test_table_relation_property,
-      $.valid_ate_table_relation_property
+      $.validate_table_relation_property
     ),
 
     option_caption_property: $ => seq(
@@ -374,12 +374,12 @@ module.exports = grammar({
       ';'
     ),
 
-    valid_ate_table_relation_property: $ => seq(
+    validate_table_relation_property: $ => prec(2, seq(
       'ValidateTableRelation',
       '=',
       field('validate', $.boolean),
       ';'
-    ),
+    )),
 
     blob_sub_type_property: $ => seq(
       'SubType',
