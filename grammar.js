@@ -455,6 +455,12 @@ module.exports = grammar({
     ),
 
     // Statements
+    return_statement: $ => seq(
+      'return',
+      optional(field('value', $.expression)),
+      ';'
+    ),
+
     statement: $ => choice(
       $.assignment_statement,
       $.if_statement,
@@ -465,7 +471,8 @@ module.exports = grammar({
       $.repeat_statement,
       $.call_statement,
       $.exit_statement,
-      $.with_statement
+      $.with_statement,
+      $.return_statement
     ),
 
     assignment_statement: $ => seq(
