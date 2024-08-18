@@ -256,6 +256,43 @@ module.exports = grammar({
       '}'
     ),
 
+    layout_element: $ => choice(
+      $.area,
+      $.group,
+      $.field,
+      $.part
+    ),
+
+    area: $ => seq(
+      'area',
+      '(',
+      field('area_type', $.identifier),
+      ')',
+      '{',
+      repeat($.layout_element),
+      '}'
+    ),
+
+    group: $ => seq(
+      'group',
+      '(',
+      field('group_type', $.identifier),
+      ')',
+      '{',
+      repeat($.layout_element),
+      '}'
+    ),
+
+    part: $ => seq(
+      'part',
+      '(',
+      field('part_name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
     actions: $ => seq(
       'actions',
       '{',
