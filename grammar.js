@@ -104,7 +104,7 @@ module.exports = grammar({
     permissions_property: $ => seq(
       'Permissions',
       '=',
-      field('permissions', $.permission_list),
+      field('permissions', $.identifier_list),
       ';'
     ),
 
