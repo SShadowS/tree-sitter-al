@@ -2208,10 +2208,19 @@ module.exports = grammar({
       ';'
     ),
 
+    event: $ => seq(
+      'event',
+      field('name', $.identifier),
+      '(',
+      optional($.parameter_list),
+      ')',
+      ';'
+    ),
+
     _controladdin_body_element: $ => choice(
       $.property,
       $.event,
-      $.procedure
+      $.procedure_definition
     ),
 
     profile_element: $ => choice(
