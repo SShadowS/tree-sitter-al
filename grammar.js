@@ -557,6 +557,13 @@ module.exports = grammar({
     key_property: $ => choice(
       $.enabled_property,
       $.clustered_property,
+      $.unique_property,
+      $.property
+    ),
+
+    key_property: $ => choice(
+      $.enabled_property,
+      $.clustered_property,
       $.unique_property
     ),
 
@@ -1294,7 +1301,19 @@ module.exports = grammar({
       $.key_definition,
       $.procedure_definition,
       $.variable_declaration,
-      $.trigger_definition
+      $.trigger_definition,
+      $.field_group
+    ),
+
+    field_group: $ => seq(
+      'fieldgroup',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      commaSep1($.identifier),
+      '}',
+      ';'
     ),
 
     field_definition: $ => seq(
@@ -1316,10 +1335,18 @@ module.exports = grammar({
           $.validate_property,
           $.access_level_property,
           $.description_property,
-          $.property
+          $.property,
+          $.field_class_property
         )),
         '}'
       ))
+    ),
+
+    field_class_property: $ => seq(
+      'FieldClass',
+      '=',
+      field('class', choice('Normal', 'FlowField', 'FlowFilter')),
+      ';'
     ),
 
     table_relation_property: $ => seq(
@@ -1770,11 +1797,19 @@ module.exports = grammar({
       'procedure',
       field('name', $.procedure_name),
       '(',
-      optional($.parameter_list),
+      optional(commaSep1($.parameter)),
       ')',
       optional(seq(':', field('return_type', $.type))),
       optional($.var_section),
       $.procedure_body
+    ),
+
+    parameter: $ => seq(
+      optional(choice('var', 'out')),
+      optional('temporary'),
+      field('name', $.identifier),
+      ':',
+      field('type', $.type)
     ),
 
     procedure_name: $ => prec(1, /[a-zA-Z_][a-zA-Z0-9_]*/),
@@ -1809,7 +1844,7 @@ module.exports = grammar({
       'then',
       repeat($._statement),
       optional(seq('else', repeat($._statement))),
-      'end;'
+      'end'
     ),
 
     exit_statement: $ => seq(
