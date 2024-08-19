@@ -633,12 +633,12 @@ module.exports = grammar({
       ';'
     ),
 
-    property: $ => seq(
+    property: $ => prec.dynamic(-1, seq(
       field('name', $.property_name),
       '=',
       field('value', $._property_value),
       ';'
-    ),
+    )),
 
     property_name: $ => choice(
       'PasteIsValid',
@@ -1650,28 +1650,28 @@ module.exports = grammar({
       ';'
     ),
 
-    external_name_property: $ => seq(
+    external_name_property: $ => prec.dynamic(1, seq(
       'ExternalName',
       '=',
       field('name', $.string),
       ';'
-    ),
+    )),
 
-    external_schema_property: $ => seq(
+    external_schema_property: $ => prec.dynamic(1, seq(
       'ExternalSchema',
       '=',
       field('schema', $.string),
       ';'
-    ),
+    )),
 
-    linked_object_property: $ => seq(
+    linked_object_property: $ => prec.dynamic(1, seq(
       'LinkedObject',
       '=',
       field('object', $.string),
       ';'
-    ),
+    )),
 
-    lookup_page_id_property: $ => seq(
+    lookup_page_id_property: $ => prec.dynamic(1, seq(
       'LookupPageId',
       '=',
       field('page_id', choice(
@@ -1679,21 +1679,21 @@ module.exports = grammar({
         $.identifier
       )),
       ';'
-    ),
+    )),
 
-    obsolete_reason_property: $ => seq(
+    obsolete_reason_property: $ => prec.dynamic(1, seq(
       'ObsoleteReason',
       '=',
       field('reason', $.string),
       ';'
-    ),
+    )),
 
-    obsolete_state_property: $ => seq(
+    obsolete_state_property: $ => prec.dynamic(1, seq(
       'ObsoleteState',
       '=',
       field('state', $.identifier),
       ';'
-    ),
+    )),
 
     table_type_property: $ => seq(
       'TableType',
