@@ -454,8 +454,20 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.field_property),
+      repeat($._field_property),
       '}'
+    ),
+
+    _field_property: $ => choice(
+      $.caption_property,
+      $.property
+    ),
+
+    field_property: $ => seq(
+      field('name', $.field_property_name),
+      '=',
+      field('value', $._property_value),
+      ';'
     ),
 
     report_definition: $ => seq(
