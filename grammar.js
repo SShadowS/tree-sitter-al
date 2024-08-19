@@ -911,18 +911,6 @@ module.exports = grammar({
       ';'
     ),
 
-    field_property: $ => choice(
-      $.caption_property,
-      $.init_value_property,
-      $.option_caption_property,
-      prec(1, seq(
-        $.property_name,
-        '=',
-        $.property_value,
-        ';'
-      ))
-    ),
-
     init_value_property: $ => seq(
       'InitValue',
       '=',
