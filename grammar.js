@@ -329,11 +329,11 @@ module.exports = grammar({
         $.extensible_property,
         $.external_name_property,
         $.fields_definition,
-        $.key_definition,
+        $.keys_definition,
         $.variable_declaration,
         $.trigger_definition,
         $.procedure_definition,
-        $.property
+        //$.property
       )),
       '}'
     ),
@@ -371,6 +371,7 @@ module.exports = grammar({
       'trigger',
       field('name', $.trigger_name),
       '()',
+      $.var_section,
       $.procedure_body
     ),
 
@@ -551,6 +552,12 @@ module.exports = grammar({
       '}'
     ),
 
+    keys_definition: $ => seq(
+      'keys',
+      '{',
+      repeat($.key_definition),
+      '}'
+    ),
 
     key_definition: $ => seq(
       'key',
@@ -603,15 +610,6 @@ module.exports = grammar({
       ';'
     ),
 
-
-    procedure_body: $ => seq(
-      'begin',
-      repeat($._statement),
-      'end;'
-    ),
-
-
-
     field_definition: $ => seq(
       'field',
       '(',
@@ -636,17 +634,6 @@ module.exports = grammar({
 
     field_id: $ => /\d+/,
     field_name: $ => /"[^"]*"/,
-    field_type: $ => choice(
-      $.identifier,
-      'Option'
-    ),
-
-    option_members: $ => seq(
-      'OptionMembers',
-      '=',
-      commaSep1($.string),
-      ';'
-    ),
 
     property: $ => prec.dynamic(-1, seq(
       field('name', $.property_name),
@@ -654,22 +641,6 @@ module.exports = grammar({
       field('value', $._property_value),
       ';'
     )),
-
-    property_name: $ => choice(
-      'PasteIsValid',
-      'LookupPageID',
-      'DrillDownPageID',
-      'SqlDataType',
-      'SqlTimestamp',
-      'SubstitutionAllowed',
-      'TableRelation',
-      'TestTableRelation',
-      'ValidateTableRelation',
-      'ValuesAllowed',
-      'Width',
-      'DataClassification'//,
-      //$.identifier
-    ),
 
     _property_value: $ => choice(
       $.string,
@@ -714,9 +685,9 @@ module.exports = grammar({
       'Action',
       'BigInteger',
       'Binary',
-      'Blob',
+      /Blob/i,
       'Boolean',
-      'Code',
+      seq('Code', optional(seq('[', $.number, ']'))),
       'Date',
       'DateFormula',
       'DateTime',
@@ -729,7 +700,7 @@ module.exports = grammar({
       'Option',
       'RecordId',
       'TableFilter',
-      'Text',
+      seq('Text', optional(seq('[', $.number, ']'))),
       'Time'
     ),
 
@@ -740,7 +711,6 @@ module.exports = grammar({
       field('type', $.type),
       ';'
     ),
-
 
     parameter_list: $ => seq(
       $.parameter,
@@ -754,13 +724,6 @@ module.exports = grammar({
       optional(seq('(', commaSep1($._expression), ')')),
       ']'
     ),
-
-    procedure_body: $ => seq(
-      'begin',
-      repeat(choice($._statement, $.preprocessor_directive)),
-      'end;'
-    ),
-
 
     _statement: $ => choice(
       $.assignment_statement,
@@ -957,12 +920,10 @@ module.exports = grammar({
       'AutoCaption',
       'AutoFormatExpression',
       'AutoFormatType',
-      'Caption',
       'CaptionClass',
       'CaptionML',
       'CardPageID',
       'DataCaptionFields',
-      'Description',
       'DelayedInsert',
       'DeleteAllowed',
       'Editable',
@@ -1030,7 +991,6 @@ module.exports = grammar({
       'DrillDown',
       'DrillDownPageID',
       'ExtendedDatatype',
-      'FieldClass',
       'ImportanceLevel',
       'Lookup',
       'MaxValue',
@@ -1038,7 +998,6 @@ module.exports = grammar({
       'NotBlank',
       'Numeric',
       'OptionCaptionML',
-      'OptionMembers',
       'OptionOrdinalValues',
       'QuickEntry',
       'RelationTableField',
@@ -1047,8 +1006,6 @@ module.exports = grammar({
       'SignDisplacement',
       'Style',
       'StyleExpr',
-      'TableRelation',
-      'ValidateTableRelation',
       'ValuesAllowed',
       'Width',
 
@@ -1260,13 +1217,6 @@ module.exports = grammar({
       ';'
     ),
 
-    property_name: $ => choice(
-      'PasteIsValid',
-      'LookupPageID',
-      'DrillDownPageID',
-      $.identifier
-    ),
-
     _property_value: $ => choice(
       $.string,
       $.number,
@@ -1295,12 +1245,12 @@ module.exports = grammar({
       $.description_property,
       $.primary_key_property,
       $.fields_definition,
-      $.key_definition,
+      $.keys_definition,
       $.procedure_definition,
       $.variable_declaration,
       $.trigger_definition,
       $.field_group,
-      prec(-1, $.property)
+      //prec(-1, $.property)
     ),
 
     fields_definition: $ => seq(
@@ -1366,27 +1316,6 @@ module.exports = grammar({
       $.field_class_property
     ),
 
-    field_id: $ => /\d+/,
-    field_name: $ => /"[^"]*"/,
-    field_type: $ => choice(
-      'Text',
-      'Code',
-      'Decimal',
-      'Integer',
-      'Boolean',
-      'Date',
-      'Time',
-      'DateTime',
-      'Blob',
-      'Guid',
-      'RecordId',
-      'TableFilter',
-      'BigInteger',
-      'Duration',
-      'DateFormula',
-      $.identifier
-    ),
-
     field_class_property: $ => seq(
       'FieldClass',
       '=',
@@ -1432,36 +1361,15 @@ module.exports = grammar({
       ';'
     ),
 
-    field_id: $ => /\d+/,
-    field_name: $ => /"[^"]*"/,
-    field_type: $ => choice(
-      'Text',
-      'Code',
-      'Decimal',
-      'Integer',
-      'Boolean',
-      'Date',
-      'Time',
-      'DateTime',
-      'Blob',
-      'Guid',
-      'RecordId',
-      'TableFilter',
-      'BigInteger',
-      'Duration',
-      'DateFormula',
-      $.identifier
-    ),
-
-
     key_definition: $ => seq(
       'key',
       '(',
       field('name', $.identifier),
+      ';',
+      optional(seq(
+        repeat($.identifier),
+        optional(';'))),
       ')',
-      '{',
-      commaSep1($.identifier),
-      '}',
       optional(seq(
         '{',
         repeat($.property),
@@ -1476,7 +1384,7 @@ module.exports = grammar({
       $.procedure_definition,
       $.variable_declaration,
       $.trigger_definition,
-      $.property
+      //$.property
     ),
 
     tableextension: $ => seq(
@@ -1605,7 +1513,7 @@ module.exports = grammar({
       seq('"', $.identifier, $.identifier, '"')
     ),
 
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    //identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
     string: $ => /"[^"]*"/,
     boolean: $ => choice('true', 'false'),
 
@@ -1659,7 +1567,7 @@ module.exports = grammar({
     )),
 
     drill_down_page_id_property: $ => prec.dynamic(1, seq(
-      'DrillDownPageId',
+      /DrillDownPageId/i,
       '=',
       field('page_id', choice($.number, $.identifier)),
       ';'
@@ -1694,7 +1602,7 @@ module.exports = grammar({
     )),
 
     lookup_page_id_property: $ => prec.dynamic(1, seq(
-      'LookupPageId',
+      /LookupPageID/i,
       '=',
       field('page_id', choice(
         $.number,
@@ -1838,12 +1746,6 @@ module.exports = grammar({
 
     procedure_name: $ => prec(1, /[a-zA-Z_][a-zA-Z0-9_]*/),
 
-    procedure_body: $ => seq(
-      'begin',
-      repeat(choice($._statement, $.preprocessor_directive)),
-      'end;'
-    ),
-
     _statement: $ => choice(
       $.assignment_statement,
       $.procedure_call,
@@ -1878,10 +1780,6 @@ module.exports = grammar({
       ')',
       ';'
     ),
-
-    parameter_list: $ => commaSep1($.parameter),
-
-
 
     event_subscriber: $ => seq(
       '[EventSubscriber(',
@@ -1965,8 +1863,6 @@ module.exports = grammar({
 
     procedure_name: $ => prec(1, /[a-zA-Z_][a-zA-Z0-9_]*/),
 
-    parameter_list: $ => commaSep1($.parameter),
-
     parameter: $ => seq(
       optional(choice('var', 'out')),
       optional('temporary'),
@@ -1977,12 +1873,6 @@ module.exports = grammar({
     ),
 
     return_type: $ => /[A-Za-z]+/,
-
-    procedure_body: $ => seq(
-      'begin',
-      repeat($._statement),
-      'end;'
-    ),
 
     _statement: $ => choice(
       $.assignment_statement,
