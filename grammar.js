@@ -574,18 +574,15 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        repeat(choice(
-          prec(1, $._field_property),
-          $.property
-        )),
+        repeat($._field_property),
         '}'
       ))
     ),
 
-    _field_property: $ => choice(
+    _field_property: $ => prec(1, choice(
       $.caption_property,
       $.property
-    ),
+    )),
 
     field_id: $ => /\d+/,
     field_name: $ => /"[^"]*"/,
