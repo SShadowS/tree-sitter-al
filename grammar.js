@@ -1235,7 +1235,7 @@ module.exports = grammar({
 
     tableextension: $ => seq(
       'tableextension',
-      field('tableextension_id', $.integer),
+      field('tableextension_id', $.number),
       field('tableextension_name', choice($.string, $.identifier)),
       'extends',
       field('base_table', choice($.string, $.identifier)),
@@ -1281,7 +1281,7 @@ module.exports = grammar({
 
     permissionset: $ => seq(
       'permissionset',
-      field('permissionset_id', $.integer),
+      field('permissionset_id', $.number),
       field('permissionset_name', $.identifier),
       '{',
       repeat($.permission),
@@ -1290,7 +1290,7 @@ module.exports = grammar({
 
     permissionsetextension: $ => seq(
       'permissionsetextension',
-      field('permissionsetextension_id', $.integer),
+      field('permissionsetextension_id', $.number),
       field('permissionsetextension_name', $.identifier),
       'extends',
       field('base_permissionset', $.identifier),
