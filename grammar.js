@@ -1795,6 +1795,8 @@ module.exports = grammar({
       ';'
     ),
 
+    variable_name: $ => $.identifier,
+
     assignment_statement: $ => seq(
       $.variable_name,
       ':=',
