@@ -675,7 +675,7 @@ module.exports = grammar({
       'ExternalType',
       'FieldClass',
       'InitValue',
-      'LookupPageID',
+      'LookupPageId',
       'MaxValue',
       'MinValue',
       'NotBlank',
@@ -1544,7 +1544,11 @@ module.exports = grammar({
     lookup_page_id_property: $ => seq(
       'LookupPageId',
       '=',
-      field('page_id', choice($.number, $.identifier)),
+      field('page_id', choice(
+        $.number,
+        $.identifier,
+        $.string
+      )),
       ';'
     ),
 
