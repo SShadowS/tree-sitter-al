@@ -956,12 +956,12 @@ module.exports = grammar({
       ';'
     ),
 
-    option_caption_property: $ => seq(
+    option_caption_property: $ => prec(2, seq(
       'OptionCaption',
       '=',
       field('captions', $.string),
       ';'
-    ),
+    )),
 
     property_name: $ => choice(
       // General properties
