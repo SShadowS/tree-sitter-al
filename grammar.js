@@ -402,7 +402,7 @@ module.exports = grammar({
       'table',
       $._object_header,
       '{',
-      repeat($._table_element),
+      repeat($._table_body_element),
       '}'
     ),
 
