@@ -464,11 +464,13 @@ module.exports = grammar({
     ),
 
     field_property: $ => seq(
-      field('name', $.field_property_name),
+      field('name', $.identifier),
       '=',
       field('value', $._property_value),
       ';'
     ),
+
+    field_property_name: $ => $.identifier,
 
     report_definition: $ => seq(
       'report',
