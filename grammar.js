@@ -1611,6 +1611,41 @@ module.exports = grammar({
       'end;'
     ),
 
+    _statement: $ => choice(
+      $.assignment_statement,
+      $.if_statement,
+      $.while_statement,
+      $.repeat_statement,
+      $.case_statement,
+      $.procedure_call,
+      $.with_statement,
+      $.temporary_statement,
+      $.for_statement,
+      $.foreach_statement,
+      $.break_statement,
+      $.exit_statement,
+      $.try_function,
+      $.preprocessor_directive,
+      $.error_statement
+    ),
+
+    if_statement: $ => seq(
+      'if',
+      $._expression,
+      'then',
+      repeat($._statement),
+      optional(seq('else', repeat($._statement))),
+      'end;'
+    ),
+
+    exit_statement: $ => seq(
+      'exit',
+      '(',
+      optional($._expression),
+      ')',
+      ';'
+    ),
+
     parameter_list: $ => commaSep1($.parameter),
 
     parameter: $ => seq(
