@@ -1304,7 +1304,8 @@ module.exports = grammar({
     _field_property: $ => choice(
       $.caption_property,
       $.property,
-      $.data_classification
+      $.data_classification,
+      $.option_members
     ),
 
     field_id: $ => /\d+/,
