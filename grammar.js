@@ -346,26 +346,6 @@ module.exports = grammar({
     xml_attribute_name: $ => /[a-zA-Z][a-zA-Z0-9]*/,
     xml_attribute_value: $ => /[^"']*/,
 
-    _definition: $ => choice(
-      $.table_definition,
-      $.page_definition,
-      $.report_definition,
-      $.codeunit_definition,
-      $.query_definition,
-      $.xmlport_definition,
-      $.enum_definition,
-      $.interface_definition,
-      $.field_definition,
-      $.variable_declaration,
-      $.procedure_definition,
-      $.permissionset_definition,
-      $.permissionsetextension_definition,
-      $.profile_definition,
-      $.dotnet_package_definition,
-      $.textconst_definition,
-      $.event_definition,
-      $.label_definition
-    ),
 
     _object_header: $ => seq(
       field('type', $.object_type),
@@ -734,36 +714,12 @@ module.exports = grammar({
       ';'
     ),
 
-    procedure_definition: $ => seq(
-      repeat($.attribute),
-      optional($.procedure_access_modifier),
-      optional('local'),
-      'procedure',
-      field('name', $.identifier),
-      '(',
-      optional($.parameter_list),
-      ')',
-      optional(seq(':', field('return_type', $.type))),
-      optional($.var_section),
-      choice(
-        $.procedure_body,
-        ';'
-      )
-    ),
 
     parameter_list: $ => seq(
       $.parameter,
       repeat(seq(';', $.parameter))
     ),
 
-    parameter: $ => seq(
-      repeat($.parameter_attribute),
-      optional(choice('var', 'out')),
-      optional('temporary'),
-      field('name', $.identifier),
-      ':',
-      field('type', $.type)
-    ),
 
     parameter_attribute: $ => seq(
       '[',
@@ -2492,42 +2448,10 @@ module.exports = grammar({
 
   // Remove this line as it's not needed
 
-  textconst_definition: $ => seq(
-    'TextConst',
-    field('language', $.identifier),
-    '=',
-    field('value', $.string),
-    ';'
-  ),
 
-  event_definition: $ => seq(
-    choice('InternalEvent', 'IntegrationEvent'),
-    field('name', $.identifier),
-    '(',
-    optional($.parameter_list),
-    ')',
-    ';'
-  ),
 
-  label_definition: $ => seq(
-    'label',
-    field('id', $.number),
-    '{',
-    repeat($.label_property),
-    '}'
-  ),
 
-  label_property: $ => seq(
-    field('name', $.identifier),
-    '=',
-    field('value', $.string),
-    ';'
-  )
 });
-
-function commaSep1(rule) {
-  return seq(rule, repeat(seq(',', rule)));
-}
 
 function commaSep1(rule) {
   return seq(rule, repeat(seq(',', rule)));
