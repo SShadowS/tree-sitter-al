@@ -964,6 +964,23 @@ module.exports = grammar({
       ';'
     ),
 
+    field_property: $ => choice(
+      seq(
+        $.property_name,
+        '=',
+        $.property_value,
+        ';'
+      ),
+      $.caption_property
+    ),
+
+    caption_property: $ => seq(
+      'Caption',
+      '=',
+      field('caption_value', $.string),
+      ';'
+    ),
+
     property_name: $ => choice(
       // General properties
       'AccessByPermission',
