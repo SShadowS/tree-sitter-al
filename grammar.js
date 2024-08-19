@@ -1713,16 +1713,19 @@ module.exports = grammar({
     ),
 
     procedure_definition: $ => seq(
+      optional($.access_modifier),
+      optional(repeat($.attribute)),
       'procedure',
       field('name', $.procedure_name),
       '(',
       optional($.parameter_list),
       ')',
       optional(seq(':', field('return_type', $.type))),
+      optional($.var_section),
       $.procedure_body
     ),
 
-    procedure_name: $ => $.identifier,
+    procedure_name: $ => prec(1, /[a-zA-Z_][a-zA-Z0-9_]*/),
 
     procedure_body: $ => seq(
       'begin',
