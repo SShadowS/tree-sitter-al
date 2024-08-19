@@ -680,16 +680,18 @@ module.exports = grammar({
     data_classification_property: $ => seq(
       'DataClassification',
       '=',
-      field('classification', choice(
-        'ToBeClassified',
-        'CustomerContent',
-        'EndUserIdentifiableInformation',
-        'AccountData',
-        'EndUserPseudonymousIdentifiers',
-        'OrganizationIdentifiableInformation',
-        'SystemMetadata'
-      )),
+      field('classification', $.data_classification_value),
       ';'
+    ),
+
+    data_classification_value: $ => choice(
+      'ToBeClassified',
+      'CustomerContent',
+      'EndUserIdentifiableInformation',
+      'AccountData',
+      'EndUserPseudonymousIdentifiers',
+      'OrganizationIdentifiableInformation',
+      'SystemMetadata'
     ),
 
     access_level_property: $ => seq(
