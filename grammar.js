@@ -561,10 +561,11 @@ module.exports = grammar({
       $.property
     ),
 
-    key_property: $ => choice(
-      $.enabled_property,
-      $.clustered_property,
-      $.unique_property
+    clustered_property: $ => seq(
+      'Clustered',
+      '=',
+      field('value', $.boolean),
+      ';'
     ),
 
     enabled_property: $ => seq(
@@ -1342,6 +1343,27 @@ module.exports = grammar({
         )),
         '}'
       ))
+    ),
+
+    field_id: $ => /\d+/,
+    field_name: $ => /"[^"]*"/,
+    field_type: $ => choice(
+      'Text',
+      'Code',
+      'Decimal',
+      'Integer',
+      'Boolean',
+      'Date',
+      'Time',
+      'DateTime',
+      'Blob',
+      'Guid',
+      'RecordId',
+      'TableFilter',
+      'BigInteger',
+      'Duration',
+      'DateFormula',
+      $.identifier
     ),
 
     field_class_property: $ => seq(
