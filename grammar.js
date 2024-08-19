@@ -1233,6 +1233,14 @@ module.exports = grammar({
       '}'
     ),
 
+    _table_body_element: $ => choice(
+      $.field_definition,
+      $.key_definition,
+      $.procedure_definition,
+      $.variable_declaration,
+      $.trigger_definition
+    ),
+
     tableextension: $ => seq(
       'tableextension',
       field('tableextension_id', $.number),
