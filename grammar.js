@@ -620,7 +620,27 @@ module.exports = grammar({
       ')',
       '{',
       commaSep1($.identifier),
+      optional($.key_properties),
       '}'
+    ),
+
+    key_properties: $ => repeat1(choice(
+      $.maintain_sift_index_property,
+      $.maintain_sql_index_property
+    )),
+
+    maintain_sift_index_property: $ => seq(
+      'MaintainSiftIndex',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    maintain_sql_index_property: $ => seq(
+      'MaintainSqlIndex',
+      '=',
+      field('value', $.boolean),
+      ';'
     ),
 
     field_definition: $ => seq(
@@ -919,12 +939,28 @@ module.exports = grammar({
 
     field_property: $ => choice(
       $.caption_property,
+      $.init_value_property,
+      $.option_caption_property,
       prec(1, seq(
         $.property_name,
         '=',
         $.property_value,
         ';'
       ))
+    ),
+
+    init_value_property: $ => seq(
+      'InitValue',
+      '=',
+      field('value', $._expression),
+      ';'
+    ),
+
+    option_caption_property: $ => seq(
+      'OptionCaption',
+      '=',
+      field('captions', $.string),
+      ';'
     ),
 
     property_name: $ => choice(
@@ -1428,6 +1464,119 @@ module.exports = grammar({
       'I',
       'M',
       'D'
+    ),
+
+    caption_property: $ => seq(
+      'Caption',
+      '=',
+      field('caption_value', $.string),
+      ';'
+    ),
+
+    data_per_company_property: $ => seq(
+      'DataPerCompany',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    drill_down_page_id_property: $ => seq(
+      'DrillDownPageId',
+      '=',
+      field('page_id', choice($.integer, $.identifier)),
+      ';'
+    ),
+
+    extensible_property: $ => seq(
+      'Extensible',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    external_name_property: $ => seq(
+      'ExternalName',
+      '=',
+      field('name', $.string),
+      ';'
+    ),
+
+    external_schema_property: $ => seq(
+      'ExternalSchema',
+      '=',
+      field('schema', $.string),
+      ';'
+    ),
+
+    linked_object_property: $ => seq(
+      'LinkedObject',
+      '=',
+      field('object', $.string),
+      ';'
+    ),
+
+    lookup_page_id_property: $ => seq(
+      'LookupPageId',
+      '=',
+      field('page_id', choice($.integer, $.identifier)),
+      ';'
+    ),
+
+    obsolete_reason_property: $ => seq(
+      'ObsoleteReason',
+      '=',
+      field('reason', $.string),
+      ';'
+    ),
+
+    obsolete_state_property: $ => seq(
+      'ObsoleteState',
+      '=',
+      field('state', $.identifier),
+      ';'
+    ),
+
+    table_type_property: $ => seq(
+      'TableType',
+      '=',
+      field('type', $.identifier),
+      ';'
+    ),
+
+    external_access_property: $ => seq(
+      'ExternalAccess',
+      '=',
+      field('access', $.identifier),
+      ';'
+    ),
+
+    moved_from_property: $ => seq(
+      'MovedFrom',
+      '=',
+      field('source', $.string),
+      ';'
+    ),
+
+    moved_to_property: $ => seq(
+      'MovedTo',
+      '=',
+      field('destination', $.string),
+      ';'
+    ),
+
+    description_property: $ => seq(
+      'Description',
+      '=',
+      field('description', $.string),
+      ';'
+    ),
+
+    primary_key_property: $ => seq(
+      'PrimaryKey',
+      '(',
+      commaSep1($.identifier),
+      ')',
+      ';'
     ),
 
     profile_setting: $ => seq(
