@@ -644,8 +644,8 @@ module.exports = grammar({
       'ValidateTableRelation',
       'ValuesAllowed',
       'Width',
-      'DataClassification',
-      $.identifier
+      'DataClassification'//,
+      //$.identifier
     ),
 
     _property_value: $ => choice(
@@ -667,23 +667,6 @@ module.exports = grammar({
       '=',
       commaSep1($.string),
       ';'
-    ),
-
-    data_classification_property: $ => seq(
-      'DataClassification',
-      '=',
-      field('classification', $.data_classification_value),
-      ';'
-    ),
-
-    data_classification_value: $ => choice(
-      'ToBeClassified',
-      'CustomerContent',
-      'EndUserIdentifiableInformation',
-      'AccountData',
-      'EndUserPseudonymousIdentifiers',
-      'OrganizationIdentifiableInformation',
-      'SystemMetadata'
     ),
 
     access_level_property: $ => seq(
@@ -1290,13 +1273,20 @@ module.exports = grammar({
       $.data_captionfields_property,
       $.description_property,
       $.primary_key_property,
-      $.field_definition,
+      $.fields_definition,
       $.key_definition,
       $.procedure_definition,
       $.variable_declaration,
       $.trigger_definition,
       $.field_group,
       prec(-1, $.property)
+    ),
+
+    fields_definition: $ => seq(
+      'fields',
+      '{',
+      repeat($.field_definition),
+      '}'
     ),
 
     field_group: $ => seq(
@@ -1318,13 +1308,13 @@ module.exports = grammar({
     ),
 
     data_classification_value: $ => choice(
-      'ToBeClassified',
-      'CustomerContent',
-      'EndUserIdentifiableInformation',
-      'AccountData',
-      'EndUserPseudonymousIdentifiers',
-      'OrganizationIdentifiableInformation',
-      'SystemMetadata'
+      /ToBeClassified/i,
+      /CustomerContent/i,
+      /EndUserIdentifiableInformation/i,
+      /AccountData/i,
+      /EndUserPseudonymousIdentifiers/i,
+      /OrganizationIdentifiableInformation/i,
+      /SystemMetadata/i
     ),
 
     field_definition: $ => seq(
@@ -1639,13 +1629,6 @@ module.exports = grammar({
       'M',
       'D'
     ),
-
-    caption_property: $ => prec(2, seq(
-      'Caption',
-      '=',
-      field('caption_value', $.string),
-      ';'
-    )),
 
     data_per_company_property: $ => prec.dynamic(1, seq(
       'DataPerCompany',
