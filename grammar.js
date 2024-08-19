@@ -188,7 +188,6 @@ module.exports = grammar({
     procedure_body: $ => seq(
       'begin',
       repeat(choice($._statement, $.preprocessor_directive, $.variable_declaration)),
-      optional($.on_error_section),
       'end;'
     ),
 
