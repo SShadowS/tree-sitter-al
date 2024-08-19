@@ -21,33 +21,34 @@ module.exports = grammar({
     // This rule defines all the possible top-level objects in an AL file
     _definition: $ => choice(
       // Main object types in AL
-      $.table_definition,
-      $.page_definition,
-      $.report_definition,
-      $.codeunit_definition,
-      $.query_definition,
-      $.xmlport_definition,
-      $.enum_definition,
-      $.tableextension,
-      $.pageextension,
-      $.dotnet,
-      $.controladdin,
-      $.profile,
-      $.permissionset,
-      $.permissionsetextension,
-      $.entitlement
+      $.table_definition,        // Defines database tables
+      $.page_definition,         // Defines user interface pages
+      $.report_definition,       // Defines reports
+      $.codeunit_definition,     // Defines units of code (similar to classes)
+      $.query_definition,        // Defines database queries
+      $.xmlport_definition,      // Defines XML data import/export
+      $.enum_definition,         // Defines enumeration types
+      $.tableextension,          // Extends existing tables
+      $.pageextension,           // Extends existing pages
+      $.dotnet,                  // Defines .NET interop
+      $.controladdin,            // Defines custom control add-ins
+      $.profile,                 // Defines user profiles
+      $.permissionset,           // Defines sets of permissions
+      $.permissionsetextension,  // Extends existing permission sets
+      $.entitlement              // Defines user entitlements
     ),
 
     // Codeunit object definition
+    // Codeunits are containers for AL code, similar to classes in other languages
     codeunit_definition: $ => seq(
-      'codeunit',
-      field('id', $.object_id),
-      field('name', $.object_name),
+      'codeunit',                   // Keyword indicating a codeunit definition
+      field('id', $.object_id),     // Unique identifier for the codeunit
+      field('name', $.object_name), // Name of the codeunit
       '{',
       repeat(choice(
-        $.var_section,
-        $._codeunit_element,
-        $.trigger_definition
+        $.var_section,              // Variable declarations
+        $._codeunit_element,        // Other codeunit elements (procedures, etc.)
+        $.trigger_definition        // Trigger definitions
       )),
       '}'
     ),
@@ -55,66 +56,52 @@ module.exports = grammar({
     // Variable section definition
     // This section declares variables used within an object
     var_section: $ => prec.right(seq(
-      'var',
-      repeat1($.variable_declaration)
+      'var',                        // Keyword indicating variable declarations
+      repeat1($.variable_declaration) // One or more variable declarations
     )),
 
     // Variable declaration definition
     // Defines the structure of a single variable declaration
     variable_declaration: $ => seq(
-      'var',
-      field('name', $.identifier),
-      ':',
-      field('type', $._variable_type),
-      optional(seq(':', field('subtype', $.identifier))),
+      'var',                                    // Keyword indicating a variable declaration
+      field('name', $.identifier),              // Name of the variable
+      ':',                                      // Separator between name and type
+      field('type', $._variable_type),          // Type of the variable
+      optional(seq(':', field('subtype', $.identifier))), // Optional subtype for certain variable types
       repeat(choice(
-        'temporary',  // Temporary variable
-        seq('array', '[', optional($.number), ']'),  // Array declaration
-        'protected',  // Protected access modifier
-        'locked',     // Locked variable
-        'withevents'  // Variable with events
+        'temporary',                            // Temporary variable (exists only for the duration of a function call)
+        seq('array', '[', optional($.number), ']'), // Array declaration with optional size
+        'protected',                            // Protected access modifier
+        'locked',                               // Locked variable (cannot be modified after initial assignment)
+        'withevents'                            // Variable that can respond to events
       )),
-      optional($.label_properties),
-      ';'
+      optional($.label_properties),             // Optional label properties for multilingual support
+      ';'                                       // Statement terminator
     ),
 
+    // Label properties definition
+    // Used for defining multilingual labels
     label_properties: $ => seq(
-      'Label',
+      'Label',                 // Keyword indicating a label definition
       choice(
-        $.string,
+        $.string,              // Single language label
         seq(
           '{',
-          repeat1($.label_property),
+          repeat1($.label_property), // Multiple language labels
           '}'
         )
       )
     ),
 
+    // Individual label property definition
     label_property: $ => seq(
-      field('language', $.language_code),
+      field('language', $.language_code), // Language code (e.g., 'ENU' for English)
       '=',
-      field('value', $.string),
-      optional(',')
+      field('value', $.string),           // Label text
+      optional(',')                       // Optional comma separator
     ),
 
-    label_properties: $ => seq(
-      'Label',
-      choice(
-        $.string,
-        seq(
-          '{',
-          repeat1($.label_property),
-          '}'
-        )
-      )
-    ),
-
-    label_property: $ => seq(
-      field('language', $.language_code),
-      '=',
-      field('value', $.string),
-      optional(',')
-    ),
+    // Duplicate definitions removed
 
     // Variable type definition
     // This includes all the built-in types in AL and allows for custom types
@@ -149,30 +136,31 @@ module.exports = grammar({
 
     // Elements that can appear within a codeunit
     _codeunit_element: $ => choice(
-      $.procedure_definition,
-      $.trigger_definition,
-      $.variable_declaration,
-      $.textconst_definition
+      $.procedure_definition,   // Function definitions
+      $.trigger_definition,     // Event trigger definitions
+      $.variable_declaration,   // Variable declarations
+      $.textconst_definition    // Text constant definitions
     ),
 
     // Definition of a local procedure
+    // Local procedures are only accessible within the codeunit
     local_procedure_definition: $ => seq(
-      'local',
-      $.procedure_definition
+      'local',                  // Keyword indicating a local procedure
+      $.procedure_definition    // The actual procedure definition
     ),
 
     // Parameter definition for procedures and triggers
     parameter: $ => seq(
-      optional(choice('var', 'out')),  // Parameter passing method
-      optional('temporary'),           // Temporary parameter
-      field('name', $.identifier),
-      ':',
-      field('type', $.type),
+      optional(choice('var', 'out')),  // Parameter passing method (by reference or out parameter)
+      optional('temporary'),           // Temporary parameter (exists only for the duration of the procedure)
+      field('name', $.identifier),     // Name of the parameter
+      ':',                             // Separator between name and type
+      field('type', $.type),           // Type of the parameter
       optional(seq(
-        '@',
-        field('language_code', $.language_code),
+        '@',                           // Indicates the start of a description
+        field('language_code', $.language_code), // Language code for the description
         ':',
-        field('description', $.string)
+        field('description', $.string) // Description of the parameter
       ))
     ),
 
