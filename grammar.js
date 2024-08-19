@@ -620,11 +620,72 @@ module.exports = grammar({
         repeat(choice(
           $.access_modifier,
           $.option_members,
-          $.data_classification
+          $.data_classification,
+          $.field_property
         )),
         '}'
       )),
       optional(';')  // Make the semicolon optional
+    ),
+
+    field_property: $ => seq(
+      field('property_name', $.field_property_name),
+      '=',
+      field('property_value', $._expression),
+      ';'
+    ),
+
+    field_property_name: $ => choice(
+      'AccessByPermission',
+      'AltSearchField',
+      'AutoFormatExpression',
+      'AutoFormatType',
+      'AutoIncrement',
+      'AutoIncrementMaximum',
+      'AutoIncrementMinimum',
+      'AutoIncrementSeed',
+      'AutoIncrementStep',
+      'BlankNumbers',
+      'BlankZero',
+      'CalcFormula',
+      'Caption',
+      'CaptionClass',
+      'CharAllowed',
+      'ClosingDates',
+      'Compressed',
+      'CustomDataType',
+      'DataClassification',
+      'DateFormula',
+      'DecimalPlaces',
+      'Description',
+      'Editable',
+      'Enabled',
+      'ExternalAccess',
+      'ExternalName',
+      'ExternalType',
+      'FieldClass',
+      'InitValue',
+      'MaxValue',
+      'MinValue',
+      'NotBlank',
+      'Numeric',
+      'ObsoleteReason',
+      'ObsoleteState',
+      'ObsoleteTag',
+      'OptionCaption',
+      'OptionMembers',
+      'OptionOrdinalValues',
+      'Permissions',
+      'RelationTableField',
+      'SignDisplacement',
+      'SqlDataType',
+      'SqlTimestamp',
+      'SubstitutionAllowed',
+      'TableRelation',
+      'TestTableRelation',
+      'ValidateTableRelation',
+      'ValuesAllowed',
+      'Width'
     ),
 
     option_members: $ => seq(
