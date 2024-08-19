@@ -564,6 +564,39 @@ module.exports = grammar({
       ';'
     ),
 
+    procedure_definition: $ => seq(
+      'procedure',
+      field('name', $.procedure_name),
+      '(',
+      optional($.parameter_list),
+      ')',
+      optional(seq(':', field('return_type', $.type))),
+      $.procedure_body
+    ),
+
+    procedure_body: $ => seq(
+      'begin',
+      repeat($._statement),
+      'end;'
+    ),
+
+    if_statement: $ => seq(
+      'if',
+      $._expression,
+      'then',
+      repeat($._statement),
+      optional(seq('else', repeat($._statement))),
+      'end;'
+    ),
+
+    exit_statement: $ => seq(
+      'exit',
+      '(',
+      optional($._expression),
+      ')',
+      ';'
+    ),
+
     field_definition: $ => seq(
       'field',
       '(',
