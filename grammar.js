@@ -354,24 +354,18 @@ module.exports = grammar({
     trigger_name: $ => choice(
       // Table triggers
       'OnInsert', 'OnModify', 'OnDelete', 'OnRename', 'OnValidate', 'OnLookup',
-      // Page triggers
+      // Keep other trigger names as they were...
       'OnInit', 'OnOpenPage', 'OnClosePage', 'OnFindRecord', 'OnNextRecord',
       'OnAfterGetRecord', 'OnNewRecord', 'OnInsertRecord', 'OnModifyRecord',
       'OnDeleteRecord', 'OnQueryClosePage', 'OnAfterGetCurrRecord',
       'OnPageBackgroundTaskCompleted', 'OnAfterGetRecord', 'OnBeforeInsertRecord',
       'OnBeforeValidate', 'OnValidate', 'OnAfterValidate',
-      // Report triggers
       'OnInitReport', 'OnPreReport', 'OnPostReport',
-      // XMLport triggers
       'OnInitXMLport', 'OnPreXMLport', 'OnPostXMLport',
-      // Query triggers
       'OnBeforeOpen', 'OnAfterOpen',
-      // Codeunit triggers
       'OnRun',
-      // General triggers
       'OnAfterAssignVariable', 'OnBeforePassVariable',
       'OnBeforeValidate', 'OnAfterValidate',
-      // Additional triggers
       'OnAction', 'OnDrillDown', 'OnAssistEdit', 'OnControlAddIn',
       'OnAfterGetRecordEvent', 'OnBeforeGetRecordEvent', 'OnOpenPageEvent',
       'OnClosePageEvent', 'OnQueryClosePageEvent', 'OnDeleteRecordEvent',
@@ -554,9 +548,36 @@ module.exports = grammar({
       '}',
       optional(seq(
         '{',
-        repeat($.property),
+        repeat($.key_property),
         '}'
       )),
+      ';'
+    ),
+
+    key_property: $ => choice(
+      $.enabled_property,
+      $.clustered_property,
+      $.unique_property
+    ),
+
+    enabled_property: $ => seq(
+      'Enabled',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    clustered_property: $ => seq(
+      'Clustered',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    unique_property: $ => seq(
+      'Unique',
+      '=',
+      field('value', $.boolean),
       ';'
     ),
 
@@ -649,10 +670,10 @@ module.exports = grammar({
       ';'
     ),
 
-    data_classification: $ => seq(
+    data_classification_property: $ => seq(
       'DataClassification',
       '=',
-      choice(
+      field('classification', choice(
         'ToBeClassified',
         'CustomerContent',
         'EndUserIdentifiableInformation',
@@ -660,7 +681,23 @@ module.exports = grammar({
         'EndUserPseudonymousIdentifiers',
         'OrganizationIdentifiableInformation',
         'SystemMetadata'
-      ),
+      )),
+      ';'
+    ),
+
+    access_level_property: $ => seq(
+      'AccessLevel',
+      '=',
+      field('level', choice('Public', 'Internal', 'Private')),
+      ';'
+    ),
+
+    data_captionfields_property: $ => seq(
+      'DataCaptionFields',
+      '=',
+      '[',
+      commaSep1($.identifier),
+      ']',
       ';'
     ),
 
@@ -1234,19 +1271,22 @@ module.exports = grammar({
 
     _table_body_element: $ => choice(
       $.caption_property,
+      $.data_classification_property,
       $.data_per_company_property,
       $.drill_down_page_id_property,
+      $.lookup_page_id_property,
       $.extensible_property,
       $.external_name_property,
       $.external_schema_property,
       $.linked_object_property,
-      $.lookup_page_id_property,
-      $.obsolete_reason_property,
       $.obsolete_state_property,
+      $.obsolete_reason_property,
       $.table_type_property,
       $.external_access_property,
       $.moved_from_property,
       $.moved_to_property,
+      $.access_level_property,
+      $.data_captionfields_property,
       $.description_property,
       $.primary_key_property,
       $.property,
@@ -1254,7 +1294,7 @@ module.exports = grammar({
       $.key_definition,
       $.procedure_definition,
       $.variable_declaration,
-      $.trigger_definition     
+      $.trigger_definition
     ),
 
     field_definition: $ => seq(
@@ -1268,16 +1308,56 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        repeat($._field_property),
+        repeat(choice(
+          $.caption_property,
+          $.data_classification_property,
+          $.option_members,
+          $.table_relation_property,
+          $.validate_property,
+          $.access_level_property,
+          $.description_property,
+          $.property
+        )),
         '}'
       ))
     ),
 
-    _field_property: $ => choice(
-      $.caption_property,
-      $.property,
-      $.data_classification,
-      $.option_members
+    table_relation_property: $ => seq(
+      'TableRelation',
+      '=',
+      field('relation', $.table_relation),
+      ';'
+    ),
+
+    table_relation: $ => seq(
+      $.identifier,
+      optional(seq(
+        '.',
+        $.identifier,
+        optional(seq('where', $.table_relation_filter))
+      ))
+    ),
+
+    table_relation_filter: $ => seq(
+      '(',
+      commaSep1($.table_relation_filter_item),
+      ')'
+    ),
+
+    table_relation_filter_item: $ => seq(
+      $.identifier,
+      '=',
+      choice(
+        $.identifier,
+        seq('field', '(', $.identifier, ')')
+      )
+    ),
+
+    validate_property: $ => seq(
+      'ValidateTableRelation',
+      '=',
+      field('value', $.boolean),
+      ';'
     ),
 
     field_id: $ => /\d+/,
