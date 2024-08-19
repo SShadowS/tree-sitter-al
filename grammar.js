@@ -675,6 +675,7 @@ module.exports = grammar({
       'ExternalType',
       'FieldClass',
       'InitValue',
+      'LookupPageID',
       'MaxValue',
       'MinValue',
       'NotBlank',
