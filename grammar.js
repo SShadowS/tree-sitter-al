@@ -2254,8 +2254,8 @@ module.exports = grammar({
       'rolecenters',
       '=',
       '[',
-      $.integer,
-      repeat(seq(',', $.integer)),
+      $.number,
+      repeat(seq(',', $.number)),
       ']',
       ';'
     ),
