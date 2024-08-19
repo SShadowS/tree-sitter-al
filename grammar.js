@@ -95,10 +95,10 @@ module.exports = grammar({
 
     // Individual label property definition
     label_property: $ => seq(
-      field('language', $.language_code), // Language code (e.g., 'ENU' for English)
+      field('language', $.identifier), // Language identifier
       '=',
-      field('value', $.string),           // Label text
-      optional(',')                       // Optional comma separator
+      field('value', $.string),        // Label text
+      optional(',')                    // Optional comma separator
     ),
 
     // Duplicate definitions removed
