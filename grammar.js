@@ -578,15 +578,14 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        repeat(choice(
-          //$.access_modifier,
-          //$.option_members,
-          //$.data_classification,
-          $.field_property
-        )),
+        repeat($.field_property),
         '}'
-      )),
-      optional(';')  // Make the semicolon optional
+      ))
+    ),
+
+    field_property: $ => choice(
+      $.caption_property,
+      $.property
     ),
 
     field_property: $ => prec(2, seq(
@@ -1222,11 +1221,14 @@ module.exports = grammar({
     ),
 
     property: $ => seq(
-      field('name', $.identifier),
+      field('name', $.property_name),
       '=',
-      field('value', choice($.string, $.number, $.boolean, $.identifier)),
+      field('value', $.property_value),
       ';'
     ),
+
+    property_name: $ => $.identifier,
+    property_value: $ => choice($.string, $.number, $.boolean, $.identifier),
 
     _table_body_element: $ => choice(
       $.caption_property,
@@ -1599,30 +1601,26 @@ module.exports = grammar({
 
     variable_declaration: $ => seq(
       'var',
-      optional($.access_modifier),
-      $.variable_name,
+      field('name', $.identifier),
       ':',
-      $.variable_type,
+      field('type', $.type),
       ';'
     ),
 
-    variable_name: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    variable_type: $ => /[A-Za-z]+/,
-
     procedure_definition: $ => seq(
-      repeat($.attribute),
-      optional('local'),
-      optional($.access_modifier),
       'procedure',
-      $.procedure_name,
+      field('name', $.procedure_name),
       '(',
-      optional($.parameter_list),
+      optional($.parameter),
       ')',
-      optional(seq(':', $.return_type)),
-      choice(
-        $.procedure_body,
-        ';'  // For procedure prototypes
-      )
+      optional(seq(':', field('return_type', $.type))),
+      $.procedure_body
+    ),
+
+    procedure_body: $ => seq(
+      'begin',
+      repeat($._statement),
+      'end;'
     ),
 
     overload: $ => seq(
