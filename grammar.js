@@ -1627,7 +1627,8 @@ module.exports = grammar({
       $.break_statement,
       $.exit_statement,
       $.try_function,
-      $.preprocessor_directive
+      $.preprocessor_directive,
+      $.error_statement
     ),
 
     try_function: $ => seq(
@@ -1774,7 +1775,8 @@ module.exports = grammar({
       $.error_type,
       $.execution_context,
       $.procedure_call,
-      $.field_access
+      $.field_access,
+      $.ternary_expression
     ),
 
     field_access: $ => seq(
@@ -2302,6 +2304,8 @@ module.exports = grammar({
     field('value', choice($.string, $.number, $.boolean, $.identifier)),
     ';'
   ),
+
+  integer: $ => /\d+/,
 
   textconst_definition: $ => seq(
     'TextConst',
