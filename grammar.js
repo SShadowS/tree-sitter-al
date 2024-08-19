@@ -330,7 +330,8 @@ module.exports = grammar({
       'codeunit',
       'query',
       'xmlport',
-      'enum'
+      'enum',
+      'codeunit'  // Add the missing codeunit keyword
     ),
 
     object_id: $ => /\d+/,
@@ -624,7 +625,7 @@ module.exports = grammar({
         )),
         '}'
       )),
-      optional(';')
+      ';'  // Ensure the semicolon is mandatory
     ),
 
     option_members: $ => seq(
@@ -1606,7 +1607,8 @@ module.exports = grammar({
       choice(
         $.procedure_body,
         ';'  // For procedure prototypes
-      )
+      ),
+      ';'  // Ensure the semicolon is mandatory
     ),
 
     overload: $ => seq(
