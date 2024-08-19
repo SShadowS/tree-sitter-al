@@ -136,11 +136,13 @@ module.exports = grammar({
       // Reference types
       'FieldRef', 'KeyRef', 'RecordRef',
       // Other types
-      'Duration', 'Enum', 'ErrorInfo', 'FilterPageBuilder', 'Guid', 'Interface',
-      'Label', 'ModuleDependencyInfo', 'ModuleInfo', 'Option', 'Query', 'Record',
-      'RecordId', 'System', 'TableConnectionType', 'TableFilter', 'TestAction',
-      'TestField', 'TestFilterField', 'TestPage', 'TestPermissions', 'TestRequestPage',
-      'Text', 'TextBuilder', 'TextConst', 'TransactionModel', 'Variant', 'Verbosity',
+      'Duration', 'Enum', 'ErrorInfo', 'FilterPageBuilder', 'Guid', 'HttpClient',
+      'HttpContent', 'HttpHeaders', 'HttpRequestMessage', 'HttpResponseMessage',
+      'Interface', 'JsonArray', 'JsonObject', 'JsonToken', 'JsonValue', 'Label',
+      'ModuleDependencyInfo', 'ModuleInfo', 'Option', 'Query', 'Record', 'RecordId',
+      'System', 'TableConnectionType', 'TableFilter', 'TestAction', 'TestField',
+      'TestFilterField', 'TestPage', 'TestPermissions', 'TestRequestPage', 'Text',
+      'TextBuilder', 'TextConst', 'TransactionModel', 'Variant', 'Verbosity',
       'Version', 'XmlPort',
       $.identifier  // For custom types
     ),
