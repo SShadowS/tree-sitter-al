@@ -1229,12 +1229,6 @@ module.exports = grammar({
     ),
 
     _table_body_element: $ => choice(
-      $.field_definition,
-      $.key_definition,
-      $.procedure_definition,
-      $.variable_declaration,
-      $.trigger_definition,
-      $.property,
       $.caption_property,
       $.data_per_company_property,
       $.drill_down_page_id_property,
@@ -1250,7 +1244,13 @@ module.exports = grammar({
       $.moved_from_property,
       $.moved_to_property,
       $.description_property,
-      $.primary_key_property
+      $.primary_key_property,
+      $.property,
+      $.field_definition,
+      $.key_definition,
+      $.procedure_definition,
+      $.variable_declaration,
+      $.trigger_definition     
     ),
 
     _page_body_element: $ => choice(
