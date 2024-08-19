@@ -700,7 +700,7 @@ module.exports = grammar({
       '=',
       field('level', choice('Public', 'Internal', 'Private')),
       ';'
-    ),
+    )),
 
     data_captionfields_property: $ => seq(
       'DataCaptionFields',
