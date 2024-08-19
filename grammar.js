@@ -1578,7 +1578,7 @@ module.exports = grammar({
       'procedure',
       field('name', $.procedure_name),
       '(',
-      optional(commaSep1($.parameter)),
+      optional($.parameter_list),
       ')',
       optional(seq(':', field('return_type', $.type))),
       $.procedure_body
@@ -1589,6 +1589,8 @@ module.exports = grammar({
       repeat($._statement),
       'end;'
     ),
+
+    parameter_list: $ => commaSep1($.parameter),
 
     parameter: $ => seq(
       optional('var'),
