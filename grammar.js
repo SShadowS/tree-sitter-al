@@ -25,46 +25,6 @@ module.exports = grammar({
       $.pageextension,      // Page extension object definition
       $.codeunit,           // Codeunit object definition
       $.report,             // Report object definition
-      $.query,
-      $.xmlport,
-      $.enum,
-      $.dotnet,
-      $.controladdin,
-      $.profile,
-      $.permissionset,
-      $.permissionsetextension,
-      $.entitlement
-    ),
-
-    // Object Definitions
-
-// AL (Application Language) grammar for tree-sitter
-// This grammar defines the structure and syntax for AL, 
-// the programming language used in Microsoft Dynamics 365 Business Central
-
-module.exports = grammar({
-  name: 'al',
-
-  // Define what should be treated as extra (ignored) in the parsing process
-  extras: $ => [
-    $.comment,  // Comments are ignored during parsing
-    /\s/        // Whitespace is ignored
-  ],
-
-  rules: {
-    // The root node of the AST (Abstract Syntax Tree)
-    // A source file in AL consists of one or more object definitions
-    source_file: $ => repeat($._definition),
-
-    // Definitions for various AL object types
-    // This rule defines all the possible top-level objects in an AL file
-    _definition: $ => choice(
-      $.table,              // Table object definition
-      $.tableextension,     // Table extension object definition
-      $.page,               // Page object definition
-      $.pageextension,      // Page extension object definition
-      $.codeunit,           // Codeunit object definition
-      $.report,             // Report object definition
       $.query,              // Query object definition
       $.xmlport,            // XMLport object definition
       $.enum,               // Enum object definition
