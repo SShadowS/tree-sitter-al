@@ -1499,7 +1499,7 @@ module.exports = grammar({
     drill_down_page_id_property: $ => seq(
       'DrillDownPageId',
       '=',
-      field('page_id', choice($.integer, $.identifier)),
+      field('page_id', choice($.number, $.identifier)),
       ';'
     ),
 
@@ -1534,7 +1534,7 @@ module.exports = grammar({
     lookup_page_id_property: $ => seq(
       'LookupPageId',
       '=',
-      field('page_id', choice($.integer, $.identifier)),
+      field('page_id', choice($.number, $.identifier)),
       ';'
     ),
 
@@ -2477,7 +2477,7 @@ module.exports = grammar({
     )
   },
 
-  integer: $ => /\d+/,
+  // Remove this line as it's not needed
 
   textconst_definition: $ => seq(
     'TextConst',
