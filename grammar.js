@@ -1254,7 +1254,7 @@ module.exports = grammar({
 
     pageextension: $ => seq(
       'pageextension',
-      field('pageextension_id', $.integer),
+      field('pageextension_id', $.number),
       field('pageextension_name', $.identifier),
       'extends',
       field('base_page', $.identifier),
