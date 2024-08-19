@@ -1063,7 +1063,6 @@ module.exports = grammar({
       'MinValue',
       'NotBlank',
       'Numeric',
-      'OptionCaption',
       'OptionCaptionML',
       'OptionMembers',
       'OptionOrdinalValues',
