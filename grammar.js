@@ -541,9 +541,11 @@ module.exports = grammar({
       ')',
       '{',
       commaSep1($.identifier),
-      optional($.key_properties),
-      '}'
+      '}',
+      optional($.key_properties)
     ),
+
+    key_properties: $ => repeat1($.property),
 
     key_properties: $ => repeat1(choice(
       $.maintain_sift_index_property,
@@ -575,22 +577,29 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        repeat($.field_property),
+        repeat($._field_property),
         '}'
       ))
     ),
 
-    field_property: $ => choice(
+    _field_property: $ => choice(
       $.caption_property,
       $.property
     ),
 
-    field_property: $ => prec(2, seq(
-      field('property_name', $.field_property_name),
+    property: $ => seq(
+      field('name', $.property_name),
       '=',
-      field('property_value', $._expression),
+      field('value', $._property_value),
       ';'
-    )),
+    ),
+
+    _property_value: $ => choice(
+      $.string,
+      $.number,
+      $.boolean,
+      $.identifier
+    ),
 
     field_property_name: $ => choice(
       'AccessByPermission',
@@ -1608,7 +1617,7 @@ module.exports = grammar({
       'procedure',
       field('name', $.procedure_name),
       '(',
-      optional($.parameter),
+      optional($.parameter_list),
       ')',
       optional(seq(':', field('return_type', $.type))),
       $.procedure_body
@@ -1619,6 +1628,8 @@ module.exports = grammar({
       repeat($._statement),
       'end;'
     ),
+
+    parameter_list: $ => commaSep1($.parameter),
 
     overload: $ => seq(
       'overload',
@@ -1900,7 +1911,8 @@ module.exports = grammar({
       $.execution_context,
       $.procedure_call,
       $.field_access,
-      $.ternary_expression
+      $.ternary_expression,
+      $.boolean
     ),
 
     field_access: $ => seq(
