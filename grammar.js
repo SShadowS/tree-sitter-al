@@ -1213,8 +1213,19 @@ module.exports = grammar({
       ';'
     ),
 
-    property_name: $ => $.identifier,
-    _property_value: $ => choice($.string, $.number, $.boolean, $.identifier),
+    property_name: $ => choice(
+      'PasteIsValid',
+      'LookupPageID',
+      'DrillDownPageID',
+      $.identifier
+    ),
+
+    _property_value: $ => choice(
+      $.string,
+      $.number,
+      $.boolean,
+      $.identifier
+    ),
 
     _table_body_element: $ => choice(
       $.caption_property,
@@ -1239,6 +1250,80 @@ module.exports = grammar({
       $.procedure_definition,
       $.variable_declaration,
       $.trigger_definition     
+    ),
+
+    field_definition: $ => seq(
+      'field',
+      '(',
+      field('id', $.field_id),
+      ';',
+      field('name', $.field_name),
+      ';',
+      field('type', $.field_type),
+      ')',
+      optional(seq(
+        '{',
+        repeat($._field_property),
+        '}'
+      ))
+    ),
+
+    _field_property: $ => choice(
+      $.caption_property,
+      $.property,
+      $.data_classification
+    ),
+
+    field_id: $ => /\d+/,
+    field_name: $ => /"[^"]*"/,
+    field_type: $ => choice(
+      'Text',
+      'Code',
+      'Decimal',
+      'Integer',
+      'Boolean',
+      'Date',
+      'Time',
+      'DateTime',
+      'Blob',
+      'Guid',
+      'RecordId',
+      'TableFilter',
+      'BigInteger',
+      'Duration',
+      'DateFormula',
+      $.identifier
+    ),
+
+    data_classification: $ => seq(
+      'DataClassification',
+      '=',
+      choice(
+        'ToBeClassified',
+        'CustomerContent',
+        'EndUserIdentifiableInformation',
+        'AccountData',
+        'EndUserPseudonymousIdentifiers',
+        'OrganizationIdentifiableInformation',
+        'SystemMetadata'
+      ),
+      ';'
+    ),
+
+    key_definition: $ => seq(
+      'key',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      commaSep1($.identifier),
+      '}',
+      optional(seq(
+        '{',
+        repeat($.property),
+        '}'
+      )),
+      ';'
     ),
 
     _page_body_element: $ => choice(
