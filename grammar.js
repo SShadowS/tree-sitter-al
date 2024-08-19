@@ -1181,12 +1181,12 @@ module.exports = grammar({
     property: $ => seq(
       field('name', $.property_name),
       '=',
-      field('value', $.property_value),
+      field('value', $._property_value),
       ';'
     ),
 
     property_name: $ => $.identifier,
-    property_value: $ => choice($.string, $.number, $.boolean, $.identifier),
+    _property_value: $ => choice($.string, $.number, $.boolean, $.identifier),
 
     _table_body_element: $ => choice(
       $.caption_property,
