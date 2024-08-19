@@ -1312,13 +1312,19 @@ module.exports = grammar({
       'fieldgroup',
       '(',
       field('name', $.identifier),
+      ')',
+      '{',
+      commaSep1($.identifier),
+      '}',
+      ';'
+    ),
 
-    data_classification_property: $ => prec.dynamic(1, seq(
+    data_classification_property: $ => seq(
       'DataClassification',
       '=',
       field('classification', $.data_classification_value),
       ';'
-    )),
+    ),
 
     data_classification_value: $ => choice(
       'ToBeClassified',
