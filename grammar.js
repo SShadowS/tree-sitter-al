@@ -154,10 +154,6 @@ module.exports = grammar({
     ),
 
     // Parameter list definition
-    parameter_list: $ => seq(
-      $.parameter,
-      repeat(seq(';', $.parameter))
-    ),
 
     // Parameter definition
     parameter: $ => seq(
@@ -564,15 +560,6 @@ module.exports = grammar({
       ';'
     ),
 
-    procedure_definition: $ => seq(
-      'procedure',
-      field('name', $.procedure_name),
-      '(',
-      optional($.parameter_list),
-      ')',
-      optional(seq(':', field('return_type', $.type))),
-      $.procedure_body
-    ),
 
     procedure_body: $ => seq(
       'begin',
@@ -1770,14 +1757,7 @@ module.exports = grammar({
 
     parameter_list: $ => commaSep1($.parameter),
 
-    parameter: $ => seq(
-      optional('var'),
-      field('name', $.identifier),
-      ':',
-      field('type', $.type)
-    ),
 
-    procedure_name: $ => $.identifier,
 
     event_subscriber: $ => seq(
       '[EventSubscriber(',
