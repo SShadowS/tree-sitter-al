@@ -1629,26 +1629,26 @@ module.exports = grammar({
       ';'
     )),
 
-    data_per_company_property: $ => seq(
+    data_per_company_property: $ => prec.dynamic(1, seq(
       'DataPerCompany',
       '=',
       field('value', $.boolean),
       ';'
-    ),
+    )),
 
-    drill_down_page_id_property: $ => seq(
+    drill_down_page_id_property: $ => prec.dynamic(1, seq(
       'DrillDownPageId',
       '=',
       field('page_id', choice($.number, $.identifier)),
       ';'
-    ),
+    )),
 
-    extensible_property: $ => seq(
+    extensible_property: $ => prec.dynamic(1, seq(
       'Extensible',
       '=',
       field('value', $.boolean),
       ';'
-    ),
+    )),
 
     external_name_property: $ => prec.dynamic(1, seq(
       'ExternalName',
