@@ -1482,12 +1482,12 @@ module.exports = grammar({
       'D'
     ),
 
-    caption_property: $ => seq(
+    caption_property: $ => prec(2, seq(
       'Caption',
       '=',
       field('caption_value', $.string),
       ';'
-    ),
+    )),
 
     data_per_company_property: $ => seq(
       'DataPerCompany',
