@@ -1313,12 +1313,12 @@ module.exports = grammar({
       '(',
       field('name', $.identifier),
 
-    data_classification_property: $ => seq(
+    data_classification_property: $ => prec.dynamic(1, seq(
       'DataClassification',
       '=',
       field('classification', $.data_classification_value),
       ';'
-    ),
+    )),
 
     data_classification_value: $ => choice(
       'ToBeClassified',
