@@ -158,7 +158,7 @@ module.exports = grammar({
       field('type', $.type),           // Type of the parameter
       optional(seq(
         '@',                           // Indicates the start of a description
-        field('language_code', $.language_code), // Language code for the description
+        field('language', $.identifier), // Language identifier for the description
         ':',
         field('description', $.string) // Description of the parameter
       ))
@@ -186,7 +186,7 @@ module.exports = grammar({
     // Procedure description (XML documentation)
     procedure_description: $ => seq(
       '@',
-      field('language', $.language_code),
+      field('language', $.identifier),
       ':',
       field('description', $.string)
     ),
@@ -2171,13 +2171,11 @@ module.exports = grammar({
 
     textconst_definition: $ => seq(
       'TextConst',
-      field('language', $.language_code),
+      field('language', $.identifier),
       '=',
       field('value', $.string),
       ';'
     ),
-
-    language_code: $ => /[A-Z]{2,3}(-[A-Z]{2,3})?/,
 
     event_definition: $ => seq(
       choice('InternalEvent', 'IntegrationEvent'),
