@@ -150,38 +150,8 @@ module.exports = grammar({
     ),
 
     // Parameter definition for procedures and triggers
-    parameter: $ => seq(
-      optional(choice('var', 'out')),  // Parameter passing method (by reference or out parameter)
-      optional('temporary'),           // Temporary parameter (exists only for the duration of the procedure)
-      field('name', $.identifier),     // Name of the parameter
-      ':',                             // Separator between name and type
-      field('type', $.type),           // Type of the parameter
-      optional(seq(
-        '@',                           // Indicates the start of a description
-        field('language', $.identifier), // Language identifier for the description
-        ':',
-        field('description', $.string) // Description of the parameter
-      ))
-    ),
 
     // Procedure definition
-    procedure_definition: $ => seq(
-      repeat($.attribute),                              // Procedure attributes
-      optional($.procedure_access_modifier),            // Access modifier
-      optional('local'),                                // Local procedure
-      'procedure',
-      field('name', $.identifier),
-      '(',
-      optional($.parameter_list),                       // Parameters
-      ')',
-      optional(seq(':', field('return_type', $.type))), // Return type
-      optional($.procedure_description),                // XML documentation
-      optional($.var_section),                          // Local variables
-      choice(
-        $.procedure_body,
-        ';'                                             // Forward declaration
-      )
-    ),
 
     // Procedure description (XML documentation)
     procedure_description: $ => seq(
