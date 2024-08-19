@@ -1241,6 +1241,14 @@ module.exports = grammar({
       $.trigger_definition
     ),
 
+    _page_body_element: $ => choice(
+      $.layout,
+      $.actions,
+      $.procedure_definition,
+      $.variable_declaration,
+      $.trigger_definition
+    ),
+
     tableextension: $ => seq(
       'tableextension',
       field('tableextension_id', $.number),
