@@ -1,978 +1,901 @@
-// AL (Application Language) grammar for tree-sitter
-// This grammar defines the structure and syntax for AL, 
-// the programming language used in Microsoft Dynamics 365 Business Central
-
 module.exports = grammar({
   name: 'al',
 
-  // Define what should be treated as extra (ignored) in the parsing process
   extras: $ => [
-    $.comment,  // Comments are ignored during parsing
-    /\s/        // Whitespace is ignored
+    $.comment,
+    $.xml_comment,
+    /\s/
   ],
 
+
   rules: {
-    // The root node of the AST (Abstract Syntax Tree)
-    // A source file in AL consists of one or more object definitions
     source_file: $ => repeat($._definition),
 
-    // Definitions for various AL object types
-    // This rule defines all the possible top-level objects in an AL file
     _definition: $ => choice(
-      $.table,              // Table object definition
-      $.tableextension,     // Table extension object definition
-      $.page,               // Page object definition
-      $.pageextension,      // Page extension object definition
-      $.codeunit,           // Codeunit object definition
-      $.report,             // Report object definition
-      $.query,              // Query object definition
-      $.xmlport,            // XMLport object definition
-      $.enum,               // Enum object definition
-      $.dotnet,             // DotNet object definition
-      $.controladdin,       // Control Add-in object definition
-      $.profile,            // Profile object definition
-      $.permissionset,      // Permission Set object definition
-      $.permissionsetextension, // Permission Set Extension object definition
-      $.entitlement         // Entitlement object definition
+      $.table_definition,
+      $.page_definition,
+      $.report_definition,
+      $.codeunit_definition,
+      $.query_definition,
+      $.xmlport_definition,
+      $.enum_definition,
+      // ... (keep other existing definitions)
     ),
 
-    // Table object definition
-    // A table in AL represents a database table
-    table: $ => seq(
-      'table',
-      field('table_id', $.integer),
-      field('table_name', choice($.string, $.identifier)),
-      optional($.extends_clause),
+    codeunit_definition: $ => seq(
+      'codeunit',
+      field('id', $.object_id),
+      field('name', $.object_name),
       '{',
-      repeat($._table_element),
+      repeat(choice(
+        $.var_section,
+        $._codeunit_element,
+        $.trigger_definition
+      )),
       '}'
     ),
 
-    // Elements that can appear within a table definition
-    // This includes fields, keys, fieldgroups, triggers, procedures, and various properties
-    _table_element: $ => choice(
-      $.fields,
-      $.keys_block,
-      $.fieldgroups_block,
-      $.trigger,
-      $.procedure,
-      $.property,
-      $.table_property,
-      $.caption_property,
-      $.lookup_page_id_property,
-      $.drill_down_page_id_property,
-      $.data_classification_property,
-      $.data_caption_fields_property,
-      $.obsolete_state_property,
-      $.paste_is_valid_property,
-      $.extensible_property,
-      $.permissions_property,
-      $.access_property,
-      $.data_per_company_property
+    var_section: $ => seq(
+      'var',
+      repeat($.variable_declaration)
     ),
 
-    // Caption property definition
-    caption_property: $ => seq(
-      'Caption',
-      '=',
-      field('caption_value', $.string),
+    variable_declaration: $ => seq(
+      'var',
+      field('name', $.identifier),
+      ':',
+      field('type', $._variable_type),
+      optional(seq(':', field('subtype', $.identifier))),
+      repeat(choice(
+        'temporary',
+        seq('array', '[', optional($.number), ']'),
+        'protected',
+        'locked',
+        'withevents'
+      )),
+      optional($.label_properties),
       ';'
     ),
 
-    // LookupPageID property definition
-    lookup_page_id_property: $ => seq(
-      'LookupPageID',
-      '=',
-      field('page_id', choice($.integer, $.identifier)),
-      ';'
+    label_properties: $ => seq(
+      'Label',
+      choice(
+        $.string,
+        seq(
+          '{',
+          repeat1($.label_property),
+          '}'
+        )
+      )
     ),
 
-    // DrillDownPageID property definition
-    drill_down_page_id_property: $ => seq(
-      'DrillDownPageID',
-      '=',
-      field('page_id', choice($.integer, $.identifier)),
-      ';'
-    ),
-
-    // DataPerCompany property definition
-    data_per_company_property: $ => seq(
-      'DataPerCompany',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
-
-    // LookupPageID property definition (alternative syntax)
-    lookup_page_property: $ => seq(
-      'LookupPageID',
-      '=',
-      field('page_name', $.identifier),
-      ';'
-    ),
-
-    // DrillDownPageID property definition (alternative syntax)
-    drill_down_page_property: $ => seq(
-      'DrillDownPageID',
-      '=',
-      field('page_name', $.identifier),
-      ';'
-    ),
-
-    // Permissions property definition
-    permissions_property: $ => seq(
-      'Permissions',
-      '=',
-      field('permissions', $.identifier_list),
-      ';'
-    ),
-
-    // Permission item definition
-    permission_item: $ => seq(
-      field('permission_type', $.identifier),
-      '=',
-      field('permission_value', $.identifier)
-    ),
-
-    // Access property definition
-    access_property: $ => seq(
-      'Access',
-      '=',
-      field('access_value', $.identifier),
-      ';'
-    ),
-
-    // PasteIsValid property definition
-    paste_is_valid_property: $ => seq(
-      'PasteIsValid',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
-
-    // Extensible property definition
-    extensible_property: $ => seq(
-      'Extensible',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
-
-    // DataClassification property definition
-    data_classification_property: $ => seq(
-      'DataClassification',
-      '=',
-      field('classification', $.identifier),
-      ';'
-    ),
-
-    // DataCaptionFields property definition
-    data_caption_fields_property: $ => seq(
-      'DataCaptionFields',
-      '=',
-      field('fields', $.identifier_list),
-      ';'
-    ),
-
-    // ObsoleteState property definition
-    obsolete_state_property: $ => seq(
-      'ObsoleteState',
-      '=',
-      field('state', $.identifier),
-      ';'
-    ),
-
-    // LookupPageID property definition (string version)
-    lookup_page_id: $ => seq(
-      'LookupPageID',
-      '=',
-      field('page_name', $.string),
-      ';'
-    ),
-
-    // DrillDownPageID property definition (string version)
-    drill_down_page_id: $ => seq(
-      'DrillDownPageID',
-      '=',
-      field('page_name', $.string),
-      ';'
-    ),
-
-    // Caption property definition (alternative syntax)
-    caption: $ => seq(
-      'Caption',
-      '=',
-      field('caption_value', $.string),
-      ';'
-    ),
-
-    // Table property definition
-    table_property: $ => prec(12, seq(
-      field('property_name', $.identifier),
-      '=',
-      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
-      optional(';')
-    )),
-
-    // Page reference definition
-    page_reference: $ => seq(
-      'Page',
-      '::',
-      field('page_name', $.identifier)
-    ),
-
-    // Generic property definition
-    property: $ => prec(11, seq(
-      field('property_name', $.identifier),
-      '=',
-      field('property_value', choice($.literal, $.identifier, $.property_option, $.boolean, $.property_list, $.page_reference)),
-      optional(';')
-    )),
-
-    // Fields block definition
-    fields: $ => seq(
-      'fields',
-      '{',
-      repeat($.field),
-      '}'
-    ),
-
-    // Keys block definition
-    keys_block: $ => seq(
-      'keys',
-      '{',
-      repeat($.key),
-      '}'
-    ),
-
-    // Fieldgroups block definition
-    fieldgroups_block: $ => seq(
-      'fieldgroups',
-      '{',
-      repeat($.fieldgroup),
-      '}'
-    ),
-
-    // Fieldgroup definition
-    fieldgroup: $ => seq(
-      field('fieldgroup_name', $.identifier),
-      '{',
-      field('fields', $.identifier_list),
-      '}'
-    ),
-
-    // Property option definition
-    property_option: $ => prec.left(8, seq(
-      field('option_name', $.identifier),
-      optional(seq(':', field('option_value', choice($.literal, $.boolean, $.identifier))))
-    )),
-
-    // Property list definition
-    property_list: $ => seq(
-      '[',
-      repeat(seq($.property_option, optional(','))),
-      ']'
-    ),
-
-    // Field definition within a table
-    // Each field represents a column in the database table
-    field: $ => seq(
-      'field',
-      '(',
-      field('field_id', $.integer),  // Unique identifier for the field
-      ';',
-      field('field_name', $.string), // Name of the field
-      ')',
-      field('data_type', $.data_type), // Data type of the field
-      '{',
-      repeat($.field_property),  // Field properties
-      '}'
-    ),
-
-    // Properties that can be applied to a field
-    // This includes various attributes and behaviors that can be set for a field
-    field_property: $ => choice(
-      $.caption_property,
-      $.data_classification_property,
-      $.table_relation_property,
-      $.option_caption_property,
-      $.option_string_property,
-      $.trigger,
-      $.obsolete_state_property,
-      $.access_by_permission_property,
-      $.enabled_property,
-      $.visible_property,
-      $.field_class_property,
-      $.auto_increment_property,
-      $.validate_property,
-      $.description_property,
-      $.blob_sub_type_property,
-      $.width_property,
-      $.editable_property,
-      $.notify_on_validate_property,
-      $.validate_on_validate_property,
-      $.init_value_property,
-      $.test_table_relation_property,
-      $.validate_table_relation_property,
-      $.assist_edit_property,
-      $.auto_format_type_property,
-      $.auto_format_expression_property,
-      $.auto_format_preserve_property,
-      $.blob_type_property,
-      $.access_property,
-      $.advanced_property,
-      $.application_area_property,
-      $.auto_format_property,
-      $.automatic_caption_property
-    ),
-
-    // Access property definition for fields
-    access_property: $ => seq(
-      'Access',
-      '=',
-      field('value', $.identifier),
-      ';'
-    ),
-
-    // Advanced property definition
-    advanced_property: $ => seq(
-      'Advanced',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
-
-    // ApplicationArea property definition
-    application_area_property: $ => seq(
-      'ApplicationArea',
-      '=',
-      field('value', $.identifier_list),
-      ';'
-    ),
-
-    // AutoFormat property definition
-    auto_format_property: $ => seq(
-      'AutoFormat',
-      '=',
-      field('value', $.identifier),
-      ';'
-    ),
-
-    // AutomaticCaption property definition
-    automatic_caption_property: $ => seq(
-      'AutomaticCaption',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
-
-    // AssistEdit property definition
-    assist_edit_property: $ => seq(
-      'AssistEdit',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
-
-    // AutoFormatType property definition
-    auto_format_type_property: $ => seq(
-      'AutoFormatType',
-      '=',
-      field('value', $.identifier),
-      ';'
-    ),
-
-    // AutoFormatExpression property definition
-    auto_format_expression_property: $ => seq(
-      'AutoFormatExpression',
+    label_property: $ => seq(
+      field('language', $.language_code),
       '=',
       field('value', $.string),
-      ';'
+      optional(',')
     ),
 
-    // AutoFormatPreserveDecimals property definition
-    auto_format_preserve_property: $ => seq(
-      'AutoFormatPreserveDecimals',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
-
-    // Blob property definition
-    blob_type_property: $ => seq(
-      'Blob',
-      '=',
-      field('value', $.identifier),
-      ';'
-    ),
-
-    // OptionCaption property definition
-    option_caption_property: $ => seq(
-      'OptionCaption',
-      '=',
-      field('captions', $.string),
-      ';'
-    ),
-
-    // OptionString property definition
-    option_string_property: $ => seq(
-      'OptionString',
-      '=',
-      field('option_string', $.string),
-      ';'
-    ),
-
-    // TableRelation property definition
-    table_relation_property: $ => prec(2, seq(
-      'TableRelation',
-      '=',
-      field('table_name', choice($.identifier, $.table_relation_expression)),
-      ';'
-    )),
-
-    // TableRelation expression definition
-    table_relation_expression: $ => seq(
-      field('table_name', $.identifier),
-      optional(seq('.', field('field_name', $.identifier))),
-      optional(seq(
-        'WHERE',
-        '(',
+    label_properties: $ => seq(
+      'Label',
+      choice(
+        $.string,
         seq(
-          seq(
-            field('field_name', $.identifier),
-            '=',
-            field('field_value', choice($.identifier, $.literal, $.field_reference))
-          ),
-          repeat(seq(
-            ',',
-            field('field_name', $.identifier),
-            '=',
-            field('field_value', choice($.identifier, $.literal, $.field_reference))
-          ))
-        ),
-        ')'
+          '{',
+          repeat1($.label_property),
+          '}'
+        )
+      )
+    ),
+
+    label_property: $ => seq(
+      field('language', $.language_code),
+      '=',
+      field('value', $.string),
+      optional(',')
+    ),
+
+    _variable_type: $ => choice(
+      'Action',
+      'Array',
+      'BigInteger',
+      'BigText',
+      'Binary',
+      'Boolean',
+      'Char',
+      'Code',
+      'Codeunit',
+      'CompanyProperty',
+      'Database',
+      'DataClassification',
+      'Date',
+      'DateFormula',
+      'DateTime',
+      'Decimal',
+      'Dialog',
+      'Dictionary',
+      'Duration',
+      'Enum',
+      'ErrorInfo',
+      'FieldRef',
+      'File',
+      'FilterPageBuilder',
+      'Guid',
+      'InStream',
+      'Integer',
+      'Interface',
+      'KeyRef',
+      'Label',
+      'List',
+      'ModuleDependencyInfo',
+      'ModuleInfo',
+      'Notification',
+      'Option',
+      'OutStream',
+      'Page',
+      'Query',
+      'Record',
+      'RecordId',
+      'RecordRef',
+      'Report',
+      'RequestPage',
+      'System',
+      'TableConnectionType',
+      'TableFilter',
+      'TestAction',
+      'TestField',
+      'TestFilterField',
+      'TestPage',
+      'TestPermissions',
+      'TestRequestPage',
+      'Text',
+      'TextBuilder',
+      'TextConst',
+      'Time',
+      'TransactionModel',
+      'Variant',
+      'Verbosity',
+      'Version',
+      'XmlPort',
+      $.identifier  // For custom types
+    ),
+
+    _codeunit_element: $ => choice(
+      $.procedure_definition,
+      $.trigger_definition,
+      $.variable_declaration,
+      $.textconst_definition
+    ),
+
+    local_procedure_definition: $ => seq(
+      'local',
+      $.procedure_definition
+    ),
+    parameter: $ => seq(
+      optional(choice('var', 'out')),
+      optional('temporary'),
+      field('name', $.identifier),
+      ':',
+      field('type', $.type),
+      optional(seq(
+        '@',
+        field('language_code', $.language_code),
+        ':',
+        field('description', $.string)
       ))
     ),
 
-    // Field reference definition
-    field_reference: $ => seq(
-      'FIELD',
+    _codeunit_element: $ => choice(
+      $.procedure_definition,
+      $.trigger_definition
+    ),
+
+    procedure_definition: $ => seq(
+      repeat($.attribute),
+      optional($.procedure_access_modifier),
+      optional('local'),
+      'procedure',
+      field('name', $.identifier),
       '(',
-      field('field_name', $.identifier),
-      ')'
+      optional($.parameter_list),
+      ')',
+      optional(seq(':', field('return_type', $.type))),
+      optional($.procedure_description),
+      optional($.var_section),
+      choice(
+        $.procedure_body,
+        ';'
+      )
     ),
 
-    // Width property definition
-    width_property: $ => seq(
-      'Width',
-      '=',
-      field('width', $.integer),
-      ';'
+    procedure_description: $ => seq(
+      '@',
+      field('language', $.language_code),
+      ':',
+      field('description', $.string)
     ),
 
-    // Editable property definition
-    editable_property: $ => seq(
-      'Editable',
-      '=',
-      field('editable', $.boolean),
-      ';'
+    parameter_list: $ => seq(
+      $.parameter,
+      repeat(seq(';', $.parameter))
     ),
 
-    // NotifyOnValidate property definition
-    notify_on_validate_property: $ => seq(
-      'NotifyOnValidate',
-      '=',
-      field('notify', $.boolean),
-      ';'
+    parameter: $ => seq(
+      optional(choice('var', 'out')),
+      optional('temporary'),
+      field('name', $.identifier),
+      ':',
+      field('type', $.type),
+      optional($.procedure_description)
     ),
 
-    // ValidateOnValidate property definition
-    validate_on_validate_property: $ => seq(
-      'ValidateOnValidate',
-      '=',
-      field('validate', $.boolean),
-      ';'
+    language_code: $ => /[A-Z]{2,3}(-[A-Z]{2,3})?/,
+
+    procedure_overload: $ => seq(
+      'procedure',
+      field('name', $.identifier),
+      '(',
+      optional($.parameter_list),
+      ')',
+      optional(seq(':', field('return_type', $.type))),
+      optional($.var_section),
+      $.procedure_body
     ),
 
-    // InitValue property definition
-    init_value_property: $ => seq(
-      'InitValue',
-      '=',
-      field('init_value', choice($.literal, $.identifier)),
-      ';'
+    procedure_access_modifier: $ => choice(
+      'internal',
+      'protected',
+      'public'
     ),
 
-    // TestTableRelation property definition
-    test_table_relation_property: $ => seq(
-      'TestTableRelation',
-      '=',
-      field('test', $.boolean),
-      ';'
+    procedure_body: $ => seq(
+      'begin',
+      repeat(choice($._statement, $.preprocessor_directive, $.variable_declaration)),
+      optional($.on_error_section),
+      'end;'
     ),
 
-    // ValidateTableRelation property definition
-    validate_table_relation_property: $ => prec(2, seq(
-      'ValidateTableRelation',
-      '=',
-      field('validate', $.boolean),
-      ';'
+    pragma_directive: $ => prec.left(seq(
+      '#PRAGMA',
+      field('name', $.pragma_name),
+      optional($.pragma_arguments)
     )),
 
-    // SubType property definition for BLOB fields
-    blob_sub_type_property: $ => seq(
-      'SubType',
-      '=',
-      field('sub_type', $.identifier),
+    preprocessor_directive: $ => choice(
+      $.if_directive,
+      $.endif_directive,
+      $.else_directive,
+      $.elif_directive,
+      $.pragma_directive
+    ),
+
+    if_directive: $ => seq('#IF', $.identifier),
+    elif_directive: $ => seq('#ELIF', $.identifier),
+    else_directive: $ => '#ELSE',
+    endif_directive: $ => '#ENDIF',
+
+    pragma_name: $ => choice(
+      'warning',
+      'error',
+      'implicitwith',
+      'inline'
+    ),
+    pragma_arguments: $ => seq(
+      $.pragma_argument,
+      repeat(seq(',', $.pragma_argument))
+    ),
+    pragma_argument: $ => choice(
+      $.string,
+      $.number,
+      $.identifier
+    ),
+
+    pragma_arguments: $ => seq(
+      $.pragma_argument,
+      repeat(seq(',', $.pragma_argument))
+    ),
+
+    pragma_argument: $ => choice(
+      $.string,
+      $.number,
+      $.identifier
+    ),
+
+    _statement: $ => choice(
+      $.assignment_statement,
+      $.procedure_call,
+      // ... (keep other existing statement types)
+    ),
+
+    procedure_call: $ => seq(
+      field('name', $.identifier),
+      '(',
+      optional(commaSep1($._expression)),
+      ')',
       ';'
     ),
 
-    // FieldClass property definition
-    field_class_property: $ => seq(
-      'FieldClass',
+    comment: $ => token(choice(
+      seq('//', /.*/),
+      seq(
+        '/*',
+        /[^*]*\*+([^/*][^*]*\*+)*/,
+        '/'
+      )
+    )),
+
+    xml_comment: $ => seq(
+      '///',
+      repeat(choice(
+        $.xml_comment_text,
+        $.xml_comment_tag
+      )),
+      /\r?\n/
+    ),
+
+    xml_comment_text: $ => /[^<\r\n]+/,
+
+    xml_comment_tag: $ => seq(
+      '<',
+      $.xml_tag_name,
+      optional($.xml_attributes),
+      choice('>', '/>')
+    ),
+
+    xml_tag_name: $ => /[a-zA-Z][a-zA-Z0-9]*/,
+
+    xml_attributes: $ => repeat1($.xml_attribute),
+
+    xml_attribute: $ => seq(
+      $.xml_attribute_name,
       '=',
-      field('field_class', $.identifier),
+      choice(
+        seq('"', optional($.xml_attribute_value), '"'),
+        seq("'", optional($.xml_attribute_value), "'")
+      )
+    ),
+
+    xml_attribute_name: $ => /[a-zA-Z][a-zA-Z0-9]*/,
+    xml_attribute_value: $ => /[^"']*/,
+
+    _definition: $ => choice(
+      $.table_definition,
+      $.page_definition,
+      $.report_definition,
+      $.codeunit_definition,
+      $.query_definition,
+      $.xmlport_definition,
+      $.enum_definition,
+      $.interface_definition,
+      $.field_definition,
+      $.variable_declaration,
+      $.procedure_definition,
+      $.permissionset_definition,
+      $.permissionsetextension_definition,
+      $.profile_definition,
+      $.dotnet_package_definition,
+      $.textconst_definition,
+      $.event_definition,
+      $.label_definition
+    ),
+
+    _object_header: $ => seq(
+      field('type', $.object_type),
+      field('id', $.object_id),
+      field('name', $.object_name)
+    ),
+
+    object_type: $ => choice(
+      'table',
+      'page',
+      'report',
+      'codeunit',
+      'query',
+      'xmlport',
+      'enum'
+    ),
+
+    object_id: $ => /\d+/,
+
+    object_name: $ => /"[^"]*"/,
+
+    _object_body: $ => seq(
+      '{',
+      repeat($._object_member),
+      '}'
+    ),
+
+    _object_member: $ => choice(
+      $.field_definition,
+      $.procedure_definition,
+      $.variable_declaration,
+      $.trigger_definition,
+      $.layout,
+      $.actions,
+      $.dataitem,
+      $.column,
+      $.textelement,
+      $.enum_value,
+      $.permission,
+      $.profile_setting,
+      $.assembly_declaration
+    ),
+
+    trigger_definition: $ => seq(
+      'trigger',
+      field('name', $.trigger_name),
+      '()',
+      $.procedure_body
+    ),
+
+    trigger_name: $ => choice(
+      // Table triggers
+      'OnInsert', 'OnModify', 'OnDelete', 'OnRename', 'OnValidate', 'OnLookup',
+      // Page triggers
+      'OnInit', 'OnOpenPage', 'OnClosePage', 'OnFindRecord', 'OnNextRecord',
+      'OnAfterGetRecord', 'OnNewRecord', 'OnInsertRecord', 'OnModifyRecord',
+      'OnDeleteRecord', 'OnQueryClosePage', 'OnAfterGetCurrRecord',
+      'OnPageBackgroundTaskCompleted', 'OnAfterGetRecord', 'OnBeforeInsertRecord',
+      'OnBeforeValidate', 'OnValidate', 'OnAfterValidate',
+      // Report triggers
+      'OnInitReport', 'OnPreReport', 'OnPostReport',
+      // XMLport triggers
+      'OnInitXMLport', 'OnPreXMLport', 'OnPostXMLport',
+      // Query triggers
+      'OnBeforeOpen', 'OnAfterOpen',
+      // Codeunit triggers
+      'OnRun',
+      // General triggers
+      'OnAfterAssignVariable', 'OnBeforePassVariable',
+      'OnBeforeValidate', 'OnAfterValidate',
+      // Additional triggers
+      'OnAction', 'OnDrillDown', 'OnAssistEdit', 'OnControlAddIn',
+      'OnAfterGetRecordEvent', 'OnBeforeGetRecordEvent', 'OnOpenPageEvent',
+      'OnClosePageEvent', 'OnQueryClosePageEvent', 'OnDeleteRecordEvent',
+      'OnInsertRecordEvent', 'OnModifyRecordEvent', 'OnNewRecordEvent',
+      'OnFindRecordEvent', 'OnNextRecordEvent', 'OnAfterGetCurrRecordEvent',
+      'OnDocumentReady', 'OnAfterInitRecord', 'OnBeforeAction',
+      'OnAfterAction', 'OnBeforeInsertRecord', 'OnBeforeModifyRecord',
+      'OnBeforeDeleteRecord', 'OnBeforeOnRun', 'OnAfterOnRun'
+    ),
+
+    table_definition: $ => seq(
+      'table',
+      $._object_header,
+      $._object_body
+    ),
+
+    page_definition: $ => seq(
+      'page',
+      $._object_header,
+      '{',
+      repeat($._page_element),
+      optional($.promoted_action_categories),
+      '}'
+    ),
+
+    promoted_action_categories: $ => seq(
+      'PromotedActionCategories',
+      '=',
+      '{',
+      repeat($.promoted_action_category),
+      '}'
+    ),
+
+    promoted_action_category: $ => seq(
+      field('id', $.string),
+      ':',
+      field('caption', $.string),
       ';'
     ),
 
-    // AutoIncrement property definition
-    auto_increment_property: $ => seq(
-      'AutoIncrement',
-      '=',
-      field('auto_increment', $.boolean),
-      ';'
+    _page_element: $ => choice(
+      $.layout,
+      $.actions,
+      $.procedure_definition,
+      $.variable_declaration
     ),
 
-    // Validate property definition
-    validate_property: $ => seq(
-      'ValidateTableRelation',
-      '=',
-      field('validate', $.boolean),
-      ';'
-    ),
-
-    // Description property definition
-    description_property: $ => seq(
-      'Description',
-      '=',
-      field('description', $.string),
-      ';'
-    ),
-
-    // OptionCaption property definition (alternative syntax)
-    option_caption: $ => seq(
-      'OptionCaption',
-      '=',
-      field('captions', $.string),
-      ';'
-    ),
-
-    // OptionString property definition (alternative syntax)
-    option_string: $ => seq(
-      'OptionString',
-      '=',
-      field('options', $.string),
-      ';'
-    ),
-
-    // AccessByPermission property definition
-    access_by_permission_property: $ => seq(
-      'AccessByPermission',
-      '=',
-      field('permission', $.string),
-      ';'
-    ),
-
-    // Enabled property definition
-    enabled_property: $ => seq(
-      'Enabled',
-      '=',
-      field('enabled', $.boolean),
-      ';'
-    ),
-
-    // Visible property definition
-    visible_property: $ => seq(
-      'Visible',
-      '=',
-      field('visible', $.boolean),
-      ';'
-    ),
-
-    // TableRelation property definition (alternative syntax)
-    table_relation: $ => seq(
-      'TableRelation',
-      '=',
-      field('table_name', $.string),
-      ';'
-    ),
-
-    // DataClassification property definition (alternative syntax)
-    data_classification: $ => seq(
-      'DataClassification',
-      '=',
-      field('classification', $.identifier),
-      ';'
-    ),
-
-    // Layout definition for pages
     layout: $ => seq(
       'layout',
       '{',
-      repeat($.layout_element),
+      repeat($._layout_element),
       '}'
     ),
 
-    // Layout element definition
-    layout_element: $ => choice(
-      $.area,
+    _layout_element: $ => choice(
       $.group,
-      $.field,
-      $.part,
-      $.systempart,
-      $.chartpart
+      $.field
     ),
 
-    // Part definition in page layout
-    part: $ => seq(
-      'part',
-      '(',
-      field('part_name', $.identifier),
-      ')',
-      '{',
-      repeat($.property),
-      '}'
-    ),
-
-    // SystemPart definition in page layout
-    systempart: $ => seq(
-      'systempart',
-      '(',
-      field('systempart_name', $.identifier),
-      ')',
-      '{',
-      repeat($.property),
-      '}'
-    ),
-
-    // ChartPart definition in page layout
-    chartpart: $ => seq(
-      'chartpart',
-      '(',
-      field('chartpart_name', $.identifier),
-      ')',
-      '{',
-      repeat($.property),
-      '}'
-    ),
-
-    // Group definition in page layout
     group: $ => seq(
       'group',
       '(',
-      field('group_name', $.identifier),
+      field('name', $.identifier),
       ')',
       '{',
-      repeat($.layout_element),
+      repeat($._layout_element),
       '}'
     ),
 
-    // Area definition in page layout
-    area: $ => seq(
-      'area',
+    field: $ => seq(
+      'field',
       '(',
-      field('area_name', $.identifier),
+      field('name', $.identifier),
       ')',
       '{',
-      repeat($.layout_element),
+      repeat($.field_property),
       '}'
     ),
 
-    // Key definition in table
-    key: $ => seq(
-      'key',
-      '(',
-      field('key_name', $.identifier),
-      ')',
-      '{',
-      field('fields', $.identifier_list),
-      repeat($.property),
-      '}'
+    field_property: $ => seq(
+      field('name', $.identifier),
+      '=',
+      field('value', $._expression),
+      ';'
     ),
 
-    // Fieldgroup definition
-    fieldgroup: $ => seq(
-      'fieldgroup',
-      '(',
-      field('fieldgroup_name', $.identifier),
-      ')',
-      '{',
-      field('fields', $.identifier_list),
-      '}'
-    ),
-
-    // TableExtension object definition
-    tableextension: $ => seq(
-      'tableextension',
-      field('tableextension_id', $.integer),
-      field('tableextension_name', choice($.string, $.identifier)),
-      'extends',
-      field('base_table', choice($.string, $.identifier)),
-      '{',
-      repeat($._table_body_element),
-      '}'
-    ),
-
-    // Page object definition
-    page: $ => seq(
-      'page',
-      field('page_id', $.integer),
-      field('page_name', $.identifier),
-      '{',
-      repeat($._page_body_element),
-      '}'
-    ),
-
-    // PageExtension object definition
-    pageextension: $ => seq(
-      'pageextension',
-      field('pageextension_id', $.integer),
-      field('pageextension_name', $.identifier),
-      'extends',
-      field('base_page', $.identifier),
-      '{',
-      repeat($._page_body_element),
-      '}'
-    ),
-
-    // Codeunit object definition
-    codeunit: $ => seq(
-      'codeunit',
-      field('codeunit_id', $.integer),
-      field('codeunit_name', $.identifier),
-      optional($.implements_clause),
-      '{',
-      repeat($._codeunit_body_element),
-      '}'
-    ),
-
-    // Report object definition
-    report: $ => seq(
+    report_definition: $ => seq(
       'report',
-      field('report_id', $.integer),
-      field('report_name', $.identifier),
+      $._object_header,
+      $._object_body
+    ),
+
+    codeunit_definition: $ => seq(
+      'codeunit',
+      $.object_id,
+      $.object_name,
       '{',
-      repeat($._report_body_element),
+      optional($.var_section),
+      repeat($._codeunit_element),
       '}'
     ),
 
-    // Query object definition
-    query: $ => seq(
+    query_definition: $ => seq(
       'query',
-      field('query_id', $.integer),
-      field('query_name', $.identifier),
-      '{',
-      repeat($._query_body_element),
-      '}'
+      $._object_header,
+      $._object_body
     ),
 
-    // XMLport object definition
-    xmlport: $ => seq(
+    xmlport_definition: $ => seq(
       'xmlport',
-      field('xmlport_id', $.integer),
-      field('xmlport_name', $.identifier),
-      '{',
-      repeat($._xmlport_body_element),
-      '}'
+      $._object_header,
+      $._object_body
     ),
 
-    // Enum object definition
-    enum: $ => seq(
+    enum_definition: $ => seq(
       'enum',
-      field('enum_id', $.integer),
-      field('enum_name', $.identifier),
-      optional($.implements_clause),
+      $._object_header,
       '{',
       repeat($.enum_value),
       '}'
     ),
 
-    // DotNet object definition
-    dotnet: $ => seq(
-      'dotnet',
-      field('dotnet_name', $.identifier),
+    interface_definition: $ => seq(
+      'interface',
+      $._object_header,
       '{',
-      repeat($.assembly),
+      repeat($.procedure_prototype),
       '}'
     ),
 
-    // Control Add-in object definition
-    controladdin: $ => seq(
-      'controladdin',
-      field('controladdin_name', $.identifier),
-      '{',
-      repeat($._controladdin_body_element),
-      '}'
-    ),
-
-    // Profile object definition
-    profile: $ => seq(
-      'profile',
-      field('profile_name', $.identifier),
-      '{',
-      repeat($.profile_element),
-      '}'
-    ),
-
-    // Permission Set object definition
-    permissionset: $ => seq(
+    permissionset_definition: $ => seq(
       'permissionset',
-      field('permissionset_id', $.integer),
-      field('permissionset_name', $.identifier),
+      $._object_header,
       '{',
       repeat($.permission),
       '}'
     ),
 
-    // Permission Set Extension object definition
-    permissionsetextension: $ => seq(
+    permissionsetextension_definition: $ => seq(
       'permissionsetextension',
-      field('permissionsetextension_id', $.integer),
-      field('permissionsetextension_name', $.identifier),
-      'extends',
-      field('base_permissionset', $.identifier),
+      $._object_header,
       '{',
       repeat($.permission),
       '}'
     ),
 
-    // Entitlement object definition
-    entitlement: $ => seq(
-      'entitlement',
-      field('entitlement_name', $.identifier),
+    profile_definition: $ => seq(
+      'profile',
+      $._object_header,
       '{',
-      repeat($.entitlement_element),
+      repeat($.profile_setting),
       '}'
     ),
 
-    // Common Elements
-
-    // Elements that can appear within a table body
-    _table_body_element: $ => choice(
-      $.field,
-      $.key,
-      $.fieldgroup,
-      $.trigger,
-      $.procedure,
-      $.property,
-      $.var_section
+    dotnet_package_definition: $ => seq(
+      'dotnet',
+      '{',
+      repeat($.assembly_declaration),
+      '}'
     ),
 
-    // Elements that can appear within a page body
-    _page_body_element: $ => choice(
-      $.layout,
-      $.actions,
-      $.trigger,
-      $.procedure,
-      $.property,
-      $.var_section
+    table_definition: $ => seq(
+      'table',
+      $.object_id,
+      $.object_name,
+      '{',
+      repeat($._table_element),
+      '}'
     ),
 
-    // Elements that can appear within a codeunit body
-    _codeunit_body_element: $ => choice(
-      $.trigger,
-      $.procedure,
-      $.property,
-      $.var_section
+    _table_element: $ => choice(
+      $.field_definition,
+      $.key_definition,
+      $.procedure_definition
     ),
 
-    // Elements that can appear within a report body
-    _report_body_element: $ => choice(
-      $.dataset,
-      $.requestpage,
-      $.trigger,
-      $.procedure,
-      $.property,
-      $.var_section
-    ),
-
-    // Elements that can appear within a query body
-    _query_body_element: $ => choice(
-      $.elements,
-      $.filter,
-      $.column,
-      $.trigger,
-      $.property
-    ),
-
-    // Elements that can appear within an XMLport body
-    _xmlport_body_element: $ => choice(
-      $.schema,
-      $.requestpage,
-      $.trigger,
-      $.procedure,
-      $.property,
-      $.var_section
-    ),
-
-    // Elements that can appear within a control add-in body
-    _controladdin_body_element: $ => choice(
-      $.property,
-      $.event,
-      $.procedure
-    ),
-
-    // Trigger definition
-    trigger: $ => seq(
-      'trigger',
-      field('trigger_name', $.identifier),
+    key_definition: $ => seq(
+      'key',
       '(',
+      field('name', $.identifier),
       ')',
-      'var',
-      repeat($.var_declaration),
-      'begin',
-      repeat($.statement),
-      'end;'
+      '{',
+      commaSep1($.identifier),
+      '}'
     ),
 
-    // Procedure definition
-    procedure: $ => seq(
-      'procedure',
-      field('procedure_name', $.identifier),
+    field_definition: $ => seq(
+      'field',
       '(',
-      optional($.parameter_list),
+      field('id', $.field_id),
+      ';',
+      field('name', $.field_name),
+      ';',
+      field('type', $.field_type),
       ')',
-      optional(seq(':', field('return_type', $.data_type))),
-      'var',
-      repeat($.var_declaration),
-      'begin',
-      repeat($.statement),
-      'end;'
-    ),
-
-    // Variable section definition
-    var_section: $ => prec.right(seq(
-      'var',
-      repeat1($.var_declaration),
+      optional(seq(
+        '{',
+        repeat(choice(
+          $.access_modifier,
+          $.option_members,
+          $.data_classification
+        )),
+        '}'
+      )),
       optional(';')
-    )),
-
-    // Procedure attribute definition
-    procedure_attribute: $ => seq(
-      '[',
-      choice('IntegrationEvent', 'BusinessEvent', 'InternalEvent'),
-      ']'
     ),
 
-    // Variable declaration
-    var_declaration: $ => seq(
-      field('var_name', $.identifier),
-      ':',
-      field('var_type', $.data_type),
-      optional(seq('temporary')),
+    option_members: $ => seq(
+      'OptionMembers',
+      '=',
+      commaSep1($.string),
       ';'
     ),
 
-    // Actions block definition for pages
+    data_classification: $ => seq(
+      'DataClassification',
+      '=',
+      choice(
+        'ToBeClassified',
+        'CustomerContent',
+        'EndUserIdentifiableInformation',
+        'AccountData',
+        'EndUserPseudonymousIdentifiers',
+        'OrganizationIdentifiableInformation',
+        'SystemMetadata'
+      ),
+      ';'
+    ),
+
+    field_id: $ => /\d+/,
+    field_name: $ => /"[^"]*"/,
+    field_type: $ => $.field_type_option,
+
+    field_type_option: $ => choice(
+      'Action',
+      'BigInteger',
+      'Binary',
+      'Blob',
+      'Boolean',
+      'Code',
+      'Date',
+      'DateFormula',
+      'DateTime',
+      'Decimal',
+      'Duration',
+      'Guid',
+      'Integer',
+      'Media',
+      'MediaSet',
+      'Option',
+      'RecordId',
+      'TableFilter',
+      'Text',
+      'Time'
+    ),
+
+    variable_declaration: $ => seq(
+      'var',
+      field('name', $.identifier),
+      ':',
+      field('type', $.type),
+      ';'
+    ),
+
+    procedure_definition: $ => seq(
+      repeat($.attribute),
+      optional($.procedure_access_modifier),
+      optional('local'),
+      'procedure',
+      field('name', $.identifier),
+      '(',
+      optional($.parameter_list),
+      ')',
+      optional(seq(':', field('return_type', $.type))),
+      optional($.var_section),
+      choice(
+        $.procedure_body,
+        ';'
+      )
+    ),
+
+    parameter_list: $ => seq(
+      $.parameter,
+      repeat(seq(';', $.parameter))
+    ),
+
+    parameter: $ => seq(
+      repeat($.parameter_attribute),
+      optional(choice('var', 'out')),
+      optional('temporary'),
+      field('name', $.identifier),
+      ':',
+      field('type', $.type)
+    ),
+
+    parameter_attribute: $ => seq(
+      '[',
+      choice('FromSet', 'RunOnClient'),
+      optional(seq('(', commaSep1($._expression), ')')),
+      ']'
+    ),
+
+    procedure_body: $ => seq(
+      'begin',
+      repeat(choice($._statement, $.preprocessor_directive)),
+      'end;'
+    ),
+
+
+    _statement: $ => choice(
+      $.assignment_statement,
+      $.procedure_call,
+      $.exit_statement,
+      $.if_statement,
+      $.error_statement
+      // Add more statement types as needed
+    ),
+
+    exit_statement: $ => seq(
+      'exit',
+      optional($._expression),
+      ';'
+    ),
+
+    if_statement: $ => seq(
+      'if',
+      $._expression,
+      'then',
+      repeat($._statement),
+      optional(seq('else', repeat($._statement))),
+      'end;'
+    ),
+
+    error_statement: $ => seq(
+      'error',
+      '(',
+      $._expression,
+      ')',
+      ';'
+    ),
+
+    assignment_statement: $ => seq(
+      field('left', $.identifier),
+      ':=',
+      field('right', $._expression),
+      ';'
+    ),
+
+    procedure_call: $ => seq(
+      field('name', $.identifier),
+      '(',
+      optional(commaSep1(choice($._expression, $.named_argument))),
+      ')',
+      ';'
+    ),
+
+    named_argument: $ => seq(
+      field('name', $.identifier),
+      ':',
+      $._expression
+    ),
+
+    _expression: $ => choice(
+      $.identifier,
+      $.literal,
+      $.system_variable,
+      $.parenthesized_expression,
+      $.field_access
+      // Add more expression types as needed
+    ),
+
+    parenthesized_expression: $ => seq(
+      '(',
+      $._expression,
+      ')'
+    ),
+
+    field_access: $ => seq(
+      $._expression,
+      '.',
+      $.identifier
+    ),
+
+    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+
+    system_variable: $ => choice(
+      'CurrPage',
+      'Rec',
+      'xRec',
+      'CurrReport',
+      'CurrFieldNo',
+      'RequestOptionsPage',
+      'ReportFormatting',
+      'CurrXMLport',
+      'CurrQuery',
+      'ActiveSession',
+      'Session',
+      'Database',
+      'CompanyProperty',
+      'ApplicationPath',
+      'EncryptionEnabled',
+      'HybridDeployment',
+      'IsServiceTier',
+      'Printer',
+      'ReportManagement',
+      'TaskScheduler',
+      'VersionManagement',
+      'WebServiceManagement'
+    ),
+
+    type: $ => choice(
+      'Text',
+      'Code',
+      'Decimal',
+      'Integer',
+      'Boolean',
+      'Date',
+      'Time',
+      'DateTime',
+      'Blob',
+      'Guid',
+      'RecordId',
+      'TableFilter',
+      'BigInteger',
+      'Duration',
+      'DateFormula',
+      'ErrorInfo',
+      $.identifier  // Allow custom types
+    ),
+
+    literal: $ => choice(
+      $.number,
+      $.string,
+      $.boolean
+    ),
+
+    number: $ => /\d+(\.\d+)?/,
+    string: $ => /"[^"]*"/,
+    boolean: $ => choice('true', 'false'),
+
+    enum_value: $ => seq(
+      field('name', $.identifier),
+      '=',
+      field('value', $.number),
+      optional(';')
+    ),
+
     actions: $ => seq(
       'actions',
       '{',
@@ -980,18 +903,188 @@ module.exports = grammar({
       '}'
     ),
 
-    // Action definition
     action: $ => seq(
       'action',
       '(',
-      field('action_name', $.identifier),
+      $.action_name,
       ')',
       '{',
-      repeat($.property),
+      repeat($.action_property),
       '}'
     ),
 
-    // Dataset definition for reports
+    action_name: $ => /"[^"]*"/,
+
+    action_property: $ => seq(
+      $.property_name,
+      '=',
+      $.property_value,
+      ';'
+    ),
+
+    property_name: $ => choice(
+      // General properties
+      'AccessByPermission',
+      'ApplicationArea',
+      'AutoCaption',
+      'AutoFormatExpression',
+      'AutoFormatType',
+      'Caption',
+      'CaptionClass',
+      'CaptionML',
+      'CardPageID',
+      'DataCaptionFields',
+      'Description',
+      'DelayedInsert',
+      'DeleteAllowed',
+      'Editable',
+      'Enabled',
+      'Extensible',
+      'HelpLink',
+      'Image',
+      'InherentEntitlements',
+      'InherentPermissions',
+      'InsertAllowed',
+      'LinksAllowed',
+      'ModifyAllowed',
+      'MultipleNewLines',
+      'NotifyOnDelete',
+      'ObsoleteReason',
+      'ObsoleteState',
+      'PageType',
+      'Permissions',
+      'PopulateAllFields',
+      'PromotedActionCategories',
+      'RefreshOnActivate',
+      'SaveValues',
+      'ShowFilter',
+      'SourceTable',
+      'SourceTableTemporary',
+      'SourceTableView',
+      'UsageCategory',
+      'Visible',
+
+      // Layout properties
+      'ColumnSpan',
+      'GridLayout',
+      'Group',
+      'IndentationColumn',
+      'IndentationControls',
+      'Layout',
+      'MoveBefore',
+      'MoveAfter',
+      'ShowCaption',
+
+      // Action properties
+      'AboutText',
+      'AboutTitle',
+      'Gesture',
+      'Image',
+      'InFooterBar',
+      'Promoted',
+      'PromotedCategory',
+      'PromotedIsBig',
+      'PromotedOnly',
+      'RunObject',
+      'RunPageMode',
+      'ShortcutKey',
+      'ToolTip',
+
+      // Field properties
+      'AssistEdit',
+      'AutoOption',
+      'BlankNumbers',
+      'BlankZero',
+      'CalcFormula',
+      'CharAllowed',
+      'ClosingDates',
+      'DecimalPlaces',
+      'DrillDown',
+      'DrillDownPageID',
+      'ExtendedDatatype',
+      'FieldClass',
+      'ImportanceLevel',
+      'Lookup',
+      'LookupPageID',
+      'MaxValue',
+      'MinValue',
+      'NotBlank',
+      'Numeric',
+      'OptionCaption',
+      'OptionCaptionML',
+      'OptionMembers',
+      'OptionOrdinalValues',
+      'QuickEntry',
+      'RelationTableField',
+      'RowSpan',
+      'ShowMandatory',
+      'SignDisplacement',
+      'Style',
+      'StyleExpr',
+      'TableRelation',
+      'ValidateTableRelation',
+      'ValuesAllowed',
+      'Width',
+
+      // Other properties
+      'AllowInCustomizations',
+      'AutoSplitKey',
+      'DataCaptionExpr',
+      'DateFormula',
+      'DefaultFieldsValidation',
+      'Dimensions',
+      'ExternalType',
+      'FreezeColumnID',
+      'GroupName',
+      'Importance',
+      'InstructionalText',
+      'IntegerType',
+      'MultiLine',
+      'ObsoleteTag',
+      'PasteIsValid',
+      'PrimaryKey',
+      'SubPageLink',
+      'SubPageView',
+      'SubType',
+      'TestPermissions',
+      'TextType',
+      'Validation',
+
+      // Report-specific properties
+      'AdditionalSearchTerms',
+      'DefaultLayout',
+      'EnableExternalAssemblies',
+      'EnableHyperlinks',
+      'PaperSourceDefaultPage',
+      'PaperSourceFirstPage',
+      'PaperSourceLastPage',
+      'PreviewMode',
+      'ProcessingOnly',
+      'RDLCLayout',
+      'RequestFilterFields',
+      'RequestFilterHeading',
+      'TransactionType',
+      'UseRequestPage',
+      'UseSystemPrinter',
+      'WordLayout'
+    ),
+    property_value: $ => choice($.identifier, $.literal),
+
+    report_definition: $ => seq(
+      'report',
+      $.object_id,
+      $.object_name,
+      '{',
+      repeat($._report_element),
+      '}'
+    ),
+
+    _report_element: $ => choice(
+      $.dataset,
+      $.requestpage,
+      $.procedure_definition
+    ),
+
     dataset: $ => seq(
       'dataset',
       '{',
@@ -999,669 +1092,1036 @@ module.exports = grammar({
       '}'
     ),
 
-    // Dataitem definition
     dataitem: $ => seq(
       'dataitem',
       '(',
-      field('dataitem_name', $.identifier),
+      $.dataitem_name,
+      ';',
+      $.table_name,
       ')',
       '{',
-      repeat(choice(
-        $.column,
-        $.dataitem,
-        $.trigger,
-        $.property
-      )),
+      repeat($._dataitem_element),
       '}'
     ),
 
-    // Request page definition
-    requestpage: $ => seq(
-      'requestpage',
-      '{',
-      repeat($.requestpage_element),
-      '}'
-    ),
+    dataitem_name: $ => /"[^"]*"/,
+    table_name: $ => /"[^"]*"/,
 
-    // Request page element definition
-    requestpage_element: $ => choice(
-      $.layout,
-      $.actions,
-      $.trigger,
-      $.property
-    ),
-
-    // Elements block definition for queries
-    elements: $ => seq(
-      'elements',
-      '{',
-      repeat($.query_element),
-      '}'
-    ),
-
-    // Query element definition
-    query_element: $ => choice(
-      $.dataitem,
+    _dataitem_element: $ => choice(
       $.column,
-      $.filter
+      $.dataitem
     ),
 
-    // Filter block definition
-    filter: $ => seq(
-      'filter',
-      '{',
-      repeat($.filter_element),
-      '}'
-    ),
-
-    // Filter element definition
-    filter_element: $ => seq(
-      field('field', $.identifier),
-      '=',
-      field('value', $.expression),
-      ';'
-    ),
-
-    // Column definition
     column: $ => seq(
       'column',
       '(',
-      field('column_name', $.identifier),
+      $.column_id,
+      ';',
+      $.column_name,
       ')',
       '{',
-      repeat($.property),
       '}'
     ),
 
-    // Schema definition for XMLports
+    column_id: $ => /\d+/,
+    column_name: $ => /"[^"]*"/,
+
+    requestpage: $ => seq(
+      'requestpage',
+      '{',
+      repeat($.control),
+      '}'
+    ),
+
+    control: $ => seq(
+      'field',
+      '(',
+      $.control_name,
+      ';',
+      $.control_type,
+      ')',
+      '{',
+      repeat($.control_property),
+      '}'
+    ),
+
+    control_name: $ => /"[^"]*"/,
+    control_type: $ => /[A-Za-z]+/,
+
+    control_property: $ => seq(
+      $.property_name,
+      '=',
+      $.property_value,
+      ';'
+    ),
+
+    query_definition: $ => seq(
+      'query',
+      $.object_id,
+      $.object_name,
+      '{',
+      repeat($._query_element),
+      '}'
+    ),
+
+    _query_element: $ => choice(
+      $.elements,
+      $.procedure_definition
+    ),
+
+    elements: $ => seq(
+      'elements',
+      '{',
+      repeat($.dataitem),
+      '}'
+    ),
+
+    xmlport_definition: $ => seq(
+      'xmlport',
+      $.object_id,
+      $.object_name,
+      '{',
+      repeat($._xmlport_element),
+      '}'
+    ),
+
+    _xmlport_element: $ => choice(
+      $.schema,
+      $.procedure_definition
+    ),
+
     schema: $ => seq(
       'schema',
       '{',
-      repeat($.schema_element),
+      repeat($.textelement),
       '}'
     ),
 
-    // Schema element definition
-    schema_element: $ => choice(
-      $.textelement,
-      $.fieldelement,
-      $.tableelement
-    ),
-
-    // Text element definition
     textelement: $ => seq(
       'textelement',
       '(',
-      field('element_name', $.identifier),
+      $.element_name,
       ')',
       '{',
-      repeat($.property),
+      repeat($.element_property),
       '}'
     ),
 
-    // Field element definition
-    fieldelement: $ => seq(
-      'fieldelement',
+    element_name: $ => /"[^"]*"/,
+
+    element_property: $ => seq(
+      $.property_name,
+      '=',
+      $.property_value,
+      ';'
+    ),
+
+    enum_definition: $ => seq(
+      'enum',
+      $.object_id,
+      $.object_name,
+      '{',
+      optional($.enum_properties),
+      repeat($.enum_value),
+      '}'
+    ),
+
+    enum_properties: $ => repeat1($.enum_property),
+
+    enum_property: $ => seq(
+      field('name', $.identifier),
+      '=',
+      field('value', choice($.string, $.boolean)),
+      ';'
+    ),
+
+    enum_value: $ => seq(
+      'value',
       '(',
-      field('element_name', $.identifier),
+      $.enum_id,
+      ';',
+      $.enum_name,
       ')',
+      optional(
+        seq(
+          '{',
+          repeat($.enum_value_property),
+          '}'
+        )
+      )
+    ),
+
+    enum_value_properties: $ => seq(
       '{',
-      repeat($.property),
+      repeat($.enum_value_property),
       '}'
     ),
 
-    // Table element definition
-    tableelement: $ => seq(
-      'tableelement',
+    enum_value_property: $ => seq(
+      field('name', $.identifier),
+      '=',
+      field('value', $.string),
+      optional(seq(',', field('locked', $.identifier), '=', $.boolean)),
+      ';'
+    ),
+
+    enum_id: $ => /\d+/,
+    enum_name: $ => choice(
+      $.string,
+      $.identifier,
+      seq('"', $.identifier, $.identifier, '"')
+    ),
+
+    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    string: $ => /"[^"]*"/,
+    boolean: $ => choice('true', 'false'),
+
+    procedure_prototype: $ => seq(
+      'procedure',
+      $.procedure_name,
       '(',
-      field('element_name', $.identifier),
+      optional($.parameter_list),
+      ')',
+      optional(seq(':', $.return_type)),
+      ';'
+    ),
+
+    permission: $ => seq(
+      $.permission_type,
+      '=',
+      $.permission_object,
+      ';'
+    ),
+
+    permission_type: $ => choice(
+      'TableData',
+      'Table',
+      'Report',
+      'Codeunit',
+      'XMLport',
+      'Page',
+      'Query',
+      'System'
+    ),
+
+    permission_object: $ => seq(
+      $.object_name,
+      '=',
+      commaSep1($.permission_level)
+    ),
+
+    permission_level: $ => choice(
+      'R',
+      'X',
+      'I',
+      'M',
+      'D'
+    ),
+
+    profile_setting: $ => seq(
+      $.setting_name,
+      '=',
+      $.setting_value,
+      ';'
+    ),
+
+    setting_name: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    setting_value: $ => choice($.string, $.boolean, $.number),
+
+    assembly_declaration: $ => seq(
+      'assembly',
+      '(',
+      $.assembly_name,
       ')',
       '{',
-      repeat($.property),
+      repeat($.type_declaration),
       '}'
     ),
 
-    // Event definition
-    event: $ => seq(
-      'event',
-      field('event_name', $.identifier),
+    assembly_name: $ => /"[^"]*"/,
+
+    type_declaration: $ => seq(
+      'type',
+      '(',
+      $.type_name,
+      ')',
+      '{',
+      repeat($.member_declaration),
+      '}'
+    ),
+
+    type_name: $ => /"[^"]*"/,
+
+    member_declaration: $ => seq(
+      $.member_type,
+      $.member_name,
+      '(',
+      optional($.parameter_list),
+      ')',
+      optional(seq(':', $.return_type)),
+      ';'
+    ),
+
+    member_type: $ => choice('method', 'constructor'),
+    member_name: $ => /"[^"]*"/,
+
+    variable_declaration: $ => seq(
+      'var',
+      optional($.access_modifier),
+      $.variable_name,
+      ':',
+      $.variable_type,
+      ';'
+    ),
+
+    variable_name: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    variable_type: $ => /[A-Za-z]+/,
+
+    procedure_definition: $ => seq(
+      repeat($.attribute),
+      optional('local'),
+      optional($.access_modifier),
+      'procedure',
+      $.procedure_name,
+      '(',
+      optional($.parameter_list),
+      ')',
+      optional(seq(':', $.return_type)),
+      choice(
+        $.procedure_body,
+        ';'  // For procedure prototypes
+      )
+    ),
+
+    overload: $ => seq(
+      'overload',
+      '(',
+      optional($.parameter_list),
+      ')',
+      optional(seq(':', $.return_type)),
+      choice(
+        $.procedure_body,
+        ';'  // For procedure prototypes
+      )
+    ),
+
+    event_subscriber: $ => seq(
+      '[EventSubscriber(',
+      commaSep1($.event_parameter),
+      ')]'
+    ),
+
+    event_parameter: $ => seq(
+      $.event_parameter_name,
+      '=',
+      $.event_parameter_value
+    ),
+
+    event_parameter_name: $ => choice(
+      'ObjectType',
+      'ObjectId',
+      'EventType',
+      'EventPublisherObject',
+      'EventFunction',
+      'OnMissingLicense',
+      'OnMissingPermission',
+      'SkipOnMissingLicense',
+      'SkipOnMissingPermission'
+    ),
+
+    event_parameter_value: $ => choice(
+      $.string,
+      $.number,
+      $.boolean,
+      $.identifier
+    ),
+
+    access_modifier: $ => choice(
+      'internal',
+      'protected',
+      'public'
+    ),
+
+    attribute: $ => choice(
+      seq(
+        '[',
+        $.attribute_name,
+        optional(seq('(', commaSep1($.attribute_argument), ')')),
+        ']'
+      ),
+      $.event_subscriber,
+      $.try_function_attribute
+    ),
+
+    attribute_name: $ => choice(
+      'NonDebuggable',
+      'InDataSet',
+      'Obsolete',
+      'BusinessEvent',
+      'IntegrationEvent',
+      'Scope',
+      'ErrorBehavior',
+      'ExternalBusinessEvent',
+      'ExternalSqlConnection',
+      'EventSubscriber',
+      'ServiceEnabled',
+      'Test',
+      'TransactionModel',
+      'CommitBehavior',
+      'HandlerFunctions',
+      /[A-Za-z]+/  // For custom attributes
+    ),
+
+    try_function_attribute: $ => seq(
+      '[',
+      'TryFunction',
+      ']'
+    ),
+
+    attribute_argument: $ => choice(
+      $.string,
+      $.number,
+      $.boolean,
+      $.identifier
+    ),
+
+    procedure_name: $ => prec(1, /[a-zA-Z_][a-zA-Z0-9_]*/),
+
+    parameter_list: $ => commaSep1($.parameter),
+
+    parameter: $ => seq(
+      optional('var'),
+      optional('temporary'),
+      field('name', $.identifier),
+      ':',
+      field('type', $.type)
+    ),
+
+    parameter_name: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    parameter_type: $ => /[A-Za-z]+/,
+
+    return_type: $ => /[A-Za-z]+/,
+
+    procedure_body: $ => seq(
+      'begin',
+      repeat($._statement),
+      'end;'
+    ),
+
+    _statement: $ => choice(
+      $.assignment_statement,
+      $.if_statement,
+      $.while_statement,
+      $.repeat_statement,
+      $.case_statement,
+      $.procedure_call,
+      $.with_statement,
+      $.temporary_statement,
+      $.for_statement,
+      $.foreach_statement,
+      $.break_statement,
+      $.exit_statement,
+      $.try_function,
+      $.preprocessor_directive
+    ),
+
+    try_function: $ => seq(
+      'if',
+      choice(
+        $.try_function_call,
+        $.try_method_call
+      ),
+      'then',
+      repeat($._statement),
+      optional(seq('else', repeat($._statement))),
+      'end;'
+    ),
+
+    try_function_call: $ => seq(
+      field('function', $.identifier),
+      '(',
+      optional(commaSep1($._expression)),
+      ')'
+    ),
+
+    try_method_call: $ => seq(
+      field('object', $._expression),
+      '.',
+      field('method', $.identifier),
+      '(',
+      optional(commaSep1($._expression)),
+      ')'
+    ),
+
+    with_statement: $ => seq(
+      'with',
+      field('record', $.identifier),
+      'do',
+      repeat($._statement),
+      'end;'
+    ),
+
+    temporary_statement: $ => seq(
+      'temporary',
+      field('variable', $.identifier),
+      ';'
+    ),
+
+    assignment_statement: $ => seq(
+      $.variable_name,
+      ':=',
+      $._expression,
+      ';'
+    ),
+
+    if_statement: $ => seq(
+      'if',
+      $._expression,
+      'then',
+      repeat($._statement),
+      optional(seq('else', repeat($._statement))),
+      'end;'
+    ),
+
+    while_statement: $ => seq(
+      'while',
+      $._expression,
+      'do',
+      repeat($._statement),
+      'end;'
+    ),
+
+    repeat_statement: $ => seq(
+      'repeat',
+      repeat($._statement),
+      'until',
+      $._expression,
+      ';'
+    ),
+
+    case_statement: $ => seq(
+      'case',
+      $._expression,
+      'of',
+      repeat($.case_option),
+      optional(seq('else', repeat($._statement))),
+      'end;'
+    ),
+
+    case_option: $ => seq(
+      $.case_value,
+      ':',
+      repeat($._statement)
+    ),
+
+    case_value: $ => /[^:]+/,
+
+    procedure_call: $ => seq(
+      $.procedure_name,
+      '(',
+      optional(commaSep1($._expression)),
+      ')',
+      ';'
+    ),
+
+    for_statement: $ => seq(
+      'for',
+      $.variable_name,
+      ':=',
+      $._expression,
+      'to',
+      $._expression,
+      optional(seq('step', $._expression)),
+      'do',
+      repeat($._statement),
+      'end;'
+    ),
+
+    foreach_statement: $ => seq(
+      'foreach',
+      $.variable_name,
+      'in',
+      $._expression,
+      'do',
+      repeat($._statement),
+      'end;'
+    ),
+
+    break_statement: $ => seq('break', ';'),
+
+    exit_statement: $ => seq(
+      'exit',
+      optional($._expression),
+      ';'
+    ),
+
+    _expression: $ => choice(
+      $.variable_name,
+      $.literal,
+      $.binary_expression,
+      $.unary_expression,
+      $.parenthesized_expression,
+      $.library_function_call,
+      $.client_type,
+      $.commit_behavior,
+      $.data_scope,
+      $.default_layout,
+      $.error_type,
+      $.execution_context,
+      $.procedure_call,
+      $.field_access
+    ),
+
+    field_access: $ => seq(
+      $._expression,
+      '.',
+      $.identifier
+    ),
+
+    library_function_call: $ => seq(
+      field('function', $.library_function),
+      '(',
+      optional(commaSep1($._expression)),
+      ')'
+    ),
+
+    library_function: $ => choice(
+      // Arithmetic functions
+      'Abs', 'Power', 'Random', 'Round', 'Sqrt',
+      // Array functions
+      'ArrayLen',
+      // Base64 functions
+      'Base64Convert', 'Base64Length', 'Base64ToText',
+      // Bit functions
+      'BitAnd', 'BitNot', 'BitOr', 'BitXor',
+      // Blob functions
+      'Blob2Base64String',
+      // Date and time functions
+      'CalcDate', 'Date2DMY', 'Date2DWY', 'DT2Date', 'DT2Time', 'CreateDateTime',
+      'CurrentDateTime', 'NormalDate', 'Time', 'Today', 'WorkDate',
+      // File handling functions
+      'CreateTempFile', 'DownloadFromStream', 'FileClose', 'FileCopy', 'FileDelete',
+      'FileExists', 'FileLen', 'FileMode', 'FileMove', 'FileOpen', 'FilePos',
+      'FileRead', 'FileSeek', 'FileWrite', 'UploadIntoStream',
+      // Formatting and conversion functions
+      'ConvertStr', 'DateFormula2Date', 'DateFormula2Text', 'DelChr', 'DelStr',
+      'Format', 'GetLastErrorText', 'InsStr', 'LowerCase', 'PadLeft', 'PadRight',
+      'SelectStr', 'StrCheckSum', 'StrLen', 'StrPos', 'StrSubstNo', 'TextEncoding',
+      'ToText', 'UpperCase',
+      // GUID functions
+      'CreateGuid', 'IsNullGuid',
+      // Math functions
+      'Exp', 'Log', 'Log10', 'MaxStrLen', 'Randomize',
+      // Record handling functions
+      'CalcFields', 'ClearMarks', 'CopyFilter', 'CurrFieldNo', 'CurrentKey',
+      'Delete', 'DeleteAll', 'FieldActive', 'FieldCaption', 'FieldError', 'FieldName',
+      'FieldNo', 'FindFirst', 'FindLast', 'FindSet', 'Get', 'GetFilter', 'GetFilters',
+      'GetPosition', 'GetRangeMax', 'GetRangeMin', 'HasFilter', 'Init', 'Insert',
+      'IsEmpty', 'Mark', 'MarkedOnly', 'Modify', 'ModifyAll', 'Next', 'ReadConsistency',
+      'ReadPermission', 'RecordId', 'RecordLevelLocking', 'Reset', 'SetAscending',
+      'SetAutoCalcFields', 'SetCurrentKey', 'SetFilter', 'SetPermissionFilter',
+      'SetPosition', 'SetRange', 'SetRecFilter', 'TableCaption', 'TableName',
+      'TestField', 'TransferFields', 'Validate', 'WritePermission',
+      // System functions
+      'CompanyName', 'ComputerName', 'EncryptionEnabled', 'GetLastErrorObject',
+      'GlobalLanguage', 'HasValue', 'SessionId', 'Sleep', 'TestFieldError',
+      'UserSecurityId', 'WindowsLanguage',
+      // UI and interaction functions
+      'Confirm', 'Dialog', 'GetUrl', 'HyperLink', 'Message', 'Notification',
+      'Page.Run', 'Report.Run', 'Report.SaveAs', 'Report.SaveAsExcel', 'Report.SaveAsPdf',
+      'Report.SaveAsWord', 'StrMenu',
+      // Variant handling functions
+      'Evaluate', 'MaxStrLen',
+      // XML handling functions
+      'XmlAttribute', 'XmlAttributeValue', 'XmlCData', 'XmlComment', 'XmlDeclaration',
+      'XmlDocument', 'XmlElement', 'XmlNamespace', 'XmlProcessingInstruction', 'XmlText',
+      // Other functions
+      'ClearAll', 'ClearLastError', 'Codeunit.Run', 'CommitTransaction',
+      'CurrentClientType', 'CurrentExecutionMode', 'CurrentTransactionType', 'Error',
+      'GetRecord', 'GuiAllowed', 'HasPermission', 'IsNullGuid', 'Millisecond',
+      'ModifyAll', 'RollbackTransaction', 'Run', 'RunModal', 'SetSelectionFilter',
+      'TextPos', 'Variant2Bool', 'Variant2Date', 'Variant2Time',
+      // Array methods
+      'AddRange', 'Any', 'AsArray', 'Clear', 'Contains', 'Copy', 'Count', 'Get',
+      'GetRange', 'IndexOf', 'Insert', 'LastIndexOf', 'Remove', 'RemoveAt', 'RemoveRange',
+      'Reverse', 'Set', 'SetRange', 'Sort',
+      // Error Collection API methods
+      'AddError', 'ClearErrors', 'GetErrors', 'HasErrors',
+      // Progress Windows methods
+      'Open', 'Update', 'Close',
+      // Action Option methods
+      'ActionOption',
+      // Audit Category Option methods
+      'AuditCategoryOption',
+      // Client Type Option methods
+      'ClientTypeOption',
+      // Client Type Option methods
+      'ClientType'
+    ),
+
+    client_type: $ => prec(3, choice(
+      'Background',
+      'Desktop',
+      'Management',
+      'OData',
+      'Phone',
+      'Tablet',
+      'Web',
+      'WebService',
+      'Windows'
+    )),
+
+    commit_behavior: $ => choice(
+      'Default',
+      'Implicit',
+      'Explicit'
+    ),
+
+    data_scope: $ => choice(
+      'Company',
+      'Global',
+      'SystemId'
+    ),
+
+    default_layout: $ => choice(
+      'RDLC',
+      'Word'
+    ),
+
+    error_type: $ => choice(
+      'AccountNotFound',
+      'AccountTypeNotSupported',
+      'AlreadyExists',
+      'AppNotFound',
+      'AppValidation',
+      'Arithmetic',
+      'ArrayBounds',
+      'AssetFileNotFound',
+      'Authorization',
+      'BcptTestCodeunitNotFound',
+      'BcptTestFunctionNotFound',
+      'BusinessCentralUpgradeRequired',
+      'CannotInsertRecord',
+      'CannotModifyRecord',
+      'CannotUpdateNonEmptyField',
+      'ConcurrencyViolation',
+      'ConfigPackageExists',
+      'Conflict',
+      'ConnectionAttemptFailed',
+      'CustomDimNotFound',
+      'CustomDimValueNotFound',
+      'DataverseSyncError',
+      'DelegatedAuthFailed',
+      'DimensionValueNotFound',
+      'DotNetClassNotFound',
+      'DotNetMemberNotFound',
+      'DotNetMethodNotFound',
+      'DuplicateKey',
+      'EndOfStream',
+      'EnvironmentNotFound',
+      'ExportToExcelFailed',
+      'ExternalSqlError',
+      'FeatureNotEnabled',
+      'FieldNotFound',
+      'FileNotFound',
+      'FilterGroupNotFound',
+      'FilterNotAllowed',
+      'FilterNotValid',
+      'FunctionNotAllowed',
+      'GenericAuthFailed',
+      'GraphAuthFailed',
+      'ImportTenantEncryptionKeyFailed',
+      'ImportTestAutomationFailed',
+      'IndexOutOfBounds',
+      'InsufficientReadPermission',
+      'InsufficientWritePermission',
+      'Internal',
+      'InvalidArgument',
+      'InvalidBindingType',
+      'InvalidChar',
+      'InvalidClient',
+      'InvalidClientType',
+      'InvalidCodeunit',
+      'InvalidCompany',
+      'InvalidCompanyInUserSettings',
+      'InvalidCredentials',
+      'InvalidCurrency',
+      'InvalidDateTimeFormat',
+      'InvalidDateTimeFormatSpecifier',
+      'InvalidDimensionValueCode',
+      'InvalidEmail',
+      'InvalidExtension',
+      'InvalidExtensionType',
+      'InvalidFieldClass',
+      'InvalidFieldName',
+      'InvalidFieldNumber',
+      'InvalidFieldValue',
+      'InvalidFilter',
+      'InvalidFilterString',
+      'InvalidGlobalDimension',
+      'InvalidGuid',
+      'InvalidImageFormat',
+      'InvalidIndex',
+      'InvalidJsonObject',
+      'InvalidJsonPropertyName',
+      'InvalidJsonToken',
+      'InvalidKeyFieldType',
+      'InvalidKeysetType',
+      'InvalidLanguageId',
+      'InvalidMediaType',
+      'InvalidMethod',
+      'InvalidMethodCallOnView',
+      'InvalidName',
+      'InvalidNestedWriteAttempt',
+      'InvalidPageType',
+      'InvalidPeriodFormat',
+      'InvalidPropertyType',
+      'InvalidRecordId',
+      'InvalidReportId',
+      'InvalidSecurityFilter',
+      'InvalidSessionMode',
+      'InvalidTableRelation',
+      'InvalidTestFunctionName',
+      'InvalidTestMethodName',
+      'InvalidTimeZone',
+      'InvalidToken',
+      'InvalidType',
+      'InvalidUri',
+      'InvalidUriTemplate',
+      'InvalidUserName',
+      'InvalidVariableName',
+      'InvalidXmlPortId',
+      'JsonParseError',
+      'JsonPropertyAlreadyExists',
+      'JsonPropertyDoesNotExist',
+      'JsonTokenDoesNotMatchInfo',
+      'LicenseError',
+      'MalformedXml',
+      'MaxConcurrencyReached',
+      'MissingExchangeRates',
+      'MissingLicensePermission',
+      'MissingRequiredParameter',
+      'NavAppFileDoesNotExist',
+      'NavAppInstallationFailed',
+      'NavAppInvalid',
+      'NavAppSymbolConflict',
+      'NavAppSymbolNotFound',
+      'NavAppValidationFailed',
+      'NoPermissions',
+      'NotAReportInDesignMode',
+      'NotFound',
+      'NotSupported',
+      'NullValue',
+      'OAuthFailed',
+      'ODataFilterLimitExceeded',
+      'ODataOrderByLimitExceeded',
+      'ODataSelectLimitExceeded',
+      'ObjectDoesNotExist',
+      'ObjectNotFound',
+      'OnBeforeTestRunFailed',
+      'OnPremiseProductTypeNotSupported',
+      'OperationAborted',
+      'OperationCanceled',
+      'OperationOnViewNotSupported',
+      'OptimisticConcurrency',
+      'OutOfBoundsException',
+      'PageNotFound',
+      'PlatformVersionTooLow',
+      'PowerBIApiNotEnabled',
+      'PrinterNotFound',
+      'RecordAlreadyExists',
+      'RecordNotFound',
+      'ReportNotFound',
+      'RequiredFieldMissing',
+      'ResourceNotFound',
+      'RuntimeError',
+      'SQLConstraintViolation',
+      'SQLDuplicateKeyError',
+      'SQLInvalidOperation',
+      'SQLTimeout',
+      'SecurityFiltering',
+      'SerializationError',
+      'ServiceNotFound',
+      'SessionNotFound',
+      'StringExceedsMaximumLength',
+      'SubscriptionDoesNotExist',
+      'SyncError',
+      'TableNotFound',
+      'TaskSchedulerError',
+      'TestCodeunitNotFound',
+      'TestFunctionNotFound',
+      'TestIsolationError',
+      'TestPermissionError',
+      'Timeout',
+      'TooManyNestedCalls',
+      'TooManyRecords',
+      'TypeMismatch',
+      'UnexpectedError',
+      'UnknownProperty',
+      'UnsupportedFieldTypeForBinding',
+      'UnsupportedFilterToken',
+      'UpgradeRequired',
+      'UploadExceedsAllowedSize',
+      'UserNotFound',
+      'UserNotLicensed',
+      'ValidationError',
+      'WebhookSubscriberNotFound',
+      'WebserviceUriTooLong',
+      'WorkflowWebhookHandlerNotFound',
+      'WrongAccountType',
+      'XmlPortNotFound'
+    ),
+
+    field_class: $ => choice(
+      'Normal',
+      'FlowField',
+      'FlowFilter'
+    ),
+
+    execution_context: $ => prec(2, choice(
+      'Normal',
+      'Background',
+      'Unspecified',
+      'OnPrem',
+      'WebService',
+      'WebServiceToOnPrem',
+      'WebServiceToSaaS',
+      'SaaS',
+      'Console',
+      'MobileDevice',
+      'Tablet',
+      'Desktop'
+    )),
+
+    action_option: $ => choice(
+      'Create',
+      'CreateMultiple',
+      'CreatePlusNew',
+      'Delete',
+      'DeleteSelected',
+      'Edit',
+      'Invoke',
+      'LookupOnly',
+      'None',
+      'Print',
+      'PrintSelected',
+      'RunObject',
+      'RunObjectOnRec',
+      'RunReport',
+      'View'
+    ),
+
+    literal: $ => choice(
+      $.number,
+      $.string,
+      $.boolean
+    ),
+
+    number: $ => /\d+(\.\d+)?/,
+    string: $ => /'[^']*'/,
+    boolean: $ => choice('true', 'false'),
+
+    binary_expression: $ => prec.left(1, seq(
+      $._expression,
+      choice(
+        '+', '-', '*', '/', 'div', 'mod',
+        '=', '<>', '<', '<=', '>', '>=',
+        'and', 'or', 'xor',
+        'in', 'like',
+        '&'  // String concatenation
+      ),
+      $._expression
+    )),
+
+    unary_expression: $ => prec(2, seq(
+      choice('-', 'not'),
+      $._expression
+    )),
+
+    ternary_expression: $ => prec.right(seq(
+      $._expression,
+      'in',
+      $._expression,
+      '..',
+      $._expression
+    )),
+
+    parenthesized_expression: $ => seq(
+      '(',
+      $._expression,
+      ')'
+    ),
+
+    textconst_definition: $ => seq(
+      'TextConst',
+      field('language', $.language_code),
+      '=',
+      field('value', $.string),
+      ';'
+    ),
+
+    language_code: $ => /[A-Z]{2,3}(-[A-Z]{2,3})?/,
+
+    event_definition: $ => seq(
+      choice('InternalEvent', 'IntegrationEvent'),
+      field('name', $.identifier),
       '(',
       optional($.parameter_list),
       ')',
       ';'
     ),
 
-    // Enum value definition
-    enum_value: $ => seq(
-      field('value_name', $.identifier),
-      optional(seq('=', field('value', $.integer))),
-      ';'
-    ),
-
-    // Assembly definition for DotNet objects
-    assembly: $ => seq(
-      'assembly',
-      '(',
-      field('assembly_name', $.string),
-      ')',
-      ';'
-    ),
-
-    // Extends clause definition
-    extends_clause: $ => seq(
-      'extends',
-      field('base_object', $.identifier)
-    ),
-
-    // Implements clause definition
-    implements_clause: $ => seq(
-      'implements',
-      $.identifier,
-      repeat(seq(',', $.identifier))
-    ),
-
-    // Profile element definition
-    profile_element: $ => choice(
-      $.profile_customization,
-      $.profile_apparea
-    ),
-
-    // Profile customization definition
-    profile_customization: $ => seq(
-      'customizations',
-      '=',
-      $.string,
-      ';'
-    ),
-
-    // Profile app area definition
-    profile_apparea: $ => seq(
-      'area',
-      '(',
-      field('area_name', $.identifier),
-      ')',
+    label_definition: $ => seq(
+      'label',
+      field('id', $.number),
       '{',
-      repeat($.profile_apparea_element),
+      repeat($.label_property),
       '}'
     ),
 
-    // Profile app area element definition
-    profile_apparea_element: $ => choice(
-      $.profile_rolecenters,
-      $.profile_sections
-    ),
-
-    // Profile role centers definition
-    profile_rolecenters: $ => seq(
-      'rolecenters',
+    label_property: $ => seq(
+      field('name', $.identifier),
       '=',
-      '[',
-      $.integer,
-      repeat(seq(',', $.integer)),
-      ']',
+      field('value', $.string),
       ';'
-    ),
+    )
+  },
 
-    // Profile sections definition
-    profile_sections: $ => seq(
-      'sections',
-      '=',
-      '[',
-      $.string,
-      repeat(seq(',', $.string)),
-      ']',
-      ';'
-    ),
+  textconst_definition: $ => seq(
+    'TextConst',
+    field('language', $.language_code),
+    '=',
+    field('value', $.string),
+    ';'
+  ),
 
-    // Permission definition
-    permission: $ => seq(
-      field('object_type', $.identifier),
-      field('object_name', $.string),
-      '=',
-      field('permission_type', $.identifier),
-      ';'
-    ),
+  language_code: $ => /[A-Z]{2,3}(-[A-Z]{2,3})?/,
 
-    // Entitlement element definition
-    entitlement_element: $ => choice(
-      $.entitlement_object_entitlements,
-      $.entitlement_custom_entitlements
-    ),
+  event_definition: $ => seq(
+    choice('InternalEvent', 'IntegrationEvent'),
+    field('name', $.identifier),
+    '(',
+    optional($.parameter_list),
+    ')',
+    ';'
+  ),
 
-    // Entitlement object entitlements definition
-    entitlement_object_entitlements: $ => seq(
-      'ObjectEntitlements',
-      '=',
-      '[',
-      $.entitlement_object,
-      repeat(seq(',', $.entitlement_object)),
-      ']',
-      ';'
-    ),
+  label_definition: $ => seq(
+    'label',
+    field('id', $.number),
+    '{',
+    repeat($.label_property),
+    '}'
+  ),
 
-    // Entitlement object definition
-    entitlement_object: $ => seq(
-      'ObjectType',
-      '=',
-      field('object_type', $.identifier),
-      ',',
-      'ObjectId',
-      '=',
-      field('object_id', $.string)
-    ),
-
-    // Entitlement custom entitlements definition
-    entitlement_custom_entitlements: $ => seq(
-      'CustomEntitlements',
-      '=',
-      '[',
-      $.string,
-      repeat(seq(',', $.string)),
-      ']',
-      ';'
-    ),
-
-    // Statements
-    // This rule defines all the possible statements in AL
-    statement: $ => choice(
-      $.assignment_statement,
-      $.if_statement,
-      $.case_statement,
-      $.for_statement,
-      $.foreach_statement,
-      $.while_statement,
-      $.repeat_statement,
-      $.call_statement,
-      $.exit_statement,
-      $.with_statement,
-      $.return_statement,
-      $.var_declaration,
-      $.try_catch_statement,
-      $.init_statement,
-      $.modify_statement,
-      $.insert_statement,
-      $.calcfields_statement,
-      $.find_statement,
-      $.findlast_statement,
-      $.setfilter_statement
-    ),
-
-    // FindLast statement: finds the last record in a table
-    findlast_statement: $ => prec(2, seq(
-      'FindLast',
-      '(',
-      ')',
-      ';'
-    )),
-
-    // SetFilter statement: sets a filter on a table
-    setfilter_statement: $ => seq(
-      'SetFilter',
-      '(',
-      field('field_name', $.identifier),
-      ',',
-      field('filter_expression', $.string),
-      ')',
-      ';'
-    ),
-
-    // Find statement: finds records in a table
-    find_statement: $ => prec(1, seq(
-      choice('FindFirst', 'FindLast', 'Find', 'FindSet'),
-      '(',
-      optional($.boolean),
-      ')',
-      ';'
-    )),
-
-    // Init statement: initializes a record
-    init_statement: $ => seq(
-      'Init',
-      '(',
-      ')',
-      ';'
-    ),
-
-    // Modify statement: modifies a record
-    modify_statement: $ => seq(
-      'Modify',
-      '(',
-      optional($.boolean),
-      ')',
-      ';'
-    ),
-
-    // Insert statement: inserts a new record
-    insert_statement: $ => seq(
-      'Insert',
-      '(',
-      optional($.boolean),
-      ')',
-      ';'
-    ),
-
-    // CalcFields statement: calculates fields in a record
-    calcfields_statement: $ => seq(
-      'CALCFIELDS',
-      '(',
-      field('field_name', $.identifier),
-      ')',
-      ';'
-    ),
-
-    // Assignment statement: assigns a value to a variable
-    assignment_statement: $ => seq(
-      field('left_hand_side', $.identifier),
-      ':=',
-      field('right_hand_side', $.expression),
-      ';'
-    ),
-
-    // If statement: conditional execution
-    if_statement: $ => seq(
-      'if',
-      field('condition', $.expression),
-      'then',
-      '{',
-      repeat($.statement),
-      '}',
-      optional(seq(
-        'else',
-        '{',
-        repeat($.statement),
-        '}'
-      ))
-    ),
-
-    // Case statement: multi-way branch
-    case_statement: $ => seq(
-      'case',
-      field('expression', $.expression),
-      'of',
-      repeat1($.case_option),
-      optional(seq(
-        'else',
-        '{',
-        repeat($.statement),
-        '}'
-      )),
-      'end;'
-    ),
-
-    // Case option: individual branch in a case statement
-    case_option: $ => seq(
-      field('option', $.expression),
-      ':',
-      '{',
-      repeat($.statement),
-      '}'
-    ),
-
-    // For statement: loop with a counter
-    for_statement: $ => seq(
-      'for',
-      field('variable', $.identifier),
-      ':=',
-      field('start', $.expression),
-      'to',
-      field('end', $.expression),
-      optional(seq('step', field('step', $.expression))),
-      'do',
-      '{',
-      repeat($.statement),
-      '}'
-    ),
-
-    // Foreach statement: loop over elements in a collection
-    foreach_statement: $ => seq(
-      'foreach',
-      field('variable', $.identifier),
-      'in',
-      field('collection', $.expression),
-      'do',
-      '{',
-      repeat($.statement),
-      '}'
-    ),
-
-    // While statement: loop with a condition
-    while_statement: $ => seq(
-      'while',
-      field('condition', $.expression),
-      'do',
-      '{',
-      repeat($.statement),
-      '}'
-    ),
-
-    // Repeat statement: loop that executes at least once
-    repeat_statement: $ => seq(
-      'repeat',
-      '{',
-      repeat($.statement),
-      '}',
-      'until',
-      field('condition', $.expression),
-      ';'
-    ),
-
-    // Call statement: calls a function or procedure
-    call_statement: $ => seq(
-      field('function_name', $.identifier),
-      '(',
-      optional($.argument_list),
-      ')',
-      ';'
-    ),
-
-    // Exit statement: exits from a loop or procedure
-    exit_statement: $ => seq(
-      'exit',
-      ';'
-    ),
-
-    // With statement: sets a default record for field access
-    with_statement: $ => seq(
-      'with',
-      field('record', $.identifier),
-      'do',
-      '{',
-      repeat($.statement),
-      '}'
-    ),
-
-    // Return statement: returns from a function or procedure
-    return_statement: $ => seq(
-      'return',
-      optional(field('value', $.expression)),
-      ';'
-    ),
-
-    // Try-catch statement: handles exceptions
-    try_catch_statement: $ => seq(
-      'try',
-      '{',
-      repeat($.statement),
-      '}',
-      'catch',
-      '{',
-      repeat($.statement),
-      '}'
-    ),
-
-    // Expressions
-    // This rule defines all the possible expressions in AL
-    expression: $ => choice(
-      $.identifier,
-      $.literal,
-      $.binary_expression,
-      $.unary_expression,
-      $.parenthesized_expression,
-      $.function_call,
-      $.record_ref_expression,
-      $.field_ref_expression
-    ),
-
-    // Binary expression: expression with two operands and an operator
-    binary_expression: $ => prec.left(1, seq(
-      field('left', $.expression),
-      field('operator', $.binary_operator),
-      field('right', $.expression)
-    )),
-
-    // Unary expression: expression with one operand and an operator
-    unary_expression: $ => prec(2, seq(
-      field('operator', $.unary_operator),
-      field('operand', $.expression)
-    )),
-
-    // Parenthesized expression: expression enclosed in parentheses
-    parenthesized_expression: $ => seq(
-      '(',
-      $.expression,
-      ')'
-    ),
-
-    // Function call expression
-    function_call: $ => seq(
-      field('function_name', $.identifier),
-      '(',
-      optional($.argument_list),
-      ')'
-    ),
-
-    // RecordRef expression: used to open a table
-    record_ref_expression: $ => seq(
-      'RecordRef',
-      '.',
-      'Open',
-      '(',
-      field('table_id', $.expression),
-      ')'
-    ),
-
-    // FieldRef expression: used to access a field in a record
-    field_ref_expression: $ => seq(
-      field('record', $.identifier),
-      '.',
-      'Field',
-      '(',
-      field('field_id', $.expression),
-      ')'
-    ),
-
-    // Operators
-    // Binary operators: operators that work on two operands
-    binary_operator: $ => choice(
-      '+', '-', '*', '/', 'div', 'mod',  // Arithmetic operators
-      '=', '<>', '<', '<=', '>', '>=',   // Comparison operators
-      'and', 'or', 'xor', 'in'           // Logical operators
-    ),
-
-    // Unary operators: operators that work on one operand
-    unary_operator: $ => choice(
-      '-', 'not'
-    ),
-
-    // Literals: constant values in the code
-    literal: $ => prec(7, choice(
-      $.integer,
-      $.decimal,
-      $.string,
-      $.boolean,
-      $.date,
-      $.time,
-      $.datetime
-    )),
-
-    // Basic types and constructs
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,  // Identifiers: names of variables, functions, etc.
-    identifier_list: $ => seq($.identifier, repeat(seq(',', $.identifier))),  // List of identifiers
-    argument_list: $ => seq($.expression, repeat(seq(',', $.expression))),  // List of arguments in a function call
-    parameter_list: $ => seq($.parameter, repeat(seq(',', $.parameter))),  // List of parameters in a function definition
-
-    // Parameter in a function definition
-    parameter: $ => seq(
-      optional('var'),  // 'var' keyword for reference parameters
-      field('parameter_name', $.identifier),
-      ':',
-      field('parameter_type', $.data_type)
-    ),
-
-    // Data types in AL
-    data_type: $ => choice(
-      'Integer',
-      'Decimal',
-      'Text',
-      'Code',
-      'Boolean',
-      'Date',
-      'Time',
-      'DateTime',
-      'Duration',
-      'BigInteger',
-      'Char',
-      'Record',
-      'RecordId',
-      'RecordRef',
-      'FieldRef',
-      'DateFormula',
-      'Variant',
-      'Blob',
-      'Codeunit',
-      'Page',
-      'Report',
-      'Query',
-      'XmlPort',
-      'GUID',
-      'InStream',
-      'OutStream',
-      'Dialog',
-      'File',
-      'TextConst',
-      'Label',
-      'Action',
-      'HttpClient',
-      'HttpContent',
-      'HttpHeaders',
-      'HttpRequestMessage',
-      'HttpResponseMessage',
-      'JsonToken',
-      'JsonValue',
-      'JsonArray',
-      'JsonObject',
-      'List',
-      'Dictionary',
-      'DotNet',
-      seq('array', '[', ']', 'of', $.data_type),
-      prec.left(2, 'Option'),
-      prec.left(3, seq('Option', '[', $.integer, ']')),
-      'BLOB'
-    ),
-
-    _property_value: $ => choice(
-      $.literal,
-      $.identifier
-    ),
-
-    // Basic literal types
-    boolean: $ => choice('true', 'false'),
-    integer: $ => /\d+/,
-    decimal: $ => /\d+\.\d+/,
-    string: $ => /'[^']*'/,
-    date: $ => /\d{2}\.\d{2}\.\d{4}/,
-    time: $ => /\d{2}:\d{2}:\d{2}/,
-    datetime: $ => seq($.date, $.time),
-
-    // Comments in AL
-    comment: $ => token(choice(
-      seq('//', /.*/),  // Single-line comment
-      seq(
-        '/*',
-        /[^*]*\*+([^/*][^*]*\*+)*/,
-        '/'
-      )  // Multi-line comment
-    ))
-  }
+  label_property: $ => seq(
+    field('name', $.identifier),
+    '=',
+    field('value', $.string),
+    ';'
+  )
 });
 
+function commaSep1(rule) {
+  return seq(rule, repeat(seq(',', rule)));
+}
