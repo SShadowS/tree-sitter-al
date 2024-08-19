@@ -1,15 +1,24 @@
+// AL (Application Language) grammar for tree-sitter
+// This grammar defines the structure and syntax for AL, 
+// the programming language used in Microsoft Dynamics 365 Business Central
+
 module.exports = grammar({
   name: 'al',
 
+  // Define what should be treated as extra (ignored) in the parsing process
   extras: $ => [
-    $.comment,
-    $.xml_comment,
-    /\s/
+    $.comment,       // Comments are ignored during parsing
+    $.xml_comment,   // XML comments are also ignored
+    /\s/             // Whitespace is ignored
   ],
 
   rules: {
+    // The root node of the AST (Abstract Syntax Tree)
+    // A source file in AL consists of one or more object definitions
     source_file: $ => repeat($._definition),
 
+    // Definitions for various AL object types
+    // This rule defines all the possible top-level objects in an AL file
     _definition: $ => choice(
       $.table_definition,
       $.page_definition,
@@ -28,6 +37,7 @@ module.exports = grammar({
       $.entitlement
     ),
 
+    // Codeunit object definition
     codeunit_definition: $ => seq(
       'codeunit',
       field('id', $.object_id),
@@ -41,11 +51,13 @@ module.exports = grammar({
       '}'
     ),
 
+    // Variable section definition
     var_section: $ => seq(
       'var',
       repeat($.variable_declaration)
     ),
 
+    // Variable declaration definition
     variable_declaration: $ => seq(
       'var',
       field('name', $.identifier),
@@ -101,6 +113,8 @@ module.exports = grammar({
       optional(',')
     ),
 
+    // Variable type definition
+    // This includes all the built-in types in AL and allows for custom types
     _variable_type: $ => choice(
       'Action',
       'Array',
@@ -196,6 +210,7 @@ module.exports = grammar({
       $.trigger_definition
     ),
 
+    // Procedure definition
     procedure_definition: $ => seq(
       repeat($.attribute),
       optional($.procedure_access_modifier),
@@ -214,6 +229,7 @@ module.exports = grammar({
       )
     ),
 
+    // Procedure description (XML documentation)
     procedure_description: $ => seq(
       '@',
       field('language', $.language_code),
@@ -221,11 +237,13 @@ module.exports = grammar({
       field('description', $.string)
     ),
 
+    // Parameter list definition
     parameter_list: $ => seq(
       $.parameter,
       repeat(seq(';', $.parameter))
     ),
 
+    // Parameter definition
     parameter: $ => seq(
       optional(choice('var', 'out')),
       optional('temporary'),
@@ -235,6 +253,7 @@ module.exports = grammar({
       optional($.procedure_description)
     ),
 
+    // Language code for localization
     language_code: $ => /[A-Z]{2,3}(-[A-Z]{2,3})?/,
 
     procedure_overload: $ => seq(
@@ -307,12 +326,15 @@ module.exports = grammar({
       $.identifier
     ),
 
+    // Statement definition
+    // This rule defines all the possible statements in AL
     _statement: $ => choice(
       $.assignment_statement,
       $.procedure_call,
       // ... (keep other existing statement types)
     ),
 
+    // Procedure call definition
     procedure_call: $ => seq(
       field('name', $.identifier),
       '(',
@@ -321,15 +343,17 @@ module.exports = grammar({
       ';'
     ),
 
+    // Comment definition
     comment: $ => token(choice(
-      seq('//', /.*/),
+      seq('//', /.*/),  // Single-line comment
       seq(
         '/*',
         /[^*]*\*+([^/*][^*]*\*+)*/,
         '/'
-      )
+      )  // Multi-line comment
     )),
 
+    // XML comment definition (for documentation)
     xml_comment: $ => seq(
       '///',
       repeat(choice(
