@@ -554,28 +554,7 @@ module.exports = grammar({
       '{',
       commaSep1($.identifier),
       '}',
-      optional($.key_properties)
-    ),
-
-    key_properties: $ => repeat1($.property),
-
-    key_properties: $ => repeat1(choice(
-      $.maintain_sift_index_property,
-      $.maintain_sql_index_property
-    )),
-
-    maintain_sift_index_property: $ => seq(
-      'MaintainSiftIndex',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
-
-    maintain_sql_index_property: $ => seq(
-      'MaintainSqlIndex',
-      '=',
-      field('value', $.boolean),
-      ';'
+      optional(repeat1($.property))
     ),
 
     field_definition: $ => seq(
@@ -1629,7 +1608,7 @@ module.exports = grammar({
       'procedure',
       field('name', $.procedure_name),
       '(',
-      optional($.parameter_list),
+      optional(commaSep1($.parameter)),
       ')',
       optional(seq(':', field('return_type', $.type))),
       $.procedure_body
@@ -1641,19 +1620,14 @@ module.exports = grammar({
       'end;'
     ),
 
-    parameter_list: $ => commaSep1($.parameter),
-
-    overload: $ => seq(
-      'overload',
-      '(',
-      optional($.parameter_list),
-      ')',
-      optional(seq(':', $.return_type)),
-      choice(
-        $.procedure_body,
-        ';'  // For procedure prototypes
-      )
+    parameter: $ => seq(
+      optional('var'),
+      field('name', $.identifier),
+      ':',
+      field('type', $.type)
     ),
+
+    procedure_name: $ => $.identifier,
 
     event_subscriber: $ => seq(
       '[EventSubscriber(',
