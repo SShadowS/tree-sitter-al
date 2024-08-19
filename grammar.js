@@ -37,29 +37,26 @@ module.exports = grammar({
       field('id', $.object_id),
       field('name', $.object_name),
       '{',
-      repeat(choice(
-        $.var_section,
-        $._codeunit_element,
-        $.trigger_definition
-      )),
+      repeat(
+        $._codeunit_element),
       '}'
     ),
 
     // Variable section definition
     // This section declares variables used within an object
-    var_section: $ => prec.right(seq(
+    var_section: $ => seq(
       'var',                        // Keyword indicating variable declarations
       repeat1($.variable_declaration) // One or more variable declarations
-    )),
+    ),
 
     // Variable declaration definition
     // Defines the structure of a single variable declaration
     variable_declaration: $ => seq(
-      'var',                                    // Keyword indicating a variable declaration
+      optional('var'),                                    // Keyword indicating a variable declaration
       field('name', $.identifier),              // Name of the variable
       ':',                                      // Separator between name and type
       field('type', $._variable_type),          // Type of the variable
-      optional(seq(':', field('subtype', $.identifier))), // Optional subtype for certain variable types
+      optional(field('subtype', $.identifier)), // Optional subtype for certain variable types
       repeat(choice(
         'temporary',                            // Temporary variable (exists only for the duration of a function call)
         seq('array', '[', optional($.number), ']'), // Array declaration with optional size
@@ -130,7 +127,7 @@ module.exports = grammar({
     _codeunit_element: $ => choice(
       $.procedure_definition,   // Function definitions
       $.trigger_definition,     // Event trigger definitions
-      $.variable_declaration,   // Variable declarations
+      $.var_section,   // Variable declarations
       $.textconst_definition    // Text constant definitions
     ),
 
@@ -187,7 +184,7 @@ module.exports = grammar({
     // Procedure body definition
     procedure_body: $ => seq(
       'begin',
-      repeat(choice($._statement, $.preprocessor_directive, $.variable_declaration)),
+      repeat(choice($._statement, $.variable_declaration)),
       'end;'
     ),
 
@@ -370,7 +367,7 @@ module.exports = grammar({
       'trigger',
       field('name', $.trigger_name),
       '()',
-      $.var_section,
+      optional($.var_section),
       $.procedure_body
     ),
 
@@ -480,16 +477,6 @@ module.exports = grammar({
       'report',
       $._object_header,
       $._object_body
-    ),
-
-    codeunit_definition: $ => seq(
-      'codeunit',
-      $.object_id,
-      $.object_name,
-      '{',
-      optional($.var_section),
-      repeat($._codeunit_element),
-      '}'
     ),
 
     query_definition: $ => seq(
