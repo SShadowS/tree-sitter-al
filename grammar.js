@@ -869,11 +869,11 @@ module.exports = grammar({
       $.identifier  // Allow custom types
     ),
 
-    literal: $ => choice(
+    literal: $ => prec(1, choice(
       $.number,
       $.string,
       $.boolean
-    ),
+    )),
 
     number: $ => /\d+(\.\d+)?/,
     string: $ => /"[^"]*"/,
@@ -1910,7 +1910,7 @@ module.exports = grammar({
       ';'
     ),
 
-    _expression: $ => choice(
+    _expression: $ => prec(2, choice(
       $.variable_name,
       $.literal,
       $.binary_expression,
@@ -1927,7 +1927,7 @@ module.exports = grammar({
       $.field_access,
       $.ternary_expression,
       $.boolean
-    ),
+    )),
 
     field_access: $ => seq(
       $._expression,
