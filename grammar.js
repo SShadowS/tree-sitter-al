@@ -376,15 +376,6 @@ module.exports = grammar({
       'OnBeforeDeleteRecord', 'OnBeforeOnRun', 'OnAfterOnRun'
     ),
 
-    table_definition: $ => seq(
-      'table',
-      $._object_header,
-      '{',
-      repeat($._table_body_element),
-      '}'
-    ),
-
-
     page_definition: $ => seq(
       'page',
       $._object_header,
@@ -548,13 +539,13 @@ module.exports = grammar({
       '}',
       optional(seq(
         '{',
-        repeat($.key_property),
+        repeat($._key_property),
         '}'
       )),
       ';'
     ),
 
-    key_property: $ => choice(
+    _key_property: $ => choice(
       $.enabled_property,
       $.clustered_property,
       $.unique_property,
@@ -1347,19 +1338,21 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        repeat(choice(
-          $.caption_property,
-          $.data_classification_property,
-          $.option_members,
-          $.table_relation_property,
-          $.validate_property,
-          $.access_level_property,
-          $.description_property,
-          $.property,
-          $.field_class_property
-        )),
+        repeat($._field_property),
         '}'
       ))
+    ),
+
+    _field_property: $ => choice(
+      $.caption_property,
+      $.data_classification_property,
+      $.option_members,
+      $.table_relation_property,
+      $.validate_property,
+      $.access_level_property,
+      $.description_property,
+      $.property,
+      $.field_class_property
     ),
 
     field_id: $ => /\d+/,
