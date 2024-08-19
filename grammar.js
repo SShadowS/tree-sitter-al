@@ -1238,7 +1238,8 @@ module.exports = grammar({
       $.key_definition,
       $.procedure_definition,
       $.variable_declaration,
-      $.trigger_definition
+      $.trigger_definition,
+      $.property
     ),
 
     _page_body_element: $ => choice(
@@ -1246,7 +1247,8 @@ module.exports = grammar({
       $.actions,
       $.procedure_definition,
       $.variable_declaration,
-      $.trigger_definition
+      $.trigger_definition,
+      $.property
     ),
 
     tableextension: $ => seq(
@@ -2293,6 +2295,13 @@ module.exports = grammar({
       ';'
     )
   },
+
+  property: $ => seq(
+    field('name', $.identifier),
+    '=',
+    field('value', choice($.string, $.number, $.boolean, $.identifier)),
+    ';'
+  ),
 
   textconst_definition: $ => seq(
     'TextConst',
