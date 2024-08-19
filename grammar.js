@@ -1233,6 +1233,13 @@ module.exports = grammar({
       '}'
     ),
 
+    property: $ => seq(
+      field('name', $.identifier),
+      '=',
+      field('value', choice($.string, $.number, $.boolean, $.identifier)),
+      ';'
+    ),
+
     _table_body_element: $ => choice(
       $.field_definition,
       $.key_definition,
@@ -2297,13 +2304,6 @@ module.exports = grammar({
       ';'
     )
   },
-
-  property: $ => seq(
-    field('name', $.identifier),
-    '=',
-    field('value', choice($.string, $.number, $.boolean, $.identifier)),
-    ';'
-  ),
 
   integer: $ => /\d+/,
 
