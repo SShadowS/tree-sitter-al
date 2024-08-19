@@ -207,9 +207,6 @@ module.exports = grammar({
       optional($.procedure_description)      // Parameter description
     ),
 
-    // Language code for localization
-    language_code: $ => /[A-Z]{2,3}(-[A-Z]{2,3})?/,
-
     // Procedure overload definition
     procedure_overload: $ => seq(
       'procedure',
