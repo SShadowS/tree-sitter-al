@@ -54,10 +54,10 @@ module.exports = grammar({
 
     // Variable section definition
     // This section declares variables used within an object
-    var_section: $ => seq(
+    var_section: $ => prec.right(seq(
       'var',
-      repeat($.variable_declaration)
-    ),
+      repeat1($.variable_declaration)
+    )),
 
     // Variable declaration definition
     // Defines the structure of a single variable declaration
