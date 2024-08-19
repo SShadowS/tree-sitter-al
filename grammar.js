@@ -470,13 +470,6 @@ module.exports = grammar({
       '}'
     ),
 
-    field_property: $ => seq(
-      field('name', $.identifier),
-      '=',
-      field('value', $._expression),
-      ';'
-    ),
-
     report_definition: $ => seq(
       'report',
       $._object_header,
@@ -642,7 +635,7 @@ module.exports = grammar({
       'ExternalType',
       'FieldClass',
       'InitValue',
-      'LookupPageId',
+      /LookupPageID/i,
       'MaxValue',
       'MinValue',
       'NotBlank',
@@ -968,7 +961,7 @@ module.exports = grammar({
       'InherentPermissions',
       'InsertAllowed',
       'LinksAllowed',
-      'LookupPageID',
+      /LookupPageID/i,
       'ModifyAllowed',
       'MultipleNewLines',
       'NotifyOnDelete',
