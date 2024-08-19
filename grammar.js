@@ -597,15 +597,7 @@ module.exports = grammar({
       $.identifier,
       'PasteIsValid',
       'LookupPageID',
-      'DrillDownPageID'
-    ),
-
-    _property_value: $ => choice(
-      $.string,
-      $.number,
-      $.boolean,
-      $.identifier
-    ),
+      'DrillDownPageID',
       'SqlDataType',
       'SqlTimestamp',
       'SubstitutionAllowed',
@@ -614,6 +606,13 @@ module.exports = grammar({
       'ValidateTableRelation',
       'ValuesAllowed',
       'Width'
+    ),
+
+    _property_value: $ => choice(
+      $.string,
+      $.number,
+      $.boolean,
+      $.identifier
     ),
 
     option_members: $ => seq(
