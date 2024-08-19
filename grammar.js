@@ -560,7 +560,8 @@ module.exports = grammar({
         '{',
         repeat($.property),
         '}'
-      ))
+      )),
+      ';'
     ),
 
     field_definition: $ => seq(
@@ -581,12 +582,23 @@ module.exports = grammar({
 
     _field_property: $ => choice(
       $.caption_property,
-      $.property
+      $.property,
+      $.option_members
     ),
 
     field_id: $ => /\d+/,
     field_name: $ => /"[^"]*"/,
-    field_type: $ => $.identifier,
+    field_type: $ => choice(
+      $.identifier,
+      'Option'
+    ),
+
+    option_members: $ => seq(
+      'OptionMembers',
+      '=',
+      commaSep1($.string),
+      ';'
+    ),
 
     property: $ => seq(
       field('name', $.property_name),
@@ -596,7 +608,6 @@ module.exports = grammar({
     ),
 
     property_name: $ => choice(
-      $.identifier,
       'PasteIsValid',
       'LookupPageID',
       'DrillDownPageID',
@@ -608,14 +619,22 @@ module.exports = grammar({
       'ValidateTableRelation',
       'ValuesAllowed',
       'Width',
-      'DataClassification'
+      'DataClassification',
+      $.identifier
     ),
 
     _property_value: $ => choice(
       $.string,
       $.number,
       $.boolean,
-      $.identifier
+      $.identifier,
+      $.property_value_list
+    ),
+
+    property_value_list: $ => seq(
+      '[',
+      commaSep1($._property_value),
+      ']'
     ),
 
     option_members: $ => seq(
