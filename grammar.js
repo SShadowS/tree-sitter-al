@@ -7,7 +7,6 @@ module.exports = grammar({
     /\s/
   ],
 
-
   rules: {
     source_file: $ => repeat($._definition),
 
@@ -19,7 +18,14 @@ module.exports = grammar({
       $.query_definition,
       $.xmlport_definition,
       $.enum_definition,
-      // ... (keep other existing definitions)
+      $.tableextension,
+      $.pageextension,
+      $.dotnet,
+      $.controladdin,
+      $.profile,
+      $.permissionset,
+      $.permissionsetextension,
+      $.entitlement
     ),
 
     codeunit_definition: $ => seq(
@@ -1220,10 +1226,91 @@ module.exports = grammar({
       'enum',
       $.object_id,
       $.object_name,
+      optional($.implements_clause),
       '{',
       optional($.enum_properties),
       repeat($.enum_value),
       '}'
+    ),
+
+    tableextension: $ => seq(
+      'tableextension',
+      field('tableextension_id', $.integer),
+      field('tableextension_name', choice($.string, $.identifier)),
+      'extends',
+      field('base_table', choice($.string, $.identifier)),
+      '{',
+      repeat($._table_body_element),
+      '}'
+    ),
+
+    pageextension: $ => seq(
+      'pageextension',
+      field('pageextension_id', $.integer),
+      field('pageextension_name', $.identifier),
+      'extends',
+      field('base_page', $.identifier),
+      '{',
+      repeat($._page_body_element),
+      '}'
+    ),
+
+    dotnet: $ => seq(
+      'dotnet',
+      field('dotnet_name', $.identifier),
+      '{',
+      repeat($.assembly),
+      '}'
+    ),
+
+    controladdin: $ => seq(
+      'controladdin',
+      field('controladdin_name', $.identifier),
+      '{',
+      repeat($._controladdin_body_element),
+      '}'
+    ),
+
+    profile: $ => seq(
+      'profile',
+      field('profile_name', $.identifier),
+      '{',
+      repeat($.profile_element),
+      '}'
+    ),
+
+    permissionset: $ => seq(
+      'permissionset',
+      field('permissionset_id', $.integer),
+      field('permissionset_name', $.identifier),
+      '{',
+      repeat($.permission),
+      '}'
+    ),
+
+    permissionsetextension: $ => seq(
+      'permissionsetextension',
+      field('permissionsetextension_id', $.integer),
+      field('permissionsetextension_name', $.identifier),
+      'extends',
+      field('base_permissionset', $.identifier),
+      '{',
+      repeat($.permission),
+      '}'
+    ),
+
+    entitlement: $ => seq(
+      'entitlement',
+      field('entitlement_name', $.identifier),
+      '{',
+      repeat($.entitlement_element),
+      '}'
+    ),
+
+    implements_clause: $ => seq(
+      'implements',
+      $.identifier,
+      repeat(seq(',', $.identifier))
     ),
 
     enum_properties: $ => repeat1($.enum_property),
@@ -2084,6 +2171,110 @@ module.exports = grammar({
       '=',
       field('value', $.string),
       ';'
+    ),
+
+    assembly: $ => seq(
+      'assembly',
+      '(',
+      field('assembly_name', $.string),
+      ')',
+      ';'
+    ),
+
+    _controladdin_body_element: $ => choice(
+      $.property,
+      $.event,
+      $.procedure
+    ),
+
+    profile_element: $ => choice(
+      $.profile_customization,
+      $.profile_apparea
+    ),
+
+    profile_customization: $ => seq(
+      'customizations',
+      '=',
+      $.string,
+      ';'
+    ),
+
+    profile_apparea: $ => seq(
+      'area',
+      '(',
+      field('area_name', $.identifier),
+      ')',
+      '{',
+      repeat($.profile_apparea_element),
+      '}'
+    ),
+
+    profile_apparea_element: $ => choice(
+      $.profile_rolecenters,
+      $.profile_sections
+    ),
+
+    profile_rolecenters: $ => seq(
+      'rolecenters',
+      '=',
+      '[',
+      $.integer,
+      repeat(seq(',', $.integer)),
+      ']',
+      ';'
+    ),
+
+    profile_sections: $ => seq(
+      'sections',
+      '=',
+      '[',
+      $.string,
+      repeat(seq(',', $.string)),
+      ']',
+      ';'
+    ),
+
+    permission: $ => seq(
+      field('object_type', $.identifier),
+      field('object_name', $.string),
+      '=',
+      field('permission_type', $.identifier),
+      ';'
+    ),
+
+    entitlement_element: $ => choice(
+      $.entitlement_object_entitlements,
+      $.entitlement_custom_entitlements
+    ),
+
+    entitlement_object_entitlements: $ => seq(
+      'ObjectEntitlements',
+      '=',
+      '[',
+      $.entitlement_object,
+      repeat(seq(',', $.entitlement_object)),
+      ']',
+      ';'
+    ),
+
+    entitlement_object: $ => seq(
+      'ObjectType',
+      '=',
+      field('object_type', $.identifier),
+      ',',
+      'ObjectId',
+      '=',
+      field('object_id', $.string)
+    ),
+
+    entitlement_custom_entitlements: $ => seq(
+      'CustomEntitlements',
+      '=',
+      '[',
+      $.string,
+      repeat(seq(',', $.string)),
+      ']',
+      ';'
     )
   },
 
@@ -2121,6 +2312,10 @@ module.exports = grammar({
     ';'
   )
 });
+
+function commaSep1(rule) {
+  return seq(rule, repeat(seq(',', rule)));
+}
 
 function commaSep1(rule) {
   return seq(rule, repeat(seq(',', rule)));
