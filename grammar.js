@@ -1299,13 +1299,13 @@ module.exports = grammar({
       $.data_captionfields_property,
       $.description_property,
       $.primary_key_property,
-      $.property,
       $.field_definition,
       $.key_definition,
       $.procedure_definition,
       $.variable_declaration,
       $.trigger_definition,
-      $.field_group
+      $.field_group,
+      prec(-1, $.property)
     ),
 
     field_group: $ => seq(
