@@ -618,9 +618,9 @@ module.exports = grammar({
       optional(seq(
         '{',
         repeat(choice(
-          $.access_modifier,
-          $.option_members,
-          $.data_classification,
+          //$.access_modifier,
+          //$.option_members,
+          //$.data_classification,
           $.field_property
         )),
         '}'
