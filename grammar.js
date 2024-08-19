@@ -1335,13 +1335,6 @@ module.exports = grammar({
       'OrganizationIdentifiableInformation',
       'SystemMetadata'
     ),
-    ),
-      ')',
-      '{',
-      commaSep1($.identifier),
-      '}',
-      ';'
-    ),
 
     field_definition: $ => seq(
       'field',
