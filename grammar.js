@@ -605,12 +605,12 @@ module.exports = grammar({
       optional(';')  // Make the semicolon optional
     ),
 
-    field_property: $ => seq(
+    field_property: $ => prec(2, seq(
       field('property_name', $.field_property_name),
       '=',
       field('property_value', $._expression),
       ';'
-    ),
+    )),
 
     field_property_name: $ => choice(
       'AccessByPermission',
