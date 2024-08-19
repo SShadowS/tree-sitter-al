@@ -5,50 +5,60 @@
 module.exports = grammar({
   name: 'al',
 
-  // Define what should be treated as extra (ignored) in the parsing process
   extras: $ => [
-    $.comment,       // Comments are ignored during parsing
-    $.xml_comment,   // XML comments are also ignored
-    /\s/             // Whitespace is ignored
+    $.comment,
+    $.xml_comment,
+    /\s/
   ],
 
   rules: {
-    // The root node of the AST (Abstract Syntax Tree)
-    // A source file in AL consists of one or more object definitions
     source_file: $ => repeat($._definition),
 
-    // Definitions for various AL object types
-    // This rule defines all the possible top-level objects in an AL file
     _definition: $ => choice(
-      // Main object types in AL
-      $.table_definition,        // Defines database tables
-      $.page_definition,         // Defines user interface pages
-      $.report_definition,       // Defines reports
-      $.codeunit_definition,     // Defines units of code (similar to classes)
-      $.query_definition,        // Defines database queries
-      $.xmlport_definition,      // Defines XML data import/export
-      $.enum_definition,         // Defines enumeration types
-      $.tableextension,          // Extends existing tables
-      $.pageextension,           // Extends existing pages
-      $.dotnet,                  // Defines .NET interop
-      $.controladdin,            // Defines custom control add-ins
-      $.profile,                 // Defines user profiles
-      $.permissionset,           // Defines sets of permissions
-      $.permissionsetextension,  // Extends existing permission sets
-      $.entitlement              // Defines user entitlements
+      $.table_definition,
+      $.page_definition,
+      $.report_definition,
+      $.codeunit_definition,
+      $.query_definition,
+      $.xmlport_definition,
+      $.enum_definition,
+      $.tableextension,
+      $.pageextension,
+      $.dotnet,
+      $.controladdin,
+      $.profile,
+      $.permissionset,
+      $.permissionsetextension,
+      $.entitlement
     ),
 
-    // Codeunit object definition
-    // Codeunits are containers for AL code, similar to classes in other languages
+    table_definition: $ => seq(
+      'table',
+      field('id', $.object_id),
+      field('name', $.object_name),
+      '{',
+      repeat($._table_element),
+      '}'
+    ),
+
+    _table_element: $ => choice(
+      $.field_definition,
+      $.key_definition,
+      $.procedure_definition,
+      $.variable_declaration,
+      $.trigger_definition,
+      $.property
+    ),
+
     codeunit_definition: $ => seq(
-      'codeunit',                   // Keyword indicating a codeunit definition
-      field('id', $.object_id),     // Unique identifier for the codeunit
-      field('name', $.object_name), // Name of the codeunit
+      'codeunit',
+      field('id', $.object_id),
+      field('name', $.object_name),
       '{',
       repeat(choice(
-        $.var_section,              // Variable declarations
-        $._codeunit_element,        // Other codeunit elements (procedures, etc.)
-        $.trigger_definition        // Trigger definitions
+        $.var_section,
+        $._codeunit_element,
+        $.trigger_definition
       )),
       '}'
     ),
