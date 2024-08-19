@@ -331,7 +331,19 @@ module.exports = grammar({
     _statement: $ => choice(
       $.assignment_statement,
       $.procedure_call,
-      // ... (keep other existing statement types)
+      $.if_statement,
+      $.while_statement,
+      $.repeat_statement,
+      $.case_statement,
+      $.with_statement,
+      $.temporary_statement,
+      $.for_statement,
+      $.foreach_statement,
+      $.break_statement,
+      $.exit_statement,
+      $.try_function,
+      $.preprocessor_directive,
+      $.error_statement
     ),
 
     // Procedure call definition
