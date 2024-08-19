@@ -20,6 +20,7 @@ module.exports = grammar({
     // Definitions for various AL object types
     // This rule defines all the possible top-level objects in an AL file
     _definition: $ => choice(
+      // Main object types in AL
       $.table_definition,
       $.page_definition,
       $.report_definition,
@@ -52,12 +53,14 @@ module.exports = grammar({
     ),
 
     // Variable section definition
+    // This section declares variables used within an object
     var_section: $ => seq(
       'var',
       repeat($.variable_declaration)
     ),
 
     // Variable declaration definition
+    // Defines the structure of a single variable declaration
     variable_declaration: $ => seq(
       'var',
       field('name', $.identifier),
@@ -65,11 +68,11 @@ module.exports = grammar({
       field('type', $._variable_type),
       optional(seq(':', field('subtype', $.identifier))),
       repeat(choice(
-        'temporary',
-        seq('array', '[', optional($.number), ']'),
-        'protected',
-        'locked',
-        'withevents'
+        'temporary',  // Temporary variable
+        seq('array', '[', optional($.number), ']'),  // Array declaration
+        'protected',  // Protected access modifier
+        'locked',     // Locked variable
+        'withevents'  // Variable with events
       )),
       optional($.label_properties),
       ';'
@@ -116,70 +119,33 @@ module.exports = grammar({
     // Variable type definition
     // This includes all the built-in types in AL and allows for custom types
     _variable_type: $ => choice(
-      'Action',
-      'Array',
-      'BigInteger',
-      'BigText',
-      'Binary',
-      'Boolean',
-      'Char',
-      'Code',
-      'Codeunit',
-      'CompanyProperty',
-      'Database',
-      'DataClassification',
-      'Date',
-      'DateFormula',
-      'DateTime',
-      'Decimal',
-      'Dialog',
-      'Dictionary',
-      'Duration',
-      'Enum',
-      'ErrorInfo',
-      'FieldRef',
-      'File',
-      'FilterPageBuilder',
-      'Guid',
-      'InStream',
-      'Integer',
-      'Interface',
-      'KeyRef',
-      'Label',
-      'List',
-      'ModuleDependencyInfo',
-      'ModuleInfo',
-      'Notification',
-      'Option',
-      'OutStream',
-      'Page',
-      'Query',
-      'Record',
-      'RecordId',
-      'RecordRef',
-      'Report',
-      'RequestPage',
-      'System',
-      'TableConnectionType',
-      'TableFilter',
-      'TestAction',
-      'TestField',
-      'TestFilterField',
-      'TestPage',
-      'TestPermissions',
-      'TestRequestPage',
-      'Text',
-      'TextBuilder',
-      'TextConst',
-      'Time',
-      'TransactionModel',
-      'Variant',
-      'Verbosity',
-      'Version',
-      'XmlPort',
+      // Basic types
+      'Action', 'Array', 'BigInteger', 'BigText', 'Binary', 'Boolean', 'Char', 'Code',
+      // Complex types
+      'Codeunit', 'CompanyProperty', 'Database', 'DataClassification',
+      // Date and time types
+      'Date', 'DateFormula', 'DateTime', 'Time',
+      // Numeric types
+      'Decimal', 'Integer',
+      // UI and interaction types
+      'Dialog', 'Notification', 'Page', 'Report', 'RequestPage',
+      // Collection types
+      'Dictionary', 'List',
+      // File and stream types
+      'File', 'InStream', 'OutStream',
+      // Reference types
+      'FieldRef', 'KeyRef', 'RecordRef',
+      // Other types
+      'Duration', 'Enum', 'ErrorInfo', 'FilterPageBuilder', 'Guid', 'Interface',
+      'Label', 'ModuleDependencyInfo', 'ModuleInfo', 'Option', 'Query', 'Record',
+      'RecordId', 'System', 'TableConnectionType', 'TableFilter', 'TestAction',
+      'TestField', 'TestFilterField', 'TestPage', 'TestPermissions', 'TestRequestPage',
+      'Text', 'TextBuilder', 'TextConst', 'TransactionModel', 'Variant', 'Verbosity',
+      'Version', 'XmlPort',
       $.identifier  // For custom types
     ),
 
+    // Elements that can appear within a codeunit
     _codeunit_element: $ => choice(
       $.procedure_definition,
       $.trigger_definition,
@@ -187,13 +153,16 @@ module.exports = grammar({
       $.textconst_definition
     ),
 
+    // Definition of a local procedure
     local_procedure_definition: $ => seq(
       'local',
       $.procedure_definition
     ),
+
+    // Parameter definition for procedures and triggers
     parameter: $ => seq(
-      optional(choice('var', 'out')),
-      optional('temporary'),
+      optional(choice('var', 'out')),  // Parameter passing method
+      optional('temporary'),           // Temporary parameter
       field('name', $.identifier),
       ':',
       field('type', $.type),
@@ -205,27 +174,22 @@ module.exports = grammar({
       ))
     ),
 
-    _codeunit_element: $ => choice(
-      $.procedure_definition,
-      $.trigger_definition
-    ),
-
     // Procedure definition
     procedure_definition: $ => seq(
-      repeat($.attribute),
-      optional($.procedure_access_modifier),
-      optional('local'),
+      repeat($.attribute),                              // Procedure attributes
+      optional($.procedure_access_modifier),            // Access modifier
+      optional('local'),                                // Local procedure
       'procedure',
       field('name', $.identifier),
       '(',
-      optional($.parameter_list),
+      optional($.parameter_list),                       // Parameters
       ')',
-      optional(seq(':', field('return_type', $.type))),
-      optional($.procedure_description),
-      optional($.var_section),
+      optional(seq(':', field('return_type', $.type))), // Return type
+      optional($.procedure_description),                // XML documentation
+      optional($.var_section),                          // Local variables
       choice(
         $.procedure_body,
-        ';'
+        ';'                                             // Forward declaration
       )
     ),
 
@@ -245,17 +209,18 @@ module.exports = grammar({
 
     // Parameter definition
     parameter: $ => seq(
-      optional(choice('var', 'out')),
-      optional('temporary'),
+      optional(choice('var', 'out')),        // Parameter passing method
+      optional('temporary'),                 // Temporary parameter
       field('name', $.identifier),
       ':',
       field('type', $.type),
-      optional($.procedure_description)
+      optional($.procedure_description)      // Parameter description
     ),
 
     // Language code for localization
     language_code: $ => /[A-Z]{2,3}(-[A-Z]{2,3})?/,
 
+    // Procedure overload definition
     procedure_overload: $ => seq(
       'procedure',
       field('name', $.identifier),
@@ -267,12 +232,14 @@ module.exports = grammar({
       $.procedure_body
     ),
 
+    // Access modifiers for procedures
     procedure_access_modifier: $ => choice(
       'internal',
       'protected',
       'public'
     ),
 
+    // Procedure body definition
     procedure_body: $ => seq(
       'begin',
       repeat(choice($._statement, $.preprocessor_directive, $.variable_declaration)),
@@ -280,12 +247,14 @@ module.exports = grammar({
       'end;'
     ),
 
+    // Pragma directive for compiler instructions
     pragma_directive: $ => prec.left(seq(
       '#PRAGMA',
       field('name', $.pragma_name),
       optional($.pragma_arguments)
     )),
 
+    // Preprocessor directives for conditional compilation
     preprocessor_directive: $ => choice(
       $.if_directive,
       $.endif_directive,
@@ -299,6 +268,7 @@ module.exports = grammar({
     else_directive: $ => '#ELSE',
     endif_directive: $ => '#ENDIF',
 
+    // Pragma names and arguments
     pragma_name: $ => choice(
       'warning',
       'error',
@@ -309,17 +279,6 @@ module.exports = grammar({
       $.pragma_argument,
       repeat(seq(',', $.pragma_argument))
     ),
-    pragma_argument: $ => choice(
-      $.string,
-      $.number,
-      $.identifier
-    ),
-
-    pragma_arguments: $ => seq(
-      $.pragma_argument,
-      repeat(seq(',', $.pragma_argument))
-    ),
-
     pragma_argument: $ => choice(
       $.string,
       $.number,
