@@ -930,12 +930,12 @@ module.exports = grammar({
       ';'
     ),
 
-    caption_property: $ => prec(2, seq(
+    caption_property: $ => seq(
       'Caption',
       '=',
       field('caption_value', $.string),
       ';'
-    )),
+    ),
 
     field_property: $ => choice(
       $.caption_property,
