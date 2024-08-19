@@ -2319,13 +2319,11 @@ module.exports = grammar({
 
   textconst_definition: $ => seq(
     'TextConst',
-    field('language', $.language_code),
+    field('language', $.identifier),
     '=',
     field('value', $.string),
     ';'
   ),
-
-  language_code: $ => /[A-Z]{2,3}(-[A-Z]{2,3})?/,
 
   event_definition: $ => seq(
     choice('InternalEvent', 'IntegrationEvent'),
