@@ -554,7 +554,11 @@ module.exports = grammar({
       '{',
       commaSep1($.identifier),
       '}',
-      optional(repeat1($.property))
+      optional(seq(
+        '{',
+        repeat($.property),
+        '}'
+      ))
     ),
 
     field_definition: $ => seq(
@@ -589,7 +593,12 @@ module.exports = grammar({
       ';'
     ),
 
-    property_name: $ => $.identifier,
+    property_name: $ => choice(
+      $.identifier,
+      'PasteIsValid',
+      'LookupPageID',
+      'DrillDownPageID'
+    ),
 
     _property_value: $ => choice(
       $.string,
