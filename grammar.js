@@ -32,15 +32,6 @@ module.exports = grammar({
       $.entitlement
     ),
 
-    table_definition: $ => seq(
-      'table',
-      field('id', $.object_id),
-      field('name', $.object_name),
-      '{',
-      repeat($._table_body_element),
-      '}'
-    ),
-
     codeunit_definition: $ => seq(
       'codeunit',
       field('id', $.object_id),
