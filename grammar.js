@@ -640,9 +640,7 @@ module.exports = grammar({
 
     field_id: $ => /\d+/,
     field_name: $ => /"[^"]*"/,
-    field_type: $ => $.field_type_option,
-
-    field_type_option: $ => choice(
+    field_type: $ => choice(
       'Action',
       'BigInteger',
       'Binary',
