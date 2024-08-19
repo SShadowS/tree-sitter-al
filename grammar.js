@@ -1335,6 +1335,7 @@ module.exports = grammar({
       'OrganizationIdentifiableInformation',
       'SystemMetadata'
     ),
+    ),
       ')',
       '{',
       commaSep1($.identifier),
