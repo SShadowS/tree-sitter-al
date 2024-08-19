@@ -1442,20 +1442,6 @@ module.exports = grammar({
       $.identifier
     ),
 
-    data_classification: $ => seq(
-      'DataClassification',
-      '=',
-      choice(
-        'ToBeClassified',
-        'CustomerContent',
-        'EndUserIdentifiableInformation',
-        'AccountData',
-        'EndUserPseudonymousIdentifiers',
-        'OrganizationIdentifiableInformation',
-        'SystemMetadata'
-      ),
-      ';'
-    ),
 
     key_definition: $ => seq(
       'key',
