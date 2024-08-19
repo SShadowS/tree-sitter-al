@@ -574,7 +574,7 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        repeat($._field_property),
+        repeat(choice($._field_property, $.property)),
         '}'
       ))
     ),
@@ -607,7 +607,8 @@ module.exports = grammar({
       'TestTableRelation',
       'ValidateTableRelation',
       'ValuesAllowed',
-      'Width'
+      'Width',
+      'DataClassification'
     ),
 
     _property_value: $ => choice(
@@ -714,7 +715,7 @@ module.exports = grammar({
       'then',
       repeat($._statement),
       optional(seq('else', repeat($._statement))),
-      'end;'
+      'end'
     ),
 
     error_statement: $ => seq(
@@ -1582,6 +1583,8 @@ module.exports = grammar({
       optional(seq(':', field('return_type', $.type))),
       $.procedure_body
     ),
+
+    procedure_name: $ => $.identifier,
 
     procedure_body: $ => seq(
       'begin',
