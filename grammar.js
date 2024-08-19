@@ -964,21 +964,21 @@ module.exports = grammar({
       ';'
     ),
 
-    field_property: $ => choice(
-      seq(
-        $.property_name,
-        '=',
-        $.property_value,
-        ';'
-      ),
-      $.caption_property
-    ),
-
     caption_property: $ => seq(
       'Caption',
       '=',
       field('caption_value', $.string),
       ';'
+    ),
+
+    field_property: $ => choice(
+      $.caption_property,
+      seq(
+        $.property_name,
+        '=',
+        $.property_value,
+        ';'
+      )
     ),
 
     property_name: $ => choice(
