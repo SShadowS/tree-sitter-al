@@ -574,7 +574,10 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        repeat(choice($._field_property, $.property)),
+        repeat(choice(
+          prec(1, $._field_property),
+          $.property
+        )),
         '}'
       ))
     ),
