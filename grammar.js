@@ -310,15 +310,31 @@ module.exports = grammar({
       field('name', $.object_name)
     ),
 
-    object_id: $ => /\d+/,
+    object_id: $ => /\d+/, // Object ID is a number
 
-    object_name: $ => /"[^"]*"/,
+    object_name: $ => /"[^"]*"/, // Object name is a string
 
     table_definition: $ => seq(
       'table',
       $._object_header,
       '{',
-      repeat($._table_body_element),
+      repeat(choice(
+        $.caption_property,
+        $.description_property,
+        $.paste_is_valid_property,
+        $.data_classification_property,
+        $.data_per_company_property,
+        $.drill_down_page_id_property,
+        $.lookup_page_id_property,
+        $.extensible_property,
+        $.external_name_property,
+        $.fields_definition,
+        $.key_definition,
+        $.variable_declaration,
+        $.trigger_definition,
+        $.procedure_definition,
+        //$.property
+      )),
       '}'
     ),
 
@@ -951,7 +967,6 @@ module.exports = grammar({
       'InherentPermissions',
       'InsertAllowed',
       'LinksAllowed',
-      /LookupPageID/i,
       'ModifyAllowed',
       'MultipleNewLines',
       'NotifyOnDelete',
@@ -1011,7 +1026,6 @@ module.exports = grammar({
       'FieldClass',
       'ImportanceLevel',
       'Lookup',
-      'LookupPageID',
       'MaxValue',
       'MinValue',
       'NotBlank',
@@ -1285,7 +1299,7 @@ module.exports = grammar({
     fields_definition: $ => seq(
       'fields',
       '{',
-      repeat($.field_definition),
+      repeat1($.field_definition),
       '}'
     ),
 
@@ -1308,13 +1322,13 @@ module.exports = grammar({
     ),
 
     data_classification_value: $ => choice(
-      /ToBeClassified/i,
-      /CustomerContent/i,
-      /EndUserIdentifiableInformation/i,
-      /AccountData/i,
-      /EndUserPseudonymousIdentifiers/i,
-      /OrganizationIdentifiableInformation/i,
-      /SystemMetadata/i
+      "ToBeClassified",
+      "CustomerContent",
+      "EndUserIdentifiableInformation",
+      "AccountData",
+      "EndUserPseudonymousIdentifiers",
+      "OrganizationIdentifiableInformation",
+      "SystemMetadata"
     ),
 
     field_definition: $ => seq(
