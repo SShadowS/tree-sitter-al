@@ -310,24 +310,21 @@ module.exports = grammar({
 
 
     _object_header: $ => seq(
-      field('type', $.object_type),
       field('id', $.object_id),
       field('name', $.object_name)
-    ),
-
-    object_type: $ => choice(
-      'table',
-      'page',
-      'report',
-      'codeunit',
-      'query',
-      'xmlport',
-      'enum'
     ),
 
     object_id: $ => /\d+/,
 
     object_name: $ => /"[^"]*"/,
+
+    table_definition: $ => seq(
+      'table',
+      $._object_header,
+      '{',
+      repeat($._table_body_element),
+      '}'
+    ),
 
     _object_body: $ => seq(
       '{',
