@@ -567,22 +567,7 @@ module.exports = grammar({
       'end;'
     ),
 
-    if_statement: $ => seq(
-      'if',
-      $._expression,
-      'then',
-      repeat($._statement),
-      optional(seq('else', repeat($._statement))),
-      'end;'
-    ),
 
-    exit_statement: $ => seq(
-      'exit',
-      '(',
-      optional($._expression),
-      ')',
-      ';'
-    ),
 
     field_definition: $ => seq(
       'field',
@@ -1716,17 +1701,17 @@ module.exports = grammar({
 
     procedure_body: $ => seq(
       'begin',
-      repeat($._statement),
+      repeat(choice($._statement, $.preprocessor_directive)),
       'end;'
     ),
 
     _statement: $ => choice(
       $.assignment_statement,
+      $.procedure_call,
       $.if_statement,
       $.while_statement,
       $.repeat_statement,
       $.case_statement,
-      $.procedure_call,
       $.with_statement,
       $.temporary_statement,
       $.for_statement,
@@ -1844,15 +1829,13 @@ module.exports = grammar({
     parameter_list: $ => commaSep1($.parameter),
 
     parameter: $ => seq(
-      optional('var'),
+      optional(choice('var', 'out')),
       optional('temporary'),
       field('name', $.identifier),
       ':',
-      field('type', $.type)
+      field('type', $.type),
+      optional($.procedure_description)
     ),
-
-    parameter_name: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    parameter_type: $ => /[A-Za-z]+/,
 
     return_type: $ => /[A-Za-z]+/,
 
