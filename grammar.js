@@ -333,9 +333,16 @@ module.exports = grammar({
         $.variable_declaration,
         $.trigger_definition,
         $.procedure_definition,
-        //$.property
+        $.property
       )),
       '}'
+    ),
+
+    paste_is_valid_property: $ => seq(
+      'PasteIsValid',
+      '=',
+      field('value', $.boolean),
+      ';'
     ),
 
     _object_body: $ => seq(
