@@ -1312,6 +1312,23 @@ module.exports = grammar({
       'fieldgroup',
       '(',
       field('name', $.identifier),
+
+    data_classification_property: $ => seq(
+      'DataClassification',
+      '=',
+      field('classification', $.data_classification_value),
+      ';'
+    ),
+
+    data_classification_value: $ => choice(
+      'ToBeClassified',
+      'CustomerContent',
+      'EndUserIdentifiableInformation',
+      'AccountData',
+      'EndUserPseudonymousIdentifiers',
+      'OrganizationIdentifiableInformation',
+      'SystemMetadata'
+    ),
       ')',
       '{',
       commaSep1($.identifier),
