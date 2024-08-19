@@ -954,6 +954,7 @@ module.exports = grammar({
       'InherentPermissions',
       'InsertAllowed',
       'LinksAllowed',
+      'LookupPageID',
       'ModifyAllowed',
       'MultipleNewLines',
       'NotifyOnDelete',
