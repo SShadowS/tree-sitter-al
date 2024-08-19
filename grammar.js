@@ -37,17 +37,8 @@ module.exports = grammar({
       field('id', $.object_id),
       field('name', $.object_name),
       '{',
-      repeat($._table_element),
+      repeat($._table_body_element),
       '}'
-    ),
-
-    _table_element: $ => choice(
-      $.field_definition,
-      $.key_definition,
-      $.procedure_definition,
-      $.variable_declaration,
-      $.trigger_definition,
-      $.property
     ),
 
     codeunit_definition: $ => seq(
