@@ -406,30 +406,6 @@ module.exports = grammar({
       '}'
     ),
 
-    _table_element: $ => choice(
-      $.field_definition,
-      $.key_definition,
-      $.procedure_definition,
-      $.variable_declaration,
-      $.trigger_definition,
-      $.property,
-      $.caption_property,
-      $.data_per_company_property,
-      $.drill_down_page_id_property,
-      $.extensible_property,
-      $.external_name_property,
-      $.external_schema_property,
-      $.linked_object_property,
-      $.lookup_page_id_property,
-      $.obsolete_reason_property,
-      $.obsolete_state_property,
-      $.table_type_property,
-      $.external_access_property,
-      $.moved_from_property,
-      $.moved_to_property,
-      $.description_property,
-      $.primary_key_property
-    ),
 
     page_definition: $ => seq(
       'page',
