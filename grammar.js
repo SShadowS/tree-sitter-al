@@ -678,12 +678,12 @@ module.exports = grammar({
       ';'
     ),
 
-    data_classification_property: $ => seq(
+    data_classification_property: $ => prec.dynamic(1, seq(
       'DataClassification',
       '=',
       field('classification', $.data_classification_value),
       ';'
-    ),
+    )),
 
     data_classification_value: $ => choice(
       'ToBeClassified',
@@ -695,7 +695,7 @@ module.exports = grammar({
       'SystemMetadata'
     ),
 
-    access_level_property: $ => seq(
+    access_level_property: $ => prec.dynamic(1, seq(
       'AccessLevel',
       '=',
       field('level', choice('Public', 'Internal', 'Private')),
