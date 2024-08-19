@@ -851,7 +851,10 @@ module.exports = grammar({
       $.identifier
     ),
 
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    identifier: $ => choice(
+      /[a-zA-Z_][a-zA-Z0-9_]*/,
+      /"[^"]+"/
+    ),
 
     system_variable: $ => choice(
       'CurrPage',
@@ -1546,8 +1549,7 @@ module.exports = grammar({
       '=',
       field('page_id', choice(
         $.number,
-        $.identifier,
-        $.string
+        $.identifier
       )),
       ';'
     ),
