@@ -125,10 +125,10 @@ module.exports = grammar({
 
     // Elements that can appear within a codeunit
     _codeunit_element: $ => choice(
+      $.var_section,   // Variable declarations
+      $.textconst_definition,    // Text constant definitions
       $.procedure_definition,   // Function definitions
       $.trigger_definition,     // Event trigger definitions
-      $.var_section,   // Variable declarations
-      $.textconst_definition    // Text constant definitions
     ),
 
     // Definition of a local procedure
@@ -368,7 +368,8 @@ module.exports = grammar({
       field('name', $.trigger_name),
       '()',
       optional($.var_section),
-      $.procedure_body
+      $.procedure_body,
+      ';'
     ),
 
     trigger_name: $ => choice(
