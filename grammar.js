@@ -1859,9 +1859,19 @@ module.exports = grammar({
       $.foreach_statement,
       $.break_statement,
       $.exit_statement,
-      $.try_function,
+      $.try_catch_statement,
       $.preprocessor_directive,
       $.error_statement
+    ),
+
+    try_catch_statement: $ => seq(
+      'try',
+      repeat($._statement),
+      optional(seq(
+        'catch',
+        repeat($._statement)
+      )),
+      'end;'
     ),
 
     if_statement: $ => seq(
