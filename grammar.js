@@ -368,8 +368,7 @@ module.exports = grammar({
       field('name', $.trigger_name),
       '()',
       optional($.var_section),
-      $.procedure_body,
-      ';'
+      $.procedure_body
     ),
 
     trigger_name: $ => choice(
