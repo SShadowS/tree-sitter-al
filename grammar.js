@@ -364,37 +364,24 @@ module.exports = grammar({
     ),
 
     trigger_definition: $ => seq(
-      'trigger',
+      'TRIGGER',
       field('name', $.trigger_name),
-      '()',
-      optional($.var_section),
-      $.procedure_body
+      'ON',
+      field('table', $.object_name),
+      optional(seq(
+        'FOR',
+        choice(
+          'INSERT',
+          'MODIFY',
+          'DELETE'
+        )
+      )),
+      'BEGIN',
+      $.procedure_body,
+      'END;'
     ),
 
-    trigger_name: $ => choice(
-      // Table triggers
-      'OnInsert', 'OnModify', 'OnDelete', 'OnRename', 'OnValidate', 'OnLookup',
-      // Keep other trigger names as they were...
-      'OnInit', 'OnOpenPage', 'OnClosePage', 'OnFindRecord', 'OnNextRecord',
-      'OnAfterGetRecord', 'OnNewRecord', 'OnInsertRecord', 'OnModifyRecord',
-      'OnDeleteRecord', 'OnQueryClosePage', 'OnAfterGetCurrRecord',
-      'OnPageBackgroundTaskCompleted', 'OnAfterGetRecord', 'OnBeforeInsertRecord',
-      'OnBeforeValidate', 'OnValidate', 'OnAfterValidate',
-      'OnInitReport', 'OnPreReport', 'OnPostReport',
-      'OnInitXMLport', 'OnPreXMLport', 'OnPostXMLport',
-      'OnBeforeOpen', 'OnAfterOpen',
-      'OnRun',
-      'OnAfterAssignVariable', 'OnBeforePassVariable',
-      'OnBeforeValidate', 'OnAfterValidate',
-      'OnAction', 'OnDrillDown', 'OnAssistEdit', 'OnControlAddIn',
-      'OnAfterGetRecordEvent', 'OnBeforeGetRecordEvent', 'OnOpenPageEvent',
-      'OnClosePageEvent', 'OnQueryClosePageEvent', 'OnDeleteRecordEvent',
-      'OnInsertRecordEvent', 'OnModifyRecordEvent', 'OnNewRecordEvent',
-      'OnFindRecordEvent', 'OnNextRecordEvent', 'OnAfterGetCurrRecordEvent',
-      'OnDocumentReady', 'OnAfterInitRecord', 'OnBeforeAction',
-      'OnAfterAction', 'OnBeforeInsertRecord', 'OnBeforeModifyRecord',
-      'OnBeforeDeleteRecord', 'OnBeforeOnRun', 'OnAfterOnRun'
-    ),
+    trigger_name: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
     page_definition: $ => seq(
       'page',
