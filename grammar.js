@@ -52,7 +52,6 @@ module.exports = grammar({
     // Variable declaration definition
     // Defines the structure of a single variable declaration
     variable_declaration: $ => seq(
-      optional('var'),                                    // Keyword indicating a variable declaration
       field('name', $.identifier),              // Name of the variable
       ':',                                      // Separator between name and type
       field('type', $._variable_type),          // Type of the variable
@@ -243,7 +242,8 @@ module.exports = grammar({
       $.exit_statement,
       $.try_function,
       $.preprocessor_directive,
-      $.error_statement
+      $.error_statement,
+      $.variable_declaration
     ),
 
     // Procedure call definition
