@@ -1745,7 +1745,6 @@ module.exports = grammar({
       $.foreach_statement,
       $.break_statement,
       $.exit_statement,
-      $.try_function,
       $.preprocessor_directive,
       $.error_statement
     ),
@@ -1878,32 +1877,20 @@ module.exports = grammar({
       $.error_statement
     ),
 
-    try_function: $ => seq(
-      'if',
-      choice(
-        $.try_function_call,
-        $.try_method_call
-      ),
-      'then',
+    if_statement: $ => seq(
+      'IF',
+      $._expression,
+      'THEN',
+      'BEGIN',
       repeat($._statement),
-      optional(seq('else', repeat($._statement))),
-      'end;'
-    ),
-
-    try_function_call: $ => seq(
-      field('function', $.identifier),
-      '(',
-      optional(commaSep1($._expression)),
-      ')'
-    ),
-
-    try_method_call: $ => seq(
-      field('object', $._expression),
-      '.',
-      field('method', $.identifier),
-      '(',
-      optional(commaSep1($._expression)),
-      ')'
+      'END',
+      optional(seq(
+        'ELSE',
+        'BEGIN',
+        repeat($._statement),
+        'END'
+      )),
+      ';'
     ),
 
     with_statement: $ => seq(
