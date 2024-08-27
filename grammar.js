@@ -14,26 +14,17 @@ module.exports = grammar({
       field('id', $.object_id),
       field('name', $.object_name),
       '{',
-      repeat($._table_element),
+      repeat(choice($._table_element, $.property)),
       '}'
     ),
 
     _table_element: $ => choice(
-      $.caption_property,
-      $.property,
       $.field_definition,
       $.key_definition,
       $.variable_declaration,
       $.trigger_definition,
       $.procedure_definition
       // Other table elements can be added here
-    ),
-
-    caption_property: $ => seq(
-      'Caption',
-      '=',
-      field('value', $.string),
-      ';'
     ),
 
     property: $ => seq(
@@ -51,8 +42,10 @@ module.exports = grammar({
       field('name', $.field_name),
       ')',
       field('type', $.field_type),
-      optional(';'),
-      repeat(choice($.caption_property, $.property))
+      '{',
+      repeat($.property),
+      '}',
+      optional(';')
     )),
 
     key_definition: $ => seq(
