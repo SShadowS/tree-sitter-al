@@ -43,7 +43,7 @@ module.exports = grammar({
       ';'
     ),
 
-    field_definition: $ => prec.right(1, seq(
+    field_definition: $ => seq(
       'field',
       '(',
       field('id', $.field_id),
@@ -51,18 +51,20 @@ module.exports = grammar({
       field('name', $.field_name),
       ')',
       field('type', $.field_type),
-      ';',
+      optional(';'),
       repeat(choice($.caption_property, $.property))
-    )),
+    ),
 
     key_definition: $ => seq(
       'key',
       '(',
-      repeat1($.identifier),
+      commaSep1($.identifier),
       ')',
-      '{',
-      repeat($.property),
-      '}'
+      optional(seq(
+        '{',
+        repeat($.property),
+        '}'
+      ))
     ),
 
     variable_declaration: $ => seq(
@@ -90,12 +92,10 @@ module.exports = grammar({
       $.procedure_body
     ),
 
-    parameter_list: $ => seq(
-      $.parameter,
-      repeat(seq(';', $.parameter))
-    ),
+    parameter_list: $ => commaSep1($.parameter),
 
     parameter: $ => seq(
+      optional(choice('var', 'out')),
       field('name', $.identifier),
       ':',
       field('type', $.type)
@@ -110,14 +110,15 @@ module.exports = grammar({
     _statement: $ => choice(
       $.procedure_call,
       $.if_statement,
-      $.exit_statement
+      $.exit_statement,
+      $.assignment_statement
       // Add more statement types as needed
     ),
 
     procedure_call: $ => seq(
       field('name', $.identifier),
       '(',
-      optional($._expression),
+      optional(commaSep($._expression)),
       ')',
       ';'
     ),
@@ -128,30 +129,62 @@ module.exports = grammar({
       'then',
       repeat($._statement),
       optional(seq('else', repeat($._statement))),
-      ';'
+      optional(';')
     ),
 
     exit_statement: $ => seq(
       'exit',
       '(',
-      $._expression,
+      optional($._expression),
       ')',
       ';'
     ),
 
+    assignment_statement: $ => seq(
+      field('left', $._assignable),
+      ':=',
+      field('right', $._expression),
+      ';'
+    ),
+
+    _assignable: $ => choice(
+      $.identifier,
+      $.field_access
+    ),
+
+    field_access: $ => seq(
+      field('record', $.identifier),
+      '.',
+      field('field', $.identifier)
+    ),
+
     _expression: $ => choice(
       $.binary_expression,
+      $.unary_expression,
+      $.parenthesized_expression,
       $.identifier,
+      $.field_access,
       $.string,
       $.number,
       $.boolean
     ),
 
     binary_expression: $ => prec.left(1, seq(
-      $._expression,
-      choice('=', '<>', '<', '<=', '>', '>=', 'in', 'and', 'or'),
-      $._expression
+      field('left', $._expression),
+      field('operator', choice('=', '<>', '<', '<=', '>', '>=', 'in', 'and', 'or', '+', '-', '*', '/')),
+      field('right', $._expression)
     )),
+
+    unary_expression: $ => prec(2, seq(
+      field('operator', choice('-', 'not')),
+      field('operand', $._expression)
+    )),
+
+    parenthesized_expression: $ => seq(
+      '(',
+      $._expression,
+      ')'
+    ),
 
     object_id: $ => /[0-9]+/,
     object_name: $ => /"[^"]*"/,
@@ -169,3 +202,11 @@ module.exports = grammar({
     boolean: $ => choice('true', 'false')
   }
 });
+
+function commaSep(rule) {
+  return optional(commaSep1(rule));
+}
+
+function commaSep1(rule) {
+  return seq(rule, repeat(seq(',', rule)));
+}
