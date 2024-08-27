@@ -31,7 +31,7 @@ module.exports = grammar({
       field('name', $.property_name),
       '=',
       field('value', $.property_value),
-      ';'
+      optional(';')
     ),
 
     field_definition: $ => prec.right(1, seq(
@@ -42,11 +42,38 @@ module.exports = grammar({
       field('name', $.field_name),
       ')',
       field('type', $.field_type),
-      '{',
-      repeat($.property),
-      '}',
+      optional(seq(
+        '{',
+        repeat($.property),
+        '}'
+      )),
       optional(';')
     )),
+
+    key_definition: $ => seq(
+      'key',
+      '(',
+      commaSep1($.identifier),
+      ')',
+      optional(seq(
+        '{',
+        repeat($.property),
+        '}'
+      )),
+      optional(';')
+    ),
+
+    property_name: $ => choice(
+      $.identifier,
+      'Caption'
+    ),
+
+    property_value: $ => choice(
+      $.string,
+      $.number,
+      $.boolean,
+      $.identifier
+    ),
 
     key_definition: $ => seq(
       'key',
