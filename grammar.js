@@ -13,8 +13,13 @@ module.exports = grammar({
       'table',
       field('id', $.object_id),
       field('name', $.object_name),
+      optional(seq(
+        '{',
+        repeat($.property),
+        '}'
+      )),
       '{',
-      repeat(choice($._table_element, $.property)),
+      repeat($._table_element),
       '}'
     ),
 
@@ -23,7 +28,8 @@ module.exports = grammar({
       $.key_definition,
       $.variable_declaration,
       $.trigger_definition,
-      $.procedure_definition
+      $.procedure_definition,
+      $.property
       // Other table elements can be added here
     ),
 
