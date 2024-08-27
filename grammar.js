@@ -13,11 +13,11 @@ module.exports = grammar({
       'table',
       field('id', $.object_id),
       field('name', $.object_name),
-      optional(seq(
+      optional(prec(1, seq(
         '{',
         repeat($.property),
         '}'
-      )),
+      ))),
       '{',
       repeat($._table_element),
       '}'
