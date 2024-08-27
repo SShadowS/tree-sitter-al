@@ -71,7 +71,16 @@ module.exports = grammar({
 
     property_name: $ => choice(
       $.identifier,
-      'Caption'
+      'Caption',
+      'DataCaptionFields',
+      'DataClassification',
+      'Description',
+      'DrillDownPageId',
+      'LookupPageId',
+      'PasteIsValid',
+      'Permissions',
+      'TableType'
+      // Add more table properties as needed
     ),
 
     property_value: $ => choice(
