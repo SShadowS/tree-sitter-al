@@ -5,102 +5,166 @@ module.exports = grammar({
     source_file: $ => repeat($._declaration),
 
     _declaration: $ => choice(
-      $.table_object
+      $.table_definition
       // Other object types can be added here in the future
     ),
 
-    table_object: $ => seq(
+    table_definition: $ => seq(
       'table',
-      field('id', $.integer),
-      field('name', $.string),
+      field('id', $.object_id),
+      field('name', $.object_name),
       '{',
       repeat($._table_element),
       '}'
     ),
 
     _table_element: $ => choice(
-      $.field,
-      $.key,
-      $.fieldgroup
+      $.caption_property,
+      $.property,
+      $.field_definition,
+      $.key_definition,
+      $.variable_declaration,
+      $.trigger_definition,
+      $.procedure_definition
       // Other table elements can be added here
     ),
 
-    field: $ => seq(
-      'field',
-      '(',
-      field('id', $.integer),
-      ';',
-      field('name', $.string),
-      ')',
-      field('type', $.data_type),
-      optional(';'),
-      optional($.field_properties)
-    ),
-
-    key: $ => seq(
-      'key',
-      '(',
-      field('name', $.string),
-      ')',
-      '{',
-      repeat1($.field_reference),
-      '}'
-    ),
-
-    fieldgroup: $ => seq(
-      'fieldgroup',
-      '(',
-      field('name', $.string),
-      ')',
-      '{',
-      repeat1($.field_reference),
-      '}'
-    ),
-
-    field_reference: $ => seq(
-      field('field', $.identifier),
-      optional(';')
-    ),
-
-    data_type: $ => choice(
-      'BigInteger',
-      'Binary',
-      'Boolean',
-      'Char',
-      'Code',
-      'Date',
-      'DateFormula',
-      'DateTime',
-      'Decimal',
-      'Duration',
-      'Guid',
-      'Integer',
-      'Option',
-      'RecordId',
-      'Text',
-      'Time'
-      // Add more data types as needed
-    ),
-
-    field_properties: $ => repeat1($.property),
-
-    property: $ => seq(
-      field('name', $.identifier),
+    caption_property: $ => seq(
+      'Caption',
       '=',
-      field('value', $._property_value),
+      field('value', $.string),
       ';'
     ),
 
-    _property_value: $ => choice(
-      $.string,
-      $.number,
-      $.boolean,
-      $.identifier
+    property: $ => seq(
+      field('name', $.property_name),
+      '=',
+      field('value', $.property_value),
+      ';'
     ),
 
-    integer: $ => /[0-9]+/,
-    string: $ => /"[^"]*"/,
+    field_definition: $ => seq(
+      'field',
+      '(',
+      field('id', $.field_id),
+      ';',
+      field('name', $.field_name),
+      ')',
+      field('type', $.field_type),
+      ';',
+      repeat(choice($.caption_property, $.property))
+    ),
+
+    key_definition: $ => seq(
+      'key',
+      '(',
+      repeat1($.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    variable_declaration: $ => seq(
+      'var',
+      field('name', $.identifier),
+      ':',
+      field('type', $.type),
+      ';'
+    ),
+
+    trigger_definition: $ => seq(
+      'trigger',
+      field('name', $.trigger_name),
+      '()',
+      $.procedure_body
+    ),
+
+    procedure_definition: $ => seq(
+      'procedure',
+      field('name', $.procedure_name),
+      '(',
+      optional($.parameter_list),
+      ')',
+      optional(seq(':', $.type)),
+      $.procedure_body
+    ),
+
+    parameter_list: $ => seq(
+      $.parameter,
+      repeat(seq(';', $.parameter))
+    ),
+
+    parameter: $ => seq(
+      field('name', $.identifier),
+      ':',
+      field('type', $.type)
+    ),
+
+    procedure_body: $ => seq(
+      'begin',
+      repeat($._statement),
+      'end;'
+    ),
+
+    _statement: $ => choice(
+      $.procedure_call,
+      $.if_statement,
+      $.exit_statement
+      // Add more statement types as needed
+    ),
+
+    procedure_call: $ => seq(
+      field('name', $.identifier),
+      '(',
+      optional($._expression),
+      ')',
+      ';'
+    ),
+
+    if_statement: $ => seq(
+      'if',
+      $._expression,
+      'then',
+      repeat($._statement),
+      optional(seq('else', repeat($._statement))),
+      ';'
+    ),
+
+    exit_statement: $ => seq(
+      'exit',
+      '(',
+      $._expression,
+      ')',
+      ';'
+    ),
+
+    _expression: $ => choice(
+      $.binary_expression,
+      $.identifier,
+      $.string,
+      $.number,
+      $.boolean
+    ),
+
+    binary_expression: $ => prec.left(1, seq(
+      $._expression,
+      choice('=', '<>', '<', '<=', '>', '>=', 'in', 'and', 'or'),
+      $._expression
+    )),
+
+    object_id: $ => /[0-9]+/,
+    object_name: $ => /"[^"]*"/,
+    field_id: $ => /[0-9]+/,
+    field_name: $ => /"[^"]*"/,
+    field_type: $ => $.identifier,
+    property_name: $ => $.identifier,
+    property_value: $ => choice($.string, $.number, $.boolean, $.identifier),
+    trigger_name: $ => $.identifier,
+    procedure_name: $ => $.identifier,
+    type: $ => $.identifier,
     identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    string: $ => /"[^"]*"/,
     number: $ => /[0-9]+(\.[0-9]+)?/,
     boolean: $ => choice('true', 'false')
   }
