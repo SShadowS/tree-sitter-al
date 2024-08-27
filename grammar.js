@@ -13,9 +13,9 @@ module.exports = grammar({
       'table',
       field('id', $.object_id),
       field('name', $.object_name),
-      optional(prec(1, seq(
+      optional(prec(2, seq(
         '{',
-        repeat($.property),
+        repeat($.table_level_property),
         '}'
       ))),
       '{',
@@ -29,9 +29,11 @@ module.exports = grammar({
       $.variable_declaration,
       $.trigger_definition,
       $.procedure_definition,
-      $.property
+      prec(1, $.property)
       // Other table elements can be added here
     ),
+
+    table_level_property: $ => $.property,
 
     property: $ => seq(
       field('name', $.property_name),
