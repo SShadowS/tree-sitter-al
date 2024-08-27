@@ -43,7 +43,7 @@ module.exports = grammar({
       ';'
     ),
 
-    field_definition: $ => seq(
+    field_definition: $ => prec.right(1, seq(
       'field',
       '(',
       field('id', $.field_id),
@@ -53,7 +53,7 @@ module.exports = grammar({
       field('type', $.field_type),
       ';',
       repeat(choice($.caption_property, $.property))
-    ),
+    )),
 
     key_definition: $ => seq(
       'key',
