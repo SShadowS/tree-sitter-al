@@ -123,14 +123,14 @@ module.exports = grammar({
       ';'
     ),
 
-    if_statement: $ => seq(
+    if_statement: $ => prec.right(1, seq(
       'if',
       $._expression,
       'then',
       repeat($._statement),
       optional(seq('else', repeat($._statement))),
       optional(';')
-    ),
+    )),
 
     exit_statement: $ => seq(
       'exit',
