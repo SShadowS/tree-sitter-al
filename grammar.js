@@ -2447,7 +2447,8 @@ module.exports = grammar({
       $.entity_caption_property,
       $.entity_caption_ml_property,
       $.entity_name_property,
-      $.entity_set_caption_property
+      $.entity_set_caption_property,
+      $.entity_set_caption_ml_property
     ),
 
     // DrillDownPageId Property
@@ -2990,7 +2991,8 @@ module.exports = grammar({
       $.entity_caption_property,
       $.entity_caption_ml_property,
       $.entity_name_property,
-      $.entity_set_caption_property
+      $.entity_set_caption_property,
+      $.entity_set_caption_ml_property
     ),
 
     // DataItemLink Property
@@ -3394,6 +3396,16 @@ module.exports = grammar({
       'EntitySetCaption',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // EntitySetCaptionML Property
+    // Sets the caption of a set of entities in multiple languages.
+    // This property is used on Page and Query objects.
+    entity_set_caption_ml_property: $ => seq(
+      'EntitySetCaptionML',
+      '=',
+      field('value', $.multilanguage_string_literal),
       ';'
     ),
 
