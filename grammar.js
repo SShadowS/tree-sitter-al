@@ -43,7 +43,8 @@ module.exports = grammar({
       $.query_extension_object,
       $.report_layout_object,
       $.workflow_object,
-      $.api_query_object
+      $.api_query_object,
+      $.request_page_object  // Added Request Page object
     ),
 
     interface_object: $ => seq(
@@ -215,6 +216,19 @@ module.exports = grammar({
     _api_query_element: $ => choice(
       $.property,
       $.elements
+    ),
+
+    request_page_object: $ => seq(
+      'requestpage',
+      '{',
+      repeat($._request_page_element),
+      '}'
+    ),
+
+    _request_page_element: $ => choice(
+      $.layout,
+      $.actions,
+      $.property
     ),
 
     _xmlport_element: $ => choice(
@@ -2591,7 +2605,8 @@ module.exports = grammar({
       $.importance_property,  // Added Importance property
       $.indentation_column_property,  // Added IndentationColumn property
       $.inherent_entitlements_property,
-      $.inherent_permissions_property
+      $.inherent_permissions_property,
+      $.insert_allowed_property  // Added InsertAllowed property
     ),
 
     // Importance Property
@@ -2611,6 +2626,16 @@ module.exports = grammar({
       'IndentationColumn',
       '=',
       field('value', $.identifier),
+      ';'
+    ),
+
+    // InsertAllowed Property
+    // Sets a value to specify whether users can add records while using a page.
+    // This property is used on Page and Request Page objects.
+    insert_allowed_property: $ => seq(
+      'InsertAllowed',
+      '=',
+      field('value', $.boolean_literal),
       ';'
     ),
 
