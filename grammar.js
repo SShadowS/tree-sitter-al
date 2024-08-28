@@ -1876,6 +1876,26 @@ module.exports = grammar({
       ';'
     ),
 
+    // Multi-language string literal
+    multilanguage_string_literal: $ => seq(
+      repeat1(seq(
+        field('language_code', $.identifier),
+        '=',
+        field('text', $.string_literal),
+        optional(',')
+      ))
+    ),
+
+    // CaptionML Property
+    // Sets the string that displays with the object, control, or other element in the user interface for multiple languages.
+    // This property is used on various AL objects including Tables, Table Fields, Pages, Page Fields, and more.
+    caption_ml_property: $ => seq(
+      'CaptionML',
+      '=',
+      field('value', $.multilanguage_string_literal),
+      ';'
+    ),
+
     // CaptionClass Property
     // Controls the caption that is used in the label of a field in a database table or in the label of a control on a page.
     // This property is used on Table Fields, Page Labels, and Page Fields.
