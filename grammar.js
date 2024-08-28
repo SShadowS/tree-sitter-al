@@ -1063,7 +1063,8 @@ module.exports = grammar({
       $.field,
       $.property,
       $.ondelete_trigger,
-      $.oninsert_trigger
+      $.oninsert_trigger,
+      $.onmodify_trigger
       // Other table elements can be added here
     ),
 
@@ -1086,6 +1087,19 @@ module.exports = grammar({
     oninsert_trigger: $ => seq(
       'trigger',
       'OnInsert',
+      '(',
+      ')',
+      field('body', $.code_block)
+    ),
+
+    // OnModify trigger for tables
+    // This trigger runs when a user modifies an existing record in the table
+    // It's executed before the default modify behavior, which checks field validity
+    // It can be used for custom actions or validations before the modification is committed
+    // Note: This trigger only runs automatically in the Web Client or when explicitly set to run in AL code
+    onmodify_trigger: $ => seq(
+      'trigger',
+      'OnModify',
       '(',
       ')',
       field('body', $.code_block)
