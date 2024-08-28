@@ -625,7 +625,8 @@ module.exports = grammar({
       $.property,
       $.trigger,
       $.procedure,
-      $.onaftertestrun_trigger
+      $.onaftertestrun_trigger,
+      $.onbeforetestrun_trigger
       // Other codeunit elements can be added here
     ),
 
@@ -655,6 +656,33 @@ module.exports = grammar({
       ':',
       'Boolean',
       ')',
+      field('body', $.code_block)
+    ),
+
+    // OnBeforeTestRun trigger for test runner codeunits
+    // This trigger runs before each test in a test codeunit is executed
+    onbeforetestrun_trigger: $ => seq(
+      'trigger',
+      'OnBeforeTestRun',
+      '(',
+      'CodeunitId',
+      ':',
+      'Integer',
+      ';',
+      'CodeunitName',
+      ':',
+      'Text',
+      ';',
+      'FunctionName',
+      ':',
+      'Text',
+      ';',
+      'Permissions',
+      ':',
+      'TestPermissions',
+      ')',
+      ':',
+      'Boolean',
       field('body', $.code_block)
     ),
 
