@@ -2085,7 +2085,8 @@ module.exports = grammar({
       $.enabled_property,
       $.extended_datatype_property,
       $.external_access_property,
-      $.external_name_property
+      $.external_name_property,
+      $.external_type_property
     ),
 
     // ExternalAccess Property
@@ -2103,6 +2104,16 @@ module.exports = grammar({
     // This property is used on Tables and Table Fields.
     external_name_property: $ => seq(
       'ExternalName',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    // ExternalType Property
+    // Specifies the type of the original table field in the external database.
+    // This property is used on Table Fields when working with external data sources.
+    external_type_property: $ => seq(
+      'ExternalType',
       '=',
       field('value', $.string_literal),
       ';'
