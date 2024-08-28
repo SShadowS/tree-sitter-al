@@ -224,7 +224,8 @@ module.exports = grammar({
     _xmlport_element: $ => choice(
       $.property,
       $.schema,
-      $.requestpage
+      $.requestpage,
+      $.auto_calc_field_property
     ),
 
     schema: $ => seq(
@@ -353,7 +354,8 @@ module.exports = grammar({
       $.requestpage,
       $.rendering,
       $.labels,
-      $.trigger
+      $.trigger,
+      $.auto_calc_field_property
     ),
 
     report_extension_object: $ => seq(
@@ -1964,6 +1966,16 @@ module.exports = grammar({
     // Sets whether the permission set can be assigned to a user.
     assignable_property: $ => seq(
       'Assignable',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // AutoCalcField Property
+    // Sets whether FlowFields should be automatically calculated.
+    // Used on XMLport Field Attributes, XMLport Field Elements, and Report Columns.
+    auto_calc_field_property: $ => seq(
+      'AutoCalcField',
       '=',
       field('value', $.boolean_literal),
       ';'
