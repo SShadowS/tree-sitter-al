@@ -14,11 +14,11 @@ module.exports = grammar({
       field('id', $.object_id),
       field('name', $.object_name),
       optional(field('al', $.string)), // AL property for table alias
-      optional(prec(2, seq(
+      optional(seq(
         '{',
-        repeat(choice($.table_level_property, $.caption_property)),
+        repeat(choice($.property, $.caption_property)),
         '}'
-      ))),
+      )),
       '{',
       repeat($._table_element),
       '}'
@@ -30,8 +30,7 @@ module.exports = grammar({
       $.variable_declaration,
       $.trigger_definition,
       $.procedure_definition,
-      prec(1, $.property)
-      // Other table elements can be added here
+      $.property
     ),
 
     table_level_property: $ => $.property,
@@ -43,7 +42,7 @@ module.exports = grammar({
       optional(';')
     ),
 
-    field_definition: $ => prec.right(1, seq(
+    field_definition: $ => seq(
       'field',
       '(',
       field('id', $.field_id),
@@ -58,7 +57,7 @@ module.exports = grammar({
         '}'
       )),
       optional(';')
-    )),
+    ),
 
     key_definition: $ => seq(
       'key',
