@@ -402,7 +402,22 @@ module.exports = grammar({
       $.ondeleterecord_trigger,
       $.onfindrecord_trigger,
       $.oninit_trigger,
-      $.oninsertrecord_trigger
+      $.oninsertrecord_trigger,
+      $.onmodifyrecord_trigger
+    ),
+
+    // OnModifyRecord trigger for pages
+    // This trigger runs before a record is modified in the table
+    // It can be used to perform custom actions or validations before the modification occurs
+    // The modification is canceled if the trigger returns false
+    onmodifyrecord_trigger: $ => seq(
+      'trigger',
+      'OnModifyRecord',
+      '(',
+      ')',
+      ':',
+      'Boolean',
+      field('body', $.code_block)
     ),
 
     // OnInsertRecord trigger for pages
