@@ -1656,7 +1656,18 @@ module.exports = grammar({
       $.calc_formula_property,
       $.caption_property,
       $.caption_class_property,
-      $.caption_ml_property
+      $.caption_ml_property,
+      $.char_allowed_property
+    ),
+
+    // CharAllowed Property
+    // Sets the range of characters the user can enter into this field or control.
+    // This property is used on Table Fields and Page Fields.
+    char_allowed_property: $ => seq(
+      'CharAllowed',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // Caption Property
