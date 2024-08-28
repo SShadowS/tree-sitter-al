@@ -4233,7 +4233,18 @@ module.exports = grammar({
       $.order_by_property,  // Added OrderBy property
       $.permissions_property,  // Added Permissions property
       $.query_type_property,  // Added QueryType property
-      $.query_category_property  // Added QueryCategory property
+      $.query_category_property,  // Added QueryCategory property
+      $.read_state_property  // Added ReadState property
+    ),
+
+    // ReadState Property
+    // Specifies which records are read and how they are locked when a query is executed.
+    // This property is used on Query objects.
+    read_state_property: $ => seq(
+      'ReadState',
+      '=',
+      field('value', choice('ReadUncommitted', 'ReadShared', 'ReadExclusive')),
+      ';'
     ),
 
     // QueryType Property
