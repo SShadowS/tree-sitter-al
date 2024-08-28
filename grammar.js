@@ -2046,7 +2046,8 @@ module.exports = grammar({
       $.obsolete_tag_property,  // Added ObsoleteTag property
       $.paste_is_valid_property,  // Added PasteIsValid property
       $.permissions_property,  // Added Permissions property
-      $.about_title_property  // Added AboutTitle property
+      $.about_title_property,  // Added AboutTitle property
+      $.data_deletion_allowed_property  // Added DataDeletionAllowed property
     ),
 
     // AboutTitle Property
@@ -3363,6 +3364,16 @@ module.exports = grammar({
       'AboutTitle',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // DataDeletionAllowed Property
+    // Sets whether data can be deleted from the table.
+    // This property is used on Table objects.
+    data_deletion_allowed_property: $ => seq(
+      'DataDeletionAllowed',
+      '=',
+      field('value', $.boolean_literal),
       ';'
     ),
 
