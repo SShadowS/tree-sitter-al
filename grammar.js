@@ -2696,7 +2696,8 @@ module.exports = grammar({
       $.links_allowed_property,  // Added LinksAllowed property
       $.lookup_property,  // Added Lookup property
       $.modify_allowed_property,  // Added ModifyAllowed property
-      $.multiline_property  // Added MultiLine property
+      $.multiline_property,  // Added MultiLine property
+      $.multiple_new_lines_property  // Added MultipleNewLines property
     ),
 
     // LinksAllowed Property
@@ -2734,6 +2735,16 @@ module.exports = grammar({
     // This property is used on Page Labels and Page Fields.
     multiline_property: $ => seq(
       'MultiLine',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // MultipleNewLines Property
+    // Sets a value that determines whether users can add multiple new lines between records.
+    // This property is used on Page and Request Page objects.
+    multiple_new_lines_property: $ => seq(
+      'MultipleNewLines',
       '=',
       field('value', $.boolean_literal),
       ';'
