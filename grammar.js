@@ -3,6 +3,7 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$._table_element, $.table_definition],
+    [$.table_definition, $._table_element, $.table_level_property],
   ],
 
   rules: {
