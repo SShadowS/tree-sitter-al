@@ -1843,6 +1843,9 @@ module.exports = grammar({
 
     exit_statement: $ => seq(
       'exit',
+      '(',
+      optional($._expression),
+      ')',
       ';'
     ),
 
