@@ -2952,7 +2952,18 @@ module.exports = grammar({
       $.encoding_property,
       $.field_delimiter_property,
       $.file_name_property,
-      $.field_separator_property
+      $.field_separator_property,
+      $.field_validate_property
+    ),
+
+    // FieldValidate Property
+    // Sets a value that specifies whether the values in the source field are validated by the OnValidate (Fields) trigger for the field.
+    // This property is used on XMLport Field Attributes and XMLport Field Elements.
+    field_validate_property: $ => seq(
+      'FieldValidate',
+      '=',
+      field('value', choice('Yes', 'No', 'Undefined')),
+      ';'
     ),
 
     // FieldDelimiter Property
