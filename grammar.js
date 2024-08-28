@@ -1597,7 +1597,18 @@ module.exports = grammar({
       $.about_title_ml_property,
       $.access_by_permission_property,
       $.additional_search_terms_property,
-      $.additional_search_terms_ml_property
+      $.additional_search_terms_ml_property,
+      $.allowed_file_extensions_property
+    ),
+
+    // AllowedFileExtensions Property
+    // Specifies the list of allowed file extensions for Page File Upload Actions.
+    // This property restricts the types of files that can be uploaded.
+    allowed_file_extensions_property: $ => seq(
+      'AllowedFileExtensions',
+      '=',
+      field('value', $.array_value),
+      ';'
     ),
 
     // AdditionalSearchTermsML Property
