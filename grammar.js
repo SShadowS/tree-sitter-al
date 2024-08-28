@@ -2936,6 +2936,16 @@ module.exports = grammar({
       $.promoted_only_property  // Added PromotedOnly property
     ),
 
+    // PromptMode Property
+    // Specifies the current mode of a PromptDialog page.
+    // This property is used on Page objects with PageType set to PromptDialog.
+    prompt_mode_property: $ => seq(
+      'PromptMode',
+      '=',
+      field('value', choice('Prompt', 'Generate', 'Content')),
+      ';'
+    ),
+
     // PromotedOnly Property
     // Specifies whether the selected action is promoted only, which means that it will appear only on the Home tab in the ribbon and not on the tab where it is defined.
     // This property is used on Page Action objects.
