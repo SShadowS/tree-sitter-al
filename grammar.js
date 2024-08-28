@@ -634,8 +634,21 @@ module.exports = grammar({
       $.onrun_trigger,
       $.onupgradepercompany_trigger,
       $.onupgradeperdatabase_trigger,
-      $.onvalidateupgradepercompany_trigger
+      $.onvalidateupgradepercompany_trigger,
+      $.onvalidateupgradeperdatabase_trigger
       // Other codeunit elements can be added here
+    ),
+
+    // OnValidateUpgradePerDatabase trigger for upgrade codeunits
+    // This trigger runs after an extension upgrade, once for the entire database
+    // It is used to check that the upgrade was successful
+    // If an error occurs during runtime, the extension upgrade is canceled
+    onvalidateupgradeperdatabase_trigger: $ => seq(
+      'trigger',
+      'OnValidateUpgradePerDatabase',
+      '(',
+      ')',
+      field('body', $.code_block)
     ),
 
     // OnValidateUpgradePerCompany trigger for upgrade codeunits
