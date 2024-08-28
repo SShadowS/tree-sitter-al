@@ -2041,7 +2041,18 @@ module.exports = grammar({
       $.moved_from_property,  // Added MovedFrom property
       $.moved_to_property,  // Added MovedTo property
       $.obsolete_reason_property,  // Added ObsoleteReason property
-      $.obsolete_state_property  // Added ObsoleteState property
+      $.obsolete_state_property,  // Added ObsoleteState property
+      $.obsolete_tag_property  // Added ObsoleteTag property
+    ),
+
+    // ObsoleteTag Property
+    // Specifies a free-form text to support tracking of where and when the object was marked as obsolete.
+    // This property is used on various AL objects including Tables, Table Fields, Pages, and more.
+    obsolete_tag_property: $ => seq(
+      'ObsoleteTag',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // ObsoleteReason Property
@@ -2223,7 +2234,8 @@ module.exports = grammar({
       $.navigation_page_id_property,  // Added NavigationPageId property
       $.not_blank_property,  // Added NotBlank property
       $.numeric_property,  // Added Numeric property
-      $.obsolete_reason_property  // Added ObsoleteReason property
+      $.obsolete_reason_property,  // Added ObsoleteReason property
+      $.obsolete_tag_property  // Added ObsoleteTag property
     ),
 
     // NotBlank Property
@@ -2764,7 +2776,8 @@ module.exports = grammar({
       $.modify_allowed_property,  // Added ModifyAllowed property
       $.multiline_property,  // Added MultiLine property
       $.multiple_new_lines_property,  // Added MultipleNewLines property
-      $.obsolete_reason_property  // Added ObsoleteReason property
+      $.obsolete_reason_property,  // Added ObsoleteReason property
+      $.obsolete_tag_property  // Added ObsoleteTag property
     ),
 
     // LinksAllowed Property
@@ -3588,7 +3601,8 @@ module.exports = grammar({
       $.subtype_property,
       $.event_subscriber_instance_property,
       $.inherent_entitlements_property,
-      $.inherent_permissions_property
+      $.inherent_permissions_property,
+      $.obsolete_tag_property  // Added ObsoleteTag property
     ),
 
     // EventSubscriberInstance Property
