@@ -5722,3 +5722,13 @@ module.exports = grammar({
       field('value', $.string_literal),
       ';'
     ),
+
+    // SourceTableView Property
+    // Sets the key, sort order, and filter to determine the view of the source table presented to the user.
+    // This property is used on Page objects.
+    source_table_view_property: $ => seq(
+      'SourceTableView',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
