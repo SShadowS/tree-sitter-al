@@ -3096,9 +3096,10 @@ module.exports = grammar({
       $.shortcut_key_property,
       $.show_as_tree_property,
       $.show_caption_property,
-      $.show_mandatory_property,  // Added ShowMandatory property
-      $.source_table_property,  // Added SourceTable property
-      $.source_table_temporary_property  // Added SourceTableTemporary property
+      $.show_mandatory_property,
+      $.source_table_property,
+      $.source_table_temporary_property,
+      $.source_table_view_property  // Added SourceTableView property
     ),
 
     // SourceTable Property
@@ -5709,5 +5710,15 @@ module.exports = grammar({
       'SourceTableTemporary',
       '=',
       field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // SourceTableView Property
+    // Sets the key, sort order, and filter to determine the view of the source table presented to the user.
+    // This property is used on Page objects.
+    source_table_view_property: $ => seq(
+      'SourceTableView',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
