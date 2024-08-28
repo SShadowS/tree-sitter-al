@@ -37,7 +37,11 @@ AboutTitleML = ENU = 'About sales invoices', DAN = 'Om salgsfakturaer';
 
 ## Remarks
 
-For more information, see the [AboutTitle Property](devenv-abouttitle-property.md). 
+The AboutTitleML property can be used in conjunction with the AL property, which allows for aliasing of various elements in AL, including tables, fields, keys, and procedures. The AL property is particularly useful when working with multilingual applications.
+
+For more information about the AboutTitleML property, see the [AboutTitle Property](devenv-abouttitle-property.md).
+
+For more information about the AL property and its usage for aliasing, refer to the AL Language documentation.
 
 [!INCLUDE[aboutTeachingTips](../includes/include-about-teaching-tips.md)]
 
