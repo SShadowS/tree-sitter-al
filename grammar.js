@@ -604,7 +604,7 @@ module.exports = grammar({
       'var',
       'IsHandled',
       ':',
-      'Boolean',
+      $.Boolean,
       ')',
       field('body', $.code_block)
     ),
@@ -1146,7 +1146,7 @@ module.exports = grammar({
       ';',
       'Success',
       ':',
-      'Boolean',
+      $.Boolean,
       ')',
       field('body', $.code_block)
     ),
@@ -1174,7 +1174,7 @@ module.exports = grammar({
       'TestPermissions',
       ')',
       ':',
-      'Boolean',
+      $.Boolean,
       field('body', $.code_block)
     ),
 
@@ -1227,7 +1227,7 @@ module.exports = grammar({
       seq(
         field('property', $.identifier),
         '=',
-        field('value', choice($.string, $.boolean, $.integer)),
+        field('value', choice($.string, $.boolean_literal, $.integer)),
         optional(',')
       )
     ),
@@ -1532,7 +1532,6 @@ module.exports = grammar({
 
     string: $ => /"[^"]*"/,
     integer: $ => /\d+/,
-    boolean: $ => choice('true', 'false'),
     // Identifiers
     identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
@@ -1554,6 +1553,15 @@ module.exports = grammar({
     string_literal: $ => /'[^']*'/,
 
     boolean_literal: $ => choice('true', 'false'),
+
+    // Types
+    _type: $ => choice(
+      $.identifier,
+      $.record_type,
+      $.Boolean
+    ),
+
+    Boolean: $ => 'Boolean',
 
     date_literal: $ => /\d{2}\.\d{2}\.\d{4}/,
 
