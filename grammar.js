@@ -3665,7 +3665,8 @@ module.exports = grammar({
       $.print_only_if_detail_property,
       $.processing_only_property,
       $.rdlc_layout_property,  // Added RDLCLayout property
-      $.request_page_property  // Added RequestPage property
+      $.request_page_property,  // Added RequestPage property
+      $.request_filter_fields_property  // Added RequestFilterFields property
     ),
 
     // RDLCLayout Property
@@ -5263,6 +5264,17 @@ module.exports = grammar({
       'RecreateScript',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // RequestFilterFields Property
+    // Sets which fields are automatically included on the tab of the request page that is related to this data item.
+    // The user can set filters on these fields.
+    // This property is used on Report Data Items and XMLport Table Elements.
+    request_filter_fields_property: $ => seq(
+      'RequestFilterFields',
+      '=',
+      field('value', $.identifier_list),
       ';'
     )
   }
