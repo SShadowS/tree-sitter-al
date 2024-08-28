@@ -2081,7 +2081,18 @@ module.exports = grammar({
       $.decimal_places_property,
       $.editable_property,
       $.enabled_property,
-      $.extended_datatype_property
+      $.extended_datatype_property,
+      $.external_access_property
+    ),
+
+    // ExternalAccess Property
+    // Specifies the type of access to the original table field in the external database.
+    // This property is used on Table Fields.
+    external_access_property: $ => seq(
+      'ExternalAccess',
+      '=',
+      field('value', choice('Full', 'Insert', 'Modify', 'Read')),
+      ';'
     ),
 
     // ColumnSpan Property
