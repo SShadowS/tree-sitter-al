@@ -1882,7 +1882,18 @@ module.exports = grammar({
 
     xmlport_property: $ => choice(
       // XMLport-specific properties will be added here
-      $.auto_replace_property
+      $.auto_replace_property,
+      $.auto_save_property
+    ),
+
+    // AutoSave Property
+    // Sets whether imported records are automatically written to the table.
+    // This property applies to new records that are inserted into the table and existing records that are modified.
+    auto_save_property: $ => seq(
+      'AutoSave',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // AutoReplace Property
