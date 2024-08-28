@@ -5701,9 +5701,8 @@ module.exports = grammar({
       '=',
       field('value', $.identifier_list),
       ';'
-    )
-  }
-});
+    ),
+
     // SourceTableTemporary Property
     // Sets whether the source table is a temporary table.
     // This property is used on Page and Request Page objects.
@@ -5723,3 +5722,5 @@ module.exports = grammar({
       field('value', $.string_literal),
       ';'
     ),
+  }
+});
