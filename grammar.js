@@ -2074,7 +2074,8 @@ module.exports = grammar({
       $.permissions_property,  // Added Permissions property
       $.about_title_property,  // Added AboutTitle property
       $.data_deletion_allowed_property,  // Added DataDeletionAllowed property
-      $.public_key_token_property  // Added PublicKeyToken property
+      $.public_key_token_property,  // Added PublicKeyToken property
+      $.recreate_script_property  // Added RecreateScript property
     ),
 
     // AboutTitle Property
@@ -4527,7 +4528,8 @@ module.exports = grammar({
       $.vertical_stretch_property,
       $.horizontal_stretch_property,
       $.requested_height_property,
-      $.requested_width_property
+      $.requested_width_property,
+      $.recreate_script_property  // Added RecreateScript property
     ),
 
     // MinimumWidth Property
@@ -5173,6 +5175,16 @@ module.exports = grammar({
     // This property is used on Dot Net Assembly objects.
     public_key_token_property: $ => seq(
       'PublicKeyToken',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    // RecreateScript Property
+    // Specifies the script which is invoked when the control add-in is recreated.
+    // This property is used on Control Add In objects.
+    recreate_script_property: $ => seq(
+      'RecreateScript',
       '=',
       field('value', $.string_literal),
       ';'
