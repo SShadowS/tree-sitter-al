@@ -408,7 +408,25 @@ module.exports = grammar({
       $.onnextrecord_trigger,
       $.onopenpage_trigger,
       $.onpagebackgroundtaskcompleted_trigger,
-      $.onpagebackgroundtaskerror_trigger
+      $.onpagebackgroundtaskerror_trigger,
+      $.onqueryclosepage_trigger
+    ),
+
+    // OnQueryClosePage trigger for pages
+    // This trigger runs when a page closes and before the OnClosePage trigger executes
+    // It can be used to perform actions or validations before the page is closed
+    // If the trigger returns false, the page closing is canceled
+    onqueryclosepage_trigger: $ => seq(
+      'trigger',
+      'OnQueryClosePage',
+      '(',
+      'CloseAction',
+      ':',
+      'Action',
+      ')',
+      ':',
+      'Boolean',
+      field('body', $.code_block)
     ),
 
     // OnPageBackgroundTaskError trigger for pages
