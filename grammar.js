@@ -3710,17 +3710,6 @@ module.exports = grammar({
         ))
       )),
       ';'
-    )
-      optional(seq(
-        ',',
-        repeat1(seq(
-          field('parameter', choice('Locked', 'Comment', 'MaxLength')),
-          '=',
-          field('parameter_value', choice($.boolean_literal, $.string_literal, $.integer)),
-          optional(',')
-        ))
-      )),
-      ';'
     ),
 
     // RequestFilterHeadingML Property
