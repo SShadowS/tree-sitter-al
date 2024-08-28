@@ -2076,7 +2076,8 @@ module.exports = grammar({
       $.data_deletion_allowed_property,  // Added DataDeletionAllowed property
       $.public_key_token_property,  // Added PublicKeyToken property
       $.recreate_script_property,  // Added RecreateScript property
-      $.replicate_data_property  // Added ReplicateData property
+      $.replicate_data_property,  // Added ReplicateData property
+      $.table_type_property  // Added TableType property
     ),
 
     // ReplicateData Property
@@ -2086,6 +2087,16 @@ module.exports = grammar({
       'ReplicateData',
       '=',
       field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // TableType Property
+    // Specifies the type of the table.
+    // This property is used on Table objects.
+    table_type_property: $ => seq(
+      'TableType',
+      '=',
+      field('value', choice('Normal', 'CRM', 'ExternalSQL', 'MicrosoftGraph', 'Temporary')),
       ';'
     ),
 
