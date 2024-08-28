@@ -2025,7 +2025,18 @@ module.exports = grammar({
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
       $.is_control_addin_property,
-      $.key_property  // Added Key property
+      $.key_property,  // Added Key property
+      $.linked_object_property  // Added LinkedObject property
+    ),
+
+    // LinkedObject Property
+    // Specifies a link to SQL Server objects.
+    // This property is used on Table objects.
+    linked_object_property: $ => seq(
+      'LinkedObject',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // Key Property
