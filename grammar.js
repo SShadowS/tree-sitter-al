@@ -2902,7 +2902,18 @@ module.exports = grammar({
       $.order_by_property,  // Added OrderBy property
       $.page_type_property,  // Added PageType property
       $.prompt_mode_property,  // Added PromptMode property
-      $.permissions_property  // Added Permissions property
+      $.permissions_property,  // Added Permissions property
+      $.populate_all_fields_property  // Added PopulateAllFields property
+    ),
+
+    // PopulateAllFields Property
+    // Sets whether fields are filled out automatically with a single filter value when a new record is inserted in a table.
+    // This property is used on Page and Request Page objects.
+    populate_all_fields_property: $ => seq(
+      'PopulateAllFields',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // PromptMode Property
