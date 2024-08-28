@@ -2829,7 +2829,18 @@ module.exports = grammar({
       $.caption_property,
       $.caption_ml_property,
       $.default_fields_validation_property,
-      $.direction_property
+      $.direction_property,
+      $.encoding_property
+    ),
+
+    // Encoding Property
+    // Sets a value that specifies which system is applied to the XMLport for character encoding.
+    // This property is used on XMLport objects.
+    encoding_property: $ => seq(
+      'Encoding',
+      '=',
+      field('value', choice('UTF8', 'UTF16', 'ISO88592')),
+      ';'
     ),
 
     // Direction Property
