@@ -1,0 +1,117 @@
+==================
+ Simple Table Test
+==================
+
+table 50100 "My Test Table"
+{
+    Caption = 'My Test Table';
+    DataClassification = CustomerContent;
+
+    fields
+    {
+        field(1; "Primary Key"; Code[20])
+        {
+            Caption = 'Primary Key';
+            DataClassification = CustomerContent;
+        }
+        field(2; Description; Text[100])
+        {
+            Caption = 'Description';
+        }
+        field(3; Amount; Decimal)
+        {
+            Caption = 'Amount';
+            DecimalPlaces = 2:2;
+        }
+    }
+
+    keys
+    {
+        key(PK; "Primary Key")
+        {
+            Clustered = true;
+        }
+    }
+
+    var
+        myInt: Integer;
+
+    trigger OnInsert()
+    begin
+        Message('Record inserted');
+    end;
+
+    procedure MyProcedure(param: Text): Boolean
+    begin
+        if param <> '' then
+            exit(true)
+        else
+            exit(false);
+    end;
+}
+
+---
+
+(source_file
+(table_definition
+    (object_id)
+    (object_name)
+    (caption_property
+    (string))
+    (property
+    (property_name)
+    (property_value))
+    (field_definition
+    (field_id)
+    (field_name)
+    (field_type)
+    (caption_property
+        (string))
+    (property
+        (property_name)
+        (property_value)))
+    (field_definition
+    (field_id)
+    (field_name)
+    (field_type)
+    (caption_property
+        (string)))
+    (field_definition
+    (field_id)
+    (field_name)
+    (field_type)
+    (caption_property
+        (string))
+    (property
+        (property_name)
+        (property_value)))
+    (key_definition
+    (identifier)
+    (identifier)
+    (property
+        (property_name)
+        (property_value)))
+    (variable_declaration
+    (identifier)
+    (type))
+    (trigger_definition
+    (trigger_name)
+    (procedure_body
+        (procedure_call
+        (identifier)
+        (string))))
+    (procedure_definition
+    (procedure_name)
+    (parameter
+        (identifier)
+        (type))
+    (type)
+    (procedure_body
+        (if_statement
+        (binary_expression
+            (identifier)
+            (string))
+        (exit_statement
+            (boolean))
+        (exit_statement
+            (boolean)))))))
