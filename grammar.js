@@ -1657,7 +1657,18 @@ module.exports = grammar({
       $.caption_property,
       $.caption_class_property,
       $.caption_ml_property,
-      $.char_allowed_property
+      $.char_allowed_property,
+      $.closing_dates_property
+    ),
+
+    // ClosingDates Property
+    // Sets a value that determines whether users can enter a closing date in this field.
+    // This property is used on Table Fields and Page Fields.
+    closing_dates_property: $ => seq(
+      'ClosingDates',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // CharAllowed Property
