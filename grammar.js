@@ -406,7 +406,27 @@ module.exports = grammar({
       $.onmodifyrecord_trigger,
       $.onnewrecord_trigger,
       $.onnextrecord_trigger,
-      $.onopenpage_trigger
+      $.onopenpage_trigger,
+      $.onpagebackgroundtaskcompleted_trigger
+    ),
+
+    // OnPageBackgroundTaskCompleted trigger for pages
+    // This trigger runs after a page background task has successfully completed
+    // It's used to handle the results of asynchronous operations on pages
+    // The trigger receives the task ID and a dictionary of results from the completed task
+    onpagebackgroundtaskcompleted_trigger: $ => seq(
+      'trigger',
+      'OnPageBackgroundTaskCompleted',
+      '(',
+      'TaskId',
+      ':',
+      'Integer',
+      ';',
+      'Results',
+      ':',
+      'Dictionary of [Text,Text]',
+      ')',
+      field('body', $.code_block)
     ),
 
     // OnOpenPage trigger for pages
