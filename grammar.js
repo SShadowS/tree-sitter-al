@@ -3314,7 +3314,18 @@ module.exports = grammar({
       $.link_table_property,  // Added LinkTable property
       $.link_table_force_insert_property,  // Added LinkTableForceInsert property
       $.max_occurs_property,  // Added MaxOccurs property
-      $.min_occurs_property  // Added MinOccurs property
+      $.min_occurs_property,  // Added MinOccurs property
+      $.namespace_prefix_property  // Added NamespacePrefix property
+    ),
+
+    // NamespacePrefix Property
+    // Specifies the namespace prefix on an XmlPort element.
+    // This property is used on XMLport Text Elements, XMLport Field Elements, XMLport Table Elements, XMLport Field Attributes, and XMLport Text Attributes.
+    namespace_prefix_property: $ => seq(
+      'NamespacePrefix',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // MinOccurs Property
