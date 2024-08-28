@@ -1609,7 +1609,18 @@ module.exports = grammar({
       $.additional_search_terms_property,
       $.additional_search_terms_ml_property,
       $.allowed_file_extensions_property,
-      $.allow_multiple_files_property
+      $.allow_multiple_files_property,
+      $.analysis_mode_enabled_property
+    ),
+
+    // AnalysisModeEnabled Property
+    // Sets a value that specifies whether analysis mode on the page is allowed.
+    // When set to true, the Analyze switch is available at the top of the page.
+    analysis_mode_enabled_property: $ => seq(
+      'AnalysisModeEnabled',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // AllowedFileExtensions Property
