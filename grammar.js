@@ -225,7 +225,24 @@ module.exports = grammar({
       $.property,
       $.schema,
       $.requestpage,
-      $.auto_calc_field_property
+      $.auto_calc_field_property,
+      $.calc_fields_property
+    ),
+
+    // CalcFields Property
+    // Sets a list of FlowFields to automatically calculate.
+    // This property is used on XMLport Table Elements.
+    calc_fields_property: $ => seq(
+      'CalcFields',
+      '=',
+      field('value', $.identifier_list),
+      ';'
+    ),
+
+    // Helper rule for a list of identifiers
+    identifier_list: $ => seq(
+      $.identifier,
+      repeat(seq(',', $.identifier))
     ),
 
     schema: $ => seq(
@@ -356,6 +373,44 @@ module.exports = grammar({
       $.labels,
       $.trigger,
       $.auto_calc_field_property
+    ),
+
+    dataset: $ => seq(
+      'dataset',
+      '{',
+      repeat($._dataset_element),
+      '}'
+    ),
+
+    _dataset_element: $ => choice(
+      $.dataitem
+    ),
+
+    dataitem: $ => seq(
+      'dataitem',
+      '(',
+      field('name', $.identifier),
+      ';',
+      field('table', $.identifier),
+      ')',
+      '{',
+      repeat($._dataitem_element),
+      '}'
+    ),
+
+    _dataitem_element: $ => choice(
+      $.property,
+      $.calc_fields_property
+    ),
+
+    // CalcFields Property
+    // Sets a list of FlowFields to automatically calculate.
+    // This property is used on Report Data Items.
+    calc_fields_property: $ => seq(
+      'CalcFields',
+      '=',
+      field('value', $.identifier_list),
+      ';'
     ),
 
     report_extension_object: $ => seq(
