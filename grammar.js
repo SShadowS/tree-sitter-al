@@ -2765,7 +2765,18 @@ module.exports = grammar({
       $.enable_external_assemblies_property,
       $.enable_external_images_property,
       $.enable_hyperlinks_property,
-      $.excel_layout_property
+      $.excel_layout_property,
+      $.excel_layout_multiple_data_sheets_property
+    ),
+
+    // ExcelLayoutMultipleDataSheets Property
+    // Sets whether an Excel layout will render to multiple data sheets or in a single sheet named Data.
+    // This property is used on Report objects.
+    excel_layout_multiple_data_sheets_property: $ => seq(
+      'ExcelLayoutMultipleDataSheets',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // ExcelLayout Property
