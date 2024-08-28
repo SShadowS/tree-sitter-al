@@ -731,12 +731,124 @@ module.exports = grammar({
     ),
 
     _statement: $ => choice(
-      // Add various statement types here
-      // For now, we'll just use a placeholder
-      $.placeholder_statement
+      $.assignment_statement,
+      $.if_statement,
+      $.case_statement,
+      $.for_statement,
+      $.while_statement,
+      $.repeat_statement,
+      $.procedure_call_statement,
+      $.exit_statement,
+      $.with_statement
     ),
 
-    placeholder_statement: $ => /[^;]+;/,
+    assignment_statement: $ => seq(
+      field('variable', $.identifier),
+      ':=',
+      field('value', $._expression),
+      ';'
+    ),
+
+    if_statement: $ => seq(
+      'if',
+      field('condition', $._expression),
+      'then',
+      field('then_body', $.code_block),
+      optional(seq('else', field('else_body', $.code_block)))
+    ),
+
+    case_statement: $ => seq(
+      'case',
+      field('expression', $._expression),
+      'of',
+      repeat1($.case_option),
+      optional(seq('else', field('else_body', $.code_block))),
+      'end'
+    ),
+
+    case_option: $ => seq(
+      field('value', $._literal),
+      ':',
+      field('body', $.code_block),
+      ';'
+    ),
+
+    for_statement: $ => seq(
+      'for',
+      field('variable', $.identifier),
+      ':=',
+      field('start', $._expression),
+      'to',
+      field('end', $._expression),
+      optional(seq('step', field('step', $._expression))),
+      'do',
+      field('body', $.code_block)
+    ),
+
+    while_statement: $ => seq(
+      'while',
+      field('condition', $._expression),
+      'do',
+      field('body', $.code_block)
+    ),
+
+    repeat_statement: $ => seq(
+      'repeat',
+      field('body', $.code_block),
+      'until',
+      field('condition', $._expression),
+      ';'
+    ),
+
+    procedure_call_statement: $ => seq(
+      field('procedure', $.identifier),
+      '(',
+      optional($._argument_list),
+      ')',
+      ';'
+    ),
+
+    exit_statement: $ => seq(
+      'exit',
+      ';'
+    ),
+
+    with_statement: $ => seq(
+      'with',
+      field('record', $.identifier),
+      'do',
+      field('body', $.code_block)
+    ),
+
+    _argument_list: $ => seq(
+      $._expression,
+      repeat(seq(',', $._expression))
+    ),
+
+    _expression: $ => choice(
+      $._literal,
+      $.identifier,
+      $.binary_expression,
+      $.unary_expression,
+      $.parenthesized_expression
+    ),
+
+    binary_expression: $ => prec.left(1, seq(
+      field('left', $._expression),
+      field('operator', $._operator),
+      field('right', $._expression)
+    )),
+
+    unary_expression: $ => prec(2, seq(
+      field('operator', choice('-', 'not')),
+      field('operand', $._expression)
+    )),
+
+    parenthesized_expression: $ => seq(
+      '(',
+      $._expression,
+      ')'
+    ),
 
     table_object: $ => seq(
       'table',
