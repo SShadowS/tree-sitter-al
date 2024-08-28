@@ -401,7 +401,25 @@ module.exports = grammar({
       $.onclosepage_trigger,
       $.ondeleterecord_trigger,
       $.onfindrecord_trigger,
-      $.oninit_trigger
+      $.oninit_trigger,
+      $.oninsertrecord_trigger
+    ),
+
+    // OnInsertRecord trigger for pages
+    // This trigger runs before a new record is inserted into the table
+    // It can be used to perform custom actions or validations before the insertion occurs
+    // The insertion is canceled if the trigger returns false
+    oninsertrecord_trigger: $ => seq(
+      'trigger',
+      'OnInsertRecord',
+      '(',
+      'BelowxRec',
+      ':',
+      'Boolean',
+      ')',
+      ':',
+      'Boolean',
+      field('body', $.code_block)
     ),
 
     // OnInit trigger for pages
