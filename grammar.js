@@ -3353,10 +3353,21 @@ module.exports = grammar({
       $.maximum_dataset_size_property,
       $.maximum_document_count_property,
       $.max_iteration_property,
-      $.option_members_property,  // Added OptionMembers property
-      $.paper_source_default_page_property,  // Added PaperSourceDefaultPage property
-      $.paper_source_first_page_property,  // Added PaperSourceFirstPage property
-      $.paper_source_last_page_property  // Added PaperSourceLastPage property
+      $.option_members_property,
+      $.paper_source_default_page_property,
+      $.paper_source_first_page_property,
+      $.paper_source_last_page_property,
+      $.pdf_font_embedding_property  // Added PdfFontEmbedding property
+    ),
+
+    // PdfFontEmbedding Property
+    // Specifies whether fonts are embedded in PDF files that are generated for reports.
+    // This property is used on Report objects.
+    pdf_font_embedding_property: $ => seq(
+      'PdfFontEmbedding',
+      '=',
+      field('value', choice('Default', 'Yes', 'No')),
+      ';'
     ),
 
     // PaperSourceFirstPage Property
