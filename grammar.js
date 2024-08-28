@@ -2929,7 +2929,8 @@ module.exports = grammar({
       $.populate_all_fields_property,
       $.preserve_whitespace_property,
       $.promoted_property,  // Added Promoted property
-      $.promoted_action_categories_property  // Added PromotedActionCategories property
+      $.promoted_action_categories_property,  // Added PromotedActionCategories property
+      $.promoted_action_categories_ml_property  // Added PromotedActionCategoriesML property
     ),
 
     // PromotedActionCategories Property
@@ -2948,6 +2949,16 @@ module.exports = grammar({
           optional(',')
         ))
       )),
+      ';'
+    ),
+
+    // PromotedActionCategoriesML Property
+    // Sets the caption of the group that you are promoting the action to in multiple languages.
+    // This property is used on Page objects.
+    promoted_action_categories_ml_property: $ => seq(
+      'PromotedActionCategoriesML',
+      '=',
+      field('value', $.multilanguage_string_literal),
       ';'
     ),
 
