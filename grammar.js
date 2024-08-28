@@ -3711,14 +3711,6 @@ module.exports = grammar({
       )),
       ';'
     )
-
-    // RequestFilterHeading Property
-    // Sets a caption for the request page tab that is related to this data item.
-    // This property is used on Report Data Items and XMLport Table Elements.
-    request_filter_heading_property: $ => seq(
-      'RequestFilterHeading',
-      '=',
-      field('value', $.string_literal),
       optional(seq(
         ',',
         repeat1(seq(
