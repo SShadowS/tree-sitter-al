@@ -19,8 +19,84 @@ module.exports = grammar({
       $.query_object,
       $.report_extension_object,
       $.report_object,
-      $.enum_object
+      $.enum_object,
+      $.xmlport_object
       // Other object types can be added here in the future
+    ),
+
+    xmlport_object: $ => seq(
+      'xmlport',
+      field('id', $.integer),
+      field('name', $.string),
+      '{',
+      repeat($._xmlport_element),
+      '}'
+    ),
+
+    _xmlport_element: $ => choice(
+      $.property,
+      $.schema,
+      $.requestpage
+    ),
+
+    schema: $ => seq(
+      'schema',
+      '{',
+      repeat($._schema_element),
+      '}'
+    ),
+
+    _schema_element: $ => choice(
+      $.textelement,
+      $.tableelement,
+      $.fieldelement,
+      $.fieldattribute
+    ),
+
+    textelement: $ => seq(
+      'textelement',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._schema_element),
+      '}'
+    ),
+
+    tableelement: $ => seq(
+      'tableelement',
+      '(',
+      field('variable', $.identifier),
+      ';',
+      field('table', $.identifier),
+      ')',
+      '{',
+      repeat($._schema_element),
+      '}'
+    ),
+
+    fieldelement: $ => seq(
+      'fieldelement',
+      '(',
+      field('name', $.identifier),
+      ';',
+      field('field', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    fieldattribute: $ => seq(
+      'fieldattribute',
+      '(',
+      field('name', $.identifier),
+      ';',
+      field('field', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
     ),
 
     enum_object: $ => seq(
