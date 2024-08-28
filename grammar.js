@@ -44,7 +44,22 @@ module.exports = grammar({
       $.report_layout_object,
       $.workflow_object,
       $.api_query_object,
-      $.request_page_object  // Added Request Page object
+      $.request_page_object,  // Added Request Page object
+      $.dotnet_assembly_object  // Added Dot Net Assembly object
+    ),
+
+    // Dot Net Assembly object definition
+    dotnet_assembly_object: $ => seq(
+      'dotnetassembly',
+      field('name', choice($.identifier, $.string)),
+      '{',
+      repeat($._dotnet_assembly_element),
+      '}'
+    ),
+
+    _dotnet_assembly_element: $ => choice(
+      $.property,
+      $.public_key_token_property
     ),
 
     interface_object: $ => seq(
