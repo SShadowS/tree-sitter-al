@@ -2493,7 +2493,18 @@ module.exports = grammar({
       $.caption_property,
       $.data_access_intent_property,
       $.decimal_places_property,
-      $.default_layout_property
+      $.default_layout_property,
+      $.default_rendering_layout_property
+    ),
+
+    // DefaultRenderingLayout Property
+    // Sets the default layout that should be used for this report.
+    // This property is used on Report objects.
+    default_rendering_layout_property: $ => seq(
+      'DefaultRenderingLayout',
+      '=',
+      field('value', $.identifier),
+      ';'
     ),
 
     // DefaultLayout Property
