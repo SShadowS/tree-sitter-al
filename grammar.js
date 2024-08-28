@@ -2973,6 +2973,7 @@ module.exports = grammar({
       field('value', $.string_literal),
       ';'
     ),
+    field_delimiter_property: $ => seq(
       'FieldDelimiter',
       '=',
       field('value', choice($.string_literal, "'<None>'")),
