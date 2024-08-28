@@ -3041,7 +3041,8 @@ module.exports = grammar({
       $.save_values_property,
       $.scope_property,
       $.shared_layout_property,  // Added SharedLayout property
-      $.shortcut_key_property  // Added ShortcutKey property
+      $.shortcut_key_property,  // Added ShortcutKey property
+      $.show_as_tree_property  // Added ShowAsTree property
     ),
 
     // SharedLayout Property
@@ -3061,6 +3062,16 @@ module.exports = grammar({
       'ShortcutKey',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // ShowAsTree Property
+    // Sets the indentation of rows on a List Page to Tree View.
+    // This property is used on Page Group objects.
+    show_as_tree_property: $ => seq(
+      'ShowAsTree',
+      '=',
+      field('value', $.boolean_literal),
       ';'
     ),
 
