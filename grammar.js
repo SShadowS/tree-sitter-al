@@ -1564,6 +1564,17 @@ module.exports = grammar({
 
     page_property: $ => choice(
       // Page-specific properties will be added here
+      $.about_text_property
+    ),
+
+    // AboutText Property
+    // Sets the body of text that appears in a teaching tip in the UI
+    // Used on Page objects and their controls (actions, fields, parts, etc.)
+    about_text_property: $ => seq(
+      'AboutText',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     report_property: $ => choice(
