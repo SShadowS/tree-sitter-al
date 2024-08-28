@@ -2763,6 +2763,23 @@ module.exports = grammar({
       ';'
     ),
 
+    // DataClassification Property
+    // Sets the data classification level for fields in a table.
+    // This property is used on Table Fields.
+    data_classification_property: $ => seq(
+      'DataClassification',
+      '=',
+      field('value', choice(
+        'CustomerContent',
+        'EndUserIdentifiableInformation',
+        'EndUserPseudonymousIdentifiers',
+        'OrganizationIdentifiableInformation',
+        'AccountData',
+        'ToBeClassified'
+      )),
+      ';'
+    ),
+
     entitlement_property: $ => choice(
       // Entitlement-specific properties will be added here
     ),
