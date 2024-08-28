@@ -501,14 +501,46 @@ module.exports = grammar({
 
     _query_element: $ => choice(
       $.property,
-      $.elements
+      $.elements,
+      $.query_type_property,
+      $.about_title_property,
+      $.about_text_property,
+      $.context_sensitive_help_page_property,
+      $.usage_category_property,
+      $.data_access_intent_property
     ),
 
     elements: $ => seq(
       'elements',
       '{',
-      repeat($.dataitem),
+      repeat($._query_data_item),
       '}'
+    ),
+
+    _query_data_item: $ => choice(
+      $.dataitem
+    ),
+
+    // New properties
+    query_type_property: $ => seq(
+      'QueryType',
+      '=',
+      field('value', choice('Normal', 'API')),
+      ';'
+    ),
+
+    usage_category_property: $ => seq(
+      'UsageCategory',
+      '=',
+      field('value', $.identifier),
+      ';'
+    ),
+
+    data_access_intent_property: $ => seq(
+      'DataAccessIntent',
+      '=',
+      field('value', choice('ReadOnly', 'ReadWrite')),
+      ';'
     ),
 
     dataitem: $ => seq(
@@ -526,7 +558,8 @@ module.exports = grammar({
     _dataitem_element: $ => choice(
       $.column,
       $.dataitem,
-      $.property
+      $.property,
+      $.data_item_link_property
     ),
 
     column: $ => seq(
@@ -539,6 +572,13 @@ module.exports = grammar({
       '{',
       repeat($.property),
       '}'
+    ),
+
+    data_item_link_property: $ => seq(
+      'DataItemLink',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     profile_object: $ => seq(
