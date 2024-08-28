@@ -389,8 +389,18 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.property),
+      repeat(choice($.property, $.include_caption_property)),
       '}'
+    ),
+
+    // IncludeCaption Property
+    // Sets whether to include the caption of a field in the data set of a report.
+    // This property is used on Report Columns.
+    include_caption_property: $ => seq(
+      'IncludeCaption',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     report_layout: $ => seq(
