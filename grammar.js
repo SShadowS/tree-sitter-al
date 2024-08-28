@@ -2959,7 +2959,18 @@ module.exports = grammar({
       $.field_delimiter_property,
       $.file_name_property,
       $.field_separator_property,
-      $.field_validate_property
+      $.field_validate_property,
+      $.format_evaluate_property
+    ),
+
+    // FormatEvaluate Property
+    // Sets the data that is being imported or exported as XML data types or as the standard AL data types.
+    // This property is used on XMLport objects.
+    format_evaluate_property: $ => seq(
+      'FormatEvaluate',
+      '=',
+      field('value', choice('Legacy', 'Xml')),
+      ';'
     ),
 
     // FileName Property
