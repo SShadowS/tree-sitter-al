@@ -10,8 +10,25 @@ module.exports = grammar({
       $.control_addin_object,
       $.entitlement_object,
       $.page_customization_object,
-      $.page_extension_object
+      $.page_extension_object,
+      $.page_object
       // Other object types can be added here in the future
+    ),
+
+    page_object: $ => seq(
+      'page',
+      field('id', $.integer),
+      field('name', $.string),
+      '{',
+      repeat($._page_element),
+      '}'
+    ),
+
+    _page_element: $ => choice(
+      $.property,
+      $.layout,
+      $.actions,
+      $.views
     ),
 
     page_extension_object: $ => seq(
@@ -77,6 +94,20 @@ module.exports = grammar({
       $.add_before,
       $.move_after,
       $.move_before
+    ),
+
+    views: $ => seq(
+      'views',
+      '{',
+      repeat($.view),
+      '}'
+    ),
+
+    view: $ => seq(
+      field('name', $.identifier),
+      '{',
+      repeat($.property),
+      '}'
     ),
 
     modify: $ => seq(
