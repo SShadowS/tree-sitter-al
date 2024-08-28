@@ -1062,7 +1062,8 @@ module.exports = grammar({
     _table_element: $ => choice(
       $.field,
       $.property,
-      $.ondelete_trigger
+      $.ondelete_trigger,
+      $.oninsert_trigger
       // Other table elements can be added here
     ),
 
@@ -1073,6 +1074,18 @@ module.exports = grammar({
     ondelete_trigger: $ => seq(
       'trigger',
       'OnDelete',
+      '(',
+      ')',
+      field('body', $.code_block)
+    ),
+
+    // OnInsert trigger for tables
+    // This trigger runs when a user inserts a new record into the table
+    // It can be used to perform custom actions or validations before the insertion occurs
+    // For example, initializing fields with default values or checking data integrity
+    oninsert_trigger: $ => seq(
+      'trigger',
+      'OnInsert',
       '(',
       ')',
       field('body', $.code_block)
