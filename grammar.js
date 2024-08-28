@@ -2853,7 +2853,8 @@ module.exports = grammar({
       $.excel_layout_property,
       $.excel_layout_multiple_data_sheets_property,
       $.execution_timeout_property,
-      $.extensible_property
+      $.extensible_property,
+      $.format_region_property
     ),
 
     // ExcelLayoutMultipleDataSheets Property
@@ -3697,6 +3698,16 @@ module.exports = grammar({
     // This property is used on Page Custom Actions.
     flow_template_id_property: $ => seq(
       'FlowTemplateId',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    // FormatRegion Property
+    // Sets the format region that will be used when formatting numbers and date/time values.
+    // This property is used on Report objects.
+    format_region_property: $ => seq(
+      'FormatRegion',
       '=',
       field('value', $.string_literal),
       ';'
