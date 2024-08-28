@@ -2766,7 +2766,8 @@ module.exports = grammar({
       $.enable_external_images_property,
       $.enable_hyperlinks_property,
       $.excel_layout_property,
-      $.excel_layout_multiple_data_sheets_property
+      $.excel_layout_multiple_data_sheets_property,
+      $.execution_timeout_property
     ),
 
     // ExcelLayoutMultipleDataSheets Property
@@ -2776,6 +2777,16 @@ module.exports = grammar({
       'ExcelLayoutMultipleDataSheets',
       '=',
       field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // ExecutionTimeout Property
+    // Sets the maximum time the report will run after which it is automatically terminated.
+    // This property is used on Report objects.
+    execution_timeout_property: $ => seq(
+      'ExecutionTimeout',
+      '=',
+      field('value', $.time_literal),
       ';'
     ),
 
