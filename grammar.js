@@ -16,7 +16,7 @@ module.exports = grammar({
       optional(field('al', $.string)), // AL property for table alias
       optional(prec(2, seq(
         '{',
-        repeat($.table_level_property),
+        repeat(choice($.table_level_property, $.caption_property)),
         '}'
       ))),
       '{',
@@ -54,7 +54,7 @@ module.exports = grammar({
       optional(field('al', $.string)), // AL property for field alias
       optional(seq(
         '{',
-        repeat($.property),
+        repeat(choice($.property, $.caption_property)),
         '}'
       )),
       optional(';')
@@ -74,6 +74,13 @@ module.exports = grammar({
       optional(';')
     ),
 
+    property: $ => seq(
+      field('name', $.property_name),
+      '=',
+      field('value', $.property_value),
+      optional(';')
+    ),
+
     property_name: $ => choice(
       $.identifier,
       'Caption',
@@ -84,7 +91,7 @@ module.exports = grammar({
       'LookupPageId',
       'PasteIsValid',
       'Permissions',
-      'TableType'
+      'TableType',
       // Add more table properties as needed
     ),
 
@@ -92,7 +99,21 @@ module.exports = grammar({
       $.string,
       $.number,
       $.boolean,
-      $.identifier
+      $.identifier,
+      $.array
+    ),
+
+    array: $ => seq(
+      '[',
+      optional(commaSep1($._expression)),
+      ']'
+    ),
+
+    caption_property: $ => seq(
+      'Caption',
+      '=',
+      field('value', $.string),
+      optional(';')
     ),
 
     key_definition: $ => seq(
