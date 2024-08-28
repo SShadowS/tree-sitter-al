@@ -2159,7 +2159,19 @@ module.exports = grammar({
       $.change_tracking_allowed_property,
       $.context_sensitive_help_page_property,
       $.cuegroup_layout_property,
+      $.custom_action_type_property,
       $.data_classification_property
+    ),
+
+    // CustomActionType Property
+    // Sets the type of the custom action for Page Custom Actions.
+    // This property determines the behavior of the custom action, such as triggering a Power Automate Flow.
+    custom_action_type_property: $ => seq(
+      'CustomActionType',
+      '=',
+      field('value', choice('Flow', 'FlowTemplate', 'FlowTemplateGallery')),
+      ';'
+    ),
     ),
 
     // ContextSensitiveHelpPage Property
