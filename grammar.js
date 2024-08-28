@@ -583,7 +583,18 @@ module.exports = grammar({
       $.column,
       $.dataitem,
       $.property,
-      $.data_item_link_property
+      $.data_item_link_property,
+      $.data_item_table_filter_property
+    ),
+
+    // DataItemTableFilter Property
+    // Sets filters on fields of the underlying table of a query.
+    // This property is used on Query Data Items.
+    data_item_table_filter_property: $ => seq(
+      'DataItemTableFilter',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     column: $ => seq(
