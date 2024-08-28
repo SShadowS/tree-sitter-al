@@ -2539,7 +2539,18 @@ module.exports = grammar({
       $.gesture_property,
       $.grid_layout_property,  // Added GridLayout property
       $.help_link_property,  // Added HelpLink property
-      $.horizontal_shrink_property  // Added HorizontalShrink property
+      $.horizontal_shrink_property,  // Added HorizontalShrink property
+      $.images_property  // Added Images property
+    ),
+
+    // Images Property
+    // Specifies the list of images to include in the control add-in.
+    // This property is used on Control Add In objects.
+    images_property: $ => seq(
+      'Images',
+      '=',
+      field('value', $.array_value),
+      ';'
     ),
 
     // HorizontalShrink Property
