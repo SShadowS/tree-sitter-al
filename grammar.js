@@ -4154,6 +4154,16 @@ module.exports = grammar({
     ),
 
     // ProfileDescription Property
+    // Sets the description of the profile that users will see in the UI.
+    // This property is used on Profile objects.
+    profile_description_property: $ => seq(
+      'ProfileDescription',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    // ProfileDescription Property
     // Sets a description for the profile that appears in the UI when users select profiles.
     // This property is used on Profile objects.
     profile_description_property: $ => seq(
