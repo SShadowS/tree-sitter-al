@@ -400,7 +400,20 @@ module.exports = grammar({
       $.onaftergetcurrrecord_trigger,
       $.onclosepage_trigger,
       $.ondeleterecord_trigger,
-      $.onfindrecord_trigger
+      $.onfindrecord_trigger,
+      $.oninit_trigger
+    ),
+
+    // OnInit trigger for pages
+    // This trigger runs immediately after the page variables are initialized and the page is loaded
+    // It's used to set up initial values or perform actions before the page is displayed to the user
+    // The trigger cannot be used to access controls on the page
+    oninit_trigger: $ => seq(
+      'trigger',
+      'OnInit',
+      '(',
+      ')',
+      field('body', $.code_block)
     ),
 
     // OnFindRecord trigger for pages
