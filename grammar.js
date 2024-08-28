@@ -2429,7 +2429,8 @@ module.exports = grammar({
       $.description_property,
       $.drilldown_property,
       $.drilldown_page_id_property,
-      $.editable_property
+      $.editable_property,
+      $.ellipsis_property
     ),
 
     // DrillDownPageId Property
@@ -3268,6 +3269,16 @@ module.exports = grammar({
     decimal_places_value: $ => choice(
       $.integer,
       seq($.integer, ':', $.integer)
+    ),
+
+    // Ellipsis Property
+    // Sets a value that specifies whether an ellipsis (...) is appended to the caption on a command button or menu item.
+    // This property is used on Page Actions and Page Custom Actions.
+    ellipsis_property: $ => seq(
+      'Ellipsis',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // DataPerCompany Property
