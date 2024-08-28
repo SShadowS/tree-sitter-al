@@ -1744,7 +1744,8 @@ module.exports = grammar({
       $.caption_property,
       $.caption_ml_property,
       $.column_store_index_property,
-      $.compression_type_property
+      $.compression_type_property,
+      $.data_classification_property
     ),
 
     // CompressionType Property
@@ -1785,7 +1786,8 @@ module.exports = grammar({
       $.char_allowed_property,
       $.closing_dates_property,
       $.column_span_property,
-      $.compressed_property
+      $.compressed_property,
+      $.data_classification_property
     ),
 
     // ColumnSpan Property
@@ -2152,10 +2154,12 @@ module.exports = grammar({
       $.auto_split_key_property,
       $.caption_property,
       $.caption_class_property,
+      $.caption_ml_property,
       $.card_page_id_property,
       $.change_tracking_allowed_property,
       $.context_sensitive_help_page_property,
-      $.cuegroup_layout_property
+      $.cuegroup_layout_property,
+      $.data_classification_property
     ),
 
     // ContextSensitiveHelpPage Property
