@@ -16,8 +16,27 @@ module.exports = grammar({
       $.permission_set_object,
       $.profile_object,
       $.query_object,
-      $.report_extension_object
+      $.report_extension_object,
+      $.report_object
       // Other object types can be added here in the future
+    ),
+
+    report_object: $ => seq(
+      'report',
+      field('id', $.integer),
+      field('name', $.string),
+      '{',
+      repeat($._report_element),
+      '}'
+    ),
+
+    _report_element: $ => choice(
+      $.property,
+      $.dataset,
+      $.requestpage,
+      $.rendering,
+      $.labels,
+      $.trigger
     ),
 
     report_extension_object: $ => seq(
@@ -462,6 +481,60 @@ module.exports = grammar({
       $.trigger,
       $.procedure
       // Other codeunit elements can be added here
+    ),
+
+    dataset: $ => seq(
+      'dataset',
+      '{',
+      repeat($._dataset_element),
+      '}'
+    ),
+
+    _dataset_element: $ => choice(
+      $.dataitem
+    ),
+
+    requestpage: $ => seq(
+      'requestpage',
+      '{',
+      repeat($._requestpage_element),
+      '}'
+    ),
+
+    _requestpage_element: $ => choice(
+      $.layout,
+      $.actions
+    ),
+
+    rendering: $ => seq(
+      'rendering',
+      '{',
+      repeat($.layout),
+      '}'
+    ),
+
+    labels: $ => seq(
+      'labels',
+      '{',
+      repeat($.label),
+      '}'
+    ),
+
+    label: $ => seq(
+      field('name', $.identifier),
+      '=',
+      field('value', $.string),
+      optional(seq(',', $.label_properties)),
+      ';'
+    ),
+
+    label_properties: $ => repeat1(
+      seq(
+        field('property', $.identifier),
+        '=',
+        field('value', choice($.string, $.boolean, $.integer)),
+        optional(',')
+      )
     ),
 
     trigger: $ => seq(
