@@ -2092,7 +2092,8 @@ module.exports = grammar({
       $.data_classification_fields_property,  // Added DataClassificationFields property
       $.about_title_ml_property,  // Added AboutTitleML property
       $.scope_property,  // Added Scope property
-      $.fields_property  // Added Fields property
+      $.fields_property,  // Added Fields property
+      $.about_text_property  // Added AboutText property
     ),
 
     // DataClassificationFields Property
@@ -3834,6 +3835,16 @@ module.exports = grammar({
       'AboutTitleML',
       '=',
       field('value', $.multilanguage_string_literal),
+      ';'
+    ),
+
+    // AboutText Property
+    // Sets the body of text that appears in a teaching tip in the UI
+    // This property is used on Table objects
+    about_text_property: $ => seq(
+      'AboutText',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
