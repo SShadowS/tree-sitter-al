@@ -2621,7 +2621,18 @@ module.exports = grammar({
       $.inherent_permissions_property,
       $.insert_allowed_property,  // Added InsertAllowed property
       $.instructional_text_property,  // Added InstructionalText property
-      $.is_header_property  // Added IsHeader property
+      $.is_header_property,  // Added IsHeader property
+      $.is_preview_property  // Added IsPreview property
+    ),
+
+    // IsPreview Property
+    // Specifies if the page is available as part of a preview release.
+    // This property is used on Page objects.
+    is_preview_property: $ => seq(
+      'IsPreview',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // Importance Property
