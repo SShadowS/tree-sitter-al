@@ -2161,7 +2161,8 @@ module.exports = grammar({
       $.external_type_property,
       $.field_class_property,
       $.init_value_property,
-      $.instructional_text_property
+      $.instructional_text_property,
+      $.max_value_property  // Added MaxValue property
     ),
 
     // ExternalAccess Property
@@ -3827,6 +3828,16 @@ module.exports = grammar({
     // This property is used on Table Fields.
     init_value_property: $ => seq(
       'InitValue',
+      '=',
+      field('value', $._value),
+      ';'
+    ),
+
+    // MaxValue Property
+    // Sets the maximum numeric value for a field.
+    // This property is used on Table Fields and Page Fields.
+    max_value_property: $ => seq(
+      'MaxValue',
       '=',
       field('value', $._value),
       ';'
