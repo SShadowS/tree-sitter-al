@@ -7,8 +7,27 @@ module.exports = grammar({
     _declaration: $ => choice(
       $.table_object,
       $.codeunit_object,
-      $.control_addin_object
+      $.control_addin_object,
+      $.entitlement_object
       // Other object types can be added here in the future
+    ),
+
+    entitlement_object: $ => seq(
+      'entitlement',
+      field('name', $.string),
+      '{',
+      repeat($._entitlement_element),
+      '}'
+    ),
+
+    _entitlement_element: $ => choice(
+      $.entitlement_property
+    ),
+
+    entitlement_property: $ => seq(
+      field('name', $.identifier),
+      '=',
+      field('value', $._value)
     ),
 
     control_addin_object: $ => seq(
