@@ -3349,6 +3349,16 @@ module.exports = grammar({
       ';'
     ),
 
+    // EntityCaption Property
+    // Sets the caption of the entity.
+    // This property is used on Page and Query objects.
+    entity_caption_property: $ => seq(
+      'EntityCaption',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
     // DataPerCompany Property
     // Sets a value that indicates whether the table data applies to all companies in the database or only the current company.
     // This property is used on Table objects.
