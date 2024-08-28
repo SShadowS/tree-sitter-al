@@ -3217,6 +3217,19 @@ module.exports = grammar({
 
     enum_value_property: $ => choice(
       // Enum value-specific properties will be added here
+      $.implementation_property
+    ),
+
+    // Implementation Property
+    // Specifies the explicit interface implementer for an enum value.
+    // This property is used on Enum Value objects.
+    implementation_property: $ => seq(
+      'Implementation',
+      '=',
+      field('interface', $.identifier),
+      '=',
+      field('implementation', $.identifier),
+      ';'
     ),
 
     permission_set_property: $ => choice(
