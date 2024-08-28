@@ -2455,12 +2455,12 @@ module.exports = grammar({
     // Editable Property
     // Sets a value that indicates whether a field, page, or control can be edited through the UI.
     // This property is used on Table Fields, Pages, Request Pages, Page Labels, Page Fields, Page Groups, Page System Parts, Page Chart Parts, and Page Parts.
-    editable_property: $ => seq(
+    editable_property: $ => prec(1, seq(
       'Editable',
       '=',
       field('value', choice($.boolean_literal, $.identifier, $._expression)),
       ';'
-    ),
+    )),
 
     // DataCaptionExpression Property
     // Sets an AL expression that is evaluated and displayed to the left of the page caption.
