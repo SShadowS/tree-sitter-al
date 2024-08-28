@@ -13,8 +13,29 @@ module.exports = grammar({
       $.page_extension_object,
       $.page_object,
       $.permission_set_extension_object,
-      $.permission_set_object
+      $.permission_set_object,
+      $.profile_object
       // Other object types can be added here in the future
+    ),
+
+    profile_object: $ => seq(
+      'profile',
+      field('name', $.identifier),
+      '{',
+      repeat($._profile_element),
+      '}'
+    ),
+
+    _profile_element: $ => choice(
+      $.property,
+      $.customizations
+    ),
+
+    customizations: $ => seq(
+      'Customizations',
+      '=',
+      field('customization_name', $.identifier),
+      ';'
     ),
 
     permission_set_object: $ => seq(
