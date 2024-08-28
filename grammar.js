@@ -2020,7 +2020,18 @@ module.exports = grammar({
       $.caption_property,
       $.caption_class_property,
       $.card_page_id_property,
-      $.change_tracking_allowed_property
+      $.change_tracking_allowed_property,
+      $.context_sensitive_help_page_property
+    ),
+
+    // ContextSensitiveHelpPage Property
+    // Specifies the help topic to show when the user presses Help in the UI.
+    // This property is used on Page, Request Page, and Query objects.
+    context_sensitive_help_page_property: $ => seq(
+      'ContextSensitiveHelpPage',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // ChangeTrackingAllowed Property
