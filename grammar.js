@@ -2039,7 +2039,18 @@ module.exports = grammar({
       $.key_property,  // Added Key property
       $.linked_object_property,  // Added LinkedObject property
       $.moved_from_property,  // Added MovedFrom property
-      $.moved_to_property  // Added MovedTo property
+      $.moved_to_property,  // Added MovedTo property
+      $.obsolete_reason_property  // Added ObsoleteReason property
+    ),
+
+    // ObsoleteReason Property
+    // Specifies why the object has been marked as Pending in the ObsoleteState property.
+    // This property is used on various AL objects including Tables, Table Fields, Pages, and more.
+    obsolete_reason_property: $ => seq(
+      'ObsoleteReason',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // MovedTo Property
@@ -2200,7 +2211,8 @@ module.exports = grammar({
       $.moved_to_property,  // Added MovedTo property
       $.navigation_page_id_property,  // Added NavigationPageId property
       $.not_blank_property,  // Added NotBlank property
-      $.numeric_property  // Added Numeric property
+      $.numeric_property,  // Added Numeric property
+      $.obsolete_reason_property  // Added ObsoleteReason property
     ),
 
     // NotBlank Property
@@ -2740,7 +2752,8 @@ module.exports = grammar({
       $.lookup_property,  // Added Lookup property
       $.modify_allowed_property,  // Added ModifyAllowed property
       $.multiline_property,  // Added MultiLine property
-      $.multiple_new_lines_property  // Added MultipleNewLines property
+      $.multiple_new_lines_property,  // Added MultipleNewLines property
+      $.obsolete_reason_property  // Added ObsoleteReason property
     ),
 
     // LinksAllowed Property
