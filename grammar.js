@@ -2529,7 +2529,8 @@ module.exports = grammar({
       $.entity_set_caption_ml_property,
       $.entity_set_name_property,
       $.extensible_property,
-      $.file_upload_row_action_property
+      $.file_upload_row_action_property,
+      $.filters_property
     ),
 
     // DrillDownPageId Property
@@ -3644,6 +3645,23 @@ module.exports = grammar({
       '=',
       field('value', $.identifier),
       ';'
+    ),
+
+    // Filters Property
+    // Sets a set of filters for the page that will be applied for this page view.
+    // This property is used on Page Views.
+    filters_property: $ => seq(
+      'Filters',
+      '=',
+      field('value', $.filters_value),
+      ';'
+    ),
+
+    filters_value: $ => seq(
+      'WHERE',
+      '(',
+      $.table_filters,
+      ')'
     ),
 
     // DataPerCompany Property
