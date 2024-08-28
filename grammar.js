@@ -3700,6 +3700,16 @@ module.exports = grammar({
       $.requested_width_property
     ),
 
+    // MaximumHeight Property
+    // Specifies the maximum height that the control add-in can be stretched to.
+    // This property is used on Control Add In objects.
+    maximum_height_property: $ => seq(
+      'MaximumHeight',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
     // VerticalShrink Property
     // Sets whether the control add-in can shrink vertically.
     vertical_shrink_property: $ => seq(
