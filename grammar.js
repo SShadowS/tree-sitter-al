@@ -4285,7 +4285,8 @@ module.exports = grammar({
       $.occurrence_property,  // Added Occurrence property
       $.permissions_property,  // Added Permissions property
       $.record_separator_property,  // Added RecordSeparator property
-      $.request_filter_heading_ml_property  // Added RequestFilterHeadingML property
+      $.request_filter_heading_ml_property,  // Added RequestFilterHeadingML property
+      $.source_table_view_property  // Added SourceTableView property
     ),
 
     // RecordSeparator Property
