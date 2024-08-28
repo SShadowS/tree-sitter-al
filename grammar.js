@@ -405,7 +405,20 @@ module.exports = grammar({
       $.oninsertrecord_trigger,
       $.onmodifyrecord_trigger,
       $.onnewrecord_trigger,
-      $.onnextrecord_trigger
+      $.onnextrecord_trigger,
+      $.onopenpage_trigger
+    ),
+
+    // OnOpenPage trigger for pages
+    // This trigger runs after a page is initialized and opened
+    // It's commonly used to set up initial values, change dynamic properties,
+    // or perform actions before the page is displayed to the user
+    onopenpage_trigger: $ => seq(
+      'trigger',
+      'OnOpenPage',
+      '(',
+      ')',
+      field('body', $.code_block)
     ),
 
     // OnNextRecord trigger for pages
