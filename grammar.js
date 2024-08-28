@@ -2215,7 +2215,8 @@ module.exports = grammar({
       $.data_caption_fields_property,
       $.data_classification_property,
       $.delayed_insert_property,
-      $.delete_allowed_property
+      $.delete_allowed_property,
+      $.description_property
     ),
 
     // DataCaptionExpression Property
@@ -2973,6 +2974,16 @@ module.exports = grammar({
       'DeleteAllowed',
       '=',
       field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // Description Property
+    // Sets the description for internal use. This description does not appear to end-users.
+    // This property is used on various AL objects including Codeunits, Tables, Pages, and more.
+    description_property: $ => seq(
+      'Description',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
