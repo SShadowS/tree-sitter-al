@@ -2046,7 +2046,8 @@ module.exports = grammar({
       $.compressed_property,
       $.data_classification_property,
       $.date_formula_property,
-      $.decimal_places_property
+      $.decimal_places_property,
+      $.editable_property
     ),
 
     // ColumnSpan Property
@@ -2427,7 +2428,8 @@ module.exports = grammar({
       $.delete_allowed_property,
       $.description_property,
       $.drilldown_property,
-      $.drilldown_page_id_property
+      $.drilldown_page_id_property,
+      $.editable_property
     ),
 
     // DrillDownPageId Property
@@ -2447,6 +2449,16 @@ module.exports = grammar({
       'DrillDown',
       '=',
       field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // Editable Property
+    // Sets a value that indicates whether a field, page, or control can be edited through the UI.
+    // This property is used on Table Fields, Pages, Request Pages, Page Labels, Page Fields, Page Groups, Page System Parts, Page Chart Parts, and Page Parts.
+    editable_property: $ => seq(
+      'Editable',
+      '=',
+      field('value', choice($.boolean_literal, $.identifier, $._expression)),
       ';'
     ),
 
