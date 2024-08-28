@@ -3404,7 +3404,18 @@ module.exports = grammar({
       $.paper_source_first_page_property,
       $.paper_source_last_page_property,
       $.pdf_font_embedding_property,  // Added PdfFontEmbedding property
-      $.permissions_property  // Added Permissions property
+      $.permissions_property,  // Added Permissions property
+      $.preview_mode_property  // Added PreviewMode property
+    ),
+
+    // PreviewMode Property
+    // Specifies how the report opens when you preview it.
+    // This property is used on Report objects.
+    preview_mode_property: $ => seq(
+      'PreviewMode',
+      '=',
+      field('value', choice('Normal', 'PrintLayout')),
+      ';'
     ),
 
     // PdfFontEmbedding Property
