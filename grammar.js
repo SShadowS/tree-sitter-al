@@ -1608,7 +1608,28 @@ module.exports = grammar({
       $.access_by_permission_property,
       $.additional_search_terms_property,
       $.additional_search_terms_ml_property,
-      $.allowed_file_extensions_property
+      $.allowed_file_extensions_property,
+      $.allow_multiple_files_property
+    ),
+
+    // AllowedFileExtensions Property
+    // Specifies the list of allowed file extensions for Page File Upload Actions.
+    // This property restricts the types of files that can be uploaded.
+    allowed_file_extensions_property: $ => seq(
+      'AllowedFileExtensions',
+      '=',
+      field('value', $.array_value),
+      ';'
+    ),
+
+    // AllowMultipleFiles Property
+    // Specifies if the action accepts multiple files for Page File Upload Actions.
+    // When set to true, the action allows uploading multiple files at once.
+    allow_multiple_files_property: $ => seq(
+      'AllowMultipleFiles',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // AllowedFileExtensions Property
