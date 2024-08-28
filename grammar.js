@@ -3658,6 +3658,16 @@ module.exports = grammar({
       ';'
     ),
 
+    // FlowEnvironmentId Property
+    // Sets the ID of the environment where the Power Automate Flow triggered by this action is located.
+    // This property is used on Page Custom Actions.
+    flow_environment_id_property: $ => seq(
+      'FlowEnvironmentId',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
     // Filters Property
     // Sets a set of filters for the page that will be applied for this page view.
     // This property is used on Page Views.
