@@ -390,13 +390,24 @@ module.exports = grammar({
       field('table', $.identifier),
       ')',
       '{',
-      repeat($._dataitem_element),
+      repeat(choice($._dataitem_element, $.data_item_link_property)),
       '}'
     ),
 
     _dataitem_element: $ => choice(
       $.property,
-      $.calc_fields_property
+      $.calc_fields_property,
+      $.data_item_link_property
+    ),
+
+    // DataItemLink Property
+    // Sets the link between two dataitems in a report or query.
+    // This property is used on Report DataItems and Query DataItems.
+    data_item_link_property: $ => seq(
+      'DataItemLink',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // CalcFields Property
@@ -518,7 +529,8 @@ module.exports = grammar({
     ),
 
     _query_data_item: $ => choice(
-      $.dataitem
+      $.dataitem,
+      $.data_item_link_property
     ),
 
     // New properties
