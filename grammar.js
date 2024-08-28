@@ -1882,6 +1882,17 @@ module.exports = grammar({
 
     xmlport_property: $ => choice(
       // XMLport-specific properties will be added here
+      $.auto_replace_property
+    ),
+
+    // AutoReplace Property
+    // Sets whether imported records automatically replace existing records with the same primary key.
+    // This property is used on XMLport Table Elements.
+    auto_replace_property: $ => seq(
+      'AutoReplace',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     query_property: $ => choice(
