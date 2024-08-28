@@ -624,8 +624,38 @@ module.exports = grammar({
     _codeunit_element: $ => choice(
       $.property,
       $.trigger,
-      $.procedure
+      $.procedure,
+      $.onaftertestrun_trigger
       // Other codeunit elements can be added here
+    ),
+
+    // OnAfterTestRun trigger for test runner codeunits
+    // This trigger runs after each test in a test codeunit has been executed
+    onaftertestrun_trigger: $ => seq(
+      'trigger',
+      'OnAfterTestRun',
+      '(',
+      'CodeunitId',
+      ':',
+      'Integer',
+      ';',
+      'CodeunitName',
+      ':',
+      'Text',
+      ';',
+      'FunctionName',
+      ':',
+      'Text',
+      ';',
+      'Permissions',
+      ':',
+      'TestPermissions',
+      ';',
+      'Success',
+      ':',
+      'Boolean',
+      ')',
+      field('body', $.code_block)
     ),
 
     dataset: $ => seq(
