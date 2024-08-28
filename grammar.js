@@ -2065,6 +2065,16 @@ module.exports = grammar({
       ';'
     ),
 
+    // ODataKeyFields Property
+    // Specifies the fields to select when using OData.
+    // This property is used on Page objects.
+    odata_key_fields_property: $ => seq(
+      'ODataKeyFields',
+      '=',
+      field('value', $.identifier_list),
+      ';'
+    ),
+
     // ObsoleteReason Property
     // Specifies why the object has been marked as Pending in the ObsoleteState property.
     // This property is used on various AL objects including Tables, Table Fields, Pages, and more.
@@ -2769,26 +2779,27 @@ module.exports = grammar({
       $.flow_template_id_property,
       $.freeze_column_property,
       $.gesture_property,
-      $.grid_layout_property,  // Added GridLayout property
-      $.help_link_property,  // Added HelpLink property
-      $.horizontal_shrink_property,  // Added HorizontalShrink property
-      $.images_property,  // Added Images property
-      $.importance_property,  // Added Importance property
-      $.indentation_column_property,  // Added IndentationColumn property
+      $.grid_layout_property,
+      $.help_link_property,
+      $.horizontal_shrink_property,
+      $.images_property,
+      $.importance_property,
+      $.indentation_column_property,
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.insert_allowed_property,  // Added InsertAllowed property
-      $.instructional_text_property,  // Added InstructionalText property
-      $.is_header_property,  // Added IsHeader property
-      $.is_preview_property,  // Added IsPreview property
-      $.links_allowed_property,  // Added LinksAllowed property
-      $.lookup_property,  // Added Lookup property
-      $.modify_allowed_property,  // Added ModifyAllowed property
-      $.multiline_property,  // Added MultiLine property
-      $.multiple_new_lines_property,  // Added MultipleNewLines property
-      $.odata_edm_type_property,  // Added ODataEDMType property
-      $.obsolete_reason_property,  // Added ObsoleteReason property
-      $.obsolete_tag_property  // Added ObsoleteTag property
+      $.insert_allowed_property,
+      $.instructional_text_property,
+      $.is_header_property,
+      $.is_preview_property,
+      $.links_allowed_property,
+      $.lookup_property,
+      $.modify_allowed_property,
+      $.multiline_property,
+      $.multiple_new_lines_property,
+      $.odata_edm_type_property,
+      $.obsolete_reason_property,
+      $.obsolete_tag_property,
+      $.odata_key_fields_property  // Added ODataKeyFields property
     ),
 
     // LinksAllowed Property
