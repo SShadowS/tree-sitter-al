@@ -1668,7 +1668,18 @@ module.exports = grammar({
       $.caption_class_property,
       $.caption_ml_property,
       $.char_allowed_property,
-      $.closing_dates_property
+      $.closing_dates_property,
+      $.column_span_property
+    ),
+
+    // ColumnSpan Property
+    // Sets the number of columns that a field spans in a Grid control.
+    // This property is used on Page Labels and Page Fields.
+    column_span_property: $ => seq(
+      'ColumnSpan',
+      '=',
+      field('value', $.integer),
+      ';'
     ),
 
     // ClosingDates Property
