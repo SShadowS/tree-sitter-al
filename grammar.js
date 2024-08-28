@@ -2045,7 +2045,18 @@ module.exports = grammar({
       $.obsolete_state_property,  // Added ObsoleteState property
       $.obsolete_tag_property,  // Added ObsoleteTag property
       $.paste_is_valid_property,  // Added PasteIsValid property
-      $.permissions_property  // Added Permissions property
+      $.permissions_property,  // Added Permissions property
+      $.about_title_property  // Added AboutTitle property
+    ),
+
+    // AboutTitle Property
+    // Sets the large-font title that appears in a teaching tip in the UI.
+    // This property is used on Table objects.
+    about_title_property: $ => seq(
+      'AboutTitle',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // LookupPageId Property
