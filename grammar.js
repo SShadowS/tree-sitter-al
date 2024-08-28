@@ -2949,7 +2949,18 @@ module.exports = grammar({
       $.caption_ml_property,
       $.default_fields_validation_property,
       $.direction_property,
-      $.encoding_property
+      $.encoding_property,
+      $.field_delimiter_property
+    ),
+
+    // FieldDelimiter Property
+    // Specifies the text delimiter for a field in an XMLport.
+    // This property is used on XMLport objects.
+    field_delimiter_property: $ => seq(
+      'FieldDelimiter',
+      '=',
+      field('value', choice($.string_literal, "'<None>'")),
+      ';'
     ),
 
     // Encoding Property
