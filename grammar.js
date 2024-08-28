@@ -4188,7 +4188,18 @@ module.exports = grammar({
       $.inherent_permissions_property,
       $.method_property,  // Added Method property
       $.order_by_property,  // Added OrderBy property
-      $.permissions_property  // Added Permissions property
+      $.permissions_property,  // Added Permissions property
+      $.query_type_property  // Added QueryType property
+    ),
+
+    // QueryType Property
+    // Sets the type of the query, which determines its behavior and usage.
+    // This property is used on Query objects.
+    query_type_property: $ => seq(
+      'QueryType',
+      '=',
+      field('value', choice('Normal', 'API')),
+      ';'
     ),
 
     // Method Property
