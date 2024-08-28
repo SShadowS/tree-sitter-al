@@ -1894,7 +1894,19 @@ module.exports = grammar({
     xmlport_property: $ => choice(
       // XMLport-specific properties will be added here
       $.auto_replace_property,
-      $.auto_save_property
+      $.auto_save_property,
+      $.auto_update_property
+    ),
+
+    // AutoUpdate Property
+    // Sets whether a record in the database with the same primary key as the record in the imported XMLport
+    // is updated with values from the imported record.
+    // This property is used on XMLport Table Elements.
+    auto_update_property: $ => seq(
+      'AutoUpdate',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // AutoSave Property
