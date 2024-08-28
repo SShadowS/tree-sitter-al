@@ -2086,7 +2086,8 @@ module.exports = grammar({
       $.extended_datatype_property,
       $.external_access_property,
       $.external_name_property,
-      $.external_type_property
+      $.external_type_property,
+      $.field_class_property
     ),
 
     // ExternalAccess Property
@@ -2116,6 +2117,16 @@ module.exports = grammar({
       'ExternalType',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // FieldClass Property
+    // Sets the class of the field in a table.
+    // This property is used on Table Fields to define whether it's a Normal field, FlowField, or FlowFilter.
+    field_class_property: $ => seq(
+      'FieldClass',
+      '=',
+      field('value', choice('Normal', 'FlowField', 'FlowFilter')),
       ';'
     ),
 
