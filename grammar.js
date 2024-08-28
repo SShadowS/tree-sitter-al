@@ -2958,6 +2958,11 @@ module.exports = grammar({
     // Specifies the text delimiter for a field in an XMLport.
     // This property is used on XMLport objects.
     field_delimiter_property: $ => seq(
+      'FieldDelimiter',
+      '=',
+      field('value', choice($.string_literal, "'<None>'")),
+      ';'
+    ),
 
     // FileName Property
     // Sets the name of the external file to read data from or write data to an XMLport.
