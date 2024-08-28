@@ -3617,8 +3617,19 @@ module.exports = grammar({
       $.pdf_font_embedding_property,
       $.permissions_property,
       $.preview_mode_property,
-      $.print_only_if_detail_property,  // Added PrintOnlyIfDetail property
-      $.processing_only_property  // Added ProcessingOnly property
+      $.print_only_if_detail_property,
+      $.processing_only_property,
+      $.rdlc_layout_property  // Added RDLCLayout property
+    ),
+
+    // RDLCLayout Property
+    // Sets the RDL layout that is used on a report and returns it as a data stream.
+    // This property is used on Report objects and Report Extension objects.
+    rdlc_layout_property: $ => seq(
+      'RDLCLayout',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // ProcessingOnly Property
