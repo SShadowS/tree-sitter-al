@@ -229,7 +229,8 @@ module.exports = grammar({
       $.layout,
       $.actions,
       $.property,
-      $.instructional_text_property
+      $.instructional_text_property,
+      $.links_allowed_property  // Added LinksAllowed property
     ),
 
     _xmlport_element: $ => choice(
@@ -2645,7 +2646,18 @@ module.exports = grammar({
       $.insert_allowed_property,  // Added InsertAllowed property
       $.instructional_text_property,  // Added InstructionalText property
       $.is_header_property,  // Added IsHeader property
-      $.is_preview_property  // Added IsPreview property
+      $.is_preview_property,  // Added IsPreview property
+      $.links_allowed_property  // Added LinksAllowed property
+    ),
+
+    // LinksAllowed Property
+    // Sets whether links are allowed on a page or request page.
+    // This property is used on Page and Request Page objects.
+    links_allowed_property: $ => seq(
+      'LinksAllowed',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // IsPreview Property
