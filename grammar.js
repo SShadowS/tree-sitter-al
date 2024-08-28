@@ -1590,7 +1590,19 @@ module.exports = grammar({
       $.access_property,
       $.access_by_permission_property,
       $.allow_in_customizations_property,
-      $.assist_edit_property
+      $.assist_edit_property,
+      $.auto_format_expression_property
+    ),
+
+    // AutoFormatExpression Property
+    // Sets an AL expression that specifies how to format data.
+    // This property is used in conjunction with the AutoFormatType property
+    // to determine how decimal data types are formatted.
+    auto_format_expression_property: $ => seq(
+      'AutoFormatExpression',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // AssistEdit Property
@@ -1831,7 +1843,8 @@ module.exports = grammar({
       // Report-specific properties will be added here
       $.additional_search_terms_property,
       $.additional_search_terms_ml_property,
-      $.allow_scheduling_property
+      $.allow_scheduling_property,
+      $.auto_format_expression_property
     ),
 
     // AllowScheduling Property
