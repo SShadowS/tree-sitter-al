@@ -3011,17 +3011,18 @@ module.exports = grammar({
       $.permissions_property,
       $.populate_all_fields_property,
       $.preserve_whitespace_property,
-      $.promoted_property,  // Added Promoted property
-      $.promoted_action_categories_property,  // Added PromotedActionCategories property
-      $.promoted_action_categories_ml_property,  // Added PromotedActionCategoriesML property
-      $.promoted_category_property,  // Added PromotedCategory property
-      $.promoted_is_big_property,  // Added PromotedIsBig property
-      $.promoted_only_property,  // Added PromotedOnly property
-      $.about_title_ml_property,  // Added AboutTitleML property
-      $.provider_property,  // Added Provider property
-      $.query_category_property,  // Added QueryCategory property
-      $.refresh_on_activate_property,  // Added RefreshOnActivate property
-      $.run_object_property  // Added RunObject property
+      $.promoted_property,
+      $.promoted_action_categories_property,
+      $.promoted_action_categories_ml_property,
+      $.promoted_category_property,
+      $.promoted_is_big_property,
+      $.promoted_only_property,
+      $.about_title_ml_property,
+      $.provider_property,
+      $.query_category_property,
+      $.refresh_on_activate_property,
+      $.run_object_property,
+      $.run_page_link_property  // Added RunPageLink property
     ),
 
     // RefreshOnActivate Property
@@ -3047,6 +3048,32 @@ module.exports = grammar({
     run_object_value: $ => seq(
       field('object_type', choice('Page', 'Report', 'Codeunit', 'Query')),
       field('object_id', choice($.integer, $.identifier))
+    ),
+
+    // RunPageLink Property
+    // Sets a link to a page that will be launched for this action.
+    // This property is used on Page Action objects.
+    run_page_link_property: $ => seq(
+      'RunPageLink',
+      '=',
+      field('value', $.run_page_link_value),
+      ';'
+    ),
+
+    run_page_link_value: $ => repeat1(
+      seq(
+        field('field', $.identifier),
+        '=',
+        field('filter', choice(
+          seq('CONST', '(', $._value, ')'),
+          seq('FILTER', '(', $.string_literal, ')'),
+          seq('FIELD', '(', $.identifier, ')'),
+          seq('FIELD', '(', 'UPPERLIMIT', '(', $.identifier, ')', ')'),
+          seq('FIELD', '(', 'FILTER', '(', $.identifier, ')', ')'),
+          seq('FIELD', '(', 'UPPERLIMIT', '(', 'FILTER', '(', $.identifier, ')', ')', ')')
+        )),
+        optional(',')
+      )
     ),
 
     // QueryCategory Property
