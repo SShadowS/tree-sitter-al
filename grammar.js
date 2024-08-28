@@ -2047,7 +2047,8 @@ module.exports = grammar({
       $.paste_is_valid_property,  // Added PasteIsValid property
       $.permissions_property,  // Added Permissions property
       $.about_title_property,  // Added AboutTitle property
-      $.data_deletion_allowed_property  // Added DataDeletionAllowed property
+      $.data_deletion_allowed_property,  // Added DataDeletionAllowed property
+      $.public_key_token_property  // Added PublicKeyToken property
     ),
 
     // AboutTitle Property
@@ -5040,3 +5041,12 @@ module.exports = grammar({
     assignment_operator: $ => ':='
   }
 });
+    // PublicKeyToken Property
+    // Specifies the public key token of the .NET assembly.
+    // This property is used on Dot Net Assembly objects.
+    public_key_token_property: $ => seq(
+      'PublicKeyToken',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
