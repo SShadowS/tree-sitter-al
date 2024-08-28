@@ -4214,6 +4214,16 @@ module.exports = grammar({
       $.query_category_property  // Added QueryCategory property
     ),
 
+    // QueryType Property
+    // Sets the type of the query, which determines its behavior and usage.
+    // This property is used on Query objects.
+    query_type_property: $ => seq(
+      'QueryType',
+      '=',
+      field('value', choice('Normal', 'API')),
+      ';'
+    ),
+
     // QueryCategory Property
     // Specifies one or more query categories that the query supports.
     // This property is used on Query objects.
