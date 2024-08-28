@@ -63,6 +63,16 @@ module.exports = grammar({
       $.culture_property
     ),
 
+    // PublicKeyToken Property
+    // Specifies the public key token of the .NET assembly.
+    // This property is used on Dot Net Assembly objects.
+    public_key_token_property: $ => seq(
+      'PublicKeyToken',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
     interface_object: $ => seq(
       'interface',
       field('name', choice($.identifier, $.string)),
