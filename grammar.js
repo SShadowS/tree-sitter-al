@@ -3386,7 +3386,18 @@ module.exports = grammar({
       $.max_occurs_property,  // Added MaxOccurs property
       $.min_occurs_property,  // Added MinOccurs property
       $.namespace_prefix_property,  // Added NamespacePrefix property
-      $.namespaces_property  // Added Namespaces property
+      $.namespaces_property,  // Added Namespaces property
+      $.occurrence_property  // Added Occurrence property
+    ),
+
+    // Occurrence Property
+    // Sets a value that specifies whether an attribute must occur in the data that is being imported or exported.
+    // This property is used on XMLport Field Attributes and XMLport Text Attributes.
+    occurrence_property: $ => seq(
+      'Occurrence',
+      '=',
+      field('value', choice('Required', 'Optional')),
+      ';'
     ),
 
     // Namespaces Property
