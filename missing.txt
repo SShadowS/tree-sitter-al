@@ -6,4 +6,4 @@ TestPermissions type needs to be defined. It's an enum used in the OnAfterTestRu
 
 We should add a rule for TestPermissions in the grammar.js file, defining it as an enum with these values.
 
-Subtype property needs to be defined for codeunits. It's used to specify the type of codeunit, such as "Install" for installation codeunits or "Upgrade" for upgrade codeunits. We should add a rule in the grammar.js file to handle the Subtype property, especially for the OnInstallAppPerCompany, OnInstallAppPerDatabase, and OnUpgradePerCompany triggers.
+Subtype property needs to be defined for codeunits. It's used to specify the type of codeunit, such as "Install" for installation codeunits or "Upgrade" for upgrade codeunits. We should add a rule in the grammar.js file to handle the Subtype property, especially for the OnInstallAppPerCompany, OnInstallAppPerDatabase, OnUpgradePerCompany, and OnUpgradePerDatabase triggers.
