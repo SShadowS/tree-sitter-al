@@ -3526,7 +3526,19 @@ module.exports = grammar({
       $.entity_set_name_property,
       $.help_link_property,  // Added HelpLink property
       $.inherent_entitlements_property,
-      $.inherent_permissions_property
+      $.inherent_permissions_property,
+      $.method_property  // Added Method property
+    ),
+
+    // Method Property
+    // Sets either a date method for retrieving the year, month, or day from a date field
+    // or a totals method for performing calculations on field values.
+    // This property is used on Query Column objects.
+    method_property: $ => seq(
+      'Method',
+      '=',
+      field('value', choice('Day', 'Month', 'Year', 'Sum', 'Count', 'Average', 'Min', 'Max')),
+      ';'
     ),
 
     // DataItemLink Property
