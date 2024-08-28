@@ -3682,6 +3682,16 @@ module.exports = grammar({
       $.request_filter_fields_property  // Added RequestFilterFields property
     ),
 
+    // RequestFilterHeadingML Property
+    // Sets the string used as a RequestFilterHeading Property for a request page tab in multiple languages.
+    // This property is used on Report Data Items and XMLport Table Elements.
+    request_filter_heading_ml_property: $ => seq(
+      'RequestFilterHeadingML',
+      '=',
+      field('value', $.multilanguage_string_literal),
+      ';'
+    ),
+
     // RequestFilterFields Property
     // Sets which fields are automatically included on the tab of the request page that is related to this data item.
     // The user can set filters on these fields.
@@ -3989,7 +3999,8 @@ module.exports = grammar({
       $.namespaces_property,  // Added Namespaces property
       $.occurrence_property,  // Added Occurrence property
       $.permissions_property,  // Added Permissions property
-      $.record_separator_property  // Added RecordSeparator property
+      $.record_separator_property,  // Added RecordSeparator property
+      $.request_filter_heading_ml_property  // Added RequestFilterHeadingML property
     ),
 
     // RecordSeparator Property
