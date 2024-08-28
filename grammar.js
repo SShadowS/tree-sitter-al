@@ -1613,7 +1613,18 @@ module.exports = grammar({
       $.analysis_mode_enabled_property,
       $.apigroup_property,
       $.apipublisher_property,
-      $.apiversion_property
+      $.apiversion_property,
+      $.application_area_property
+    ),
+
+    // ApplicationArea Property
+    // Specifies which application areas the page is designed for.
+    // This property determines the visibility of the page based on the user's assigned application areas.
+    application_area_property: $ => seq(
+      'ApplicationArea',
+      '=',
+      field('value', choice($.identifier, $.array_value)),
+      ';'
     ),
 
     // APIVersion Property
