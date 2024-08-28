@@ -1595,7 +1595,26 @@ module.exports = grammar({
       $.about_text_ml_property,
       $.about_title_property,
       $.about_title_ml_property,
-      $.access_by_permission_property
+      $.access_by_permission_property,
+      $.additional_search_terms_property
+    ),
+
+    // AdditionalSearchTerms Property
+    // Specifies search terms (words and phrases) for the page.
+    // These terms are used by the search feature in the Web client and mobile apps.
+    additional_search_terms_property: $ => seq(
+      'AdditionalSearchTerms',
+      '=',
+      field('value', $.string_literal),
+      optional(seq(
+        ',',
+        choice(
+          seq('Locked', '=', field('locked', $.boolean_literal)),
+          seq('Comment', '=', field('comment', $.string_literal)),
+          seq('MaxLength', '=', field('max_length', $.integer))
+        )
+      )),
+      ';'
     ),
 
     // AccessByPermission Property
@@ -1678,6 +1697,7 @@ module.exports = grammar({
 
     report_property: $ => choice(
       // Report-specific properties will be added here
+      $.additional_search_terms_property
     ),
 
     xmlport_property: $ => choice(
