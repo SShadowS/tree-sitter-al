@@ -3178,7 +3178,18 @@ module.exports = grammar({
       $.format_evaluate_property,
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.link_table_property  // Added LinkTable property
+      $.link_table_property,  // Added LinkTable property
+      $.link_table_force_insert_property  // Added LinkTableForceInsert property
+    ),
+
+    // LinkTableForceInsert Property
+    // Sets whether data from the linked table is forcibly modified or inserted into a table to prevent an error from being generated.
+    // This property is used on XMLport Table Elements.
+    link_table_force_insert_property: $ => seq(
+      'LinkTableForceInsert',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // LinkTable Property
