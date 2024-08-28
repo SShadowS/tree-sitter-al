@@ -3225,7 +3225,18 @@ module.exports = grammar({
       $.inherent_permissions_property,
       $.link_table_property,  // Added LinkTable property
       $.link_table_force_insert_property,  // Added LinkTableForceInsert property
-      $.max_occurs_property  // Added MaxOccurs property
+      $.max_occurs_property,  // Added MaxOccurs property
+      $.min_occurs_property  // Added MinOccurs property
+    ),
+
+    // MinOccurs Property
+    // Sets the minimum number of times that an element can occur.
+    // This property is used on XMLport Text Elements, XMLport Field Elements, and XMLport Table Elements.
+    min_occurs_property: $ => seq(
+      'MinOccurs',
+      '=',
+      field('value', choice('Zero', 'Once')),
+      ';'
     ),
 
     // MaxOccurs Property
