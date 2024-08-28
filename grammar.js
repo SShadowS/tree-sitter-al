@@ -1564,7 +1564,8 @@ module.exports = grammar({
 
     page_property: $ => choice(
       // Page-specific properties will be added here
-      $.about_text_property
+      $.about_text_property,
+      $.about_text_ml_property
     ),
 
     // AboutText Property
@@ -1575,6 +1576,26 @@ module.exports = grammar({
       '=',
       field('value', $.string_literal),
       ';'
+    ),
+
+    // AboutTextML Property
+    // Sets the body of text that appears in a teaching tip in the UI, supporting multiple languages
+    // Used on Page objects and their controls (actions, fields, parts, etc.)
+    about_text_ml_property: $ => seq(
+      'AboutTextML',
+      '=',
+      field('value', $.multilanguage_string_literal),
+      ';'
+    ),
+
+    // Multi-language string literal
+    multilanguage_string_literal: $ => seq(
+      repeat1(seq(
+        field('language_code', $.identifier),
+        '=',
+        field('text', $.string_literal),
+        optional(',')
+      ))
     ),
 
     report_property: $ => choice(
@@ -1611,10 +1632,14 @@ module.exports = grammar({
 
     page_customization_property: $ => choice(
       // Page customization-specific properties will be added here
+      $.about_text_property,
+      $.about_text_ml_property
     ),
 
     page_extension_property: $ => choice(
       // Page extension-specific properties will be added here
+      $.about_text_property,
+      $.about_text_ml_property
     ),
 
     table_extension_property: $ => choice(
