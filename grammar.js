@@ -11,8 +11,42 @@ module.exports = grammar({
       $.entitlement_object,
       $.page_customization_object,
       $.page_extension_object,
-      $.page_object
+      $.page_object,
+      $.permission_set_extension_object
       // Other object types can be added here in the future
+    ),
+
+    permission_set_extension_object: $ => seq(
+      'permissionsetextension',
+      field('id', $.integer),
+      field('name', $.string),
+      'extends',
+      field('base_permission_set', $.string),
+      '{',
+      repeat($._permission_set_extension_element),
+      '}'
+    ),
+
+    _permission_set_extension_element: $ => choice(
+      $.permissions
+    ),
+
+    permissions: $ => seq(
+      'Permissions',
+      '=',
+      $.permission_list,
+      ';'
+    ),
+
+    permission_list: $ => seq(
+      repeat1($.permission_entry)
+    ),
+
+    permission_entry: $ => seq(
+      field('object_type', $.identifier),
+      field('object_name', $.string),
+      '=',
+      field('permission_type', $.identifier)
     ),
 
     page_object: $ => seq(
