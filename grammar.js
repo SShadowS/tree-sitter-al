@@ -2865,7 +2865,8 @@ module.exports = grammar({
       $.obsolete_reason_property,
       $.obsolete_tag_property,
       $.odata_key_fields_property,  // Added ODataKeyFields property
-      $.order_by_property  // Added OrderBy property
+      $.order_by_property,  // Added OrderBy property
+      $.page_type_property  // Added PageType property
     ),
 
     // LinksAllowed Property
@@ -4473,6 +4474,30 @@ module.exports = grammar({
         ')',
         optional(',')
       ))
+    ),
+
+    // PageType Property
+    // Sets the type of the page, which determines its behavior and appearance.
+    // This property is used on Page objects.
+    page_type_property: $ => seq(
+      'PageType',
+      '=',
+      field('value', choice(
+        'Card',
+        'List',
+        'RoleCenter',
+        'CardPart',
+        'ListPart',
+        'Document',
+        'Worksheet',
+        'ListPlus',
+        'ConfirmationDialog',
+        'NavigatePage',
+        'StandardDialog',
+        'API',
+        'HeadlinePart'
+      )),
+      ';'
     ),
 
     // FormatRegion Property
