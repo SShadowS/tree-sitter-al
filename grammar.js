@@ -1638,7 +1638,8 @@ module.exports = grammar({
     table_property: $ => choice(
       // Table-specific properties will be added here
       $.access_property,
-      $.caption_property
+      $.caption_property,
+      $.caption_ml_property
     ),
 
     field_property: $ => choice(
@@ -1654,7 +1655,8 @@ module.exports = grammar({
       $.blank_zero_property,
       $.calc_formula_property,
       $.caption_property,
-      $.caption_class_property
+      $.caption_class_property,
+      $.caption_ml_property
     ),
 
     // Caption Property
@@ -1672,6 +1674,16 @@ module.exports = grammar({
           seq('MaxLength', '=', field('max_length', $.integer))
         )
       )),
+      ';'
+    ),
+
+    // CaptionML Property
+    // Sets the string that displays with the object, control, or other element in the user interface for multiple languages.
+    // This property is used on various AL objects including Tables, Table Fields, Pages, Page Fields, and more.
+    caption_ml_property: $ => seq(
+      'CaptionML',
+      '=',
+      field('value', $.multilanguage_string_literal),
       ';'
     ),
 
