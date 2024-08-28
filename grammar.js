@@ -2956,6 +2956,16 @@ module.exports = grammar({
       $.field_validate_property
     ),
 
+    // FileName Property
+    // Sets the name of the external file to read data from or write data to an XMLport.
+    // This property is used on XMLport objects.
+    file_name_property: $ => seq(
+      'FileName',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
     // FieldValidate Property
     // Sets a value that specifies whether the values in the source field are validated by the OnValidate (Fields) trigger for the field.
     // This property is used on XMLport Field Attributes and XMLport Field Elements.
