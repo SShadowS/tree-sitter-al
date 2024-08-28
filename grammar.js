@@ -627,8 +627,20 @@ module.exports = grammar({
       $.procedure,
       $.onaftertestrun_trigger,
       $.onbeforetestrun_trigger,
-      $.oncheckpreconditionspercompany_trigger
+      $.oncheckpreconditionspercompany_trigger,
+      $.oncheckpreconditionsperdatabase_trigger
       // Other codeunit elements can be added here
+    ),
+
+    // OnCheckPreconditionsPerDatabase trigger for upgrade codeunits
+    // This trigger runs before an extension upgrade, once for the entire database
+    // It's used to check if certain requirements are met before running the upgrade
+    oncheckpreconditionsperdatabase_trigger: $ => seq(
+      'trigger',
+      'OnCheckPreconditionsPerDatabase',
+      '(',
+      ')',
+      field('body', $.code_block)
     ),
 
     // OnCheckPreconditionsPerCompany trigger for upgrade codeunits
