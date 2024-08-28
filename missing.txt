@@ -1,53 +1,39 @@
-TestPermissions type needs to be defined. It's an enum used in the OnAfterTestRun and OnBeforeTestRun triggers with the following possible values:
-- Disabled
-- Restrictive
-- NonRestrictive
-- InheritFromTestCodunit
+Field Group needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Field Group and its structure.
 
-We should add a rule for TestPermissions in the grammar.js file, defining it as an enum with these values.
+Page Label needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Page Label and its structure.
 
-Subtype property needs to be defined for codeunits. It's used to specify the type of codeunit, such as "Install" for installation codeunits or "Upgrade" for upgrade codeunits. We should add a rule in the grammar.js file to handle the Subtype property, especially for the OnInstallAppPerCompany, OnInstallAppPerDatabase, OnUpgradePerCompany, OnUpgradePerDatabase, and OnValidateUpgradePerDatabase triggers.
+Page Group needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Page Group and its structure.
 
-The OnDelete trigger for tables has been added to the grammar.js file. No additional items need to be added to the missing.txt file for this trigger.
+Page Part needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Page Part and its structure.
 
-Action type needs to be defined. It's used in the OnQueryClosePage trigger for pages. Action is likely an enum or a specific type in AL that represents the action taken to close a page (e.g., OK, Cancel). We should add a rule in the grammar.js file to define the Action type.
+Page System Part needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Page System Part and its structure.
 
-Interface object needs to be defined. It's mentioned in the Access property documentation as one of the object types that can use this property. We should add rules in the grammar.js file to define the interface object and its elements.
+Page Action needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Page Action and its structure.
 
-QueryType property needs to be defined for queries. It's used to specify the type of query, such as "API" for API queries. We should add a rule in the grammar.js file to handle the QueryType property, especially for API queries that use the APIGroup property.
+Page Action Separator needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Page Action Separator and its structure.
 
-The APIVersion property for queries has been updated in the grammar.js file. It now includes a comment mentioning that the default value is 'beta' if not specified. The QueryType property should be implemented to fully support the APIVersion property's functionality.
+Page Action Group needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Page Action Group and its structure.
 
-XMLport Table Element needs to be defined. It's used in the AutoUpdate, AutoReplace, and AutoSave properties for XMLports. We should add rules in the grammar.js file to define the XMLport Table Element and its structure.
+Query Column needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Query Column and its structure.
 
-Page Field needs to be defined. It's used in various properties including CharAllowed, BlankNumbers, and BlankZero. We should add rules in the grammar.js file to define the Page Field and its structure.
+Query Filter needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Query Filter and its structure.
 
-PageType property needs to be defined for pages. It's used to specify the type of page, such as "API" for API pages. We should add a rule in the grammar.js file to handle the PageType property, especially for API pages that use the ChangeTrackingAllowed property.
+Report Column needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Report Column and its structure.
 
-Query Column needs to be defined. It's used in the ColumnFilter property. We should add rules in the grammar.js file to define the Query Column and its structure.
+Enum Value needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Enum Value and its structure.
 
-Query Filter needs to be defined. It's used in the ColumnFilter property. We should add rules in the grammar.js file to define the Query Filter and its structure.
+Page Custom Action needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Page Custom Action and its structure.
 
-Page Label needs to be defined. It's used in the ColumnSpan property. We should add rules in the grammar.js file to define the Page Label and its structure.
+Page System Action needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Page System Action and its structure.
 
-Page Field needs to be defined. It's used in the ColumnSpan property. We should add rules in the grammar.js file to define the Page Field and its structure.
+Page File Upload Action needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Page File Upload Action and its structure.
 
-Request Page needs to be defined. It's used with the ContextSensitiveHelpPage property. We should add rules in the grammar.js file to define the Request Page and its structure.
+Page View needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Page View and its structure.
 
-Query object needs to be updated to include the ContextSensitiveHelpPage property. We should modify the existing Query object definition in the grammar.js file to include this property.
+Report Layout needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Report Layout and its structure.
 
-Page Group needs to be defined. It's used with the CuegroupLayout property. We should add rules in the grammar.js file to define the Page Group and its structure.
+Profile needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Profile and its structure.
 
-Dot Net Assembly object needs to be defined. It's used with the Culture property. We should add rules in the grammar.js file to define the Dot Net Assembly object and its structure.
+Enum Type needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Enum Type and its structure.
 
-Page Custom Action needs to be defined. It's used with the CustomActionType property. We should add rules in the grammar.js file to define the Page Custom Action and its structure.
-
-Request Page object needs to be defined. It's used with the DataCaptionExpression and DataCaptionFields properties. We should add rules in the grammar.js file to define the Request Page object and its structure, including these properties.
-
-Request Page object needs to be defined. It's used with the DeleteAllowed property. We should add rules in the grammar.js file to define the Request Page object and its structure, including this property.
-
-The Description property has been added to the grammar.js file for various AL objects including Codeunits, Tables, Pages, and more. No additional items need to be added to the missing.txt file for this property.
-
-Table object needs to be updated to include the DrillDownPageId property. We should modify the existing Table object definition in the grammar.js file to include this property.
-
-Page Field needs to be defined. It's used with the DrillDownPageId property. We should add rules in the grammar.js file to define the Page Field and its structure, including this property.
+Permission Set needs to be defined. It's used with the CaptionML property. We should add rules in the grammar.js file to define the Permission Set and its structure.

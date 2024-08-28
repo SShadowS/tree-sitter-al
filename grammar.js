@@ -312,7 +312,8 @@ module.exports = grammar({
 
     _enum_element: $ => choice(
       $.property,
-      $.value
+      $.value,
+      $.enum_type
     ),
 
     value: $ => seq(
@@ -322,6 +323,14 @@ module.exports = grammar({
       ';',
       field('name', $.string),
       ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    enum_type: $ => seq(
+      'type',
+      field('name', $.identifier),
       '{',
       repeat($.property),
       '}'
@@ -369,7 +378,29 @@ module.exports = grammar({
       $.labels,
       $.trigger,
       $.auto_calc_field_property,
-      $.data_item_link_property
+      $.data_item_link_property,
+      $.report_column,
+      $.report_layout
+    ),
+
+    report_column: $ => seq(
+      'column',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    report_layout: $ => seq(
+      'layout',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
     ),
 
     dataset: $ => seq(
@@ -541,7 +572,9 @@ module.exports = grammar({
       $.about_text_property,
       $.context_sensitive_help_page_property,
       $.usage_category_property,
-      $.data_access_intent_property
+      $.data_access_intent_property,
+      $.query_column,
+      $.query_filter
     ),
 
     elements: $ => seq(
@@ -553,7 +586,29 @@ module.exports = grammar({
 
     _query_data_item: $ => choice(
       $.dataitem,
-      $.data_item_link_property
+      $.data_item_link_property,
+      $.query_column,
+      $.query_filter
+    ),
+
+    query_column: $ => seq(
+      'column',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    query_filter: $ => seq(
+      'filter',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
     ),
 
     // New properties
@@ -637,7 +692,8 @@ module.exports = grammar({
 
     _profile_element: $ => choice(
       $.property,
-      $.customizations
+      $.customizations,
+      $.caption_ml_property
     ),
 
     customizations: $ => seq(
@@ -658,7 +714,8 @@ module.exports = grammar({
 
     _permission_set_element: $ => choice(
       $.property,
-      $.permissions
+      $.permissions,
+      $.caption_ml_property
     ),
 
     permission_set_extension_object: $ => seq(
@@ -710,6 +767,18 @@ module.exports = grammar({
       $.actions,
       $.views,
       $.area,
+      $.field_group,
+      $.page_label,
+      $.page_group,
+      $.page_part,
+      $.page_system_part,
+      $.page_action,
+      $.page_action_separator,
+      $.page_action_group,
+      $.page_custom_action,
+      $.page_system_action,
+      $.page_file_upload_action,
+      $.page_view,
       $.onaftergetcurrrecord_trigger,
       $.onclosepage_trigger,
       $.ondeleterecord_trigger,
@@ -723,6 +792,126 @@ module.exports = grammar({
       $.onpagebackgroundtaskcompleted_trigger,
       $.onpagebackgroundtaskerror_trigger,
       $.onqueryclosepage_trigger
+    ),
+
+    field_group: $ => seq(
+      'fieldgroup',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.field),
+      '}'
+    ),
+
+    page_label: $ => seq(
+      'label',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    page_group: $ => seq(
+      'group',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._page_element),
+      '}'
+    ),
+
+    page_part: $ => seq(
+      'part',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    page_system_part: $ => seq(
+      'systempart',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    page_action: $ => seq(
+      'action',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    page_action_separator: $ => seq(
+      'separator',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    page_action_group: $ => seq(
+      'actiongroup',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._page_element),
+      '}'
+    ),
+
+    page_custom_action: $ => seq(
+      'customaction',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    page_system_action: $ => seq(
+      'systemaction',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    page_file_upload_action: $ => seq(
+      'fileuploadaction',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    page_view: $ => seq(
+      'view',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
     ),
 
     area: $ => seq(
