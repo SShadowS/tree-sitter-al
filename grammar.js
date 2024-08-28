@@ -3079,7 +3079,18 @@ module.exports = grammar({
       $.extensible_property,
       $.format_region_property,
       $.inherent_entitlements_property,
-      $.inherent_permissions_property
+      $.inherent_permissions_property,
+      $.maximum_dataset_size_property  // Added MaximumDatasetSize property
+    ),
+
+    // MaximumDatasetSize Property
+    // Sets the maximum amount of rows to be included on the report.
+    // This property is used on Report objects.
+    maximum_dataset_size_property: $ => seq(
+      'MaximumDatasetSize',
+      '=',
+      field('value', $.integer),
+      ';'
     ),
 
     // ExcelLayoutMultipleDataSheets Property
