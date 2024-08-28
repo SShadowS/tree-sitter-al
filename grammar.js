@@ -3343,7 +3343,23 @@ module.exports = grammar({
       $.maximum_document_count_property,
       $.max_iteration_property,
       $.option_members_property,  // Added OptionMembers property
-      $.paper_source_default_page_property  // Added PaperSourceDefaultPage property
+      $.paper_source_default_page_property,  // Added PaperSourceDefaultPage property
+      $.paper_source_first_page_property  // Added PaperSourceFirstPage property
+    ),
+
+    // PaperSourceFirstPage Property
+    // Specifies which paper source to use when printing page one of the report.
+    // This property is used on Report objects.
+    paper_source_first_page_property: $ => seq(
+      'PaperSourceFirstPage',
+      '=',
+      field('value', choice(
+        'Upper', 'Lower', 'Middle', 'Manual', 'Envelope', 'ManualFeed',
+        'AutomaticFeed', 'TractorFeed', 'SmallFormat', 'LargeFormat',
+        'LargeCapacity', 'Cassette', 'FormSource',
+        ...Array.from({length: 16}, (_, i) => `Custom${i+1}`)
+      )),
+      ';'
     ),
 
     // OptionMembers Property
