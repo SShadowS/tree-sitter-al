@@ -1587,7 +1587,18 @@ module.exports = grammar({
       // Field-specific properties will be added here
       $.access_property,
       $.access_by_permission_property,
-      $.allow_in_customizations_property
+      $.allow_in_customizations_property,
+      $.assist_edit_property
+    ),
+
+    // AssistEdit Property
+    // Sets assist-edit capabilities for a text box on a page field.
+    // When set to true, it provides assist-edit capabilities and an AssistEdit button.
+    assist_edit_property: $ => seq(
+      'AssistEdit',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // AllowInCustomizations Property
