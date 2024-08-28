@@ -2198,7 +2198,18 @@ module.exports = grammar({
       $.min_value_property,  // Added MinValue property
       $.moved_from_property,  // Added MovedFrom property
       $.moved_to_property,  // Added MovedTo property
-      $.navigation_page_id_property  // Added NavigationPageId property
+      $.navigation_page_id_property,  // Added NavigationPageId property
+      $.not_blank_property  // Added NotBlank property
+    ),
+
+    // NotBlank Property
+    // Sets a value that specifies whether users must enter a value in the selected field or text box.
+    // This property is used on Table Fields and Page Fields.
+    not_blank_property: $ => seq(
+      'NotBlank',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // MovedTo Property
