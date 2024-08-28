@@ -2038,6 +2038,7 @@ module.exports = grammar({
       $.is_control_addin_property,
       $.key_property,  // Added Key property
       $.linked_object_property,  // Added LinkedObject property
+      $.lookup_page_id_property,  // Added LookupPageId property
       $.moved_from_property,  // Added MovedFrom property
       $.moved_to_property,  // Added MovedTo property
       $.obsolete_reason_property,  // Added ObsoleteReason property
@@ -2045,6 +2046,16 @@ module.exports = grammar({
       $.obsolete_tag_property,  // Added ObsoleteTag property
       $.paste_is_valid_property,  // Added PasteIsValid property
       $.permissions_property  // Added Permissions property
+    ),
+
+    // LookupPageId Property
+    // Sets the ID of the page to use for lookups on this table.
+    // This property is used on Table objects.
+    lookup_page_id_property: $ => seq(
+      'LookupPageId',
+      '=',
+      field('value', choice($.integer, $.identifier)),
+      ';'
     ),
 
     // PasteIsValid Property
