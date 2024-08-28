@@ -1982,7 +1982,18 @@ module.exports = grammar({
       $.compression_type_property,
       $.data_caption_fields_property,
       $.data_classification_property,
-      $.data_per_company_property
+      $.data_per_company_property,
+      $.enabled_property
+    ),
+
+    // Enabled Property
+    // Sets a value that indicates whether a table is enabled or disabled.
+    // When disabled, the table cannot be accessed or modified.
+    enabled_property: $ => seq(
+      'Enabled',
+      '=',
+      field('value', choice($.boolean_literal, $.identifier)),
+      ';'
     ),
 
     // CaptionML Property
@@ -2047,7 +2058,8 @@ module.exports = grammar({
       $.data_classification_property,
       $.date_formula_property,
       $.decimal_places_property,
-      $.editable_property
+      $.editable_property,
+      $.enabled_property
     ),
 
     // ColumnSpan Property
@@ -2430,7 +2442,8 @@ module.exports = grammar({
       $.drilldown_property,
       $.drilldown_page_id_property,
       $.editable_property,
-      $.ellipsis_property
+      $.ellipsis_property,
+      $.enabled_property
     ),
 
     // DrillDownPageId Property
