@@ -2343,7 +2343,18 @@ module.exports = grammar({
       $.option_caption_property,
       $.option_caption_ml_property,
       $.option_members_property,
-      $.option_ordinal_values_property  // Added OptionOrdinalValues property
+      $.option_ordinal_values_property,  // Added OptionOrdinalValues property
+      $.quick_entry_property  // Added QuickEntry property
+    ),
+
+    // QuickEntry Property
+    // Specifies if the page control should have input focus.
+    // This property is used on Page Field objects.
+    quick_entry_property: $ => seq(
+      'QuickEntry',
+      '=',
+      field('value', choice($.boolean_literal, $.identifier)),
+      ';'
     ),
 
     // OptionOrdinalValues Property
