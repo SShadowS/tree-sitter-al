@@ -2077,7 +2077,18 @@ module.exports = grammar({
       $.public_key_token_property,  // Added PublicKeyToken property
       $.recreate_script_property,  // Added RecreateScript property
       $.replicate_data_property,  // Added ReplicateData property
-      $.table_type_property  // Added TableType property
+      $.table_type_property,  // Added TableType property
+      $.data_classification_fields_property  // Added DataClassificationFields property
+    ),
+
+    // DataClassificationFields Property
+    // Specifies the fields in the table that contain sensitive data.
+    // This property is used on Table objects to define which fields contain sensitive information.
+    data_classification_fields_property: $ => seq(
+      'DataClassificationFields',
+      '=',
+      field('value', $.identifier_list),
+      ';'
     ),
 
     // ReplicateData Property
