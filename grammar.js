@@ -1556,10 +1556,12 @@ module.exports = grammar({
     // Object-specific property rules
     table_property: $ => choice(
       // Table-specific properties will be added here
+      $.access_property
     ),
 
     field_property: $ => choice(
       // Field-specific properties will be added here
+      $.access_property
     ),
 
     page_property: $ => choice(
@@ -1568,6 +1570,15 @@ module.exports = grammar({
       $.about_text_ml_property,
       $.about_title_property,
       $.about_title_ml_property
+    ),
+
+    // Access Property
+    // Sets the object accessibility level, which controls whether the object can be used from other code in the same module or other modules
+    access_property: $ => seq(
+      'Access',
+      '=',
+      field('value', choice('Public', 'Internal', 'Protected', 'Local')),
+      ';'
     ),
 
     // AboutTitle Property
