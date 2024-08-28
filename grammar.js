@@ -2272,7 +2272,18 @@ module.exports = grammar({
     codeunit_property: $ => choice(
       // Codeunit-specific properties will be added here
       $.access_property,
-      $.subtype_property
+      $.subtype_property,
+      $.event_subscriber_instance_property
+    ),
+
+    // EventSubscriberInstance Property
+    // Sets whether event subscriber methods in a codeunit are bound to a specific codeunit instance.
+    // This property is used on Codeunit objects.
+    event_subscriber_instance_property: $ => seq(
+      'EventSubscriberInstance',
+      '=',
+      field('value', choice('Manual', 'StaticAutomatic')),
+      ';'
     ),
 
     // Subtype Property for codeunits
