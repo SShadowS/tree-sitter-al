@@ -47,6 +47,30 @@ module.exports = grammar({
       $.api_query_object
     ),
 
+    interface_object: $ => seq(
+      'interface',
+      field('name', choice($.identifier, $.string)),
+      '{',
+      repeat($._interface_element),
+      '}'
+    ),
+
+    _interface_element: $ => choice(
+      $.method,
+      $.property
+    ),
+
+    method: $ => seq(
+      optional('local'),
+      'procedure',
+      field('name', $.identifier),
+      '(',
+      optional($._parameter_list),
+      ')',
+      field('return_type', optional(seq(':', $._type))),
+      ';'
+    ),
+
     xmlport_object: $ => seq(
       'xmlport',
       field('id', $.integer),
@@ -1666,7 +1690,16 @@ module.exports = grammar({
 
     codeunit_property: $ => choice(
       // Codeunit-specific properties will be added here
-      $.access_property
+      $.access_property,
+      $.subtype_property
+    ),
+
+    // Subtype Property for codeunits
+    subtype_property: $ => seq(
+      'Subtype',
+      '=',
+      field('value', choice('Install', 'Upgrade', 'Test')),
+      ';'
     ),
 
     enum_property: $ => choice(
@@ -1811,6 +1844,24 @@ module.exports = grammar({
     ),
 
     Boolean: $ => 'Boolean',
+
+    // Action type for OnQueryClosePage trigger
+    Action: $ => choice(
+      'OK',
+      'Cancel',
+      'Yes',
+      'No',
+      'LookupOK',
+      'LookupCancel'
+    ),
+
+    // TestPermissions enum
+    TestPermissions: $ => choice(
+      'Disabled',
+      'Restrictive',
+      'NonRestrictive',
+      'InheritFromTestCodunit'
+    ),
 
     date_literal: $ => /\d{2}\.\d{2}\.\d{4}/,
 
