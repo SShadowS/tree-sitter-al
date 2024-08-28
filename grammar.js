@@ -5211,7 +5211,18 @@ module.exports = grammar({
 
     entitlement_property: $ => choice(
       // Entitlement-specific properties will be added here
-      $.object_entitlements_property
+      $.object_entitlements_property,
+      $.role_type_property
+    ),
+
+    // RoleType Property
+    // Specifies whether the role is local or delegated when the entitlement type is Role.
+    // This property is used on Entitlement objects.
+    role_type_property: $ => seq(
+      'RoleType',
+      '=',
+      field('value', choice('Local', 'Delegated')),
+      ';'
     ),
 
     // ObjectEntitlements Property
