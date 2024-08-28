@@ -627,6 +627,7 @@ module.exports = grammar({
       'page',
       field('id', $.integer),
       field('name', choice($.identifier, $.string)),
+      optional('API'),
       '{',
       repeat($._page_element),
       '}'
@@ -637,6 +638,7 @@ module.exports = grammar({
       $.layout,
       $.actions,
       $.views,
+      $.area,
       $.onaftergetcurrrecord_trigger,
       $.onclosepage_trigger,
       $.ondeleterecord_trigger,
@@ -650,6 +652,61 @@ module.exports = grammar({
       $.onpagebackgroundtaskcompleted_trigger,
       $.onpagebackgroundtaskerror_trigger,
       $.onqueryclosepage_trigger
+    ),
+
+    area: $ => seq(
+      'area',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._area_element),
+      '}'
+    ),
+
+    _area_element: $ => choice(
+      $.group,
+      $.part,
+      $.systempart
+    ),
+
+    group: $ => seq(
+      'group',
+      '(',
+      field('name', choice($.identifier, $.string)),
+      ')',
+      '{',
+      repeat($._group_element),
+      '}'
+    ),
+
+    _group_element: $ => choice(
+      $.part,
+      $.group
+    ),
+
+    part: $ => seq(
+      'part',
+      '(',
+      field('name', choice($.identifier, $.string)),
+      ';',
+      field('part_name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    systempart: $ => seq(
+      'systempart',
+      '(',
+      field('name', choice($.identifier, $.string)),
+      ';',
+      field('system_part_name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
     ),
 
     // OnQueryClosePage trigger for pages
