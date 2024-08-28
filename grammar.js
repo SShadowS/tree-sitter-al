@@ -1856,7 +1856,8 @@ module.exports = grammar({
     enum_property: $ => choice(
       // Enum-specific properties will be added here
       $.access_property,
-      $.assignment_compatibility_property
+      $.assignment_compatibility_property,
+      $.assignment_compatibility_reason_property
     ),
 
     // AssignmentCompatibility Property
@@ -1866,6 +1867,16 @@ module.exports = grammar({
       'AssignmentCompatibility',
       '=',
       field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // AssignmentCompatibilityReason Property
+    // Sets a warning text that is shown when the Assignment Compatibility is used.
+    // This property provides an explanation for why assignment compatibility is necessary.
+    assignment_compatibility_reason_property: $ => seq(
+      'AssignmentCompatibilityReason',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
