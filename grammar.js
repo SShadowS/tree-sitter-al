@@ -1565,7 +1565,18 @@ module.exports = grammar({
     page_property: $ => choice(
       // Page-specific properties will be added here
       $.about_text_property,
-      $.about_text_ml_property
+      $.about_text_ml_property,
+      $.about_title_property
+    ),
+
+    // AboutTitle Property
+    // Sets the large-font title that appears in a teaching tip in the UI
+    // Used on Page objects and their controls (actions, fields, parts, etc.)
+    about_title_property: $ => seq(
+      'AboutTitle',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // AboutText Property
@@ -1633,13 +1644,15 @@ module.exports = grammar({
     page_customization_property: $ => choice(
       // Page customization-specific properties will be added here
       $.about_text_property,
-      $.about_text_ml_property
+      $.about_text_ml_property,
+      $.about_title_property
     ),
 
     page_extension_property: $ => choice(
       // Page extension-specific properties will be added here
       $.about_text_property,
-      $.about_text_ml_property
+      $.about_text_ml_property,
+      $.about_title_property
     ),
 
     table_extension_property: $ => choice(
