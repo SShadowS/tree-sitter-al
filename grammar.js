@@ -2213,7 +2213,8 @@ module.exports = grammar({
       $.data_access_intent_property,
       $.data_caption_expression_property,
       $.data_caption_fields_property,
-      $.data_classification_property
+      $.data_classification_property,
+      $.delayed_insert_property
     ),
 
     // DataCaptionExpression Property
@@ -2951,6 +2952,16 @@ module.exports = grammar({
         'AccountData',
         'ToBeClassified'
       )),
+      ';'
+    ),
+
+    // DelayedInsert Property
+    // Sets a value that specifies whether a user must leave a record before it is inserted into the database.
+    // This property is used on Page objects.
+    delayed_insert_property: $ => seq(
+      'DelayedInsert',
+      '=',
+      field('value', $.boolean_literal),
       ';'
     ),
 
