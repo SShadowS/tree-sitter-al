@@ -3175,6 +3175,37 @@ module.exports = grammar({
       ';'
     ),
 
+    // TableRelation Property
+    // Sets a table relation for a field.
+    // This property is used on Table Fields and Page Fields.
+    table_relation_property: $ => seq(
+      'TableRelation',
+      '=',
+      field('value', $.table_relation_value),
+      ';'
+    ),
+
+    table_relation_value: $ => seq(
+      field('table', $.identifier),
+      optional(seq(
+        '.',
+        field('field', $.identifier)
+      )),
+      optional(seq(
+        'WHERE',
+        '(',
+        $.table_filters,
+        ')'
+      ))
+    ),
+    // This property is used on Page and Request Page objects.
+    source_table_property: $ => seq(
+      'SourceTable',
+      '=',
+      field('value', $.identifier),
+      ';'
+    ),
+
     // SharedLayout Property
     // Specifies whether the view has the same layout as the default view 'All'.
     // This property is used on Page View objects.
