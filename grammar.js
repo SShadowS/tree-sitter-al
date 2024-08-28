@@ -14,8 +14,60 @@ module.exports = grammar({
       $.page_object,
       $.permission_set_extension_object,
       $.permission_set_object,
-      $.profile_object
+      $.profile_object,
+      $.query_object
       // Other object types can be added here in the future
+    ),
+
+    query_object: $ => seq(
+      'query',
+      field('id', $.integer),
+      field('name', $.string),
+      '{',
+      repeat($._query_element),
+      '}'
+    ),
+
+    _query_element: $ => choice(
+      $.property,
+      $.elements
+    ),
+
+    elements: $ => seq(
+      'elements',
+      '{',
+      repeat($.dataitem),
+      '}'
+    ),
+
+    dataitem: $ => seq(
+      'dataitem',
+      '(',
+      field('name', $.identifier),
+      ';',
+      field('table', $.identifier),
+      ')',
+      '{',
+      repeat($._dataitem_element),
+      '}'
+    ),
+
+    _dataitem_element: $ => choice(
+      $.column,
+      $.dataitem,
+      $.property
+    ),
+
+    column: $ => seq(
+      'column',
+      '(',
+      field('name', $.identifier),
+      ';',
+      field('field', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
     ),
 
     profile_object: $ => seq(
