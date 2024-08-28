@@ -2931,7 +2931,8 @@ module.exports = grammar({
       $.promoted_property,  // Added Promoted property
       $.promoted_action_categories_property,  // Added PromotedActionCategories property
       $.promoted_action_categories_ml_property,  // Added PromotedActionCategoriesML property
-      $.promoted_category_property  // Added PromotedCategory property
+      $.promoted_category_property,  // Added PromotedCategory property
+      $.promoted_is_big_property  // Added PromotedIsBig property
     ),
 
     // PromotedCategory Property
@@ -3009,6 +3010,16 @@ module.exports = grammar({
     // This property is used on Page Actions.
     promoted_property: $ => seq(
       'Promoted',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // PromotedIsBig Property
+    // Sets the action to appear before other promoted actions in the action bar, regardless of its position in the AL code of the page.
+    // This property is used on Page Actions.
+    promoted_is_big_property: $ => seq(
+      'PromotedIsBig',
       '=',
       field('value', $.boolean_literal),
       ';'
