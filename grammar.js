@@ -2530,7 +2530,8 @@ module.exports = grammar({
       $.entity_set_name_property,
       $.extensible_property,
       $.file_upload_row_action_property,
-      $.filters_property
+      $.filters_property,
+      $.flow_caption_property
     ),
 
     // DrillDownPageId Property
@@ -3644,6 +3645,16 @@ module.exports = grammar({
       'FileUploadRowAction',
       '=',
       field('value', $.identifier),
+      ';'
+    ),
+
+    // FlowCaption Property
+    // Sets the default caption of the new flow.
+    // This property is used on Page Custom Actions.
+    flow_caption_property: $ => seq(
+      'FlowCaption',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
