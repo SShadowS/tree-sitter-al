@@ -1680,7 +1680,8 @@ module.exports = grammar({
       $.caption_ml_property,
       $.char_allowed_property,
       $.closing_dates_property,
-      $.column_span_property
+      $.column_span_property,
+      $.compressed_property
     ),
 
     // ColumnSpan Property
@@ -1690,6 +1691,16 @@ module.exports = grammar({
       'ColumnSpan',
       '=',
       field('value', $.integer),
+      ';'
+    ),
+
+    // Compressed Property
+    // Sets a value that specifies whether a BLOB is compressed.
+    // This property is used on Table Fields of BLOB Data Type.
+    compressed_property: $ => seq(
+      'Compressed',
+      '=',
+      field('value', $.boolean_literal),
       ';'
     ),
 
