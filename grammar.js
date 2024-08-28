@@ -1061,8 +1061,21 @@ module.exports = grammar({
 
     _table_element: $ => choice(
       $.field,
-      $.property
+      $.property,
+      $.ondelete_trigger
       // Other table elements can be added here
+    ),
+
+    // OnDelete trigger for tables
+    // This trigger runs when a user tries to delete a record from the table
+    // It can be used to perform custom actions before the deletion occurs
+    // or to prevent the deletion under certain conditions
+    ondelete_trigger: $ => seq(
+      'trigger',
+      'OnDelete',
+      '(',
+      ')',
+      field('body', $.code_block)
     ),
 
     field: $ => seq(
