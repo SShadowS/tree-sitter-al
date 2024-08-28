@@ -628,8 +628,20 @@ module.exports = grammar({
       $.onaftertestrun_trigger,
       $.onbeforetestrun_trigger,
       $.oncheckpreconditionspercompany_trigger,
-      $.oncheckpreconditionsperdatabase_trigger
+      $.oncheckpreconditionsperdatabase_trigger,
+      $.oninstallapppercompany_trigger
       // Other codeunit elements can be added here
+    ),
+
+    // OnInstallAppPerCompany trigger for install codeunits
+    // This trigger runs during the installation or reinstallation of an extension
+    // It is executed once for each company in the database
+    oninstallapppercompany_trigger: $ => seq(
+      'trigger',
+      'OnInstallAppPerCompany',
+      '(',
+      ')',
+      field('body', $.code_block)
     ),
 
     // OnCheckPreconditionsPerDatabase trigger for upgrade codeunits
