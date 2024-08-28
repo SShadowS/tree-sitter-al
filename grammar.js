@@ -1591,7 +1591,18 @@ module.exports = grammar({
       $.access_by_permission_property,
       $.allow_in_customizations_property,
       $.assist_edit_property,
-      $.auto_format_expression_property
+      $.auto_format_expression_property,
+      $.auto_format_type_property
+    ),
+
+    // AutoFormatType Property
+    // Sets a value that determines how data is formatted, together with the AL expression in the AutoFormatExpression Property.
+    // Used on Table Fields, Page Fields, and Report Columns.
+    auto_format_type_property: $ => seq(
+      'AutoFormatType',
+      '=',
+      field('value', choice('1', '2', '3', '10', '11')),
+      ';'
     ),
 
     // AutoFormatExpression Property
@@ -1844,7 +1855,8 @@ module.exports = grammar({
       $.additional_search_terms_property,
       $.additional_search_terms_ml_property,
       $.allow_scheduling_property,
-      $.auto_format_expression_property
+      $.auto_format_expression_property,
+      $.auto_format_type_property
     ),
 
     // AllowScheduling Property
