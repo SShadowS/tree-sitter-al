@@ -2443,7 +2443,8 @@ module.exports = grammar({
       $.drilldown_page_id_property,
       $.editable_property,
       $.ellipsis_property,
-      $.enabled_property
+      $.enabled_property,
+      $.entity_caption_property
     ),
 
     // DrillDownPageId Property
@@ -2982,7 +2983,8 @@ module.exports = grammar({
       $.caption_ml_property,
       $.column_filter_property,
       $.data_access_intent_property,
-      $.data_item_link_property
+      $.data_item_link_property,
+      $.entity_caption_property
     ),
 
     // DataItemLink Property
