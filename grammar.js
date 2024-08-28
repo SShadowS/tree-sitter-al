@@ -134,11 +134,13 @@ module.exports = grammar({
       '(',
       commaSep1($.identifier),
       ')',
+      optional(field('al', $.string)), // AL property for key alias
       optional(seq(
         '{',
         repeat($.property),
         '}'
-      ))
+      )),
+      optional(';')
     ),
 
     variable_declaration: $ => seq(
