@@ -2764,7 +2764,18 @@ module.exports = grammar({
       $.default_rendering_layout_property,
       $.enable_external_assemblies_property,
       $.enable_external_images_property,
-      $.enable_hyperlinks_property
+      $.enable_hyperlinks_property,
+      $.excel_layout_property
+    ),
+
+    // ExcelLayout Property
+    // Sets the Excel layout that is used on a report and returns it as a data stream.
+    // This property is used on Report objects and Report Extension objects.
+    excel_layout_property: $ => seq(
+      'ExcelLayout',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // EnableHyperlinks Property
@@ -3155,6 +3166,7 @@ module.exports = grammar({
 
     report_extension_property: $ => choice(
       // Report extension-specific properties will be added here
+      $.excel_layout_property
     ),
 
     query_extension_property: $ => choice(
