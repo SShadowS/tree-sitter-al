@@ -3042,7 +3042,8 @@ module.exports = grammar({
       $.scope_property,
       $.shared_layout_property,  // Added SharedLayout property
       $.shortcut_key_property,  // Added ShortcutKey property
-      $.show_as_tree_property  // Added ShowAsTree property
+      $.show_as_tree_property,  // Added ShowAsTree property
+      $.show_caption_property  // Added ShowCaption property
     ),
 
     // SharedLayout Property
@@ -3062,6 +3063,16 @@ module.exports = grammar({
       'ShortcutKey',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // ShowCaption Property
+    // Sets whether the text that is specified by the Caption Property is displayed for the control.
+    // This property is used on Page Label, Page Field, and Page Group objects.
+    show_caption_property: $ => seq(
+      'ShowCaption',
+      '=',
+      field('value', $.boolean_literal),
       ';'
     ),
 
