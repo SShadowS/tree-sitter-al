@@ -2535,7 +2535,8 @@ module.exports = grammar({
       $.flow_id_property,
       $.flow_template_category_name_property,
       $.flow_template_id_property,
-      $.freeze_column_property
+      $.freeze_column_property,
+      $.gesture_property
     ),
 
     // DrillDownPageId Property
@@ -3711,6 +3712,16 @@ module.exports = grammar({
       'FreezeColumn',
       '=',
       field('value', $.identifier),
+      ';'
+    ),
+
+    // Gesture Property
+    // Specifies a gesture that runs the action on a device with a touch interface, such as the phone client.
+    // This property is used on Page Actions and Page File Upload Actions.
+    gesture_property: $ => seq(
+      'Gesture',
+      '=',
+      field('value', choice('None', 'LeftSwipe', 'RightSwipe', 'ContextMenu')),
       ';'
     ),
 
