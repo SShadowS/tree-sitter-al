@@ -1554,11 +1554,21 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.key_field),
+      repeat(choice($.key_field, $.clustered_property)),
       '}'
     ),
 
     key_field: $ => $.identifier,
+
+    // Clustered Property
+    // Sets a value that indicates whether the key also defines the clustered index in the database.
+    // This property is used on Table Keys.
+    clustered_property: $ => seq(
+      'Clustered',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
 
     // OnDelete trigger for tables
     // This trigger runs when a user tries to delete a record from the table
