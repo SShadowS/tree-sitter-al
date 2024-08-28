@@ -649,8 +649,18 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.property),
+      repeat(choice($.property, $.reverse_sign_property)),
       '}'
+    ),
+
+    // ReverseSign Property
+    // Changes negative values into positive values and positive values into negative values in a column of a resulting query data set.
+    // This property is used on Query Column objects.
+    reverse_sign_property: $ => seq(
+      'ReverseSign',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     query_filter: $ => seq(
