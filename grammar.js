@@ -1745,6 +1745,7 @@ module.exports = grammar({
       $.caption_ml_property,
       $.column_store_index_property,
       $.compression_type_property,
+      $.data_caption_fields_property,
       $.data_classification_property
     ),
 
@@ -2161,6 +2162,7 @@ module.exports = grammar({
       $.cuegroup_layout_property,
       $.custom_action_type_property,
       $.data_caption_expression_property,
+      $.data_caption_fields_property,
       $.data_classification_property
     ),
 
@@ -2793,6 +2795,16 @@ module.exports = grammar({
       'RequestedWidth',
       '=',
       field('value', $.integer),
+      ';'
+    ),
+
+    // DataCaptionFields Property
+    // Sets the fields that appear to the left of the caption on pages that display the contents of this table.
+    // This property is used on Tables, Pages, and Request Pages.
+    data_caption_fields_property: $ => seq(
+      'DataCaptionFields',
+      '=',
+      field('value', $.identifier_list),
       ';'
     ),
 
