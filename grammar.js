@@ -1615,7 +1615,7 @@ module.exports = grammar({
       field('permission_type', $.access_by_permission_type)
     ),
 
-    access_by_permission_type: $ => choice('R', 'I', 'M', 'D', 'X')
+    access_by_permission_type: $ => choice('R', 'I', 'M', 'D', 'X'),
 
     // Access Property
     // Sets the object accessibility level, which controls whether the object can be used from other code in the same module or other modules
