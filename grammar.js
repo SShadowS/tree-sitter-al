@@ -4573,7 +4573,18 @@ module.exports = grammar({
       // Profile-specific properties will be added here
       $.customizations_property,
       $.enabled_property,
-      $.profile_description_property  // Added ProfileDescription property
+      $.profile_description_property,  // Added ProfileDescription property
+      $.role_center_property  // Added RoleCenter property
+    ),
+
+    // RoleCenter Property
+    // Specifies the Role Center Page for this profile.
+    // This property is used on Profile objects.
+    role_center_property: $ => seq(
+      'RoleCenter',
+      '=',
+      field('value', $.identifier),
+      ';'
     ),
 
     // ProfileDescription Property
