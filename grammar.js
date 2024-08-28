@@ -3367,7 +3367,18 @@ module.exports = grammar({
     permission_set_property: $ => choice(
       // Permission set-specific properties will be added here
       $.assignable_property,
-      $.excluded_permission_sets_property
+      $.excluded_permission_sets_property,
+      $.included_permission_sets_property
+    ),
+
+    // IncludedPermissionSets Property
+    // Sets the lists of other permission sets that are included in this permission set.
+    // This property is used on Permission Set objects.
+    included_permission_sets_property: $ => seq(
+      'IncludedPermissionSets',
+      '=',
+      field('value', $.identifier_list),
+      ';'
     ),
 
     // ExcludedPermissionSets Property
