@@ -59,7 +59,8 @@ module.exports = grammar({
 
     _dotnet_assembly_element: $ => choice(
       $.property,
-      $.public_key_token_property
+      $.public_key_token_property,
+      $.culture_property
     ),
 
     interface_object: $ => seq(
