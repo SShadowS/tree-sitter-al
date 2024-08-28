@@ -2492,7 +2492,18 @@ module.exports = grammar({
       $.auto_format_type_property,
       $.caption_property,
       $.data_access_intent_property,
-      $.decimal_places_property
+      $.decimal_places_property,
+      $.default_layout_property
+    ),
+
+    // DefaultLayout Property
+    // Specifies whether the report uses the built-in RDL, Word, or Excel report layout by default.
+    // This property is used on Report objects.
+    default_layout_property: $ => seq(
+      'DefaultLayout',
+      '=',
+      field('value', choice('RDLC', 'Word', 'Excel')),
+      ';'
     ),
 
     // AllowScheduling Property
