@@ -3406,7 +3406,18 @@ module.exports = grammar({
       $.pdf_font_embedding_property,
       $.permissions_property,
       $.preview_mode_property,
-      $.print_only_if_detail_property  // Added PrintOnlyIfDetail property
+      $.print_only_if_detail_property,  // Added PrintOnlyIfDetail property
+      $.processing_only_property  // Added ProcessingOnly property
+    ),
+
+    // ProcessingOnly Property
+    // Sets the value that indicates whether a report produces printed output or only processes data.
+    // This property is used on Report objects.
+    processing_only_property: $ => seq(
+      'ProcessingOnly',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // PrintOnlyIfDetail Property
