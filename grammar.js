@@ -403,7 +403,22 @@ module.exports = grammar({
       $.onfindrecord_trigger,
       $.oninit_trigger,
       $.oninsertrecord_trigger,
-      $.onmodifyrecord_trigger
+      $.onmodifyrecord_trigger,
+      $.onnewrecord_trigger
+    ),
+
+    // OnNewRecord trigger for pages
+    // This trigger runs after a new record is initialized, but before it is inserted as a record in the table
+    // It's used to initialize a new record or other variables on the page before users enter any data
+    onnewrecord_trigger: $ => seq(
+      'trigger',
+      'OnNewRecord',
+      '(',
+      'BelowxRec',
+      ':',
+      'Boolean',
+      ')',
+      field('body', $.code_block)
     ),
 
     // OnModifyRecord trigger for pages
