@@ -4338,6 +4338,17 @@ module.exports = grammar({
 
     entitlement_property: $ => choice(
       // Entitlement-specific properties will be added here
+      $.object_entitlements_property
+    ),
+
+    // ObjectEntitlements Property
+    // Determines the object permissions that this entitlement object permits a user or application to use.
+    // This property is used on Entitlement objects.
+    object_entitlements_property: $ => seq(
+      'ObjectEntitlements',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     report_layout_property: $ => choice(
