@@ -3022,9 +3022,10 @@ module.exports = grammar({
       $.query_category_property,
       $.refresh_on_activate_property,
       $.run_object_property,
-      $.run_page_link_property,  // Added RunPageLink property
-      $.run_page_mode_property,  // Added RunPageMode property
-      $.run_page_on_rec_property  // Added RunPageOnRec property
+      $.run_page_link_property,
+      $.run_page_mode_property,
+      $.run_page_on_rec_property,
+      $.run_page_view_property  // Added RunPageView property
     ),
 
     // RefreshOnActivate Property
@@ -3096,6 +3097,22 @@ module.exports = grammar({
       '=',
       field('value', $.boolean_literal),
       ';'
+    ),
+
+    // RunPageView Property
+    // Sets a tableview for the page that will be launched for this action.
+    // This property is used on Page Action objects.
+    run_page_view_property: $ => seq(
+      'RunPageView',
+      '=',
+      field('value', $.run_page_view_value),
+      ';'
+    ),
+
+    run_page_view_value: $ => seq(
+      optional(seq('SORTING', '(', $.identifier_list, ')')),
+      optional(seq('ORDER', '(', choice('Ascending', 'Descending'), ')')),
+      optional(seq('WHERE', '(', $.table_filters, ')'))
     ),
 
     // QueryCategory Property
