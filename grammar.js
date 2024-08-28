@@ -3078,10 +3078,11 @@ module.exports = grammar({
       $.run_page_view_property,
       $.save_values_property,
       $.scope_property,
-      $.shared_layout_property,  // Added SharedLayout property
-      $.shortcut_key_property,  // Added ShortcutKey property
-      $.show_as_tree_property,  // Added ShowAsTree property
-      $.show_caption_property  // Added ShowCaption property
+      $.shared_layout_property,
+      $.shortcut_key_property,
+      $.show_as_tree_property,
+      $.show_caption_property,
+      $.show_mandatory_property  // Added ShowMandatory property
     ),
 
     // SharedLayout Property
@@ -3111,6 +3112,16 @@ module.exports = grammar({
       'ShowCaption',
       '=',
       field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // ShowMandatory Property
+    // Sets a value that specifies whether users must enter a value in the selected field or text box.
+    // This property is used on Page Field objects.
+    show_mandatory_property: $ => seq(
+      'ShowMandatory',
+      '=',
+      field('value', choice($.boolean_literal, $.identifier, $._expression)),
       ';'
     ),
 
