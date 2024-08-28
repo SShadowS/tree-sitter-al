@@ -3039,7 +3039,18 @@ module.exports = grammar({
       $.run_page_on_rec_property,
       $.run_page_view_property,
       $.save_values_property,
-      $.scope_property
+      $.scope_property,
+      $.shared_layout_property  // Added SharedLayout property
+    ),
+
+    // SharedLayout Property
+    // Specifies whether the view has the same layout as the default view 'All'.
+    // This property is used on Page View objects.
+    shared_layout_property: $ => seq(
+      'SharedLayout',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // Scope Property
