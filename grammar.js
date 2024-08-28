@@ -1942,7 +1942,18 @@ module.exports = grammar({
       $.application_area_property,
       $.auto_split_key_property,
       $.caption_property,
-      $.caption_class_property
+      $.caption_class_property,
+      $.card_page_id_property
+    ),
+
+    // CardPageId Property
+    // Sets the card page that is associated with items in the current list page.
+    // This property is used on Page and Request Page objects.
+    card_page_id_property: $ => seq(
+      'CardPageID',
+      '=',
+      field('value', choice($.integer, $.identifier, $.string_literal)),
+      ';'
     ),
 
     // ApplicationArea Property
