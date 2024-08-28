@@ -34,7 +34,13 @@ module.exports = grammar({
       $.variable_declaration,
       $.trigger_definition,
       $.procedure_definition,
-      $.property
+      $.property,
+      $.table_level_property
+    ),
+
+    table_level_property: $ => seq(
+      $.property,
+      optional(field('al', $.string)) // AL property for table-level property alias
     ),
 
     table_level_property: $ => seq(
