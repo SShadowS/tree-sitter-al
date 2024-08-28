@@ -5105,9 +5105,8 @@ module.exports = grammar({
 
     logical_operator: $ => choice('and', 'or', 'not', 'xor'),
 
-    assignment_operator: $ => ':='
-  }
-});
+    assignment_operator: $ => ':=',
+
     // PublicKeyToken Property
     // Specifies the public key token of the .NET assembly.
     // This property is used on Dot Net Assembly objects.
@@ -5116,4 +5115,6 @@ module.exports = grammar({
       '=',
       field('value', $.string_literal),
       ';'
-    ),
+    )
+  }
+});
