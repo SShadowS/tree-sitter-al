@@ -2216,7 +2216,18 @@ module.exports = grammar({
       $.data_classification_property,
       $.delayed_insert_property,
       $.delete_allowed_property,
-      $.description_property
+      $.description_property,
+      $.drilldown_property
+    ),
+
+    // DrillDown Property
+    // Sets a drill-down for a field on a page.
+    // This property is used on Page Fields.
+    drilldown_property: $ => seq(
+      'DrillDown',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // DataCaptionExpression Property
