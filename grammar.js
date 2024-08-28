@@ -2528,7 +2528,8 @@ module.exports = grammar({
       $.entity_set_caption_property,
       $.entity_set_caption_ml_property,
       $.entity_set_name_property,
-      $.extensible_property
+      $.extensible_property,
+      $.file_upload_row_action_property
     ),
 
     // DrillDownPageId Property
@@ -3632,6 +3633,16 @@ module.exports = grammar({
       'EntitySetName',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // FileUploadRowAction Property
+    // Specifies the File Upload Action to be invoked when a file is uploaded to the row.
+    // This property is used on Page Groups.
+    file_upload_row_action_property: $ => seq(
+      'FileUploadRowAction',
+      '=',
+      field('value', $.identifier),
       ';'
     ),
 
