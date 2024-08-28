@@ -3081,7 +3081,18 @@ module.exports = grammar({
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
       $.maximum_dataset_size_property,  // Added MaximumDatasetSize property
-      $.maximum_document_count_property  // Added MaximumDocumentCount property
+      $.maximum_document_count_property,  // Added MaximumDocumentCount property
+      $.max_iteration_property  // Added MaxIteration property
+    ),
+
+    // MaxIteration Property
+    // Sets a limit on the number of times that a data item will be iterated when the report is run.
+    // This property is used on Report Data Items.
+    max_iteration_property: $ => seq(
+      'MaxIteration',
+      '=',
+      field('value', $.integer),
+      ';'
     ),
 
     // MaximumDocumentCount Property
