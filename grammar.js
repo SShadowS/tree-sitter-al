@@ -3040,7 +3040,8 @@ module.exports = grammar({
       $.run_page_view_property,
       $.save_values_property,
       $.scope_property,
-      $.shared_layout_property  // Added SharedLayout property
+      $.shared_layout_property,  // Added SharedLayout property
+      $.shortcut_key_property  // Added ShortcutKey property
     ),
 
     // SharedLayout Property
@@ -3050,6 +3051,16 @@ module.exports = grammar({
       'SharedLayout',
       '=',
       field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // ShortcutKey Property
+    // Sets a shortcut key for selecting a menu item.
+    // This property is used on Page Action, Page Custom Action, and Page File Upload Action objects.
+    shortcut_key_property: $ => seq(
+      'ShortcutKey',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
