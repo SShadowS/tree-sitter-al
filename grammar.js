@@ -2336,7 +2336,18 @@ module.exports = grammar({
       $.apigroup_property,
       $.apiversion_property,
       $.apipublisher_property,
-      $.caption_property
+      $.caption_property,
+      $.column_filter_property
+    ),
+
+    // ColumnFilter Property
+    // Sets a filter on the column filter row of a query.
+    // This property is used on Query Columns and Query Filters.
+    column_filter_property: $ => seq(
+      'ColumnFilter',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // APIVersion Property for queries

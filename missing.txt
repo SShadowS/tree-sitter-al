@@ -20,8 +20,10 @@ The APIVersion property for queries has been updated in the grammar.js file. It 
 
 XMLport Table Element needs to be defined. It's used in the AutoUpdate, AutoReplace, and AutoSave properties for XMLports. We should add rules in the grammar.js file to define the XMLport Table Element and its structure.
 
-Page Field needs to be defined. It's used in the BlankNumbers and BlankZero properties. We should add rules in the grammar.js file to define the Page Field and its structure.
+Page Field needs to be defined. It's used in various properties including CharAllowed, BlankNumbers, and BlankZero. We should add rules in the grammar.js file to define the Page Field and its structure.
 
 PageType property needs to be defined for pages. It's used to specify the type of page, such as "API" for API pages. We should add a rule in the grammar.js file to handle the PageType property, especially for API pages that use the ChangeTrackingAllowed property.
 
-Page Field needs to be defined. It's used in various properties including CharAllowed, BlankNumbers, and BlankZero. We should add rules in the grammar.js file to define the Page Field and its structure.
+Query Column needs to be defined. It's used in the ColumnFilter property. We should add rules in the grammar.js file to define the Query Column and its structure.
+
+Query Filter needs to be defined. It's used in the ColumnFilter property. We should add rules in the grammar.js file to define the Query Filter and its structure.
