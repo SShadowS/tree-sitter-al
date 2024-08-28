@@ -2439,8 +2439,19 @@ module.exports = grammar({
       $.option_caption_property,
       $.option_caption_ml_property,
       $.option_members_property,
-      $.option_ordinal_values_property,  // Added OptionOrdinalValues property
-      $.quick_entry_property  // Added QuickEntry property
+      $.option_ordinal_values_property,
+      $.quick_entry_property,
+      $.sign_displacement_property  // Added SignDisplacement property
+    ),
+
+    // SignDisplacement Property
+    // Sets a value to shift negative values to the right for display purposes only.
+    // This property is used on Table Fields and Page Fields.
+    sign_displacement_property: $ => seq(
+      'SignDisplacement',
+      '=',
+      field('value', $.integer),
+      ';'
     ),
 
     // QuickEntry Property
