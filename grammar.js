@@ -2540,7 +2540,18 @@ module.exports = grammar({
       $.grid_layout_property,  // Added GridLayout property
       $.help_link_property,  // Added HelpLink property
       $.horizontal_shrink_property,  // Added HorizontalShrink property
-      $.images_property  // Added Images property
+      $.images_property,  // Added Images property
+      $.importance_property  // Added Importance property
+    ),
+
+    // Importance Property
+    // Sets the amount of information that is visible in a window or dialog box.
+    // This property is used on Page Labels and Page Fields.
+    importance_property: $ => seq(
+      'Importance',
+      '=',
+      field('value', choice('Standard', 'Promoted', 'Additional')),
+      ';'
     ),
 
     // Images Property
