@@ -1592,7 +1592,18 @@ module.exports = grammar({
       $.allow_in_customizations_property,
       $.assist_edit_property,
       $.auto_format_expression_property,
-      $.auto_format_type_property
+      $.auto_format_type_property,
+      $.auto_increment_property
+    ),
+
+    // AutoIncrement Property
+    // Sets whether the field value should be automatically incremented.
+    // This property is only applicable to Integer and BigInteger data types.
+    auto_increment_property: $ => seq(
+      'AutoIncrement',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // AutoFormatType Property
