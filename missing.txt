@@ -19,3 +19,5 @@ QueryType property needs to be defined for queries. It's used to specify the typ
 The APIVersion property for queries has been updated in the grammar.js file. It now includes a comment mentioning that the default value is 'beta' if not specified. The QueryType property should be implemented to fully support the APIVersion property's functionality.
 
 XMLport Table Element needs to be defined. It's used in the AutoUpdate, AutoReplace, and AutoSave properties for XMLports. We should add rules in the grammar.js file to define the XMLport Table Element and its structure.
+
+Page Field needs to be defined. It's used in the BlankNumbers property. We should add rules in the grammar.js file to define the Page Field and its structure.

@@ -1593,7 +1593,18 @@ module.exports = grammar({
       $.assist_edit_property,
       $.auto_format_expression_property,
       $.auto_format_type_property,
-      $.auto_increment_property
+      $.auto_increment_property,
+      $.blank_numbers_property
+    ),
+
+    // BlankNumbers Property
+    // Sets whether the system will clear a range of numbers as it formats them.
+    // This property is used on Table Fields and Page Fields.
+    blank_numbers_property: $ => seq(
+      'BlankNumbers',
+      '=',
+      field('value', choice('DontBlank', 'BlankNeg', 'BlankNegAndZero', 'BlankZero', 'BlankZeroAndPos', 'BlankPos')),
+      ';'
     ),
 
     // AutoIncrement Property
