@@ -1653,7 +1653,8 @@ module.exports = grammar({
       $.blank_numbers_property,
       $.blank_zero_property,
       $.calc_formula_property,
-      $.caption_property
+      $.caption_property,
+      $.caption_class_property
     ),
 
     // Caption Property
@@ -1671,6 +1672,16 @@ module.exports = grammar({
           seq('MaxLength', '=', field('max_length', $.integer))
         )
       )),
+      ';'
+    ),
+
+    // CaptionClass Property
+    // Controls the caption that is used in the label of a field in a database table or in the label of a control on a page.
+    // This property is used on Table Fields, Page Labels, and Page Fields.
+    caption_class_property: $ => seq(
+      'CaptionClass',
+      '=',
+      field('value', choice($.string_literal, $.identifier)),
       ';'
     ),
 
@@ -1918,7 +1929,8 @@ module.exports = grammar({
       $.apiversion_property,
       $.application_area_property,
       $.auto_split_key_property,
-      $.caption_property
+      $.caption_property,
+      $.caption_class_property
     ),
 
     // ApplicationArea Property
