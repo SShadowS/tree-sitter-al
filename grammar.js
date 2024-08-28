@@ -4540,7 +4540,18 @@ module.exports = grammar({
       $.horizontal_stretch_property,
       $.requested_height_property,
       $.requested_width_property,
-      $.recreate_script_property  // Added RecreateScript property
+      $.recreate_script_property,  // Added RecreateScript property
+      $.refresh_script_property  // Added RefreshScript property
+    ),
+
+    // RefreshScript Property
+    // Specifies the script which is invoked when the control add-in is refreshed.
+    // This property is used on Control Add In objects.
+    refresh_script_property: $ => seq(
+      'RefreshScript',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // MinimumWidth Property
