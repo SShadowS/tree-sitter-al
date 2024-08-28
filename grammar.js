@@ -2172,7 +2172,6 @@ module.exports = grammar({
       field('value', choice('Flow', 'FlowTemplate', 'FlowTemplateGallery')),
       ';'
     ),
-    ),
 
     // ContextSensitiveHelpPage Property
     // Specifies the help topic to show when the user presses Help in the UI.
