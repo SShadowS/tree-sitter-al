@@ -3666,7 +3666,27 @@ module.exports = grammar({
       $.processing_only_property,
       $.rdlc_layout_property,  // Added RDLCLayout property
       $.request_page_property,  // Added RequestPage property
-      $.request_filter_fields_property  // Added RequestFilterFields property
+      $.request_filter_fields_property,  // Added RequestFilterFields property
+      $.request_filter_heading_property  // Added RequestFilterHeading property
+    ),
+
+    // RequestFilterHeading Property
+    // Sets a caption for the request page tab that is related to this data item.
+    // This property is used on Report Data Items and XMLport Table Elements.
+    request_filter_heading_property: $ => seq(
+      'RequestFilterHeading',
+      '=',
+      field('value', $.string_literal),
+      optional(seq(
+        ',',
+        repeat1(seq(
+          field('parameter', choice('Locked', 'Comment', 'MaxLength')),
+          '=',
+          field('parameter_value', choice($.boolean_literal, $.string_literal, $.integer)),
+          optional(',')
+        ))
+      )),
+      ';'
     ),
 
     // RDLCLayout Property
