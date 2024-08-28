@@ -1,6 +1,10 @@
 module.exports = grammar({
   name: 'al',
 
+  conflicts: $ => [
+    [$._table_element, $.table_definition],
+  ],
+
   rules: {
     source_file: $ => repeat($._declaration),
 
