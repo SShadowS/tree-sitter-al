@@ -2839,6 +2839,12 @@ module.exports = grammar({
     // Identifiers
     identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
+    // Helper rule for a list of identifiers
+    identifier_list: $ => seq(
+      $.identifier,
+      repeat(seq(',', $.identifier))
+    ),
+
     // Literals
     _literal: $ => choice(
       $.number_literal,
