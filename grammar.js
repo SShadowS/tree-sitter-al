@@ -2536,7 +2536,8 @@ module.exports = grammar({
       $.flow_template_category_name_property,
       $.flow_template_id_property,
       $.freeze_column_property,
-      $.gesture_property
+      $.gesture_property,
+      $.grid_layout_property  // Added GridLayout property
     ),
 
     // DrillDownPageId Property
@@ -3722,6 +3723,16 @@ module.exports = grammar({
       'Gesture',
       '=',
       field('value', choice('None', 'LeftSwipe', 'RightSwipe', 'ContextMenu')),
+      ';'
+    ),
+
+    // GridLayout Property
+    // Specifies if the layout is rows or columns.
+    // This property is used on Page Groups.
+    grid_layout_property: $ => seq(
+      'GridLayout',
+      '=',
+      field('value', choice('Rows', 'Columns')),
       ';'
     ),
 
