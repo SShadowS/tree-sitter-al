@@ -8,8 +8,152 @@ module.exports = grammar({
       $.table_object,
       $.codeunit_object,
       $.control_addin_object,
-      $.entitlement_object
+      $.entitlement_object,
+      $.page_customization_object
       // Other object types can be added here in the future
+    ),
+
+    page_customization_object: $ => seq(
+      'pagecustomization',
+      field('name', $.identifier),
+      'customizes',
+      field('target_page', $.string),
+      '{',
+      repeat($._page_customization_element),
+      '}'
+    ),
+
+    _page_customization_element: $ => choice(
+      $.layout,
+      $.actions
+    ),
+
+    layout: $ => seq(
+      'layout',
+      '{',
+      repeat($._layout_element),
+      '}'
+    ),
+
+    _layout_element: $ => choice(
+      $.modify,
+      $.add_first,
+      $.add_last,
+      $.add_after,
+      $.add_before,
+      $.move_after,
+      $.move_before
+    ),
+
+    actions: $ => seq(
+      'actions',
+      '{',
+      repeat($._action_element),
+      '}'
+    ),
+
+    _action_element: $ => choice(
+      $.modify,
+      $.add_first,
+      $.add_last,
+      $.add_after,
+      $.add_before,
+      $.move_after,
+      $.move_before
+    ),
+
+    modify: $ => seq(
+      'modify',
+      '(',
+      field('target', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    add_first: $ => seq(
+      'addfirst',
+      '(',
+      field('target', $.identifier),
+      ')',
+      '{',
+      repeat($._customization_content),
+      '}'
+    ),
+
+    add_last: $ => seq(
+      'addlast',
+      '(',
+      field('target', $.identifier),
+      ')',
+      '{',
+      repeat($._customization_content),
+      '}'
+    ),
+
+    add_after: $ => seq(
+      'addafter',
+      '(',
+      field('target', $.identifier),
+      ')',
+      '{',
+      repeat($._customization_content),
+      '}'
+    ),
+
+    add_before: $ => seq(
+      'addbefore',
+      '(',
+      field('target', $.identifier),
+      ')',
+      '{',
+      repeat($._customization_content),
+      '}'
+    ),
+
+    move_after: $ => seq(
+      'moveafter',
+      '(',
+      field('target', $.identifier),
+      ';',
+      field('new_position', $.identifier),
+      ')'
+    ),
+
+    move_before: $ => seq(
+      'movebefore',
+      '(',
+      field('target', $.identifier),
+      ';',
+      field('new_position', $.identifier),
+      ')'
+    ),
+
+    _customization_content: $ => choice(
+      $.field,
+      $.group,
+      $.action
+    ),
+
+    group: $ => seq(
+      'group',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._customization_content),
+      '}'
+    ),
+
+    action: $ => seq(
+      'action',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
     ),
 
     entitlement_object: $ => seq(
