@@ -2445,7 +2445,8 @@ module.exports = grammar({
       $.ellipsis_property,
       $.enabled_property,
       $.entity_caption_property,
-      $.entity_caption_ml_property
+      $.entity_caption_ml_property,
+      $.entity_name_property
     ),
 
     // DrillDownPageId Property
@@ -2986,7 +2987,8 @@ module.exports = grammar({
       $.data_access_intent_property,
       $.data_item_link_property,
       $.entity_caption_property,
-      $.entity_caption_ml_property
+      $.entity_caption_ml_property,
+      $.entity_name_property
     ),
 
     // DataItemLink Property
@@ -3370,6 +3372,16 @@ module.exports = grammar({
       'EntityCaptionML',
       '=',
       field('value', $.multilanguage_string_literal),
+      ';'
+    ),
+
+    // EntityName Property
+    // Sets the singular entity name with which the page is exposed in the API endpoint.
+    // This property is used on Page and Query objects.
+    entity_name_property: $ => seq(
+      'EntityName',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
