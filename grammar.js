@@ -228,7 +228,8 @@ module.exports = grammar({
     _request_page_element: $ => choice(
       $.layout,
       $.actions,
-      $.property
+      $.property,
+      $.instructional_text_property
     ),
 
     _xmlport_element: $ => choice(
@@ -844,7 +845,7 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($._page_element),
+      repeat(choice($._page_element, $.instructional_text_property)),
       '}'
     ),
 
@@ -2124,7 +2125,8 @@ module.exports = grammar({
       $.external_name_property,
       $.external_type_property,
       $.field_class_property,
-      $.init_value_property
+      $.init_value_property,
+      $.instructional_text_property
     ),
 
     // ExternalAccess Property
@@ -2606,7 +2608,8 @@ module.exports = grammar({
       $.indentation_column_property,  // Added IndentationColumn property
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.insert_allowed_property  // Added InsertAllowed property
+      $.insert_allowed_property,  // Added InsertAllowed property
+      $.instructional_text_property  // Added InstructionalText property
     ),
 
     // Importance Property
@@ -2636,6 +2639,25 @@ module.exports = grammar({
       'InsertAllowed',
       '=',
       field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // InstructionalText Property
+    // Sets the string used for instructions in the UI.
+    // This property is used on Page, Request Page, Page Field, and Page Group objects.
+    instructional_text_property: $ => seq(
+      'InstructionalText',
+      '=',
+      field('value', $.string_literal),
+      optional(seq(
+        ',',
+        repeat1(seq(
+          field('parameter', choice('Locked', 'Comment', 'MaxLength')),
+          '=',
+          field('parameter_value', choice($.boolean_literal, $.string_literal, $.integer)),
+          optional(',')
+        ))
+      )),
       ';'
     ),
 
