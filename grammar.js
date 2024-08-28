@@ -761,9 +761,7 @@ module.exports = grammar({
     ),
 
     _value: $ => choice(
-      $.string,
-      $.integer,
-      $.boolean,
+      $._literal,
       $.identifier
     ),
 
