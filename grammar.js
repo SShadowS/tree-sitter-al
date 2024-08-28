@@ -368,7 +368,8 @@ module.exports = grammar({
       $.rendering,
       $.labels,
       $.trigger,
-      $.auto_calc_field_property
+      $.auto_calc_field_property,
+      $.data_item_link_property
     ),
 
     dataset: $ => seq(
@@ -2581,13 +2582,22 @@ module.exports = grammar({
     ),
 
     // DataItemLink Property
-    // Sets a reference between one or more fields of the data item table and data item or data items above it.
-    // This property is used on Query DataItems.
+    // Sets the corresponding fields from two data items that are linked by the DataItemLinkReference Property.
+    // This property is used on Report DataItems and Query DataItems.
     data_item_link_property: $ => seq(
       'DataItemLink',
       '=',
-      field('value', $.string_literal),
+      field('value', $.data_item_link_value),
       ';'
+    ),
+
+    data_item_link_value: $ => seq(
+      field('field', $.identifier),
+      '=',
+      'FIELD',
+      '(',
+      field('reference_field', $.identifier),
+      ')'
     ),
 
     // ColumnFilter Property
