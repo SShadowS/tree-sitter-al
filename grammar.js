@@ -2536,7 +2536,18 @@ module.exports = grammar({
       $.auto_save_property,
       $.auto_update_property,
       $.caption_property,
-      $.default_fields_validation_property
+      $.default_fields_validation_property,
+      $.direction_property
+    ),
+
+    // Direction Property
+    // Sets the XMLport to import, export, or import and export data in XML format.
+    // This property is used on XMLport objects.
+    direction_property: $ => seq(
+      'Direction',
+      '=',
+      field('value', choice('Import', 'Export', 'Both')),
+      ';'
     ),
 
     // DefaultFieldsValidation Property
