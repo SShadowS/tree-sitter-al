@@ -9,8 +9,25 @@ module.exports = grammar({
       $.codeunit_object,
       $.control_addin_object,
       $.entitlement_object,
-      $.page_customization_object
+      $.page_customization_object,
+      $.page_extension_object
       // Other object types can be added here in the future
+    ),
+
+    page_extension_object: $ => seq(
+      'pageextension',
+      field('id', $.integer),
+      field('name', $.string),
+      'extends',
+      field('base_page', $.string),
+      '{',
+      repeat($._page_extension_element),
+      '}'
+    ),
+
+    _page_extension_element: $ => choice(
+      $.layout,
+      $.actions
     ),
 
     page_customization_object: $ => seq(
