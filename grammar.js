@@ -2247,18 +2247,36 @@ module.exports = grammar({
       $.field_class_property,
       $.init_value_property,
       $.instructional_text_property,
-      $.max_value_property,  // Added MaxValue property
-      $.min_value_property,  // Added MinValue property
-      $.moved_from_property,  // Added MovedFrom property
-      $.moved_to_property,  // Added MovedTo property
-      $.navigation_page_id_property,  // Added NavigationPageId property
-      $.not_blank_property,  // Added NotBlank property
-      $.numeric_property,  // Added Numeric property
-      $.obsolete_reason_property,  // Added ObsoleteReason property
-      $.obsolete_tag_property,  // Added ObsoleteTag property
-      $.option_caption_property,  // Added OptionCaption property
-      $.option_caption_ml_property,  // Added OptionCaptionML property
-      $.option_members_property  // Added OptionMembers property
+      $.max_value_property,
+      $.min_value_property,
+      $.moved_from_property,
+      $.moved_to_property,
+      $.navigation_page_id_property,
+      $.not_blank_property,
+      $.numeric_property,
+      $.obsolete_reason_property,
+      $.obsolete_tag_property,
+      $.option_caption_property,
+      $.option_caption_ml_property,
+      $.option_members_property,
+      $.option_ordinal_values_property  // Added OptionOrdinalValues property
+    ),
+
+    // OptionOrdinalValues Property
+    // Specifies the list of option values. Can be set if the property ExternalType is set to Picklist.
+    // This property is used on Table Fields.
+    option_ordinal_values_property: $ => seq(
+      'OptionOrdinalValues',
+      '=',
+      field('value', $.option_ordinal_values_value),
+      ';'
+    ),
+
+    option_ordinal_values_value: $ => seq(
+      repeat1(seq(
+        $.integer,
+        optional(',')
+      ))
     ),
 
     // OptionCaptionML Property
