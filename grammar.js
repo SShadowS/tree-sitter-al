@@ -1650,7 +1650,165 @@ module.exports = grammar({
       $.auto_format_type_property,
       $.auto_increment_property,
       $.blank_numbers_property,
-      $.blank_zero_property
+      $.blank_zero_property,
+      $.calc_formula_property
+    ),
+
+    // CalcFormula Property
+    // Sets the Calculation formula for a FlowField.
+    // This property is used on Table Fields to define how FlowFields are calculated.
+    calc_formula_property: $ => seq(
+      'CalcFormula',
+      '=',
+      field('value', $.calc_formula_value),
+      ';'
+    ),
+
+    calc_formula_value: $ => choice(
+      $.exist_formula,
+      $.count_formula,
+      $.sum_formula,
+      $.average_formula,
+      $.min_formula,
+      $.max_formula,
+      $.lookup_formula
+    ),
+
+    exist_formula: $ => seq(
+      optional('-'),
+      'Exist',
+      '(',
+      field('destination_table', $.identifier),
+      optional($.where_clause),
+      ')'
+    ),
+
+    count_formula: $ => seq(
+      'Count',
+      '(',
+      field('destination_table', $.identifier),
+      optional($.where_clause),
+      ')'
+    ),
+
+    sum_formula: $ => seq(
+      optional('-'),
+      'Sum',
+      '(',
+      field('destination_table', $.identifier),
+      '.',
+      field('destination_field', $.identifier),
+      optional($.where_clause),
+      ')'
+    ),
+
+    average_formula: $ => seq(
+      optional('-'),
+      'Average',
+      '(',
+      field('destination_table', $.identifier),
+      '.',
+      field('destination_field', $.identifier),
+      optional($.where_clause),
+      ')'
+    ),
+
+    min_formula: $ => seq(
+      'Min',
+      '(',
+      field('destination_table', $.identifier),
+      '.',
+      field('destination_field', $.identifier),
+      optional($.where_clause),
+      ')'
+    ),
+
+    max_formula: $ => seq(
+      'Max',
+      '(',
+      field('destination_table', $.identifier),
+      '.',
+      field('destination_field', $.identifier),
+      optional($.where_clause),
+      ')'
+    ),
+
+    lookup_formula: $ => seq(
+      'Lookup',
+      '(',
+      field('destination_table', $.identifier),
+      '.',
+      field('destination_field', $.identifier),
+      optional($.where_clause),
+      ')'
+    ),
+
+    where_clause: $ => seq(
+      'WHERE',
+      '(',
+      $.table_filters,
+      ')'
+    ),
+
+    table_filters: $ => seq(
+      $.table_filter,
+      repeat(seq(',', $.table_filter))
+    ),
+
+    table_filter: $ => seq(
+      field('destination_field', $.identifier),
+      '=',
+      choice(
+        $.const_filter,
+        $.filter_filter,
+        $.field_filter,
+        $.upperlimit_field_filter,
+        $.upperlimit_filter_field_filter
+      )
+    ),
+
+    const_filter: $ => seq(
+      'CONST',
+      '(',
+      field('value', $._literal),
+      ')'
+    ),
+
+    filter_filter: $ => seq(
+      'FILTER',
+      '(',
+      field('filter', $.string_literal),
+      ')'
+    ),
+
+    field_filter: $ => seq(
+      'FIELD',
+      '(',
+      field('source_field', $.identifier),
+      ')'
+    ),
+
+    upperlimit_field_filter: $ => seq(
+      'FIELD',
+      '(',
+      'UPPERLIMIT',
+      '(',
+      field('source_field', $.identifier),
+      ')',
+      ')'
+    ),
+
+    upperlimit_filter_field_filter: $ => seq(
+      'FIELD',
+      '(',
+      'UPPERLIMIT',
+      '(',
+      'FILTER',
+      '(',
+      field('source_field', $.identifier),
+      ')',
+      ')',
+      ')'
     ),
 
     // BlankZero Property
