@@ -1661,7 +1661,8 @@ module.exports = grammar({
       $.apigroup_property,
       $.apipublisher_property,
       $.apiversion_property,
-      $.application_area_property
+      $.application_area_property,
+      $.auto_split_key_property
     ),
 
     // ApplicationArea Property
@@ -1671,6 +1672,16 @@ module.exports = grammar({
       'ApplicationArea',
       '=',
       field('value', choice($.identifier, $.array_value)),
+      ';'
+    ),
+
+    // AutoSplitKey Property
+    // Sets whether a key is automatically created for a new record placed between the current record and the previous record.
+    // This property is applicable to Page and Request Page objects.
+    auto_split_key_property: $ => seq(
+      'AutoSplitKey',
+      '=',
+      field('value', $.boolean_literal),
       ';'
     ),
 
