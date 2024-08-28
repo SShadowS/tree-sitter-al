@@ -256,7 +256,8 @@ module.exports = grammar({
       $.actions,
       $.property,
       $.instructional_text_property,
-      $.links_allowed_property  // Added LinksAllowed property
+      $.links_allowed_property,  // Added LinksAllowed property
+      $.save_values_property  // Added SaveValues property
     ),
 
     _xmlport_element: $ => choice(
@@ -3025,7 +3026,18 @@ module.exports = grammar({
       $.run_page_link_property,
       $.run_page_mode_property,
       $.run_page_on_rec_property,
-      $.run_page_view_property  // Added RunPageView property
+      $.run_page_view_property,  // Added RunPageView property
+      $.save_values_property  // Added SaveValues property
+    ),
+
+    // SaveValues Property
+    // Sets whether user-specific control values are saved for this page.
+    // This property is used on Page and Request Page objects.
+    save_values_property: $ => seq(
+      'SaveValues',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // RefreshOnActivate Property
