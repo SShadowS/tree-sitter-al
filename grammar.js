@@ -3878,7 +3878,25 @@ module.exports = grammar({
       $.namespace_prefix_property,  // Added NamespacePrefix property
       $.namespaces_property,  // Added Namespaces property
       $.occurrence_property,  // Added Occurrence property
-      $.permissions_property  // Added Permissions property
+      $.permissions_property,  // Added Permissions property
+      $.record_separator_property  // Added RecordSeparator property
+    ),
+
+    // RecordSeparator Property
+    // Sets the string that is to be used to separate records in an XMLport.
+    // This property is used on XMLport objects.
+    record_separator_property: $ => seq(
+      'RecordSeparator',
+      '=',
+      field('value', choice(
+        "'<NewLine>'",
+        "'<CR/LF>'",
+        "'<CR>'",
+        "'<LF>'",
+        "'<TAB>'",
+        $.string_literal
+      )),
+      ';'
     ),
 
     // Occurrence Property
