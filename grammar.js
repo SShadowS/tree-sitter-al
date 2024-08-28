@@ -396,7 +396,20 @@ module.exports = grammar({
       $.property,
       $.layout,
       $.actions,
-      $.views
+      $.views,
+      $.onaftergetcurrrecord_trigger
+    ),
+
+    // OnAfterGetCurrRecord trigger for pages
+    // This trigger runs after the current record is retrieved from the table
+    // It's called once when the page is opened, and again whenever the current record changes
+    // It's commonly used for updating page controls or performing actions based on the current record
+    onaftergetcurrrecord_trigger: $ => seq(
+      'trigger',
+      'OnAfterGetCurrRecord',
+      '(',
+      ')',
+      field('body', $.code_block)
     ),
 
     page_extension_object: $ => seq(
