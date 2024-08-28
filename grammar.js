@@ -404,7 +404,25 @@ module.exports = grammar({
       $.oninit_trigger,
       $.oninsertrecord_trigger,
       $.onmodifyrecord_trigger,
-      $.onnewrecord_trigger
+      $.onnewrecord_trigger,
+      $.onnextrecord_trigger
+    ),
+
+    // OnNextRecord trigger for pages
+    // This trigger determines the next record to be displayed on a page
+    // It's called when the user navigates between records (e.g., using Next or Previous)
+    // The trigger can be used to implement custom navigation logic
+    onnextrecord_trigger: $ => seq(
+      'trigger',
+      'OnNextRecord',
+      '(',
+      'Steps',
+      ':',
+      'Integer',
+      ')',
+      ':',
+      'Integer',
+      field('body', $.code_block)
     ),
 
     // OnNewRecord trigger for pages
