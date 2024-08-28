@@ -257,7 +257,8 @@ module.exports = grammar({
       $.property,
       $.instructional_text_property,
       $.links_allowed_property,  // Added LinksAllowed property
-      $.save_values_property  // Added SaveValues property
+      $.save_values_property,  // Added SaveValues property
+      $.source_table_temporary_property  // Added SourceTableTemporary property
     ),
 
     _xmlport_element: $ => choice(
@@ -3096,7 +3097,8 @@ module.exports = grammar({
       $.show_as_tree_property,
       $.show_caption_property,
       $.show_mandatory_property,  // Added ShowMandatory property
-      $.source_table_property  // Added SourceTable property
+      $.source_table_property,  // Added SourceTable property
+      $.source_table_temporary_property  // Added SourceTableTemporary property
     ),
 
     // SourceTable Property
