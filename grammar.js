@@ -2756,7 +2756,18 @@ module.exports = grammar({
       $.decimal_places_property,
       $.default_layout_property,
       $.default_rendering_layout_property,
-      $.enable_external_assemblies_property
+      $.enable_external_assemblies_property,
+      $.enable_external_images_property
+    ),
+
+    // EnableExternalImages Property
+    // Sets whether external images are allowed on a report.
+    // This property is used on Report objects.
+    enable_external_images_property: $ => seq(
+      'EnableExternalImages',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // EnableExternalAssemblies Property
