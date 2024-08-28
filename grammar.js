@@ -1984,7 +1984,8 @@ module.exports = grammar({
       $.data_classification_property,
       $.data_per_company_property,
       $.enabled_property,
-      $.extensible_property
+      $.extensible_property,
+      $.external_name_property
     ),
 
     // Enabled Property
@@ -2082,7 +2083,8 @@ module.exports = grammar({
       $.editable_property,
       $.enabled_property,
       $.extended_datatype_property,
-      $.external_access_property
+      $.external_access_property,
+      $.external_name_property
     ),
 
     // ExternalAccess Property
@@ -2092,6 +2094,16 @@ module.exports = grammar({
       'ExternalAccess',
       '=',
       field('value', choice('Full', 'Insert', 'Modify', 'Read')),
+      ';'
+    ),
+
+    // ExternalName Property
+    // Specifies the name of the original table or field in the external database.
+    // This property is used on Tables and Table Fields.
+    external_name_property: $ => seq(
+      'ExternalName',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
