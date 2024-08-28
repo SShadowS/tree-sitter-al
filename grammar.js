@@ -2561,7 +2561,8 @@ module.exports = grammar({
       $.help_link_property,  // Added HelpLink property
       $.horizontal_shrink_property,  // Added HorizontalShrink property
       $.images_property,  // Added Images property
-      $.importance_property  // Added Importance property
+      $.importance_property,  // Added Importance property
+      $.indentation_column_property  // Added IndentationColumn property
     ),
 
     // Importance Property
@@ -2571,6 +2572,16 @@ module.exports = grammar({
       'Importance',
       '=',
       field('value', choice('Standard', 'Promoted', 'Additional')),
+      ';'
+    ),
+
+    // IndentationColumn Property
+    // Sets the name of the hidden column that controls row indentation in a List page.
+    // This property is used on Page Groups.
+    indentation_column_property: $ => seq(
+      'IndentationColumn',
+      '=',
+      field('value', $.identifier),
       ';'
     ),
 
