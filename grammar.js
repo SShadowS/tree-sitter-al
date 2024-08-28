@@ -2576,7 +2576,18 @@ module.exports = grammar({
       $.apiversion_property,
       $.apipublisher_property,
       $.caption_property,
-      $.column_filter_property
+      $.column_filter_property,
+      $.data_item_link_property
+    ),
+
+    // DataItemLink Property
+    // Sets a reference between one or more fields of the data item table and data item or data items above it.
+    // This property is used on Query DataItems.
+    data_item_link_property: $ => seq(
+      'DataItemLink',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // ColumnFilter Property
