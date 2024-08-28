@@ -2191,7 +2191,27 @@ module.exports = grammar({
     lookup_page_id_property: $ => seq(
       'LookupPageId',
       '=',
-      field('value', choice($.integer, $.identifier)),
+      field('value', choice($.integer, $.identifier, $.string_literal)),
+      ';'
+    ),
+
+    // DrillDownPageId Property
+    // Sets the ID of the page to use for drill-downs on this table.
+    // This property is used on Table objects.
+    drill_down_page_id_property: $ => seq(
+      'DrillDownPageID',
+      '=',
+      field('value', choice($.integer, $.identifier, $.string_literal)),
+      ';'
+    ),
+
+    // TableType Property
+    // Specifies the type of the table.
+    // This property is used on Table objects.
+    table_type_property: $ => seq(
+      'TableType',
+      '=',
+      field('value', choice('Normal', 'CRM', 'ExternalSQL', 'MicrosoftGraph', 'Temporary')),
       ';'
     ),
 
