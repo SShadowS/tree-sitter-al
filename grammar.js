@@ -1649,7 +1649,18 @@ module.exports = grammar({
       // Table-specific properties will be added here
       $.access_property,
       $.caption_property,
-      $.caption_ml_property
+      $.caption_ml_property,
+      $.column_store_index_property
+    ),
+
+    // ColumnStoreIndex Property
+    // Sets the fields that are added to the ColumnStore index inside SQL Server.
+    // This property is used on Table objects to improve performance for analytical queries on large tables.
+    column_store_index_property: $ => seq(
+      'ColumnStoreIndex',
+      '=',
+      field('value', $.identifier_list),
+      ';'
     ),
 
     field_property: $ => choice(
