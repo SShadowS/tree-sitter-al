@@ -2975,7 +2975,18 @@ module.exports = grammar({
       $.promoted_only_property,  // Added PromotedOnly property
       $.about_title_ml_property,  // Added AboutTitleML property
       $.provider_property,  // Added Provider property
-      $.query_category_property  // Added QueryCategory property
+      $.query_category_property,  // Added QueryCategory property
+      $.refresh_on_activate_property  // Added RefreshOnActivate property
+    ),
+
+    // RefreshOnActivate Property
+    // Set this property on pages where you want to refresh the data when the user navigates back from another page.
+    // This property is used on Page objects.
+    refresh_on_activate_property: $ => seq(
+      'RefreshOnActivate',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // QueryCategory Property
