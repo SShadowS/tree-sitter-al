@@ -1617,6 +1617,17 @@ module.exports = grammar({
     ),
 
     // APIVersion Property
+    // Sets the version(s) of the API endpoint the page is exposed in.
+    // This property can only be set if the PageType is set to API.
+    apiversion_property: $ => seq(
+      'APIVersion',
+      '=',
+      field('value', $.string_literal),
+      optional(seq(',', $.string_literal)),
+      ';'
+    ),
+
+    // APIVersion Property
     // Sets the version of the API endpoint that the page is exposed in.
     // This property can only be set if the PageType is set to API.
     apiversion_property: $ => seq(
@@ -1851,6 +1862,17 @@ module.exports = grammar({
       $.apigroup_property,
       $.apiversion_property,
       $.apipublisher_property
+    ),
+
+    // APIVersion Property for queries
+    // Sets the version(s) of the API endpoint the query is exposed in.
+    // This property can only be set if the QueryType is set to API.
+    apiversion_property: $ => seq(
+      'APIVersion',
+      '=',
+      field('value', $.string_literal),
+      optional(seq(',', $.string_literal)),
+      ';'
     ),
 
     // APIPublisher Property for queries
