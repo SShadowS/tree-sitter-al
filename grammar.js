@@ -399,7 +399,25 @@ module.exports = grammar({
       $.views,
       $.onaftergetcurrrecord_trigger,
       $.onclosepage_trigger,
-      $.ondeleterecord_trigger
+      $.ondeleterecord_trigger,
+      $.onfindrecord_trigger
+    ),
+
+    // OnFindRecord trigger for pages
+    // This trigger overrides the default page behavior and enables you to specify which record
+    // you want to display when the page opens.
+    // It's called when the page is opened and when the user navigates between records.
+    onfindrecord_trigger: $ => seq(
+      'trigger',
+      'OnFindRecord',
+      '(',
+      'Which',
+      ':',
+      'Text',
+      ')',
+      ':',
+      'Boolean',
+      field('body', $.code_block)
     ),
 
     // OnDeleteRecord trigger for pages
