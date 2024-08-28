@@ -2903,7 +2903,18 @@ module.exports = grammar({
       $.page_type_property,  // Added PageType property
       $.prompt_mode_property,  // Added PromptMode property
       $.permissions_property,  // Added Permissions property
-      $.populate_all_fields_property  // Added PopulateAllFields property
+      $.populate_all_fields_property,  // Added PopulateAllFields property
+      $.preserve_whitespace_property  // Added PreserveWhiteSpace property
+    ),
+
+    // PreserveWhiteSpace Property
+    // Determines whether white space should be preserved in documents that are imported through an XmlPort.
+    // This property is used on Xml Port objects.
+    preserve_whitespace_property: $ => seq(
+      'PreserveWhiteSpace',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // PopulateAllFields Property
