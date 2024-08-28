@@ -2928,7 +2928,27 @@ module.exports = grammar({
       $.permissions_property,
       $.populate_all_fields_property,
       $.preserve_whitespace_property,
-      $.promoted_property  // Added Promoted property
+      $.promoted_property,  // Added Promoted property
+      $.promoted_action_categories_property  // Added PromotedActionCategories property
+    ),
+
+    // PromotedActionCategories Property
+    // Sets a category for a promoted action.
+    // This property is used on Page objects.
+    promoted_action_categories_property: $ => seq(
+      'PromotedActionCategories',
+      '=',
+      field('value', $.string_literal),
+      optional(seq(
+        ',',
+        repeat1(seq(
+          field('parameter', choice('Locked', 'Comment', 'MaxLength')),
+          '=',
+          field('parameter_value', choice($.boolean_literal, $.string_literal, $.integer)),
+          optional(',')
+        ))
+      )),
+      ';'
     ),
 
     // PreserveWhiteSpace Property
