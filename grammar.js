@@ -3315,8 +3315,26 @@ module.exports = grammar({
       $.link_table_force_insert_property,  // Added LinkTableForceInsert property
       $.max_occurs_property,  // Added MaxOccurs property
       $.min_occurs_property,  // Added MinOccurs property
-      $.namespace_prefix_property  // Added NamespacePrefix property
+      $.namespace_prefix_property,  // Added NamespacePrefix property
+      $.namespaces_property  // Added Namespaces property
     ),
+
+    // Namespaces Property
+    // Specifies namespaces on the XmlPort.
+    // This property is used on XMLport objects to declare one or more namespaces.
+    namespaces_property: $ => seq(
+      'Namespaces',
+      '=',
+      field('value', $.namespaces_value),
+      ';'
+    ),
+
+    namespaces_value: $ => repeat1(seq(
+      field('prefix', $.identifier),
+      '=',
+      field('namespace', $.string_literal),
+      optional(',')
+    )),
 
     // NamespacePrefix Property
     // Specifies the namespace prefix on an XmlPort element.
