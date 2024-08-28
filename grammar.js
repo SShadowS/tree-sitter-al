@@ -3003,7 +3003,6 @@ module.exports = grammar({
       '=',
       field('value', $.boolean_literal),
       ';'
-    )
     ),
 
     // Extensible Property
