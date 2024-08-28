@@ -2951,13 +2951,37 @@ module.exports = grammar({
       $.direction_property,
       $.encoding_property,
       $.field_delimiter_property,
-      $.file_name_property
+      $.file_name_property,
+      $.field_separator_property
     ),
 
     // FieldDelimiter Property
     // Specifies the text delimiter for a field in an XMLport.
     // This property is used on XMLport objects.
     field_delimiter_property: $ => seq(
+      'FieldDelimiter',
+      '=',
+      field('value', choice($.string_literal, "'<None>'")),
+      ';'
+    ),
+
+    // FieldSeparator Property
+    // Sets the string that is to be used to separate fields in an XMLport.
+    // This property is used on XMLport objects.
+    field_separator_property: $ => seq(
+      'FieldSeparator',
+      '=',
+      field('value', choice(
+        "'<None>'",
+        "'<NewLine>'",
+        "'<CR/LF>'",
+        "'<CR>'",
+        "'<LF>'",
+        "'<TAB>'",
+        $.string_literal
+      )),
+      ';'
+    ),
       'FieldDelimiter',
       '=',
       field('value', choice($.string_literal, "'<None>'")),
