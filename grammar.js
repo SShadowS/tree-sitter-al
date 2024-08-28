@@ -1,8 +1,25 @@
 module.exports = grammar({
   name: 'al',
 
+  extras: $ => [
+    $.comment,
+    /\s/
+  ],
+
   rules: {
-    source_file: $ => repeat($._declaration),
+    source_file: $ => repeat(choice(
+      $._declaration,
+      $.comment
+    )),
+
+    comment: $ => choice(
+      seq('//', /.*/),
+      seq(
+        '/*',
+        /[^*]*\*+([^/*][^*]*\*+)*/,
+        '/'
+      )
+    ),
 
     _declaration: $ => choice(
       $.table_object,
@@ -20,7 +37,8 @@ module.exports = grammar({
       $.report_extension_object,
       $.report_object,
       $.enum_object,
-      $.xmlport_object
+      $.xmlport_object,
+      $.comment
       // Other object types can be added here in the future
     ),
 
