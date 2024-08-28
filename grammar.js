@@ -3198,6 +3198,23 @@ module.exports = grammar({
         ')'
       ))
     ),
+
+    // ValuesAllowed Property
+    // Sets a list of values that are allowed in the field.
+    // This property is used on Table Fields and Page Fields.
+    values_allowed_property: $ => seq(
+      'ValuesAllowed',
+      '=',
+      field('value', $.values_allowed_value),
+      ';'
+    ),
+
+    values_allowed_value: $ => seq(
+      repeat1(seq(
+        $._value,
+        optional(',')
+      ))
+    ),
     // This property is used on Page and Request Page objects.
     source_table_property: $ => seq(
       'SourceTable',
