@@ -1943,7 +1943,18 @@ module.exports = grammar({
       $.auto_split_key_property,
       $.caption_property,
       $.caption_class_property,
-      $.card_page_id_property
+      $.card_page_id_property,
+      $.change_tracking_allowed_property
+    ),
+
+    // ChangeTrackingAllowed Property
+    // Sets a value that indicates whether the entity exposed through the OData API supports change tracking.
+    // This property is used on Page objects.
+    change_tracking_allowed_property: $ => seq(
+      'ChangeTrackingAllowed',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // CardPageId Property
