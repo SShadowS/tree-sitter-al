@@ -6,8 +6,31 @@ module.exports = grammar({
 
     _declaration: $ => choice(
       $.table_object,
-      $.codeunit_object
+      $.codeunit_object,
+      $.control_addin_object
       // Other object types can be added here in the future
+    ),
+
+    control_addin_object: $ => seq(
+      'controladdin',
+      field('name', $.identifier),
+      '{',
+      repeat($._control_addin_element),
+      '}'
+    ),
+
+    _control_addin_element: $ => choice(
+      $.property,
+      $.procedure,
+      $.event
+    ),
+
+    event: $ => seq(
+      'event',
+      field('name', $.identifier),
+      '(',
+      optional($._parameter_list),
+      ')'
     ),
 
     codeunit_object: $ => seq(
