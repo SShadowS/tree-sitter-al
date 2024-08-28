@@ -2160,7 +2160,18 @@ module.exports = grammar({
       $.context_sensitive_help_page_property,
       $.cuegroup_layout_property,
       $.custom_action_type_property,
+      $.data_caption_expression_property,
       $.data_classification_property
+    ),
+
+    // DataCaptionExpression Property
+    // Sets an AL expression that is evaluated and displayed to the left of the page caption.
+    // This property is used on Page and Request Page objects.
+    data_caption_expression_property: $ => seq(
+      'DataCaptionExpression',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // CustomActionType Property
