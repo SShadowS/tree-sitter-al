@@ -3026,9 +3026,19 @@ module.exports = grammar({
       $.run_page_link_property,
       $.run_page_mode_property,
       $.run_page_on_rec_property,
-      $.run_page_view_property,  // Added RunPageView property
-      $.save_values_property,  // Added SaveValues property
-      $.scope_property  // Added Scope property
+      $.run_page_view_property,
+      $.save_values_property,
+      $.scope_property
+    ),
+
+    // Scope Property
+    // Specifies the scope of the action to be either page-specific, or specific to a repeater control.
+    // This property is used on Page Action objects.
+    scope_property: $ => seq(
+      'Scope',
+      '=',
+      field('value', choice('Page', 'Repeater')),
+      ';'
     ),
 
     // Scope Property
