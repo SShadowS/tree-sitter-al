@@ -2510,7 +2510,18 @@ module.exports = grammar({
       $.auto_replace_property,
       $.auto_save_property,
       $.auto_update_property,
-      $.caption_property
+      $.caption_property,
+      $.default_fields_validation_property
+    ),
+
+    // DefaultFieldsValidation Property
+    // Sets a value that indicates whether fields are validated in an XMLport.
+    // This property affects the default behavior of field validation for all fields in the XMLport.
+    default_fields_validation_property: $ => seq(
+      'DefaultFieldsValidation',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // AutoUpdate Property
