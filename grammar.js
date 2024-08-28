@@ -2909,13 +2909,14 @@ module.exports = grammar({
       $.odata_edm_type_property,
       $.obsolete_reason_property,
       $.obsolete_tag_property,
-      $.odata_key_fields_property,  // Added ODataKeyFields property
-      $.order_by_property,  // Added OrderBy property
-      $.page_type_property,  // Added PageType property
-      $.prompt_mode_property,  // Added PromptMode property
-      $.permissions_property,  // Added Permissions property
-      $.populate_all_fields_property,  // Added PopulateAllFields property
-      $.preserve_whitespace_property  // Added PreserveWhiteSpace property
+      $.odata_key_fields_property,
+      $.order_by_property,
+      $.page_type_property,
+      $.prompt_mode_property,
+      $.permissions_property,
+      $.populate_all_fields_property,
+      $.preserve_whitespace_property,
+      $.promoted_property  // Added Promoted property
     ),
 
     // PreserveWhiteSpace Property
@@ -2923,6 +2924,16 @@ module.exports = grammar({
     // This property is used on Xml Port objects.
     preserve_whitespace_property: $ => seq(
       'PreserveWhiteSpace',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // Promoted Property
+    // Sets the value that indicates whether the selected action is elevated to a promoted category in the action bar.
+    // This property is used on Page Actions.
+    promoted_property: $ => seq(
+      'Promoted',
       '=',
       field('value', $.boolean_literal),
       ';'
