@@ -6,8 +6,12 @@ module.exports = grammar({
     /\s/
   ],
 
+  precedences: $ => [
+    [$.comment, $._declaration]
+  ],
+
   rules: {
-    source_file: $ => repeat(choice(
+    source_file: $ => repeat1(choice(
       $._declaration,
       $.comment
     )),
