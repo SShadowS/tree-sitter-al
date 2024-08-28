@@ -9,3 +9,5 @@ We should add a rule for TestPermissions in the grammar.js file, defining it as 
 Subtype property needs to be defined for codeunits. It's used to specify the type of codeunit, such as "Install" for installation codeunits or "Upgrade" for upgrade codeunits. We should add a rule in the grammar.js file to handle the Subtype property, especially for the OnInstallAppPerCompany, OnInstallAppPerDatabase, OnUpgradePerCompany, OnUpgradePerDatabase, and OnValidateUpgradePerDatabase triggers.
 
 The OnDelete trigger for tables has been added to the grammar.js file. No additional items need to be added to the missing.txt file for this trigger.
+
+Action type needs to be defined. It's used in the OnQueryClosePage trigger for pages. Action is likely an enum or a specific type in AL that represents the action taken to close a page (e.g., OK, Cancel). We should add a rule in the grammar.js file to define the Action type.
