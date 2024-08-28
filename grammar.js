@@ -2055,6 +2055,16 @@ module.exports = grammar({
       ';'
     ),
 
+    // ODataEDMType Property
+    // Specifies the Entity Data Model Type to be used for this node in the OData metadata.
+    // This property is used on Page Field objects.
+    odata_edm_type_property: $ => seq(
+      'ODataEDMType',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
     // ObsoleteReason Property
     // Specifies why the object has been marked as Pending in the ObsoleteState property.
     // This property is used on various AL objects including Tables, Table Fields, Pages, and more.
@@ -2776,6 +2786,7 @@ module.exports = grammar({
       $.modify_allowed_property,  // Added ModifyAllowed property
       $.multiline_property,  // Added MultiLine property
       $.multiple_new_lines_property,  // Added MultipleNewLines property
+      $.odata_edm_type_property,  // Added ODataEDMType property
       $.obsolete_reason_property,  // Added ObsoleteReason property
       $.obsolete_tag_property  // Added ObsoleteTag property
     ),
