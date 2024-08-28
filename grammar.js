@@ -2934,7 +2934,18 @@ module.exports = grammar({
       $.access_property,
       $.assignment_compatibility_property,
       $.assignment_compatibility_reason_property,
-      $.default_implementation_property
+      $.default_implementation_property,
+      $.extensible_property
+    ),
+
+    // Extensible Property
+    // Sets whether the enum can be extended by enum extensions.
+    // This property is used on Enum objects.
+    extensible_property: $ => seq(
+      'Extensible',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // DefaultImplementation Property
