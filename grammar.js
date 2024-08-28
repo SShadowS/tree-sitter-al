@@ -111,7 +111,8 @@ module.exports = grammar({
     ),
 
     _dotnet_package_element: $ => choice(
-      $.assembly
+      $.assembly,
+      $.culture_property
     ),
 
     assembly: $ => seq(
@@ -119,6 +120,16 @@ module.exports = grammar({
       '(',
       field('name', $.string),
       ')',
+      ';'
+    ),
+
+    // Culture Property
+    // Specifies the culture of the .NET assembly.
+    // This property is used on Dot Net Assembly objects.
+    culture_property: $ => seq(
+      'Culture',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
