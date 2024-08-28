@@ -15,8 +15,90 @@ module.exports = grammar({
       $.permission_set_extension_object,
       $.permission_set_object,
       $.profile_object,
-      $.query_object
+      $.query_object,
+      $.report_extension_object
       // Other object types can be added here in the future
+    ),
+
+    report_extension_object: $ => seq(
+      'reportextension',
+      field('id', $.integer),
+      field('name', $.string),
+      'extends',
+      field('base_report', $.string),
+      '{',
+      repeat($._report_extension_element),
+      '}'
+    ),
+
+    _report_extension_element: $ => choice(
+      $.dataset,
+      $.requestpage,
+      $.rendering,
+      $.trigger
+    ),
+
+    dataset: $ => seq(
+      'dataset',
+      '{',
+      repeat($._dataset_element),
+      '}'
+    ),
+
+    _dataset_element: $ => choice(
+      $.add,
+      $.modify
+    ),
+
+    add: $ => seq(
+      'add',
+      '(',
+      field('dataitem', $.identifier),
+      ')',
+      '{',
+      repeat($.column),
+      '}'
+    ),
+
+    column: $ => seq(
+      'column',
+      '(',
+      field('name', $.identifier),
+      ';',
+      field('source', $._column_source),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    _column_source: $ => choice(
+      $.identifier,
+      $.qualified_name
+    ),
+
+    qualified_name: $ => seq(
+      $.identifier,
+      '.',
+      $.identifier
+    ),
+
+    requestpage: $ => seq(
+      'requestpage',
+      '{',
+      repeat($._requestpage_element),
+      '}'
+    ),
+
+    _requestpage_element: $ => choice(
+      $.layout
+    ),
+
+    rendering: $ => seq(
+      'rendering',
+      '{',
+      repeat($.layout),
+      '}'
     ),
 
     query_object: $ => seq(
