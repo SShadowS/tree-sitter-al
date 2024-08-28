@@ -2257,7 +2257,8 @@ module.exports = grammar({
       $.obsolete_reason_property,  // Added ObsoleteReason property
       $.obsolete_tag_property,  // Added ObsoleteTag property
       $.option_caption_property,  // Added OptionCaption property
-      $.option_caption_ml_property  // Added OptionCaptionML property
+      $.option_caption_ml_property,  // Added OptionCaptionML property
+      $.option_members_property  // Added OptionMembers property
     ),
 
     // OptionCaptionML Property
@@ -2268,6 +2269,23 @@ module.exports = grammar({
       '=',
       field('value', $.multilanguage_string_literal),
       ';'
+    ),
+
+    // OptionMembers Property
+    // Sets the list of options that are available in the table field that is currently selected.
+    // This property is used on Table Fields.
+    option_members_property: $ => seq(
+      'OptionMembers',
+      '=',
+      field('value', $.option_members_value),
+      ';'
+    ),
+
+    option_members_value: $ => seq(
+      repeat1(seq(
+        $.string_literal,
+        optional(',')
+      ))
     ),
 
     // NotBlank Property
