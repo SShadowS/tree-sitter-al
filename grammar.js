@@ -2040,7 +2040,8 @@ module.exports = grammar({
       $.linked_object_property,  // Added LinkedObject property
       $.moved_from_property,  // Added MovedFrom property
       $.moved_to_property,  // Added MovedTo property
-      $.obsolete_reason_property  // Added ObsoleteReason property
+      $.obsolete_reason_property,  // Added ObsoleteReason property
+      $.obsolete_state_property  // Added ObsoleteState property
     ),
 
     // ObsoleteReason Property
@@ -2050,6 +2051,16 @@ module.exports = grammar({
       'ObsoleteReason',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // ObsoleteState Property
+    // Marks whether the object will be deprecated.
+    // This property is used on various AL objects including Tables, Table Fields, Pages, and more.
+    obsolete_state_property: $ => seq(
+      'ObsoleteState',
+      '=',
+      field('value', choice('Pending', 'Removed')),
       ';'
     ),
 
