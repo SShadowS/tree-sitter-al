@@ -2537,7 +2537,8 @@ module.exports = grammar({
       $.flow_template_id_property,
       $.freeze_column_property,
       $.gesture_property,
-      $.grid_layout_property  // Added GridLayout property
+      $.grid_layout_property,  // Added GridLayout property
+      $.help_link_property  // Added HelpLink property
     ),
 
     // DrillDownPageId Property
@@ -3217,7 +3218,8 @@ module.exports = grammar({
       $.entity_name_property,
       $.entity_set_caption_property,
       $.entity_set_caption_ml_property,
-      $.entity_set_name_property
+      $.entity_set_name_property,
+      $.help_link_property  // Added HelpLink property
     ),
 
     // DataItemLink Property
@@ -3733,6 +3735,16 @@ module.exports = grammar({
       'GridLayout',
       '=',
       field('value', choice('Rows', 'Columns')),
+      ';'
+    ),
+
+    // HelpLink Property
+    // Specifies the help link to show when the user presses Help in the UI.
+    // This property is used on Page, Request Page, and Query objects.
+    help_link_property: $ => seq(
+      'HelpLink',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
