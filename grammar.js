@@ -36,8 +36,15 @@ module.exports = grammar({
       $.report_extension_object,
       $.report_object,
       $.enum_object,
-      $.xmlport_object
-      // Other object types can be added here in the future
+      $.xmlport_object,
+      $.interface_object,
+      $.dotnet_package_object,
+      $.enum_extension_object,
+      $.query_extension_object,
+      $.report_layout_object,
+      $.workflow_object,
+      $.api_page_object,
+      $.api_query_object
     ),
 
     xmlport_object: $ => seq(
@@ -47,6 +54,147 @@ module.exports = grammar({
       '{',
       repeat($._xmlport_element),
       '}'
+    ),
+
+    interface_object: $ => seq(
+      'interface',
+      field('name', choice($.identifier, $.string)),
+      '{',
+      repeat($._interface_element),
+      '}'
+    ),
+
+    _interface_element: $ => choice(
+      $.method
+    ),
+
+    method: $ => seq(
+      'method',
+      field('name', $.identifier),
+      '(',
+      optional($._parameter_list),
+      ')',
+      field('return_type', optional(seq(':', $._type))),
+      ';'
+    ),
+
+    dotnet_package_object: $ => seq(
+      'dotnetpackage',
+      field('name', choice($.identifier, $.string)),
+      '{',
+      repeat($._dotnet_package_element),
+      '}'
+    ),
+
+    _dotnet_package_element: $ => choice(
+      $.assembly
+    ),
+
+    assembly: $ => seq(
+      'assembly',
+      '(',
+      field('name', $.string),
+      ')',
+      ';'
+    ),
+
+    enum_extension_object: $ => seq(
+      'enumextension',
+      field('id', $.integer),
+      field('name', choice($.identifier, $.string)),
+      'extends',
+      field('base_enum', choice($.identifier, $.string)),
+      '{',
+      repeat($._enum_extension_element),
+      '}'
+    ),
+
+    _enum_extension_element: $ => choice(
+      $.value
+    ),
+
+    query_extension_object: $ => seq(
+      'queryextension',
+      field('id', $.integer),
+      field('name', choice($.identifier, $.string)),
+      'extends',
+      field('base_query', choice($.identifier, $.string)),
+      '{',
+      repeat($._query_extension_element),
+      '}'
+    ),
+
+    _query_extension_element: $ => choice(
+      $.elements,
+      $.property
+    ),
+
+    report_layout_object: $ => seq(
+      'reportlayout',
+      field('id', $.integer),
+      field('name', choice($.identifier, $.string)),
+      '{',
+      repeat($._report_layout_element),
+      '}'
+    ),
+
+    _report_layout_element: $ => choice(
+      $.property,
+      $.layout
+    ),
+
+    workflow_object: $ => seq(
+      'workflow',
+      field('name', choice($.identifier, $.string)),
+      '{',
+      repeat($._workflow_element),
+      '}'
+    ),
+
+    _workflow_element: $ => choice(
+      $.property,
+      $.step
+    ),
+
+    step: $ => seq(
+      'step',
+      '(',
+      field('id', $.integer),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    api_page_object: $ => seq(
+      'page',
+      field('id', $.integer),
+      field('name', choice($.identifier, $.string)),
+      'API',
+      '{',
+      repeat($._api_page_element),
+      '}'
+    ),
+
+    _api_page_element: $ => choice(
+      $.property,
+      $.layout,
+      $.actions
+    ),
+
+    api_query_object: $ => seq(
+      'query',
+      field('id', $.integer),
+      field('name', choice($.identifier, $.string)),
+      'API',
+      '{',
+      repeat($._api_query_element),
+      '}'
+    ),
+
+    _api_query_element: $ => choice(
+      $.property,
+      $.elements
     ),
 
     _xmlport_element: $ => choice(
