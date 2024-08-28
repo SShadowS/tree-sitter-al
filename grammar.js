@@ -398,7 +398,18 @@ module.exports = grammar({
     _dataitem_element: $ => choice(
       $.property,
       $.calc_fields_property,
-      $.data_item_link_property
+      $.data_item_link_property,
+      $.data_item_link_reference_property
+    ),
+
+    // DataItemLinkReference Property
+    // Sets the parent data item to which a child (indented) data item is linked.
+    // This property is used on Report DataItems and Query DataItems.
+    data_item_link_reference_property: $ => seq(
+      'DataItemLinkReference',
+      '=',
+      field('value', $.identifier),
+      ';'
     ),
 
     // DataItemLink Property
