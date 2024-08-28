@@ -43,7 +43,6 @@ module.exports = grammar({
       $.query_extension_object,
       $.report_layout_object,
       $.workflow_object,
-      $.api_page_object,
       $.api_query_object
     ),
 
@@ -202,11 +201,6 @@ module.exports = grammar({
     ),
 
 
-    _api_page_element: $ => choice(
-      $.property,
-      $.layout,
-      $.actions
-    ),
 
     api_query_object: $ => seq(
       'query',
