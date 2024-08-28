@@ -3177,7 +3177,18 @@ module.exports = grammar({
       $.field_validate_property,
       $.format_evaluate_property,
       $.inherent_entitlements_property,
-      $.inherent_permissions_property
+      $.inherent_permissions_property,
+      $.link_table_property  // Added LinkTable property
+    ),
+
+    // LinkTable Property
+    // Sets the table that this XML item should be linked to.
+    // This property is used on XMLport Table Elements.
+    link_table_property: $ => seq(
+      'LinkTable',
+      '=',
+      field('value', $.identifier),
+      ';'
     ),
 
     // FormatEvaluate Property
