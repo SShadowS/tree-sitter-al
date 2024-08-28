@@ -2023,7 +2023,18 @@ module.exports = grammar({
       $.external_name_property,
       $.external_schema_property,
       $.inherent_entitlements_property,
-      $.inherent_permissions_property
+      $.inherent_permissions_property,
+      $.is_control_addin_property
+    ),
+
+    // IsControlAddIn Property
+    // Sets a value that indicates whether the .NET type represents a control add-in.
+    // This property is used on Dot Net Type Declaration objects.
+    is_control_addin_property: $ => seq(
+      'IsControlAddIn',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // Enabled Property
