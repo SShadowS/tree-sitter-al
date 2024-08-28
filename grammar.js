@@ -3030,7 +3030,18 @@ module.exports = grammar({
 
     profile_property: $ => choice(
       // Profile-specific properties will be added here
-      $.customizations_property
+      $.customizations_property,
+      $.enabled_property
+    ),
+
+    // Enabled Property for profiles
+    // Specifies whether the profile can be used by users or not.
+    // This property is used on Profile objects.
+    enabled_property: $ => seq(
+      'Enabled',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // Customizations Property
