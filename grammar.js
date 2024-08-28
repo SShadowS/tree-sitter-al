@@ -1836,7 +1836,8 @@ module.exports = grammar({
       $.column_span_property,
       $.compressed_property,
       $.data_classification_property,
-      $.date_formula_property
+      $.date_formula_property,
+      $.decimal_places_property
     ),
 
     // ColumnSpan Property
@@ -2490,7 +2491,8 @@ module.exports = grammar({
       $.auto_format_expression_property,
       $.auto_format_type_property,
       $.caption_property,
-      $.data_access_intent_property
+      $.data_access_intent_property,
+      $.decimal_places_property
     ),
 
     // AllowScheduling Property
@@ -2915,6 +2917,21 @@ module.exports = grammar({
       '=',
       field('value', $.string_literal),
       ';'
+    ),
+
+    // DecimalPlaces Property
+    // Sets display and storage requirements for the Decimal Data Type.
+    // This property is used on Table Fields, Page Fields, and Report Columns.
+    decimal_places_property: $ => seq(
+      'DecimalPlaces',
+      '=',
+      field('value', $.decimal_places_value),
+      ';'
+    ),
+
+    decimal_places_value: $ => choice(
+      $.integer,
+      seq($.integer, ':', $.integer)
     ),
 
     // DataPerCompany Property
