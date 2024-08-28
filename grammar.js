@@ -1792,7 +1792,8 @@ module.exports = grammar({
       $.column_store_index_property,
       $.compression_type_property,
       $.data_caption_fields_property,
-      $.data_classification_property
+      $.data_classification_property,
+      $.data_per_company_property
     ),
 
     // CompressionType Property
@@ -2888,6 +2889,16 @@ module.exports = grammar({
         'AccountData',
         'ToBeClassified'
       )),
+      ';'
+    ),
+
+    // DataPerCompany Property
+    // Sets a value that indicates whether the table data applies to all companies in the database or only the current company.
+    // This property is used on Table objects.
+    data_per_company_property: $ => seq(
+      'DataPerCompany',
+      '=',
+      field('value', $.boolean_literal),
       ';'
     ),
 
