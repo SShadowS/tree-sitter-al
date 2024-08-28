@@ -1596,7 +1596,18 @@ module.exports = grammar({
       $.about_title_property,
       $.about_title_ml_property,
       $.access_by_permission_property,
-      $.additional_search_terms_property
+      $.additional_search_terms_property,
+      $.additional_search_terms_ml_property
+    ),
+
+    // AdditionalSearchTermsML Property
+    // Specifies search terms (words and phrases) for the page in different languages.
+    // These terms are used by the search feature in the Web client and mobile apps.
+    additional_search_terms_ml_property: $ => seq(
+      'AdditionalSearchTermsML',
+      '=',
+      field('value', $.multilanguage_string_literal),
+      ';'
     ),
 
     // AdditionalSearchTerms Property
@@ -1697,7 +1708,8 @@ module.exports = grammar({
 
     report_property: $ => choice(
       // Report-specific properties will be added here
-      $.additional_search_terms_property
+      $.additional_search_terms_property,
+      $.additional_search_terms_ml_property
     ),
 
     xmlport_property: $ => choice(
