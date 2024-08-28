@@ -1924,6 +1924,16 @@ module.exports = grammar({
 
     permission_set_property: $ => choice(
       // Permission set-specific properties will be added here
+      $.assignable_property
+    ),
+
+    // Assignable Property
+    // Sets whether the permission set can be assigned to a user.
+    assignable_property: $ => seq(
+      'Assignable',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     profile_property: $ => choice(
