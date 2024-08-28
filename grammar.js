@@ -2255,7 +2255,8 @@ module.exports = grammar({
       $.not_blank_property,  // Added NotBlank property
       $.numeric_property,  // Added Numeric property
       $.obsolete_reason_property,  // Added ObsoleteReason property
-      $.obsolete_tag_property  // Added ObsoleteTag property
+      $.obsolete_tag_property,  // Added ObsoleteTag property
+      $.option_caption_property  // Added OptionCaption property
     ),
 
     // NotBlank Property
@@ -4084,6 +4085,16 @@ module.exports = grammar({
       'RequestedWidth',
       '=',
       field('value', $.integer),
+      ';'
+    ),
+
+    // OptionCaption Property
+    // Sets the string options that are displayed to the user for Option type fields.
+    // This property is used on Table Fields, Page Fields, and Report Columns.
+    option_caption_property: $ => seq(
+      'OptionCaption',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
