@@ -13,6 +13,7 @@ module.exports = grammar({
       'table',
       field('id', $.object_id),
       field('name', $.object_name),
+      optional(field('al', $.string)), // AL property for table alias
       optional(prec(2, seq(
         '{',
         repeat($.table_level_property),
@@ -50,6 +51,7 @@ module.exports = grammar({
       field('name', $.field_name),
       ')',
       field('type', $.field_type),
+      optional(field('al', $.string)), // AL property for field alias
       optional(seq(
         '{',
         repeat($.property),
@@ -63,6 +65,7 @@ module.exports = grammar({
       '(',
       commaSep1($.identifier),
       ')',
+      optional(field('al', $.string)), // AL property for key alias
       optional(seq(
         '{',
         repeat($.property),
@@ -126,6 +129,7 @@ module.exports = grammar({
       optional($.parameter_list),
       ')',
       optional(seq(':', $.type)),
+      optional(field('al', $.string)), // AL property for procedure alias
       $.procedure_body
     ),
 
