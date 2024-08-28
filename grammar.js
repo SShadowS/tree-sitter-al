@@ -2864,7 +2864,8 @@ module.exports = grammar({
       $.odata_edm_type_property,
       $.obsolete_reason_property,
       $.obsolete_tag_property,
-      $.odata_key_fields_property  // Added ODataKeyFields property
+      $.odata_key_fields_property,  // Added ODataKeyFields property
+      $.order_by_property  // Added OrderBy property
     ),
 
     // LinksAllowed Property
@@ -3842,7 +3843,8 @@ module.exports = grammar({
       $.help_link_property,  // Added HelpLink property
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.method_property  // Added Method property
+      $.method_property,  // Added Method property
+      $.order_by_property  // Added OrderBy property
     ),
 
     // Method Property
@@ -4451,6 +4453,26 @@ module.exports = grammar({
       '=',
       field('value', $.string_literal),
       ';'
+    ),
+
+    // OrderBy Property
+    // Sorts table fields in the page view in ascending or descending order.
+    // This property is used on Page View and Query objects.
+    order_by_property: $ => seq(
+      'OrderBy',
+      '=',
+      field('value', $.order_by_value),
+      ';'
+    ),
+
+    order_by_value: $ => seq(
+      repeat1(seq(
+        field('direction', choice('Ascending', 'Descending')),
+        '(',
+        field('field', $.identifier),
+        ')',
+        optional(',')
+      ))
     ),
 
     // FormatRegion Property
