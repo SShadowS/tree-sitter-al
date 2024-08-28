@@ -6,6 +6,7 @@ module.exports = grammar({
 
     _declaration: $ => choice(
       $.table_object,
+      $.table_extension_object,
       $.codeunit_object,
       $.control_addin_object,
       $.entitlement_object,
@@ -19,6 +20,31 @@ module.exports = grammar({
       $.report_extension_object,
       $.report_object
       // Other object types can be added here in the future
+    ),
+
+    table_extension_object: $ => seq(
+      'tableextension',
+      field('id', $.integer),
+      field('name', $.string),
+      'extends',
+      field('base_table', $.string),
+      '{',
+      repeat($._table_extension_element),
+      '}'
+    ),
+
+    _table_extension_element: $ => choice(
+      $.fields,
+      $.property,
+      $.procedure,
+      $.trigger
+    ),
+
+    fields: $ => seq(
+      'fields',
+      '{',
+      repeat($.field),
+      '}'
     ),
 
     report_object: $ => seq(
