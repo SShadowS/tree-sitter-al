@@ -2934,7 +2934,19 @@ module.exports = grammar({
       $.promoted_category_property,  // Added PromotedCategory property
       $.promoted_is_big_property,  // Added PromotedIsBig property
       $.promoted_only_property,  // Added PromotedOnly property
-      $.about_title_ml_property  // Added AboutTitleML property
+      $.about_title_ml_property,  // Added AboutTitleML property
+      $.provider_property  // Added Provider property
+    ),
+
+    // Provider Property
+    // Sets the provider for a FactBox. This property enables you to create a link from a Repeater or any other type of control to a Factbox.
+    // It could also be used to link two FactBoxes.
+    // This property is used on Page Part, Page System Part, and Page Chart Part objects.
+    provider_property: $ => seq(
+      'Provider',
+      '=',
+      field('value', $.identifier),
+      ';'
     ),
 
     // AboutTitleML Property
