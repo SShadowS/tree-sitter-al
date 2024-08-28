@@ -4514,7 +4514,18 @@ module.exports = grammar({
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
       $.obsolete_tag_property,  // Added ObsoleteTag property
-      $.permissions_property  // Added Permissions property
+      $.permissions_property,  // Added Permissions property
+      $.single_instance_property  // Added SingleInstance property
+    ),
+
+    // SingleInstance Property
+    // Sets whether a single instance of the codeunit and codeunit variables are instantiated.
+    // This property is used on Codeunit objects.
+    single_instance_property: $ => seq(
+      'SingleInstance',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // EventSubscriberInstance Property
