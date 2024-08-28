@@ -2024,7 +2024,19 @@ module.exports = grammar({
       $.external_schema_property,
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.is_control_addin_property
+      $.is_control_addin_property,
+      $.key_property  // Added Key property
+    ),
+
+    // Key Property
+    // Sets the primary key for the table.
+    // This property is used on Table objects.
+    key_property: $ => seq(
+      'Key',
+      '(',
+      field('fields', $.identifier_list),
+      ')',
+      ';'
     ),
 
     // IsControlAddIn Property
