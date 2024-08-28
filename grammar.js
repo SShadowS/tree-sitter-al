@@ -1442,14 +1442,42 @@ module.exports = grammar({
     ),
 
     _table_element: $ => choice(
-      $.field,
+      $.fields,
+      $.keys,
       $.property,
+      $.procedure,
+      $.trigger,
       $.ondelete_trigger,
       $.oninsert_trigger,
       $.onmodify_trigger,
       $.onrename_trigger
-      // Other table elements can be added here
     ),
+
+    fields: $ => seq(
+      'fields',
+      '{',
+      repeat($.field),
+      '}'
+    ),
+
+    keys: $ => seq(
+      'keys',
+      '{',
+      repeat($.key),
+      '}'
+    ),
+
+    key: $ => seq(
+      'key',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.key_field),
+      '}'
+    ),
+
+    key_field: $ => $.identifier,
 
     // OnDelete trigger for tables
     // This trigger runs when a user tries to delete a record from the table
