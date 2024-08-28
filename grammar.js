@@ -1594,7 +1594,18 @@ module.exports = grammar({
       $.auto_format_expression_property,
       $.auto_format_type_property,
       $.auto_increment_property,
-      $.blank_numbers_property
+      $.blank_numbers_property,
+      $.blank_zero_property
+    ),
+
+    // BlankZero Property
+    // Indicates whether the system displays zeros (0) and No.
+    // This property is used on Table Fields and Page Fields.
+    blank_zero_property: $ => seq(
+      'BlankZero',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // BlankNumbers Property
