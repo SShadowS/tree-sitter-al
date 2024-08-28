@@ -1444,7 +1444,7 @@ module.exports = grammar({
     _table_element: $ => choice(
       $.fields,
       $.keys,
-      $.property,
+      $.table_property,
       $.procedure,
       $.trigger,
       $.ondelete_trigger,
@@ -1545,17 +1545,128 @@ module.exports = grammar({
       field('value', $._value)
     ),
 
+    // Generic property structure
     property: $ => seq(
-      'property',
       field('name', $.identifier),
-      '{',
+      '=',
       field('value', $._value),
-      '}'
+      ';'
+    ),
+
+    // Object-specific property rules
+    table_property: $ => choice(
+      // Table-specific properties will be added here
+    ),
+
+    field_property: $ => choice(
+      // Field-specific properties will be added here
+    ),
+
+    page_property: $ => choice(
+      // Page-specific properties will be added here
+    ),
+
+    report_property: $ => choice(
+      // Report-specific properties will be added here
+    ),
+
+    xmlport_property: $ => choice(
+      // XMLport-specific properties will be added here
+    ),
+
+    query_property: $ => choice(
+      // Query-specific properties will be added here
+    ),
+
+    codeunit_property: $ => choice(
+      // Codeunit-specific properties will be added here
+    ),
+
+    enum_property: $ => choice(
+      // Enum-specific properties will be added here
+    ),
+
+    enum_value_property: $ => choice(
+      // Enum value-specific properties will be added here
+    ),
+
+    permission_set_property: $ => choice(
+      // Permission set-specific properties will be added here
+    ),
+
+    profile_property: $ => choice(
+      // Profile-specific properties will be added here
+    ),
+
+    page_customization_property: $ => choice(
+      // Page customization-specific properties will be added here
+    ),
+
+    page_extension_property: $ => choice(
+      // Page extension-specific properties will be added here
+    ),
+
+    table_extension_property: $ => choice(
+      // Table extension-specific properties will be added here
+    ),
+
+    report_extension_property: $ => choice(
+      // Report extension-specific properties will be added here
+    ),
+
+    query_extension_property: $ => choice(
+      // Query extension-specific properties will be added here
+    ),
+
+    enum_extension_property: $ => choice(
+      // Enum extension-specific properties will be added here
+    ),
+
+    control_addin_property: $ => choice(
+      // Control add-in-specific properties will be added here
+    ),
+
+    entitlement_property: $ => choice(
+      // Entitlement-specific properties will be added here
+    ),
+
+    report_layout_property: $ => choice(
+      // Report layout-specific properties will be added here
+    ),
+
+    workflow_property: $ => choice(
+      // Workflow-specific properties will be added here
     ),
 
     _value: $ => choice(
       $._literal,
-      $.identifier
+      $.identifier,
+      $.array_value,
+      $.object_value
+    ),
+
+    array_value: $ => seq(
+      '[',
+      optional(seq(
+        $._value,
+        repeat(seq(',', $._value))
+      )),
+      ']'
+    ),
+
+    object_value: $ => seq(
+      '{',
+      optional(seq(
+        $.key_value_pair,
+        repeat(seq(',', $.key_value_pair))
+      )),
+      '}'
+    ),
+
+    key_value_pair: $ => seq(
+      field('key', choice($.string, $.identifier)),
+      ':',
+      field('value', $._value)
     ),
 
     string: $ => /"[^"]*"/,
