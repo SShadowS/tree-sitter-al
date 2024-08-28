@@ -2620,7 +2620,8 @@ module.exports = grammar({
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
       $.insert_allowed_property,  // Added InsertAllowed property
-      $.instructional_text_property  // Added InstructionalText property
+      $.instructional_text_property,  // Added InstructionalText property
+      $.is_header_property  // Added IsHeader property
     ),
 
     // Importance Property
@@ -2669,6 +2670,16 @@ module.exports = grammar({
           optional(',')
         ))
       )),
+      ';'
+    ),
+
+    // IsHeader Property
+    // Specifies if the page action separator is a header.
+    // This property is used on Page Action Separator objects.
+    is_header_property: $ => seq(
+      'IsHeader',
+      '=',
+      field('value', $.boolean_literal),
       ';'
     ),
 
