@@ -2532,7 +2532,8 @@ module.exports = grammar({
       $.file_upload_row_action_property,
       $.filters_property,
       $.flow_caption_property,
-      $.flow_id_property
+      $.flow_id_property,
+      $.flow_template_category_name_property
     ),
 
     // DrillDownPageId Property
@@ -3664,6 +3665,16 @@ module.exports = grammar({
     // This property is used on Page Custom Actions.
     flow_id_property: $ => seq(
       'FlowId',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    // FlowTemplateCategoryName Property
+    // Sets the category used to filter the list of Power Automate templates shown in the template gallery.
+    // This property is used on Page Custom Actions.
+    flow_template_category_name_property: $ => seq(
+      'FlowTemplateCategoryName',
       '=',
       field('value', $.string_literal),
       ';'
