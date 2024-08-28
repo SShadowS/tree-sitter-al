@@ -2932,7 +2932,18 @@ module.exports = grammar({
       $.promoted_action_categories_property,  // Added PromotedActionCategories property
       $.promoted_action_categories_ml_property,  // Added PromotedActionCategoriesML property
       $.promoted_category_property,  // Added PromotedCategory property
-      $.promoted_is_big_property  // Added PromotedIsBig property
+      $.promoted_is_big_property,  // Added PromotedIsBig property
+      $.promoted_only_property  // Added PromotedOnly property
+    ),
+
+    // PromotedOnly Property
+    // Specifies whether the selected action is promoted only, which means that it will appear only on the Home tab in the ribbon and not on the tab where it is defined.
+    // This property is used on Page Action objects.
+    promoted_only_property: $ => seq(
+      'PromotedOnly',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // PromotedCategory Property
