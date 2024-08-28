@@ -5,9 +5,82 @@ module.exports = grammar({
     source_file: $ => repeat($._declaration),
 
     _declaration: $ => choice(
-      $.table_object
+      $.table_object,
+      $.codeunit_object
       // Other object types can be added here in the future
     ),
+
+    codeunit_object: $ => seq(
+      'codeunit',
+      field('id', $.integer),
+      field('name', $.string),
+      '{',
+      repeat($._codeunit_element),
+      '}'
+    ),
+
+    _codeunit_element: $ => choice(
+      $.property,
+      $.trigger,
+      $.procedure
+      // Other codeunit elements can be added here
+    ),
+
+    trigger: $ => seq(
+      'trigger',
+      field('name', $.identifier),
+      '(',
+      optional($._parameter_list),
+      ')',
+      field('body', $.code_block)
+    ),
+
+    procedure: $ => seq(
+      optional('local'),
+      'procedure',
+      field('name', $.identifier),
+      '(',
+      optional($._parameter_list),
+      ')',
+      field('return_type', optional(seq(':', $._type))),
+      field('body', $.code_block)
+    ),
+
+    _parameter_list: $ => seq(
+      $.parameter,
+      repeat(seq(';', $.parameter))
+    ),
+
+    parameter: $ => seq(
+      optional(choice('var', 'out')),
+      field('name', $.identifier),
+      ':',
+      field('type', $._type)
+    ),
+
+    _type: $ => choice(
+      $.identifier,
+      $.record_type
+    ),
+
+    record_type: $ => seq(
+      'Record',
+      field('table_name', $.identifier)
+    ),
+
+    code_block: $ => seq(
+      'begin',
+      repeat($._statement),
+      'end'
+    ),
+
+    _statement: $ => choice(
+      // Add various statement types here
+      // For now, we'll just use a placeholder
+      $.placeholder_statement
+    ),
+
+    placeholder_statement: $ => /[^;]+;/,
 
     table_object: $ => seq(
       'table',
