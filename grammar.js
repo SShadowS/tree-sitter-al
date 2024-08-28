@@ -1892,7 +1892,7 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat(choice($.key_field, $.clustered_property)),
+      repeat(choice($.key_field, $.clustered_property, $.included_fields_property)),
       '}'
     ),
 
@@ -1905,6 +1905,16 @@ module.exports = grammar({
       'Clustered',
       '=',
       field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // IncludedFields Property
+    // Sets the fields that are included as non-key columns in the index on SQL Server.
+    // This property is used on Table Keys.
+    included_fields_property: $ => seq(
+      'IncludedFields',
+      '=',
+      field('value', $.identifier_list),
       ';'
     ),
 
