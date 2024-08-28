@@ -2109,7 +2109,8 @@ module.exports = grammar({
       $.external_access_property,
       $.external_name_property,
       $.external_type_property,
-      $.field_class_property
+      $.field_class_property,
+      $.init_value_property
     ),
 
     // ExternalAccess Property
@@ -3616,6 +3617,16 @@ module.exports = grammar({
       'RequestedWidth',
       '=',
       field('value', $.integer),
+      ';'
+    ),
+
+    // InitValue Property
+    // Sets the initial value of this field when a user creates a new record.
+    // This property is used on Table Fields.
+    init_value_property: $ => seq(
+      'InitValue',
+      '=',
+      field('value', $._value),
       ';'
     ),
 
