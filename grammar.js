@@ -3667,7 +3667,8 @@ module.exports = grammar({
       $.rdlc_layout_property,  // Added RDLCLayout property
       $.request_page_property,  // Added RequestPage property
       $.request_filter_fields_property,  // Added RequestFilterFields property
-      $.request_filter_heading_property  // Added RequestFilterHeading property
+      $.request_filter_heading_property,  // Added RequestFilterHeading property
+      $.request_filter_heading_ml_property  // Added RequestFilterHeadingML property
     ),
 
     // RequestFilterHeading Property
@@ -3686,6 +3687,16 @@ module.exports = grammar({
           optional(',')
         ))
       )),
+      ';'
+    ),
+
+    // RequestFilterHeadingML Property
+    // Sets the string used as a RequestFilterHeading Property for a request page tab in multiple languages.
+    // This property is used on Report Data Items and XMLport Table Elements.
+    request_filter_heading_ml_property: $ => seq(
+      'RequestFilterHeadingML',
+      '=',
+      field('value', $.multilanguage_string_literal),
       ';'
     ),
 
