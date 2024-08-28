@@ -2,12 +2,7 @@ module.exports = grammar({
   name: 'al',
 
   extras: $ => [
-    $.comment,
     /\s/
-  ],
-
-  precedences: $ => [
-    [$.comment, $._declaration]
   ],
 
   rules: {
@@ -41,8 +36,7 @@ module.exports = grammar({
       $.report_extension_object,
       $.report_object,
       $.enum_object,
-      $.xmlport_object,
-      $.comment
+      $.xmlport_object
       // Other object types can be added here in the future
     ),
 
