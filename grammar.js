@@ -3215,6 +3215,16 @@ module.exports = grammar({
         optional(',')
       ))
     ),
+
+    // Width Property
+    // Sets the width of a field on a page.
+    // This property is used on Page Fields.
+    width_property: $ => seq(
+      'Width',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
     // This property is used on Page and Request Page objects.
     source_table_property: $ => seq(
       'SourceTable',
