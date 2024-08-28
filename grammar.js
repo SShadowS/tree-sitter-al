@@ -2866,7 +2866,18 @@ module.exports = grammar({
       $.obsolete_tag_property,
       $.odata_key_fields_property,  // Added ODataKeyFields property
       $.order_by_property,  // Added OrderBy property
-      $.page_type_property  // Added PageType property
+      $.page_type_property,  // Added PageType property
+      $.prompt_mode_property  // Added PromptMode property
+    ),
+
+    // PromptMode Property
+    // Sets the current mode of the page when the PageType is set to PromptDialog.
+    // This property is used on Page objects.
+    prompt_mode_property: $ => seq(
+      'PromptMode',
+      '=',
+      field('value', choice('Prompt', 'Result')),
+      ';'
     ),
 
     // LinksAllowed Property
