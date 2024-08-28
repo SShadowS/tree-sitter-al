@@ -2209,6 +2209,7 @@ module.exports = grammar({
       $.context_sensitive_help_page_property,
       $.cuegroup_layout_property,
       $.custom_action_type_property,
+      $.data_access_intent_property,
       $.data_caption_expression_property,
       $.data_caption_fields_property,
       $.data_classification_property
@@ -2488,7 +2489,8 @@ module.exports = grammar({
       $.allow_scheduling_property,
       $.auto_format_expression_property,
       $.auto_format_type_property,
-      $.caption_property
+      $.caption_property,
+      $.data_access_intent_property
     ),
 
     // AllowScheduling Property
@@ -2613,6 +2615,7 @@ module.exports = grammar({
       $.apipublisher_property,
       $.caption_property,
       $.column_filter_property,
+      $.data_access_intent_property,
       $.data_item_link_property
     ),
 
@@ -2873,6 +2876,16 @@ module.exports = grammar({
       'DataCaptionFields',
       '=',
       field('value', $.identifier_list),
+      ';'
+    ),
+
+    // DataAccessIntent Property
+    // Sets the data access intent of the page, report, or query.
+    // This property is used on Page, Report, and Query objects.
+    data_access_intent_property: $ => seq(
+      'DataAccessIntent',
+      '=',
+      field('value', choice('ReadOnly', 'ReadWrite')),
       ';'
     ),
 
