@@ -33,7 +33,10 @@ module.exports = grammar({
       $.property
     ),
 
-    table_level_property: $ => $.property,
+    table_level_property: $ => seq(
+      $.property,
+      optional(field('al', $.string)) // AL property for table-level property alias
+    ),
 
     property: $ => seq(
       field('name', $.property_name),
