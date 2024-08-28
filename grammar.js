@@ -3023,7 +3023,8 @@ module.exports = grammar({
       $.refresh_on_activate_property,
       $.run_object_property,
       $.run_page_link_property,  // Added RunPageLink property
-      $.run_page_mode_property  // Added RunPageMode property
+      $.run_page_mode_property,  // Added RunPageMode property
+      $.run_page_on_rec_property  // Added RunPageOnRec property
     ),
 
     // RefreshOnActivate Property
@@ -3084,6 +3085,16 @@ module.exports = grammar({
       'RunPageMode',
       '=',
       field('value', choice('View', 'Edit', 'Create')),
+      ';'
+    ),
+
+    // RunPageOnRec Property
+    // Sets whether the same record on the page you launch from this control is displayed as is already displayed on the current page.
+    // This property is used on Page Action objects.
+    run_page_on_rec_property: $ => seq(
+      'RunPageOnRec',
+      '=',
+      field('value', $.boolean_literal),
       ';'
     ),
 
