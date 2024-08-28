@@ -2513,6 +2513,106 @@ module.exports = grammar({
 
     control_addin_property: $ => choice(
       // Control add-in-specific properties will be added here
+      $.vertical_shrink_property,
+      $.horizontal_shrink_property,
+      $.minimum_height_property,
+      $.minimum_width_property,
+      $.maximum_height_property,
+      $.maximum_width_property,
+      $.vertical_stretch_property,
+      $.horizontal_stretch_property,
+      $.requested_height_property,
+      $.requested_width_property
+    ),
+
+    // VerticalShrink Property
+    // Sets whether the control add-in can shrink vertically.
+    vertical_shrink_property: $ => seq(
+      'VerticalShrink',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // HorizontalShrink Property
+    // Sets whether the control add-in can shrink horizontally.
+    horizontal_shrink_property: $ => seq(
+      'HorizontalShrink',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // MinimumHeight Property
+    // Sets the minimum height of the control add-in.
+    minimum_height_property: $ => seq(
+      'MinimumHeight',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
+    // MinimumWidth Property
+    // Sets the minimum width of the control add-in.
+    minimum_width_property: $ => seq(
+      'MinimumWidth',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
+    // MaximumHeight Property
+    // Sets the maximum height of the control add-in.
+    maximum_height_property: $ => seq(
+      'MaximumHeight',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
+    // MaximumWidth Property
+    // Sets the maximum width of the control add-in.
+    maximum_width_property: $ => seq(
+      'MaximumWidth',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
+    // VerticalStretch Property
+    // Sets whether the control add-in can stretch vertically.
+    vertical_stretch_property: $ => seq(
+      'VerticalStretch',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // HorizontalStretch Property
+    // Sets whether the control add-in can stretch horizontally.
+    horizontal_stretch_property: $ => seq(
+      'HorizontalStretch',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // RequestedHeight Property
+    // Sets the requested height of the control add-in.
+    requested_height_property: $ => seq(
+      'RequestedHeight',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
+    // RequestedWidth Property
+    // Sets the requested width of the control add-in.
+    requested_width_property: $ => seq(
+      'RequestedWidth',
+      '=',
+      field('value', $.integer),
+      ';'
     ),
 
     entitlement_property: $ => choice(
