@@ -201,15 +201,6 @@ module.exports = grammar({
       '}'
     ),
 
-    api_page_object: $ => seq(
-      'page',
-      field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
-      'API',
-      '{',
-      repeat($._api_page_element),
-      '}'
-    ),
 
     _api_page_element: $ => choice(
       $.property,
