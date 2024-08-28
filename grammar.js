@@ -1566,7 +1566,8 @@ module.exports = grammar({
       // Page-specific properties will be added here
       $.about_text_property,
       $.about_text_ml_property,
-      $.about_title_property
+      $.about_title_property,
+      $.about_title_ml_property
     ),
 
     // AboutTitle Property
@@ -1576,6 +1577,16 @@ module.exports = grammar({
       'AboutTitle',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // AboutTitleML Property
+    // Sets the large-font title that appears in a teaching tip in the UI, supporting multiple languages
+    // Used on Page objects and their controls (actions, fields, parts, etc.)
+    about_title_ml_property: $ => seq(
+      'AboutTitleML',
+      '=',
+      field('value', $.multilanguage_string_literal),
       ';'
     ),
 
@@ -1645,7 +1656,8 @@ module.exports = grammar({
       // Page customization-specific properties will be added here
       $.about_text_property,
       $.about_text_ml_property,
-      $.about_title_property
+      $.about_title_property,
+      $.about_title_ml_property
     ),
 
     page_extension_property: $ => choice(
