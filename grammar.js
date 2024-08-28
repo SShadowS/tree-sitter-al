@@ -398,7 +398,22 @@ module.exports = grammar({
       $.actions,
       $.views,
       $.onaftergetcurrrecord_trigger,
-      $.onclosepage_trigger
+      $.onclosepage_trigger,
+      $.ondeleterecord_trigger
+    ),
+
+    // OnDeleteRecord trigger for pages
+    // This trigger runs before a record is deleted from the table
+    // It can be used to perform custom actions or validations before the deletion occurs
+    // The deletion is canceled if the trigger returns false
+    ondeleterecord_trigger: $ => seq(
+      'trigger',
+      'OnDeleteRecord',
+      '(',
+      ')',
+      ':',
+      'Boolean',
+      field('body', $.code_block)
     ),
 
     // OnAfterGetCurrRecord trigger for pages
