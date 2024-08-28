@@ -1645,14 +1645,31 @@ module.exports = grammar({
 
     codeunit_property: $ => choice(
       // Codeunit-specific properties will be added here
+      $.access_property
     ),
 
     enum_property: $ => choice(
       // Enum-specific properties will be added here
+      $.access_property
     ),
 
     enum_value_property: $ => choice(
       // Enum value-specific properties will be added here
+    ),
+
+    permission_set_property: $ => choice(
+      // Permission set-specific properties will be added here
+      $.access_property
+    ),
+
+    query_property: $ => choice(
+      // Query-specific properties will be added here
+      $.access_property
+    ),
+
+    interface_property: $ => choice(
+      // Interface-specific properties will be added here
+      $.access_property
     ),
 
     permission_set_property: $ => choice(
