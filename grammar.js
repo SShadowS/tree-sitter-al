@@ -2028,7 +2028,18 @@ module.exports = grammar({
       $.is_control_addin_property,
       $.key_property,  // Added Key property
       $.linked_object_property,  // Added LinkedObject property
-      $.moved_from_property  // Added MovedFrom property
+      $.moved_from_property,  // Added MovedFrom property
+      $.moved_to_property  // Added MovedTo property
+    ),
+
+    // MovedTo Property
+    // Specifies the destination extension Id when a table is moved to another extension.
+    // This property is used on Table objects.
+    moved_to_property: $ => seq(
+      'MovedTo',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // MovedFrom Property
@@ -2175,7 +2186,18 @@ module.exports = grammar({
       $.instructional_text_property,
       $.max_value_property,  // Added MaxValue property
       $.min_value_property,  // Added MinValue property
-      $.moved_from_property  // Added MovedFrom property
+      $.moved_from_property,  // Added MovedFrom property
+      $.moved_to_property  // Added MovedTo property
+    ),
+
+    // MovedTo Property
+    // Specifies the destination extension Id when a table field is moved to another extension.
+    // This property is used on Table Field objects.
+    moved_to_property: $ => seq(
+      'MovedTo',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // MinValue Property
