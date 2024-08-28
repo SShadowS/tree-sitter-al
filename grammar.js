@@ -2007,7 +2007,8 @@ module.exports = grammar({
       $.extensible_property,
       $.external_name_property,
       $.external_schema_property,
-      $.inherent_entitlements_property
+      $.inherent_entitlements_property,
+      $.inherent_permissions_property
     ),
 
     // Enabled Property
@@ -2172,6 +2173,18 @@ module.exports = grammar({
     ),
 
     inherent_entitlements_value: $ => repeat1(choice('R', 'I', 'M', 'D', 'X')),
+
+    // InherentPermissions Property
+    // Specifies the permissions that are inherently assigned to the given object.
+    // This property is used on Query, Report, Xml Port, Table, Codeunit, and Page objects.
+    inherent_permissions_property: $ => seq(
+      'InherentPermissions',
+      '=',
+      field('value', $.inherent_permissions_value),
+      ';'
+    ),
+
+    inherent_permissions_value: $ => repeat1(choice('R', 'I', 'M', 'D', 'X')),
 
     // ColumnSpan Property
     // Sets the number of columns that a field spans in a Grid control.
@@ -2576,7 +2589,8 @@ module.exports = grammar({
       $.images_property,  // Added Images property
       $.importance_property,  // Added Importance property
       $.indentation_column_property,  // Added IndentationColumn property
-      $.inherent_entitlements_property
+      $.inherent_entitlements_property,
+      $.inherent_permissions_property
     ),
 
     // Importance Property
@@ -2937,7 +2951,8 @@ module.exports = grammar({
       $.execution_timeout_property,
       $.extensible_property,
       $.format_region_property,
-      $.inherent_entitlements_property
+      $.inherent_entitlements_property,
+      $.inherent_permissions_property
     ),
 
     // ExcelLayoutMultipleDataSheets Property
@@ -3045,7 +3060,8 @@ module.exports = grammar({
       $.field_separator_property,
       $.field_validate_property,
       $.format_evaluate_property,
-      $.inherent_entitlements_property
+      $.inherent_entitlements_property,
+      $.inherent_permissions_property
     ),
 
     // FormatEvaluate Property
@@ -3192,7 +3208,8 @@ module.exports = grammar({
       $.access_property,
       $.subtype_property,
       $.event_subscriber_instance_property,
-      $.inherent_entitlements_property
+      $.inherent_entitlements_property,
+      $.inherent_permissions_property
     ),
 
     // EventSubscriberInstance Property
@@ -3314,7 +3331,8 @@ module.exports = grammar({
       $.entity_set_caption_ml_property,
       $.entity_set_name_property,
       $.help_link_property,  // Added HelpLink property
-      $.inherent_entitlements_property
+      $.inherent_entitlements_property,
+      $.inherent_permissions_property
     ),
 
     // DataItemLink Property
