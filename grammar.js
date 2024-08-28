@@ -856,8 +856,18 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.property),
+      repeat(choice($.property, $.multiplicity_property)),
       '}'
+    ),
+
+    // Multiplicity Property
+    // Specifies the multiplicity of the part on API pages.
+    // This property is used on Page Part objects.
+    multiplicity_property: $ => seq(
+      'Multiplicity',
+      '=',
+      field('value', choice('ZeroOrOne', 'Many')),
+      ';'
     ),
 
     page_system_part: $ => seq(
