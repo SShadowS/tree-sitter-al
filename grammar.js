@@ -2043,7 +2043,8 @@ module.exports = grammar({
       $.obsolete_reason_property,  // Added ObsoleteReason property
       $.obsolete_state_property,  // Added ObsoleteState property
       $.obsolete_tag_property,  // Added ObsoleteTag property
-      $.paste_is_valid_property  // Added PasteIsValid property
+      $.paste_is_valid_property,  // Added PasteIsValid property
+      $.permissions_property  // Added Permissions property
     ),
 
     // PasteIsValid Property
@@ -2055,6 +2056,28 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
+
+    // Permissions Property
+    // Sets whether an object has additional permission required to perform some operations on one or more tables.
+    // This property is used on various AL objects including Codeunit, Table, Request Page, Page, Xml Port, Report, Query, Permission Set, and Permission Set Extension.
+    permissions_property: $ => seq(
+      'Permissions',
+      '=',
+      field('value', $.permissions_value),
+      ';'
+    ),
+
+    permissions_value: $ => seq(
+      repeat1(seq(
+        'TableData',
+        field('table_id', $.integer),
+        '=',
+        field('permissions', $.permissions_string),
+        optional(',')
+      ))
+    ),
+
+    permissions_string: $ => /[RrIiMmDdXx]+/,
 
     // ObsoleteTag Property
     // Specifies a free-form text to support tracking of where and when the object was marked as obsolete.
@@ -2878,7 +2901,8 @@ module.exports = grammar({
       $.odata_key_fields_property,  // Added ODataKeyFields property
       $.order_by_property,  // Added OrderBy property
       $.page_type_property,  // Added PageType property
-      $.prompt_mode_property  // Added PromptMode property
+      $.prompt_mode_property,  // Added PromptMode property
+      $.permissions_property  // Added Permissions property
     ),
 
     // PromptMode Property
@@ -3357,7 +3381,8 @@ module.exports = grammar({
       $.paper_source_default_page_property,
       $.paper_source_first_page_property,
       $.paper_source_last_page_property,
-      $.pdf_font_embedding_property  // Added PdfFontEmbedding property
+      $.pdf_font_embedding_property,  // Added PdfFontEmbedding property
+      $.permissions_property  // Added Permissions property
     ),
 
     // PdfFontEmbedding Property
@@ -3575,7 +3600,8 @@ module.exports = grammar({
       $.min_occurs_property,  // Added MinOccurs property
       $.namespace_prefix_property,  // Added NamespacePrefix property
       $.namespaces_property,  // Added Namespaces property
-      $.occurrence_property  // Added Occurrence property
+      $.occurrence_property,  // Added Occurrence property
+      $.permissions_property  // Added Permissions property
     ),
 
     // Occurrence Property
@@ -3801,7 +3827,8 @@ module.exports = grammar({
       $.event_subscriber_instance_property,
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.obsolete_tag_property  // Added ObsoleteTag property
+      $.obsolete_tag_property,  // Added ObsoleteTag property
+      $.permissions_property  // Added Permissions property
     ),
 
     // EventSubscriberInstance Property
@@ -3926,7 +3953,8 @@ module.exports = grammar({
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
       $.method_property,  // Added Method property
-      $.order_by_property  // Added OrderBy property
+      $.order_by_property,  // Added OrderBy property
+      $.permissions_property  // Added Permissions property
     ),
 
     // Method Property
@@ -4020,7 +4048,8 @@ module.exports = grammar({
       // Permission set-specific properties will be added here
       $.assignable_property,
       $.excluded_permission_sets_property,
-      $.included_permission_sets_property
+      $.included_permission_sets_property,
+      $.permissions_property  // Added Permissions property
     ),
 
     // IncludedPermissionSets Property
