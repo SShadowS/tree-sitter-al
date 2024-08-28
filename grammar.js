@@ -3735,6 +3735,16 @@ module.exports = grammar({
       $.requested_width_property
     ),
 
+    // MinimumWidth Property
+    // Specifies the minimum width that the control add-in can be shrunk to.
+    // This setting only applies if the HorizontalShrink setting is specified.
+    minimum_width_property: $ => seq(
+      'MinimumWidth',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
     // MinimumHeight Property
     // Specifies the minimum height that the control add-in can be shrunk to.
     // This property is used on Control Add In objects and only applies if VerticalShrink is set to true.
