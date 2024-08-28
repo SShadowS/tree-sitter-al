@@ -2217,7 +2217,18 @@ module.exports = grammar({
       $.delayed_insert_property,
       $.delete_allowed_property,
       $.description_property,
-      $.drilldown_property
+      $.drilldown_property,
+      $.drilldown_page_id_property
+    ),
+
+    // DrillDownPageId Property
+    // Sets the ID of the page to use as a drill-down.
+    // This property is used on Table objects and Page Fields.
+    drilldown_page_id_property: $ => seq(
+      'DrillDownPageID',
+      '=',
+      field('value', choice($.integer, $.identifier)),
+      ';'
     ),
 
     // DrillDown Property
