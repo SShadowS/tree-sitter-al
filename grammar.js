@@ -2091,7 +2091,8 @@ module.exports = grammar({
       $.table_type_property,  // Added TableType property
       $.data_classification_fields_property,  // Added DataClassificationFields property
       $.about_title_ml_property,  // Added AboutTitleML property
-      $.scope_property  // Added Scope property
+      $.scope_property,  // Added Scope property
+      $.fields_property  // Added Fields property
     ),
 
     // DataClassificationFields Property
@@ -2132,6 +2133,43 @@ module.exports = grammar({
       '=',
       field('value', choice('Cloud', 'OnPrem')),
       ';'
+    ),
+
+    // Fields Property
+    // Specifies the fields that are included in the table.
+    // This property is used on Table objects to define the structure of the table.
+    fields_property: $ => seq(
+      'Fields',
+      '=',
+      field('value', $.fields_value),
+      ';'
+    ),
+
+    fields_value: $ => seq(
+      '{',
+      repeat($.field_definition),
+      '}'
+    ),
+
+    field_definition: $ => seq(
+      field('field_name', $.identifier),
+      ':',
+      field('field_type', $.identifier),
+      optional(seq(
+        '(',
+        field('field_properties', $.field_properties),
+        ')'
+      )),
+      ';'
+    ),
+
+    field_properties: $ => repeat1(
+      seq(
+        field('property_name', $.identifier),
+        '=',
+        field('property_value', $._value),
+        optional(',')
+      )
     ),
 
     // AboutTitle Property
