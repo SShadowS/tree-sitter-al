@@ -28,4 +28,12 @@ To sort a set of table fields in the table view, use the **sorting** keyword. To
 
 ## See Also  
 
-[Properties](devenv-properties.md)
+[Properties](devenv-properties.md)    // SourceTableView Property
+    // Sets the key, sort order, and filter of the source table presented to the user.
+    // This property is used on XMLport Table Elements.
+    source_table_view_property: $ => seq(
+      'SourceTableView',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
