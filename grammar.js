@@ -770,6 +770,48 @@ module.exports = grammar({
     string: $ => /"[^"]*"/,
     integer: $ => /\d+/,
     boolean: $ => choice('true', 'false'),
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/
+    // Identifiers
+    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+
+    // Literals
+    _literal: $ => choice(
+      $.number_literal,
+      $.string_literal,
+      $.boolean_literal,
+      $.date_literal,
+      $.time_literal,
+      $.datetime_literal
+    ),
+
+    number_literal: $ => choice(
+      /\d+/,
+      /\d+\.\d+/
+    ),
+
+    string_literal: $ => /'[^']*'/,
+
+    boolean_literal: $ => choice('true', 'false'),
+
+    date_literal: $ => /\d{2}\.\d{2}\.\d{4}/,
+
+    time_literal: $ => /\d{2}:\d{2}:\d{2}/,
+
+    datetime_literal: $ => seq($.date_literal, $.time_literal),
+
+    // Operators
+    _operator: $ => choice(
+      $.arithmetic_operator,
+      $.comparison_operator,
+      $.logical_operator,
+      $.assignment_operator
+    ),
+
+    arithmetic_operator: $ => choice('+', '-', '*', '/', 'div', 'mod'),
+
+    comparison_operator: $ => choice('=', '<>', '<', '>', '<=', '>='),
+
+    logical_operator: $ => choice('and', 'or', 'not', 'xor'),
+
+    assignment_operator: $ => ':='
   }
 });
