@@ -2933,7 +2933,18 @@ module.exports = grammar({
       $.promoted_action_categories_ml_property,  // Added PromotedActionCategoriesML property
       $.promoted_category_property,  // Added PromotedCategory property
       $.promoted_is_big_property,  // Added PromotedIsBig property
-      $.promoted_only_property  // Added PromotedOnly property
+      $.promoted_only_property,  // Added PromotedOnly property
+      $.about_title_ml_property  // Added AboutTitleML property
+    ),
+
+    // AboutTitleML Property
+    // Sets the large-font title that appears in a teaching tip in the UI, supporting multiple languages.
+    // This property is used on Page objects and their controls (actions, fields, parts, etc.).
+    about_title_ml_property: $ => seq(
+      'AboutTitleML',
+      '=',
+      field('value', $.multilanguage_string_literal),
+      ';'
     ),
 
     // PromptMode Property
