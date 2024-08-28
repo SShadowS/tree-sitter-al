@@ -1751,7 +1751,18 @@ module.exports = grammar({
     report_property: $ => choice(
       // Report-specific properties will be added here
       $.additional_search_terms_property,
-      $.additional_search_terms_ml_property
+      $.additional_search_terms_ml_property,
+      $.allow_scheduling_property
+    ),
+
+    // AllowScheduling Property
+    // Sets whether a report can be scheduled to run in the background.
+    // When set to true, users can schedule the report to run at a specific time.
+    allow_scheduling_property: $ => seq(
+      'AllowScheduling',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     xmlport_property: $ => choice(
