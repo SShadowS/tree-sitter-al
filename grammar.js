@@ -1836,7 +1836,18 @@ module.exports = grammar({
 
     query_property: $ => choice(
       // Query-specific properties will be added here
-      $.access_property
+      $.access_property,
+      $.apigroup_property
+    ),
+
+    // APIGroup Property for queries
+    // Sets the group of the API endpoint that the query is exposed in.
+    // This property can only be set if the QueryType is set to API.
+    apigroup_property: $ => seq(
+      'APIGroup',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     interface_property: $ => choice(
