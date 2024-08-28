@@ -1637,7 +1637,8 @@ module.exports = grammar({
     // Object-specific property rules
     table_property: $ => choice(
       // Table-specific properties will be added here
-      $.access_property
+      $.access_property,
+      $.caption_property
     ),
 
     field_property: $ => choice(
@@ -1651,7 +1652,26 @@ module.exports = grammar({
       $.auto_increment_property,
       $.blank_numbers_property,
       $.blank_zero_property,
-      $.calc_formula_property
+      $.calc_formula_property,
+      $.caption_property
+    ),
+
+    // Caption Property
+    // Sets the string that is used to identify a control or other object in the user interface.
+    // This property is used on various AL objects including Table Fields, Page Fields, and more.
+    caption_property: $ => seq(
+      'Caption',
+      '=',
+      field('value', $.string_literal),
+      optional(seq(
+        ',',
+        choice(
+          seq('Locked', '=', field('locked', $.boolean_literal)),
+          seq('Comment', '=', field('comment', $.string_literal)),
+          seq('MaxLength', '=', field('max_length', $.integer))
+        )
+      )),
+      ';'
     ),
 
     // CalcFormula Property
@@ -1897,7 +1917,8 @@ module.exports = grammar({
       $.apipublisher_property,
       $.apiversion_property,
       $.application_area_property,
-      $.auto_split_key_property
+      $.auto_split_key_property,
+      $.caption_property
     ),
 
     // ApplicationArea Property
@@ -2113,7 +2134,8 @@ module.exports = grammar({
       $.additional_search_terms_ml_property,
       $.allow_scheduling_property,
       $.auto_format_expression_property,
-      $.auto_format_type_property
+      $.auto_format_type_property,
+      $.caption_property
     ),
 
     // AllowScheduling Property
@@ -2130,7 +2152,8 @@ module.exports = grammar({
       // XMLport-specific properties will be added here
       $.auto_replace_property,
       $.auto_save_property,
-      $.auto_update_property
+      $.auto_update_property,
+      $.caption_property
     ),
 
     // AutoUpdate Property
@@ -2223,7 +2246,8 @@ module.exports = grammar({
       $.access_property,
       $.apigroup_property,
       $.apiversion_property,
-      $.apipublisher_property
+      $.apipublisher_property,
+      $.caption_property
     ),
 
     // APIVersion Property for queries
