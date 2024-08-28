@@ -3020,7 +3020,8 @@ module.exports = grammar({
       $.about_title_ml_property,  // Added AboutTitleML property
       $.provider_property,  // Added Provider property
       $.query_category_property,  // Added QueryCategory property
-      $.refresh_on_activate_property  // Added RefreshOnActivate property
+      $.refresh_on_activate_property,  // Added RefreshOnActivate property
+      $.run_object_property  // Added RunObject property
     ),
 
     // RefreshOnActivate Property
@@ -3031,6 +3032,21 @@ module.exports = grammar({
       '=',
       field('value', $.boolean_literal),
       ';'
+    ),
+
+    // RunObject Property
+    // Sets the object you want to run immediately when the action is activated.
+    // This property is used on Page Action objects.
+    run_object_property: $ => seq(
+      'RunObject',
+      '=',
+      field('value', $.run_object_value),
+      ';'
+    ),
+
+    run_object_value: $ => seq(
+      field('object_type', choice('Page', 'Report', 'Codeunit', 'Query')),
+      field('object_id', choice($.integer, $.identifier))
     ),
 
     // QueryCategory Property
