@@ -1855,7 +1855,18 @@ module.exports = grammar({
 
     enum_property: $ => choice(
       // Enum-specific properties will be added here
-      $.access_property
+      $.access_property,
+      $.assignment_compatibility_property
+    ),
+
+    // AssignmentCompatibility Property
+    // Sets whether an Enum can be assigned to from another Enum type.
+    // This is intended for backwards compatibility when splitting existing Options into multiple Enums.
+    assignment_compatibility_property: $ => seq(
+      'AssignmentCompatibility',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     enum_value_property: $ => choice(
