@@ -830,7 +830,11 @@ module.exports = grammar({
       $.identifier,
       $.binary_expression,
       $.unary_expression,
-      $.parenthesized_expression
+      $.parenthesized_expression,
+      $.function_call_expression,
+      $.member_access_expression,
+      $.array_access_expression,
+      $.ternary_expression
     ),
 
     binary_expression: $ => prec.left(1, seq(
@@ -849,6 +853,34 @@ module.exports = grammar({
       $._expression,
       ')'
     ),
+
+    function_call_expression: $ => prec(3, seq(
+      field('function', $.identifier),
+      '(',
+      optional($._argument_list),
+      ')'
+    )),
+
+    member_access_expression: $ => prec(4, seq(
+      field('object', $._expression),
+      '.',
+      field('member', $.identifier)
+    )),
+
+    array_access_expression: $ => prec(4, seq(
+      field('array', $._expression),
+      '[',
+      field('index', $._expression),
+      ']'
+    )),
+
+    ternary_expression: $ => prec.right(0, seq(
+      field('condition', $._expression),
+      '?',
+      field('true_expression', $._expression),
+      ':',
+      field('false_expression', $._expression)
+    )),
 
     table_object: $ => seq(
       'table',
