@@ -1796,6 +1796,26 @@ module.exports = grammar({
       $.data_per_company_property
     ),
 
+    // CaptionML Property
+    // Sets the string that displays with the object, control, or other element in the user interface for multiple languages.
+    // This property is used on various AL objects including Tables, Table Fields, Pages, Page Fields, and more.
+    caption_ml_property: $ => seq(
+      'CaptionML',
+      '=',
+      field('value', $.multilanguage_string_literal),
+      ';'
+    ),
+
+    // Multi-language string literal
+    multilanguage_string_literal: $ => seq(
+      repeat1(seq(
+        field('language_code', $.identifier),
+        '=',
+        field('text', $.string_literal),
+        optional(',')
+      ))
+    ),
+
     // CompressionType Property
     // Specifies the compression type used for the table in SQL Server.
     // This property is only applicable to tables with TableType set to Normal.
@@ -2516,6 +2536,7 @@ module.exports = grammar({
       $.auto_format_expression_property,
       $.auto_format_type_property,
       $.caption_property,
+      $.caption_ml_property,
       $.data_access_intent_property,
       $.decimal_places_property,
       $.default_layout_property,
@@ -2558,6 +2579,7 @@ module.exports = grammar({
       $.auto_save_property,
       $.auto_update_property,
       $.caption_property,
+      $.caption_ml_property,
       $.default_fields_validation_property,
       $.direction_property
     ),
@@ -2698,6 +2720,7 @@ module.exports = grammar({
       $.apiversion_property,
       $.apipublisher_property,
       $.caption_property,
+      $.caption_ml_property,
       $.column_filter_property,
       $.data_access_intent_property,
       $.data_item_link_property
