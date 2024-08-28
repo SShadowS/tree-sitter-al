@@ -3642,7 +3642,8 @@ module.exports = grammar({
       $.preview_mode_property,
       $.print_only_if_detail_property,
       $.processing_only_property,
-      $.rdlc_layout_property  // Added RDLCLayout property
+      $.rdlc_layout_property,  // Added RDLCLayout property
+      $.request_page_property  // Added RequestPage property
     ),
 
     // RDLCLayout Property
@@ -3652,6 +3653,16 @@ module.exports = grammar({
       'RDLCLayout',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // RequestPage Property
+    // Specifies the request page for the report.
+    // This property is used on Report objects to define the page that collects user input before running the report.
+    request_page_property: $ => seq(
+      'RequestPage',
+      '=',
+      field('value', $.identifier),
       ';'
     ),
 
