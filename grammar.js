@@ -18,8 +18,35 @@ module.exports = grammar({
       $.profile_object,
       $.query_object,
       $.report_extension_object,
-      $.report_object
+      $.report_object,
+      $.enum_object
       // Other object types can be added here in the future
+    ),
+
+    enum_object: $ => seq(
+      'enum',
+      field('id', $.integer),
+      field('name', $.string),
+      '{',
+      repeat($._enum_element),
+      '}'
+    ),
+
+    _enum_element: $ => choice(
+      $.property,
+      $.value
+    ),
+
+    value: $ => seq(
+      'value',
+      '(',
+      field('id', $.integer),
+      ';',
+      field('name', $.string),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
     ),
 
     table_extension_object: $ => seq(
