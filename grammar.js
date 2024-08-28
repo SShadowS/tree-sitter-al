@@ -1996,6 +1996,26 @@ module.exports = grammar({
       ';'
     ),
 
+    // ExtendedDatatype Property
+    // Sets the extended data type of a control.
+    // This property is used on Table Fields and Page Fields.
+    extended_datatype_property: $ => seq(
+      'ExtendedDatatype',
+      '=',
+      field('value', choice(
+        'None',
+        'PhoneNo',
+        'URL',
+        'EMail',
+        'Ratio',
+        'Masked',
+        'Person',
+        'Barcode',
+        'RichContent'
+      )),
+      ';'
+    ),
+
     // CaptionML Property
     // Sets the string that displays with the object, control, or other element in the user interface for multiple languages.
     // This property is used on various AL objects including Tables, Table Fields, Pages, Page Fields, and more.
@@ -2059,7 +2079,8 @@ module.exports = grammar({
       $.date_formula_property,
       $.decimal_places_property,
       $.editable_property,
-      $.enabled_property
+      $.enabled_property,
+      $.extended_datatype_property
     ),
 
     // ColumnSpan Property
