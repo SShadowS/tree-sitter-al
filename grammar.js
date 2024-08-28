@@ -3022,7 +3022,8 @@ module.exports = grammar({
       $.query_category_property,
       $.refresh_on_activate_property,
       $.run_object_property,
-      $.run_page_link_property  // Added RunPageLink property
+      $.run_page_link_property,  // Added RunPageLink property
+      $.run_page_mode_property  // Added RunPageMode property
     ),
 
     // RefreshOnActivate Property
@@ -3074,6 +3075,16 @@ module.exports = grammar({
         )),
         optional(',')
       )
+    ),
+
+    // RunPageMode Property
+    // Sets the mode in which the page is run. Choose between View, Edit, or Create.
+    // This property is used on Page Action objects.
+    run_page_mode_property: $ => seq(
+      'RunPageMode',
+      '=',
+      field('value', choice('View', 'Edit', 'Create')),
+      ';'
     ),
 
     // QueryCategory Property
