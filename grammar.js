@@ -3094,7 +3094,18 @@ module.exports = grammar({
       $.shortcut_key_property,
       $.show_as_tree_property,
       $.show_caption_property,
-      $.show_mandatory_property  // Added ShowMandatory property
+      $.show_mandatory_property,  // Added ShowMandatory property
+      $.source_table_property  // Added SourceTable property
+    ),
+
+    // SourceTable Property
+    // Sets the ID of the table from which this page will display records.
+    // This property is used on Page and Request Page objects.
+    source_table_property: $ => seq(
+      'SourceTable',
+      '=',
+      field('value', $.identifier),
+      ';'
     ),
 
     // SharedLayout Property
