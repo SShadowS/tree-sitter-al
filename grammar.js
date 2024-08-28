@@ -2067,35 +2067,34 @@ module.exports = grammar({
       $.data_caption_fields_property,
       $.data_classification_property,
       $.data_per_company_property,
+      $.data_deletion_allowed_property,
+      $.drill_down_page_id_property,
       $.enabled_property,
       $.extensible_property,
       $.external_name_property,
       $.external_schema_property,
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.is_control_addin_property,
-      $.key_property,  // Added Key property
-      $.linked_object_property,  // Added LinkedObject property
-      $.lookup_page_id_property,  // Added LookupPageId property
-      $.moved_from_property,  // Added MovedFrom property
-      $.moved_to_property,  // Added MovedTo property
-      $.obsolete_reason_property,  // Added ObsoleteReason property
-      $.obsolete_state_property,  // Added ObsoleteState property
-      $.obsolete_tag_property,  // Added ObsoleteTag property
-      $.paste_is_valid_property,  // Added PasteIsValid property
-      $.permissions_property,  // Added Permissions property
-      $.about_title_property,  // Added AboutTitle property
-      $.data_deletion_allowed_property,  // Added DataDeletionAllowed property
-      $.public_key_token_property,  // Added PublicKeyToken property
-      $.recreate_script_property,  // Added RecreateScript property
-      $.replicate_data_property,  // Added ReplicateData property
-      $.table_type_property,  // Added TableType property
-      $.data_classification_fields_property,  // Added DataClassificationFields property
-      $.about_title_ml_property,  // Added AboutTitleML property
-      $.scope_property,  // Added Scope property
-      $.fields_property,  // Added Fields property
-      $.about_text_property,  // Added AboutText property
-      $.source_table_temporary_property  // Added SourceTableTemporary property
+      $.key_property,
+      $.linked_in_transaction_property,
+      $.linked_object_property,
+      $.lookup_page_id_property,
+      $.moved_from_property,
+      $.moved_to_property,
+      $.obsolete_reason_property,
+      $.obsolete_state_property,
+      $.obsolete_tag_property,
+      $.paste_is_valid_property,
+      $.permissions_property,
+      $.replicate_data_property,
+      $.table_type_property,
+      $.data_classification_fields_property,
+      $.scope_property,
+      $.fields_property,
+      $.about_title_property,
+      $.about_title_ml_property,
+      $.about_text_property,
+      $.about_text_ml_property
     ),
 
     // DataClassificationFields Property
@@ -2324,6 +2323,26 @@ module.exports = grammar({
       'LinkedObject',
       '=',
       field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // LinkedInTransaction Property
+    // Specifies whether the table is linked in a transaction.
+    // This property is used on Table objects.
+    linked_in_transaction_property: $ => seq(
+      'LinkedInTransaction',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // AboutTextML Property
+    // Sets the body of text that appears in a teaching tip in the UI, supporting multiple languages.
+    // This property is used on Table objects.
+    about_text_ml_property: $ => seq(
+      'AboutTextML',
+      '=',
+      field('value', $.multilanguage_string_literal),
       ';'
     ),
 
