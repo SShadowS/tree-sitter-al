@@ -2162,7 +2162,18 @@ module.exports = grammar({
       $.field_class_property,
       $.init_value_property,
       $.instructional_text_property,
-      $.max_value_property  // Added MaxValue property
+      $.max_value_property,  // Added MaxValue property
+      $.min_value_property  // Added MinValue property
+    ),
+
+    // MinValue Property
+    // Sets the minimum numeric value for a field.
+    // This property is used on Table Fields and Page Fields.
+    min_value_property: $ => seq(
+      'MinValue',
+      '=',
+      field('value', $._value),
+      ';'
     ),
 
     // ExternalAccess Property
