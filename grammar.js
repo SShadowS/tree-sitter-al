@@ -3223,7 +3223,18 @@ module.exports = grammar({
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
       $.link_table_property,  // Added LinkTable property
-      $.link_table_force_insert_property  // Added LinkTableForceInsert property
+      $.link_table_force_insert_property,  // Added LinkTableForceInsert property
+      $.max_occurs_property  // Added MaxOccurs property
+    ),
+
+    // MaxOccurs Property
+    // Sets a value that indicates the maximum number of times an element can occur.
+    // This property is used on XMLport Text Elements, XMLport Table Elements, and XMLport Field Elements.
+    max_occurs_property: $ => seq(
+      'MaxOccurs',
+      '=',
+      field('value', choice('Once', 'Unbounded')),
+      ';'
     ),
 
     // LinkTableForceInsert Property
