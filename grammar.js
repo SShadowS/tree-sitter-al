@@ -1612,7 +1612,18 @@ module.exports = grammar({
       $.allow_multiple_files_property,
       $.analysis_mode_enabled_property,
       $.apigroup_property,
-      $.apipublisher_property
+      $.apipublisher_property,
+      $.apiversion_property
+    ),
+
+    // APIVersion Property
+    // Sets the version of the API endpoint that the page is exposed in.
+    // This property can only be set if the PageType is set to API.
+    apiversion_property: $ => seq(
+      'APIVersion',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // APIPublisher Property
@@ -1837,7 +1848,8 @@ module.exports = grammar({
     query_property: $ => choice(
       // Query-specific properties will be added here
       $.access_property,
-      $.apigroup_property
+      $.apigroup_property,
+      $.apiversion_property
     ),
 
     // APIGroup Property for queries
@@ -1845,6 +1857,16 @@ module.exports = grammar({
     // This property can only be set if the QueryType is set to API.
     apigroup_property: $ => seq(
       'APIGroup',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    // APIVersion Property for queries
+    // Sets the version of the API endpoint that the query is exposed in.
+    // This property can only be set if the QueryType is set to API.
+    apiversion_property: $ => seq(
+      'APIVersion',
       '=',
       field('value', $.string_literal),
       ';'
