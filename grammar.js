@@ -2093,7 +2093,8 @@ module.exports = grammar({
       $.about_title_ml_property,  // Added AboutTitleML property
       $.scope_property,  // Added Scope property
       $.fields_property,  // Added Fields property
-      $.about_text_property  // Added AboutText property
+      $.about_text_property,  // Added AboutText property
+      $.source_table_temporary_property  // Added SourceTableTemporary property
     ),
 
     // DataClassificationFields Property
@@ -5699,3 +5700,12 @@ module.exports = grammar({
     )
   }
 });
+    // SourceTableTemporary Property
+    // Sets whether the source table is a temporary table.
+    // This property is used on Page and Request Page objects.
+    source_table_temporary_property: $ => seq(
+      'SourceTableTemporary',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
