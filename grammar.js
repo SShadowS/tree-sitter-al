@@ -1611,7 +1611,18 @@ module.exports = grammar({
       $.allowed_file_extensions_property,
       $.allow_multiple_files_property,
       $.analysis_mode_enabled_property,
-      $.apigroup_property
+      $.apigroup_property,
+      $.apipublisher_property
+    ),
+
+    // APIPublisher Property
+    // Sets the publisher of the API endpoint that the page is exposed in.
+    // This property can only be set if the PageType is set to API.
+    apipublisher_property: $ => seq(
+      'APIPublisher',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // APIGroup Property
