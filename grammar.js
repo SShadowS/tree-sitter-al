@@ -2075,7 +2075,18 @@ module.exports = grammar({
       $.about_title_property,  // Added AboutTitle property
       $.data_deletion_allowed_property,  // Added DataDeletionAllowed property
       $.public_key_token_property,  // Added PublicKeyToken property
-      $.recreate_script_property  // Added RecreateScript property
+      $.recreate_script_property,  // Added RecreateScript property
+      $.replicate_data_property  // Added ReplicateData property
+    ),
+
+    // ReplicateData Property
+    // Specifies if the table should be replicated.
+    // This property is used on Table objects.
+    replicate_data_property: $ => seq(
+      'ReplicateData',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // AboutTitle Property
