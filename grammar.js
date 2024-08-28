@@ -407,7 +407,40 @@ module.exports = grammar({
       $.onnewrecord_trigger,
       $.onnextrecord_trigger,
       $.onopenpage_trigger,
-      $.onpagebackgroundtaskcompleted_trigger
+      $.onpagebackgroundtaskcompleted_trigger,
+      $.onpagebackgroundtaskerror_trigger
+    ),
+
+    // OnPageBackgroundTaskError trigger for pages
+    // This trigger runs when an error occurs in a page background task
+    // It's used to handle errors that occur during asynchronous operations on pages
+    // The trigger receives the task ID, error code, error text, error call stack, and a boolean to indicate if the error has been handled
+    onpagebackgroundtaskerror_trigger: $ => seq(
+      'trigger',
+      'OnPageBackgroundTaskError',
+      '(',
+      'TaskId',
+      ':',
+      'Integer',
+      ';',
+      'ErrorCode',
+      ':',
+      'Text',
+      ';',
+      'ErrorText',
+      ':',
+      'Text',
+      ';',
+      'ErrorCallStack',
+      ':',
+      'Text',
+      ';',
+      'var',
+      'IsHandled',
+      ':',
+      'Boolean',
+      ')',
+      field('body', $.code_block)
     ),
 
     // OnPageBackgroundTaskCompleted trigger for pages
