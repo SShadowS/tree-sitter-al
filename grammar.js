@@ -2757,7 +2757,18 @@ module.exports = grammar({
       $.default_layout_property,
       $.default_rendering_layout_property,
       $.enable_external_assemblies_property,
-      $.enable_external_images_property
+      $.enable_external_images_property,
+      $.enable_hyperlinks_property
+    ),
+
+    // EnableHyperlinks Property
+    // Sets whether hyperlinks to URLs are allowed on reports.
+    // This property is used on Report objects.
+    enable_hyperlinks_property: $ => seq(
+      'EnableHyperlinks',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // EnableExternalImages Property
