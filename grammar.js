@@ -2982,11 +2982,6 @@ module.exports = grammar({
       )),
       ';'
     ),
-      'FieldDelimiter',
-      '=',
-      field('value', choice($.string_literal, "'<None>'")),
-      ';'
-    ),
 
     // FileName Property
     // Sets the name of the external file to read data from or write data to an XMLport.
