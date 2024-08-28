@@ -2090,7 +2090,8 @@ module.exports = grammar({
       $.replicate_data_property,  // Added ReplicateData property
       $.table_type_property,  // Added TableType property
       $.data_classification_fields_property,  // Added DataClassificationFields property
-      $.about_title_ml_property  // Added AboutTitleML property
+      $.about_title_ml_property,  // Added AboutTitleML property
+      $.scope_property  // Added Scope property
     ),
 
     // DataClassificationFields Property
@@ -2120,6 +2121,16 @@ module.exports = grammar({
       'TableType',
       '=',
       field('value', choice('Normal', 'CRM', 'ExternalSQL', 'MicrosoftGraph', 'Temporary')),
+      ';'
+    ),
+
+    // Scope Property
+    // Sets the scope of a table.
+    // This property is used on Table objects to determine the availability of the table in different environments.
+    scope_property: $ => seq(
+      'Scope',
+      '=',
+      field('value', choice('Cloud', 'OnPrem')),
       ';'
     ),
 
