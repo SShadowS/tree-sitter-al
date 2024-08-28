@@ -3308,9 +3308,27 @@ module.exports = grammar({
       $.format_region_property,
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.maximum_dataset_size_property,  // Added MaximumDatasetSize property
-      $.maximum_document_count_property,  // Added MaximumDocumentCount property
-      $.max_iteration_property  // Added MaxIteration property
+      $.maximum_dataset_size_property,
+      $.maximum_document_count_property,
+      $.max_iteration_property,
+      $.option_members_property  // Added OptionMembers property
+    ),
+
+    // OptionMembers Property
+    // Sets the list of options that are available in the report column that is currently selected.
+    // This property is used on Report Columns.
+    option_members_property: $ => seq(
+      'OptionMembers',
+      '=',
+      field('value', $.option_members_value),
+      ';'
+    ),
+
+    option_members_value: $ => seq(
+      repeat1(seq(
+        $.string_literal,
+        optional(',')
+      ))
     ),
 
     // MaxIteration Property
