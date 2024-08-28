@@ -2962,7 +2962,18 @@ module.exports = grammar({
       $.promoted_is_big_property,  // Added PromotedIsBig property
       $.promoted_only_property,  // Added PromotedOnly property
       $.about_title_ml_property,  // Added AboutTitleML property
-      $.provider_property  // Added Provider property
+      $.provider_property,  // Added Provider property
+      $.query_category_property  // Added QueryCategory property
+    ),
+
+    // QueryCategory Property
+    // Specifies the query category that the page supports.
+    // This property is used on Page objects.
+    query_category_property: $ => seq(
+      'QueryCategory',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // Provider Property
@@ -4199,7 +4210,26 @@ module.exports = grammar({
       $.method_property,  // Added Method property
       $.order_by_property,  // Added OrderBy property
       $.permissions_property,  // Added Permissions property
-      $.query_type_property  // Added QueryType property
+      $.query_type_property,  // Added QueryType property
+      $.query_category_property  // Added QueryCategory property
+    ),
+
+    // QueryCategory Property
+    // Specifies one or more query categories that the query supports.
+    // This property is used on Query objects.
+    query_category_property: $ => seq(
+      'QueryCategory',
+      '=',
+      field('value', $.query_category_value),
+      ';'
+    ),
+
+    query_category_value: $ => choice(
+      $.string_literal,
+      seq(
+        $.string_literal,
+        repeat(seq(',', $.string_literal))
+      )
     ),
 
     // QueryType Property
