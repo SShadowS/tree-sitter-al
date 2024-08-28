@@ -1849,7 +1849,18 @@ module.exports = grammar({
       // Query-specific properties will be added here
       $.access_property,
       $.apigroup_property,
-      $.apiversion_property
+      $.apiversion_property,
+      $.apipublisher_property
+    ),
+
+    // APIPublisher Property for queries
+    // Sets the publisher of the API endpoint that the query is exposed in.
+    // This property can only be set if the QueryType is set to API.
+    apipublisher_property: $ => seq(
+      'APIPublisher',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // APIGroup Property for queries
