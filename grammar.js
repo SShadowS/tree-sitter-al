@@ -2695,7 +2695,8 @@ module.exports = grammar({
       $.is_preview_property,  // Added IsPreview property
       $.links_allowed_property,  // Added LinksAllowed property
       $.lookup_property,  // Added Lookup property
-      $.modify_allowed_property  // Added ModifyAllowed property
+      $.modify_allowed_property,  // Added ModifyAllowed property
+      $.multiline_property  // Added MultiLine property
     ),
 
     // LinksAllowed Property
@@ -2723,6 +2724,16 @@ module.exports = grammar({
     // This property is used on Page and Request Page objects.
     modify_allowed_property: $ => seq(
       'ModifyAllowed',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // MultiLine Property
+    // Sets the value that indicates whether a field can display multiple lines of text.
+    // This property is used on Page Labels and Page Fields.
+    multiline_property: $ => seq(
+      'MultiLine',
       '=',
       field('value', $.boolean_literal),
       ';'
