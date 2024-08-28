@@ -45,11 +45,6 @@ module.exports = grammar({
       optional(field('al', $.string)) // AL property for table-level property alias
     ),
 
-    table_level_property: $ => seq(
-      $.property,
-      optional(field('al', $.string)) // AL property for table-level property alias
-    ),
-
     property: $ => seq(
       field('name', $.property_name),
       '=',
@@ -134,6 +129,7 @@ module.exports = grammar({
       'Caption',
       '=',
       field('value', $.string),
+      optional(field('al', $.string)), // AL property for caption alias
       optional(';')
     ),
 
