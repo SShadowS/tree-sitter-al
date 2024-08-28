@@ -1650,7 +1650,18 @@ module.exports = grammar({
       $.access_property,
       $.caption_property,
       $.caption_ml_property,
-      $.column_store_index_property
+      $.column_store_index_property,
+      $.compression_type_property
+    ),
+
+    // CompressionType Property
+    // Specifies the compression type used for the table in SQL Server.
+    // This property is only applicable to tables with TableType set to Normal.
+    compression_type_property: $ => seq(
+      'CompressionType',
+      '=',
+      field('value', choice('None', 'Row', 'Page', 'Unspecified')),
+      ';'
     ),
 
     // ColumnStoreIndex Property
