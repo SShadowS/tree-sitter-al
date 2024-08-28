@@ -1985,7 +1985,8 @@ module.exports = grammar({
       $.data_per_company_property,
       $.enabled_property,
       $.extensible_property,
-      $.external_name_property
+      $.external_name_property,
+      $.external_schema_property
     ),
 
     // Enabled Property
@@ -2102,6 +2103,16 @@ module.exports = grammar({
     // This property is used on Tables and Table Fields.
     external_name_property: $ => seq(
       'ExternalName',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    // ExternalSchema Property
+    // Specifies the name of the database schema of the external database.
+    // This property is used on Table objects.
+    external_schema_property: $ => seq(
+      'ExternalSchema',
       '=',
       field('value', $.string_literal),
       ';'
