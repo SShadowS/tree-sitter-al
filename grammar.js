@@ -2637,6 +2637,17 @@ module.exports = grammar({
 
     profile_property: $ => choice(
       // Profile-specific properties will be added here
+      $.customizations_property
+    ),
+
+    // Customizations Property
+    // Specifies the Page Customizations which are applied with this profile.
+    // This property is used on Profile objects.
+    customizations_property: $ => seq(
+      'Customizations',
+      '=',
+      field('value', $.identifier_list),
+      ';'
     ),
 
     page_customization_property: $ => choice(
