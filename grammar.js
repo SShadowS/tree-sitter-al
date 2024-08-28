@@ -2021,7 +2021,8 @@ module.exports = grammar({
       $.caption_class_property,
       $.card_page_id_property,
       $.change_tracking_allowed_property,
-      $.context_sensitive_help_page_property
+      $.context_sensitive_help_page_property,
+      $.cuegroup_layout_property
     ),
 
     // ContextSensitiveHelpPage Property
@@ -2031,6 +2032,16 @@ module.exports = grammar({
       'ContextSensitiveHelpPage',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // CuegroupLayout Property
+    // Specifies if the layout is wide for a Page Group.
+    // This property is used on Page Group objects.
+    cuegroup_layout_property: $ => seq(
+      'CuegroupLayout',
+      '=',
+      field('value', choice('Wide')),
       ';'
     ),
 
