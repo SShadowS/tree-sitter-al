@@ -2197,7 +2197,8 @@ module.exports = grammar({
       $.max_value_property,  // Added MaxValue property
       $.min_value_property,  // Added MinValue property
       $.moved_from_property,  // Added MovedFrom property
-      $.moved_to_property  // Added MovedTo property
+      $.moved_to_property,  // Added MovedTo property
+      $.navigation_page_id_property  // Added NavigationPageId property
     ),
 
     // MovedTo Property
@@ -2207,6 +2208,16 @@ module.exports = grammar({
       'MovedTo',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // NavigationPageId Property
+    // Specifies which page the TableRelation should navigate to.
+    // This property is used on Page Field objects.
+    navigation_page_id_property: $ => seq(
+      'NavigationPageId',
+      '=',
+      field('value', choice($.integer, $.identifier)),
       ';'
     ),
 
