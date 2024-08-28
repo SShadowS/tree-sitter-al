@@ -2588,7 +2588,20 @@ module.exports = grammar({
       // Enum-specific properties will be added here
       $.access_property,
       $.assignment_compatibility_property,
-      $.assignment_compatibility_reason_property
+      $.assignment_compatibility_reason_property,
+      $.default_implementation_property
+    ),
+
+    // DefaultImplementation Property
+    // Specifies the default implementer for the enum value if there is no explicit implementer set for the value.
+    // This property is used on Enum objects.
+    default_implementation_property: $ => seq(
+      'DefaultImplementation',
+      '=',
+      field('interface', $.identifier),
+      '=',
+      field('implementation', $.identifier),
+      ';'
     ),
 
     // AssignmentCompatibility Property
