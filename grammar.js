@@ -399,7 +399,8 @@ module.exports = grammar({
       $.property,
       $.calc_fields_property,
       $.data_item_link_property,
-      $.data_item_link_reference_property
+      $.data_item_link_reference_property,
+      $.data_item_table_view_property
     ),
 
     // DataItemLinkReference Property
@@ -417,6 +418,16 @@ module.exports = grammar({
     // This property is used on Report DataItems and Query DataItems.
     data_item_link_property: $ => seq(
       'DataItemLink',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    // DataItemTableView Property
+    // Sets the key on which to sort, the sort order, and the filters for the data item.
+    // This property is used on Report Data Items.
+    data_item_table_view_property: $ => seq(
+      'DataItemTableView',
       '=',
       field('value', $.string_literal),
       ';'
