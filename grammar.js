@@ -1064,7 +1064,8 @@ module.exports = grammar({
       $.property,
       $.ondelete_trigger,
       $.oninsert_trigger,
-      $.onmodify_trigger
+      $.onmodify_trigger,
+      $.onrename_trigger
       // Other table elements can be added here
     ),
 
@@ -1100,6 +1101,20 @@ module.exports = grammar({
     onmodify_trigger: $ => seq(
       'trigger',
       'OnModify',
+      '(',
+      ')',
+      field('body', $.code_block)
+    ),
+
+    // OnRename trigger for tables
+    // This trigger runs when a user tries to rename a record in the table
+    // It's executed after field validation and before the default renaming behavior
+    // It can be used to perform custom actions or validations before the rename occurs
+    // The record is not renamed if an error occurs in the trigger code
+    // Note: This trigger runs automatically when the user changes a record's primary key field in a page from the Web Client
+    onrename_trigger: $ => seq(
+      'trigger',
+      'OnRename',
       '(',
       ')',
       field('body', $.code_block)
