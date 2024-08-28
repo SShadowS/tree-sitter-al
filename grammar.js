@@ -100,7 +100,14 @@ module.exports = grammar({
       $.number,
       $.boolean,
       $.identifier,
-      $.array
+      $.array,
+      $.enum_value
+    ),
+
+    enum_value: $ => seq(
+      $.identifier,
+      '::',
+      $.identifier
     ),
 
     array: $ => seq(
@@ -252,14 +259,20 @@ module.exports = grammar({
     object_name: $ => /"[^"]*"/,
     field_id: $ => /[0-9]+/,
     field_name: $ => /"[^"]*"/,
-    field_type: $ => $.identifier,
+    field_type: $ => choice(
+      $.identifier,
+      seq($.identifier, optional(seq('(', $.number, ')')))
+    ),
     property_name: $ => $.identifier,
     property_value: $ => choice($.string, $.number, $.boolean, $.identifier),
     trigger_name: $ => $.identifier,
     procedure_name: $ => $.identifier,
     type: $ => $.identifier,
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    string: $ => /"[^"]*"/,
+    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_.]*/,
+    string: $ => choice(
+      /"[^"]*"/,
+      /'[^']*'/
+    ),
     number: $ => /[0-9]+(\.[0-9]+)?/,
     boolean: $ => choice('true', 'false')
   }
