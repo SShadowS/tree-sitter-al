@@ -1586,7 +1586,17 @@ module.exports = grammar({
     field_property: $ => choice(
       // Field-specific properties will be added here
       $.access_property,
-      $.access_by_permission_property
+      $.access_by_permission_property,
+      $.allow_in_customizations_property
+    ),
+
+    // AllowInCustomizations Property
+    // Specifies whether this table field can be used as source expression for new page fields in page customizations.
+    allow_in_customizations_property: $ => seq(
+      'AllowInCustomizations',
+      '=',
+      field('value', choice('Always', 'Never')),
+      ';'
     ),
 
     page_property: $ => choice(
