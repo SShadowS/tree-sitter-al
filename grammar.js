@@ -2930,7 +2930,39 @@ module.exports = grammar({
       $.preserve_whitespace_property,
       $.promoted_property,  // Added Promoted property
       $.promoted_action_categories_property,  // Added PromotedActionCategories property
-      $.promoted_action_categories_ml_property  // Added PromotedActionCategoriesML property
+      $.promoted_action_categories_ml_property,  // Added PromotedActionCategoriesML property
+      $.promoted_category_property  // Added PromotedCategory property
+    ),
+
+    // PromotedCategory Property
+    // Sets a category for a promoted action.
+    // This property is used on Page Action objects.
+    promoted_category_property: $ => seq(
+      'PromotedCategory',
+      '=',
+      field('value', choice(
+        'New',
+        'Process',
+        'Report',
+        'Category4',
+        'Category5',
+        'Category6',
+        'Category7',
+        'Category8',
+        'Category9',
+        'Category10',
+        'Category11',
+        'Category12',
+        'Category13',
+        'Category14',
+        'Category15',
+        'Category16',
+        'Category17',
+        'Category18',
+        'Category19',
+        'Category20'
+      )),
+      ';'
     ),
 
     // PromotedActionCategories Property
