@@ -2538,7 +2538,18 @@ module.exports = grammar({
       $.freeze_column_property,
       $.gesture_property,
       $.grid_layout_property,  // Added GridLayout property
-      $.help_link_property  // Added HelpLink property
+      $.help_link_property,  // Added HelpLink property
+      $.horizontal_shrink_property  // Added HorizontalShrink property
+    ),
+
+    // HorizontalShrink Property
+    // Specifies that the control add-in can be made smaller horizontally.
+    // This property is used on Control Add In objects.
+    horizontal_shrink_property: $ => seq(
+      'HorizontalShrink',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // DrillDownPageId Property
