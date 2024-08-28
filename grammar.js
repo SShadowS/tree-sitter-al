@@ -2534,7 +2534,8 @@ module.exports = grammar({
       $.flow_caption_property,
       $.flow_id_property,
       $.flow_template_category_name_property,
-      $.flow_template_id_property
+      $.flow_template_id_property,
+      $.freeze_column_property
     ),
 
     // DrillDownPageId Property
@@ -3700,6 +3701,16 @@ module.exports = grammar({
       'FlowTemplateId',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // FreezeColumn Property
+    // Specifies the columns in a list that remain in view on a page, even when you scroll right.
+    // This property is used on Page Groups.
+    freeze_column_property: $ => seq(
+      'FreezeColumn',
+      '=',
+      field('value', $.identifier),
       ';'
     ),
 
