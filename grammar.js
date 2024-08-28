@@ -2256,7 +2256,18 @@ module.exports = grammar({
       $.numeric_property,  // Added Numeric property
       $.obsolete_reason_property,  // Added ObsoleteReason property
       $.obsolete_tag_property,  // Added ObsoleteTag property
-      $.option_caption_property  // Added OptionCaption property
+      $.option_caption_property,  // Added OptionCaption property
+      $.option_caption_ml_property  // Added OptionCaptionML property
+    ),
+
+    // OptionCaptionML Property
+    // Sets the strings that are displayed to the user for selecting an option in multiple languages.
+    // This property is used on Table Fields, Page Fields, and Report Columns.
+    option_caption_ml_property: $ => seq(
+      'OptionCaptionML',
+      '=',
+      field('value', $.multilanguage_string_literal),
+      ';'
     ),
 
     // NotBlank Property
