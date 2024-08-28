@@ -2214,7 +2214,8 @@ module.exports = grammar({
       $.data_caption_expression_property,
       $.data_caption_fields_property,
       $.data_classification_property,
-      $.delayed_insert_property
+      $.delayed_insert_property,
+      $.delete_allowed_property
     ),
 
     // DataCaptionExpression Property
@@ -2960,6 +2961,16 @@ module.exports = grammar({
     // This property is used on Page objects.
     delayed_insert_property: $ => seq(
       'DelayedInsert',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // DeleteAllowed Property
+    // Sets a value that specifies whether users can delete records while using the page.
+    // This property is used on Page and Request Page objects.
+    delete_allowed_property: $ => seq(
+      'DeleteAllowed',
       '=',
       field('value', $.boolean_literal),
       ';'
