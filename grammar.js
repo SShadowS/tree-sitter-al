@@ -4373,7 +4373,18 @@ module.exports = grammar({
       $.permissions_property,  // Added Permissions property
       $.query_type_property,  // Added QueryType property
       $.query_category_property,  // Added QueryCategory property
-      $.read_state_property  // Added ReadState property
+      $.read_state_property,  // Added ReadState property
+      $.reverse_sign_property  // Added ReverseSign property
+    ),
+
+    // ReverseSign Property
+    // Changes negative values into positive values and positive values into negative values in a column of a resulting query data set.
+    // This property is used on Query Column objects.
+    reverse_sign_property: $ => seq(
+      'ReverseSign',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // ReadState Property
