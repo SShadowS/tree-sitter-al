@@ -397,7 +397,8 @@ module.exports = grammar({
       $.layout,
       $.actions,
       $.views,
-      $.onaftergetcurrrecord_trigger
+      $.onaftergetcurrrecord_trigger,
+      $.onclosepage_trigger
     ),
 
     // OnAfterGetCurrRecord trigger for pages
@@ -407,6 +408,18 @@ module.exports = grammar({
     onaftergetcurrrecord_trigger: $ => seq(
       'trigger',
       'OnAfterGetCurrRecord',
+      '(',
+      ')',
+      field('body', $.code_block)
+    ),
+
+    // OnClosePage trigger for pages
+    // This trigger runs when a page is about to close
+    // It's called after the OnQueryClosePage trigger (if it exists)
+    // It can be used to perform cleanup operations or final checks before the page is closed
+    onclosepage_trigger: $ => seq(
+      'trigger',
+      'OnClosePage',
       '(',
       ')',
       field('body', $.code_block)
