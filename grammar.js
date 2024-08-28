@@ -1835,7 +1835,8 @@ module.exports = grammar({
       $.closing_dates_property,
       $.column_span_property,
       $.compressed_property,
-      $.data_classification_property
+      $.data_classification_property,
+      $.date_formula_property
     ),
 
     // ColumnSpan Property
@@ -2889,6 +2890,17 @@ module.exports = grammar({
         'AccountData',
         'ToBeClassified'
       )),
+      ';'
+    ),
+
+    // DateFormula Property
+    // Sets a date formula used to verify that the date the user enters is correct.
+    // This property is used on Table Fields and Page Fields.
+    // Note: This property is deprecated and it's recommended to use the DateFormula Data Type instead.
+    date_formula_property: $ => seq(
+      'DateFormula',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
