@@ -4149,7 +4149,18 @@ module.exports = grammar({
     profile_property: $ => choice(
       // Profile-specific properties will be added here
       $.customizations_property,
-      $.enabled_property
+      $.enabled_property,
+      $.profile_description_property  // Added ProfileDescription property
+    ),
+
+    // ProfileDescription Property
+    // Sets a description for the profile that appears in the UI when users select profiles.
+    // This property is used on Profile objects.
+    profile_description_property: $ => seq(
+      'ProfileDescription',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // Enabled Property for profiles
