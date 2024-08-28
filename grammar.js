@@ -2042,7 +2042,18 @@ module.exports = grammar({
       $.moved_to_property,  // Added MovedTo property
       $.obsolete_reason_property,  // Added ObsoleteReason property
       $.obsolete_state_property,  // Added ObsoleteState property
-      $.obsolete_tag_property  // Added ObsoleteTag property
+      $.obsolete_tag_property,  // Added ObsoleteTag property
+      $.paste_is_valid_property  // Added PasteIsValid property
+    ),
+
+    // PasteIsValid Property
+    // Sets whether inserting records into this table using the paste command is enabled.
+    // This property is used on Table objects.
+    paste_is_valid_property: $ => seq(
+      'PasteIsValid',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // ObsoleteTag Property
