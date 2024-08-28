@@ -2199,7 +2199,8 @@ module.exports = grammar({
       $.moved_from_property,  // Added MovedFrom property
       $.moved_to_property,  // Added MovedTo property
       $.navigation_page_id_property,  // Added NavigationPageId property
-      $.not_blank_property  // Added NotBlank property
+      $.not_blank_property,  // Added NotBlank property
+      $.numeric_property  // Added Numeric property
     ),
 
     // NotBlank Property
@@ -2207,6 +2208,16 @@ module.exports = grammar({
     // This property is used on Table Fields and Page Fields.
     not_blank_property: $ => seq(
       'NotBlank',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // Numeric Property
+    // Sets a value that requires users to enter only numbers in the field.
+    // This property is used on Table Fields and Page Fields.
+    numeric_property: $ => seq(
+      'Numeric',
       '=',
       field('value', $.boolean_literal),
       ';'
