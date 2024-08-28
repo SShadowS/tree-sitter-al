@@ -4161,6 +4161,17 @@ module.exports = grammar({
 
     report_layout_property: $ => choice(
       // Report layout-specific properties will be added here
+      $.mime_type_property
+    ),
+
+    // MimeType Property
+    // Sets the mimetype that is associated with this custom report layout.
+    // This property is used on Report Layout objects.
+    mime_type_property: $ => seq(
+      'MimeType',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     workflow_property: $ => choice(
