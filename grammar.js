@@ -2755,7 +2755,18 @@ module.exports = grammar({
       $.data_access_intent_property,
       $.decimal_places_property,
       $.default_layout_property,
-      $.default_rendering_layout_property
+      $.default_rendering_layout_property,
+      $.enable_external_assemblies_property
+    ),
+
+    // EnableExternalAssemblies Property
+    // Sets whether external Microsoft .NET assemblies can be used on a report.
+    // This property is used on Report objects.
+    enable_external_assemblies_property: $ => seq(
+      'EnableExternalAssemblies',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // DefaultRenderingLayout Property
