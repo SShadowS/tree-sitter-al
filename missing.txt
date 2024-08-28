@@ -15,3 +15,5 @@ Action type needs to be defined. It's used in the OnQueryClosePage trigger for p
 Interface object needs to be defined. It's mentioned in the Access property documentation as one of the object types that can use this property. We should add rules in the grammar.js file to define the interface object and its elements.
 
 QueryType property needs to be defined for queries. It's used to specify the type of query, such as "API" for API queries. We should add a rule in the grammar.js file to handle the QueryType property, especially for API queries that use the APIGroup property.
+
+The APIVersion property for queries has been updated in the grammar.js file. It now includes a comment mentioning that the default value is 'beta' if not specified. The QueryType property should be implemented to fully support the APIVersion property's functionality.

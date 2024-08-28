@@ -1878,6 +1878,7 @@ module.exports = grammar({
     // APIVersion Property for queries
     // Sets the version(s) of the API endpoint the query is exposed in.
     // This property can only be set if the QueryType is set to API.
+    // If not specified, the default value is 'beta'.
     apiversion_property: $ => seq(
       'APIVersion',
       '=',
