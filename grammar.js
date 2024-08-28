@@ -2660,7 +2660,8 @@ module.exports = grammar({
       $.is_header_property,  // Added IsHeader property
       $.is_preview_property,  // Added IsPreview property
       $.links_allowed_property,  // Added LinksAllowed property
-      $.lookup_property  // Added Lookup property
+      $.lookup_property,  // Added Lookup property
+      $.modify_allowed_property  // Added ModifyAllowed property
     ),
 
     // LinksAllowed Property
@@ -2678,6 +2679,16 @@ module.exports = grammar({
     // This property is used on Page Field objects.
     lookup_property: $ => seq(
       'Lookup',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // ModifyAllowed Property
+    // Sets the value to determine whether users can modify records while using this page.
+    // This property is used on Page and Request Page objects.
+    modify_allowed_property: $ => seq(
+      'ModifyAllowed',
       '=',
       field('value', $.boolean_literal),
       ';'
