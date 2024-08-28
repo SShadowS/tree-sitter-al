@@ -4630,6 +4630,16 @@ module.exports = grammar({
       $.refresh_script_property  // Added RefreshScript property
     ),
 
+    // RequestedWidth Property
+    // Specifies the initial width of the control add-in.
+    // This property is used on Control Add In objects.
+    requested_width_property: $ => seq(
+      'RequestedWidth',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
     // RequestedHeight Property
     // Specifies the initial height of the control add-in.
     // This property is used on Control Add In objects.
