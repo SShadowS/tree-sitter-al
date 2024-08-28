@@ -1610,7 +1610,18 @@ module.exports = grammar({
       $.additional_search_terms_ml_property,
       $.allowed_file_extensions_property,
       $.allow_multiple_files_property,
-      $.analysis_mode_enabled_property
+      $.analysis_mode_enabled_property,
+      $.apigroup_property
+    ),
+
+    // APIGroup Property
+    // Sets the group of the API endpoint that the page is exposed in.
+    // This property can only be set if the PageType is set to API.
+    apigroup_property: $ => seq(
+      'APIGroup',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // AnalysisModeEnabled Property
