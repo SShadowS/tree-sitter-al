@@ -2531,7 +2531,8 @@ module.exports = grammar({
       $.extensible_property,
       $.file_upload_row_action_property,
       $.filters_property,
-      $.flow_caption_property
+      $.flow_caption_property,
+      $.flow_id_property
     ),
 
     // DrillDownPageId Property
@@ -3653,6 +3654,16 @@ module.exports = grammar({
     // This property is used on Page Custom Actions.
     flow_caption_property: $ => seq(
       'FlowCaption',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    // FlowId Property
+    // Sets the ID of the Power Automate Flow triggered by this action.
+    // This property is used on Page Custom Actions.
+    flow_id_property: $ => seq(
+      'FlowId',
       '=',
       field('value', $.string_literal),
       ';'
