@@ -1983,7 +1983,8 @@ module.exports = grammar({
       $.data_caption_fields_property,
       $.data_classification_property,
       $.data_per_company_property,
-      $.enabled_property
+      $.enabled_property,
+      $.extensible_property
     ),
 
     // Enabled Property
@@ -2470,7 +2471,8 @@ module.exports = grammar({
       $.entity_name_property,
       $.entity_set_caption_property,
       $.entity_set_caption_ml_property,
-      $.entity_set_name_property
+      $.entity_set_name_property,
+      $.extensible_property
     ),
 
     // DrillDownPageId Property
@@ -2788,7 +2790,8 @@ module.exports = grammar({
       $.enable_hyperlinks_property,
       $.excel_layout_property,
       $.excel_layout_multiple_data_sheets_property,
-      $.execution_timeout_property
+      $.execution_timeout_property,
+      $.extensible_property
     ),
 
     // ExcelLayoutMultipleDataSheets Property
@@ -2990,6 +2993,17 @@ module.exports = grammar({
       $.assignment_compatibility_reason_property,
       $.default_implementation_property,
       $.extensible_property
+    ),
+
+    // Extensible Property
+    // Sets whether the object can be extended.
+    // This property is used on Table, Page, Report, and Enum objects.
+    extensible_property: $ => seq(
+      'Extensible',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    )
     ),
 
     // Extensible Property
