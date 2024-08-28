@@ -1561,7 +1561,8 @@ module.exports = grammar({
 
     field_property: $ => choice(
       // Field-specific properties will be added here
-      $.access_property
+      $.access_property,
+      $.access_by_permission_property
     ),
 
     page_property: $ => choice(
@@ -1569,8 +1570,28 @@ module.exports = grammar({
       $.about_text_property,
       $.about_text_ml_property,
       $.about_title_property,
-      $.about_title_ml_property
+      $.about_title_ml_property,
+      $.access_by_permission_property
     ),
+
+    // AccessByPermission Property
+    // Sets a value for a table field or UI element that determines the permission mask for an object
+    // that a user must have to see and access the related page fields or UI element in the client.
+    access_by_permission_property: $ => seq(
+      'AccessByPermission',
+      '=',
+      field('value', $.access_by_permission_value),
+      ';'
+    ),
+
+    access_by_permission_value: $ => seq(
+      field('object_type', $.identifier),
+      field('object_name', $.identifier),
+      '=',
+      field('permission_type', $.access_by_permission_type)
+    ),
+
+    access_by_permission_type: $ => choice('R', 'I', 'M', 'D', 'X')
 
     // Access Property
     // Sets the object accessibility level, which controls whether the object can be used from other code in the same module or other modules
