@@ -2088,7 +2088,8 @@ module.exports = grammar({
       $.recreate_script_property,  // Added RecreateScript property
       $.replicate_data_property,  // Added ReplicateData property
       $.table_type_property,  // Added TableType property
-      $.data_classification_fields_property  // Added DataClassificationFields property
+      $.data_classification_fields_property,  // Added DataClassificationFields property
+      $.about_title_ml_property  // Added AboutTitleML property
     ),
 
     // DataClassificationFields Property
@@ -3586,6 +3587,16 @@ module.exports = grammar({
       'AboutTitle',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    // AboutTitleML Property
+    // Sets the large-font title that appears in a teaching tip in the UI, supporting multiple languages
+    // This property is used on Table objects
+    about_title_ml_property: $ => seq(
+      'AboutTitleML',
+      '=',
+      field('value', $.multilanguage_string_literal),
       ';'
     ),
 
