@@ -4827,7 +4827,18 @@ module.exports = grammar({
       $.requested_height_property,
       $.requested_width_property,
       $.recreate_script_property,  // Added RecreateScript property
-      $.refresh_script_property  // Added RefreshScript property
+      $.refresh_script_property,  // Added RefreshScript property
+      $.scripts_property  // Added Scripts property
+    ),
+
+    // Scripts Property
+    // Specifies the list of scripts to include in the control add-in.
+    // This property is used on Control Add In objects.
+    scripts_property: $ => seq(
+      'Scripts',
+      '=',
+      field('value', $.array_value),
+      ';'
     ),
 
     // RequestedWidth Property
