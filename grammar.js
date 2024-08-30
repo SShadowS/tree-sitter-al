@@ -1492,7 +1492,6 @@ module.exports = grammar({
 
     _codeunit_element: $ => choice(
       $.property,
-      $.trigger,
       $.procedure,
       $.onaftertestrun_trigger,
       $.onbeforetestrun_trigger,
@@ -1504,7 +1503,8 @@ module.exports = grammar({
       $.onupgradepercompany_trigger,
       $.onupgradeperdatabase_trigger,
       $.onvalidateupgradepercompany_trigger,
-      $.onvalidateupgradeperdatabase_trigger
+      $.onvalidateupgradeperdatabase_trigger,
+      $.trigger,
       // Other codeunit elements can be added here
     ),
 
