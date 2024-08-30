@@ -1490,22 +1490,25 @@ module.exports = grammar({
       '}'
     ),
 
-    _codeunit_element: $ => choice(
-      $.property,
-      $.procedure,
-      $.onaftertestrun_trigger,
-      $.onbeforetestrun_trigger,
-      $.oncheckpreconditionspercompany_trigger,
-      $.oncheckpreconditionsperdatabase_trigger,
-      $.oninstallapppercompany_trigger,
-      $.oninstallappperdatabase_trigger,
-      $.onrun_trigger,
-      $.onupgradepercompany_trigger,
-      $.onupgradeperdatabase_trigger,
-      $.onvalidateupgradepercompany_trigger,
-      $.onvalidateupgradeperdatabase_trigger,
-      $.trigger,
-      // Other codeunit elements can be added here
+    _codeunit_element: $ => seq(
+      choice(
+        $.property,
+        $.procedure,
+        $.onaftertestrun_trigger,
+        $.onbeforetestrun_trigger,
+        $.oncheckpreconditionspercompany_trigger,
+        $.oncheckpreconditionsperdatabase_trigger,
+        $.oninstallapppercompany_trigger,
+        $.oninstallappperdatabase_trigger,
+        $.onrun_trigger,
+        $.onupgradepercompany_trigger,
+        $.onupgradeperdatabase_trigger,
+        $.onvalidateupgradepercompany_trigger,
+        $.onvalidateupgradeperdatabase_trigger,
+        $.trigger,
+        // Other codeunit elements can be added here
+      ),
+      optional(';')
     ),
 
     // OnValidateUpgradePerDatabase trigger for upgrade codeunits
