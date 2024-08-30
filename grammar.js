@@ -3169,7 +3169,25 @@ module.exports = grammar({
       $.sign_displacement_property,
       $.table_relation_property,
       $.values_allowed_property,
-      $.width_property
+      $.width_property,
+      $.page_view_property
+    ),
+
+    page_view_property: $ => seq(
+      'PageView',
+      '=',
+      field('value', $.page_view_value),
+      ';'
+    ),
+
+    page_view_value: $ => seq(
+      '{',
+      repeat(choice(
+        $.caption_ml_property,
+        $.filters_property,
+        $.shared_layout_property
+      )),
+      '}'
     ),
 
     page_action: $ => seq(
@@ -4110,12 +4128,29 @@ module.exports = grammar({
       $.preview_mode_property,
       $.print_only_if_detail_property,
       $.processing_only_property,
-      $.rdlc_layout_property,  // Added RDLCLayout property
-      $.request_page_property,  // Added RequestPage property
-      $.request_filter_fields_property,  // Added RequestFilterFields property
-      $.request_filter_heading_property,  // Added RequestFilterHeading property
-      $.request_filter_heading_ml_property,  // Added RequestFilterHeadingML property
-      $.request_filter_fields_property  // Added RequestFilterFields property
+      $.rdlc_layout_property,
+      $.request_page_property,
+      $.request_filter_fields_property,
+      $.request_filter_heading_property,
+      $.request_filter_heading_ml_property,
+      $.request_filter_fields_property,
+      $.report_layout_property
+    ),
+
+    report_layout_property: $ => seq(
+      'ReportLayout',
+      '=',
+      field('value', $.report_layout_value),
+      ';'
+    ),
+
+    report_layout_value: $ => seq(
+      '{',
+      repeat(choice(
+        $.caption_ml_property,
+        // Add other properties specific to Report Layout here
+      )),
+      '}'
     ),
 
     // RequestFilterHeadingML Property
@@ -4427,17 +4462,47 @@ module.exports = grammar({
       $.format_evaluate_property,
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.link_table_property,  // Added LinkTable property
-      $.link_table_force_insert_property,  // Added LinkTableForceInsert property
-      $.max_occurs_property,  // Added MaxOccurs property
-      $.min_occurs_property,  // Added MinOccurs property
-      $.namespace_prefix_property,  // Added NamespacePrefix property
-      $.namespaces_property,  // Added Namespaces property
-      $.occurrence_property,  // Added Occurrence property
-      $.permissions_property,  // Added Permissions property
-      $.record_separator_property,  // Added RecordSeparator property
-      $.request_filter_heading_ml_property,  // Added RequestFilterHeadingML property
-      $.source_table_view_property  // Added SourceTableView property
+      $.link_table_property,
+      $.link_table_force_insert_property,
+      $.max_occurs_property,
+      $.min_occurs_property,
+      $.namespace_prefix_property,
+      $.namespaces_property,
+      $.occurrence_property,
+      $.permissions_property,
+      $.record_separator_property,
+      $.request_filter_heading_ml_property,
+      $.source_table_view_property,
+      $.preserve_whitespace_property
+    ),
+
+    xmlport_object: $ => seq(
+      'xmlport',
+      field('id', $.integer),
+      field('name', choice($.identifier, $.string)),
+      '{',
+      repeat($._xmlport_element),
+      '}'
+    ),
+
+    _xmlport_element: $ => choice(
+      $.xmlport_property,
+      $.schema,
+      $.requestpage
+    ),
+
+    schema: $ => seq(
+      'schema',
+      '{',
+      repeat($._schema_element),
+      '}'
+    ),
+
+    _schema_element: $ => choice(
+      $.textelement,
+      $.tableelement,
+      $.fieldelement,
+      $.fieldattribute
     ),
 
     // RecordSeparator Property
