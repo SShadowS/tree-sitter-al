@@ -3213,6 +3213,16 @@ module.exports = grammar({
       $.trigger_property
     ),
 
+    // Image Property
+    // Sets the image to be displayed for the action.
+    // This property is used on Page Action objects.
+    image_property: $ => seq(
+      'Image',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
     // SourceTable Property
     // Sets the ID of the table from which this page will display records.
     // This property is used on Page and Request Page objects.
