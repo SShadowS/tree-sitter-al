@@ -3233,6 +3233,16 @@ module.exports = grammar({
       ';'
     ),
 
+    // Trigger Property
+    // Sets the trigger for the action.
+    // This property is used on Page Action objects.
+    trigger_property: $ => seq(
+      'Trigger',
+      '=',
+      field('value', $.identifier),
+      ';'
+    ),
+
     // SourceTable Property
     // Sets the ID of the table from which this page will display records.
     // This property is used on Page and Request Page objects.
