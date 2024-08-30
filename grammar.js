@@ -3172,6 +3172,29 @@ module.exports = grammar({
       $.width_property
     ),
 
+    page_action: $ => seq(
+      'action',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.page_action_property),
+      '}'
+    ),
+
+    page_action_property: $ => choice(
+      $.caption_property,
+      $.caption_ml_property,
+      $.enabled_property,
+      $.image_property,
+      $.promoted_property,
+      $.promoted_category_property,
+      $.run_object_property,
+      $.shortcut_key_property,
+      $.tooltip_property,
+      $.trigger_property
+    ),
+
     // SourceTable Property
     // Sets the ID of the table from which this page will display records.
     // This property is used on Page and Request Page objects.
