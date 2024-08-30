@@ -1511,6 +1511,127 @@ module.exports = grammar({
       optional(';')
     ),
 
+    _table_element: $ => seq(
+      choice(
+        $.fields,
+        $.keys,
+        $.table_property,
+        $.procedure,
+        $.trigger,
+        $.ondelete_trigger,
+        $.oninsert_trigger,
+        $.onmodify_trigger,
+        $.onrename_trigger
+      ),
+      optional(';')
+    ),
+
+    _page_element: $ => seq(
+      choice(
+        $.property,
+        $.layout,
+        $.actions,
+        $.views,
+        $.area,
+        $.field_group,
+        $.page_label,
+        $.page_group,
+        $.page_part,
+        $.page_system_part,
+        $.page_action,
+        $.page_action_separator,
+        $.page_action_group,
+        $.page_custom_action,
+        $.page_system_action,
+        $.page_file_upload_action,
+        $.page_view,
+        $.onaftergetcurrrecord_trigger,
+        $.onclosepage_trigger,
+        $.ondeleterecord_trigger,
+        $.onfindrecord_trigger,
+        $.oninit_trigger,
+        $.oninsertrecord_trigger,
+        $.onmodifyrecord_trigger,
+        $.onnewrecord_trigger,
+        $.onnextrecord_trigger,
+        $.onopenpage_trigger,
+        $.onpagebackgroundtaskcompleted_trigger,
+        $.onpagebackgroundtaskerror_trigger,
+        $.onqueryclosepage_trigger
+      ),
+      optional(';')
+    ),
+
+    _report_element: $ => seq(
+      choice(
+        $.property,
+        $.dataset,
+        $.requestpage,
+        $.rendering,
+        $.labels,
+        $.trigger,
+        $.auto_calc_field_property,
+        $.data_item_link_property,
+        $.report_column,
+        $.report_layout
+      ),
+      optional(';')
+    ),
+
+    _xmlport_element: $ => seq(
+      choice(
+        $.property,
+        $.schema,
+        $.requestpage,
+        $.auto_calc_field_property,
+        $.calc_fields_property
+      ),
+      optional(';')
+    ),
+
+    _query_element: $ => seq(
+      choice(
+        $.property,
+        $.elements,
+        $.query_type_property,
+        $.about_title_property,
+        $.about_text_property,
+        $.context_sensitive_help_page_property,
+        $.usage_category_property,
+        $.data_access_intent_property,
+        $.query_column,
+        $.query_filter
+      ),
+      optional(';')
+    ),
+
+    _enum_element: $ => seq(
+      choice(
+        $.property,
+        $.value,
+        $.enum_type
+      ),
+      optional(';')
+    ),
+
+    _permission_set_element: $ => seq(
+      choice(
+        $.property,
+        $.permissions,
+        $.caption_ml_property
+      ),
+      optional(';')
+    ),
+
+    _control_addin_element: $ => seq(
+      choice(
+        $.property,
+        $.procedure,
+        $.event
+      ),
+      optional(';')
+    ),
+
     // OnValidateUpgradePerDatabase trigger for upgrade codeunits
     // This trigger runs after an extension upgrade, once for the entire database
     // It is used to check that the upgrade was successful
