@@ -3223,6 +3223,16 @@ module.exports = grammar({
       ';'
     ),
 
+    // Tooltip Property
+    // Sets the tooltip text for the action.
+    // This property is used on Page Action objects.
+    tooltip_property: $ => seq(
+      'Tooltip',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
     // SourceTable Property
     // Sets the ID of the table from which this page will display records.
     // This property is used on Page and Request Page objects.
