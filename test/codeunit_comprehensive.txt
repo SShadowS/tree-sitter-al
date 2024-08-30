@@ -1,0 +1,282 @@
+==================
+Comprehensive Codeunit Test
+==================
+
+codeunit 50200 "Comprehensive Test Codeunit"
+{
+    TableNo = "Customer";
+    Subtype = Test;
+    SingleInstance = true;
+    EventSubscriberInstance = Manual;
+
+    var
+        GlobalVar: Integer;
+
+    trigger OnRun()
+    var
+        LocalVar: Text;
+    begin
+        LocalVar := 'Hello from Comprehensive Test Codeunit!';
+        Message(LocalVar);
+        TestComplexProcedure(GlobalVar, LocalVar);
+    end;
+
+    local procedure TestComplexProcedure(var IntParam: Integer; TextParam: Text): Decimal
+    var
+        DecimalVar: Decimal;
+    begin
+        IntParam += 1;
+        DecimalVar := 3.14;
+
+        if IntParam > 10 then
+            exit(DecimalVar * 2)
+        else
+            case IntParam of
+                1..5:
+                    DecimalVar := DecimalVar * IntParam;
+                6..10:
+                    DecimalVar := DecimalVar + IntParam;
+            end;
+
+        while IntParam < 20 do begin
+            IntParam += 1;
+            DecimalVar += 0.5;
+        end;
+
+        repeat
+            IntParam -= 1;
+            DecimalVar -= 0.25;
+        until IntParam = 10;
+
+        exit(DecimalVar);
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Comprehensive Test Codeunit", 'OnSomeEvent', '', false, false)]
+    local procedure OnSomeEventSubscriber(var Rec: Record Customer)
+    begin
+        // Event subscriber logic
+    end;
+
+    trigger OnAfterTestRun(CodeunitId: Integer; CodeunitName: Text; FunctionName: Text; Permissions: TestPermissions; Success: Boolean)
+    begin
+        if Success then
+            Message('Test %1 in codeunit %2 completed successfully.', FunctionName, CodeunitName)
+        else
+            Error('Test %1 in codeunit %2 failed.', FunctionName, CodeunitName);
+    end;
+
+    trigger OnBeforeTestRun(CodeunitId: Integer; CodeunitName: Text; FunctionName: Text; Permissions: TestPermissions): Boolean
+    begin
+        Message('Starting test %1 in codeunit %2.', FunctionName, CodeunitName);
+        exit(true);
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_object
+    (integer)
+    (string)
+    (table_no_property
+      (identifier))
+    (subtype_property
+      (value))
+    (single_instance_property
+      (boolean_literal))
+    (event_subscriber_instance_property
+      (value))
+    (var_section
+      (var_declaration
+        (identifier)
+        (identifier)))
+    (onrun_trigger
+      (var_section
+        (var_declaration
+          (identifier)
+          (identifier)))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (string_literal))
+        (procedure_call_statement
+          (identifier)
+          (identifier))
+        (procedure_call_statement
+          (identifier)
+          (identifier)
+          (identifier))))
+    (procedure
+      (identifier)
+      (parameter
+        (identifier)
+        (identifier))
+      (parameter
+        (identifier)
+        (identifier))
+      (identifier)
+      (var_section
+        (var_declaration
+          (identifier)
+          (identifier)))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (binary_expression
+            (identifier)
+            (arithmetic_operator)
+            (integer)))
+        (assignment_statement
+          (identifier)
+          (number_literal))
+        (if_statement
+          (binary_expression
+            (identifier)
+            (comparison_operator)
+            (integer))
+          (code_block
+            (exit_statement
+              (binary_expression
+                (identifier)
+                (arithmetic_operator)
+                (integer))))
+          (code_block
+            (case_statement
+              (identifier)
+              (case_option
+                (integer)
+                (code_block
+                  (assignment_statement
+                    (identifier)
+                    (binary_expression
+                      (identifier)
+                      (arithmetic_operator)
+                      (identifier)))))
+              (case_option
+                (integer)
+                (code_block
+                  (assignment_statement
+                    (identifier)
+                    (binary_expression
+                      (identifier)
+                      (arithmetic_operator)
+                      (identifier))))))))
+        (while_statement
+          (binary_expression
+            (identifier)
+            (comparison_operator)
+            (integer))
+          (code_block
+            (assignment_statement
+              (identifier)
+              (binary_expression
+                (identifier)
+                (arithmetic_operator)
+                (integer)))
+            (assignment_statement
+              (identifier)
+              (binary_expression
+                (identifier)
+                (arithmetic_operator)
+                (number_literal)))))
+        (repeat_statement
+          (code_block
+            (assignment_statement
+              (identifier)
+              (binary_expression
+                (identifier)
+                (arithmetic_operator)
+                (integer)))
+            (assignment_statement
+              (identifier)
+              (binary_expression
+                (identifier)
+                (arithmetic_operator)
+                (number_literal))))
+          (binary_expression
+            (identifier)
+            (comparison_operator)
+            (integer)))
+        (exit_statement
+          (identifier))))
+    (procedure
+      (attribute
+        (identifier)
+        (object_value
+          (key_value_pair
+            (identifier)
+            (identifier))
+          (key_value_pair
+            (identifier)
+            (identifier))
+          (key_value_pair
+            (string)
+            (string_literal))
+          (key_value_pair
+            (string)
+            (string_literal))
+          (key_value_pair
+            (identifier)
+            (boolean_literal))
+          (key_value_pair
+            (identifier)
+            (boolean_literal))))
+      (identifier)
+      (parameter
+        (identifier)
+        (record_type
+          (identifier)))
+      (code_block))
+    (onaftertestrun_trigger
+      (parameter
+        (identifier)
+        (identifier))
+      (parameter
+        (identifier)
+        (identifier))
+      (parameter
+        (identifier)
+        (identifier))
+      (parameter
+        (identifier)
+        (identifier))
+      (parameter
+        (identifier)
+        (Boolean))
+      (code_block
+        (if_statement
+          (identifier)
+          (code_block
+            (procedure_call_statement
+              (identifier)
+              (string_literal)
+              (identifier)
+              (identifier)))
+          (code_block
+            (procedure_call_statement
+              (identifier)
+              (string_literal)
+              (identifier)
+              (identifier))))))
+    (onbeforetestrun_trigger
+      (parameter
+        (identifier)
+        (identifier))
+      (parameter
+        (identifier)
+        (identifier))
+      (parameter
+        (identifier)
+        (identifier))
+      (parameter
+        (identifier)
+        (identifier))
+      (Boolean)
+      (code_block
+        (procedure_call_statement
+          (identifier)
+          (string_literal)
+          (identifier)
+          (identifier))
+        (exit_statement
+          (boolean_literal))))))
