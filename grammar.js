@@ -2166,8 +2166,13 @@ module.exports = grammar({
 
     field: $ => seq(
       'field',
+      '(',
       field('id', $.integer),
+      ';',
       field('name', $.string),
+      ';',
+      field('data_type', $.identifier),
+      ')',
       '{',
       repeat($.field_property),
       '}'
