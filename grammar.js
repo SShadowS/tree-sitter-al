@@ -2030,7 +2030,7 @@ module.exports = grammar({
     ),
 
     parameter: $ => seq(
-      optional(choice('var', 'out')),
+      optional(choice(/[vV][aA][rR]/, /[oO][uU][tT]/)),
       field('name', $.identifier),
       ':',
       field('type', $._type)
