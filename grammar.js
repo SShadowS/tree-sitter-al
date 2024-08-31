@@ -2010,12 +2010,12 @@ module.exports = grammar({
     ),
 
     if_statement: $ => prec.right(seq(
-      'if',
+      /[iI][fF]/,
       field('condition', $._expression),
-      'then',
+      /[tT][hH][eE][nN]/,
       field('then_body', choice($._statement, $.code_block)),
       optional(seq(
-        'else',
+        /[eE][lL][sS][eE]/,
         field('else_body', choice($._statement, $.code_block))
       ))
     )),
