@@ -1958,10 +1958,10 @@ module.exports = grammar({
       $.record_type
     ),
 
-    record_type: $ => seq(
+    record_type: $ => prec(2, seq(
       'Record',
       field('table_name', $.identifier)
-    ),
+    )),
 
     code_block: $ => seq(
       'begin',
