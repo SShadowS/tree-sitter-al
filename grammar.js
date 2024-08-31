@@ -2183,14 +2183,14 @@ module.exports = grammar({
       $.method_call  // Added this line
     ),
 
-    method_call: $ => seq(
+    method_call: $ => prec(5, seq(
       field('object', $.identifier),
       '.',
       field('method', $.identifier),
       '(',
       optional($._argument_list),
       ')'
-    ),
+    )),
 
     binary_expression: $ => prec.left(1, seq(
       field('left', $._expression),
