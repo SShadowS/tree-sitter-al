@@ -2248,7 +2248,7 @@ module.exports = grammar({
       'OnInsert',
       '(',
       ')',
-      optional($.variable_declaration),
+      optional($.var),
       field('body', $.code_block)
     ),
 
@@ -2262,7 +2262,7 @@ module.exports = grammar({
       'OnModify',
       '(',
       ')',
-      optional($.variable_declaration),
+      optional($.var),
       field('body', $.code_block)
     ),
 
