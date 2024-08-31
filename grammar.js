@@ -2179,7 +2179,17 @@ module.exports = grammar({
       $.function_call_expression,
       $.member_access_expression,
       $.array_access_expression,
-      $.ternary_expression
+      $.ternary_expression,
+      $.method_call  // Added this line
+    ),
+
+    method_call: $ => seq(
+      field('object', $.identifier),
+      '.',
+      field('method', $.identifier),
+      '(',
+      optional($._argument_list),
+      ')'
     ),
 
     binary_expression: $ => prec.left(1, seq(
@@ -2200,13 +2210,13 @@ module.exports = grammar({
     ),
 
     function_call_expression: $ => prec(3, seq(
-      field('function', $.identifier),
+      field('function', choice($.identifier, $.member_access_expression)),
       '(',
       optional($._argument_list),
       ')'
     )),
 
-    member_access_expression: $ => prec(4, seq(
+    member_access_expression: $ => prec.left(4, seq(
       field('object', $._expression),
       '.',
       field('member', $.identifier)
