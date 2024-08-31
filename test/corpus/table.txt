@@ -100,6 +100,52 @@ table 50100 "My Test Table"
       (string_literal))
     (data_classification_property
       (identifier))
+    (data_caption_fields_property
+      (identifier_list
+        (identifier)
+        (identifier)))
+    (drill_down_page_id_property
+      (string_literal))
+    (lookup_page_id_property
+      (string_literal))
+    (paste_is_valid_property
+      (boolean_literal))
+    (permissions_property
+      (permissions_value
+        (integer)
+        (permissions_string)))
+    (data_per_company_property
+      (boolean_literal))
+    (extensible_property
+      (boolean_literal))
+    (table_type_property
+      (identifier))
+    (compression_type_property
+      (identifier))
+    (access_property
+      (identifier))
+    (obsolete_state_property
+      (identifier))
+    (obsolete_reason_property
+      (string_literal))
+    (obsolete_tag_property
+      (string_literal))
+    (replicate_data_property
+      (boolean_literal))
+    (linked_object_property
+      (boolean_literal))
+    (linked_in_transaction_property
+      (boolean_literal))
+    (caption_ml_property
+      (multilanguage_string_literal
+        (identifier)
+        (string_literal)
+        (identifier)
+        (string_literal)))
+    (about_title_property
+      (string_literal))
+    (about_text_property
+      (string_literal))
     (fields
       (field
         (integer)
@@ -132,11 +178,38 @@ table 50100 "My Test Table"
           (key_field))
         (clustered_property
           (boolean_literal))))
+    (fieldgroups
+      (fieldgroup
+        (identifier)
+        (identifier_list
+          (identifier)
+          (identifier)))
+      (fieldgroup
+        (identifier)
+        (identifier_list
+          (identifier)
+          (identifier)
+          (identifier))))
     (var
       (variable_declaration
         (identifier)
         (identifier)))
     (oninsert_trigger
+      (code_block
+        (procedure_call_statement
+          (identifier)
+          (string_literal))))
+    (onmodify_trigger
+      (code_block
+        (procedure_call_statement
+          (identifier)
+          (string_literal))))
+    (ondelete_trigger
+      (code_block
+        (procedure_call_statement
+          (identifier)
+          (string_literal))))
+    (onrename_trigger
       (code_block
         (procedure_call_statement
           (identifier)
