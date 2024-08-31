@@ -1901,6 +1901,7 @@ module.exports = grammar({
       '(',
       optional($._parameter_list),
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1912,6 +1913,7 @@ module.exports = grammar({
       optional($._parameter_list),
       ')',
       field('return_type', optional(seq(':', $._type))),
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -2221,6 +2223,7 @@ module.exports = grammar({
       'OnInsert',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
