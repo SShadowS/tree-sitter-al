@@ -2400,7 +2400,7 @@ module.exports = grammar({
       $.data_classification_property,
       $.data_per_company_property,
       $.data_deletion_allowed_property,
-      $.drill_down_page_id_property,
+      $.drilldown_page_id_property,
       $.enabled_property,
       $.extensible_property,
       $.external_name_property,
