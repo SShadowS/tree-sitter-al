@@ -1962,7 +1962,8 @@ module.exports = grammar({
       'Record',
       field('table_reference', choice(
         $.identifier,
-        $.integer
+        $.integer,
+        $.string_literal
       ))
     )),
 
