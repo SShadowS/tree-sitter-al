@@ -19,7 +19,8 @@ module.exports = grammar({
 
     line_comment: $ => seq(
       '//',
-      /[^\n]*/
+      /[^\n]*/,
+      '\n'  // Explicitly consume the newline
     ),
 
     block_comment: $ => seq(
