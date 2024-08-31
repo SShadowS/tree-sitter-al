@@ -2400,7 +2400,7 @@ module.exports = grammar({
       'Text'
     ),
 
-    sized_data_type: $ => prec(1, seq(
+    sized_data_type: $ => prec.dynamic(1, seq(
       choice('Code', 'Text'),
       '[',
       $.integer,
@@ -6289,13 +6289,6 @@ module.exports = grammar({
     string_literal: $ => /'[^']*'/,
 
     boolean_literal: $ => choice('true', 'false'),
-
-    // Types
-    _type: $ => choice(
-      $.identifier,
-      $.record_type,
-      $.Boolean
-    ),
 
     Boolean: $ => 'Boolean',
 
