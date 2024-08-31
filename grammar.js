@@ -1505,7 +1505,16 @@ module.exports = grammar({
 
     _codeunit_element: $ => seq(
       choice(
-        //$.property,
+        $.access_property,
+        $.subtype_property,
+        $.event_subscriber_instance_property,
+        $.inherent_entitlements_property,
+        $.inherent_permissions_property,
+        $.obsolete_tag_property,
+        $.permissions_property,
+        $.single_instance_property,
+        $.test_isolation_property,
+        $.test_permission_property,
         $.procedure,
         $.onaftertestrun_trigger,
         $.onbeforetestrun_trigger,
@@ -1520,7 +1529,6 @@ module.exports = grammar({
         $.onvalidateupgradeperdatabase_trigger,
         $.trigger,
         $.var
-        // Other codeunit elements can be added here
       ),
       optional(';')
     ),
