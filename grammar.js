@@ -2053,12 +2053,12 @@ module.exports = grammar({
     )),
 
     code_block: $ => seq(
-      'begin',
+      /[bB][eE][gG][iI][nN]/,
       repeat(choice(
         $._statement,
         //$.comment
       )),
-      'end'
+      /[eE][nN][dD]/
     ),
 
     _statement: $ => choice(
