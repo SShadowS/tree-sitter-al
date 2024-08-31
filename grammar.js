@@ -1540,7 +1540,7 @@ module.exports = grammar({
       $.procedure
     ),
 
-    event_subscriber_params: $ => prec.right(seq(
+    event_subscriber_params: $ => seq(
       field('object_type', $.identifier),
       ',',
       field('object_id', choice($.integer, $.identifier)),
@@ -1548,9 +1548,15 @@ module.exports = grammar({
       field('event_name', $.string_literal),
       ',',
       field('element_name', $.string_literal),
-      optional(seq(',', field('skip_on_missing_license', $.boolean_literal))),
-      optional(seq(',', field('skip_on_missing_permission', $.boolean_literal)))
-    )),
+      optional(seq(
+        ',',
+        field('skip_on_missing_license', $.boolean_literal),
+        optional(seq(
+          ',',
+          field('skip_on_missing_permission', $.boolean_literal)
+        ))
+      ))
+    ),
 
     _table_element: $ => seq(
       choice(
