@@ -1501,6 +1501,8 @@ module.exports = grammar({
         $.event_subscriber_instance_property,
         $.inherent_entitlements_property,
         $.inherent_permissions_property,
+        $.obsolete_reason_property,
+        $.obsolete_state_property,
         $.obsolete_tag_property,
         $.permissions_property,
         $.single_instance_property,
