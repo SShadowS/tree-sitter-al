@@ -6397,7 +6397,7 @@ module.exports = grammar({
     string: $ => /"(?:[^"\\]|\\.)*"/,
     integer: $ => /\d+/,
     // Identifiers
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*(([a-zA-Z0-9_]+)|([a-zA-Z0-9_]+\.?))*[a-zA-Z0-9_]*/,
 
     // Helper rule for a list of identifiers
     identifier_list: $ => seq(
