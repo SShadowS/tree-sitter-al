@@ -2037,14 +2037,14 @@ module.exports = grammar({
     ),
 
     for_statement: $ => seq(
-      'for',
+      /[fF][oO][rR]/,
       field('variable', $.identifier),
       ':=',
       field('start', $._expression),
-      'to',
+      /[tT][oO]/,
       field('end', $._expression),
-      optional(seq('step', field('step', $._expression))),
-      'do',
+      optional(seq(/[sS][tT][eE][pP]/, field('step', $._expression))),
+      /[dD][oO]/,
       field('body', $.code_block)
     ),
 
