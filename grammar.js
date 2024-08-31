@@ -1526,9 +1526,30 @@ module.exports = grammar({
         $.onvalidateupgradepercompany_trigger,
         $.onvalidateupgradeperdatabase_trigger,
         $.trigger,
-        $.var
+        $.var,
+        $.event_subscriber  // Add this line to include event subscribers
       ),
       optional(';')
+    ),
+
+    // Add the event_subscriber rule
+    event_subscriber: $ => seq(
+      '[EventSubscriber(',
+      $.event_subscriber_params,
+      ')]',
+      $.procedure
+    ),
+
+    event_subscriber_params: $ => seq(
+      field('object_type', $.identifier),
+      ',',
+      field('object_id', choice($.integer, $.identifier)),
+      ',',
+      field('event_name', $.string_literal),
+      ',',
+      field('element_name', $.string_literal),
+      optional(seq(',', field('skip_on_missing_license', $.boolean_literal))),
+      optional(seq(',', field('skip_on_missing_permission', $.boolean_literal)))
     ),
 
     _table_element: $ => seq(
@@ -5244,7 +5265,7 @@ module.exports = grammar({
     event_subscriber_instance_property: $ => seq(
       'EventSubscriberInstance',
       '=',
-      field('value', choice('Manual', 'StaticAutomatic')),
+      field('value', choice('Manual', 'StaticAutomatic', 'PerSession')),  // Add 'PerSession' option
       ';'
     ),
 
