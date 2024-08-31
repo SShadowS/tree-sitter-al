@@ -2085,19 +2085,29 @@ module.exports = grammar({
       'key',
       '(',
       field('name', $.identifier),
+      ';',
+      field('fields', $.identifier_list),
       ')',
       '{',
-      repeat(choice($.key_field, $.clustered_property, $.included_fields_property)),
+      repeat(choice($.clustered_property, $.unique_property, $.included_fields_property, $.column_store_index_property, $.enabled_property)),
       '}'
     ),
-
-    key_field: $ => $.identifier,
 
     // Clustered Property
     // Sets a value that indicates whether the key also defines the clustered index in the database.
     // This property is used on Table Keys.
     clustered_property: $ => seq(
       'Clustered',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // Unique Property
+    // Creates a unique constraint on the table in SQL Server.
+    // This property is used on Table Keys.
+    unique_property: $ => seq(
+      'Unique',
       '=',
       field('value', $.boolean_literal),
       ';'
@@ -2110,6 +2120,26 @@ module.exports = grammar({
       'IncludedFields',
       '=',
       field('value', $.identifier_list),
+      ';'
+    ),
+
+    // ColumnStoreIndex Property
+    // Sets the fields that are added to the ColumnStore index inside SQL Server.
+    // This property is used on Table Keys.
+    column_store_index_property: $ => seq(
+      'ColumnStoreIndex',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
+
+    // Enabled Property
+    // Sets whether the key is enabled or disabled.
+    // This property is used on Table Keys.
+    enabled_property: $ => seq(
+      'Enabled',
+      '=',
+      field('value', $.boolean_literal),
       ';'
     ),
 
