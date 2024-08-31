@@ -1984,14 +1984,12 @@ module.exports = grammar({
 
     exit_statement: $ => seq(
       'exit',
-      optional($.optional_exit_statement),
+      optional(seq(
+        '(',
+        optional($._expression),
+        ')'
+      )),
       optional(';')
-    ),
-
-    optional_exit_statement: $ => seq(
-      '(',
-      optional($._expression),
-      ')',
     ),
 
     with_statement: $ => seq(
