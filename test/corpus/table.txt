@@ -6,6 +6,25 @@ table 50100 "My Test Table"
 {
     Caption = 'My Test Table';
     DataClassification = CustomerContent;
+    DataCaptionFields = "Primary Key", Description;
+    DrillDownPageId = "My Test Table List";
+    LookupPageId = "My Test Table Lookup";
+    PasteIsValid = true;
+    Permissions = tabledata "My Test Table" = rimd;
+    DataPerCompany = true;
+    Extensible = true;
+    TableType = Normal;
+    CompressionType = Page;
+    Access = Public;
+    ObsoleteState = Pending;
+    ObsoleteReason = 'This table will be replaced in the next version.';
+    ObsoleteTag = '19.0';
+    ReplicateData = true;
+    LinkedObject = false;
+    LinkedInTransaction = false;
+    CaptionML = ENU = 'My Test Table', DAN = 'Min Test Tabel';
+    AboutTitle = 'About My Test Table';
+    AboutText = 'This table is used for testing purposes.';
 
     fields
     {
@@ -33,12 +52,33 @@ table 50100 "My Test Table"
         }
     }
 
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Primary Key", Description) { }
+        fieldgroup(Brick; "Primary Key", Description, Amount) { }
+    }
+
     var
         myInt: Integer;
 
     trigger OnInsert()
     begin
         Message('Record inserted');
+    end;
+
+    trigger OnModify()
+    begin
+        Message('Record modified');
+    end;
+
+    trigger OnDelete()
+    begin
+        Message('Record deleted');
+    end;
+
+    trigger OnRename()
+    begin
+        Message('Record renamed');
     end;
 
     procedure MyProcedure(param: Text): Boolean
