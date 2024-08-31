@@ -1505,7 +1505,7 @@ module.exports = grammar({
 
     _codeunit_element: $ => seq(
       choice(
-        $.property,
+        //$.property,
         $.procedure,
         $.onaftertestrun_trigger,
         $.onbeforetestrun_trigger,
@@ -1518,7 +1518,8 @@ module.exports = grammar({
         $.onupgradeperdatabase_trigger,
         $.onvalidateupgradepercompany_trigger,
         $.onvalidateupgradeperdatabase_trigger,
-        $.trigger
+        $.trigger,
+        $.var
         // Other codeunit elements can be added here
       ),
       optional(';')
@@ -1963,7 +1964,7 @@ module.exports = grammar({
       field('table_reference', choice(
         $.identifier,
         $.integer,
-        $.string_literal
+        $.string
       ))
     )),
 
