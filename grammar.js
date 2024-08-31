@@ -2021,12 +2021,12 @@ module.exports = grammar({
     )),
 
     case_statement: $ => seq(
-      'case',
+      /[cC][aA][sS][eE]/,
       field('expression', $._expression),
-      'of',
+      /[oO][fF]/,
       repeat1($.case_option),
-      optional(seq('else', field('else_body', $.code_block))),
-      'end'
+      optional(seq(/[eE][lL][sS][eE]/, field('else_body', $.code_block))),
+      /[eE][nN][dD]/
     ),
 
     case_option: $ => seq(
