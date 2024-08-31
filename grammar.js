@@ -2001,7 +2001,7 @@ module.exports = grammar({
       optional($._parameter_list),
       ')',
       optional(choice(
-        seq(field('return_type', seq(':', $._type))),
+        seq(field('return_type', seq(':', $._type)),optional(';')),
         seq(
           field('return_value', $.identifier),
           ':',
