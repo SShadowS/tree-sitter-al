@@ -1945,7 +1945,14 @@ module.exports = grammar({
       '(',
       optional($._parameter_list),
       ')',
-      field('return_type', optional(seq(':', $._type))),
+      optional(choice(
+        field('return_type', seq(':', $._type)),
+        seq(
+          field('return_value', $.identifier),
+          ':',
+          field('return_type', $._type)
+        )
+      )),
       optional($.variable_declaration),
       field('body', $.code_block)
     ),
