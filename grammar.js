@@ -2078,7 +2078,7 @@ module.exports = grammar({
     ),
 
     exit_statement: $ => seq(
-      'exit',
+      /[eE][xX][iI][tT]/,
       optional(seq(
         '(',
         optional($._expression),
