@@ -126,16 +126,6 @@ module.exports = grammar({
       $.method
     ),
 
-    method: $ => seq(
-      'method',
-      field('name', $.identifier),
-      '(',
-      optional($._parameter_list),
-      ')',
-      field('return_type', optional(seq(':', $._type))),
-      ';'
-    ),
-
     dotnet_package_object: $ => seq(
       'dotnetpackage',
       field('name', choice($.identifier, $.string)),
