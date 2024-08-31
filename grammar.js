@@ -2169,7 +2169,7 @@ module.exports = grammar({
       '(',
       field('id', $.integer),
       ';',
-      field('name', $.string),
+      field('name', choice($.string, $.identifier)),
       ';',
       field('data_type', $._table_data_type),
       ')',
@@ -6077,7 +6077,7 @@ module.exports = grammar({
       field('value', $._value)
     ),
 
-    string: $ => /"[^"]*"/,
+    string: $ => /"(?:[^"\\]|\\.)*"/,
     integer: $ => /\d+/,
     // Identifiers
     identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
