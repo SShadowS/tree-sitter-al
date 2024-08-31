@@ -2049,9 +2049,9 @@ module.exports = grammar({
     ),
 
     while_statement: $ => seq(
-      'while',
+      /[wW][hH][iI][lL][eE]/,
       field('condition', $._expression),
-      'do',
+      /[dD][oO]/,
       field('body', $.code_block)
     ),
 
