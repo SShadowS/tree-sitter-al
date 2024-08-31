@@ -2,7 +2,8 @@ module.exports = grammar({
   name: 'al',
 
   extras: $ => [
-    /\s/
+    /\s/,
+    $.comment
   ],
 
   rules: {
@@ -12,12 +13,16 @@ module.exports = grammar({
     )),
 
     comment: $ => choice(
-      seq('//', /.*/),
-      seq(
-        '/*',
-        /[^*]*\*+([^/*][^*]*\*+)*/,
-        '/'
-      )
+      $.line_comment,
+      $.block_comment
+    ),
+
+    line_comment: $ => seq('//', /.*/),
+
+    block_comment: $ => seq(
+      '/*',
+      /[^*]*\*+([^/*][^*]*\*+)*/,
+      '/'
     ),
 
     _declaration: $ => choice(
