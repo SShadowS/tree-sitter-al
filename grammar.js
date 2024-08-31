@@ -1505,7 +1505,7 @@ module.exports = grammar({
         $.onupgradeperdatabase_trigger,
         $.onvalidateupgradepercompany_trigger,
         $.onvalidateupgradeperdatabase_trigger,
-        $.trigger,
+        $.trigger
         // Other codeunit elements can be added here
       ),
       optional(';')
