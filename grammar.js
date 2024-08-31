@@ -2158,7 +2158,10 @@ module.exports = grammar({
       /[eE][xX][iI][tT]/,
       optional(seq(
         '(',
-        optional($._expression),
+        optional(seq(
+          optional(/[nN][oO][tT]/),
+          $._expression
+        )),
         ')'
       )),
       optional(';')
