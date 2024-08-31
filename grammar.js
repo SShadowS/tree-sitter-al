@@ -1529,9 +1529,7 @@ module.exports = grammar({
 
     var: $ => seq(
       'var',
-      '{',
-      repeat($.variable_declaration),
-      '}'
+      repeat($.variable_declaration)
     ),
 
     variable_declaration: $ => seq(
@@ -1986,10 +1984,14 @@ module.exports = grammar({
 
     exit_statement: $ => seq(
       'exit',
+      optional($.optional_exit_statement),
+      optional(';')
+    ),
+
+    optional_exit_statement: $ => seq(
       '(',
       optional($._expression),
       ')',
-      ';'
     ),
 
     with_statement: $ => seq(
@@ -2068,18 +2070,6 @@ module.exports = grammar({
       '{',
       repeat($._table_element),
       '}'
-    ),
-
-    _table_element: $ => choice(
-      $.fields,
-      $.keys,
-      $.table_property,
-      $.procedure,
-      $.trigger,
-      $.ondelete_trigger,
-      $.oninsert_trigger,
-      $.onmodify_trigger,
-      $.onrename_trigger
     ),
 
     fields: $ => seq(
