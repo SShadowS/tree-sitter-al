@@ -2088,9 +2088,9 @@ module.exports = grammar({
     ),
 
     with_statement: $ => seq(
-      'with',
+      /[wW][iI][tT][hH]/,
       field('record', $.identifier),
-      'do',
+      /[dD][oO]/,
       field('body', $.code_block)
     ),
 
