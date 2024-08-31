@@ -5136,15 +5136,36 @@ module.exports = grammar({
     ),
 
     codeunit_property: $ => choice(
-      // Codeunit-specific properties will be added here
       $.access_property,
       $.subtype_property,
       $.event_subscriber_instance_property,
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.obsolete_tag_property,  // Added ObsoleteTag property
-      $.permissions_property,  // Added Permissions property
-      $.single_instance_property  // Added SingleInstance property
+      $.obsolete_tag_property,
+      $.permissions_property,
+      $.single_instance_property,
+      $.test_isolation_property,
+      $.test_permission_property
+    ),
+
+    // TestIsolation Property
+    // Specifies the test isolation level for test codeunits.
+    // This property is used on Codeunit objects with Subtype = Test.
+    test_isolation_property: $ => seq(
+      'TestIsolation',
+      '=',
+      field('value', choice('Implicit', 'Explicit', 'None')),
+      ';'
+    ),
+
+    // TestPermissions Property
+    // Specifies the permission set that test methods in a test codeunit run under.
+    // This property is used on Codeunit objects with Subtype = Test.
+    test_permission_property: $ => seq(
+      'TestPermissions',
+      '=',
+      field('value', choice('Disabled', 'Restrictive', 'NonRestrictive', 'InheritFromTestCodunit')),
+      ';'
     ),
 
     // SingleInstance Property
