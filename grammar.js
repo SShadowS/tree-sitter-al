@@ -1992,6 +1992,7 @@ module.exports = grammar({
     ),
 
     procedure: $ => seq(
+      optional($.obsolete_attribute),
       optional('local'),
       'procedure',
       field('name', $.identifier),
@@ -2008,6 +2009,18 @@ module.exports = grammar({
       )),
       optional($.variable_declaration),
       field('body', $.code_block)
+    ),
+
+    obsolete_attribute: $ => seq(
+      '[',
+      'Obsolete',
+      '(',
+      optional(seq(
+        field('reason', $.string_literal),
+        optional(seq(',', field('tag', $.string_literal)))
+      )),
+      ')',
+      ']'
     ),
 
     _parameter_list: $ => seq(
