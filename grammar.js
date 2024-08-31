@@ -2056,9 +2056,9 @@ module.exports = grammar({
     ),
 
     repeat_statement: $ => seq(
-      'repeat',
+      /[rR][eE][pP][eE][aA][tT]/,
       field('body', $.code_block),
-      'until',
+      /[uU][nN][tT][iI][lL]/,
       field('condition', $._expression),
       ';'
     ),
