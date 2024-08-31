@@ -1061,6 +1061,7 @@ module.exports = grammar({
       ')',
       ':',
       'Boolean',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1093,6 +1094,7 @@ module.exports = grammar({
       ':',
       $.Boolean,
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1112,6 +1114,7 @@ module.exports = grammar({
       ':',
       'Dictionary of [Text,Text]',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1124,6 +1127,7 @@ module.exports = grammar({
       'OnOpenPage',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1141,6 +1145,7 @@ module.exports = grammar({
       ')',
       ':',
       'Integer',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1155,6 +1160,7 @@ module.exports = grammar({
       ':',
       'Boolean',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1169,6 +1175,7 @@ module.exports = grammar({
       ')',
       ':',
       'Boolean',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1186,6 +1193,7 @@ module.exports = grammar({
       ')',
       ':',
       'Boolean',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1198,6 +1206,7 @@ module.exports = grammar({
       'OnInit',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1215,6 +1224,7 @@ module.exports = grammar({
       ')',
       ':',
       'Boolean',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1229,6 +1239,7 @@ module.exports = grammar({
       ')',
       ':',
       'Boolean',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1241,6 +1252,7 @@ module.exports = grammar({
       'OnAfterGetCurrRecord',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1253,6 +1265,7 @@ module.exports = grammar({
       'OnClosePage',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1693,6 +1706,7 @@ module.exports = grammar({
       'OnValidateUpgradePerDatabase',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1705,6 +1719,7 @@ module.exports = grammar({
       'OnValidateUpgradePerCompany',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1716,6 +1731,7 @@ module.exports = grammar({
       'OnUpgradePerDatabase',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1727,6 +1743,7 @@ module.exports = grammar({
       'OnUpgradePerCompany',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1738,6 +1755,7 @@ module.exports = grammar({
       'OnRun',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1749,6 +1767,7 @@ module.exports = grammar({
       'OnInstallAppPerDatabase',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1760,6 +1779,7 @@ module.exports = grammar({
       'OnInstallAppPerCompany',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1771,6 +1791,7 @@ module.exports = grammar({
       'OnCheckPreconditionsPerDatabase',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1782,6 +1803,7 @@ module.exports = grammar({
       'OnCheckPreconditionsPerCompany',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1811,6 +1833,7 @@ module.exports = grammar({
       ':',
       $.Boolean,
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -1838,6 +1861,7 @@ module.exports = grammar({
       ')',
       ':',
       $.Boolean,
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -2211,6 +2235,7 @@ module.exports = grammar({
       'OnDelete',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -2237,6 +2262,7 @@ module.exports = grammar({
       'OnModify',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
@@ -2251,6 +2277,7 @@ module.exports = grammar({
       'OnRename',
       '(',
       ')',
+      optional($.variable_declaration),
       field('body', $.code_block)
     ),
 
