@@ -17,7 +17,10 @@ module.exports = grammar({
       $.block_comment
     ),
 
-    line_comment: $ => seq('//', /.*/),
+    line_comment: $ => seq(
+      '//',
+      /[^\n]*/
+    ),
 
     block_comment: $ => seq(
       '/*',
