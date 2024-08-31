@@ -2387,7 +2387,6 @@ module.exports = grammar({
       'TestPage',
       'TestPermissions',
       'TestRequestPage',
-      'Text',
       'TextBuilder',
       'Time',
       'TransactionModel',
@@ -2396,13 +2395,17 @@ module.exports = grammar({
       'Verbosity',
       'Version',
       'XmlPort',
-      seq(
-        choice('Code', 'Text'),
-        '[',
-        $.integer,
-        ']'
-      )
+      $.sized_data_type,
+      'Code',
+      'Text'
     ),
+
+    sized_data_type: $ => prec(1, seq(
+      choice('Code', 'Text'),
+      '[',
+      $.integer,
+      ']'
+    )),
 
     field_property: $ => choice(
       // Field-specific properties will be added here
