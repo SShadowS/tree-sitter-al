@@ -2071,6 +2071,12 @@ module.exports = grammar({
       $.procedure_call_statement,
       $.exit_statement,
       $.with_statement,
+      $.method_call_statement  // Add this line
+    ),
+
+    method_call_statement: $ => seq(
+      $.method_call,
+      ';'
     ),
 
     assignment_statement: $ => seq(
