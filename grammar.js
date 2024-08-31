@@ -1927,8 +1927,11 @@ module.exports = grammar({
       'if',
       field('condition', $._expression),
       'then',
-      field('then_body', $.code_block),
-      optional(seq('else', field('else_body', $.code_block)))
+      field('then_body', choice($._statement, $.code_block)),
+      optional(seq(
+        'else',
+        field('else_body', choice($._statement, $.code_block))
+      ))
     ),
 
     case_statement: $ => seq(
