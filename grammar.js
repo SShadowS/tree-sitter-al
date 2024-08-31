@@ -1542,7 +1542,7 @@ module.exports = grammar({
     ),
 
     event_subscriber_params: $ => seq(
-      field('object_type', $.identifier),
+      field('object_type', $.object_type),
       ',',
       field('object_id', choice($.integer, $.identifier)),
       ',',
@@ -1557,6 +1557,12 @@ module.exports = grammar({
           field('skip_on_missing_permission', $.boolean_literal)
         ))
       ))
+    ),
+
+    object_type: $ => seq(
+      'ObjectType',
+      '::',
+      choice('Codeunit', 'Page', 'Report', 'Table', 'XMLPort')
     ),
 
     _table_element: $ => seq(
