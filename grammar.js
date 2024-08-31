@@ -1960,7 +1960,10 @@ module.exports = grammar({
 
     record_type: $ => prec(2, seq(
       'Record',
-      field('table_name', $.identifier)
+      field('table_reference', choice(
+        $.identifier,
+        $.integer
+      ))
     )),
 
     code_block: $ => seq(
