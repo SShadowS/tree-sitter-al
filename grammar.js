@@ -2001,12 +2001,14 @@ module.exports = grammar({
       optional($._parameter_list),
       ')',
       optional(choice(
-        field('return_type', seq(':', $._type)),
+        seq(field('return_type', seq(':', $._type)), optional(';')),
         seq(
           field('return_value', $.identifier),
           ':',
-          field('return_type', $._type)
-        )
+          field('return_type', $._type),
+          optional(';')
+        ),
+        ';'
       )),
       optional($.variable_declaration),
       field('body', $.code_block)
