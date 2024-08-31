@@ -1990,7 +1990,10 @@ module.exports = grammar({
 
     code_block: $ => seq(
       'begin',
-      repeat($._statement),
+      repeat(choice(
+        $._statement,
+        $.comment
+      )),
       'end'
     ),
 
