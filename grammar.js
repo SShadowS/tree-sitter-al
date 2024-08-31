@@ -1521,9 +1521,24 @@ module.exports = grammar({
         $.ondelete_trigger,
         $.oninsert_trigger,
         $.onmodify_trigger,
-        $.onrename_trigger
+        $.onrename_trigger,
+        $.var
       ),
       optional(';')
+    ),
+
+    var: $ => seq(
+      'var',
+      '{',
+      repeat($.variable_declaration),
+      '}'
+    ),
+
+    variable_declaration: $ => seq(
+      field('name', $.identifier),
+      ':',
+      field('type', $._type),
+      ';'
     ),
 
     _page_element: $ => seq(
