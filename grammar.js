@@ -2756,6 +2756,16 @@ module.exports = grammar({
       ';'
     ),
 
+    // ObsoleteState Property
+    // Marks whether the object will be deprecated.
+    // This property is used on various AL objects including Tables, Table Fields, Pages, and more.
+    obsolete_state_property: $ => seq(
+      'ObsoleteState',
+      '=',
+      field('value', choice('Pending', 'Removed')),
+      ';'
+    ),
+
     // MovedTo Property
     // Specifies the destination extension Id when a table is moved to another extension.
     // This property is used on Table objects.
@@ -2936,13 +2946,14 @@ module.exports = grammar({
       $.not_blank_property,
       $.numeric_property,
       $.obsolete_reason_property,
+      $.obsolete_state_property,
       $.obsolete_tag_property,
       $.option_caption_property,
       $.option_caption_ml_property,
       $.option_members_property,
       $.option_ordinal_values_property,
       $.quick_entry_property,
-      $.sign_displacement_property  // Added SignDisplacement property
+      $.sign_displacement_property
     ),
 
     // SignDisplacement Property
@@ -3566,6 +3577,7 @@ module.exports = grammar({
       $.multiple_new_lines_property,
       $.odata_edm_type_property,
       $.obsolete_reason_property,
+      $.obsolete_state_property,
       $.obsolete_tag_property,
       $.odata_key_fields_property,
       $.order_by_property,
@@ -4602,6 +4614,9 @@ module.exports = grammar({
       $.maximum_dataset_size_property,
       $.maximum_document_count_property,
       $.max_iteration_property,
+      $.obsolete_reason_property,
+      $.obsolete_state_property,
+      $.obsolete_tag_property,
       $.option_members_property,
       $.paper_source_default_page_property,
       $.paper_source_first_page_property,
@@ -4951,6 +4966,9 @@ module.exports = grammar({
       $.min_occurs_property,
       $.namespace_prefix_property,
       $.namespaces_property,
+      $.obsolete_reason_property,
+      $.obsolete_state_property,
+      $.obsolete_tag_property,
       $.occurrence_property,
       $.permissions_property,
       $.record_separator_property,
