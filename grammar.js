@@ -1954,7 +1954,7 @@ module.exports = grammar({
     ),
 
     _type: $ => choice(
-      $.identifier,
+      $._variable_data_type,
       $.record_type
     ),
 
