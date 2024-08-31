@@ -1923,7 +1923,7 @@ module.exports = grammar({
       ';'
     ),
 
-    if_statement: $ => seq(
+    if_statement: $ => prec.right(seq(
       'if',
       field('condition', $._expression),
       'then',
@@ -1932,7 +1932,7 @@ module.exports = grammar({
         'else',
         field('else_body', choice($._statement, $.code_block))
       ))
-    ),
+    )),
 
     case_statement: $ => seq(
       'case',
