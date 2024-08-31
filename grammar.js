@@ -2499,6 +2499,7 @@ module.exports = grammar({
       $.not_blank_property,
       $.numeric_property,
       $.obsolete_reason_property,
+      $.obsolete_state_property,
       $.obsolete_tag_property,
       $.option_caption_property,
       $.option_caption_ml_property,
