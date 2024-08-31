@@ -1991,7 +1991,8 @@ module.exports = grammar({
       $.repeat_statement,
       $.procedure_call_statement,
       $.exit_statement,
-      $.with_statement
+      $.with_statement,
+      seq($.identifier, ';')  // This allows for procedure calls without parentheses
     ),
 
     assignment_statement: $ => seq(
@@ -2055,12 +2056,18 @@ module.exports = grammar({
       ';'
     ),
 
-    procedure_call_statement: $ => seq(
-      field('procedure', $.identifier),
-      '(',
-      optional($._argument_list),
-      ')',
-      ';'
+    procedure_call_statement: $ => choice(
+      seq(
+        field('procedure', $.identifier),
+        '(',
+        optional($._argument_list),
+        ')',
+        ';'
+      ),
+      seq(
+        field('procedure', $.identifier),
+        ';'
+      )
     ),
 
     exit_statement: $ => seq(
