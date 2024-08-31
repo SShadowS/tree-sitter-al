@@ -2086,11 +2086,23 @@ module.exports = grammar({
       '(',
       field('name', $.identifier),
       ';',
-      field('fields', $.identifier_list),
+      field('fields', $.key_field_list),
       ')',
       '{',
       repeat(choice($.clustered_property, $.unique_property, $.included_fields_property, $.column_store_index_property, $.enabled_property)),
       '}'
+    ),
+
+    // Helper rule for a list of key fields
+    key_field_list: $ => seq(
+      $.key_field,
+      repeat(seq(',', $.key_field))
+    ),
+
+    // Helper rule for a key field (can be quoted or unquoted)
+    key_field: $ => choice(
+      $.identifier,
+      $.string
     ),
 
     // Clustered Property
