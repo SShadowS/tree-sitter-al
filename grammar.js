@@ -1992,7 +1992,6 @@ module.exports = grammar({
       $.procedure_call_statement,
       $.exit_statement,
       $.with_statement,
-      seq($.identifier, ';')  // This allows for procedure calls without parentheses
     ),
 
     assignment_statement: $ => seq(
