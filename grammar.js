@@ -6462,11 +6462,11 @@ module.exports = grammar({
       $.assignment_operator
     ),
 
-    arithmetic_operator: $ => choice('+', '-', '*', '/', 'div', 'mod'),
+    arithmetic_operator: $ => choice('+', '-', '*', '/', /[dD][iI][vV]/, /[mM][oO][dD]/),
 
     comparison_operator: $ => choice('=', '<>', '<', '>', '<=', '>='),
 
-    logical_operator: $ => choice('and', 'or', 'not', 'xor'),
+    logical_operator: $ => choice(/[aA][nN][dD]/, /[oO][rR]/, /[nN][oO][tT]/, /[xX][oO][rR]/),
 
     assignment_operator: $ => ':=',
 
