@@ -2171,7 +2171,7 @@ module.exports = grammar({
       ';',
       field('name', $.string),
       ';',
-      field('data_type', $._data_type),
+      field('data_type', $._table_data_type),
       ')',
       '{',
       repeat($.field_property),
