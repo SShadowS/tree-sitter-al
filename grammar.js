@@ -95,7 +95,7 @@ module.exports = grammar({
       optional($._parameter_list),
       ')',
       field('return_type', optional(seq(':', $._type))),
-      ';'
+      optional(';')
     ),
 
     xmlport_object: $ => seq(
