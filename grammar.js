@@ -1548,6 +1548,24 @@ module.exports = grammar({
       optional(';')
     ),
 
+    fieldgroups: $ => seq(
+      'fieldgroups',
+      '{',
+      repeat($.fieldgroup),
+      '}'
+    ),
+
+    fieldgroup: $ => seq(
+      'fieldgroup',
+      '(',
+      field('name', $.identifier),
+      ';',
+      field('fields', $.identifier_list),
+      ')',
+      '{',
+      '}'
+    ),
+
     var: $ => seq(
       'var',
       repeat($.variable_declaration)
