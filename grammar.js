@@ -2063,7 +2063,7 @@ module.exports = grammar({
       ';'
     ),
 
-    procedure_call_statement: $ => prec.dynamic(2, choice(
+    procedure_call_statement: $ => choice(
       seq(
         field('procedure', $.identifier),
         '(',
@@ -2075,7 +2075,7 @@ module.exports = grammar({
         field('procedure', $.identifier),
         ';'
       )
-    )),
+    ),
 
     exit_statement: $ => seq(
       'exit',
