@@ -1478,6 +1478,7 @@ module.exports = grammar({
     ),
 
     event: $ => seq(
+      optional($.obsolete_attribute),
       'event',
       field('name', $.identifier),
       '(',
