@@ -1515,7 +1515,8 @@ module.exports = grammar({
       choice(
         $.fields,
         $.keys,
-        $.table_property,
+        $.caption_property,
+        $.data_classification_property,
         $.procedure,
         $.trigger,
         $.ondelete_trigger,
