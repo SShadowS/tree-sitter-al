@@ -1619,10 +1619,37 @@ module.exports = grammar({
       repeat($.variable_declaration)
     ),
 
-    variable_declaration: $ => seq(
+    variable_declaration: $ => choice(
+      seq(
+        field('name', $.identifier),
+        ':',
+        field('type', $._type),
+        ';'
+      ),
+      $.label_declaration
+    ),
+
+    label_declaration: $ => seq(
       field('name', $.identifier),
       ':',
-      field('type', $._type),
+      'Label',
+      field('value', $.string_literal),
+      optional(seq(
+        ',',
+        field('language', $.string_literal),
+        optional(seq(
+          ',',
+          'Locked',
+          '=',
+          field('locked', $.boolean_literal)
+        )),
+        optional(seq(
+          ',',
+          'Comment',
+          '=',
+          field('comment', $.string_literal)
+        ))
+      )),
       ';'
     ),
 
@@ -2420,6 +2447,7 @@ module.exports = grammar({
       'JsonToken',
       'JsonValue',
       'KeyRef',
+      'Label',
       'List',
       'ModuleInfo',
       'Notification',
