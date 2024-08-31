@@ -2076,7 +2076,7 @@ module.exports = grammar({
 
     method_call_statement: $ => seq(
       $.method_call,
-      ';'
+      optional(';')
     ),
 
     assignment_statement: $ => seq(
