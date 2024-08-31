@@ -6425,7 +6425,7 @@ module.exports = grammar({
 
     string_literal: $ => /'[^']*'/,
 
-    boolean_literal: $ => choice('true', 'false'),
+    boolean_literal: $ => choice(/[tT][rR][uU][eE]/, /[fF][aA][lL][sS][eE]/),
 
     Boolean: $ => 'Boolean',
 
