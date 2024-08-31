@@ -82,17 +82,20 @@ table 50100 "My Test Table"
         (caption_property
           (string_literal))
         (decimal_places_property
-          (integer)
-          (integer))))
+          (decimal_places_value
+            (integer)
+            (integer)))))
     (keys
       (key
         (identifier)
-        (identifier)
+        (key_field_list
+          (key_field))
         (clustered_property
           (boolean_literal))))
-    (variable_declaration
-      (identifier)
-      (identifier))
+    (var
+      (variable_declaration
+        (identifier)
+        (identifier)))
     (oninsert_trigger
       (code_block
         (procedure_call_statement
