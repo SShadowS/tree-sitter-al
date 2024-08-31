@@ -12,22 +12,14 @@ module.exports = grammar({
       $.comment
     )),
 
-    comment: $ => choice(
-      $.line_comment,
-      $.block_comment
-    ),
-
-    line_comment: $ => seq(
-      '//',
-      /[^\n]*/,
-      '\n'  // Explicitly consume the newline
-    ),
-
-    block_comment: $ => seq(
-      '/*',
-      /[^*]*\*+([^/*][^*]*\*+)*/,
-      '/'
-    ),
+    comment: _ => token(choice(
+      seq('//', /[^\r\n\u2028\u2029]*/),
+      seq(
+        '/*',
+        /[^*]*\*+([^/*][^*]*\*+)*/,
+        '/',
+      ),
+    )),
 
     _declaration: $ => choice(
       $.table_object,
@@ -2019,7 +2011,7 @@ module.exports = grammar({
       'begin',
       repeat(choice(
         $._statement,
-        $.comment
+        //$.comment
       )),
       'end'
     ),
