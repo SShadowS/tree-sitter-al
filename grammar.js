@@ -2667,55 +2667,6 @@ module.exports = grammar({
       ']'
     )),
 
-    field_property: $ => choice(
-      // Field-specific properties will be added here
-      $.access_property,
-      $.access_by_permission_property,
-      $.allow_in_customizations_property,
-      $.assist_edit_property,
-      $.auto_format_expression_property,
-      $.auto_format_type_property,
-      $.auto_increment_property,
-      $.blank_numbers_property,
-      $.blank_zero_property,
-      $.calc_formula_property,
-      $.caption_property,
-      $.caption_class_property,
-      $.caption_ml_property,
-      $.char_allowed_property,
-      $.closing_dates_property,
-      $.column_span_property,
-      $.compressed_property,
-      $.field_data_classification_property,
-      $.date_formula_property,
-      $.decimal_places_property,
-      $.editable_property,
-      $.enabled_property,
-      $.extended_datatype_property,
-      $.external_access_property,
-      $.external_name_property,
-      $.external_type_property,
-      $.field_class_property,
-      $.init_value_property,
-      $.instructional_text_property,
-      $.max_value_property,
-      $.min_value_property,
-      $.moved_from_property,
-      $.moved_to_property,
-      $.navigation_page_id_property,
-      $.not_blank_property,
-      $.numeric_property,
-      $.obsolete_reason_property,
-      $.obsolete_state_property,
-      $.obsolete_tag_property,
-      $.option_caption_property,
-      $.option_caption_ml_property,
-      $.option_members_property,
-      $.option_ordinal_values_property,
-      $.quick_entry_property,
-      $.sign_displacement_property
-    ),
-
     // Generic property structure
     property: $ => seq(
       field('name', $.identifier),
@@ -3104,7 +3055,7 @@ module.exports = grammar({
       $.closing_dates_property,
       $.column_span_property,
       $.compressed_property,
-      $.data_classification_property,
+      $.field_data_classification_property,
       $.date_formula_property,
       $.decimal_places_property,
       $.editable_property,
@@ -3131,7 +3082,8 @@ module.exports = grammar({
       $.option_members_property,
       $.option_ordinal_values_property,
       $.quick_entry_property,
-      $.sign_displacement_property
+      $.sign_displacement_property,
+      $.table_relation_property
     ),
 
     // SignDisplacement Property
@@ -3737,23 +3689,23 @@ module.exports = grammar({
       '(',
       $.condition,
       ')',
-      $.simple_table_relation,
+      $.string,
       repeat(seq(
         'ELSE',
         'IF',
         '(',
         $.condition,
         ')',
-        $.simple_table_relation
+        $.string
       )),
       optional(seq(
         'ELSE',
-        $.simple_table_relation
+        $.string
       ))
     ),
 
     condition: $ => seq(
-      field('field', $.identifier),
+      field('field', $.string),
       '=',
       field('value', $.const_filter)
     ),
@@ -3761,7 +3713,7 @@ module.exports = grammar({
     const_filter: $ => seq(
       'CONST',
       '(',
-      field('value', choice($.identifier, $.string_literal)),
+      field('value', choice($.identifier, $.string)),
       ')'
     ),
 
@@ -6071,14 +6023,6 @@ module.exports = grammar({
         'PromptDialog'
       )),
       ';'
-    ),
-
-    field_property: $ => choice(
-      $.caption_property,
-      $.tooltip_property,
-      $.visible_property,
-      $.editable_property,
-      // ... other field properties
     ),
 
     part_property: $ => choice(
