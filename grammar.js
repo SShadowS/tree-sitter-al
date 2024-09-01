@@ -1820,7 +1820,7 @@ module.exports = grammar({
 
     _page_element: $ => seq(
       choice(
-        $.property,
+        //$.property,
         $.layout,
         $.actions,
         $.views,
@@ -1909,7 +1909,8 @@ module.exports = grammar({
         $.source_table_property,
         $.source_table_temporary_property,
         $.source_table_view_property,
-        $.usage_category_property
+        $.usage_category_property,
+        $.var
       ),
       optional(';')
     ),
