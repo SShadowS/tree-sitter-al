@@ -31,10 +31,10 @@ module.exports = grammar({
       ';'
     ),
 
-    qualified_namespace: $ => seq(
+    qualified_namespace: $ => prec.left(seq(
       $.identifier,
       repeat(seq('.', $.identifier))
-    ),
+    )),
 
     comment: _ => token(choice(
       seq('//', /[^\r\n\u2028\u2029]*/),
