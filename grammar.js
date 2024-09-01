@@ -4444,12 +4444,12 @@ module.exports = grammar({
     // DataCaptionExpression Property
     // Sets an AL expression that is evaluated and displayed to the left of the page caption.
     // This property is used on Page and Request Page objects.
-    data_caption_expression_property: $ => seq(
+    data_caption_expression_property: $ => prec(1, seq(
       'DataCaptionExpression',
       '=',
       field('value', choice($.string_literal, $._expression)),
       ';'
-    ),
+    )),
 
     // CustomActionType Property
     // Sets the type of the custom action for Page Custom Actions.
