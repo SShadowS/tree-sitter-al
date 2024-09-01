@@ -849,7 +849,45 @@ module.exports = grammar({
       $.source_table_property,
       $.caption_property,
       $.context_sensitive_help_page_property,
+      $.application_area_property,
+      $.usage_category_property,
+      $.insert_allowed_property,
+      $.delete_allowed_property,
+      $.modify_allowed_property,
+      $.auto_split_key_property,
+      $.data_caption_fields_property,
+      $.editable_property,
+      $.card_page_id_property,
+      $.page_view_property,
       // ... other page-level properties
+    ),
+
+    // ApplicationArea Property
+    // Specifies which application areas the page is designed for.
+    // This property determines the visibility of the page based on the user's assigned application areas.
+    application_area_property: $ => seq(
+      'ApplicationArea',
+      '=',
+      field('value', choice($.identifier, $.array_value)),
+      ';'
+    ),
+
+    // UsageCategory Property
+    // Specifies how the page can be used from the search feature.
+    // This property is used on Page objects.
+    usage_category_property: $ => seq(
+      'UsageCategory',
+      '=',
+      field('value', choice(
+        'Administration',
+        'Documents',
+        'History',
+        'Lists',
+        'None',
+        'ReportsAndAnalysis',
+        'Tasks'
+      )),
+      ';'
     ),
 
     _al_code: $ => choice(
