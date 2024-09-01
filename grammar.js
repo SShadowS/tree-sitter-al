@@ -4000,12 +4000,17 @@ module.exports = grammar({
     ),
 
     // SourceTable Property
-    // Sets the ID of the table from which this page will display records.
+    // Sets the ID or name of the table from which this page will display records.
     // This property is used on Page and Request Page objects.
     source_table_property: $ => seq(
       'SourceTable',
       '=',
-      field('value', $.fully_qualified_identifier),
+      field('value', choice(
+        $.integer,
+        $.fully_qualified_identifier,
+        $.identifier,
+        $.string_literal
+      )),
       ';'
     ),
 
