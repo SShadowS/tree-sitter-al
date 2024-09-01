@@ -836,7 +836,7 @@ module.exports = grammar({
       field('name', choice($.identifier, $.string)),
       optional('API'),
       '{',
-      repeat($._page_property),
+      repeat($.page_property),
       optional($.layout),
       optional($.actions),
       optional($.views),
