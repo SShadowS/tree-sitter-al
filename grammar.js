@@ -2582,11 +2582,7 @@ module.exports = grammar({
       ),
       seq(
         'Enum',
-        optional(seq(
-          '[',
-          field('enum_type', $.identifier),
-          ']'
-        ))
+        field('enum_type', $.identifier)
       )
     ),
 
