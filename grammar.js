@@ -2592,7 +2592,8 @@ module.exports = grammar({
       '(',
       ')',
       optional($.variable_declaration),
-      field('body', $.code_block)
+      field('body', $.code_block),
+      optional(';')
     ),
 
     page_field: $ => seq(
