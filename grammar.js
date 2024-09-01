@@ -1292,7 +1292,7 @@ module.exports = grammar({
       $.group,
       $.part,
       $.system_part,
-      $.field,
+      $.page_field,
       $.repeater,
       $.cue_group,
       $.fixed_layout,
