@@ -4067,16 +4067,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // Scope Property
-    // Specifies the scope of the action to be either page-specific, or specific to a repeater control.
-    // This property is used on Page Action objects.
-    scope_property: $ => seq(
-      'Scope',
-      '=',
-      field('value', choice('Page', 'Repeater')),
-      ';'
-    ),
-
     // SaveValues Property
     // Sets whether user-specific control values are saved for this page.
     // This property is used on Page and Request Page objects.
@@ -5748,16 +5738,6 @@ module.exports = grammar({
     // This property can only be set if the QueryType is set to API.
     apigroup_property: $ => seq(
       'APIGroup',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
-
-    // APIVersion Property for queries
-    // Sets the version of the API endpoint that the query is exposed in.
-    // This property can only be set if the QueryType is set to API.
-    apiversion_property: $ => seq(
-      'APIVersion',
       '=',
       field('value', $.string_literal),
       ';'
