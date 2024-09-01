@@ -4387,7 +4387,7 @@ module.exports = grammar({
     data_caption_expression_property: $ => seq(
       'DataCaptionExpression',
       '=',
-      field('value', $.string_literal),
+      field('value', choice($.string_literal, $._expression)),
       ';'
     ),
 
