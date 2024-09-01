@@ -3301,23 +3301,6 @@ module.exports = grammar({
       ))
     ),
 
-    // OptionMembers Property
-    // Sets the list of options that are available in the table field that is currently selected.
-    // This property is used on Table Fields.
-    option_members_property: $ => seq(
-      'OptionMembers',
-      '=',
-      field('value', $.option_members_value),
-      ';'
-    ),
-
-    option_members_value: $ => seq(
-      repeat1(seq(
-        $.string_literal,
-        optional(',')
-      ))
-    ),
-
     // NotBlank Property
     // Sets a value that specifies whether users must enter a value in the selected field or text box.
     // This property is used on Table Fields and Page Fields.
@@ -5560,16 +5543,6 @@ module.exports = grammar({
     // Extensible Property
     // Sets whether the object can be extended.
     // This property is used on Table, Page, Report, and Enum objects.
-    extensible_property: $ => seq(
-      'Extensible',
-      '=',
-      field('value', $.boolean_literal),
-      ';'
-    ),
-
-    // Extensible Property
-    // Sets whether the enum can be extended by enum extensions.
-    // This property is used on Enum objects.
     extensible_property: $ => seq(
       'Extensible',
       '=',
