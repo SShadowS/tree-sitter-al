@@ -413,10 +413,10 @@ module.exports = grammar({
       $.trigger
     ),
 
-    fields: $ => seq(
+    table_fields: $ => seq(
       'fields',
       '{',
-      repeat($.field),
+      repeat($.table_field),
       '}'
     ),
 
@@ -1310,7 +1310,7 @@ module.exports = grammar({
     ),
 
     _group_content: $ => choice(
-      $.field,
+      $.page_field,
       $.part,
       $.group,
       $.cue_group
@@ -1357,7 +1357,7 @@ module.exports = grammar({
     ),
 
     _cue_group_content: $ => choice(
-      $.field,
+      $.page_field,
       $.part
     ),
 
@@ -1372,7 +1372,7 @@ module.exports = grammar({
     ),
 
     _repeater_content: $ => choice(
-      $.field,
+      $.page_field,
       $.group
     ),
 
@@ -2397,6 +2397,12 @@ module.exports = grammar({
       '}'
     ),
 
+    _table_element: $ => choice(
+      $.table_fields,
+      $.keys,
+      // ... other table elements
+    ),
+
     fields: $ => seq(
       'fields',
       '{',
@@ -2530,7 +2536,7 @@ module.exports = grammar({
       field('body', $.code_block)
     ),
 
-    field: $ => seq(
+    table_field: $ => seq(
       'field',
       '(',
       field('id', $.integer),
@@ -2538,6 +2544,16 @@ module.exports = grammar({
       field('name', choice($.string, $.identifier)),
       ';',
       field('data_type', $._table_data_type),
+      ')',
+      '{',
+      repeat($.field_property),
+      '}'
+    ),
+
+    page_field: $ => seq(
+      'field',
+      '(',
+      field('name', $.identifier),
       ')',
       '{',
       repeat($.field_property),
