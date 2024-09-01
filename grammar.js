@@ -1295,7 +1295,6 @@ module.exports = grammar({
       $.page_field,
       $.repeater,
       $.cue_group,
-      $.fixed_layout,
       $.grid
     ),
 
