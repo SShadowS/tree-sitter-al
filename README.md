@@ -26,5 +26,11 @@ npm run test
 npm run parse <path-to-al-file>
 ```
 
+## Parse and debug
+Send the debug flag to see the parsed tree. This is useful for debugging the parser. Please add the output to issues if you find any bugs. I might need the original AL file to debug the issue, but just the debug output is enough as a start.
+```bash
+tree-sitter parse <path-to-al-file> --debug
+```
+
 References
 - [AL Language Spec](https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-dev-overview)
