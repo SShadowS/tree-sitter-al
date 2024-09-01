@@ -1315,15 +1315,19 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($._area_content),
+      repeat($._area_element),
       '}'
     ),
 
-    _area_content: $ => choice(
+    _area_element: $ => choice(
       $.group,
       $.part,
       $.system_part,
-      $.field
+      $.field,
+      $.repeater,
+      $.cue_group,
+      $.fixed_layout,
+      $.grid
     ),
 
     group: $ => seq(
