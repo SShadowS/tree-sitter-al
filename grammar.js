@@ -4741,7 +4741,7 @@ module.exports = grammar({
 
     // AboutTitleML Property
     // Sets the large-font title that appears in a teaching tip in the UI, supporting multiple languages
-    // This property is used on Table objects
+    // This property is used on Table objects and Page objects and their controls (actions, fields, parts, etc.)
     about_title_ml_property: $ => seq(
       'AboutTitleML',
       '=',
