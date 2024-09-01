@@ -4771,7 +4771,7 @@ module.exports = grammar({
 
     // AboutTitleML Property
     // Sets the large-font title that appears in a teaching tip in the UI, supporting multiple languages
-    // Used on Page objects and their controls (actions, fields, parts, etc.)
+    // This property is used on Table objects and Page objects and their controls (actions, fields, parts, etc.)
     about_title_ml_property: $ => seq(
       'AboutTitleML',
       '=',
@@ -4882,16 +4882,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // RequestFilterFields Property
-    // Sets which fields are automatically included on the tab of the request page that is related to this data item.
-    // The user can set filters on these fields.
-    // This property is used on Report Data Items and XMLport Table Elements.
-    request_filter_fields_property: $ => seq(
-      'RequestFilterFields',
-      '=',
-      field('value', $.identifier_list),
-      ';'
-    ),
 
     // RequestFilterHeading Property
     // Sets a caption for the request page tab that is related to this data item.
