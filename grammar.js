@@ -1454,9 +1454,15 @@ module.exports = grammar({
 
     view_property: $ => choice(
       $.caption_property,
-      $.layout_property,
       $.filters_property,
       // ... other view properties
+    ),
+
+    layout_property: $ => seq(
+      'Layout',
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     // OnAfterGetCurrRecord trigger for pages
@@ -6473,6 +6479,34 @@ module.exports = grammar({
     system_part_property: $ => choice(
       $.system_part_id_property,
       // ... other system part properties
+    ),
+
+    page_id_property: $ => seq(
+      'PagePartID',
+      '=',
+      field('value', choice($.integer, $.identifier)),
+      ';'
+    ),
+
+    system_part_id_property: $ => seq(
+      'SystemPartID',
+      '=',
+      field('value', $.identifier),
+      ';'
+    ),
+
+    tooltip_property: $ => seq(
+      'ToolTip',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    visible_property: $ => seq(
+      'Visible',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
     ),
 
     // FormatRegion Property
