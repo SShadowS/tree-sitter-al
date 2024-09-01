@@ -1289,11 +1289,11 @@ module.exports = grammar({
     ),
 
     _area_element: $ => choice(
+      $.repeater,
       $.group,
       $.part,
       $.system_part,
       $.page_field,
-      $.repeater,
       $.cue_group
     ),
 
@@ -1641,12 +1641,12 @@ module.exports = grammar({
 
     _table_element: $ => seq(
       choice(
-        $.fields,
+        $.table_fields,
         $.keys,
         $.caption_property,
         $.data_classification_property,
         $.data_caption_fields_property,
-        $.drill_down_page_id_property,
+        $.drilldown_page_id_property,
         $.lookup_page_id_property,
         $.paste_is_valid_property,
         $.permissions_property,
@@ -1735,11 +1735,9 @@ module.exports = grammar({
 
     _page_element: $ => seq(
       choice(
-        //$.property,
         $.layout,
         $.actions,
         $.views,
-        $.area,
         $.field_group,
         $.page_label,
         $.page_group,
@@ -2395,12 +2393,6 @@ module.exports = grammar({
       '}'
     ),
 
-    _table_element: $ => choice(
-      $.table_fields,
-      $.keys,
-      // ... other table elements
-    ),
-
     fields: $ => seq(
       'fields',
       '{',
@@ -2861,16 +2853,6 @@ module.exports = grammar({
     // This property is used on Table objects.
     lookup_page_id_property: $ => seq(
       'LookupPageId',
-      '=',
-      field('value', choice($.integer, $.identifier, $.string_literal)),
-      ';'
-    ),
-
-    // DrillDownPageId Property
-    // Sets the ID of the page to use for drill-downs on this table.
-    // This property is used on Table objects.
-    drill_down_page_id_property: $ => seq(
-      'DrillDownPageID',
       '=',
       field('value', choice($.integer, $.identifier, $.string_literal)),
       ';'
@@ -4247,7 +4229,7 @@ module.exports = grammar({
     // Sets the ID of the page to use as a drill-down.
     // This property is used on Table objects and Page Fields.
     drilldown_page_id_property: $ => seq(
-      'DrillDownPageID',
+      'DrillDownPageId',
       '=',
       field('value', choice($.integer, $.identifier, $.string)),
       ';'
@@ -6056,14 +6038,14 @@ module.exports = grammar({
     ),
 
     page_id_property: $ => seq(
-      'PagePartID',
+      'PagePartId',
       '=',
-      field('value', choice($.integer, $.identifier)),
+      field('value', choice($.integer, $.identifier, $.string_literal)),
       ';'
     ),
 
     system_part_id_property: $ => seq(
-      'SystemPartID',
+      'SystemPartId',
       '=',
       field('value', $.identifier),
       ';'
