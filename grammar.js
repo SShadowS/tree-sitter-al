@@ -4058,13 +4058,6 @@ module.exports = grammar({
       field('value', $.integer),
       ';'
     ),
-    // This property is used on Page and Request Page objects.
-    source_table_property: $ => seq(
-      'SourceTable',
-      '=',
-      field('value', $.identifier),
-      ';'
-    ),
 
     // SharedLayout Property
     // Specifies whether the view has the same layout as the default view 'All'.
