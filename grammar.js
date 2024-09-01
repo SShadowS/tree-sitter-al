@@ -6400,7 +6400,7 @@ module.exports = grammar({
     string: $ => /"(?:[^"\\]|\\.)*"/,
     integer: $ => /\d+/,
     // Identifiers
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*([A-Z][a-z0-9_]*)*(\.[a-zA-Z_][a-zA-Z0-9_]*([A-Z][a-z0-9_]*)*)?/,
 
     fully_qualified_identifier: $ => seq(
       optional(seq($.qualified_namespace, '.')),
