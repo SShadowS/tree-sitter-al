@@ -2241,21 +2241,32 @@ module.exports = grammar({
     case_statement: $ => prec.left(1, seq(
       /[cC][aA][sS][eE]/,
       field('expression', choice(
-        $.identifier,
         $.string,
+        $.identifier,
         $._expression
       )),
       /[oO][fF]/,
-      repeat1($.case_option),
+      repeat1($.case_branch),
       optional(seq(/[eE][lL][sS][eE]/, field('else_body', $.code_block))),
       /[eE][nN][dD]/
     )),
 
-    case_option: $ => seq(
-      field('value', $._literal),
+    case_branch: $ => seq(
+      field('value', choice(
+        $._literal,
+        $.qualified_name
+      )),
       ':',
-      field('body', $.code_block),
-      ';'
+      field('body', choice(
+        repeat($._statement),
+        $.code_block
+      ))
+    ),
+   
+    qualified_name: $ => seq(
+      choice($.identifier, $.string),
+      '::',
+      $.identifier
     ),
 
     for_statement: $ => seq(
