@@ -2579,6 +2579,14 @@ module.exports = grammar({
         '[',
         $.integer,
         ']'
+      ),
+      seq(
+        'Enum',
+        optional(seq(
+          '[',
+          field('enum_type', $.identifier),
+          ']'
+        ))
       )
     ),
 
