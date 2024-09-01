@@ -2240,7 +2240,11 @@ module.exports = grammar({
 
     case_statement: $ => seq(
       /[cC][aA][sS][eE]/,
-      field('expression', $._expression),
+      field('expression', choice(
+        $.identifier,
+        $.string,
+        $._expression
+      )),
       /[oO][fF]/,
       repeat1($.case_option),
       optional(seq(/[eE][lL][sS][eE]/, field('else_body', $.code_block))),
@@ -6244,7 +6248,10 @@ module.exports = grammar({
       field('value', $._value)
     ),
 
-    string: $ => /"(?:[^"\\]|\\.)*"/,
+    string: $ => choice(
+      /"(?:[^"\\]|\\.)*"/,
+      /'(?:[^'\\]|\\.)*'/
+    ),
     integer: $ => /\d+/,
     // Identifiers
     identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*([A-Z][a-z0-9_]*)*(\.[a-zA-Z_][a-zA-Z0-9_]*([A-Z][a-z0-9_]*)*)?/,
