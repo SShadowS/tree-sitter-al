@@ -1671,6 +1671,9 @@ module.exports = grammar({
         $.oninsert_trigger,
         $.onmodify_trigger,
         $.onrename_trigger,
+        $.onvalidate_trigger,
+        $.onlookup_trigger,
+        $.onafterlookup_trigger,
         $.var
       ),
       optional(';')
@@ -2526,6 +2529,42 @@ module.exports = grammar({
       field('body', $.code_block)
     ),
 
+    // OnValidate trigger for table fields
+    // This trigger runs when the value in the field is modified
+    // It can be used to perform custom validations or actions based on the new value
+    onvalidate_trigger: $ => seq(
+      'trigger',
+      'OnValidate',
+      '(',
+      ')',
+      optional($.variable_declaration),
+      field('body', $.code_block)
+    ),
+
+    // OnLookup trigger for table fields
+    // This trigger runs when the lookup button for the field is selected
+    // It can be used to provide custom lookup functionality
+    onlookup_trigger: $ => seq(
+      'trigger',
+      'OnLookup',
+      '(',
+      ')',
+      optional($.variable_declaration),
+      field('body', $.code_block)
+    ),
+
+    // OnAfterLookup trigger for table fields
+    // This trigger runs after a value has been selected from the lookup
+    // It can be used to perform actions based on the selected value
+    onafterlookup_trigger: $ => seq(
+      'trigger',
+      'OnAfterLookup',
+      '(',
+      ')',
+      optional($.variable_declaration),
+      field('body', $.code_block)
+    ),
+
     table_field: $ => seq(
       'field',
       '(',
@@ -2536,8 +2575,24 @@ module.exports = grammar({
       field('data_type', $._table_data_type),
       ')',
       '{',
-      repeat($.field_property),
+      repeat(choice(
+        $.field_property,
+        $.field_trigger
+      )),
       '}'
+    ),
+
+    field_trigger: $ => seq(
+      'trigger',
+      field('name', choice(
+        'OnValidate',
+        'OnLookup',
+        'OnAfterLookup'
+      )),
+      '(',
+      ')',
+      optional($.variable_declaration),
+      field('body', $.code_block)
     ),
 
     page_field: $ => seq(
