@@ -5681,16 +5681,6 @@ module.exports = grammar({
       )
     ),
 
-    // QueryType Property
-    // Sets the type of the query, which determines its behavior and usage.
-    // This property is used on Query objects.
-    query_type_property: $ => seq(
-      'QueryType',
-      '=',
-      field('value', choice('Normal', 'API')),
-      ';'
-    ),
-
     // Method Property
     // Sets either a date method for retrieving the year, month, or day from a date field
     // or a totals method for performing calculations on field values.
