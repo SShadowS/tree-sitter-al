@@ -6,11 +6,35 @@ module.exports = grammar({
     $.comment
   ],
 
+  // Note: Scope resolution and the fact that all objects in a file belong to the declared namespace
+  // are semantic concerns, not syntactic ones. These aspects should be handled during semantic analysis.
+
   rules: {
-    source_file: $ => repeat1(choice(
-      $._declaration,
-      $.comment
-    )),
+    source_file: $ => seq(
+      $.namespace_declaration,
+      repeat($.using_directive),
+      repeat1(choice(
+        $._declaration,
+        $.comment
+      ))
+    ),
+
+    namespace_declaration: $ => seq(
+      'namespace',
+      field('name', $.qualified_namespace),
+      ';'
+    ),
+
+    using_directive: $ => seq(
+      'using',
+      field('name', $.qualified_namespace),
+      ';'
+    ),
+
+    qualified_namespace: $ => seq(
+      $.identifier,
+      repeat(seq('.', $.identifier))
+    ),
 
     comment: _ => token(choice(
       seq('//', /[^\r\n\u2028\u2029]*/),
@@ -45,8 +69,8 @@ module.exports = grammar({
       $.report_layout_object,
       $.workflow_object,
       $.api_query_object,
-      $.request_page_object,  // Added Request Page object
-      $.dotnet_assembly_object  // Added Dot Net Assembly object
+      $.request_page_object,
+      $.dotnet_assembly_object
     ),
 
     // Dot Net Assembly object definition
@@ -2249,7 +2273,7 @@ module.exports = grammar({
     table_object: $ => seq(
       'table',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', choice($.fully_qualified_identifier, $.string)),
       '{',
       repeat($._table_element),
       '}'
@@ -3780,7 +3804,7 @@ module.exports = grammar({
     source_table_property: $ => seq(
       'SourceTable',
       '=',
-      field('value', $.identifier),
+      field('value', $.fully_qualified_identifier),
       ';'
     ),
 
@@ -6400,12 +6424,17 @@ module.exports = grammar({
     string: $ => /"(?:[^"\\]|\\.)*"/,
     integer: $ => /\d+/,
     // Identifiers
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*([A-Z][a-z0-9_]*)*(\.[a-zA-Z_][a-zA-Z0-9_]*([A-Z][a-z0-9_]*)*)?/,
+    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+
+    fully_qualified_identifier: $ => seq(
+      optional(seq($.qualified_namespace, '.')),
+      $.identifier
+    ),
 
     // Helper rule for a list of identifiers
     identifier_list: $ => seq(
-      $.identifier,
-      repeat(seq(',', $.identifier))
+      $.fully_qualified_identifier,
+      repeat(seq(',', $.fully_qualified_identifier))
     ),
 
     // Literals
