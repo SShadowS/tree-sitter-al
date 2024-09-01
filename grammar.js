@@ -4009,7 +4009,7 @@ module.exports = grammar({
         $.integer,
         $.fully_qualified_identifier,
         $.identifier,
-        $.string_literal
+        $.string
       )),
       ';'
     )),
@@ -4566,7 +4566,7 @@ module.exports = grammar({
     drilldown_page_id_property: $ => seq(
       'DrillDownPageID',
       '=',
-      field('value', choice($.integer, $.identifier)),
+      field('value', choice($.integer, $.identifier, $.string)),
       ';'
     ),
 
@@ -4646,7 +4646,7 @@ module.exports = grammar({
     card_page_id_property: $ => seq(
       'CardPageID',
       '=',
-      field('value', choice($.integer, $.identifier, $.string_literal)),
+      field('value', choice($.integer, $.identifier, $.string)),
       ';'
     ),
 
