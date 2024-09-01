@@ -899,11 +899,11 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat(choice(
+      repeat(prec(1, choice(
         $._page_element,
         $.instructional_text_property,
         $.caption_ml_property
-      )),
+      ))),
       '}'
     ),
 
