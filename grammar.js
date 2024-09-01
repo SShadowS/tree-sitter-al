@@ -3713,7 +3713,12 @@ module.exports = grammar({
       ';'
     ),
 
-    table_relation_value: $ => seq(
+    table_relation_value: $ => choice(
+      $.simple_table_relation,
+      $.conditional_table_relation
+    ),
+
+    simple_table_relation: $ => seq(
       field('table', $.identifier),
       optional(seq(
         '.',
@@ -3725,6 +3730,39 @@ module.exports = grammar({
         $.table_filters,
         ')'
       ))
+    ),
+
+    conditional_table_relation: $ => seq(
+      'IF',
+      '(',
+      $.condition,
+      ')',
+      $.simple_table_relation,
+      repeat(seq(
+        'ELSE',
+        'IF',
+        '(',
+        $.condition,
+        ')',
+        $.simple_table_relation
+      )),
+      optional(seq(
+        'ELSE',
+        $.simple_table_relation
+      ))
+    ),
+
+    condition: $ => seq(
+      field('field', $.identifier),
+      '=',
+      field('value', $.const_filter)
+    ),
+
+    const_filter: $ => seq(
+      'CONST',
+      '(',
+      field('value', choice($.identifier, $.string_literal)),
+      ')'
     ),
 
     // ValuesAllowed Property
