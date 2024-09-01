@@ -4097,12 +4097,12 @@ module.exports = grammar({
     // ShowMandatory Property
     // Sets a value that specifies whether users must enter a value in the selected field or text box.
     // This property is used on Page Field objects.
-    show_mandatory_property: $ => seq(
+    show_mandatory_property: $ => prec(1, seq(
       'ShowMandatory',
       '=',
       field('value', choice($.boolean_literal, $.identifier, $._expression)),
       ';'
-    ),
+    )),
 
     // ShowAsTree Property
     // Sets the indentation of rows on a List Page to Tree View.
