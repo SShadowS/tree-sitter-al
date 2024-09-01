@@ -836,8 +836,26 @@ module.exports = grammar({
       field('name', choice($.identifier, $.string)),
       optional('API'),
       '{',
-      repeat($._page_element),
+      repeat($._page_property),
+      optional($.layout),
+      optional($.actions),
+      optional($.views),
+      optional(repeat($._al_code)),
       '}'
+    ),
+
+    _page_property: $ => choice(
+      $.page_type_property,
+      $.source_table_property,
+      $.caption_property,
+      $.context_sensitive_help_page_property,
+      // ... other page-level properties
+    ),
+
+    _al_code: $ => choice(
+      $.procedure,
+      $.trigger,
+      $.var
     ),
 
     field_group: $ => seq(
@@ -1290,6 +1308,110 @@ module.exports = grammar({
     ),
 
     _layout_element: $ => choice(
+      $.area,
+      $.group,
+      $.field,
+      $.part,
+      $.system_part,
+      $.cue_group,
+      $.repeater
+    ),
+
+    area: $ => seq(
+      'area',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._area_content),
+      '}'
+    ),
+
+    _area_content: $ => choice(
+      $.group,
+      $.part,
+      $.system_part,
+      $.field
+    ),
+
+    group: $ => seq(
+      'group',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._group_content),
+      '}'
+    ),
+
+    _group_content: $ => choice(
+      $.field,
+      $.part,
+      $.group,
+      $.cue_group
+    ),
+
+    field: $ => seq(
+      'field',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.field_property),
+      '}'
+    ),
+
+    part: $ => seq(
+      'part',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.part_property),
+      '}'
+    ),
+
+    system_part: $ => seq(
+      'systempart',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($.system_part_property),
+      '}'
+    ),
+
+    cue_group: $ => seq(
+      'cuegroup',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._cue_group_content),
+      '}'
+    ),
+
+    _cue_group_content: $ => choice(
+      $.field,
+      $.part
+    ),
+
+    repeater: $ => seq(
+      'repeater',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._repeater_content),
+      '}'
+    ),
+
+    _repeater_content: $ => choice(
+      $.field,
+      $.group
+    ),
+
+    _layout_element: $ => choice(
       $.modify,
       $.add_first,
       $.add_last,
@@ -1326,8 +1448,15 @@ module.exports = grammar({
     view: $ => seq(
       field('name', $.identifier),
       '{',
-      repeat($.property),
+      repeat($.view_property),
       '}'
+    ),
+
+    view_property: $ => choice(
+      $.caption_property,
+      $.layout_property,
+      $.filters_property,
+      // ... other view properties
     ),
 
     // OnAfterGetCurrRecord trigger for pages
@@ -6320,9 +6449,30 @@ module.exports = grammar({
         'NavigatePage',
         'StandardDialog',
         'API',
-        'HeadlinePart'
+        'HeadlinePart',
+        'PromptDialog'
       )),
       ';'
+    ),
+
+    field_property: $ => choice(
+      $.caption_property,
+      $.tooltip_property,
+      $.visible_property,
+      $.editable_property,
+      // ... other field properties
+    ),
+
+    part_property: $ => choice(
+      $.page_id_property,
+      $.provider_property,
+      $.editable_property,
+      // ... other part properties
+    ),
+
+    system_part_property: $ => choice(
+      $.system_part_id_property,
+      // ... other system part properties
     ),
 
     // FormatRegion Property
