@@ -6737,11 +6737,11 @@ module.exports = grammar({
 
     time_literal: $ => /\d{2}:\d{2}:\d{2}/,
 
-    datetime_literal: $ => choice(
+    datetime_literal: $ => prec(1, choice(
       seq($.date_literal, $.time_literal),
       /\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}/,
       /0DT/
-    ),
+    )),
 
     // Operators
     _operator: $ => choice(
