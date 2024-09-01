@@ -984,37 +984,6 @@ module.exports = grammar({
       '}'
     ),
 
-    area: $ => seq(
-      'area',
-      '(',
-      field('name', $.identifier),
-      ')',
-      '{',
-      repeat($._area_element),
-      '}'
-    ),
-
-    _area_element: $ => choice(
-      $.group,
-      $.part,
-      $.systempart
-    ),
-
-    group: $ => seq(
-      'group',
-      '(',
-      field('name', choice($.identifier, $.string)),
-      ')',
-      '{',
-      repeat($._group_element),
-      '}'
-    ),
-
-    _group_element: $ => choice(
-      $.part,
-      $.group
-    ),
-
     part: $ => seq(
       'part',
       '(',
@@ -1333,7 +1302,7 @@ module.exports = grammar({
     group: $ => seq(
       'group',
       '(',
-      field('name', $.identifier),
+      field('name', choice($.identifier, $.string)),
       ')',
       '{',
       repeat($._group_content),
@@ -1545,16 +1514,6 @@ module.exports = grammar({
       $.field,
       $.group,
       $.action
-    ),
-
-    group: $ => seq(
-      'group',
-      '(',
-      field('name', $.identifier),
-      ')',
-      '{',
-      repeat($._customization_content),
-      '}'
     ),
 
     action: $ => seq(
