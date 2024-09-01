@@ -1294,8 +1294,7 @@ module.exports = grammar({
       $.system_part,
       $.page_field,
       $.repeater,
-      $.cue_group,
-      $.grid
+      $.cue_group
     ),
 
     group: $ => seq(
