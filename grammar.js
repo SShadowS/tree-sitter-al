@@ -2238,7 +2238,7 @@ module.exports = grammar({
       ))
     )),
 
-    case_statement: $ => seq(
+    case_statement: $ => prec.left(1, seq(
       /[cC][aA][sS][eE]/,
       field('expression', choice(
         $.identifier,
@@ -2249,7 +2249,7 @@ module.exports = grammar({
       repeat1($.case_option),
       optional(seq(/[eE][lL][sS][eE]/, field('else_body', $.code_block))),
       /[eE][nN][dD]/
-    ),
+    )),
 
     case_option: $ => seq(
       field('value', $._literal),
