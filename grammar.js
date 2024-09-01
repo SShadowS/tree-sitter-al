@@ -11,8 +11,8 @@ module.exports = grammar({
 
   rules: {
     source_file: $ => seq(
-      $.namespace_declaration,
-      repeat($.using_directive),
+      optional($.namespace_declaration),
+      optional(repeat($.using_directive)),
       repeat1(choice(
         $._declaration,
         $.comment
