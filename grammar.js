@@ -2251,7 +2251,7 @@ module.exports = grammar({
       /[eE][nN][dD]/
     )),
 
-    case_branch: $ => seq(
+    case_branch: $ => prec.left(seq(
       field('value', choice(
         $._literal,
         $.qualified_name
@@ -2261,7 +2261,7 @@ module.exports = grammar({
         repeat($._statement),
         $.code_block
       ))
-    ),
+    )),
    
     qualified_name: $ => seq(
       choice($.identifier, $.string),
