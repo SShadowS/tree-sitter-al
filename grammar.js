@@ -4327,12 +4327,15 @@ module.exports = grammar({
     ),
 
     // PromotedActionCategories Property
-    // Sets a category for a promoted action.
+    // Sets categories for promoted actions.
     // This property is used on Page objects.
     promoted_action_categories_property: $ => seq(
       'PromotedActionCategories',
       '=',
-      field('value', $.string_literal),
+      field('value', choice(
+        $.string_literal,
+        $.comma_separated_category_list
+      )),
       optional(seq(
         ',',
         repeat1(seq(
@@ -4343,6 +4346,13 @@ module.exports = grammar({
         ))
       )),
       ';'
+    ),
+
+    comma_separated_category_list: $ => seq(
+      "'",
+      $.identifier,
+      repeat(seq(',', $.identifier)),
+      "'"
     ),
 
     // PromotedActionCategoriesML Property
