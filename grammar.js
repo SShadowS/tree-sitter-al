@@ -3047,16 +3047,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // ObsoleteState Property
-    // Marks whether the object will be deprecated.
-    // This property is used on various AL objects including Tables, Table Fields, Pages, and more.
-    obsolete_state_property: $ => seq(
-      'ObsoleteState',
-      '=',
-      field('value', choice('Pending', 'Removed')),
-      ';'
-    ),
-
     // MovedTo Property
     // Specifies the destination extension Id when a table is moved to another extension.
     // This property is used on Table objects.
@@ -3528,36 +3518,6 @@ module.exports = grammar({
         field('text', $.string_literal),
         optional(',')
       ))
-    ),
-
-    // CaptionML Property
-    // Sets the string that displays with the object, control, or other element in the user interface for multiple languages.
-    // This property is used on various AL objects including Tables, Table Fields, Pages, Page Fields, and more.
-    caption_ml_property: $ => seq(
-      'CaptionML',
-      '=',
-      field('value', $.multilanguage_string_literal),
-      ';'
-    ),
-
-    // Multi-language string literal
-    multilanguage_string_literal: $ => seq(
-      repeat1(seq(
-        field('language_code', $.identifier),
-        '=',
-        field('text', $.string_literal),
-        optional(',')
-      ))
-    ),
-
-    // CaptionML Property
-    // Sets the string that displays with the object, control, or other element in the user interface for multiple languages.
-    // This property is used on various AL objects including Tables, Table Fields, Pages, Page Fields, and more.
-    caption_ml_property: $ => seq(
-      'CaptionML',
-      '=',
-      field('value', $.multilanguage_string_literal),
-      ';'
     ),
 
     // CaptionClass Property
@@ -4677,16 +4637,6 @@ module.exports = grammar({
       '=',
       field('value', $.string_literal),
       optional(seq(',', $.string_literal)),
-      ';'
-    ),
-
-    // APIVersion Property
-    // Sets the version of the API endpoint that the page is exposed in.
-    // This property can only be set if the PageType is set to API.
-    apiversion_property: $ => seq(
-      'APIVersion',
-      '=',
-      field('value', $.string_literal),
       ';'
     ),
 
@@ -5930,16 +5880,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // ProfileDescription Property
-    // Sets a description for the profile that appears in the UI when users select profiles.
-    // This property is used on Profile objects.
-    profile_description_property: $ => seq(
-      'ProfileDescription',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
-
     // Enabled Property for profiles
     // Specifies whether the profile can be used by users or not.
     // This property is used on Profile objects.
@@ -6034,16 +5974,6 @@ module.exports = grammar({
     // This property is used on Control Add In objects.
     requested_height_property: $ => seq(
       'RequestedHeight',
-      '=',
-      field('value', $.integer),
-      ';'
-    ),
-
-    // RequestedWidth Property
-    // Specifies the initial width of the control add-in.
-    // This property is used on Control Add In objects.
-    requested_width_property: $ => seq(
-      'RequestedWidth',
       '=',
       field('value', $.integer),
       ';'
