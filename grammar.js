@@ -2686,7 +2686,7 @@ module.exports = grammar({
       $.closing_dates_property,
       $.column_span_property,
       $.compressed_property,
-      $.data_classification_property,
+      $.field_data_classification_property,
       $.date_formula_property,
       $.decimal_places_property,
       $.editable_property,
@@ -2733,7 +2733,7 @@ module.exports = grammar({
       $.column_store_index_property,
       $.compression_type_property,
       $.data_caption_fields_property,
-      $.data_classification_property,
+      $.table_data_classification_property,
       $.data_per_company_property,
       $.data_deletion_allowed_property,
       $.drilldown_page_id_property,
@@ -5746,7 +5746,7 @@ module.exports = grammar({
     // DataClassification Property
     // Sets the data classification level for fields in a table.
     // This property is used on Table Fields.
-    data_classification_property: $ => seq(
+    table_data_classification_property: $ => prec(2, seq(
       'DataClassification',
       '=',
       field('value', choice(
@@ -5758,7 +5758,21 @@ module.exports = grammar({
         'ToBeClassified'
       )),
       ';'
-    ),
+    )),
+
+    field_data_classification_property: $ => prec(1, seq(
+      'DataClassification',
+      '=',
+      field('value', choice(
+        'CustomerContent',
+        'EndUserIdentifiableInformation',
+        'EndUserPseudonymousIdentifiers',
+        'OrganizationIdentifiableInformation',
+        'AccountData',
+        'ToBeClassified'
+      )),
+      ';'
+    )),
 
     // DelayedInsert Property
     // Sets a value that specifies whether a user must leave a record before it is inserted into the database.
