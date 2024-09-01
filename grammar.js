@@ -513,16 +513,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // DataItemLink Property
-    // Sets the link between two dataitems in a report or query.
-    // This property is used on Report DataItems and Query DataItems.
-    data_item_link_property: $ => seq(
-      'DataItemLink',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
-
     // DataItemTableView Property
     // Sets the key on which to sort, the sort order, and the filters for the data item.
     // This property is used on Report Data Items.
@@ -752,13 +742,6 @@ module.exports = grammar({
       '{',
       repeat($.property),
       '}'
-    ),
-
-    data_item_link_property: $ => seq(
-      'DataItemLink',
-      '=',
-      field('value', $.string_literal),
-      ';'
     ),
 
     profile_object: $ => seq(
@@ -2558,16 +2541,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // Enabled Property
-    // Sets whether the key is enabled or disabled.
-    // This property is used on Table Keys.
-    enabled_property: $ => seq(
-      'Enabled',
-      '=',
-      field('value', $.boolean_literal),
-      ';'
-    ),
-
     // OnDelete trigger for tables
     // This trigger runs when a user tries to delete a record from the table
     // It can be used to perform custom actions before the deletion occurs
@@ -2955,16 +2928,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // TableType Property
-    // Specifies the type of the table.
-    // This property is used on Table objects.
-    table_type_property: $ => seq(
-      'TableType',
-      '=',
-      field('value', choice('Normal', 'CRM', 'ExternalSQL', 'MicrosoftGraph', 'Temporary')),
-      ';'
-    ),
-
     // PasteIsValid Property
     // Sets whether inserting records into this table using the paste command is enabled.
     // This property is used on Table objects.
@@ -3321,16 +3284,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // MovedTo Property
-    // Specifies the destination extension Id when a table field is moved to another extension.
-    // This property is used on Table Field objects.
-    moved_to_property: $ => seq(
-      'MovedTo',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
-
     // NavigationPageId Property
     // Specifies which page the TableRelation should navigate to.
     // This property is used on Page Field objects.
@@ -3480,16 +3433,6 @@ module.exports = grammar({
           seq('MaxLength', '=', field('max_length', $.integer))
         )
       )),
-      ';'
-    ),
-
-    // CaptionML Property
-    // Sets the string that displays with the object, control, or other element in the user interface for multiple languages.
-    // This property is used on various AL objects including Tables, Table Fields, Pages, Page Fields, and more.
-    caption_ml_property: $ => seq(
-      'CaptionML',
-      '=',
-      field('value', $.multilanguage_string_literal),
       ';'
     ),
 
@@ -4343,16 +4286,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // PromptMode Property
-    // Sets the current mode of the page when the PageType is set to PromptDialog.
-    // This property is used on Page objects.
-    prompt_mode_property: $ => seq(
-      'PromptMode',
-      '=',
-      field('value', choice('Prompt', 'Result')),
-      ';'
-    ),
-
     // LinksAllowed Property
     // Sets whether links are allowed on a page or request page.
     // This property is used on Page and Request Page objects.
@@ -4663,16 +4596,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // AllowedFileExtensions Property
-    // Specifies the list of allowed file extensions for Page File Upload Actions.
-    // This property restricts the types of files that can be uploaded.
-    allowed_file_extensions_property: $ => seq(
-      'AllowedFileExtensions',
-      '=',
-      field('value', $.array_value),
-      ';'
-    ),
-
     // AdditionalSearchTermsML Property
     // Specifies search terms (words and phrases) for the page in different languages.
     // These terms are used by the search feature in the Web client and mobile apps.
@@ -4729,26 +4652,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // AboutTitle Property
-    // Sets the large-font title that appears in a teaching tip in the UI
-    // Used on Page objects and their controls (actions, fields, parts, etc.)
-    about_title_property: $ => seq(
-      'AboutTitle',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
-
-    // AboutTitleML Property
-    // Sets the large-font title that appears in a teaching tip in the UI, supporting multiple languages
-    // This property is used on Table objects and Page objects and their controls (actions, fields, parts, etc.)
-    about_title_ml_property: $ => seq(
-      'AboutTitleML',
-      '=',
-      field('value', $.multilanguage_string_literal),
-      ';'
-    ),
-
     // AboutText Property
     // Sets the body of text that appears in a teaching tip in the UI
     // This property is used on Table objects
@@ -4766,26 +4669,6 @@ module.exports = grammar({
       'DataDeletionAllowed',
       '=',
       field('value', $.boolean_literal),
-      ';'
-    ),
-
-    // AboutTitleML Property
-    // Sets the large-font title that appears in a teaching tip in the UI, supporting multiple languages
-    // This property is used on Table objects and Page objects and their controls (actions, fields, parts, etc.)
-    about_title_ml_property: $ => seq(
-      'AboutTitleML',
-      '=',
-      field('value', $.multilanguage_string_literal),
-      ';'
-    ),
-
-    // AboutText Property
-    // Sets the body of text that appears in a teaching tip in the UI
-    // Used on Page objects and their controls (actions, fields, parts, etc.)
-    about_text_property: $ => seq(
-      'AboutText',
-      '=',
-      field('value', $.string_literal),
       ';'
     ),
 
@@ -4899,16 +4782,6 @@ module.exports = grammar({
           optional(',')
         ))
       )),
-      ';'
-    ),
-
-    // RequestFilterHeadingML Property
-    // Sets the string used as a RequestFilterHeading Property for a request page tab in multiple languages.
-    // This property is used on Report Data Items and XMLport Table Elements.
-    request_filter_heading_ml_property: $ => seq(
-      'RequestFilterHeadingML',
-      '=',
-      field('value', $.multilanguage_string_literal),
       ';'
     ),
 
@@ -5369,22 +5242,6 @@ module.exports = grammar({
       ';'
     ),
 
-    // FileName Property
-    // Sets the name of the external file to read data from or write data to an XMLport.
-    // This property is used on XMLport objects.
-    file_name_property: $ => seq(
-      'FileName',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
-    field_delimiter_property: $ => seq(
-      'FieldDelimiter',
-      '=',
-      field('value', choice($.string_literal, "'<None>'")),
-      ';'
-    ),
-
     // Encoding Property
     // Sets a value that specifies which system is applied to the XMLport for character encoding.
     // This property is used on XMLport objects.
@@ -5810,16 +5667,6 @@ module.exports = grammar({
       'ProfileDescription',
       '=',
       field('value', $.string_literal),
-      ';'
-    ),
-
-    // Enabled Property for profiles
-    // Specifies whether the profile can be used by users or not.
-    // This property is used on Profile objects.
-    enabled_property: $ => seq(
-      'Enabled',
-      '=',
-      field('value', $.boolean_literal),
       ';'
     ),
 
