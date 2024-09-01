@@ -1644,7 +1644,7 @@ module.exports = grammar({
         $.table_fields,
         $.keys,
         $.caption_property,
-        $.data_classification_property,
+        $.table_data_classification_property,
         $.data_caption_fields_property,
         $.drilldown_page_id_property,
         $.lookup_page_id_property,
