@@ -3861,7 +3861,7 @@ module.exports = grammar({
     const_filter: $ => seq(
       'CONST',
       '(',
-      field('value', $.identifier),
+      field('value', optional($.identifier)),
       ')'
     ),
 
