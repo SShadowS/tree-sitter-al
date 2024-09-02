@@ -6282,10 +6282,10 @@ module.exports = grammar({
 
     _numeric_identifier: $ => /\d+/,
 
-    _compound_identifier: $ => seq(
+    _compound_identifier: $ => prec.left(seq(
       choice($._quoted_identifier, $._simple_identifier),
       optional(repeat(seq('.', choice($._quoted_identifier, $._simple_identifier))))
-    ),
+    )),
 
     // _compound_identifier: $ => prec.left(2, seq(
     //   choice($._simple_identifier, $._quoted_identifier),
