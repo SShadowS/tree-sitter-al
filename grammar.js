@@ -6266,12 +6266,13 @@ module.exports = grammar({
       /'(?:[^'\\]|\\.)*'/
     ),
     integer: $ => /\d+/,
+    
     // Identifiers
     identifier: $ => choice(
-      $._simple_identifier,
-      $._quoted_identifier,
-      prec(2, $._numeric_identifier),
-      prec.dynamic(1, $._compound_identifier),
+      //$._simple_identifier,
+      //$._quoted_identifier,
+      $._numeric_identifier,
+      $._compound_identifier,
       $._enum_identifier
     ),
 
@@ -6281,11 +6282,16 @@ module.exports = grammar({
 
     _numeric_identifier: $ => /\d+/,
 
-    _compound_identifier: $ => prec.left(2, seq(
-      choice($._simple_identifier, $._quoted_identifier),
-      '.',
-      choice($._simple_identifier, $._quoted_identifier)
-    )),
+    _compound_identifier: $ => seq(
+      choice($._quoted_identifier, $._simple_identifier),
+      optional(repeat(seq('.', choice($._quoted_identifier, $._simple_identifier))))
+    ),
+
+    // _compound_identifier: $ => prec.left(2, seq(
+    //   choice($._simple_identifier, $._quoted_identifier),
+    //   '.',
+    //   choice($._simple_identifier, $._quoted_identifier)
+    // )),
 
     _enum_identifier: $ => seq(
       choice($._simple_identifier, $._quoted_identifier),
