@@ -2255,7 +2255,7 @@ module.exports = grammar({
       )),
       ':',
       field('body', choice(
-        repeat($._statement),
+        $._statement,
         $.code_block
       ))
     )),
@@ -6253,29 +6253,29 @@ module.exports = grammar({
     integer: $ => /\d+/,
     // Identifiers
     identifier: $ => choice(
-      $.simple_identifier,
-      $.quoted_identifier,
-      prec(2, $.numeric_identifier),
-      prec.dynamic(1, $.compound_identifier),
-      $.enum_identifier
+      $._simple_identifier,
+      $._quoted_identifier,
+      prec(2, $._numeric_identifier),
+      prec.dynamic(1, $._compound_identifier),
+      $._enum_identifier
     ),
 
-    simple_identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    _simple_identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
-    quoted_identifier: $ => /"[^"]+"/,
+    _quoted_identifier: $ => /"[^"]+"/,
 
-    numeric_identifier: $ => /\d+/,
+    _numeric_identifier: $ => /\d+/,
 
-    compound_identifier: $ => prec.left(2, seq(
-      choice($.simple_identifier, $.quoted_identifier),
+    _compound_identifier: $ => prec.left(2, seq(
+      choice($._simple_identifier, $._quoted_identifier),
       '.',
-      choice($.simple_identifier, $.quoted_identifier)
+      choice($._simple_identifier, $._quoted_identifier)
     )),
 
-    enum_identifier: $ => seq(
-      choice($.simple_identifier, $.quoted_identifier),
+    _enum_identifier: $ => seq(
+      choice($._simple_identifier, $._quoted_identifier),
       '::',
-      choice($.simple_identifier, $.quoted_identifier)
+      choice($._simple_identifier, $._quoted_identifier)
     ),
 
     fully_qualified_identifier: $ => seq(
