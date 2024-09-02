@@ -6267,7 +6267,31 @@ module.exports = grammar({
     ),
     integer: $ => /\d+/,
     // Identifiers
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*([A-Z][a-z0-9_]*)*(\.[a-zA-Z_][a-zA-Z0-9_]*([A-Z][a-z0-9_]*)*)?/,
+    identifier: $ => choice(
+      $.simple_identifier,
+      $.quoted_identifier,
+      $.numeric_identifier,
+      $.compound_identifier,
+      $.enum_identifier
+    ),
+
+    simple_identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+
+    quoted_identifier: $ => /"[^"]+"/,
+
+    numeric_identifier: $ => /\d+/,
+
+    compound_identifier: $ => seq(
+      choice($.simple_identifier, $.quoted_identifier),
+      '.',
+      choice($.simple_identifier, $.quoted_identifier)
+    ),
+
+    enum_identifier: $ => seq(
+      choice($.simple_identifier, $.quoted_identifier),
+      '::',
+      choice($.simple_identifier, $.quoted_identifier)
+    ),
 
     fully_qualified_identifier: $ => seq(
       optional(seq($.qualified_namespace, '.')),
