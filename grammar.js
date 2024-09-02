@@ -6260,7 +6260,7 @@ module.exports = grammar({
       $._enum_identifier
     ),
 
-    _simple_identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    _simple_identifier: $ => /[a-zA-Z_][a-zA-Z0-9_-]*/,
 
     _quoted_identifier: $ => /"[^"]+"/,
 
