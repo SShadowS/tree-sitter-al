@@ -3527,9 +3527,11 @@ module.exports = grammar({
     filter_filter: $ => seq(
       'FILTER',
       '(',
-      field('filter', $.string_literal),
+      field('filter', $.filter_expression),
       ')'
     ),
+
+    filter_expression: $ => /[a-zA-Z0-9<>&|=\%]+/,
 
     field_filter: $ => seq(
       'FIELD',
