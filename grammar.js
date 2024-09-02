@@ -6277,7 +6277,7 @@ module.exports = grammar({
 
     _simple_identifier: $ => /[a-zA-Z_][a-zA-Z0-9_-]*/,
 
-    _quoted_identifier: $ => /"[^"]+"/,
+    _quoted_identifier: $ => /"[^"]*(?:\.[^"]*)*"/,
 
     _numeric_identifier: $ => /\d+/,
 
