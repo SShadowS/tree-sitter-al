@@ -6271,7 +6271,7 @@ module.exports = grammar({
       $.simple_identifier,
       $.quoted_identifier,
       $.numeric_identifier,
-      $.compound_identifier,
+      prec.dynamic(1, $.compound_identifier),
       $.enum_identifier
     ),
 
@@ -6281,11 +6281,11 @@ module.exports = grammar({
 
     numeric_identifier: $ => /\d+/,
 
-    compound_identifier: $ => seq(
+    compound_identifier: $ => prec.left(2, seq(
       choice($.simple_identifier, $.quoted_identifier),
       '.',
       choice($.simple_identifier, $.quoted_identifier)
-    ),
+    )),
 
     enum_identifier: $ => seq(
       choice($.simple_identifier, $.quoted_identifier),
