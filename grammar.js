@@ -3533,6 +3533,74 @@ module.exports = grammar({
       ')'
     ),
 
+    field_filter: $ => seq(
+      'FIELD',
+      '(',
+      field('source_field', $.identifier),
+      ')'
+    ),
+
+    upperlimit_field_filter: $ => seq(
+      'FIELD',
+      '(',
+      'UPPERLIMIT',
+      '(',
+      field('source_field', $.identifier),
+      ')',
+      ')'
+    ),
+
+    upperlimit_filter_field_filter: $ => seq(
+      'FIELD',
+      '(',
+      'UPPERLIMIT',
+      '(',
+      'FILTER',
+      '(',
+      field('source_field', $.identifier),
+      ')',
+      ')',
+      ')'
+    ),
+
+    where_clause: $ => seq(
+      'WHERE',
+      '(',
+      $.table_filters,
+      ')'
+    ),
+
+    table_filters: $ => seq(
+      $.table_filter,
+      repeat(seq(',', $.table_filter))
+    ),
+
+    table_filter: $ => seq(
+      field('destination_field', $.identifier),
+      '=',
+      choice(
+        $.const_filter,
+        $.filter_filter,
+        $.field_filter,
+        $.upperlimit_field_filter,
+        $.upperlimit_filter_field_filter
+      )
+    ),
+
+    const_filter: $ => seq(
+      'CONST',
+      '(',
+      field('value', $._literal),
+      ')'
+    ),
+
+    filter_filter: $ => seq(
+      'FILTER',
+      '(',
+      field('filter', $.filter_expression),
+      ')'
+    ),
+
     filter_expression: $ => /[a-zA-Z0-9<>&|=\%'\s]+/,
 
     field_filter: $ => seq(
