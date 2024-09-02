@@ -3801,36 +3801,35 @@ module.exports = grammar({
     ),
 
     simple_table_relation: $ => seq(
-      field('table', $.identifier),
-      optional(seq(
-        '.',
-        field('field', $.identifier)
-      )),
-      optional(seq(
-        'WHERE',
-        '(',
-        $.table_filters,
-        ')'
-      ))
+      $.table_relation_target,
+      optional($.where_clause)
+    ),
+
+    where_clause: $ => seq(
+      'WHERE',
+      '(',
+      $.table_filters,
+      ')'
     ),
 
     conditional_table_relation: $ => seq(
       'IF',
       '(',
-      $.condition,
+      $.conditions,
       ')',
-      $.string,
-      repeat(seq(
-        'ELSE',
-        'IF',
-        '(',
-        $.condition,
-        ')',
-        $.string
-      )),
+      $.table_relation_target,
+      optional($.where_clause),
       optional(seq(
         'ELSE',
-        $.string
+        $.table_relation
+      ))
+    ),
+
+    conditions: $ => seq(
+      $.condition,
+      repeat(seq(
+        choice('&', '|'),
+        $.condition
       ))
     ),
 
@@ -3844,6 +3843,19 @@ module.exports = grammar({
         $.upperlimit_field_filter,
         $.upperlimit_filter_field_filter
       ))
+    ),
+
+    table_relation_target: $ => seq(
+      field('table', $.identifier),
+      optional(seq(
+        '.',
+        field('field', $.identifier)
+      ))
+    ),
+
+    table_relation: $ => choice(
+      $.simple_table_relation,
+      $.conditional_table_relation
     ),
 
     const_filter: $ => seq(
