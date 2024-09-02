@@ -3533,7 +3533,7 @@ module.exports = grammar({
       ')'
     ),
 
-    filter_expression: $ => /[a-zA-Z0-9<>&|=\%']+/,
+    filter_expression: $ => /[a-zA-Z0-9<>&|=\%'\s]+/,
 
     field_filter: $ => seq(
       'FIELD',
