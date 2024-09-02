@@ -76,7 +76,7 @@ module.exports = grammar({
     // Dot Net Assembly object definition
     dotnet_assembly_object: $ => seq(
       'dotnetassembly',
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._dotnet_assembly_element),
       '}'
@@ -100,7 +100,7 @@ module.exports = grammar({
 
     interface_object: $ => seq(
       'interface',
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._interface_element),
       '}'
@@ -125,7 +125,7 @@ module.exports = grammar({
     xmlport_object: $ => seq(
       'xmlport',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._xmlport_element),
       '}'
@@ -133,7 +133,7 @@ module.exports = grammar({
 
     interface_object: $ => seq(
       'interface',
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._interface_element),
       '}'
@@ -145,7 +145,7 @@ module.exports = grammar({
 
     dotnet_package_object: $ => seq(
       'dotnetpackage',
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._dotnet_package_element),
       '}'
@@ -177,9 +177,9 @@ module.exports = grammar({
     enum_extension_object: $ => seq(
       'enumextension',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       'extends',
-      field('base_enum', choice($.identifier, $.string)),
+      field('base_enum', $.identifier),
       '{',
       repeat($._enum_extension_element),
       '}'
@@ -192,9 +192,9 @@ module.exports = grammar({
     query_extension_object: $ => seq(
       'queryextension',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       'extends',
-      field('base_query', choice($.identifier, $.string)),
+      field('base_query', $.identifier),
       '{',
       repeat($._query_extension_element),
       '}'
@@ -208,7 +208,7 @@ module.exports = grammar({
     report_layout_object: $ => seq(
       'reportlayout',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._report_layout_element),
       '}'
@@ -221,7 +221,7 @@ module.exports = grammar({
 
     workflow_object: $ => seq(
       'workflow',
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._workflow_element),
       '}'
@@ -247,7 +247,7 @@ module.exports = grammar({
     api_query_object: $ => seq(
       'query',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       'API',
       '{',
       repeat($._api_query_element),
@@ -363,7 +363,7 @@ module.exports = grammar({
     enum_object: $ => seq(
       'enum',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._enum_element),
       '}'
@@ -398,9 +398,9 @@ module.exports = grammar({
     table_extension_object: $ => seq(
       'tableextension',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       'extends',
-      field('base_table', choice($.identifier, $.string)),
+      field('base_table', $.identifier),
       '{',
       repeat($._table_extension_element),
       '}'
@@ -423,7 +423,7 @@ module.exports = grammar({
     report_object: $ => seq(
       'report',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._report_element),
       '}'
@@ -536,9 +536,9 @@ module.exports = grammar({
     report_extension_object: $ => seq(
       'reportextension',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       'extends',
-      field('base_report', choice($.identifier, $.string)),
+      field('base_report', $.identifier),
       '{',
       repeat($._report_extension_element),
       '}'
@@ -617,7 +617,7 @@ module.exports = grammar({
     query_object: $ => seq(
       'query',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._query_element),
       '}'
@@ -761,7 +761,7 @@ module.exports = grammar({
     permission_set_object: $ => seq(
       'permissionset',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._permission_set_element),
       '}'
@@ -776,9 +776,9 @@ module.exports = grammar({
     permission_set_extension_object: $ => seq(
       'permissionsetextension',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       'extends',
-      field('base_permission_set', choice($.identifier, $.string)),
+      field('base_permission_set', $.identifier),
       '{',
       repeat($._permission_set_extension_element),
       '}'
@@ -809,7 +809,7 @@ module.exports = grammar({
     page_object: $ => seq(
       'page',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       optional('API'),
       '{',
       repeat($._page_element),
@@ -987,7 +987,7 @@ module.exports = grammar({
     part: $ => seq(
       'part',
       '(',
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       ';',
       field('part_name', $.identifier),
       ')',
@@ -999,7 +999,7 @@ module.exports = grammar({
     systempart: $ => seq(
       'systempart',
       '(',
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       ';',
       field('system_part_name', $.identifier),
       ')',
@@ -1233,9 +1233,9 @@ module.exports = grammar({
     page_extension_object: $ => seq(
       'pageextension',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       'extends',
-      field('base_page', choice($.identifier, $.string)),
+      field('base_page', $.identifier),
       '{',
       repeat($._page_extension_element),
       '}'
@@ -1300,7 +1300,7 @@ module.exports = grammar({
     group: $ => seq(
       'group',
       '(',
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       ')',
       '{',
       repeat($._group_content),
@@ -1526,7 +1526,7 @@ module.exports = grammar({
 
     entitlement_object: $ => seq(
       'entitlement',
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._entitlement_element),
       '}'
@@ -1568,7 +1568,7 @@ module.exports = grammar({
     codeunit_object: $ => seq(
       'codeunit',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._codeunit_element),
       '}'
@@ -1618,7 +1618,7 @@ module.exports = grammar({
     event_subscriber_params: $ => seq(
       field('object_type', $.object_type),
       ',',
-      field('object_id', choice($.integer, $.identifier)),
+      field('object_id', $.identifier),
       ',',
       field('event_name', $.string_literal),
       ',',
@@ -2221,7 +2221,7 @@ module.exports = grammar({
     ),
 
     assignment_statement: $ => seq(
-      field('variable', choice($.identifier, $.string)),
+      field('variable', $.identifier),
       ':=',
       field('value', $._expression),
       ';'
@@ -2255,7 +2255,7 @@ module.exports = grammar({
     case_branch: $ => prec.left(seq(
       field('value', choice(
         $._literal,
-        $.qualified_name
+        $.identifier
       )),
       ':',
       field('body', choice(
@@ -2264,12 +2264,6 @@ module.exports = grammar({
       ))
     )),
    
-    qualified_name: $ => seq(
-      choice($.identifier, $.string),
-      '::',
-      $.identifier
-    ),
-
     for_statement: $ => seq(
       /[fF][oO][rR]/,
       field('variable', $.identifier),
@@ -2406,7 +2400,7 @@ module.exports = grammar({
     table_object: $ => seq(
       'table',
       field('id', $.integer),
-      field('name', choice($.fully_qualified_identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._table_element),
       '}'
@@ -2881,7 +2875,7 @@ module.exports = grammar({
     lookup_page_id_property: $ => seq(
       'LookupPageId',
       '=',
-      field('value', choice($.integer, $.identifier, $.string_literal)),
+      field('value', $.identifier),
       ';'
     ),
 
@@ -3248,7 +3242,7 @@ module.exports = grammar({
     navigation_page_id_property: $ => seq(
       'NavigationPageId',
       '=',
-      field('value', choice($.integer, $.identifier)),
+      field('value', $.identifier),
       ';'
     ),
 
@@ -3718,12 +3712,7 @@ module.exports = grammar({
     source_table_property: $ => prec(1, seq(
       'SourceTable',
       '=',
-      field('value', choice(
-        $.integer,
-        $.fully_qualified_identifier,
-        $.identifier,
-        $.string
-      )),
+      field('value', $.identifier),
       ';'
     )),
 
@@ -3786,7 +3775,7 @@ module.exports = grammar({
     const_filter: $ => seq(
       'CONST',
       '(',
-      field('value', choice($.identifier, $.string)),
+      field('value', $.identifier),
       ')'
     ),
 
@@ -3909,7 +3898,7 @@ module.exports = grammar({
 
     run_object_value: $ => seq(
       field('object_type', choice('Page', 'Report', 'Codeunit', 'Query')),
-      field('object_id', choice($.integer, $.identifier))
+      field('object_id', $.identifier)
     ),
 
     // RunPageLink Property
@@ -4298,7 +4287,7 @@ module.exports = grammar({
     drilldown_page_id_property: $ => seq(
       'DrillDownPageId',
       '=',
-      field('value', choice($.integer, $.identifier, $.string)),
+      field('value', $.identifier),
       ';'
     ),
 
@@ -4378,7 +4367,7 @@ module.exports = grammar({
     card_page_id_property: $ => seq(
       'CardPageId',
       '=',
-      field('value', choice($.integer, $.identifier, $.string)),
+      field('value', $.identifier),
       ';'
     ),
 
@@ -4931,7 +4920,7 @@ module.exports = grammar({
     xmlport_object: $ => seq(
       'xmlport',
       field('id', $.integer),
-      field('name', choice($.identifier, $.string)),
+      field('name', $.identifier),
       '{',
       repeat($._xmlport_element),
       '}'
@@ -6113,7 +6102,7 @@ module.exports = grammar({
     page_id_property: $ => seq(
       'PagePartId',
       '=',
-      field('value', choice($.integer, $.identifier, $.string_literal)),
+      field('value', $.identifier),
       ';'
     ),
 
