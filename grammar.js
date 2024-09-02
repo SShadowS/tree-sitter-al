@@ -6304,8 +6304,8 @@ module.exports = grammar({
     ),
 
     number_literal: $ => choice(
-      /\d+/,
-      /\d+\.\d+/
+      /\d+\.\d+/,
+      prec(-1, /\d+/)
     ),
 
     string_literal: $ => /'[^']*'/,
