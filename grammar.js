@@ -2281,11 +2281,13 @@ module.exports = grammar({
 
     repeat_statement: $ => seq(
       /[rR][eE][pP][eE][aA][tT]/,
-      field('body', $.code_block),
+      field('body', $.repeat_code_block),
       /[uU][nN][tT][iI][lL]/,
       field('condition', $._expression),
       ';'
     ),
+
+    repeat_code_block: $ => repeat1($._statement),
 
     procedure_call_statement: $ => choice(
       seq(
@@ -3288,7 +3290,7 @@ module.exports = grammar({
     field_class_property: $ => seq(
       'FieldClass',
       '=',
-      field('value', choice('Normal', 'FlowField', 'FlowFilter')),
+      field('value', seq(optional('"'), choice('Normal', 'FlowField', 'FlowFilter'),optional('"'))),
       ';'
     ),
 
