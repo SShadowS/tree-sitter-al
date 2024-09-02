@@ -2221,7 +2221,7 @@ module.exports = grammar({
     ),
 
     assignment_statement: $ => seq(
-      field('variable', $.identifier),
+      field('variable', choice($.identifier, $.string)),
       ':=',
       field('value', $._expression),
       ';'
@@ -2248,7 +2248,8 @@ module.exports = grammar({
       /[oO][fF]/,
       repeat1($.case_branch),
       optional(seq(/[eE][lL][sS][eE]/, field('else_body', $.code_block))),
-      /[eE][nN][dD]/
+      /[eE][nN][dD]/,
+      (optional(';'))
     )),
 
     case_branch: $ => prec.left(seq(
@@ -3738,7 +3739,8 @@ module.exports = grammar({
 
     table_relation_value: $ => choice(
       $.simple_table_relation,
-      $.conditional_table_relation
+      $.conditional_table_relation,
+      $.string
     ),
 
     simple_table_relation: $ => seq(
