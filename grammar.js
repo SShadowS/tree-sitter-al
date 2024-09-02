@@ -3765,7 +3765,13 @@ module.exports = grammar({
     condition: $ => seq(
       field('field', $.string),
       '=',
-      field('value', $.const_filter)
+      field('value', choice(
+        $.const_filter,
+        $.filter_filter,
+        $.field_filter,
+        $.upperlimit_field_filter,
+        $.upperlimit_filter_field_filter
+      ))
     ),
 
     const_filter: $ => seq(
