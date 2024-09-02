@@ -6259,7 +6259,7 @@ module.exports = grammar({
     identifier: $ => choice(
       $.simple_identifier,
       $.quoted_identifier,
-      $.numeric_identifier,
+      prec(2, $.numeric_identifier),
       prec.dynamic(1, $.compound_identifier),
       $.enum_identifier
     ),
