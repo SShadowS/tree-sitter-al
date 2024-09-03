@@ -440,7 +440,7 @@ module.exports = grammar({
       $.dataitem
     ),
 
-    dataitem: $ => seq(
+    dataitem: $ => prec.right(2, seq(
       'dataitem',
       '(',
       field('name', $.identifier),
@@ -448,17 +448,17 @@ module.exports = grammar({
       field('table', $.identifier),
       ')',
       '{',
-      repeat(prec.right(1, $._dataitem_element)),
-      optional(prec(2, $.data_item_link_property)),
+      repeat($._dataitem_element),
+      optional($.data_item_link_property),
       '}'
-    ),
+    )),
 
-    _dataitem_element: $ => choice(
+    _dataitem_element: $ => prec.left(1, choice(
       $.property,
       $.calc_fields_property,
       $.data_item_link_reference_property,
       $.data_item_table_view_property
-    ),
+    )),
     data_item_link_reference_property: $ => seq(
       'DataItemLinkReference',
       '=',
