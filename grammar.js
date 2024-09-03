@@ -1933,12 +1933,12 @@ module.exports = grammar({
       optional(';')
     )),
 
-    assignment_statement: $ => seq(
+    assignment_statement: $ => prec.left(2, seq(
       field('variable', $.identifier),
       ':=',
       field('value', $._expression),
       ';'
-    ),
+    )),
 
     if_statement: $ => prec.right(seq(
       /[iI][fF]/,
