@@ -2113,16 +2113,16 @@ module.exports = grammar({
       field('operand', $._expression)
     )),
 
-    parenthesized_expression: $ => seq(
+    parenthesized_expression: $ => prec(7, seq(
       '(',
       $._expression,
       ')'
-    ),
+    )),
 
     function_call_expression: $ => prec(3, seq(
       field('function', choice($.identifier, $.member_access_expression)),
       '(',
-      optional($._argument_list),
+      optional(prec.dynamic(1, $._argument_list)),
       ')'
     )),
 
