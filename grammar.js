@@ -3524,6 +3524,12 @@ module.exports = grammar({
       field('value', $.array_value),
       ';'
     ),
+    vertical_shrink_property: $ => seq(
+      'VerticalShrink',
+      '=',
+      field('value', $.boolean_literal),
+      ';'
+    ),
     horizontal_shrink_property: $ => seq(
       'HorizontalShrink',
       '=',
