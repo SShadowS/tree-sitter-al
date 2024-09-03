@@ -2139,7 +2139,7 @@ module.exports = grammar({
       ']'
     )),
 
-    ternary_expression: $ => prec.right(0, seq(
+    ternary_expression: $ => prec.right(6, seq(
       field('condition', $._expression),
       '?',
       field('true_expression', $._expression),
