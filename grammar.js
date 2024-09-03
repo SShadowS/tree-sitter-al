@@ -2061,10 +2061,9 @@ module.exports = grammar({
     ),
 
     method_call: $ => prec.left(5, seq(
-      field('object', $.identifier),
+      field('object', choice($.identifier, $.member_access_expression)),
       '.',
       field('method', choice(
-        $.identifier,
         /[sS][eE][tT][rR][aA][nN][gG][eE]/,
         /[sS][eE][tT][fF][iI][lL][tT][eE][rR]/,
         /[fF][iI][nN][dD][fF][iI][rR][sS][tT]/,
@@ -2074,7 +2073,8 @@ module.exports = grammar({
         /[iI][nN][sS][eE][rR][tT]/,
         /[mM][oO][dD][iI][fF][yY]/,
         /[dD][eE][lL][eE][tT][eE]/,
-        /[iI][sS][eE][mM][pP][tT][yY]/
+        /[iI][sS][eE][mM][pP][tT][yY]/,
+        $.identifier
       )),
       optional(seq(
         optional('('),
