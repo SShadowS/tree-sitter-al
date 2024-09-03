@@ -2020,7 +2020,7 @@ module.exports = grammar({
       )
     ),
 
-    exit_statement: $ => seq(
+    exit_statement: $ => prec.left(seq(
       /[eE][xX][iI][tT]/,
       optional(seq(
         '(',
@@ -2031,7 +2031,7 @@ module.exports = grammar({
         ')'
       )),
       optional(';')
-    ),
+    )),
 
     with_statement: $ => seq(
       /[wW][iI][tT][hH]/,
