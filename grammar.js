@@ -2056,8 +2056,8 @@ module.exports = grammar({
       $.array_access_expression,
       $.ternary_expression,
       $.method_call,
-      $.setrange_call,
-      $.setfilter_call
+      //$.setrange_call,
+      //$.setfilter_call
     ),
 
     method_call: $ => prec(5, seq(
@@ -2076,9 +2076,9 @@ module.exports = grammar({
         /[dD][eE][lL][eE][tT][eE]/,
         /[iI][sS][eE][mM][pP][tT][yY]/
       )),
-      '(',
+      optional('('),
       optional($._argument_list),
-      ')'
+      optional(')')
     )),
 
     setrange_call: $ => seq(
