@@ -2060,7 +2060,7 @@ module.exports = grammar({
       //$.setfilter_call
     ),
 
-    method_call: $ => prec(5, seq(
+    method_call: $ => prec.left(5, seq(
       field('object', $.identifier),
       '.',
       field('method', choice(
@@ -2076,9 +2076,11 @@ module.exports = grammar({
         /[dD][eE][lL][eE][tT][eE]/,
         /[iI][sS][eE][mM][pP][tT][yY]/
       )),
-      optional('('),
-      optional($._argument_list),
-      optional(')')
+      optional(seq(
+        optional('('),
+        optional($._argument_list),
+        optional(')')
+      ))
     )),
 
     setrange_call: $ => seq(
