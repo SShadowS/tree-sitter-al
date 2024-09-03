@@ -1947,7 +1947,7 @@ module.exports = grammar({
       field('then_body', choice($._statement, $.code_block)),
       optional(seq(
         /[eE][lL][sS][eE]/,
-        field('else_body', choice($._statement, $.code_block))
+        field('else_body', choice(seq($._statement, $.code_block, optional(';')))),
       ))
     )),
 
