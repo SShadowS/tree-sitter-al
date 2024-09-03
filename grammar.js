@@ -1928,10 +1928,10 @@ module.exports = grammar({
       $.method_call_statement  // Add this line
     ),
 
-    method_call_statement: $ => seq(
+    method_call_statement: $ => prec.left(2, seq(
       $.method_call,
       optional(';')
-    ),
+    )),
 
     assignment_statement: $ => seq(
       field('variable', $.identifier),
