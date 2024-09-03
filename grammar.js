@@ -2055,17 +2055,50 @@ module.exports = grammar({
       $.member_access_expression,
       $.array_access_expression,
       $.ternary_expression,
-      $.method_call  // Added this line
+      $.method_call,
+      $.setrange_call,
+      $.setfilter_call
     ),
 
     method_call: $ => prec(5, seq(
       field('object', $.identifier),
       '.',
-      field('method', $.identifier),
+      field('method', choice(
+        $.identifier,
+        /[sS][eE][tT][rR][aA][nN][gG][eE]/,
+        /[sS][eE][tT][fF][iI][lL][tT][eE][rR]/,
+        /[fF][iI][nN][dD][fF][iI][rR][sS][tT]/,
+        /[fF][iI][nN][dD][lL][aA][sS][tT]/,
+        /[fF][iI][nN][dD][sS][eE][tT]/,
+        /[gG][eE][tT]/,
+        /[iI][nN][sS][eE][rR][tT]/,
+        /[mM][oO][dD][iI][fF][yY]/,
+        /[dD][eE][lL][eE][tT][eE]/,
+        /[iI][sS][eE][mM][pP][tT][yY]/
+      )),
       '(',
       optional($._argument_list),
       ')'
     )),
+
+    setrange_call: $ => seq(
+      /[sS][eE][tT][rR][aA][nN][gG][eE]/,
+      '(',
+      field('field', $.identifier),
+      ',',
+      field('from_value', $._expression),
+      optional(seq(',', field('to_value', $._expression))),
+      ')'
+    ),
+
+    setfilter_call: $ => seq(
+      /[sS][eE][tT][fF][iI][lL][tT][eE][rR]/,
+      '(',
+      field('field', $.identifier),
+      ',',
+      field('filter_string', choice($.string_literal, $._expression)),
+      ')'
+    ),
 
     binary_expression: $ => prec.left(1, seq(
       field('left', $._expression),
