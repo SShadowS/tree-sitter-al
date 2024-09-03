@@ -448,17 +448,17 @@ module.exports = grammar({
       field('table', $.identifier),
       ')',
       '{',
-      repeat(choice($._dataitem_element, $.data_item_link_property)),
+      repeat(choice(prec(1, $._dataitem_element), $.data_item_link_property)),
       '}'
     ),
 
-    _dataitem_element: $ => choice(
+    _dataitem_element: $ => prec(1, choice(
       $.property,
       $.calc_fields_property,
       $.data_item_link_property,
       $.data_item_link_reference_property,
       $.data_item_table_view_property
-    ),
+    )),
     data_item_link_reference_property: $ => seq(
       'DataItemLinkReference',
       '=',
