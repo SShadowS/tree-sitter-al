@@ -2040,10 +2040,10 @@ module.exports = grammar({
       field('body', $.code_block)
     ),
 
-    _argument_list: $ => seq(
+    _argument_list: $ => prec.left(seq(
       $._expression,
       repeat(seq(',', $._expression))
-    ),
+    )),
 
     _expression: $ => choice(
       $._literal,
