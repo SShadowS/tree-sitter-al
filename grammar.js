@@ -505,18 +505,6 @@ module.exports = grammar({
       '}'
     ),
 
-    column: $ => seq(
-      'column',
-      '(',
-      field('name', $.identifier),
-      ';',
-      field('source', $._column_source),
-      ')',
-      '{',
-      repeat($.property),
-      '}'
-    ),
-
     _column_source: $ => choice(
       $.identifier,
       $.qualified_name
@@ -1158,16 +1146,6 @@ module.exports = grammar({
       '}'
     ),
 
-    part: $ => seq(
-      'part',
-      '(',
-      field('name', $.identifier),
-      ')',
-      '{',
-      repeat($.part_property),
-      '}'
-    ),
-
     system_part: $ => seq(
       'systempart',
       '(',
@@ -1206,16 +1184,6 @@ module.exports = grammar({
     _repeater_content: $ => choice(
       $.page_field,
       $.group
-    ),
-
-    _layout_element: $ => choice(
-      $.modify,
-      $.add_first,
-      $.add_last,
-      $.add_after,
-      $.add_before,
-      $.move_after,
-      $.move_before
     ),
 
     actions: $ => seq(
@@ -1847,13 +1815,6 @@ module.exports = grammar({
     _requestpage_element: $ => choice(
       $.layout,
       $.actions
-    ),
-
-    rendering: $ => seq(
-      'rendering',
-      '{',
-      repeat($.layout),
-      '}'
     ),
 
     labels: $ => seq(
@@ -4497,24 +4458,6 @@ module.exports = grammar({
       'MinimumHeight',
       '=',
       field('value', $.integer),
-      ';'
-    ),
-    maximum_height_property: $ => seq(
-      'MaximumHeight',
-      '=',
-      field('value', $.integer),
-      ';'
-    ),
-    vertical_shrink_property: $ => seq(
-      'VerticalShrink',
-      '=',
-      field('value', $.boolean_literal),
-      ';'
-    ),
-    horizontal_shrink_property: $ => seq(
-      'HorizontalShrink',
-      '=',
-      field('value', $.boolean_literal),
       ';'
     ),
     maximum_height_property: $ => seq(
