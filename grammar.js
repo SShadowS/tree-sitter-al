@@ -2116,7 +2116,8 @@ module.exports = grammar({
     parenthesized_expression: $ => prec(7, seq(
       '(',
       $._expression,
-      ')'
+      ')',
+      optional(';')
     )),
 
     function_call_expression: $ => prec(3, seq(
