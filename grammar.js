@@ -6,6 +6,10 @@ module.exports = grammar({
     $.comment
   ],
 
+  conflicts: $ => [
+    [$.parenthesized_expression]
+  ],
+
   rules: {
     source_file: $ => seq(
       optional($.namespace_declaration),
