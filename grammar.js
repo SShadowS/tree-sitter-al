@@ -2112,10 +2112,10 @@ module.exports = grammar({
       repeat(seq(',', $._expression))
     )),
 
-    _expression: $ => choice(
+    _expression: $ => prec(2, choice(
       $._literal,
       $.identifier,
-      $.enum_identifier,  // Added this line
+      $.enum_identifier,
       $.parenthesized_expression,
       $.unary_expression,
       $.call_expression,
@@ -2123,7 +2123,7 @@ module.exports = grammar({
       $.array_access_expression,
       $.ternary_expression,
       $.logical_or_expression
-    ),
+    )),
 
     call_expression: $ => prec.left(2, seq(
       field('function', $._expression),
