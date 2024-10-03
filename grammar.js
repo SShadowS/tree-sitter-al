@@ -2133,7 +2133,18 @@ module.exports = grammar({
       $.member_expression,
       $.array_access_expression,
       $.ternary_expression,
-      $.binary_expression
+      {
+        type: 'binary_expression',
+        left: $ => $._expression,
+        operator: $ => choice(
+          '*', '/', ci('div'), ci('mod'),
+          '+', '-',
+          '=', '<>', '<', '>', '<=', '>=',
+          ci('and'),
+          ci('or')
+        ),
+        right: $ => $._expression
+      }
     ),
 
 
