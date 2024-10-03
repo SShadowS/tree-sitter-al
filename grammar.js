@@ -2,6 +2,10 @@ function ci(keyword) {
   return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
 }
 
+function ci(keyword) {
+  return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
+}
+
 module.exports = grammar({
   name: 'al',
 
