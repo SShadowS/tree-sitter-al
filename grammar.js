@@ -2225,6 +2225,12 @@ module.exports = grammar({
       ']'
     )),
 
+    _lvalue_expression: $ => choice(
+      $.identifier,
+      $.member_expression,
+      $.array_access_expression
+    ),
+
     ternary_expression: $ => prec.right(6, seq(
       field('condition', $._expression),
       '?',
