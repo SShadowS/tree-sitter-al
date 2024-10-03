@@ -3162,7 +3162,8 @@ module.exports = grammar({
       $.run_object_property,
       $.shortcut_key_property,
       $.tooltip_property,
-      $.trigger_property
+      $.trigger_property,
+      $.application_area_property  // Add this line
     ),
     image_property: $ => seq(
       ci('Image'),
