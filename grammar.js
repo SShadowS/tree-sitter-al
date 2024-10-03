@@ -885,9 +885,9 @@ module.exports = grammar({
     systempart: $ => seq(
       'systempart',
       '(',
-      field('name', $.identifier),
+      field('name', choice($.identifier, $.string_literal)),
       ';',
-      field('system_part_name', $.identifier),
+      field('system_part_name', choice($.identifier, $.string_literal)),
       ')',
       '{',
       repeat($.property),
@@ -4733,6 +4733,7 @@ module.exports = grammar({
       'PageType',
       '=',
       field('value', choice(
+        $.string_literal,
         'Card',
         'List',
         'RoleCenter',
@@ -4893,7 +4894,7 @@ module.exports = grammar({
       $._compound_identifier,
       $._enum_identifier
     ),
-    _simple_identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*([A-Z][a-z0-9_]*)*/,
+    _simple_identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
     _quoted_identifier: $ => /"[^"]*(?:\.[^"]*)*"/,
 
@@ -4932,7 +4933,10 @@ module.exports = grammar({
       prec(-1, /\d+/)
     ),
 
-    string_literal: $ => /'[^']*'/,
+    string_literal: $ => choice(
+      /"(?:[^"\\]|\\.)*"/,
+      /'(?:[^'\\]|\\.)*'/
+    ),
 
     boolean_literal: $ => choice(/[tT][rR][uU][eE]/, /[fF][aA][lL][sS][eE]/),
 
