@@ -1936,14 +1936,14 @@ module.exports = grammar({
       field('table_reference', $.identifier )
     )),
 
-    code_block: $ => seq(
+    code_block: $ => prec.left(seq(
       /[bB][eE][gG][iI][nN]/,
       repeat(choice(
         $._statement,
       )),
       /[eE][nN][dD]/,
       optional(';')
-    ),
+    )),
 
     _statement: $ => choice(
       $.assignment_statement,
