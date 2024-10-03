@@ -2123,7 +2123,7 @@ module.exports = grammar({
       repeat(seq(',', $._expression))
     )),
 
-    _expression: $ => prec(2, choice(
+    _expression: $ => choice(
       $._literal,
       $.identifier,
       $.enum_identifier,
@@ -2133,8 +2133,8 @@ module.exports = grammar({
       $.member_expression,
       $.array_access_expression,
       $.ternary_expression,
-      $.logical_or_expression
-    )),
+      $.binary_expression
+    ),
 
     call_expression: $ => prec.left(2, seq(
       field('function', $._expression),
@@ -2147,12 +2147,7 @@ module.exports = grammar({
       field('object', $._expression),
       '.',
       field('member', seq(
-        field('name', $.identifier),
-        optional(seq(
-          '(',
-          optional($._argument_list),
-          ')'
-        ))
+        field('name', $.identifier)
       ))
     )),
 
@@ -2183,44 +2178,9 @@ module.exports = grammar({
       field('false_expression', $._expression)
     )),
 
-    logical_or_expression: $ => prec.left(2, seq(
-      field('left', $.logical_and_expression),
-      field('operator', choice(/[oO][rR]/)),
-      field('right', $.logical_and_expression)
-    )),
-
-    logical_and_expression: $ => prec.left(3, seq(
-      field('left', $.equality_expression),
-      field('operator', choice(/[aA][nN][dD]/)),
-      field('right', $.equality_expression)
-    )),
-
-    equality_expression: $ => prec.left(4, seq(
-      field('left', $.relational_expression),
-      field('operator', choice('=', '<>', '<', '>', '<=', '>=')),
-      field('right', $.relational_expression)
-    )),
-
-    relational_expression: $ => prec.left(5, seq(
-      field('left', $.additive_expression),
-      field('operator', choice('<', '>', '<=', '>=')),
-      field('right', $.additive_expression)
-    )),
-
-    additive_expression: $ => prec.left(6, seq(
-      field('left', $.multiplicative_expression),
-      field('operator', choice('+', '-')),
-      field('right', $.multiplicative_expression)
-    )),
-
-    multiplicative_expression: $ => prec.left(7, seq(
-      field('left', $.unary_expression),
-      field('operator', choice('*', '/', /[dD][iI][vV]/, /[mM][oO][dD]/)),
-      field('right', $.unary_expression)
-    )),
 
     unary_expression: $ => prec(8, seq(
-      field('operator', choice('-', /[nN][oO][tT]/)),
+      field('operator', choice('-', ci('not'))),
       field('operand', $._expression)
     )),
 
@@ -5242,3 +5202,23 @@ module.exports = grammar({
     ),
   }
 });
+    binary_expression: $ => {
+      const table = [
+        [6, choice('*', '/', ci('div'), ci('mod'))],
+        [5, choice('+', '-')],
+        [4, choice('=', '<>', '<', '>', '<=', '>=')],
+        [3, ci('not')],
+        [2, ci('and')],
+        [1, ci('or')]
+      ];
+      return choice(...table.map(([precedence, operator]) =>
+        prec.left(precedence, seq(
+          field('left', $._expression),
+          field('operator', operator),
+          field('right', $._expression)
+        ))
+      ));
+    },
+function ci(keyword) {
+  return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
+}
