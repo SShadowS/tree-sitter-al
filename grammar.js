@@ -810,7 +810,7 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.property),
+      repeat($.page_action_property),
       '}'
     ),
 
