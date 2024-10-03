@@ -1958,6 +1958,11 @@ module.exports = grammar({
       $.repeat_statement,
       $.exit_statement,
       $.with_statement,
+      $.error_statement,
+      $.message_statement,
+      $.assert_error_statement,
+      $.break_statement,
+      $.continue_statement,
       $.expression_statement
     ),
 
@@ -2071,6 +2076,38 @@ module.exports = grammar({
       field('record', $.identifier),
       /[dD][oO]/,
       field('body', $.code_block)
+    ),
+
+    error_statement: $ => seq(
+      /[eE][rR][rR][oO][rR]/,
+      '(',
+      field('message', $._expression),
+      ')',
+      optional(';')
+    ),
+
+    message_statement: $ => seq(
+      /[mM][eE][sS][sS][aA][gG][eE]/,
+      '(',
+      field('message', $._expression),
+      ')',
+      optional(';')
+    ),
+
+    assert_error_statement: $ => seq(
+      /[aA][sS][sS][eE][rR][tT][eE][rR][rR][oO][rR]/,
+      field('expression', $._expression),
+      optional(';')
+    ),
+
+    break_statement: $ => seq(
+      /[bB][rR][eE][aA][kK]/,
+      optional(';')
+    ),
+
+    continue_statement: $ => seq(
+      /[cC][oO][nN][tT][iI][nN][uU][eE]/,
+      optional(';')
     ),
 
     _argument_list: $ => prec.left(seq(
