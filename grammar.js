@@ -1050,7 +1050,7 @@ module.exports = grammar({
       optional($.variable_declaration),
       field('body', $.code_block)
     ),
-    onaftergetrecord_trigger: $ => seq(
+    onaftergetrecord_trigger: $ => prec.right(seq(
       'trigger',
       'OnAfterGetRecord',
       '(',
@@ -1058,7 +1058,7 @@ module.exports = grammar({
       optional($.var),
       field('body', $.code_block),
       optional(';')
-    ),
+    )),
     onclosepage_trigger: $ => seq(
       'trigger',
       'OnClosePage',
