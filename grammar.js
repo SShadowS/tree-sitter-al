@@ -5118,7 +5118,7 @@ module.exports = grammar({
 
     string_literal: $ => prec(3, choice(
       /"(?:[^"\\]|\\.)*"/,
-      /'(?:[^'\\]|\\.)*'/
+      /'.*?'/
     )),
 
     boolean_literal: $ => choice(/[tT][rR][uU][eE]/, /[fF][aA][lL][sS][eE]/),
