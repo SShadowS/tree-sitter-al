@@ -2115,6 +2115,7 @@ module.exports = grammar({
     _expression: $ => choice(
       $._literal,
       $.identifier,
+      $.enum_identifier,  // Added this line
       $.parenthesized_expression,
       $.unary_expression,
       $.call_expression,
@@ -5104,7 +5105,8 @@ module.exports = grammar({
       $._quoted_identifier,
       $._numeric_identifier,
       $._compound_identifier,
-      $._enum_identifier
+      $._enum_identifier,
+      $.enum_identifier  // Added this line
     ),
     _simple_identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
@@ -5121,6 +5123,12 @@ module.exports = grammar({
       choice($._simple_identifier, $._quoted_identifier),
       '::',
       choice($._simple_identifier, $._quoted_identifier)
+    ),
+
+    enum_identifier: $ => seq(
+      field('enum_type', choice($.identifier, $._quoted_identifier)),
+      '::',
+      field('enum_value', choice($.identifier, $._quoted_identifier))
     ),
 
     fully_qualified_identifier: $ => seq(
