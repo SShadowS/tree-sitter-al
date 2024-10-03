@@ -885,7 +885,7 @@ module.exports = grammar({
       field('part_name', $.identifier),
       ')',
       '{',
-      repeat($.property),
+      repeat(choice($.property, $.part_property)),
       '}'
     ),
 
@@ -4917,6 +4917,28 @@ module.exports = grammar({
       $.page_id_property,
       $.provider_property,
       $.editable_property,
+      $.sub_page_link_property,
+    ),
+
+    sub_page_link_property: $ => seq(
+      'SubPageLink',
+      '=',
+      field('value', $.sub_page_link_value),
+      ';'
+    ),
+
+    sub_page_link_value: $ => seq(
+      $.sub_page_link_mapping,
+      repeat(seq(',', $.sub_page_link_mapping))
+    ),
+
+    sub_page_link_mapping: $ => seq(
+      field('table_field', choice($.identifier, $.string_literal)),
+      '=',
+      'FIELD',
+      '(',
+      field('page_field', choice($.identifier, $.string_literal)),
+      ')'
     ),
 
     system_part_property: $ => choice(
