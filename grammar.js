@@ -3295,7 +3295,7 @@ module.exports = grammar({
     image_property: $ => seq(
       ci('Image'),
       '=',
-      field('value', $.string_literal),
+      field('value', choice($.string_literal, $.identifier)),
       ';'
     ),
     tooltip_property: $ => seq(
