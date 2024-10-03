@@ -1536,7 +1536,7 @@ module.exports = grammar({
       $.label_declaration
     ),
 
-    label_declaration: $ => seq(
+    label_declaration: $ => prec(2, seq(
       field('name', $.identifier),
       ':',
       'Label',
@@ -1558,7 +1558,7 @@ module.exports = grammar({
         ))
       )),
       ';'
-    ),
+    )),
 
     _page_element: $ => seq(
       choice(
