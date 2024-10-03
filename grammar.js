@@ -1525,10 +1525,10 @@ module.exports = grammar({
       '}'
     ),
 
-    var: $ => seq(
+    var: $ => prec.left(seq(
       ci('var'),
       repeat1($.variable_declaration)
-    ),
+    )),
 
     variable_declaration: $ => choice(
       seq(
