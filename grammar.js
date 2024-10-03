@@ -2341,7 +2341,7 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.field_property),
+      repeat(choice($.field_property, $.trigger)),
       '}'
     ),
 
@@ -3163,7 +3163,71 @@ module.exports = grammar({
       $.shortcut_key_property,
       $.tooltip_property,
       $.trigger_property,
-      $.application_area_property  // Add this line
+      $.application_area_property,
+      $.run_page_link_property,
+      $.run_page_view_property,
+      $.run_page_mode_property
+    ),
+
+    run_page_link_property: $ => seq(
+      'RunPageLink',
+      '=',
+      field('value', $.run_page_link_value),
+      ';'
+    ),
+
+    run_page_view_property: $ => seq(
+      'RunPageView',
+      '=',
+      field('value', $.run_page_view_value),
+      ';'
+    ),
+
+    run_page_mode_property: $ => seq(
+      'RunPageMode',
+      '=',
+      field('value', choice('View', 'Edit', 'Create')),
+      ';'
+    ),
+
+    run_page_link_value: $ => seq(
+      repeat1(seq(
+        field('field', $.identifier),
+        '=',
+        choice(
+          seq('CONST', '(', $._value, ')'),
+          seq('FILTER', '(', $.string_literal, ')'),
+          seq('FIELD', '(', $.identifier, ')'),
+          seq('FIELD', '(', 'UPPERLIMIT', '(', $.identifier, ')', ')'),
+          seq('FIELD', '(', 'FILTER', '(', $.identifier, ')', ')'),
+          seq('FIELD', '(', 'UPPERLIMIT', '(', 'FILTER', '(', $.identifier, ')', ')', ')')
+        ),
+        optional(',')
+      ))
+    ),
+
+    run_page_view_value: $ => choice(
+      seq('SORTING', '(', $.identifier_list, ')'),
+      seq('ORDER', '(', choice('Ascending', 'Descending'), ')'),
+      seq('WHERE', '(', $.table_filters, ')'),
+      seq(
+        'SORTING',
+        '(',
+        $.identifier_list,
+        ')',
+        optional(seq('ORDER', '(', choice('Ascending', 'Descending'), ')')),
+        optional(seq('WHERE', '(', $.table_filters, ')'))
+      ),
+      seq(
+        'SORTING',
+        '(',
+        $.identifier_list,
+        ')',
+        'WHERE',
+        '(',
+        $.table_filters,
+        ')'
+      )
     ),
     image_property: $ => seq(
       ci('Image'),
@@ -3340,7 +3404,7 @@ module.exports = grammar({
         ci('Codeunit'),
         ci('Query')
       )),
-      field('object_id', $.identifier)
+      field('object_id', choice($.identifier, $.string_literal))
     ),
     run_page_link_property: $ => seq(
       'RunPageLink',
