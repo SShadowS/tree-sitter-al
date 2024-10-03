@@ -5125,11 +5125,11 @@ module.exports = grammar({
       choice($._simple_identifier, $._quoted_identifier)
     ),
 
-    enum_identifier: $ => seq(
+    enum_identifier: $ => prec.left(seq(
       field('enum_type', choice($.identifier, $._quoted_identifier)),
       '::',
       field('enum_value', choice($.identifier, $._quoted_identifier))
-    ),
+    )),
 
     fully_qualified_identifier: $ => seq(
       optional(seq($.qualified_namespace, '.')),
