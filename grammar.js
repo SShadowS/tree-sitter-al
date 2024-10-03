@@ -1050,6 +1050,15 @@ module.exports = grammar({
       optional($.variable_declaration),
       field('body', $.code_block)
     ),
+    onaftergetrecord_trigger: $ => seq(
+      'trigger',
+      'OnAfterGetRecord',
+      '(',
+      ')',
+      optional($.var),
+      field('body', $.code_block),
+      optional(';')
+    ),
     onclosepage_trigger: $ => seq(
       'trigger',
       'OnClosePage',
@@ -1578,6 +1587,7 @@ module.exports = grammar({
         $.page_file_upload_action,
         $.page_view,
         $.onaftergetcurrrecord_trigger,
+        $.onaftergetrecord_trigger,
         $.onclosepage_trigger,
         $.ondeleterecord_trigger,
         $.onfindrecord_trigger,
@@ -1590,6 +1600,7 @@ module.exports = grammar({
         $.onpagebackgroundtaskcompleted_trigger,
         $.onpagebackgroundtaskerror_trigger,
         $.onqueryclosepage_trigger,
+        $.var,
         $.about_text_property,
         $.about_text_ml_property,
         $.about_title_property,
