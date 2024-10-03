@@ -3202,6 +3202,9 @@ module.exports = grammar({
       $.image_property,
       $.promoted_property,
       $.promoted_category_property,
+      $.promoted_is_big_property,
+      $.promoted_only_property,
+      $.scope_property,
       $.run_object_property,
       $.shortcut_key_property,
       $.tooltip_property,
@@ -3444,7 +3447,7 @@ module.exports = grammar({
     scope_property: $ => seq(
       'Scope',
       '=',
-      field('value', choice('Page', 'Repeater')),
+      field('value', choice('Page', 'Group', 'Repeater')),
       ';'
     ),
     save_values_property: $ => seq(
@@ -3480,13 +3483,9 @@ module.exports = grammar({
       seq(
         field('field', $.identifier),
         '=',
-        field('filter', choice(
-          seq('CONST', '(', $._value, ')'),
-          seq('FILTER', '(', $.string_literal, ')'),
+        field('link', choice(
           seq('FIELD', '(', $.identifier, ')'),
-          seq('FIELD', '(', 'UPPERLIMIT', '(', $.identifier, ')', ')'),
-          seq('FIELD', '(', 'FILTER', '(', $.identifier, ')', ')'),
-          seq('FIELD', '(', 'UPPERLIMIT', '(', 'FILTER', '(', $.identifier, ')', ')', ')')
+          $._expression
         )),
         optional(',')
       )
