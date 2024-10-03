@@ -2080,6 +2080,7 @@ module.exports = grammar({
       $.array_access_expression,
       $.ternary_expression,
       $.method_call,
+      $.logical_or_expression
       //$.setrange_call,
       //$.setfilter_call
     ),
@@ -2124,11 +2125,6 @@ module.exports = grammar({
       ',',
       field('filter_string', choice($.string_literal, $._expression)),
       ')'
-    ),
-
-    _expression: $ => choice(
-      $.ternary_expression,
-      $.logical_or_expression
     ),
 
     ternary_expression: $ => prec.right(1, seq(
