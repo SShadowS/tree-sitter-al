@@ -2133,19 +2133,25 @@ module.exports = grammar({
       $.member_expression,
       $.array_access_expression,
       $.ternary_expression,
-      {
-        type: 'binary_expression',
-        left: $ => $._expression,
-        operator: $ => choice(
-          '*', '/', ci('div'), ci('mod'),
-          '+', '-',
-          '=', '<>', '<', '>', '<=', '>=',
-          ci('and'),
-          ci('or')
-        ),
-        right: $ => $._expression
-      }
+      $.binary_expression
     ),
+
+    binary_expression: $ => {
+      const table = [
+        [6, choice('*', '/', ci('div'), ci('mod'))],
+        [5, choice('+', '-')],
+        [4, choice('=', '<>', '<', '>', '<=', '>=')],
+        [3, ci('and')],
+        [2, ci('or')]
+      ];
+      return choice(...table.map(([precedence, operator]) =>
+        prec.left(precedence, seq(
+          field('left', $._expression),
+          field('operator', operator),
+          field('right', $._expression)
+        ))
+      ));
+    },
 
 
     call_expression: $ => prec.left(2, seq(
