@@ -3247,7 +3247,7 @@ module.exports = grammar({
     ),
 
     run_object_value: $ => seq(
-      field('object_type', choice(ci('Page'), ci('Report'), ci('Codeunit'), ci('Query'))),
+      field('object_type', choice(ci('page'), ci('report'), ci('codeunit'), ci('query'))),
       field('object_id', choice($.integer, $.identifier, $.string_literal))
     ),
 
