@@ -1952,12 +1952,12 @@ module.exports = grammar({
       $.method_call_statement  // Add this line
     ),
 
-    method_call_statement: $ => prec.left(2, seq(
+    method_call_statement: $ => prec.left(1, seq(
       $.method_call,
       optional(';')
     )),
 
-    assignment_statement: $ => prec.left(2, seq(
+    assignment_statement: $ => prec.left(0, seq(
       field('variable', $.identifier),
       ':=',
       field('value', $._expression),
@@ -2126,18 +2126,61 @@ module.exports = grammar({
       ')'
     ),
 
-    binary_expression: $ => prec.left(1, seq(
-      field('left', $._expression),
-      field('operator', $._operator),
-      field('right', $._expression)
+    _expression: $ => choice(
+      $.ternary_expression,
+      $.logical_or_expression
+    ),
+
+    ternary_expression: $ => prec.right(1, seq(
+      field('condition', $._expression),
+      '?',
+      field('true_expression', $._expression),
+      ':',
+      field('false_expression', $._expression)
     )),
 
-    unary_expression: $ => prec(2, seq(
-      field('operator', choice('-', 'not')),
+    logical_or_expression: $ => prec.left(2, seq(
+      field('left', $.logical_and_expression),
+      field('operator', choice(/[oO][rR]/)),
+      field('right', $.logical_and_expression)
+    )),
+
+    logical_and_expression: $ => prec.left(3, seq(
+      field('left', $.equality_expression),
+      field('operator', choice(/[aA][nN][dD]/)),
+      field('right', $.equality_expression)
+    )),
+
+    equality_expression: $ => prec.left(4, seq(
+      field('left', $.relational_expression),
+      field('operator', choice('=', '<>', '<', '>', '<=', '>=')),
+      field('right', $.relational_expression)
+    )),
+
+    relational_expression: $ => prec.left(5, seq(
+      field('left', $.additive_expression),
+      field('operator', choice('<', '>', '<=', '>=')),
+      field('right', $.additive_expression)
+    )),
+
+    additive_expression: $ => prec.left(6, seq(
+      field('left', $.multiplicative_expression),
+      field('operator', choice('+', '-')),
+      field('right', $.multiplicative_expression)
+    )),
+
+    multiplicative_expression: $ => prec.left(7, seq(
+      field('left', $.unary_expression),
+      field('operator', choice('*', '/', /[dD][iI][vV]/, /[mM][oO][dD]/)),
+      field('right', $.unary_expression)
+    )),
+
+    unary_expression: $ => prec(8, seq(
+      field('operator', choice('-', /[nN][oO][tT]/)),
       field('operand', $._expression)
     )),
 
-    parenthesized_expression: $ => prec(7, seq(
+    parenthesized_expression: $ => prec(10, seq(
       '(',
       $._expression,
       ')'
@@ -2150,13 +2193,13 @@ module.exports = grammar({
       ')'
     )),
 
-    member_access_expression: $ => prec.left(4, seq(
+    member_access_expression: $ => prec.left(9, seq(
       field('object', $._expression),
       '.',
       field('member', $.identifier)
     )),
 
-    array_access_expression: $ => prec(4, seq(
+    array_access_expression: $ => prec(9, seq(
       field('array', $._expression),
       '[',
       field('index', $._expression),
