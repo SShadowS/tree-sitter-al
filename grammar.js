@@ -1137,7 +1137,8 @@ module.exports = grammar({
       $.page_field,
       $.part,
       $.group,
-      $.cue_group
+      $.cue_group,
+      $.system_part
     ),
 
     field: $ => seq(
