@@ -1,3 +1,7 @@
+function ci(keyword) {
+  return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
+}
+
 module.exports = grammar({
   name: 'al',
 
@@ -705,16 +709,16 @@ module.exports = grammar({
     ),
 
     page_object: $ => seq(
-      'page',
+      ci('page'),
       field('id', $.integer),
       field('name', $.identifier),
-      optional('API'),
+      optional(ci('API')),
       '{',
       repeat($._page_element),
       '}'
     ),
     application_area_property: $ => seq(
-      'ApplicationArea',
+      ci('ApplicationArea'),
       '=',
       field('value', choice($.identifier, $.array_value)),
       ';'
@@ -1189,7 +1193,7 @@ module.exports = grammar({
     ),
 
     actions: $ => seq(
-      'actions',
+      ci('actions'),
       '{',
       repeat($._action_element),
       '}'
@@ -2902,15 +2906,15 @@ module.exports = grammar({
       ';'
     ),
     caption_property: $ => seq(
-      'Caption',
+      ci('Caption'),
       '=',
       field('value', $.string_literal),
       optional(seq(
         ',',
         choice(
-          seq('Locked', '=', field('locked', $.boolean_literal)),
-          seq('Comment', '=', field('comment', $.string_literal)),
-          seq('MaxLength', '=', field('max_length', $.integer))
+          seq(ci('Locked'), '=', field('locked', $.boolean_literal)),
+          seq(ci('Comment'), '=', field('comment', $.string_literal)),
+          seq(ci('MaxLength'), '=', field('max_length', $.integer))
         )
       )),
       ';'
@@ -3138,7 +3142,7 @@ module.exports = grammar({
     ),
 
     page_action: $ => seq(
-      'action',
+      ci('action'),
       '(',
       field('name', $.identifier),
       ')',
@@ -3160,7 +3164,7 @@ module.exports = grammar({
       $.trigger_property
     ),
     image_property: $ => seq(
-      'Image',
+      ci('Image'),
       '=',
       field('value', $.string_literal),
       ';'
@@ -3321,14 +3325,19 @@ module.exports = grammar({
       ';'
     ),
     run_object_property: $ => seq(
-      'RunObject',
+      ci('RunObject'),
       '=',
       field('value', $.run_object_value),
       ';'
     ),
 
     run_object_value: $ => seq(
-      field('object_type', choice('Page', 'Report', 'Codeunit', 'Query')),
+      field('object_type', choice(
+        ci('Page'),
+        ci('Report'),
+        ci('Codeunit'),
+        ci('Query')
+      )),
       field('object_id', $.identifier)
     ),
     run_page_link_property: $ => seq(
