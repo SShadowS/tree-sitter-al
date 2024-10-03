@@ -5054,6 +5054,7 @@ module.exports = grammar({
     ),
 
     _value: $ => choice(
+      prec.right(1, $._expression),
       $._literal,
       $.identifier,
       $.array_value,
@@ -5093,9 +5094,7 @@ module.exports = grammar({
       prec(2,$._simple_identifier),
       $._quoted_identifier,
       $._numeric_identifier,
-      $._compound_identifier,
-      $._enum_identifier,
-      $.enum_identifier  // Added this line
+      $._compound_identifier
     ),
     _simple_identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
