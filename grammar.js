@@ -1952,16 +1952,15 @@ module.exports = grammar({
       $.for_statement,
       $.while_statement,
       $.repeat_statement,
-      $.procedure_call_statement,
       $.exit_statement,
       $.with_statement,
-      $.method_call_statement  // Add this line
+      $.expression_statement
     ),
 
-    method_call_statement: $ => prec.left(1, seq(
-      $.method_call,
+    expression_statement: $ => seq(
+      $._expression,
       optional(';')
-    )),
+    ),
 
     assignment_statement: $ => prec.left(0, seq(
       field('variable', $.identifier),
@@ -2078,40 +2077,26 @@ module.exports = grammar({
     _expression: $ => choice(
       $._literal,
       $.identifier,
-      //$.binary_expression,
-      $.unary_expression,
       $.parenthesized_expression,
-      $.function_call_expression,
-      $.member_access_expression,
+      $.unary_expression,
+      $.call_expression,
+      $.member_expression,
       $.array_access_expression,
       $.ternary_expression,
-      $.method_call,
       $.logical_or_expression
-      //$.setrange_call,
-      //$.setfilter_call
     ),
 
-    method_call: $ => prec.left(5, seq(
-      field('object', choice($.identifier, $.member_access_expression)),
+    call_expression: $ => prec.left(2, seq(
+      field('function', $._expression),
+      '(',
+      optional($._argument_list),
+      ')'
+    )),
+
+    member_expression: $ => prec.left(3, seq(
+      field('object', $._expression),
       '.',
-      field('method', choice(
-        /[sS][eE][tT][rR][aA][nN][gG][eE]/,
-        /[sS][eE][tT][fF][iI][lL][tT][eE][rR]/,
-        /[fF][iI][nN][dD][fF][iI][rR][sS][tT]/,
-        /[fF][iI][nN][dD][lL][aA][sS][tT]/,
-        /[fF][iI][nN][dD][sS][eE][tT]/,
-        /[gG][eE][tT]/,
-        /[iI][nN][sS][eE][rR][tT]/,
-        /[mM][oO][dD][iI][fF][yY]/,
-        /[dD][eE][lL][eE][tT][eE]/,
-        /[iI][sS][eE][mM][pP][tT][yY]/,
-        $.identifier
-      )),
-      optional(seq(
-        '(',
-        optional($._argument_list),
-        ')'
-      ))
+      field('property', $.identifier)
     )),
 
     setrange_call: $ => seq(
@@ -2188,12 +2173,6 @@ module.exports = grammar({
       ')'
     )),
 
-    function_call_expression: $ => prec(3, seq(
-      field('function', choice($.identifier, $.member_access_expression)),
-      '(',
-      optional(prec.dynamic(1, $._argument_list)),
-      ')'
-    )),
 
     member_access_expression: $ => prec.left(9, seq(
       field('object', $._expression),
