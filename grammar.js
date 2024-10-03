@@ -3250,27 +3250,43 @@ module.exports = grammar({
     ),
 
     run_page_view_value: $ => choice(
-      seq('SORTING', '(', $.identifier_list, ')'),
-      seq('ORDER', '(', choice('Ascending', 'Descending'), ')'),
-      seq('WHERE', '(', $.table_filters, ')'),
       seq(
-        'SORTING',
+        ci('sorting'),
         '(',
-        $.identifier_list,
+        $.identifier_or_string_list,
         ')',
-        optional(seq('ORDER', '(', choice('Ascending', 'Descending'), ')')),
-        optional(seq('WHERE', '(', $.table_filters, ')'))
+        optional(seq(
+          ci('order'),
+          '(',
+          choice('Ascending', 'Descending'),
+          ')'
+        )),
+        optional(seq(
+          ci('where'),
+          '(',
+          $.table_filters,
+          ')'
+        ))
       ),
       seq(
-        'SORTING',
+        ci('order'),
         '(',
-        $.identifier_list,
-        ')',
-        'WHERE',
+        choice('Ascending', 'Descending'),
+        ')'
+      ),
+      seq(
+        ci('where'),
         '(',
         $.table_filters,
         ')'
       )
+    ),
+
+    identifier_or_string: $ => choice($.fully_qualified_identifier, $.string_literal),
+
+    identifier_or_string_list: $ => seq(
+      $.identifier_or_string,
+      repeat(seq(',', $.identifier_or_string))
     ),
     image_property: $ => seq(
       ci('Image'),
