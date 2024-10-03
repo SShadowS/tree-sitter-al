@@ -1969,7 +1969,7 @@ module.exports = grammar({
     ),
 
     assignment_statement: $ => prec.left(0, seq(
-      field('variable', $.identifier),
+      field('variable', $._lvalue_expression),
       ':=',
       field('value', $._expression),
       ';'
