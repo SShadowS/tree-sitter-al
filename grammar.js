@@ -2801,7 +2801,8 @@ module.exports = grammar({
       $.table_relation_property,
       $.application_area_property,
       $.tooltip_property,
-      $.lookup_page_id_property  // Add this line
+      $.lookup_page_id_property,
+      $.visible_property  // Add this line
     ),
 
     source_expr_property: $ => seq(
@@ -3300,6 +3301,13 @@ module.exports = grammar({
       'LookupPageId',
       '=',
       field('value', $.identifier),
+      ';'
+    ),
+
+    visible_property: $ => seq(
+      'Visible',
+      '=',
+      field('value', choice($.boolean_literal, $.identifier, $._expression)),
       ';'
     ),
     trigger_property: $ => seq(
