@@ -2800,7 +2800,8 @@ module.exports = grammar({
       $.source_expr_property,
       $.table_relation_property,
       $.application_area_property,
-      $.tooltip_property
+      $.tooltip_property,
+      $.lookup_page_id_property  // Add this line
     ),
 
     source_expr_property: $ => seq(
@@ -3292,6 +3293,13 @@ module.exports = grammar({
       'Tooltip',
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    lookup_page_id_property: $ => seq(
+      'LookupPageId',
+      '=',
+      field('value', $.identifier),
       ';'
     ),
     trigger_property: $ => seq(
