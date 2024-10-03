@@ -2123,7 +2123,7 @@ module.exports = grammar({
       repeat(seq(',', $._expression))
     )),
 
-    _expression: $ => choice(
+    _expression: $ => prec.right(2, choice(
       $._literal,
       $.identifier,
       $.enum_identifier,
@@ -2134,7 +2134,7 @@ module.exports = grammar({
       $.array_access_expression,
       $.ternary_expression,
       $.binary_expression
-    ),
+    )),
 
     binary_expression: $ => {
       const table = [
@@ -5053,13 +5053,13 @@ module.exports = grammar({
     workflow_property: $ => choice(
     ),
 
-    _value: $ => choice(
-      prec.right(2, $._expression),
+    _value: $ => prec.right(3, choice(
+      $._expression,
       $._literal,
       $.identifier,
       $.array_value,
       $.object_value
-    ),
+    )),
 
     array_value: $ => seq(
       '[',
