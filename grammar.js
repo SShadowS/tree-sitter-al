@@ -4882,10 +4882,10 @@ module.exports = grammar({
       field('value', $._value)
     ),
 
-    string: $ => choice(
+    string: $ => prec(2, choice(
       /"(?:[^"\\]|\\.)*"/,
       /'(?:[^'\\]|\\.)*'/
-    ),
+    )),
     integer: $ => /\d+/,
     identifier: $ => choice(
       prec(2,$._simple_identifier),
@@ -4933,10 +4933,10 @@ module.exports = grammar({
       prec(-1, /\d+/)
     ),
 
-    string_literal: $ => choice(
+    string_literal: $ => prec(3, choice(
       /"(?:[^"\\]|\\.)*"/,
       /'(?:[^'\\]|\\.)*'/
-    ),
+    )),
 
     boolean_literal: $ => choice(/[tT][rR][uU][eE]/, /[fF][aA][lL][sS][eE]/),
 
