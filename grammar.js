@@ -2072,7 +2072,7 @@ module.exports = grammar({
     _expression: $ => choice(
       $._literal,
       $.identifier,
-      $.binary_expression,
+      //$.binary_expression,
       $.unary_expression,
       $.parenthesized_expression,
       $.function_call_expression,
