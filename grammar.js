@@ -495,6 +495,7 @@ module.exports = grammar({
     ),
 
     _dataset_element: $ => choice(
+      $.dataitem,
       $.add,
       $.modify
     ),
@@ -528,7 +529,13 @@ module.exports = grammar({
     ),
 
     _requestpage_element: $ => choice(
-      $.layout
+      $.layout,
+      $.actions,
+      $.property,
+      $.instructional_text_property,
+      $.links_allowed_property,
+      $.save_values_property,
+      $.source_table_temporary_property
     ),
 
     rendering: $ => seq(
@@ -1519,8 +1526,8 @@ module.exports = grammar({
     ),
 
     var: $ => seq(
-      'var',
-      repeat($.variable_declaration)
+      ci('var'),
+      repeat1($.variable_declaration)
     ),
 
     variable_declaration: $ => choice(
