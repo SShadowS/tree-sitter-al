@@ -1908,8 +1908,8 @@ module.exports = grammar({
 
     _type: $ => choice(
       $.simple_type,
-      $.record_type,
-      $._variable_data_type
+      $._variable_data_type,
+      $.record_type
     ),
 
     simple_type: $ => $.identifier,
