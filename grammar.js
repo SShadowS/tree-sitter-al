@@ -1872,9 +1872,14 @@ module.exports = grammar({
       field('body', $.code_block)
     ),
 
+    named_type: $ => seq(
+      field('base_type', $._variable_data_type),
+      field('subtype', choice($.identifier, $.string_literal))
+    ),
+
     _type: $ => choice(
       $.simple_type,
-      $._variable_data_type,
+      $.named_type,
       $.record_type
     ),
 
@@ -1936,7 +1941,8 @@ module.exports = grammar({
       repeat(choice(
         $._statement,
       )),
-      /[eE][nN][dD]/
+      /[eE][nN][dD]/,
+      optional(';')
     ),
 
     _statement: $ => choice(
