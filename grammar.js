@@ -1942,6 +1942,7 @@ module.exports = grammar({
 
     code_block: $ => prec.left(seq(
       /[bB][eE][gG][iI][nN]/,
+      optional($.var),
       repeat(choice(
         $._statement,
       )),
