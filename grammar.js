@@ -843,7 +843,7 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.property),
+      repeat(choice($.property, $.trigger)),
       '}'
     ),
 
@@ -853,7 +853,7 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.property),
+      repeat(choice($.property, $.trigger)),
       '}'
     ),
 
@@ -863,7 +863,7 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.property),
+      repeat(choice($.property, $.trigger)),
       '}'
     ),
 
@@ -3191,7 +3191,7 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.page_action_property),
+      repeat(choice($.page_action_property, $.trigger)),
       '}'
     ),
 
