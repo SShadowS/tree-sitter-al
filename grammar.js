@@ -3514,29 +3514,6 @@ module.exports = grammar({
       ';'
     ),
 
-    run_page_view_value: $ => choice(
-      seq('SORTING', '(', $.identifier_list, ')'),
-      seq('ORDER', '(', choice('Ascending', 'Descending'), ')'),
-      seq('WHERE', '(', $.table_filters, ')'),
-      seq(
-        'SORTING',
-        '(',
-        $.identifier_list,
-        ')',
-        optional(seq('ORDER', '(', choice('Ascending', 'Descending'), ')')),
-        optional(seq('WHERE', '(', $.table_filters, ')'))
-      ),
-      seq(
-        'SORTING',
-        '(',
-        $.identifier_list,
-        ')',
-        'WHERE',
-        '(',
-        $.table_filters,
-        ')'
-      )
-    ),
     query_category_property: $ => seq(
       'QueryCategory',
       '=',
