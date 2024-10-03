@@ -2,10 +2,6 @@ function ci(keyword) {
   return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
 }
 
-function ci(keyword) {
-  return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
-}
-
 module.exports = grammar({
   name: 'al',
 
@@ -1112,7 +1108,7 @@ module.exports = grammar({
     ),
 
     area: $ => seq(
-      'area',
+      ci('area'),
       '(',
       field('name', $.identifier),
       ')',
@@ -1149,7 +1145,7 @@ module.exports = grammar({
     ),
 
     field: $ => seq(
-      'field',
+      ci('field'),
       '(',
       field('name', $.identifier),
       ')',
@@ -1186,7 +1182,7 @@ module.exports = grammar({
     ),
 
     repeater: $ => seq(
-      'repeater',
+      ci('repeater'),
       '(',
       field('name', $.identifier),
       ')',
@@ -1345,7 +1341,7 @@ module.exports = grammar({
     ),
 
     action: $ => seq(
-      'action',
+      ci('action'),
       '(',
       field('name', $.identifier),
       ')',
@@ -1891,8 +1887,8 @@ module.exports = grammar({
 
     procedure: $ => prec(1, seq(
       optional($.obsolete_attribute),
-      optional('local'),
-      'procedure',
+      optional(ci('local')),
+      ci('procedure'),
       field('name', $.identifier),
       '(',
       optional($._parameter_list),
@@ -3239,7 +3235,8 @@ module.exports = grammar({
       $.application_area_property,
       $.run_page_link_property,
       $.run_page_view_property,
-      $.run_page_mode_property
+      $.run_page_mode_property,
+      $.visible_property
     ),
 
     run_object_property: $ => seq(
@@ -3351,7 +3348,7 @@ module.exports = grammar({
     ),
 
     visible_property: $ => seq(
-      'Visible',
+      ci('Visible'),
       '=',
       field('value', choice($.boolean_literal, $.identifier, $._expression)),
       ';'
@@ -3527,7 +3524,7 @@ module.exports = grammar({
         field('field', $.identifier),
         '=',
         field('link', choice(
-          seq('FIELD', '(', $.identifier, ')'),
+          seq(ci('FIELD'), '(', $.identifier, ')'),
           $._expression
         )),
         optional(',')
