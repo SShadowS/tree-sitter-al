@@ -496,12 +496,6 @@ module.exports = grammar({
       $.trigger
     ),
 
-    _dataset_element: $ => choice(
-      $.dataitem,
-      $.add,
-      $.modify
-    ),
-
     add: $ => seq(
       'add',
       '(',
@@ -1844,22 +1838,6 @@ module.exports = grammar({
       field('body', $.code_block)
     ),
 
-    _dataset_element: $ => choice(
-      $.dataitem
-    ),
-
-    requestpage: $ => seq(
-      'requestpage',
-      '{',
-      repeat($._requestpage_element),
-      '}'
-    ),
-
-    _requestpage_element: $ => choice(
-      $.layout,
-      $.actions
-    ),
-
     labels: $ => seq(
       'labels',
       '{',
@@ -1892,18 +1870,6 @@ module.exports = grammar({
       ')',
       optional($.var),
       field('body', $.code_block)
-    ),
-
-    var: $ => seq(
-      ci('var'),
-      repeat1($.variable_declaration)
-    ),
-
-    variable_declaration: $ => seq(
-      field('name', $.identifier),
-      ':',
-      field('type', $._type),
-      ';'
     ),
 
     _type: $ => choice(
@@ -1958,11 +1924,6 @@ module.exports = grammar({
       field('name', $.identifier),
       ':',
       field('type', $._type)
-    ),
-
-    _type: $ => choice(
-      $._variable_data_type,
-      $.record_type
     ),
 
     record_type: $ => prec(2, seq(
@@ -3441,12 +3402,6 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    run_object_property: $ => seq(
-      ci('RunObject'),
-      '=',
-      field('value', $.run_object_value),
-      ';'
-    ),
 
     run_object_value: $ => seq(
       field('object_type', choice(
@@ -3778,12 +3733,6 @@ module.exports = grammar({
       'CardPageId',
       '=',
       field('value', $.identifier),
-      ';'
-    ),
-    application_area_property: $ => seq(
-      'ApplicationArea',
-      '=',
-      field('value', choice($.identifier, $.array_value)),
       ';'
     ),
     auto_split_key_property: $ => seq(
