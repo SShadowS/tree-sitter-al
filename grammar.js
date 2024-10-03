@@ -2101,9 +2101,9 @@ module.exports = grammar({
         $.identifier
       )),
       optional(seq(
-        optional('('),
+        '(',
         optional($._argument_list),
-        optional(')')
+        ')'
       ))
     )),
 
