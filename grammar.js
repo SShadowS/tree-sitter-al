@@ -1149,10 +1149,12 @@ module.exports = grammar({
     system_part: $ => seq(
       'systempart',
       '(',
-      field('name', $.identifier),
+      field('name', choice($.identifier, $.string_literal)),
+      ';',
+      field('system_part_name', choice($.identifier, $.string_literal)),
       ')',
       '{',
-      repeat($.system_part_property),
+      repeat($.property),
       '}'
     ),
 
@@ -1194,6 +1196,13 @@ module.exports = grammar({
     ),
 
     _action_element: $ => choice(
+      $.action_area,
+      $.action_group,
+      $.page_action,
+      $.page_action_separator,
+      $.page_system_action,
+      $.page_file_upload_action,
+      $.page_custom_action,
       $.modify,
       $.add_first,
       $.add_last,
@@ -1295,6 +1304,26 @@ module.exports = grammar({
       ';',
       field('new_position', $.identifier),
       ')'
+    ),
+
+    action_area: $ => seq(
+      'area',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._action_element),
+      '}'
+    ),
+
+    action_group: $ => seq(
+      'group',
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._action_element),
+      '}'
     ),
 
     _customization_content: $ => choice(
