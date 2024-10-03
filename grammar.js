@@ -2798,7 +2798,9 @@ module.exports = grammar({
       $.quick_entry_property,
       $.sign_displacement_property,
       $.source_expr_property,
-      $.table_relation_property
+      $.table_relation_property,
+      $.application_area_property,
+      $.tooltip_property
     ),
 
     source_expr_property: $ => seq(
