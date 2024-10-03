@@ -2136,6 +2136,7 @@ module.exports = grammar({
       $.binary_expression
     ),
 
+
     call_expression: $ => prec.left(2, seq(
       field('function', $._expression),
       '(',
