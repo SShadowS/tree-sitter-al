@@ -2134,7 +2134,14 @@ module.exports = grammar({
     member_expression: $ => prec.left(3, seq(
       field('object', $._expression),
       '.',
-      field('property', $.identifier)
+      field('member', seq(
+        field('name', $.identifier),
+        optional(seq(
+          '(',
+          optional($._argument_list),
+          ')'
+        ))
+      ))
     )),
 
     setrange_call: $ => seq(
