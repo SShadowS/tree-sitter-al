@@ -810,7 +810,7 @@ module.exports = grammar({
       field('name', $.identifier),
       ')',
       '{',
-      repeat($.page_action_property),
+      repeat(choice($.page_action_property, $.trigger, $.var)),
       '}'
     ),
 
@@ -1876,14 +1876,34 @@ module.exports = grammar({
     ),
 
     trigger: $ => seq(
-      'trigger',
+      ci('trigger'),
       field('name', $.identifier),
       '(',
       optional($._parameter_list),
       ')',
-      optional($.variable_declaration),
+      optional($.var),
       field('body', $.code_block)
     ),
+
+    var: $ => seq(
+      ci('var'),
+      repeat1($.variable_declaration)
+    ),
+
+    variable_declaration: $ => seq(
+      field('name', $.identifier),
+      ':',
+      field('type', $._type),
+      ';'
+    ),
+
+    _type: $ => choice(
+      $.simple_type,
+      $.record_type,
+      $._variable_data_type
+    ),
+
+    simple_type: $ => $.identifier,
 
     procedure: $ => prec(1, seq(
       optional($.obsolete_attribute),
@@ -2766,7 +2786,15 @@ module.exports = grammar({
       $.option_ordinal_values_property,
       $.quick_entry_property,
       $.sign_displacement_property,
+      $.source_expr_property,
       $.table_relation_property
+    ),
+
+    source_expr_property: $ => seq(
+      ci('SourceExpr'),
+      '=',
+      field('value', $._expression),
+      ';'
     ),
     sign_displacement_property: $ => seq(
       'SignDisplacement',
@@ -3167,6 +3195,18 @@ module.exports = grammar({
       $.run_page_link_property,
       $.run_page_view_property,
       $.run_page_mode_property
+    ),
+
+    run_object_property: $ => seq(
+      ci('RunObject'),
+      '=',
+      field('value', $.run_object_value),
+      ';'
+    ),
+
+    run_object_value: $ => seq(
+      field('object_type', choice(ci('Page'), ci('Report'), ci('Codeunit'), ci('Query'))),
+      field('object_id', choice($.integer, $.identifier, $.string_literal))
     ),
 
     run_page_link_property: $ => seq(
