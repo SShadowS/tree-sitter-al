@@ -805,7 +805,7 @@ module.exports = grammar({
     ),
 
     page_action: $ => seq(
-      'action',
+      ci('action'),
       '(',
       field('name', $.identifier),
       ')',
@@ -815,7 +815,7 @@ module.exports = grammar({
     ),
 
     page_action_separator: $ => seq(
-      'separator',
+      ci('separator'),
       '(',
       field('name', $.identifier),
       ')',
@@ -835,7 +835,7 @@ module.exports = grammar({
     ),
 
     page_custom_action: $ => seq(
-      'customaction',
+      ci('customaction'),
       '(',
       field('name', $.identifier),
       ')',
@@ -845,7 +845,7 @@ module.exports = grammar({
     ),
 
     page_system_action: $ => seq(
-      'systemaction',
+      ci('systemaction'),
       '(',
       field('name', $.identifier),
       ')',
@@ -855,7 +855,7 @@ module.exports = grammar({
     ),
 
     page_file_upload_action: $ => seq(
-      'fileuploadaction',
+      ci('fileuploadaction'),
       '(',
       field('name', $.identifier),
       ')',
@@ -1311,7 +1311,7 @@ module.exports = grammar({
     ),
 
     action_area: $ => seq(
-      'area',
+      ci('area'),
       '(',
       field('name', $.identifier),
       ')',
@@ -1321,7 +1321,7 @@ module.exports = grammar({
     ),
 
     action_group: $ => seq(
-      'group',
+      ci('group'),
       '(',
       field('name', $.identifier),
       ')',
