@@ -5054,7 +5054,7 @@ module.exports = grammar({
     ),
 
     _value: $ => choice(
-      prec.right(1, $._expression),
+      prec.right(2, $._expression),
       $._literal,
       $.identifier,
       $.array_value,
