@@ -441,7 +441,9 @@ module.exports = grammar({
     ),
 
     _dataset_element: $ => choice(
-      $.dataitem
+      $.dataitem,
+      $.add,
+      $.modify
     ),
 
     dataitem: $ => prec.right(2, seq(
