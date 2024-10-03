@@ -2358,7 +2358,9 @@ module.exports = grammar({
     page_field: $ => seq(
       'field',
       '(',
-      field('name', $.identifier),
+      field('name', choice($.identifier, $.string_literal)),
+      ';',
+      field('source_expression', $._expression),
       ')',
       '{',
       repeat(choice($.field_property, $.trigger)),
