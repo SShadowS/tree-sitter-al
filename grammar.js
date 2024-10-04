@@ -1942,12 +1942,10 @@ module.exports = grammar({
     )),
 
     code_block: $ => prec.left(seq(
-      /[bB][eE][gG][iI][nN]/,
+      ci('begin'),
       optional($.var),
-      repeat(choice(
-        $._statement,
-      )),
-      /[eE][nN][dD]/,
+      repeat($._statement),
+      ci('end'),
       optional(';')
     )),
 
@@ -2301,7 +2299,6 @@ module.exports = grammar({
       'OnDelete',
       '(',
       ')',
-      optional($.variable_declaration),
       field('body', $.code_block)
     ),
     oninsert_trigger: $ => seq(
@@ -2309,7 +2306,6 @@ module.exports = grammar({
       'OnInsert',
       '(',
       ')',
-      optional($.var),
       field('body', $.code_block)
     ),
     onmodify_trigger: $ => seq(
@@ -2317,7 +2313,6 @@ module.exports = grammar({
       'OnModify',
       '(',
       ')',
-      optional($.var),
       field('body', $.code_block)
     ),
     onrename_trigger: $ => seq(
