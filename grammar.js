@@ -1978,13 +1978,13 @@ module.exports = grammar({
     )),
 
     if_statement: $ => prec.right(seq(
-      /[iI][fF]/,
+      ci('if'),
       field('condition', $._expression),
-      /[tT][hH][eE][nN]/,
+      ci('then'),
       field('then_body', choice($._statement, $.code_block)),
       optional(seq(
-        /[eE][lL][sS][eE]/,
-        field('else_body', choice(seq($._statement, $.code_block, optional(';')))),
+        ci('else'),
+        field('else_body', choice($._statement, $.code_block))
       ))
     )),
 
