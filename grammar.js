@@ -1943,7 +1943,6 @@ module.exports = grammar({
 
     code_block: $ => prec.left(seq(
       ci('begin'),
-      optional($.var),
       repeat($._statement),
       ci('end'),
       optional(';')
@@ -2299,6 +2298,7 @@ module.exports = grammar({
       'OnDelete',
       '(',
       ')',
+      optional($.var),
       field('body', $.code_block)
     ),
     oninsert_trigger: $ => seq(
@@ -2306,6 +2306,7 @@ module.exports = grammar({
       'OnInsert',
       '(',
       ')',
+      optional($.var),
       field('body', $.code_block)
     ),
     onmodify_trigger: $ => seq(
@@ -2313,6 +2314,7 @@ module.exports = grammar({
       'OnModify',
       '(',
       ')',
+      optional($.var),
       field('body', $.code_block)
     ),
     onrename_trigger: $ => seq(
@@ -2320,7 +2322,7 @@ module.exports = grammar({
       'OnRename',
       '(',
       ')',
-      optional($.variable_declaration),
+      optional($.var),
       field('body', $.code_block)
     ),
     onvalidate_trigger: $ => seq(
@@ -2328,7 +2330,7 @@ module.exports = grammar({
       'OnValidate',
       '(',
       ')',
-      optional($.variable_declaration),
+      optional($.var),
       field('body', $.code_block)
     ),
     onlookup_trigger: $ => seq(
@@ -2336,7 +2338,7 @@ module.exports = grammar({
       'OnLookup',
       '(',
       ')',
-      optional($.variable_declaration),
+      optional($.var),
       field('body', $.code_block)
     ),
     onafterlookup_trigger: $ => seq(
@@ -2344,7 +2346,7 @@ module.exports = grammar({
       'OnAfterLookup',
       '(',
       ')',
-      optional($.variable_declaration),
+      optional($.var),
       field('body', $.code_block)
     ),
 
