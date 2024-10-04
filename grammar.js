@@ -5173,7 +5173,7 @@ module.exports = grammar({
 
     arithmetic_operator: $ => choice('+', '-', '*', '/', /[dD][iI][vV]/, /[mM][oO][dD]/),
 
-    comparison_operator: $ => choice('=', '<>', '<', '>', '<=', '>='),
+    comparison_operator: $ => token(choice('=', '<>', '<=', '>=', '<', '>')),
 
     logical_operator: $ => choice(/[aA][nN][dD]/, /[oO][rR]/, /[nN][oO][tT]/, /[xX][oO][rR]/),
 
@@ -5214,10 +5214,9 @@ module.exports = grammar({
       const table = [
         [6, choice('*', '/', ci('div'), ci('mod'))],
         [5, choice('+', '-')],
-        [4, choice('=', '<>', '<', '>', '<=', '>=')],
-        [3, ci('not')],
-        [2, ci('and')],
-        [1, ci('or')]
+        [4, $.comparison_operator],
+        [3, ci('and')],
+        [2, ci('or')]
       ];
       return choice(...table.map(([precedence, operator]) =>
         prec.left(precedence, seq(
