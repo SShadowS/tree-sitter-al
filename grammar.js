@@ -1904,15 +1904,9 @@ module.exports = grammar({
       '(',
       optional($._parameter_list),
       ')',
-      optional(choice(
-        seq(field('return_type', seq(':', $._type)),optional(';')),
-        seq(
-          field('return_value', $.identifier),
-          ':',
-          field('return_type', $._type),
-          optional(';')
-        ),
-        ';'
+      optional(seq(
+        optional(seq(':', field('return_type', $._type))),
+        optional(';')
       )),
       optional($.var),
       field('body', $.code_block)
