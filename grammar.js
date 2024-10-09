@@ -2074,6 +2074,7 @@ module.exports = grammar({
       field('expression', choice(
         $.string,
         $.identifier,
+        $.enum_identifier,  // Added this line
         $._expression
       )),
       /[oO][fF]/,
