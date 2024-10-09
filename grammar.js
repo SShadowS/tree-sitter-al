@@ -1889,6 +1889,7 @@ module.exports = grammar({
     ),
 
     _type: $ => choice(
+      $.sized_data_type,
       $.named_type,
       $.record_type,
       $.simple_type
