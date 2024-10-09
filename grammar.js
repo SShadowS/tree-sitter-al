@@ -1906,11 +1906,7 @@ module.exports = grammar({
       ')',
       optional(seq(
         ':',
-        field('return_type', $._type),
-        optional(seq(
-          ci('var'),
-          field('return_name', $.identifier)
-        ))
+        field('return_type', $._type)
       )),
       optional(';'),
       optional($.var),
