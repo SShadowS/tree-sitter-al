@@ -1884,18 +1884,18 @@ module.exports = grammar({
     ),
 
     named_type: $ => seq(
-      field('base_type', $._variable_data_type),
+      field('base_type', choice('Table', 'Record')),
       field('subtype', choice($.identifier, $.string_literal))
     ),
 
-    _type: $ => prec.left(1, choice(
+    _type: $ => choice(
+      $._variable_data_type,
       $.sized_data_type,
-      $.named_type,
       $.record_type,
-      $.simple_type
-    )),
+      $.named_type
+    ),
 
-    simple_type: $ => $.identifier,
+    // simple_type: $ => $.identifier,
 
     procedure: $ => prec(1, seq(
       optional($.obsolete_attribute),
