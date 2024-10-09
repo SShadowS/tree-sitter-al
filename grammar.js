@@ -5210,10 +5210,12 @@ module.exports = grammar({
       prec(-1, /\d+/)
     ),
 
-    string_literal: $ => prec(3, choice(
-      /"(?:[^"\\]|\\.)*"/,
-      /'.*?'/
-    )),
+    string_literal: $ => choice(
+      '""',
+      "''",
+      seq('"', /(?:[^"\\]|\\.)+/, '"'),
+      seq("'", /(?:[^'\\]|\\.)+/, "'")
+    ),
 
     boolean_literal: $ => choice(/[tT][rR][uU][eE]/, /[fF][aA][lL][sS][eE]/),
 
