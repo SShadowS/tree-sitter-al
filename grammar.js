@@ -1888,12 +1888,12 @@ module.exports = grammar({
       field('subtype', choice($.identifier, $.string_literal))
     ),
 
-    _type: $ => choice(
+    _type: $ => prec.left(1, choice(
       $.sized_data_type,
       $.named_type,
       $.record_type,
       $.simple_type
-    ),
+    )),
 
     simple_type: $ => $.identifier,
 
