@@ -2454,7 +2454,7 @@ module.exports = grammar({
       )),
       '(',
       ')',
-      optional($.variable_declaration),
+      optional($.var),
       field('body', $.code_block),
       optional(';')
     ),
