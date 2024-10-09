@@ -2507,7 +2507,7 @@ module.exports = grammar({
       'Text'
     ),
 
-    sized_data_type: $ => prec.dynamic(1, seq(
+    sized_data_type: $ => prec(2, seq(
       choice('Code', 'Text'),
       '[',
       $.integer,
