@@ -1883,13 +1883,13 @@ module.exports = grammar({
       field('body', $.code_block)
     ),
 
-    named_type: $ => seq(
+    named_type: $ => prec(2, seq(
       field('base_type', choice(
         'Table', 'Record', 'Page', 'Report', 'XmlPort', 'Query',
         'Enum', 'DotNet', 'Interface', 'Codeunit'
       )),
       field('subtype', choice($.identifier, $.string_literal))
-    ),
+    )),
 
     _type: $ => prec(2, choice(
       $._variable_data_type,
