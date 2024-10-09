@@ -1884,7 +1884,10 @@ module.exports = grammar({
     ),
 
     named_type: $ => seq(
-      field('base_type', choice('Table', 'Record')),
+      field('base_type', choice(
+        'Table', 'Record', 'Page', 'Report', 'XmlPort', 'Query',
+        'Enum', 'DotNet', 'Interface', 'Codeunit'
+      )),
       field('subtype', choice($.identifier, $.string_literal))
     ),
 
