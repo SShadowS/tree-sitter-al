@@ -14,8 +14,6 @@ module.exports = grammar({
     $.comment
   ],
 
-  word: $ => $.identifier,
-
   rules: {
     source_file: $ => seq(
       optional($.namespace_declaration),
