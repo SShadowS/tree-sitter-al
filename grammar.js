@@ -1889,9 +1889,9 @@ module.exports = grammar({
     ),
 
     _type: $ => choice(
-      $.simple_type,
       $.named_type,
-      $.record_type
+      $.record_type,
+      $.simple_type
     ),
 
     simple_type: $ => $.identifier,
@@ -1904,11 +1904,13 @@ module.exports = grammar({
       '(',
       optional($._parameter_list),
       ')',
-      optional(seq(
-        ':',
-        field('return_type', $._type)
-      )),
       optional(';'),
+      optional(seq(
+        optional(field('name', $.identifier)),
+        ':',
+        field('return_type', $._type),
+        optional(';')
+      )),
       optional($.var),
       field('body', $.code_block)
     )),
