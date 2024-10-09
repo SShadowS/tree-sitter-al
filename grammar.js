@@ -1883,7 +1883,7 @@ module.exports = grammar({
       field('body', $.code_block)
     ),
 
-    named_type: $ => prec(2, seq(
+    named_type: $ => prec(3, seq(
       field('base_type', choice(
         'Table', 'Record', 'Page', 'Report', 'XmlPort', 'Query',
         'Enum', 'DotNet', 'Interface', 'Codeunit'
