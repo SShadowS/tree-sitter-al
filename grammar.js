@@ -2,6 +2,10 @@ function ci(keyword) {
   return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
 }
 
+const PREC = {
+  COMPOUND_IDENTIFIER: 1,
+};
+
 module.exports = grammar({
   name: 'al',
 
@@ -9,6 +13,8 @@ module.exports = grammar({
     /\s/,
     $.comment
   ],
+
+  word: $ => $.identifier,
 
   rules: {
     source_file: $ => seq(
@@ -19,6 +25,9 @@ module.exports = grammar({
         $.comment
       ))
     ),
+
+    // Token definition for '::'
+    double_colon: $ => '::',
 
     namespace_declaration: $ => seq(
       'namespace',
@@ -2074,14 +2083,14 @@ module.exports = grammar({
       field('expression', choice(
         $.string,
         $.identifier,
-        $.enum_identifier,  // Added this line
+        $.enum_identifier,
         $._expression
       )),
       /[oO][fF]/,
       repeat1($.case_branch),
       optional(seq(/[eE][lL][sS][eE]/, field('else_body', $.code_block))),
       /[eE][nN][dD]/,
-      (optional(';'))
+      optional(';')
     )),
 
     case_branch: $ => prec.left(seq(
@@ -5188,7 +5197,7 @@ module.exports = grammar({
 
     enum_identifier: $ => prec.left(seq(
       field('enum_type', choice($.identifier, $._quoted_identifier)),
-      '::',
+      $.double_colon,
       field('enum_value', choice($.identifier, $._quoted_identifier))
     )),
 
