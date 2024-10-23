@@ -9,28 +9,31 @@ function ci(keyword) {
   );
 }
 
-function makeSimpleProperty(name, valueTypeFn) {
-  return $ => seq(
-    token(name instanceof RegExp ? name : ci(name)),
+function makeSimpleProperty($, name, valueTypeFn) {
+  const propName = name instanceof RegExp ? name : ci(name);
+  return seq(
+    token(propName),
     '=',
     field('value', valueTypeFn($)),
     ';'
   );
 }
 
-function makeChoiceProperty(name, choicesFn) {
-  return $ => seq(
-    token(name instanceof RegExp ? name : ci(name)),
+function makeChoiceProperty($, name, choicesFn) {
+  const propName = name instanceof RegExp ? name : ci(name);
+  return seq(
+    token(propName),
     '=',
     field('value', choicesFn($)),
     ';'
   );
 }
 
-function makeTrigger(name, paramsFn) {
-  return $ => seq(
+function makeTrigger($, name, paramsFn) {
+  const triggerName = name instanceof RegExp ? name : ci(name);
+  return seq(
     token(ci('trigger')),
-    token(name instanceof RegExp ? name : ci(name)),
+    token(triggerName),
     '(',
     paramsFn ? paramsFn($) : seq(),
     ')',
@@ -39,14 +42,16 @@ function makeTrigger(name, paramsFn) {
   );
 }
 
-const makeObject = (type, elementsFn) => $ => seq(
-  type,
-  field('id', $.integer),
-  field('name', $.identifier),
-  '{',
-  repeat(elementsFn($)),
-  '}'
-);
+function makeObject($, type, elementsFn) {
+  return seq(
+    type,
+    field('id', $.integer),
+    field('name', $.identifier),
+    '{',
+    repeat(elementsFn($)),
+    '}'
+  );
+}
 
 
 const PREC = {
@@ -2448,9 +2453,9 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    ondelete_trigger: makeTrigger('OnDelete'),
-    oninsert_trigger: makeTrigger('OnInsert'),
-    onmodify_trigger: makeTrigger('OnModify'),
+    ondelete_trigger: $ => makeTrigger($, 'OnDelete'),
+    oninsert_trigger: $ => makeTrigger($, 'OnInsert'), 
+    onmodify_trigger: $ => makeTrigger($, 'OnModify'),
     onrename_trigger: $ => seq(
       'trigger',
       'OnRename',
