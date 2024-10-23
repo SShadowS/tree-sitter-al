@@ -1,14 +1,11 @@
 // Helper functions for property definitions
 function makeSimpleProperty(name, valueTypeFn) {
-  return $ => {
-    const rule = seq(
-      token(name instanceof RegExp ? name : ci(name)),
-      '=',
-      field('value', valueTypeFn($)),
-      ';'
-    );
-    return rule;
-  };
+  return $ => seq(
+    token(name instanceof RegExp ? name : ci(name)),
+    '=',
+    field('value', valueTypeFn($)),
+    ';'
+  );
 }
 
 function makeChoiceProperty(name, choicesFn) {
@@ -21,25 +18,15 @@ function makeChoiceProperty(name, choicesFn) {
 }
 
 function makeTrigger(name, paramsFn = null) {
-  return $ => {
-    const baseSeq = [
-      token(ci('trigger')),
-      token(name instanceof RegExp ? name : ci(name)),
-      '(',
-    ];
-    
-    if (paramsFn) {
-      baseSeq.push(paramsFn($));
-    }
-
-    baseSeq.push(
-      ')',
-      optional($.variable_declaration),
-      field('body', $.code_block)
-    );
-
-    return seq(...baseSeq);
-  };
+  return $ => seq(
+    token(ci('trigger')),
+    token(name instanceof RegExp ? name : ci(name)),
+    '(',
+    paramsFn ? paramsFn($) : null,
+    ')',
+    optional($.variable_declaration),
+    field('body', $.code_block)
+  );
 }
 
 function makeObject(type, elementsFn) {
