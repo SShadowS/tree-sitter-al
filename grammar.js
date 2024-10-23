@@ -17,16 +17,25 @@ function makeChoiceProperty(name, choicesFn) {
   );
 }
 
-function makeTrigger(name, paramsFn = null) {
-  return $ => seq(
-    token(ci('trigger')),
-    token(name instanceof RegExp ? name : ci(name)),
-    '(',
-    paramsFn ? paramsFn($) : null,
-    ')',
-    optional($.variable_declaration),
-    field('body', $.code_block)
-  );
+function makeTrigger(name, paramsFn) {
+  return $ => paramsFn 
+    ? seq(
+        token(ci('trigger')),
+        token(name instanceof RegExp ? name : ci(name)),
+        '(',
+        paramsFn($),
+        ')',
+        optional($.variable_declaration),
+        field('body', $.code_block)
+      )
+    : seq(
+        token(ci('trigger')),
+        token(name instanceof RegExp ? name : ci(name)),
+        '(',
+        ')',
+        optional($.variable_declaration),
+        field('body', $.code_block)
+      );
 }
 
 function makeObject(type, elementsFn) {
