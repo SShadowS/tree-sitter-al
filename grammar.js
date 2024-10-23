@@ -1,37 +1,50 @@
 
 // Helper functions for property definitions
-const makeSimpleProperty = (name, valueTypeFn) => $ => seq(
-  name instanceof RegExp ? token(name) : token(ci(name)),
-  '=',
-  field('value', valueTypeFn($)),
-  ';'
-);
+function ci(keyword) {
+  return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
+}
 
-const makeChoiceProperty = (name, choicesFn) => $ => seq(
-  name instanceof RegExp ? token(name) : token(ci(name)), 
-  '=',
-  field('value', choicesFn($)),
-  ';'
-);
+const makeSimpleProperty = (name, valueTypeFn) => $ => {
+  const propName = name instanceof RegExp ? name : ci(name);
+  return seq(
+    token(propName),
+    '=',
+    field('value', valueTypeFn($)),
+    ';'
+  );
+};
 
-const makeTrigger = (name, paramsFn) => $ => paramsFn
-  ? seq(
-      token(ci('trigger')),
-      token(name instanceof RegExp ? name : ci(name)),
-      '(',
-      paramsFn($),
-      ')',
-      optional($.variable_declaration),
-      field('body', $.code_block)
-    )
-  : seq(
-      token(ci('trigger')),
-      token(name instanceof RegExp ? name : ci(name)),
-      '(',
-      ')',
-      optional($.variable_declaration),
-      field('body', $.code_block)
-    );
+const makeChoiceProperty = (name, choicesFn) => $ => {
+  const propName = name instanceof RegExp ? name : ci(name);
+  return seq(
+    token(propName),
+    '=',
+    field('value', choicesFn($)),
+    ';'
+  );
+};
+
+const makeTrigger = (name, paramsFn) => $ => {
+  const triggerName = name instanceof RegExp ? name : ci(name);
+  return paramsFn
+    ? seq(
+        token(ci('trigger')),
+        token(triggerName),
+        '(',
+        paramsFn($),
+        ')',
+        optional($.variable_declaration),
+        field('body', $.code_block)
+      )
+    : seq(
+        token(ci('trigger')),
+        token(triggerName),
+        '(',
+        ')',
+        optional($.variable_declaration),
+        field('body', $.code_block)
+      );
+};
 
 const makeObject = (type, elementsFn) => $ => seq(
   type,
