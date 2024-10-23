@@ -1972,7 +1972,7 @@ module.exports = grammar({
       )
     ),
 
-    trigger: $ => seq(
+    trigger: $ => prec.right(1, seq(
       repeat($.attribute),
       ci('trigger'),
       field('name', choice(
@@ -1991,7 +1991,7 @@ module.exports = grammar({
       optional($.var),
       field('body', $.code_block),
       optional(';')
-    ),
+    )),
 
     named_type: $ => prec(3, seq(
       field('base_type', choice(
