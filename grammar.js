@@ -9,9 +9,6 @@ const PREC = {
   CALL: 5,
 };
 
-// Token definitions and helper constants
-const colon = ':';
-
 // Helper functions for property definitions
 function ci(keyword) {
   if (typeof keyword !== 'string') {
@@ -97,12 +94,12 @@ module.exports = grammar({
     $.comment
   ],
 
-  tokens: {
-    double_colon: $ => token('::'),
-    colon: $ => token(':')
-  },
 
   rules: {
+    // Token definitions
+    colon: $ => ':',
+    double_colon: $ => '::',
+
     source_file: $ => seq(
       optional($.namespace_declaration),
       optional(repeat($.using_directive)),
