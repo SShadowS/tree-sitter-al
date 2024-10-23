@@ -1,32 +1,41 @@
 // Helper functions for property definitions
 function makeSimpleProperty(name, valueTypeFn) {
-  return $ => seq(
-    name,
-    '=',
-    field('value', valueTypeFn($)),
-    ';'
-  );
+  return $ => {
+    const value = valueTypeFn($);
+    return seq(
+      name,
+      '=',
+      field('value', value),
+      ';'
+    );
+  };
 }
 
 function makeChoiceProperty(name, choicesFn) {
-  return $ => seq(
-    name,
-    '=',
-    field('value', choicesFn($)),
-    ';'
-  );
+  return $ => {
+    const choices = choicesFn($);
+    return seq(
+      name,
+      '=',
+      field('value', choices),
+      ';'
+    );
+  };
 }
 
 function makeTrigger(name, paramsFn = $ => []) {
-  return $ => seq(
-    'trigger',
-    name,
-    '(',
-    ...paramsFn($),
-    ')',
-    optional($.variable_declaration),
-    field('body', $.code_block)
-  );
+  return $ => {
+    const params = paramsFn($);
+    return seq(
+      'trigger',
+      name,
+      '(',
+      ...params,
+      ')',
+      optional($.variable_declaration),
+      field('body', $.code_block)
+    );
+  };
 }
 
 function makeObject(type, elements) {
