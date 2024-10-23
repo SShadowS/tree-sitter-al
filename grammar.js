@@ -3470,11 +3470,8 @@ module.exports = grammar({
       ';'
     ),
 
-    visible_property: $ => seq(
-      ci('Visible'),
-      '=',
-      field('value', choice($.boolean_literal, $.identifier, $._expression)),
-      ';'
+    visible_property: makeSimpleProperty(ci('Visible'), $ =>
+      choice($.boolean_literal, $.identifier, $._expression)
     ),
     trigger_property: $ => seq(
       'Trigger',
@@ -3889,11 +3886,8 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    editable_property: $ => prec(1, seq(
-      'Editable',
-      '=',
-      field('value', choice($.boolean_literal, $.identifier, $._expression)),
-      ';'
+    editable_property: $ => prec(1, makeSimpleProperty('Editable', $ =>
+      choice($.boolean_literal, $.identifier, $._expression)
     )),
     data_caption_expression_property: $ => prec(1, seq(
       'DataCaptionExpression',
