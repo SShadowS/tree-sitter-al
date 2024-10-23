@@ -1,7 +1,7 @@
 // Helper functions for property definitions
 function makeSimpleProperty(name, valueTypeFn) {
   return $ => seq(
-    ci(name),
+    name instanceof RegExp ? name : ci(name),
     '=',
     field('value', valueTypeFn($)),
     ';'
