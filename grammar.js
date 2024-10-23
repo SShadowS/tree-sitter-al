@@ -97,6 +97,11 @@ module.exports = grammar({
     $.comment
   ],
 
+  tokens: {
+    double_colon: $ => '::',
+    colon: $ => ':'
+  },
+
   rules: {
     source_file: $ => seq(
       optional($.namespace_declaration),
@@ -1558,7 +1563,7 @@ module.exports = grammar({
 
     object_type: $ => seq(
       'ObjectType',
-      '::',
+      $.double_colon,
       choice('Codeunit', 'Page', 'Report', 'Table', 'XMLPort')
     ),
 
@@ -2222,7 +2227,7 @@ module.exports = grammar({
         choice($._literal, $.identifier),
         repeat(seq(',', choice($._literal, $.identifier)))
       )),
-      colon,
+      $.colon,
       field('body', choice(
         $._statement,
         $.code_block
