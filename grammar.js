@@ -3481,13 +3481,6 @@ module.exports = grammar({
       ';'
     ),
 
-    lookup_page_id_property: $ => seq(
-      'LookupPageId',
-      '=',
-      field('value', $.identifier),
-      ';'
-    ),
-
     visible_property: $ => prec(5, makeSimpleProperty($, 'Visible', $ => choice($.boolean_literal, $.identifier, $._expression))),
     trigger_property: $ => seq(
       'Trigger',
