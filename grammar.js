@@ -1980,6 +1980,7 @@ module.exports = grammar({
     ),
 
     trigger: $ => seq(
+      repeat($.attribute),
       ci('trigger'),
       field('name', $.identifier),
       '(',
@@ -2551,6 +2552,7 @@ module.exports = grammar({
     ),
 
     field_trigger: $ => seq(
+      repeat($.attribute),
       'trigger',
       field('name', choice(
         'OnValidate',
