@@ -83,13 +83,6 @@ const propertyValues = $ => choice(
 module.exports = grammar({
   name: 'al',
 
-  conflicts: $ => [
-    [$.property, $._expression],
-    [$.editable_property, $._expression],
-    [$.visible_property, $._expression],
-    [$.enabled_property, $._expression]
-  ],
-
   extras: $ => [
     /\s/,
     $.comment
