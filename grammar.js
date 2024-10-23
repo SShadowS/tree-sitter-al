@@ -1,3 +1,45 @@
+// Helper functions for property definitions
+function makeSimpleProperty(name, valueType) {
+  return $ => seq(
+    name,
+    '=',
+    field('value', valueType),
+    ';'
+  );
+}
+
+function makeChoiceProperty(name, choices) {
+  return $ => seq(
+    name,
+    '=',
+    field('value', choice(...choices)),
+    ';'
+  );
+}
+
+function makeTrigger(name, params = []) {
+  return $ => seq(
+    'trigger',
+    name,
+    '(',
+    ...params,
+    ')',
+    optional($.variable_declaration),
+    field('body', $.code_block)
+  );
+}
+
+function makeObject(type, elements) {
+  return $ => seq(
+    type,
+    field('id', $.integer),
+    field('name', $.identifier),
+    '{',
+    repeat(elements),
+    '}'
+  );
+}
+
 function ci(keyword) {
   return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
 }
@@ -5,6 +47,25 @@ function ci(keyword) {
 const PREC = {
   COMPOUND_IDENTIFIER: 1,
 };
+
+// Common property groups
+const commonProperties = $ => choice(
+  $.access_property,
+  $.caption_property, 
+  $.caption_ml_property,
+  $.obsolete_reason_property,
+  $.obsolete_state_property,
+  $.obsolete_tag_property
+);
+
+// Common property value types
+const propertyValues = $ => choice(
+  $.boolean_literal,
+  $.string_literal,
+  $.identifier,
+  $.integer,
+  $._expression
+);
 
 module.exports = grammar({
   name: 'al',
@@ -2382,30 +2443,9 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    ondelete_trigger: $ => seq(
-      'trigger',
-      'OnDelete',
-      '(',
-      ')',
-      optional($.var),
-      field('body', $.code_block)
-    ),
-    oninsert_trigger: $ => seq(
-      'trigger',
-      'OnInsert',
-      '(',
-      ')',
-      optional($.var),
-      field('body', $.code_block)
-    ),
-    onmodify_trigger: $ => seq(
-      'trigger',
-      'OnModify',
-      '(',
-      ')',
-      optional($.var),
-      field('body', $.code_block)
-    ),
+    ondelete_trigger: makeTrigger('OnDelete'),
+    oninsert_trigger: makeTrigger('OnInsert'),
+    onmodify_trigger: makeTrigger('OnModify'),
     onrename_trigger: $ => seq(
       'trigger',
       'OnRename',
