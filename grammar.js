@@ -1,9 +1,9 @@
 // Helper functions for property definitions
 function makeSimpleProperty(name, valueTypeFn) {
-  return seq(
+  return $ => seq(
     name,
     '=',
-    field('value', valueTypeFn),
+    field('value', valueTypeFn($)),
     ';'
   );
 }
