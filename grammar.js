@@ -98,8 +98,8 @@ module.exports = grammar({
   ],
 
   tokens: {
-    double_colon: $ => '::',
-    colon: $ => ':'
+    double_colon: $ => token('::'),
+    colon: $ => token(':')
   },
 
   rules: {
@@ -1587,7 +1587,7 @@ module.exports = grammar({
 
     object_type: $ => seq(
       'ObjectType',
-      '::',
+      $.double_colon,
       choice('Codeunit', 'Page', 'Report', 'Table', 'XMLPort')
     ),
 
@@ -2227,7 +2227,7 @@ module.exports = grammar({
         choice($._literal, $.identifier),
         repeat(seq(',', choice($._literal, $.identifier)))
       )),
-      ':',
+      $.colon,
       field('body', choice(
         $._statement,
         $.code_block
@@ -2403,7 +2403,7 @@ module.exports = grammar({
       field('condition', $._expression),
       '?', 
       field('true_expression', $._expression),
-      colon,
+      $.colon,
       field('false_expression', $._expression)
     )),
 
