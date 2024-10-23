@@ -1532,34 +1532,22 @@ module.exports = grammar({
     ),
     event_subscriber: $ => seq(
       '[EventSubscriber(',
-      $.event_subscriber_params,
-      ')]',
-      $.procedure
-    ),
-
-
-    event_subscriber_params: $ => seq(
-      field('object_type', $.object_type),
+      field('object_type', choice('Codeunit', 'Page', 'Report', 'Table', 'XMLPort')),
       ',',
       field('object_id', $.identifier),
       ',',
       field('event_name', $.string_literal),
-      ',',
+      ',', 
       field('element_name', $.string_literal),
       optional(seq(
         ',',
         field('skip_on_missing_license', $.boolean_literal),
         optional(seq(
           ',',
-          field('skip_on_missing_permission', $.boolean_literal)
-        ))
-      ))
-    ),
-
-    object_type: $ => seq(
-      'ObjectType',
-      $.double_colon,
-      choice('Codeunit', 'Page', 'Report', 'Table', 'XMLPort')
+          field('skip_on_missing_permission', $.boolean_literal))
+      ))),
+      ')]',
+      $.procedure
     ),
 
     _table_element: $ => seq(
@@ -4579,16 +4567,16 @@ module.exports = grammar({
       $.entity_set_caption_property,
       $.entity_set_caption_ml_property,
       $.entity_set_name_property,
-      $.help_link_property,  // Added HelpLink property
+      $.help_link_property,
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.method_property,  // Added Method property
-      $.order_by_property,  // Added OrderBy property
-      $.permissions_property,  // Added Permissions property
-      $.query_type_property,  // Added QueryType property
-      $.query_category_property,  // Added QueryCategory property
-      $.read_state_property,  // Added ReadState property
-      $.reverse_sign_property  // Added ReverseSign property
+      $.method_property,
+      $.order_by_property,
+      $.permissions_property,
+      $.query_type_property,
+      $.query_category_property,
+      $.read_state_property,
+      $.reverse_sign_property
     ),
     reverse_sign_property: $ => seq(
       'ReverseSign',
