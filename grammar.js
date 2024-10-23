@@ -2209,9 +2209,9 @@ module.exports = grammar({
     )),
 
     case_branch: $ => prec.left(seq(
-      field('value', choice(
-        $._literal,
-        $.identifier
+      field('values', seq(
+        choice($._literal, $.identifier),
+        repeat(seq(',', choice($._literal, $.identifier)))
       )),
       ':',
       field('body', choice(
