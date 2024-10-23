@@ -2858,7 +2858,7 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    enabled_property: $ => makeSimpleProperty('Enabled', $ => choice($.boolean_literal, $.identifier)),
+    enabled_property: $ => makeSimpleProperty($, 'Enabled', $ => choice($.boolean_literal, $.identifier)),
     extended_datatype_property: $ => seq(
       'ExtendedDatatype',
       '=',
@@ -3475,7 +3475,7 @@ module.exports = grammar({
       ';'
     ),
 
-    visible_property: $ => makeSimpleProperty(ci('Visible'), $ => choice($.boolean_literal, $.identifier, $._expression)),
+    visible_property: $ => makeSimpleProperty($, ci('Visible'), $ => choice($.boolean_literal, $.identifier, $._expression)),
     trigger_property: $ => seq(
       'Trigger',
       '=',
@@ -3595,7 +3595,7 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    show_mandatory_property: $ => makeSimpleProperty('ShowMandatory', $ => choice($.boolean_literal, $.identifier, $._expression)),
+    show_mandatory_property: $ => makeSimpleProperty($, 'ShowMandatory', $ => choice($.boolean_literal, $.identifier, $._expression)),
     show_as_tree_property: $ => seq(
       'ShowAsTree',
       '=',
@@ -3884,7 +3884,7 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    editable_property: $ => makeSimpleProperty('Editable', $ =>
+    editable_property: $ => makeSimpleProperty($, 'Editable', $ =>
       choice($.boolean_literal, $.identifier, $._expression)
     ),
     data_caption_expression_property: $ => prec(1, seq(
