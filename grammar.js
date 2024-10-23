@@ -1553,6 +1553,30 @@ module.exports = grammar({
       choice('Codeunit', 'Page', 'Report', 'Table', 'XMLPort')
     ),
 
+    event_subscriber_params: $ => seq(
+      field('object_type', $.object_type),
+      ',',
+      field('object_id', $.identifier),
+      ',',
+      field('event_name', $.string_literal),
+      ',',
+      field('element_name', $.string_literal),
+      optional(seq(
+        ',',
+        field('skip_on_missing_license', $.boolean_literal),
+        optional(seq(
+          ',',
+          field('skip_on_missing_permission', $.boolean_literal)
+        ))
+      ))
+    ),
+
+    object_type: $ => seq(
+      'ObjectType',
+      '::',
+      choice('Codeunit', 'Page', 'Report', 'Table', 'XMLPort')
+    ),
+
     _table_element: $ => seq(
       choice(
         $.table_fields,
@@ -1580,6 +1604,7 @@ module.exports = grammar({
         $.about_text_property,
         $.fieldgroups,
         $.procedure,
+        $.event_subscriber,
         $.trigger,
         $.ondelete_trigger,
         $.oninsert_trigger,
@@ -2056,7 +2081,7 @@ module.exports = grammar({
     // simple_type: $ => $.identifier,
 
     procedure: $ => prec(1, seq(
-      optional($.obsolete_attribute),
+      repeat($.attribute),
       optional(ci('local')),
       ci('procedure'),
       field('name', $.identifier),
@@ -2073,6 +2098,22 @@ module.exports = grammar({
       optional($.var),
       field('body', $.code_block)
     )),
+
+    attribute: $ => seq(
+      '[',
+      field('attribute_name', $.identifier),
+      optional(seq(
+        '(',
+        optional(field('attribute_arguments', $.attribute_arguments)),
+        ')'
+      )),
+      ']'
+    ),
+
+    attribute_arguments: $ => seq(
+      $._expression,
+      repeat(seq(',', $._expression))
+    ),
 
     obsolete_attribute: $ => seq(
       '[',
