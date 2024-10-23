@@ -1,4 +1,5 @@
 
+// Precedence constants
 const PREC = {
   COMPOUND_IDENTIFIER: 1,
   CASE_BRANCH: 2,
@@ -8,6 +9,7 @@ const PREC = {
   CALL: 5,
 };
 
+// Token definitions
 const colon = ':';
 
 // Helper functions for property definitions
@@ -67,15 +69,6 @@ function makeObject($, type, elementsFn) {
   );
 }
 
-
-const PREC = {
-  COMPOUND_IDENTIFIER: 1,
-  CASE_BRANCH: 2,
-  TERNARY: 1,
-  UNARY: 3,
-  MEMBER: 4,
-  CALL: 5,
-};
 
 const colon = ':';
 
