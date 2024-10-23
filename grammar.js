@@ -3474,7 +3474,8 @@ module.exports = grammar({
     table_relation_value: $ => choice(
       $.simple_table_relation,
       $.conditional_table_relation,
-      $.string
+      $.string,
+      $.identifier
     ),
 
     simple_table_relation: $ => seq(
@@ -5107,7 +5108,7 @@ module.exports = grammar({
     filters_property: $ => seq(
       'Filters',
       '=',
-      field('value', $.filters_value),
+      field('value', choice($.filters_value, $.string_literal)),
       ';'
     ),
 
@@ -5159,7 +5160,10 @@ module.exports = grammar({
       $._literal,
       $.identifier,
       $.array_value,
-      $.object_value
+      $.object_value,
+      $.time_literal,
+      $.date_literal,
+      $.datetime_literal
     )),
 
     array_value: $ => seq(
