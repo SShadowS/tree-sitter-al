@@ -70,7 +70,14 @@ function makeObject($, type, elementsFn) {
 
 const PREC = {
   COMPOUND_IDENTIFIER: 1,
+  CASE_BRANCH: 2,
+  TERNARY: 1,
+  UNARY: 3,
+  MEMBER: 4,
+  CALL: 5,
 };
+
+const colon = ':';
 
 // Common property groups
 const commonProperties = $ => choice(
