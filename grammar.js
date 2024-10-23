@@ -3485,7 +3485,7 @@ module.exports = grammar({
       ';'
     ),
 
-    visible_property: $ => prec(3, makeSimpleProperty($, 'Visible', $ => choice($.boolean_literal, $.identifier, $._expression))),
+    visible_property: $ => prec(5, makeSimpleProperty($, 'Visible', $ => choice($.boolean_literal, $.identifier, $._expression))),
     trigger_property: $ => seq(
       'Trigger',
       '=',
@@ -5246,14 +5246,14 @@ module.exports = grammar({
       $.fully_qualified_identifier,
       repeat(seq(',', $.fully_qualified_identifier))
     ),
-    _literal: $ => choice(
+    _literal: $ => prec(4, choice(
       $.number_literal,
       $.string_literal,
       $.boolean_literal,
       $.date_literal,
       $.time_literal,
       $.datetime_literal
-    ),
+    )),
 
     number_literal: $ => choice(
       /\d+\.\d+/,
