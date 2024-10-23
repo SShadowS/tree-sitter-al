@@ -1,6 +1,9 @@
 
 // Helper functions for property definitions
 function ci(keyword) {
+  if (typeof keyword !== 'string') {
+    return keyword;
+  }
   return new RegExp(
     keyword
       .split('')
@@ -10,7 +13,7 @@ function ci(keyword) {
 }
 
 function makeSimpleProperty($, name, valueTypeFn) {
-  const propName = name instanceof RegExp ? name : ci(name);
+  const propName = name instanceof RegExp ? name : ci(name.toString());
   return seq(
     token(propName),
     '=',
