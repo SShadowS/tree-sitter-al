@@ -3475,8 +3475,8 @@ module.exports = grammar({
       ';'
     ),
     tooltip_property: $ => seq(
-      'Tooltip',
-      '=',
+      'ToolTip',
+      '=', 
       field('value', $.string_literal),
       ';'
     ),
