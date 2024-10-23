@@ -3354,10 +3354,10 @@ module.exports = grammar({
 
     run_object_value: $ => seq(
       field('object_type', choice(
-        ci('Page'),
-        ci('Report'), 
-        ci('Codeunit'),
-        ci('Query')
+        'Page',
+        'Report',
+        'Codeunit', 
+        'Query'
       )),
       field('object_id', choice($.identifier, $.string_literal))
     ),
@@ -3597,15 +3597,6 @@ module.exports = grammar({
       ';'
     ),
 
-    run_object_value: $ => seq(
-      field('object_type', choice(
-        'Page',
-        'Report',
-        'Codeunit',
-        'Query'
-      )),
-      field('object_id', $.identifier)
-    ),
     run_page_link_property: $ => seq(
       'RunPageLink',
       '=',
@@ -4431,31 +4422,31 @@ module.exports = grammar({
     ),
 
     query_property: $ => choice(
-      $.access_property,
-      $.apigroup_property,
-      $.apiversion_property,
-      $.apipublisher_property,
-      $.caption_property,
-      $.caption_ml_property,
-      $.column_filter_property,
-      $.data_access_intent_property,
-      $.data_item_link_property,
-      $.entity_caption_property,
-      $.entity_caption_ml_property,
-      $.entity_name_property,
-      $.entity_set_caption_property,
-      $.entity_set_caption_ml_property,
-      $.entity_set_name_property,
-      $.help_link_property,
-      $.inherent_entitlements_property,
-      $.inherent_permissions_property,
-      $.method_property,
-      $.order_by_property,
-      $.permissions_property,
-      $.query_type_property,
-      $.query_category_property,
-      $.read_state_property,
-      $.reverse_sign_property
+      'access',
+      'apigroup',
+      'apiversion', 
+      'apipublisher',
+      'caption',
+      'captionML',
+      'columnFilter',
+      'dataAccessIntent',
+      'dataItemLink',
+      'entityCaption',
+      'entityCaptionML', 
+      'entityName',
+      'entitySetCaption',
+      'entitySetCaptionML',
+      'entitySetName',
+      'helpLink',
+      'inherentEntitlements',
+      'inherentPermissions',
+      'method',
+      'orderBy',
+      'permissions',
+      'queryType',
+      'queryCategory',
+      'readState',
+      'reverseSign'
     ),
 
     codeunit_property: $ => choice(
@@ -4624,11 +4615,11 @@ module.exports = grammar({
     ),
 
     data_item_link_value: $ => seq(
-      field('field', $.identifier),
+      field('source_field', $.identifier),
       '=',
       'FIELD',
       '(',
-      field('reference_field', $.identifier),
+      field('target_field', $.identifier),
       ')'
     ),
     column_filter_property: $ => seq(
