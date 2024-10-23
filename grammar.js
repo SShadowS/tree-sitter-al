@@ -109,9 +109,6 @@ module.exports = grammar({
       ))
     ),
 
-    // Token definition for '::'
-    double_colon: $ => '::',
-
     namespace_declaration: $ => seq(
       'namespace',
       field('name', $.qualified_namespace),
@@ -5231,12 +5228,6 @@ module.exports = grammar({
       choice($._quoted_identifier, $._simple_identifier),
       optional(repeat(seq('.', choice($._quoted_identifier, $._simple_identifier))))
     )),
-
-    _enum_identifier: $ => seq(
-      choice($._simple_identifier, $._quoted_identifier),
-      '::',
-      choice($._simple_identifier, $._quoted_identifier)
-    ),
 
     enum_identifier: $ => prec.left(seq(
       field('enum_type', choice($.identifier, $._quoted_identifier)),
