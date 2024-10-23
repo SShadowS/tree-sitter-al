@@ -5100,7 +5100,7 @@ module.exports = grammar({
       ';'
     ),
 
-    visible_property: makeSimpleProperty(ci('Visible'), $ =>
+    visible_property: $ => makeSimpleProperty($, 'Visible', $ => 
       choice($.boolean_literal, $.identifier, $._expression)
     ),
     format_region_property: $ => seq(
