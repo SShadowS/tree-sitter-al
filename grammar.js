@@ -1,3 +1,7 @@
+function ci(keyword) {
+  return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
+}
+
 // Helper functions for property definitions
 const makeSimpleProperty = (name, valueTypeFn) => $ => seq(
   token(name instanceof RegExp ? name : ci(name)),
@@ -5321,22 +5325,3 @@ module.exports = grammar({
     ),
   }
 });
-    binary_expression: $ => {
-      const table = [
-        [6, choice('*', '/', ci('div'), ci('mod'))],
-        [5, choice('+', '-')],
-        [4, $.comparison_operator],
-        [3, ci('and')],
-        [2, ci('or')]
-      ];
-      return choice(...table.map(([precedence, operator]) =>
-        prec.left(precedence, seq(
-          field('left', $._expression),
-          field('operator', operator),
-          field('right', $._expression)
-        ))
-      ));
-    },
-function ci(keyword) {
-  return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
-}
