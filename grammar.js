@@ -9,7 +9,7 @@ const PREC = {
   CALL: 5,
 };
 
-// Token definitions
+// Token definitions and helper constants
 const colon = ':';
 
 // Helper functions for property definitions
@@ -69,8 +69,6 @@ function makeObject($, type, elementsFn) {
   );
 }
 
-
-const colon = ':';
 
 // Common property groups
 const commonProperties = $ => choice(
