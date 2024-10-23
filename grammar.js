@@ -17,16 +17,24 @@ function makeChoiceProperty(name, choicesFn) {
   );
 }
 
-function makeTrigger(name, paramsFn = () => []) {
-  return seq(
+function makeTrigger(name, paramsFn = null) {
+  const baseSeq = [
     'trigger',
     name,
     '(',
-    ...paramsFn,
+  ];
+  
+  if (paramsFn) {
+    baseSeq.push(paramsFn);
+  }
+
+  baseSeq.push(
     ')',
     optional($.variable_declaration),
     field('body', $.code_block)
   );
+
+  return seq(...baseSeq);
 }
 
 function makeObject(type, elements) {
