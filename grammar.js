@@ -1,24 +1,27 @@
 // Helper functions for property definitions
-function makeSimpleProperty(name, valueTypeFn) {
-  return $ => seq(
+const makeSimpleProperty = (name, valueTypeFn) => ({
+  name: 'simple_property',
+  rule: $ => seq(
     token(name instanceof RegExp ? name : ci(name)),
     '=',
     field('value', valueTypeFn($)),
     ';'
-  );
-}
+  )
+});
 
-function makeChoiceProperty(name, choicesFn) {
-  return $ => seq(
+const makeChoiceProperty = (name, choicesFn) => ({
+  name: 'choice_property',
+  rule: $ => seq(
     token(name instanceof RegExp ? name : ci(name)),
     '=',
     field('value', choicesFn($)),
     ';'
-  );
-}
+  )
+});
 
-function makeTrigger(name, paramsFn) {
-  return $ => paramsFn 
+const makeTrigger = (name, paramsFn) => ({
+  name: 'trigger',
+  rule: $ => paramsFn
     ? seq(
         token(ci('trigger')),
         token(name instanceof RegExp ? name : ci(name)),
@@ -35,19 +38,20 @@ function makeTrigger(name, paramsFn) {
         ')',
         optional($.variable_declaration),
         field('body', $.code_block)
-      );
-}
+      )
+});
 
-function makeObject(type, elementsFn) {
-  return $ => seq(
+const makeObject = (type, elementsFn) => ({
+  name: 'object',
+  rule: $ => seq(
     type,
     field('id', $.integer),
     field('name', $.identifier),
     '{',
     repeat(elementsFn($)),
     '}'
-  );
-}
+  )
+});
 
 function ci(keyword) {
   return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
