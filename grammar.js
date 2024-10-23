@@ -1,28 +1,28 @@
 // Helper functions for property definitions
-function makeSimpleProperty(name, valueType) {
+function makeSimpleProperty(name, valueTypeFn) {
   return $ => seq(
     name,
     '=',
-    field('value', valueType),
+    field('value', valueTypeFn($)),
     ';'
   );
 }
 
-function makeChoiceProperty(name, choices) {
+function makeChoiceProperty(name, choicesFn) {
   return $ => seq(
     name,
     '=',
-    field('value', choice(...choices)),
+    field('value', choicesFn($)),
     ';'
   );
 }
 
-function makeTrigger(name, params = []) {
+function makeTrigger(name, paramsFn = $ => []) {
   return $ => seq(
     'trigger',
     name,
     '(',
-    ...params,
+    ...paramsFn($),
     ')',
     optional($.variable_declaration),
     field('body', $.code_block)
