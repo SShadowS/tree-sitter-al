@@ -4,7 +4,7 @@ function ci(keyword) {
 
 // Helper functions for property definitions
 const makeSimpleProperty = (name, valueTypeFn) => $ => seq(
-  name instanceof RegExp ? token(name) : token(ci(name)),
+  token(ci(name)),
   '=',
   field('value', valueTypeFn($)),
   ';'
