@@ -2403,11 +2403,11 @@ module.exports = grammar({
       ')'
     ),
 
-    ternary_expression: $ => prec.right(1, seq(
+    ternary_expression: $ => prec.right(PREC.TERNARY, seq(
       field('condition', $._expression),
-      '?',
+      '?', 
       field('true_expression', $._expression),
-      ':',
+      colon,
       field('false_expression', $._expression)
     )),
 
