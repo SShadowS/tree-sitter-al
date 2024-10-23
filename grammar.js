@@ -9,47 +9,29 @@ function ci(keyword) {
   );
 }
 
-const makeSimpleProperty = (name, valueTypeFn) => $ => {
-  const propName = name instanceof RegExp ? name : ci(name);
-  return seq(
-    token(propName),
-    '=',
-    field('value', valueTypeFn($)),
-    ';'
-  );
-};
+const makeSimpleProperty = (name, valueTypeFn) => $ => seq(
+  token(name instanceof RegExp ? name : ci(name)),
+  '=',
+  field('value', valueTypeFn($)),
+  ';'
+);
 
-const makeChoiceProperty = (name, choicesFn) => $ => {
-  const propName = name instanceof RegExp ? name : ci(name);
-  return seq(
-    token(propName),
-    '=',
-    field('value', choicesFn($)),
-    ';'
-  );
-};
+const makeChoiceProperty = (name, choicesFn) => $ => seq(
+  token(name instanceof RegExp ? name : ci(name)),
+  '=',
+  field('value', choicesFn($)),
+  ';'
+);
 
-const makeTrigger = (name, paramsFn) => $ => {
-  const triggerName = name instanceof RegExp ? name : ci(name);
-  return paramsFn
-    ? seq(
-        token(ci('trigger')),
-        token(triggerName),
-        '(',
-        paramsFn($),
-        ')',
-        optional($.variable_declaration),
-        field('body', $.code_block)
-      )
-    : seq(
-        token(ci('trigger')),
-        token(triggerName),
-        '(',
-        ')',
-        optional($.variable_declaration),
-        field('body', $.code_block)
-      );
-};
+const makeTrigger = (name, paramsFn) => $ => seq(
+  token(ci('trigger')),
+  token(name instanceof RegExp ? name : ci(name)),
+  '(',
+  paramsFn ? paramsFn($) : seq(),
+  ')',
+  optional($.variable_declaration),
+  field('body', $.code_block)
+);
 
 const makeObject = (type, elementsFn) => $ => seq(
   type,
