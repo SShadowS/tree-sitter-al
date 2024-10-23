@@ -3599,12 +3599,9 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    show_mandatory_property: $ => prec(1, seq(
-      'ShowMandatory',
-      '=',
-      field('value', choice($.boolean_literal, $.identifier, $._expression)),
-      ';'
-    )),
+    show_mandatory_property: makeSimpleProperty('ShowMandatory', $ =>
+      choice($.boolean_literal, $.identifier, $._expression)
+    ),
     show_as_tree_property: $ => seq(
       'ShowAsTree',
       '=',
@@ -5106,11 +5103,8 @@ module.exports = grammar({
       ';'
     ),
 
-    visible_property: $ => seq(
-      'Visible',
-      '=',
-      field('value', $.boolean_literal),
-      ';'
+    visible_property: makeSimpleProperty(ci('Visible'), $ =>
+      choice($.boolean_literal, $.identifier, $._expression)
     ),
     format_region_property: $ => seq(
       'FormatRegion',
