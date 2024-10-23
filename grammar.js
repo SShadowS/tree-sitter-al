@@ -1537,29 +1537,6 @@ module.exports = grammar({
       $.procedure
     ),
 
-    event_subscriber_params: $ => seq(
-      field('object_type', $.object_type),
-      ',',
-      field('object_id', $.identifier),
-      ',',
-      field('event_name', $.string_literal),
-      ',',
-      field('element_name', $.string_literal),
-      optional(seq(
-        ',',
-        field('skip_on_missing_license', $.boolean_literal),
-        optional(seq(
-          ',',
-          field('skip_on_missing_permission', $.boolean_literal)
-        ))
-      ))
-    ),
-
-    object_type: $ => seq(
-      'ObjectType',
-      $.double_colon,
-      choice('Codeunit', 'Page', 'Report', 'Table', 'XMLPort')
-    ),
 
     event_subscriber_params: $ => seq(
       field('object_type', $.object_type),
@@ -3388,8 +3365,13 @@ module.exports = grammar({
     ),
 
     run_object_value: $ => seq(
-      field('object_type', choice(ci('page'), ci('report'), ci('codeunit'), ci('query'))),
-      field('object_id', choice($.integer, $.identifier, $.string_literal))
+      field('object_type', choice(
+        ci('Page'),
+        ci('Report'), 
+        ci('Codeunit'),
+        ci('Query')
+      )),
+      field('object_id', choice($.identifier, $.string_literal))
     ),
 
     run_page_link_property: $ => seq(
@@ -4461,6 +4443,31 @@ module.exports = grammar({
     ),
 
     query_property: $ => choice(
+      $.access_property,
+      $.apigroup_property,
+      $.apiversion_property,
+      $.apipublisher_property,
+      $.caption_property,
+      $.caption_ml_property,
+      $.column_filter_property,
+      $.data_access_intent_property,
+      $.data_item_link_property,
+      $.entity_caption_property,
+      $.entity_caption_ml_property,
+      $.entity_name_property,
+      $.entity_set_caption_property,
+      $.entity_set_caption_ml_property,
+      $.entity_set_name_property,
+      $.help_link_property,
+      $.inherent_entitlements_property,
+      $.inherent_permissions_property,
+      $.method_property,
+      $.order_by_property,
+      $.permissions_property,
+      $.query_type_property,
+      $.query_category_property,
+      $.read_state_property,
+      $.reverse_sign_property
     ),
 
     codeunit_property: $ => choice(
