@@ -2848,11 +2848,8 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    enabled_property: $ => seq(
-      'Enabled',
-      '=',
-      field('value', choice($.boolean_literal, $.identifier)),
-      ';'
+    enabled_property: makeSimpleProperty('Enabled', $ => 
+      choice($.boolean_literal, $.identifier)
     ),
     extended_datatype_property: $ => seq(
       'ExtendedDatatype',
