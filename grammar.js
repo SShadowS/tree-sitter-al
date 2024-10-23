@@ -2227,7 +2227,7 @@ module.exports = grammar({
         choice($._literal, $.identifier),
         repeat(seq(',', choice($._literal, $.identifier)))
       )),
-      $.colon,
+      ':',
       field('body', choice(
         $._statement,
         $.code_block
