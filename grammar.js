@@ -18,32 +18,34 @@ function makeChoiceProperty(name, choicesFn) {
 }
 
 function makeTrigger(name, paramsFn = null) {
-  const baseSeq = [
-    'trigger',
-    name,
-    '(',
-  ];
-  
-  if (paramsFn) {
-    baseSeq.push(paramsFn);
-  }
+  return $ => {
+    const baseSeq = [
+      'trigger',
+      name,
+      '(',
+    ];
+    
+    if (paramsFn) {
+      baseSeq.push(paramsFn($));
+    }
 
-  baseSeq.push(
-    ')',
-    optional($.variable_declaration),
-    field('body', $.code_block)
-  );
+    baseSeq.push(
+      ')',
+      optional($.variable_declaration),
+      field('body', $.code_block)
+    );
 
-  return seq(...baseSeq);
+    return seq(...baseSeq);
+  };
 }
 
-function makeObject(type, elements) {
+function makeObject(type, elementsFn) {
   return $ => seq(
     type,
     field('id', $.integer),
     field('name', $.identifier),
     '{',
-    repeat(elements),
+    repeat(elementsFn($)),
     '}'
   );
 }
