@@ -10,33 +10,39 @@ function ci(keyword) {
 }
 
 function makeSimpleProperty(name, valueTypeFn) {
-  return $ => seq(
-    token(name instanceof RegExp ? name : ci(name)),
-    '=',
-    field('value', valueTypeFn($)),
-    ';'
-  );
+  return function($) {
+    return seq(
+      token(name instanceof RegExp ? name : ci(name)),
+      '=',
+      field('value', valueTypeFn($)),
+      ';'
+    );
+  };
 }
 
 function makeChoiceProperty(name, choicesFn) {
-  return $ => seq(
-    token(name instanceof RegExp ? name : ci(name)),
-    '=', 
-    field('value', choicesFn($)),
-    ';'
-  );
+  return function($) {
+    return seq(
+      token(name instanceof RegExp ? name : ci(name)),
+      '=',
+      field('value', choicesFn($)),
+      ';'
+    );
+  };
 }
 
 function makeTrigger(name, paramsFn) {
-  return $ => seq(
-    token(ci('trigger')),
-    token(name instanceof RegExp ? name : ci(name)),
-    '(',
-    paramsFn ? paramsFn($) : seq(),
-    ')',
-    optional($.variable_declaration),
-    field('body', $.code_block)
-  );
+  return function($) {
+    return seq(
+      token(ci('trigger')),
+      token(name instanceof RegExp ? name : ci(name)),
+      '(',
+      paramsFn ? paramsFn($) : seq(),
+      ')',
+      optional($.variable_declaration),
+      field('body', $.code_block)
+    );
+  };
 }
 
 const makeObject = (type, elementsFn) => $ => seq(
