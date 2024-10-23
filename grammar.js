@@ -9,10 +9,10 @@ function makeSimpleProperty(name, valueTypeFn) {
 }
 
 function makeChoiceProperty(name, choicesFn) {
-  return seq(
-    name,
+  return $ => seq(
+    token(name instanceof RegExp ? name : ci(name)),
     '=',
-    field('value', choicesFn),
+    field('value', choicesFn($)),
     ';'
   );
 }
@@ -20,8 +20,8 @@ function makeChoiceProperty(name, choicesFn) {
 function makeTrigger(name, paramsFn = null) {
   return $ => {
     const baseSeq = [
-      'trigger',
-      name,
+      token(ci('trigger')),
+      token(name instanceof RegExp ? name : ci(name)),
       '(',
     ];
     
