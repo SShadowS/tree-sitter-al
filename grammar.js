@@ -83,6 +83,13 @@ const propertyValues = $ => choice(
 module.exports = grammar({
   name: 'al',
 
+  conflicts: $ => [
+    [$.property, $._expression],
+    [$.editable_property, $._expression],
+    [$.visible_property, $._expression],
+    [$.enabled_property, $._expression]
+  ],
+
   extras: $ => [
     /\s/,
     $.comment
@@ -2861,7 +2868,7 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    enabled_property: $ => makeSimpleProperty($, 'Enabled', $ => choice($.boolean_literal, $.identifier)),
+    enabled_property: $ => prec(2, makeSimpleProperty($, 'Enabled', $ => choice($.boolean_literal, $.identifier))),
     extended_datatype_property: $ => seq(
       'ExtendedDatatype',
       '=',
