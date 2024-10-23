@@ -1606,13 +1606,6 @@ module.exports = grammar({
         $.procedure,
         $.event_subscriber,
         $.trigger,
-        $.ondelete_trigger,
-        $.oninsert_trigger,
-        $.onmodify_trigger,
-        $.onrename_trigger,
-        $.onvalidate_trigger,
-        $.onlookup_trigger,
-        $.onafterlookup_trigger,
         $.var
       ),
       optional(';')
@@ -1982,12 +1975,22 @@ module.exports = grammar({
     trigger: $ => seq(
       repeat($.attribute),
       ci('trigger'),
-      field('name', $.identifier),
+      field('name', choice(
+        ci('OnInsert'),
+        ci('OnModify'), 
+        ci('OnDelete'),
+        ci('OnRename'),
+        ci('OnValidate'),
+        ci('OnLookup'),
+        ci('OnAfterLookup'),
+        $.identifier
+      )),
       '(',
       optional($._parameter_list),
       ')',
       optional($.var),
-      field('body', $.code_block)
+      field('body', $.code_block),
+      optional(';')
     ),
 
     named_type: $ => prec(3, seq(
@@ -2495,41 +2498,6 @@ module.exports = grammar({
       '=',
       field('value', $.boolean_literal),
       ';'
-    ),
-    ondelete_trigger: $ => makeTrigger($, 'OnDelete'),
-    oninsert_trigger: $ => makeTrigger($, 'OnInsert'), 
-    onmodify_trigger: $ => makeTrigger($, 'OnModify'),
-    onrename_trigger: $ => seq(
-      'trigger',
-      'OnRename',
-      '(',
-      ')',
-      optional($.var),
-      field('body', $.code_block)
-    ),
-    onvalidate_trigger: $ => seq(
-      'trigger',
-      'OnValidate',
-      '(',
-      ')',
-      optional($.var),
-      field('body', $.code_block)
-    ),
-    onlookup_trigger: $ => seq(
-      'trigger',
-      'OnLookup',
-      '(',
-      ')',
-      optional($.var),
-      field('body', $.code_block)
-    ),
-    onafterlookup_trigger: $ => seq(
-      'trigger',
-      'OnAfterLookup',
-      '(',
-      ')',
-      optional($.var),
-      field('body', $.code_block)
     ),
 
     table_field: $ => seq(
