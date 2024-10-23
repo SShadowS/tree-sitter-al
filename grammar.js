@@ -1,14 +1,14 @@
 
 // Helper functions for property definitions
 const makeSimpleProperty = (name, valueTypeFn) => $ => seq(
-  token(name instanceof RegExp ? name : ci(name)),
+  name instanceof RegExp ? token(name) : token(ci(name)),
   '=',
   field('value', valueTypeFn($)),
   ';'
 );
 
 const makeChoiceProperty = (name, choicesFn) => $ => seq(
-  token(name instanceof RegExp ? name : ci(name)),
+  name instanceof RegExp ? token(name) : token(ci(name)),
   '=',
   field('value', choicesFn($)),
   ';'
