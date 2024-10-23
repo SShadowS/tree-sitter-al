@@ -1,10 +1,7 @@
-function ci(keyword) {
-  return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
-}
 
 // Helper functions for property definitions
 const makeSimpleProperty = (name, valueTypeFn) => $ => seq(
-  name,
+  token(name instanceof RegExp ? name : ci(name)),
   '=',
   field('value', valueTypeFn($)),
   ';'
