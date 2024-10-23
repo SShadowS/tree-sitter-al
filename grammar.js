@@ -1,57 +1,45 @@
 // Helper functions for property definitions
-const makeSimpleProperty = (name, valueTypeFn) => ({
-  name: 'simple_property',
-  rule: $ => seq(
-    token(name instanceof RegExp ? name : ci(name)),
-    '=',
-    field('value', valueTypeFn($)),
-    ';'
-  )
-});
+const makeSimpleProperty = (name, valueTypeFn) => $ => seq(
+  token(name instanceof RegExp ? name : ci(name)),
+  '=',
+  field('value', valueTypeFn($)),
+  ';'
+);
 
-const makeChoiceProperty = (name, choicesFn) => ({
-  name: 'choice_property',
-  rule: $ => seq(
-    token(name instanceof RegExp ? name : ci(name)),
-    '=',
-    field('value', choicesFn($)),
-    ';'
-  )
-});
+const makeChoiceProperty = (name, choicesFn) => $ => seq(
+  token(name instanceof RegExp ? name : ci(name)),
+  '=',
+  field('value', choicesFn($)),
+  ';'
+);
 
-const makeTrigger = (name, paramsFn) => ({
-  name: 'trigger',
-  rule: $ => paramsFn
-    ? seq(
-        token(ci('trigger')),
-        token(name instanceof RegExp ? name : ci(name)),
-        '(',
-        paramsFn($),
-        ')',
-        optional($.variable_declaration),
-        field('body', $.code_block)
-      )
-    : seq(
-        token(ci('trigger')),
-        token(name instanceof RegExp ? name : ci(name)),
-        '(',
-        ')',
-        optional($.variable_declaration),
-        field('body', $.code_block)
-      )
-});
+const makeTrigger = (name, paramsFn) => $ => paramsFn
+  ? seq(
+      token(ci('trigger')),
+      token(name instanceof RegExp ? name : ci(name)),
+      '(',
+      paramsFn($),
+      ')',
+      optional($.variable_declaration),
+      field('body', $.code_block)
+    )
+  : seq(
+      token(ci('trigger')),
+      token(name instanceof RegExp ? name : ci(name)),
+      '(',
+      ')',
+      optional($.variable_declaration),
+      field('body', $.code_block)
+    );
 
-const makeObject = (type, elementsFn) => ({
-  name: 'object',
-  rule: $ => seq(
-    type,
-    field('id', $.integer),
-    field('name', $.identifier),
-    '{',
-    repeat(elementsFn($)),
-    '}'
-  )
-});
+const makeObject = (type, elementsFn) => $ => seq(
+  type,
+  field('id', $.integer),
+  field('name', $.identifier),
+  '{',
+  repeat(elementsFn($)),
+  '}'
+);
 
 function ci(keyword) {
   return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
