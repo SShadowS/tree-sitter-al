@@ -3599,12 +3599,12 @@ module.exports = grammar({
 
     run_object_value: $ => seq(
       field('object_type', choice(
-        ci('Page'),
-        ci('Report'),
-        ci('Codeunit'),
-        ci('Query')
+        'Page',
+        'Report',
+        'Codeunit',
+        'Query'
       )),
-      field('object_id', choice($.identifier, $.string_literal))
+      field('object_id', $.identifier)
     ),
     run_page_link_property: $ => seq(
       'RunPageLink',
