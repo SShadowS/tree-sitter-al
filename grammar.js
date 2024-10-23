@@ -3485,7 +3485,7 @@ module.exports = grammar({
       ';'
     ),
 
-    visible_property: $ => makeSimpleProperty($, ci('Visible'), $ => choice($.boolean_literal, $.identifier, $._expression)),
+    visible_property: $ => prec(2, makeSimpleProperty($, ci('Visible'), $ => choice($.boolean_literal, $.identifier, $._expression))),
     trigger_property: $ => seq(
       'Trigger',
       '=',
