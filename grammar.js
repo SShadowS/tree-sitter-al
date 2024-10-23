@@ -2089,13 +2089,11 @@ module.exports = grammar({
       '(',
       optional($._parameter_list),
       ')',
-      optional(';'),
       optional(seq(
-        optional(field('name', $.identifier)),
         ':',
-        field('return_type', $._type),
-        optional(';')
+        field('return_type', $._type)
       )),
+      optional(';'),
       optional($.var),
       field('body', $.code_block)
     )),
