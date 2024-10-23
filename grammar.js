@@ -4,21 +4,21 @@ function ci(keyword) {
   return new RegExp(keyword.split('').map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`).join(''));
 }
 
-const makeSimpleProperty = (name, valueTypeFn) => seq(
+const makeSimpleProperty = (name, valueTypeFn) => $ => seq(
   token(name instanceof RegExp ? name : ci(name)),
   '=',
   field('value', valueTypeFn),
   ';'
 );
 
-const makeChoiceProperty = (name, choicesFn) => seq(
+const makeChoiceProperty = (name, choicesFn) => $ => seq(
   token(name instanceof RegExp ? name : ci(name)),
   '=', 
   field('value', choicesFn),
   ';'
 );
 
-const makeTrigger = (name, paramsFn) => paramsFn
+const makeTrigger = (name, paramsFn) => $ => paramsFn
   ? seq(
       token(ci('trigger')),
       token(name instanceof RegExp ? name : ci(name)),
