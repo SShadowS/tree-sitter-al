@@ -1,11 +1,11 @@
 // Helper functions for property definitions
 function makeSimpleProperty(name, valueTypeFn) {
-  return $ => seq(
+  return $ => choice(seq(
     token(name instanceof RegExp ? name : ci(name)),
     '=',
     field('value', valueTypeFn($)),
     ';'
-  );
+  ));
 }
 
 function makeChoiceProperty(name, choicesFn) {
@@ -2858,7 +2858,7 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    enabled_property: makeSimpleProperty('Enabled', $ => choice($.boolean_literal, $.identifier)),
+    enabled_property: $ => makeSimpleProperty('Enabled', $ => choice($.boolean_literal, $.identifier)),
     extended_datatype_property: $ => seq(
       'ExtendedDatatype',
       '=',
@@ -3475,7 +3475,7 @@ module.exports = grammar({
       ';'
     ),
 
-    visible_property: makeSimpleProperty(ci('Visible'), $ => choice($.boolean_literal, $.identifier, $._expression)),
+    visible_property: $ => makeSimpleProperty(ci('Visible'), $ => choice($.boolean_literal, $.identifier, $._expression)),
     trigger_property: $ => seq(
       'Trigger',
       '=',
@@ -3595,7 +3595,7 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    show_mandatory_property: makeSimpleProperty('ShowMandatory', $ => choice($.boolean_literal, $.identifier, $._expression)),
+    show_mandatory_property: $ => makeSimpleProperty('ShowMandatory', $ => choice($.boolean_literal, $.identifier, $._expression)),
     show_as_tree_property: $ => seq(
       'ShowAsTree',
       '=',
