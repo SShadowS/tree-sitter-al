@@ -1,11 +1,11 @@
 // Helper functions for property definitions
 function makeSimpleProperty(name, valueTypeFn) {
-  return $ => seq(
+  return $ => prec(1, seq(
     name,
     '=',
     field('value', valueTypeFn($)),
     ';'
-  );
+  ));
 }
 
 function makeChoiceProperty(name, choicesFn) {
