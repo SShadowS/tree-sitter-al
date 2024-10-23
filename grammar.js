@@ -1,4 +1,15 @@
 
+const PREC = {
+  COMPOUND_IDENTIFIER: 1,
+  CASE_BRANCH: 2,
+  TERNARY: 1,
+  UNARY: 3,
+  MEMBER: 4,
+  CALL: 5,
+};
+
+const colon = ':';
+
 // Helper functions for property definitions
 function ci(keyword) {
   if (typeof keyword !== 'string') {
@@ -2208,12 +2219,12 @@ module.exports = grammar({
       optional(';')
     )),
 
-    case_branch: $ => prec.left(seq(
+    case_branch: $ => prec.left(PREC.CASE_BRANCH, seq(
       field('values', seq(
         choice($._literal, $.identifier),
         repeat(seq(',', choice($._literal, $.identifier)))
       )),
-      ':',
+      colon,
       field('body', choice(
         $._statement,
         $.code_block
@@ -2425,11 +2436,11 @@ module.exports = grammar({
       $.array_access_expression
     ),
 
-    ternary_expression: $ => prec.right(6, seq(
+    ternary_expression: $ => prec.right(PREC.TERNARY, seq(
       field('condition', $._expression),
       '?',
       field('true_expression', $._expression),
-      ':',
+      colon,
       field('false_expression', $._expression)
     )),
 
