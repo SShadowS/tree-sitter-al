@@ -3890,9 +3890,9 @@ module.exports = grammar({
       field('value', $.boolean_literal),
       ';'
     ),
-    editable_property: $ => prec(1, makeSimpleProperty('Editable', $ =>
+    editable_property: $ => makeSimpleProperty('Editable', $ =>
       choice($.boolean_literal, $.identifier, $._expression)
-    )),
+    ),
     data_caption_expression_property: $ => prec(1, seq(
       'DataCaptionExpression',
       '=',
