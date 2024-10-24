@@ -116,6 +116,16 @@ module.exports = grammar({
     function: $ => $._expression,
     member: $ => $.identifier,
     object: $ => $._expression,
+    type: $ => $._type,
+    data_type: $ => $._data_type,
+    field_name: $ => $.identifier,
+    field_type: $ => $.identifier,
+    field_properties: $ => repeat1(seq(
+      field('property_name', $.identifier),
+      '=',
+      field('property_value', $._value),
+      optional(',')
+    )),
     base_type: $ => $.identifier,
     subtype: $ => choice($.identifier, $.string_literal),
     procedure: $ => $.identifier,
