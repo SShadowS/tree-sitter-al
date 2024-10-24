@@ -102,6 +102,8 @@ module.exports = grammar({
     condition: $ => $._expression,
     then_body: $ => choice($._statement, $.code_block),
     else_body: $ => choice($._statement, $.code_block),
+    true_expression: $ => $._expression,
+    false_expression: $ => $._expression,
     left: $ => $._expression,
     operator: $ => /[+\-*/=<>]+|and|or|not/,
     right: $ => $._expression,
