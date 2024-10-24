@@ -105,7 +105,7 @@ module.exports = grammar({
     then_expression: $ => $._expression,
     else_expression: $ => $._expression,
     left: $ => $._expression,
-    operator: $ => /[+\-*/=<>]+|and|or|not/,
+    operator: $ => /[+\-*/=<>]+|and|or|not|div|mod|xor/i,
     right: $ => $._expression,
     operand: $ => $._expression,
     parameters: $ => $._parameter_list,
@@ -5354,19 +5354,12 @@ module.exports = grammar({
       /0DT/
     )),
     _operator: $ => choice(
-      $.arithmetic_operator,
-      $.comparison_operator,
-      $.logical_operator,
-      $.assignment_operator
+      '+', '-', '*', '/', 
+      '=', '<>', '<=', '>=', '<', '>',
+      /[aA][nN][dD]/, /[oO][rR]/, /[nN][oO][tT]/, /[xX][oO][rR]/,
+      /[dD][iI][vV]/, /[mM][oO][dD]/,
+      ':='
     ),
-
-    arithmetic_operator: $ => choice('+', '-', '*', '/', /[dD][iI][vV]/, /[mM][oO][dD]/),
-
-    comparison_operator: $ => token(choice('=', '<>', '<=', '>=', '<', '>')),
-
-    logical_operator: $ => choice(/[aA][nN][dD]/, /[oO][rR]/, /[nN][oO][tT]/, /[xX][oO][rR]/),
-
-    assignment_operator: $ => ':=',
     public_key_token_property: $ => seq(
       'PublicKeyToken',
       '=',
