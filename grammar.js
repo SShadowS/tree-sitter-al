@@ -170,7 +170,17 @@ module.exports = grammar({
     filter_string: $ => choice($.string_literal, $._expression),
     customization_name: $ => $.identifier,
     source_expression: $ => $._expression,
-    table_reference: $ => $.identifier
+    table_reference: $ => $.identifier,
+    // Added missing fields
+    type: $ => $._type,
+    data_type: $ => $._data_type,
+    field_name: $ => $.identifier,
+    field_type: $ => $.identifier, 
+    field_properties: $ => $.field_properties,
+    language: $ => $.string_literal,
+    locked: $ => $.boolean_literal,
+    comment: $ => $.string_literal,
+    permissions: $ => $.permissions_string
   },
 
 
