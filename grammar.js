@@ -176,7 +176,12 @@ module.exports = grammar({
     data_type: $ => $._data_type,
     field_name: $ => $.identifier,
     field_type: $ => $.identifier, 
-    field_properties: $ => $.field_properties,
+    field_properties: $ => repeat1(seq(
+      field('property_name', $.identifier),
+      '=',
+      field('property_value', $._value),
+      optional(',')
+    )),
     language: $ => $.string_literal,
     locked: $ => $.boolean_literal,
     comment: $ => $.string_literal,
@@ -186,30 +191,125 @@ module.exports = grammar({
     element_name: $ => $.string_literal,
     skip_on_missing_license: $ => $.boolean_literal,
     skip_on_missing_permission: $ => $.boolean_literal,
-    run_object_value: $ => $.run_object_value,
+    run_object_value: $ => seq(
+      field('object_type', choice('Page', 'Report', 'Codeunit', 'Query')),
+      field('object_id', choice($.identifier, $.string_literal))
+    ),
     system_part_name: $ => choice($.identifier, $.string_literal),
-    table_relation_value: $ => $.table_relation_value,
-    table_relation_target: $ => $.table_relation_target,
-    table_relation: $ => $.table_relation,
-    values_allowed_value: $ => $.values_allowed_value,
-    filters_value: $ => $.filters_value,
-    run_page_link_value: $ => $.run_page_link_value,
-    run_page_view_value: $ => $.run_page_view_value,
-    sub_page_link_value: $ => $.sub_page_link_value,
-    multilanguage_string_literal: $ => $.multilanguage_string_literal,
-    calc_formula_value: $ => $.calc_formula_value,
-    decimal_places_value: $ => $.decimal_places_value,
-    namespaces_value: $ => $.namespaces_value,
-    option_members_value: $ => $.option_members_value,
-    option_ordinal_values_value: $ => $.option_ordinal_values_value,
-    query_category_value: $ => $.query_category_value,
-    data_item_link_value: $ => $.data_item_link_value,
-    access_by_permission_value: $ => $.access_by_permission_value,
-    inherent_entitlements_value: $ => $.inherent_entitlements_value,
-    inherent_permissions_value: $ => $.inherent_permissions_value,
-    array_value: $ => $.array_value,
-    object_value: $ => $.object_value,
-    key_value_pair: $ => $.key_value_pair
+    table_relation_value: $ => choice(
+      $.simple_table_relation,
+      $.conditional_table_relation,
+      $.string,
+      $.identifier
+    ),
+    table_relation_target: $ => seq(
+      field('table', $.identifier),
+      optional(seq('.', field('field', $.identifier)))
+    ),
+    table_relation: $ => choice(
+      $.simple_table_relation,
+      $.conditional_table_relation
+    ),
+    values_allowed_value: $ => seq(
+      repeat1(seq($._value, optional(',')))
+    ),
+    filters_value: $ => seq(
+      'WHERE',
+      '(',
+      $.table_filters,
+      ')'
+    ),
+    run_page_link_value: $ => repeat1(seq(
+      field('field', $.identifier),
+      '=',
+      field('link', choice(
+        seq(ci('FIELD'), '(', $.identifier, ')'),
+        $._expression
+      )),
+      optional(',')
+    )),
+    run_page_view_value: $ => choice(
+      seq(
+        ci('sorting'),
+        '(',
+        $.identifier_or_string_list,
+        ')',
+        optional(seq(ci('order'), '(', choice('Ascending', 'Descending'), ')')),
+        optional(seq(ci('where'), '(', $.table_filters, ')'))
+      ),
+      seq(ci('order'), '(', choice('Ascending', 'Descending'), ')'),
+      seq(ci('where'), '(', $.table_filters, ')')
+    ),
+    sub_page_link_value: $ => seq(
+      $.sub_page_link_mapping,
+      repeat(seq(',', $.sub_page_link_mapping))
+    ),
+    multilanguage_string_literal: $ => repeat1(seq(
+      field('language_code', $.identifier),
+      '=',
+      field('text', $.string_literal),
+      optional(',')
+    )),
+    calc_formula_value: $ => choice(
+      $.exist_formula,
+      $.count_formula,
+      $.sum_formula,
+      $.average_formula,
+      $.min_formula,
+      $.max_formula,
+      $.lookup_formula
+    ),
+    decimal_places_value: $ => choice(
+      $.integer,
+      seq($.integer, ':', $.integer)
+    ),
+    namespaces_value: $ => repeat1(seq(
+      field('prefix', $.identifier),
+      '=',
+      field('namespace', $.string_literal),
+      optional(',')
+    )),
+    option_members_value: $ => seq(
+      repeat1(seq($.string_literal, optional(',')))
+    ),
+    option_ordinal_values_value: $ => seq(
+      repeat1(seq($.integer, optional(',')))
+    ),
+    query_category_value: $ => choice(
+      $.string_literal,
+      seq($.string_literal, repeat(seq(',', $.string_literal)))
+    ),
+    data_item_link_value: $ => seq(
+      field('source_field', $.identifier),
+      '=',
+      'FIELD',
+      '(',
+      field('target_field', $.identifier),
+      ')'
+    ),
+    access_by_permission_value: $ => seq(
+      field('object_type', $.identifier),
+      field('object_name', $.identifier),
+      '=',
+      field('permission_type', $.access_by_permission_type)
+    ),
+    inherent_entitlements_value: $ => repeat1(choice('R', 'I', 'M', 'D', 'X')),
+    inherent_permissions_value: $ => repeat1(choice('R', 'I', 'M', 'D', 'X')),
+    array_value: $ => seq(
+      '[',
+      optional(seq($._value, repeat(seq(',', $._value)))),
+      ']'
+    ),
+    object_value: $ => seq(
+      '{',
+      optional(seq($.key_value_pair, repeat(seq(',', $.key_value_pair)))),
+      '}'
+    ),
+    key_value_pair: $ => seq(
+      field('key', choice($.string, $.identifier)),
+      ':',
+      field('value', $._value)
+    )
   },
 
 
