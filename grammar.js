@@ -102,8 +102,8 @@ module.exports = grammar({
     condition: $ => $._expression,
     then_body: $ => choice($._statement, $.code_block),
     else_body: $ => choice($._statement, $.code_block),
-    true_expression: $ => $._expression,
-    false_expression: $ => $._expression,
+    then_expression: $ => $._expression,
+    else_expression: $ => $._expression,
     left: $ => $._expression,
     operator: $ => /[+\-*/=<>]+|and|or|not/,
     right: $ => $._expression,
@@ -2440,9 +2440,9 @@ module.exports = grammar({
     ternary_expression: $ => prec.right(PREC.TERNARY, seq(
       field('condition', $._expression),
       '?',
-      field('true_expression', $._expression),
+      field('then_expression', $._expression),
       ':',
-      field('false_expression', $._expression)
+      field('else_expression', $._expression)
     )),
 
 
