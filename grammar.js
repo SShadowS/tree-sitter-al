@@ -13,7 +13,8 @@ const PREC = {
   MEMBER: 10,
   COMPOUND_IDENTIFIER: 11,
   CASE_BRANCH: 12,
-  IN: 13
+  IN: 13,
+  TERNARY: 14
 };
 
 // Helper functions
