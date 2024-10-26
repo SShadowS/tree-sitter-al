@@ -2278,6 +2278,7 @@ module.exports = grammar({
       $.exit_statement,
       $.with_statement,
       $.error_statement,
+      $.try_statement,
       $.message_statement,
       $.assert_error_statement,
       $.break_statement,
@@ -2308,26 +2309,18 @@ module.exports = grammar({
       ))
     )),
 
-    case_statement: $ => prec.left(1, seq(
-      /[cC][aA][sS][eE]/,
-      field('expression', choice(
-        $.string,
-        $.identifier, 
-        $.enum_identifier,
-        $._expression
-      )),
-      /[oO][fF]/,
+    case_statement: $ => seq(
+      ci('case'),
+      field('expression', $._expression),
+      ci('of'),
       repeat1($.case_branch),
       optional(seq(
-        /[eE][lL][sS][eE]/,
-        field('else_body', choice(
-          $._statement,
-          $.code_block
-        ))
+        ci('else'),
+        field('else_body', choice($._statement, $.code_block))
       )),
-      /[eE][nN][dD]/,
+      ci('end'),
       optional(';')
-    )),
+    ),
 
     case_branch: $ => prec.left(PREC.CASE_BRANCH, seq(
       field('values', seq(
@@ -2398,10 +2391,10 @@ module.exports = grammar({
     )),
 
     with_statement: $ => seq(
-      /[wW][iI][tT][hH]/,
+      ci('with'),
       field('record', $.identifier),
-      /[dD][oO]/,
-      field('body', $.code_block)
+      ci('do'), 
+      field('body', choice($._statement, $.code_block))
     ),
 
     error_statement: $ => seq(
@@ -2417,6 +2410,29 @@ module.exports = grammar({
       '(',
       field('message', $._expression),
       ')',
+      optional(';')
+    ),
+
+    try_statement: $ => seq(
+      ci('try'),
+      field('try_block', $.code_block),
+      choice(
+        seq(
+          ci('except'),
+          field('except_block', $.code_block)
+        ),
+        seq(
+          ci('finally'),
+          field('finally_block', $.code_block)
+        ),
+        seq(
+          ci('except'),
+          field('except_block', $.code_block),
+          ci('finally'),
+          field('finally_block', $.code_block)
+        )
+      ),
+      ci('end'),
       optional(';')
     ),
 
