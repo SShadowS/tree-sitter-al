@@ -9,6 +9,9 @@ const PREC = {
   CALL: 5,
 };
 
+// Token definitions and helper constants
+const colon = ':';
+
 // Helper functions for property definitions
 function ci(keyword) {
   if (typeof keyword !== 'string') {
@@ -94,240 +97,7 @@ module.exports = grammar({
     $.comment
   ],
 
-  fields: {
-    id: $ => $.integer,
-    name: $ => $.identifier,
-    value: $ => $._value,
-    body: $ => $.code_block,
-    condition: $ => $._expression,
-    then_body: $ => choice($._statement, $.code_block),
-    else_body: $ => choice($._statement, $.code_block),
-    then_expression: $ => $._expression,
-    else_expression: $ => $._expression,
-    left: $ => $._expression,
-    operator: $ => /[+\-*/=<>]+|and|or|not|div|mod|xor/i,
-    right: $ => $._expression,
-    operand: $ => $._expression,
-    parameters: $ => $._parameter_list,
-    return_type: $ => $._type,
-    array: $ => $._expression,
-    index: $ => $._expression,
-    key: $ => choice($.string, $.identifier),
-    function: $ => $._expression,
-    member: $ => $.identifier,
-    object: $ => $._expression,
-    type: $ => $._type,
-    data_type: $ => $._data_type,
-    field_name: $ => $.identifier,
-    field_type: $ => $.identifier,
-    field_properties: $ => repeat1(seq(
-      field('property_name', $.identifier),
-      '=',
-      field('property_value', $._value),
-      optional(',')
-    )),
-    base_type: $ => $.identifier,
-    subtype: $ => choice($.identifier, $.string_literal),
-    procedure: $ => $.identifier,
-    arguments: $ => $._argument_list,
-    variable: $ => $._lvalue_expression,
-    source_field: $ => $.identifier,
-    target_field: $ => $.identifier,
-    table: $ => $.identifier,
-    field: $ => $.identifier,
-    fields: $ => $.identifier_list,
-    enum_type: $ => $.identifier,
-    enum_value: $ => $.identifier,
-    base_enum: $ => $.identifier,
-    base_table: $ => $.identifier,
-    base_report: $ => $.identifier,
-    base_page: $ => $.identifier,
-    target: $ => $.identifier,
-    new_position: $ => $.identifier,
-    language_code: $ => $.identifier,
-    text: $ => $.string_literal,
-    property: $ => $.identifier,
-    property_value: $ => choice($.boolean_literal, $.string_literal, $.integer),
-    parameter: $ => choice('Locked', 'Comment', 'MaxLength'),
-    parameter_value: $ => choice($.boolean_literal, $.string_literal, $.integer),
-    interface: $ => $.identifier,
-    implementation: $ => $.identifier,
-    destination_table: $ => $.identifier,
-    destination_field: $ => $.identifier,
-    filter: $ => $.filter_expression,
-    table_field: $ => choice($.identifier, $.string_literal),
-    page_field: $ => choice($.identifier, $.string_literal),
-    direction: $ => choice('Ascending', 'Descending'),
-    prefix: $ => $.identifier,
-    namespace: $ => $.string_literal,
-    object_type: $ => $.identifier,
-    object_name: $ => $.identifier,
-    permission_type: $ => $.access_by_permission_type,
-    attribute_name: $ => $.identifier,
-    attribute_arguments: $ => $.attribute_arguments,
-    reason: $ => $.string_literal,
-    tag: $ => $.string_literal,
-    expression: $ => $._expression,
-    values: $ => seq(choice($._literal, $.identifier), repeat(seq(',', choice($._literal, $.identifier)))),
-    start: $ => $._expression,
-    end: $ => $._expression,
-    step: $ => $._expression,
-    message: $ => $._expression,
-    record: $ => $.identifier,
-    link: $ => choice(seq('FIELD', '(', $.identifier, ')'), $._expression),
-    from_value: $ => $._expression,
-    to_value: $ => $._expression,
-    filter_string: $ => choice($.string_literal, $._expression),
-    customization_name: $ => $.identifier,
-    source_expression: $ => $._expression,
-    table_reference: $ => $.identifier,
-    // Added missing fields
-    type: $ => $._type,
-    data_type: $ => $._data_type,
-    field_name: $ => $.identifier,
-    field_type: $ => $.identifier, 
-    field_properties: $ => repeat1(seq(
-      field('property_name', $.identifier),
-      '=',
-      field('property_value', $._value),
-      optional(',')
-    )),
-    language: $ => $.string_literal,
-    locked: $ => $.boolean_literal,
-    comment: $ => $.string_literal,
-    permissions: $ => $.permissions_string,
-    object_id: $ => $.identifier,
-    event_name: $ => $.string_literal,
-    element_name: $ => $.string_literal,
-    skip_on_missing_license: $ => $.boolean_literal,
-    skip_on_missing_permission: $ => $.boolean_literal,
-    run_object_value: $ => seq(
-      field('object_type', choice('Page', 'Report', 'Codeunit', 'Query')),
-      field('object_id', choice($.identifier, $.string_literal))
-    ),
-    system_part_name: $ => choice($.identifier, $.string_literal),
-    table_relation_value: $ => choice(
-      $.simple_table_relation,
-      $.conditional_table_relation,
-      $.string,
-      $.identifier
-    ),
-    table_relation_target: $ => seq(
-      field('table', $.identifier),
-      optional(seq('.', field('field', $.identifier)))
-    ),
-    table_relation: $ => choice(
-      $.simple_table_relation,
-      $.conditional_table_relation
-    ),
-    values_allowed_value: $ => seq(
-      repeat1(seq($._value, optional(',')))
-    ),
-    filters_value: $ => seq(
-      'WHERE',
-      '(',
-      $.table_filters,
-      ')'
-    ),
-    run_page_link_value: $ => repeat1(seq(
-      field('field', $.identifier),
-      '=',
-      field('link', choice(
-        seq(ci('FIELD'), '(', $.identifier, ')'),
-        $._expression
-      )),
-      optional(',')
-    )),
-    run_page_view_value: $ => choice(
-      seq(
-        ci('sorting'),
-        '(',
-        $.identifier_or_string_list,
-        ')',
-        optional(seq(ci('order'), '(', choice('Ascending', 'Descending'), ')')),
-        optional(seq(ci('where'), '(', $.table_filters, ')'))
-      ),
-      seq(ci('order'), '(', choice('Ascending', 'Descending'), ')'),
-      seq(ci('where'), '(', $.table_filters, ')')
-    ),
-    sub_page_link_value: $ => seq(
-      $.sub_page_link_mapping,
-      repeat(seq(',', $.sub_page_link_mapping))
-    ),
-    multilanguage_string_literal: $ => repeat1(seq(
-      field('language_code', $.identifier),
-      '=',
-      field('text', $.string_literal),
-      optional(',')
-    )),
-    calc_formula_value: $ => choice(
-      $.exist_formula,
-      $.count_formula,
-      $.sum_formula,
-      $.average_formula,
-      $.min_formula,
-      $.max_formula,
-      $.lookup_formula
-    ),
-    decimal_places_value: $ => choice(
-      $.integer,
-      seq($.integer, ':', $.integer)
-    ),
-    namespaces_value: $ => repeat1(seq(
-      field('prefix', $.identifier),
-      '=',
-      field('namespace', $.string_literal),
-      optional(',')
-    )),
-    option_members_value: $ => seq(
-      repeat1(seq($.string_literal, optional(',')))
-    ),
-    option_ordinal_values_value: $ => seq(
-      repeat1(seq($.integer, optional(',')))
-    ),
-    query_category_value: $ => choice(
-      $.string_literal,
-      seq($.string_literal, repeat(seq(',', $.string_literal)))
-    ),
-    data_item_link_value: $ => seq(
-      field('source_field', $.identifier),
-      '=',
-      'FIELD',
-      '(',
-      field('target_field', $.identifier),
-      ')'
-    ),
-    access_by_permission_value: $ => seq(
-      field('object_type', $.identifier),
-      field('object_name', $.identifier),
-      '=',
-      field('permission_type', $.access_by_permission_type)
-    ),
-    inherent_entitlements_value: $ => repeat1(choice('R', 'I', 'M', 'D', 'X')),
-    inherent_permissions_value: $ => repeat1(choice('R', 'I', 'M', 'D', 'X')),
-    array_value: $ => seq(
-      '[',
-      optional(seq($._value, repeat(seq(',', $._value)))),
-      ']'
-    ),
-    object_value: $ => seq(
-      '{',
-      optional(seq($.key_value_pair, repeat(seq(',', $.key_value_pair)))),
-      '}'
-    ),
-    key_value_pair: $ => seq(
-      field('key', choice($.string, $.identifier)),
-      ':',
-      field('value', $._value)
-    )
-  },
-
-
   rules: {
-    // Token definitions
-    colon: $ => ':',
-    double_colon: $ => '::',
-
     source_file: $ => seq(
       optional($.namespace_declaration),
       optional(repeat($.using_directive)),
@@ -336,6 +106,9 @@ module.exports = grammar({
         $.comment
       ))
     ),
+
+    // Token definition for '::'
+    double_colon: $ => '::',
 
     namespace_declaration: $ => seq(
       'namespace',
@@ -1760,22 +1533,57 @@ module.exports = grammar({
     ),
     event_subscriber: $ => seq(
       '[EventSubscriber(',
-      field('object_type', choice('Codeunit', 'Page', 'Report', 'Table', 'XMLPort')),
+      $.event_subscriber_params,
+      ')]',
+      $.procedure
+    ),
+
+    event_subscriber_params: $ => seq(
+      field('object_type', $.object_type),
       ',',
       field('object_id', $.identifier),
       ',',
       field('event_name', $.string_literal),
-      ',', 
+      ',',
       field('element_name', $.string_literal),
       optional(seq(
         ',',
         field('skip_on_missing_license', $.boolean_literal),
         optional(seq(
           ',',
-          field('skip_on_missing_permission', $.boolean_literal))
-      ))),
-      ')]',
-      $.procedure
+          field('skip_on_missing_permission', $.boolean_literal)
+        ))
+      ))
+    ),
+
+    object_type: $ => seq(
+      'ObjectType',
+      '::',
+      choice('Codeunit', 'Page', 'Report', 'Table', 'XMLPort')
+    ),
+
+    event_subscriber_params: $ => seq(
+      field('object_type', $.object_type),
+      ',',
+      field('object_id', $.identifier),
+      ',',
+      field('event_name', $.string_literal),
+      ',',
+      field('element_name', $.string_literal),
+      optional(seq(
+        ',',
+        field('skip_on_missing_license', $.boolean_literal),
+        optional(seq(
+          ',',
+          field('skip_on_missing_permission', $.boolean_literal)
+        ))
+      ))
+    ),
+
+    object_type: $ => seq(
+      'ObjectType',
+      '::',
+      choice('Codeunit', 'Page', 'Report', 'Table', 'XMLPort')
     ),
 
     _table_element: $ => seq(
@@ -2414,7 +2222,7 @@ module.exports = grammar({
         choice($._literal, $.identifier),
         repeat(seq(',', choice($._literal, $.identifier)))
       )),
-      $.colon,
+      colon,
       field('body', choice(
         $._statement,
         $.code_block
@@ -2588,10 +2396,10 @@ module.exports = grammar({
 
     ternary_expression: $ => prec.right(PREC.TERNARY, seq(
       field('condition', $._expression),
-      '?',
-      field('then_expression', $._expression),
-      ':',
-      field('else_expression', $._expression)
+      '?', 
+      field('true_expression', $._expression),
+      colon,
+      field('false_expression', $._expression)
     )),
 
 
@@ -2626,6 +2434,13 @@ module.exports = grammar({
       $.array_access_expression
     ),
 
+    ternary_expression: $ => prec.right(PREC.TERNARY, seq(
+      field('condition', $._expression),
+      '?',
+      field('true_expression', $._expression),
+      colon,
+      field('false_expression', $._expression)
+    )),
 
     table_object: $ => seq(
       'table',
@@ -3581,13 +3396,8 @@ module.exports = grammar({
     ),
 
     run_object_value: $ => seq(
-      field('object_type', choice(
-        'Page',
-        'Report',
-        'Codeunit', 
-        'Query'
-      )),
-      field('object_id', choice($.identifier, $.string_literal))
+      field('object_type', choice(ci('page'), ci('report'), ci('codeunit'), ci('query'))),
+      field('object_id', choice($.integer, $.identifier, $.string_literal))
     ),
 
     run_page_link_property: $ => seq(
@@ -3673,9 +3483,16 @@ module.exports = grammar({
       ';'
     ),
     tooltip_property: $ => seq(
-      'ToolTip',
-      '=', 
+      'Tooltip',
+      '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    lookup_page_id_property: $ => seq(
+      'LookupPageId',
+      '=',
+      field('value', $.identifier),
       ';'
     ),
 
@@ -3702,8 +3519,7 @@ module.exports = grammar({
     table_relation_value: $ => choice(
       $.simple_table_relation,
       $.conditional_table_relation,
-      $.string,
-      $.identifier
+      $.string
     ),
 
     simple_table_relation: $ => seq(
@@ -3826,6 +3642,15 @@ module.exports = grammar({
       ';'
     ),
 
+    run_object_value: $ => seq(
+      field('object_type', choice(
+        ci('Page'),
+        ci('Report'),
+        ci('Codeunit'),
+        ci('Query')
+      )),
+      field('object_id', choice($.identifier, $.string_literal))
+    ),
     run_page_link_property: $ => seq(
       'RunPageLink',
       '=',
@@ -4651,31 +4476,6 @@ module.exports = grammar({
     ),
 
     query_property: $ => choice(
-      'access',
-      'apigroup',
-      'apiversion', 
-      'apipublisher',
-      'caption',
-      'captionML',
-      'columnFilter',
-      'dataAccessIntent',
-      'dataItemLink',
-      'entityCaption',
-      'entityCaptionML', 
-      'entityName',
-      'entitySetCaption',
-      'entitySetCaptionML',
-      'entitySetName',
-      'helpLink',
-      'inherentEntitlements',
-      'inherentPermissions',
-      'method',
-      'orderBy',
-      'permissions',
-      'queryType',
-      'queryCategory',
-      'readState',
-      'reverseSign'
     ),
 
     codeunit_property: $ => choice(
@@ -4787,16 +4587,16 @@ module.exports = grammar({
       $.entity_set_caption_property,
       $.entity_set_caption_ml_property,
       $.entity_set_name_property,
-      $.help_link_property,
+      $.help_link_property,  // Added HelpLink property
       $.inherent_entitlements_property,
       $.inherent_permissions_property,
-      $.method_property,
-      $.order_by_property,
-      $.permissions_property,
-      $.query_type_property,
-      $.query_category_property,
-      $.read_state_property,
-      $.reverse_sign_property
+      $.method_property,  // Added Method property
+      $.order_by_property,  // Added OrderBy property
+      $.permissions_property,  // Added Permissions property
+      $.query_type_property,  // Added QueryType property
+      $.query_category_property,  // Added QueryCategory property
+      $.read_state_property,  // Added ReadState property
+      $.reverse_sign_property  // Added ReverseSign property
     ),
     reverse_sign_property: $ => seq(
       'ReverseSign',
@@ -4844,11 +4644,11 @@ module.exports = grammar({
     ),
 
     data_item_link_value: $ => seq(
-      field('source_field', $.identifier),
+      field('field', $.identifier),
       '=',
       'FIELD',
       '(',
-      field('target_field', $.identifier),
+      field('reference_field', $.identifier),
       ')'
     ),
     column_filter_property: $ => seq(
@@ -5336,7 +5136,7 @@ module.exports = grammar({
     filters_property: $ => seq(
       'Filters',
       '=',
-      field('value', choice($.filters_value, $.string_literal)),
+      field('value', $.filters_value),
       ';'
     ),
 
@@ -5388,10 +5188,7 @@ module.exports = grammar({
       $._literal,
       $.identifier,
       $.array_value,
-      $.object_value,
-      $.time_literal,
-      $.date_literal,
-      $.datetime_literal
+      $.object_value
     )),
 
     array_value: $ => seq(
@@ -5439,6 +5236,12 @@ module.exports = grammar({
       choice($._quoted_identifier, $._simple_identifier),
       optional(repeat(seq('.', choice($._quoted_identifier, $._simple_identifier))))
     )),
+
+    _enum_identifier: $ => seq(
+      choice($._simple_identifier, $._quoted_identifier),
+      '::',
+      choice($._simple_identifier, $._quoted_identifier)
+    ),
 
     enum_identifier: $ => prec.left(seq(
       field('enum_type', choice($.identifier, $._quoted_identifier)),
@@ -5503,12 +5306,19 @@ module.exports = grammar({
       /0DT/
     )),
     _operator: $ => choice(
-      '+', '-', '*', '/', 
-      '=', '<>', '<=', '>=', '<', '>',
-      /[aA][nN][dD]/, /[oO][rR]/, /[nN][oO][tT]/, /[xX][oO][rR]/,
-      /[dD][iI][vV]/, /[mM][oO][dD]/,
-      ':='
+      $.arithmetic_operator,
+      $.comparison_operator,
+      $.logical_operator,
+      $.assignment_operator
     ),
+
+    arithmetic_operator: $ => choice('+', '-', '*', '/', /[dD][iI][vV]/, /[mM][oO][dD]/),
+
+    comparison_operator: $ => token(choice('=', '<>', '<=', '>=', '<', '>')),
+
+    logical_operator: $ => choice(/[aA][nN][dD]/, /[oO][rR]/, /[nN][oO][tT]/, /[xX][oO][rR]/),
+
+    assignment_operator: $ => ':=',
     public_key_token_property: $ => seq(
       'PublicKeyToken',
       '=',
