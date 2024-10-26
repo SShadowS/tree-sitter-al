@@ -128,6 +128,10 @@ module.exports = grammar({
     $.comment
   ],
 
+  conflicts: $ => [
+    [$.visible_property, $._primary_expression]
+  ],
+
   rules: {
     source_file: $ => seq(
       optional($.namespace_declaration),
