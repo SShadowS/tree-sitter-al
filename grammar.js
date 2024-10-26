@@ -3,8 +3,8 @@
 const PREC = {
   ASSIGN: 1,
   OR: 2,
-  AND: 3, 
-  EQUALITY: 4,
+  AND: 3,
+  EQUALITY: 4, 
   RELATIONAL: 5,
   ADDITIVE: 6,
   MULTIPLICATIVE: 7,
@@ -15,15 +15,18 @@ const PREC = {
   CASE_BRANCH: 12,
   IN: 13,
   TERNARY: 14,
-  PROPERTY: 15 // Higher precedence for properties
+  PROPERTY: 15, // Higher precedence for properties
+  POSTFIX: 16,
+  PREFIX: 17,
+  DOT: 18
 };
 
 // Helper functions for operator expressions
 const op = {
   infix: (prio, lhs, op, rhs) => prec.left(prio, seq(
-    field('left', lhs),
-    field('operator', op), 
-    field('right', rhs)
+    field('lhs', lhs),
+    field('operator', op),
+    field('rhs', rhs)
   )),
 
   prefix: (prio, operator, operand) => prec.right(prio, seq(
@@ -38,28 +41,47 @@ const op = {
 
   args: (prio, entity, open, args, close) => prec.left(prio, seq(
     field('entity', entity),
-    open,
+    open, 
     field('args', args),
     close
+  )),
+
+  dot: (prio, object, operator, member) => prec.left(prio, seq(
+    field('object', object),
+    field('operator', operator),
+    field('member', member)
   ))
 };
 
 // Helper for case-insensitive keywords
 function ci(keyword) {
-  return new RegExp(keyword
-    .split('')
-    .map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`)
-    .join('')
+  if (typeof keyword !== 'string') {
+    return keyword;
+  }
+  return new RegExp(
+    '[^a-zA-Z0-9_]' +
+    keyword
+      .split('')
+      .map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`)
+      .join('') +
+    '[^a-zA-Z0-9_]'
   );
 }
 
-// Helper for delimited lists
-function delimited(rule, delimiter = ',') {
-  return optional(seq(rule, repeat(seq(delimiter, rule))));
+// Helper functions for lists and delimiters
+function delimited(rule, delimiter = ',', precedence = 0) {
+  return optional(delimited1(rule, delimiter, precedence));
 }
 
-function delimited1(rule, delimiter = ',') {
-  return seq(rule, repeat(seq(delimiter, rule)));
+function delimited1(rule, delimiter = ',', precedence = 0) {
+  return seq(
+    optional(repeat1(prec(precedence, seq(rule, delimiter)))),
+    rule
+  );
+}
+
+function sep1(sep, rule) {
+  return seq(rule, repeat(seq(sep, rule)));
 }
 
 // Token definitions and helper constants 
