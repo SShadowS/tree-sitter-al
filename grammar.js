@@ -24,12 +24,12 @@ function ci(keyword) {
     return keyword;
   }
   return new RegExp(
-    '\\b' +
+    '(?:[^a-zA-Z0-9_]|^)' +
     keyword
       .split('')
       .map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`)
       .join('') +
-    '\\b'
+    '(?:[^a-zA-Z0-9_]|$)'
   );
 }
 
