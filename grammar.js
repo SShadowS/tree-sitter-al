@@ -2,8 +2,8 @@
 // Precedence constants
 const PREC = {
   ASSIGN: 1,
-  OR: 2, 
-  AND: 3,
+  OR: 2,
+  AND: 3, 
   EQUALITY: 4,
   RELATIONAL: 5,
   ADDITIVE: 6,
@@ -14,23 +14,52 @@ const PREC = {
   COMPOUND_IDENTIFIER: 11,
   CASE_BRANCH: 12,
   IN: 13,
-  TERNARY: 14
+  TERNARY: 14,
+  PROPERTY: 15 // Higher precedence for properties
 };
 
-// Helper functions
-function infixExpression(precedence, operator, left, right) {
-  return prec.left(precedence, seq(
-    field('left', left),
-    field('operator', operator),
-    field('right', right)
-  ));
-}
+// Helper functions for operator expressions
+const op = {
+  infix: (prio, lhs, op, rhs) => prec.left(prio, seq(
+    field('left', lhs),
+    field('operator', op), 
+    field('right', rhs)
+  )),
 
-function prefixExpression(precedence, operator, operand) {
-  return prec(precedence, seq(
+  prefix: (prio, operator, operand) => prec.right(prio, seq(
     field('operator', operator),
     field('operand', operand)
-  ));
+  )),
+
+  postfix: (prio, operand, operator) => prec.left(prio, seq(
+    field('operand', operand),
+    field('operator', operator)
+  )),
+
+  args: (prio, entity, open, args, close) => prec.left(prio, seq(
+    field('entity', entity),
+    open,
+    field('args', args),
+    close
+  ))
+};
+
+// Helper for case-insensitive keywords
+function ci(keyword) {
+  return new RegExp(keyword
+    .split('')
+    .map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`)
+    .join('')
+  );
+}
+
+// Helper for delimited lists
+function delimited(rule, delimiter = ',') {
+  return optional(seq(rule, repeat(seq(delimiter, rule))));
+}
+
+function delimited1(rule, delimiter = ',') {
+  return seq(rule, repeat(seq(delimiter, rule)));
 }
 
 // Token definitions and helper constants 
@@ -2431,22 +2460,14 @@ module.exports = grammar({
       choice($.identifier, $.string_literal)
     ),
 
-    binary_expression: $ => {
-      const table = [
-        [PREC.MULTIPLICATIVE, choice('*', '/', ci('div'), ci('mod'))],
-        [PREC.ADDITIVE, choice('+', '-')],
-        [PREC.RELATIONAL, choice('=', '<>', '<', '>', '<=', '>=', ci('in'))],
-        [PREC.AND, ci('and')],
-        [PREC.OR, ci('or')]
-      ];
-      return choice(...table.map(([precedence, operator]) =>
-        prec.left(precedence, seq(
-          field('left', $._expression),
-          field('operator', operator),
-          field('right', $._expression)
-        ))
-      ));
-    },
+    binary_expression: $ => choice(
+      op.infix(PREC.MULTIPLICATIVE, $._expression, choice('*', '/', ci('div'), ci('mod')), $._expression),
+      op.infix(PREC.ADDITIVE, $._expression, choice('+', '-'), $._expression),
+      op.infix(PREC.RELATIONAL, $._expression, choice('=', '<>', '<', '>', '<=', '>='), $._expression),
+      op.infix(PREC.IN, $._expression, ci('in'), $._expression),
+      op.infix(PREC.AND, $._expression, ci('and'), $._expression),
+      op.infix(PREC.OR, $._expression, ci('or'), $._expression)
+    ),
 
 
     call_expression: $ => prec.left(2, seq(
@@ -3585,7 +3606,12 @@ module.exports = grammar({
       ';'
     ),
 
-    visible_property: $ => prec(5, makeSimpleProperty($, 'Visible', $ => choice($.boolean_literal, $.identifier, $._expression))),
+    visible_property: $ => prec(PREC.PROPERTY, seq(
+      ci('Visible'),
+      '=',
+      field('value', choice($.boolean_literal, $.identifier, $._expression)),
+      ';'
+    )),
     trigger_property: $ => seq(
       'Trigger',
       '=',
