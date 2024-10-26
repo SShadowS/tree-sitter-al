@@ -24,10 +24,12 @@ function ci(keyword) {
     return keyword;
   }
   return new RegExp(
+    '\\b' +
     keyword
       .split('')
       .map(c => `[${c.toLowerCase()}${c.toUpperCase()}]`)
-      .join('')
+      .join('') +
+    '\\b'
   );
 }
 
