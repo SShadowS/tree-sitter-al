@@ -180,7 +180,9 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
-    [$.visible_property, $._primary_expression]
+    [$.visible_property, $._primary_expression],
+    [$.case_statement, $.if_statement],
+    [$.try_statement, $.function_call]
   ],
 
   rules: {
