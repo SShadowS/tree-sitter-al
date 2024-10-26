@@ -2014,8 +2014,18 @@ module.exports = grammar({
       $._variable_data_type,
       $.sized_data_type,
       $.record_type,
-      $.named_type
+      $.named_type,
+      $.array_type
     )),
+
+    array_type: $ => seq(
+      'array',
+      '[',
+      $.integer,
+      ']',
+      'of',
+      $._type
+    ),
 
     _variable_data_type: $ => prec(1, choice(
       'Action',
@@ -2102,6 +2112,7 @@ module.exports = grammar({
       optional($._parameter_list),
       ')',
       optional(seq(
+        field('return_var', optional($.identifier)),
         ':',
         field('return_type', $._type)
       )),
@@ -2206,13 +2217,19 @@ module.exports = grammar({
       /[cC][aA][sS][eE]/,
       field('expression', choice(
         $.string,
-        $.identifier,
+        $.identifier, 
         $.enum_identifier,
         $._expression
       )),
       /[oO][fF]/,
       repeat1($.case_branch),
-      optional(seq(/[eE][lL][sS][eE]/, field('else_body', $.code_block))),
+      optional(seq(
+        /[eE][lL][sS][eE]/,
+        field('else_body', choice(
+          $._statement,
+          $.code_block
+        ))
+      )),
       /[eE][nN][dD]/,
       optional(';')
     )),
@@ -2333,7 +2350,8 @@ module.exports = grammar({
       $._literal,
       $.identifier,
       $.enum_identifier,
-      $.parenthesized_expression,
+      $.database_reference,
+      $.parenthesized_expression, 
       $.unary_expression,
       $.call_expression,
       $.member_expression,
@@ -2341,6 +2359,12 @@ module.exports = grammar({
       $.ternary_expression,
       $.binary_expression
     )),
+
+    database_reference: $ => seq(
+      'DATABASE',
+      '::',
+      $.identifier
+    ),
 
     binary_expression: $ => {
       const table = [
