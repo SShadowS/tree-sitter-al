@@ -2133,8 +2133,17 @@ module.exports = grammar({
     ),
 
     attribute_arguments: $ => seq(
-      $._expression,
-      repeat(seq(',', $._expression))
+      $._attribute_argument,
+      repeat(seq(',', $._attribute_argument))
+    ),
+
+    _attribute_argument: $ => choice(
+      seq(
+        field('argument_name', $.identifier),
+        ':=',
+        field('argument_value', $._expression)
+      ),
+      $._expression
     ),
 
     obsolete_attribute: $ => seq(
