@@ -2019,12 +2019,13 @@ module.exports = grammar({
     )),
 
     array_type: $ => seq(
-      'array',
+      /[aA][rR][rR][aA][yY]/,
       '[',
-      $.integer,
+      field('size', $.integer),
       ']',
-      'of',
-      $._type
+      /[oO][fF]/,
+      field('element_type', $._type),
+      optional(';')
     ),
 
     _variable_data_type: $ => prec(1, choice(
