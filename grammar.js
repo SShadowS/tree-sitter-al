@@ -2428,11 +2428,11 @@ module.exports = grammar({
 
     binary_expression: $ => {
       const table = [
-        [6, choice('*', '/', ci('div'), ci('mod'))],
-        [5, choice('+', '-')],
-        [4, choice('=', '<>', '<', '>', '<=', '>=', ci('in'))],
-        [3, ci('and')],
-        [2, ci('or')]
+        [PREC.MULTIPLICATIVE, choice('*', '/', ci('div'), ci('mod'))],
+        [PREC.ADDITIVE, choice('+', '-')],
+        [PREC.RELATIONAL, choice('=', '<>', '<', '>', '<=', '>=', ci('in'))],
+        [PREC.AND, ci('and')],
+        [PREC.OR, ci('or')]
       ];
       return choice(...table.map(([precedence, operator]) =>
         prec.left(precedence, seq(
@@ -2487,7 +2487,7 @@ module.exports = grammar({
     )),
 
 
-    unary_expression: $ => prec(8, seq(
+    unary_expression: $ => prec(PREC.UNARY, seq(
       field('operator', choice('-', ci('not'))),
       field('operand', $._expression)
     )),
@@ -2499,13 +2499,13 @@ module.exports = grammar({
     )),
 
 
-    member_access_expression: $ => prec.left(9, seq(
+    member_access_expression: $ => prec.left(PREC.MEMBER, seq(
       field('object', $._expression),
       '.',
       field('member', $.identifier)
     )),
 
-    array_access_expression: $ => prec(9, seq(
+    array_access_expression: $ => prec(PREC.MEMBER, seq(
       field('array', $._expression),
       '[',
       field('index', $._expression),
