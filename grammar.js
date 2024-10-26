@@ -7,6 +7,7 @@ const PREC = {
   UNARY: 3,
   MEMBER: 4,
   CALL: 5,
+  IN: 4,
 };
 
 // Token definitions and helper constants
@@ -2372,7 +2373,16 @@ module.exports = grammar({
       $.array_access_expression,
       $.ternary_expression,
       $.binary_expression,
+      $.in_expression,
       $.array_literal
+    )),
+
+    in_keyword: $ => token(/in/i),
+
+    in_expression: $ => prec.left(PREC.IN, seq(
+      field('left', $._expression),
+      $.in_keyword,
+      field('right', $._expression)
     )),
 
     array_literal: $ => seq(
@@ -2384,7 +2394,7 @@ module.exports = grammar({
     database_reference: $ => seq(
       'DATABASE',
       '::',
-      $.identifier
+      choice($.identifier, $.string_literal)
     ),
 
     binary_expression: $ => {
