@@ -1,16 +1,38 @@
 
 // Precedence constants
 const PREC = {
-  COMPOUND_IDENTIFIER: 1,
-  CASE_BRANCH: 2,
-  TERNARY: 1,
-  UNARY: 3,
-  MEMBER: 4,
-  CALL: 5,
-  IN: 4,
+  ASSIGN: 1,
+  OR: 2, 
+  AND: 3,
+  EQUALITY: 4,
+  RELATIONAL: 5,
+  ADDITIVE: 6,
+  MULTIPLICATIVE: 7,
+  UNARY: 8,
+  CALL: 9,
+  MEMBER: 10,
+  COMPOUND_IDENTIFIER: 11,
+  CASE_BRANCH: 12,
+  IN: 13
 };
 
-// Token definitions and helper constants
+// Helper functions
+function infixExpression(precedence, operator, left, right) {
+  return prec.left(precedence, seq(
+    field('left', left),
+    field('operator', operator),
+    field('right', right)
+  ));
+}
+
+function prefixExpression(precedence, operator, operand) {
+  return prec(precedence, seq(
+    field('operator', operator),
+    field('operand', operand)
+  ));
+}
+
+// Token definitions and helper constants 
 const colon = ':';
 
 // Helper functions
@@ -2363,21 +2385,26 @@ module.exports = grammar({
       repeat(seq(',', $._expression))
     )),
 
-    _expression: $ => prec.right(2, choice(
-      $._literal,
-      $.identifier,
-      $.enum_identifier,
-      $.database_reference,
-      $.parenthesized_expression, 
+    _expression: $ => choice(
+      $._primary_expression,
+      $.ternary_expression,
+      $.binary_expression,
       $.unary_expression,
       $.call_expression,
       $.member_expression,
       $.array_access_expression,
-      $.ternary_expression,
-      $.binary_expression,
-      $.in_expression,
-      $.array_literal
-    )),
+      $.parenthesized_expression
+    ),
+
+    _primary_expression: $ => choice(
+      $._literal,
+      $.identifier,
+      $.enum_identifier, 
+      $.database_reference,
+      $.array_literal,
+      $.setrange_call,
+      $.setfilter_call
+    ),
 
     in_keyword: $ => token(/in/i),
 
