@@ -2018,15 +2018,14 @@ module.exports = grammar({
       $.array_type
     )),
 
-    array_type: $ => seq(
+    array_type: $ => prec.right(2, seq(
       /[aA][rR][rR][aA][yY]/,
       '[',
       field('size', $.integer),
       ']',
       /[oO][fF]/,
-      field('element_type', $._type),
-      optional(';')
-    ),
+      field('element_type', $._type)
+    )),
 
     _variable_data_type: $ => prec(1, choice(
       'Action',
