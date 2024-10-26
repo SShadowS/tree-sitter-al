@@ -12,7 +12,12 @@ const PREC = {
 // Token definitions and helper constants
 const colon = ':';
 
-// Helper functions for property definitions
+// Helper functions
+function sep1(sep, rule) {
+  return seq(rule, repeat(seq(sep, rule)));
+}
+
+// Helper functions for property definitions  
 function ci(keyword) {
   if (typeof keyword !== 'string') {
     return keyword;
@@ -2366,8 +2371,15 @@ module.exports = grammar({
       $.member_expression,
       $.array_access_expression,
       $.ternary_expression,
-      $.binary_expression
+      $.binary_expression,
+      $.array_literal
     )),
+
+    array_literal: $ => seq(
+      '[',
+      sep1(',', $._expression),
+      ']'
+    ),
 
     database_reference: $ => seq(
       'DATABASE',
@@ -2379,7 +2391,7 @@ module.exports = grammar({
       const table = [
         [6, choice('*', '/', ci('div'), ci('mod'))],
         [5, choice('+', '-')],
-        [4, choice('=', '<>', '<', '>', '<=', '>=')],
+        [4, choice('=', '<>', '<', '>', '<=', '>=', ci('in'))],
         [3, ci('and')],
         [2, ci('or')]
       ];
