@@ -18,26 +18,28 @@ codeunit 50100 "My Test Codeunit"
 ---
 
 (source_file
-  (codeunit_object
-    (integer)
-    (string)
-    (onrun_trigger
-      (code_block
-        (procedure_call_statement
-          (identifier)
-          (string_literal))))
-    (procedure
-      (identifier)
-      (parameter
-        (identifier)
-        (identifier))
-      (parameter
-        (identifier)
-        (identifier))
-      (identifier)
-      (code_block
-        (exit_statement
-          (binary_expression
-            (identifier)
-            (arithmetic_operator)
-            (identifier)))))))
+   (codeunit_declaration
+     (object_id (integer))
+     (object_name (name))
+     (onrun_trigger
+       (code_block
+         (procedure_call
+           (identifier)
+             (argument_list
+               (string_literal)))))
+     (procedure
+       (name)
+       (parameter_list
+         (parameter
+           (name)
+           (type))
+         (parameter
+           (name)
+           (type)))
+       (return_type (basic_type))
+       (code_block
+         (exit_statement
+           (binary_expression
+             (identifier)
+             (arithmetic_operator)
+             (identifier)))))))

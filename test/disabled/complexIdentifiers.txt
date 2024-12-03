@@ -1,0 +1,111 @@
+==================
+Complex identifiers
+==================
+
+page 50101 "My Page Name"
+{
+    var
+        MyLocalVar: Integer;
+        "Variable With Space": Text;
+        _underscoreVar: Boolean;
+        Global@Variable: DateTime;
+}
+
+interface "My Interface"
+{
+    procedure "Method With Space"(param1: Integer; "param with space": Text);
+    procedure _underscoreMethod();
+}
+
+enum 50102 "Status Enum"
+{
+    value(0; "Open") { }
+    value(1; "In Progress") { }
+    value(2; Closed) { }
+}
+
+query 50103 "My Query"
+{
+    elements
+    {
+        dataitem(Customer; Customer)
+        {
+            column(Name; Name) { }
+            column("Address 2"; "Address 2") { }
+        }
+    }
+}
+
+codeunit 50104 "Business Logic"
+{
+    local procedure HandleRecord(rec: Record Customer)
+    var
+        TempRec: Record "Sales Header" temporary;
+        ResultText: Text;
+    begin
+        ResultText := ProcessData(TempRec);
+    end;
+
+    procedure ProcessData(var SalesHeader: Record "Sales Header"): Text
+    begin
+    end;
+}
+
+---
+
+(source_file
+  (page_declaration
+    (object_id (integer))
+    (object_name (string))
+    (var_section
+      (var_declaration (name) (data_type))
+      (var_declaration (string) (data_type))
+      (var_declaration (name) (data_type))
+      (var_declaration (name) (data_type))))
+  (interface_declaration
+    (object_name (string))
+    (procedure_definition
+      (procedure_name (string))
+      (parameter_list
+        (parameter (name) (data_type))
+        (parameter (string) (data_type))))
+    (procedure_definition
+      (procedure_name (name))))
+  (enum_declaration
+    (object_id (integer))
+    (object_name (string))
+    (enum_value_list
+      (enum_value (integer) (string))
+      (enum_value (integer) (string))
+      (enum_value (integer) (name))))
+  (query_declaration
+    (object_id (integer))
+    (object_name (string))
+    (query_elements
+      (dataitem
+        (name)
+        (table_reference (name))
+        (column (name) (name))
+        (column (string) (string)))))
+  (codeunit_declaration
+    (object_id (integer))
+    (object_name (string))
+    (procedure_definition
+      (procedure_name (name))
+      (parameter_list
+        (parameter (name) (record_reference (name))))
+      (var_section
+        (var_declaration (name) (record_reference (string)) (temporary))
+        (var_declaration (name) (data_type)))
+      (code_block
+        (assignment_statement
+          (variable_reference (name))
+          (procedure_call
+            (procedure_name (name))
+            (argument_list (variable_reference (name)))))))
+    (procedure_definition
+      (procedure_name (name))
+      (parameter_list
+        (parameter (var) (name) (record_reference (string))))
+      (return_type (data_type))
+      (code_block))))

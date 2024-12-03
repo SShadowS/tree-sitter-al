@@ -1,0 +1,26 @@
+==================
+Empty Code Block Test
+==================
+
+table 50101 "Empty Code Block Test"
+{
+    trigger OnInsert()
+    begin
+    end;
+
+    procedure EmptyProcedure()
+    begin
+    end;
+}
+
+---
+
+(source_file
+(table_declaration
+    (object_id (integer))
+    (object_name (name))
+    (oninsert_trigger
+      (code_block))
+    (procedure
+      (name)
+        (code_block))))

@@ -1,0 +1,113 @@
+==================
+Mixed Method Types
+==================
+codeunit 50100 MyCodeunit
+{
+    var
+        Cust: Record Customer;
+        Amount: Decimal;
+    trigger OnRun()
+    begin
+        Message('Hello');
+        Cust.Get('10000');
+        Amount := 100;
+        Message('Amount: %1', Amount);
+        Cust.SetRange("No.", '10000', '20000');
+        if Cust.FindSet() then begin
+            Message('Found records');
+        end;
+    end;
+}
+---
+(source_file
+  (codeunit_declaration
+    (object_id (integer))
+    (object_name (name))
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification (record_type (identifier))))
+      (variable_declaration
+        (identifier)
+        (type_specification (basic_type))))
+    (onrun_trigger
+      (code_block
+        (procedure_call
+          (identifier)
+          (argument_list (string_literal)))
+        (get_statement
+          (get_method
+            (record)
+            (argument_list
+              (string_literal))))
+        (assignment_statement
+          (identifier)
+          (integer))
+        (procedure_call
+          (identifier)
+          (argument_list
+            (string_literal)
+            (identifier)))
+        (set_range_statement
+          (identifier)
+          (string_literal)
+          (string_literal))
+        (if_statement
+          (find_set_method
+            (record))
+          (code_block
+            (procedure_call
+              (identifier)
+              (argument_list
+                (string_literal)))))))))
+
+==================
+Complex Parameter Calls
+==================
+codeunit 50100 MyCodeunit
+{
+    var
+        Cust: Record Customer;
+    trigger OnRun()
+    begin
+        Error('Cannot process customer %1 with balance %2', 
+            Cust."No.",
+            Cust."Balance (LCY)");
+        if Cust.Get(Cust."No.") then begin
+            Message('Found');
+        end;
+    end;
+}
+---
+(source_file
+  (codeunit_declaration
+    (object_id (integer))
+    (object_name (name))
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification (record_type (identifier)))))
+    (onrun_trigger
+      (code_block
+        (procedure_call
+          (identifier)
+          (argument_list
+            (string_literal)
+            (member_access_expression
+              (object)
+              (member))
+            (member_access_expression
+              (object)
+              (member))))
+        (if_statement
+          (get_method
+            (record)
+            (argument_list
+              (member_access_expression
+                (object)
+                (member))))
+          (code_block
+            (procedure_call
+              (identifier)
+              (argument_list
+                (string_literal)))))))))

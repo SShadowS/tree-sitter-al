@@ -1,18 +1,15 @@
 # Rust artifacts
-Cargo.lock
 target/
 
 # Node artifacts
 build/
 prebuilds/
 node_modules/
-*.tgz
 
 # Swift artifacts
 .build/
 
 # Go artifacts
-go.sum
 _obj/
 
 # Python artifacts
@@ -36,16 +33,18 @@ dist/
 *.wasm
 *.obj
 *.o
-.aider*
 
-.alpackages/
-.snapshots/
-docs/
-env/
-developer/
+# Archives
+*.tar.gz
+*.tgz
+*.zip
+.aider*
 .env
+/env
+/developer
+/.vscode
 *.al
 *.ps1
-missing.txt
-INSTRUCTIONS.md
-CONVENTIONS.md
+*.log
+log.html
+grammarPascal.js

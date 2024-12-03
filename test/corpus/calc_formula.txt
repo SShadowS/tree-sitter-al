@@ -1,0 +1,188 @@
+======================
+CalcFormula Field Test
+======================
+
+table 50100 "CalcFormula Test"
+{
+    fields
+    {
+        field(1; "No."; Code[20])
+        {
+            Caption = 'No.';
+        }
+        field(2; "Simple Lookup"; Text[100])
+        {
+            FieldClass = FlowField;
+            CalcFormula = lookup(Customer.Name where("No." = field("No.")));
+        }
+        field(3; "Count Example"; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count("Sales Line" where("Document No." = field("No.")));
+        }
+        field(4; "Sum Example"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = sum("Sales Line".Amount where("Document No." = field("No.")));
+        }
+        field(5; "Average Example"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = average("Sales Line".Amount where("Document Type" = field("No.")));
+        }
+        field(6; "Min Example"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = min("Sales Line"."Unit Price" where("Document No." = field("No.")));
+        }
+        field(7; "Max Example"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = max("Sales Line"."Unit Price" where("Document No." = field("No.")));
+        }
+        field(8; "Complex Lookup"; Text[100])
+        {
+            FieldClass = FlowField;
+            CalcFormula = lookup(Customer.Name where("No." = field("No."),
+                                                    "Country Code" = const('US')));
+        }
+    }
+}
+
+---
+
+(source_file
+  (table_declaration
+    (object_id
+      (integer))
+    (object_name
+      (name))
+    (fields
+      (field_declaration
+        (integer)
+        (name)
+        (data_type
+          (integer))
+        (caption_property
+          (string_literal)))
+      (field_declaration
+        (integer)
+        (name)
+        (data_type
+          (integer))
+        (field_class_property
+          (field_class_value))
+        (calc_formula_property
+          (lookup_formula
+            (field_reference
+              (table)
+              (field))
+            (lookup_where_conditions
+              (lookup_where_condition
+                (identifier)
+                (field_ref
+                  (identifier)))))))
+      (field_declaration
+        (integer)
+        (name)
+        (data_type)
+        (field_class_property
+          (field_class_value))
+        (calc_formula_property
+          (count_formula
+            (table_reference)
+            (where_clause
+              (where_conditions
+                (where_condition
+                  (identifier)
+                  (field_ref
+                    (identifier))))))))
+      (field_declaration
+        (integer)
+        (name)
+        (data_type)
+        (field_class_property
+          (field_class_value))
+        (calc_formula_property
+          (sum_formula
+            (field_reference
+              (table)
+              (field))
+            (where_clause
+              (where_conditions
+                (where_condition
+                  (identifier)
+                  (field_ref
+                    (identifier))))))))
+      (field_declaration
+        (integer)
+        (name)
+        (data_type)
+        (field_class_property
+          (field_class_value))
+        (calc_formula_property
+          (average_formula
+            (field_reference
+              (table)
+              (field))
+            (where_clause
+              (where_conditions
+                (where_condition
+                  (identifier)
+                  (field_ref
+                    (identifier))))))))
+      (field_declaration
+        (integer)
+        (name)
+        (data_type)
+        (field_class_property
+          (field_class_value))
+        (calc_formula_property
+          (min_formula
+            (field_reference
+              (table)
+              (field))
+            (where_clause
+              (where_conditions
+                (where_condition
+                  (identifier)
+                  (field_ref
+                    (identifier))))))))
+      (field_declaration
+        (integer)
+        (name)
+        (data_type)
+        (field_class_property
+          (field_class_value))
+        (calc_formula_property
+          (max_formula
+            (field_reference
+              (table)
+              (field))
+            (where_clause
+              (where_conditions
+                (where_condition
+                  (identifier)
+                  (field_ref
+                    (identifier))))))))
+      (field_declaration
+        (integer)
+        (name)
+        (data_type
+          (integer))
+        (field_class_property
+          (field_class_value))
+        (calc_formula_property
+          (lookup_formula
+            (field_reference
+              (table)
+              (field))
+            (lookup_where_conditions
+              (lookup_where_condition
+                (identifier)
+                (field_ref
+                  (identifier)))
+              (lookup_where_condition
+                (identifier)
+                (const)
+                    (string_literal)))))))))

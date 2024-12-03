@@ -1,0 +1,89 @@
+==================
+Procedure Return Types
+==================
+
+codeunit 50100 "Return Types Test"
+{
+    procedure GetInteger(): Integer
+    begin
+        exit(42);
+    end;
+
+    procedure GetNamedInteger() Result: Integer
+    begin
+        Result := 42;
+        exit(Result);
+    end;
+
+    procedure GetCustomerRecord(): Record Customer
+    begin
+        exit(Customer);
+    end;
+
+    procedure GetNamedCustomerRecord() CustomerRec: Record Customer
+    begin
+        CustomerRec := Customer;
+        exit(CustomerRec);
+    end;
+
+    procedure DoSomething()
+    begin
+        Message('No return value');
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (name))
+    (procedure
+      (name)
+      (return_type
+        (basic_type))
+      (code_block
+        (exit_statement
+          (integer))))
+    (procedure
+      (name)
+      (return_value
+        (identifier))
+      (return_type
+        (basic_type))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (integer))
+        (exit_statement
+          (identifier))))
+    (procedure
+      (name)
+      (return_type
+        (record_type
+          (identifier)))
+      (code_block
+        (exit_statement
+          (identifier))))
+    (procedure
+      (name)
+      (return_value
+        (identifier))
+      (return_type
+        (record_type
+          (identifier)))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (identifier))
+        (exit_statement
+          (identifier))))
+    (procedure
+      (name)
+      (code_block
+        (procedure_call
+          (identifier)
+          (argument_list
+            (string_literal)))))))

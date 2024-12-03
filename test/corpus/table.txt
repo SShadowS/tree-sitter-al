@@ -53,68 +53,74 @@ table 50100 "My Test Table"
 ---
 
 (source_file
-  (table_object
-    (integer)
-    (string)
+  (table_declaration
+    (object_id
+      (integer))
+    (object_name
+      (name))
     (caption_property
       (string_literal))
-    (data_classification_property)
+    (data_classification_property
+      (data_classification_value))
     (fields
-      (field
+      (field_declaration
         (integer)
-        (string)
-        (identifier)
+        (name)
+        (data_type
+              (integer))
         (caption_property
           (string_literal))
         (data_classification_property
-          (identifier)))
-      (field
+          (data_classification_value)))
+      (field_declaration
         (integer)
-        (string)
-        (identifier)
+        (name)
+        (data_type
+          (integer))
         (caption_property
           (string_literal)))
-      (field
+      (field_declaration
         (integer)
-        (string)
-        (identifier)
+        (name)
+        (data_type)
         (caption_property
           (string_literal))
         (decimal_places_property
-          (decimal_places_value
-            (integer)
-            (integer)))))
+          (integer)
+          (integer))))
     (keys
-      (key
-        (identifier)
+      (key_declaration
+        (name)
         (key_field_list
           (key_field))
         (clustered_property
-          (boolean_literal))))
-    (var
+          (boolean))))
+    (var_section
       (variable_declaration
         (identifier)
-        (identifier)))
+        (type_specification
+              (basic_type))))
     (oninsert_trigger
       (code_block
-        (procedure_call_statement
+        (procedure_call
           (identifier)
-          (string_literal))))
+          (argument_list
+                (string_literal)))))
     (procedure
-      (identifier)
-      (parameter
-        (identifier)
-        (identifier))
-      (identifier)
+      (name)
+      (parameter_list
+        (parameter
+          (name)
+          (type)))
+      (return_type
+        (basic_type))
       (code_block
         (if_statement
           (binary_expression
             (identifier)
             (comparison_operator)
             (string_literal))
-          (code_block
-            (exit_statement
-              (boolean_literal)))
-          (code_block
-            (exit_statement
-              (boolean_literal))))))))
+          (exit_statement
+            (boolean))
+          (exit_statement
+            (boolean)))))))

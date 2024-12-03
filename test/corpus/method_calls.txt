@@ -1,0 +1,189 @@
+==================
+Generic Method Call
+==================
+codeunit 50100 MyCodeunit
+{
+    trigger OnRun()
+    begin
+        Message('Hello World');
+        Error('This is an error');
+        Confirm('Are you sure?');
+    end;
+}
+---
+(source_file
+  (codeunit_declaration
+    (object_id (integer))
+    (object_name (name))
+    (onrun_trigger
+      (code_block
+        (procedure_call
+          (identifier)
+          (argument_list
+            (string_literal)))
+        (procedure_call
+          (identifier)
+          (argument_list
+            (string_literal)))
+        (procedure_call
+          (identifier)
+          (argument_list
+            (string_literal)))))))
+
+==================
+Record Method Calls
+==================
+codeunit 50100 MyCodeunit
+{
+    var
+        Customer: Record Customer;
+    trigger OnRun()
+    begin
+        Customer.Get('10000');
+        Message('Found customer');
+        Customer.SetRange("No.", '10000', '20000');
+        Customer.FindSet(true, false);
+    end;
+}
+---
+(source_file
+  (codeunit_declaration
+    (object_id (integer))
+    (object_name (name))
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (record_type (identifier)))))
+    (onrun_trigger
+      (code_block
+        (get_statement
+          (get_method
+            (record)
+            (argument_list
+              (string_literal))))
+        (procedure_call
+          (identifier)
+          (argument_list
+            (string_literal)))
+        (set_range_statement
+          (identifier)
+          (string_literal)
+          (string_literal))
+        (find_set_statement
+          (find_set_method
+            (record)
+            (boolean)
+            (boolean)))))))
+
+==================
+Boolean Method Conditions
+==================
+codeunit 50100 MyCodeunit
+{
+    var
+        Customer: Record Customer;
+    trigger OnRun()
+    begin
+        if Customer.Get('10000') then
+            Message('Found customer');
+        
+        if Customer.FindSet() then begin
+            repeat
+                if Customer.Next() then
+                    Message('Next customer');
+            until Customer."No." = '';
+        end;
+    end;
+}
+---
+(source_file
+  (codeunit_declaration
+    (object_id (integer))
+    (object_name (name))
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (record_type (identifier)))))
+    (onrun_trigger
+      (code_block
+        (if_statement
+          (get_method
+            (record)
+            (argument_list
+              (string_literal)))
+          (procedure_call
+            (identifier)
+            (argument_list
+              (string_literal))))
+        (if_statement
+          (find_set_method (record))
+          (code_block
+            (repeat_statement
+              (if_statement
+                (next_method (object))
+                (procedure_call
+                  (identifier)
+                  (argument_list
+                    (string_literal))))
+              (binary_expression
+                (member_access_expression
+                  (object)
+                  (member))
+                (comparison_operator)
+                (string_literal)))))))))
+
+==================
+Mixed Method Calls With Parameters
+==================
+
+codeunit 50100 MyCodeunit
+{
+    var
+        Customer: Record Customer;
+        Amount: Decimal;
+    trigger OnRun()
+    begin
+        if Customer.Get('10000') then begin
+            Amount := Customer."Credit Amount";
+            Message('Credit Amount: %1', Amount);
+            Customer.SetFilter("Credit Amount", '>%1', Amount);
+        end;
+    end;
+}
+---
+(source_file
+  (codeunit_declaration
+    (object_id (integer))
+    (object_name (name))
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (record_type (identifier))))
+      (variable_declaration
+        (identifier)
+        (type_specification (basic_type))))
+    (onrun_trigger
+      (code_block
+        (if_statement
+          (get_method
+            (record)
+            (argument_list
+              (string_literal)))
+          (code_block
+            (assignment_statement
+              (identifier)
+              (member_access_expression
+                (object)
+                (member)))
+            (procedure_call
+              (identifier)
+              (argument_list
+                (string_literal)
+                (identifier)))
+            (set_filter_statement
+              (identifier)
+              (string_literal)
+              (identifier))))))))
