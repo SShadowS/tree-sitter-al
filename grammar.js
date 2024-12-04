@@ -628,28 +628,51 @@ module.exports = grammar({
       $.conditional_table_relation
     )),
 
-    _simple_table_relation: $ => choice(
-      // Basic table reference
+    _simple_table_relation: $ => seq(
       $._table_reference,
-      
-      // Table.Field reference 
-      seq(
-        $._table_reference,
-        '.',
-        $._field_reference
-      ),
+      optional(seq('.', $._field_reference)),
+      optional($.where_clause)
+    ),
 
-      // With WHERE clause
+    conditional_table_relation: $ => seq(
+      'IF',
+      '(',
+      $.table_filters,
+      ')',
+      $._table_reference,
+      optional(seq('.', $._field_reference)),
+      optional($.where_clause),
+      'ELSE',
+      $.table_relation_value
+    ),
+
+    table_filters: $ => seq(
+      $.table_filter,
+      repeat(seq(',', $.table_filter))
+    ),
+
+    table_filter: $ => choice(
       seq(
-        choice(
-          $._table_reference,
-          seq($._table_reference, '.', $._field_reference)
-        ),
-        'where',
+        field('field', $._field_reference),
+        '=',
+        'CONST',
         '(',
-        $.filter_conditions,
+        field('value', choice($.string_literal, $.identifier, $._quoted_identifier)),
+        ')'
+      ),
+      seq(
+        'FIELD',
+        '(',
+        field('field', $._field_reference),
         ')'
       )
+    ),
+
+    where_clause: $ => seq(
+      'WHERE',
+      '(',
+      $.table_filters,
+      ')'
     ),
 
     _field_reference: $ => choice(
