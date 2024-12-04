@@ -685,33 +685,6 @@ module.exports = grammar({
       $.identifier
     ), $.identifier),
 
-    conditional_table_relation: $ => prec.right(2, seq(
-      'if',
-      '(',
-      $.table_relation_condition,
-      ')',
-      $._table_relation_body,
-      optional(seq(
-        'else',
-        $._table_relation_body
-      ))
-    )),
-
-    _table_relation_body: $ => choice(
-      $._simple_table_relation,
-      $.conditional_table_relation
-    ),
-
-    table_relation_condition: $ => seq(
-      field('field', $._field_reference),
-      '=',
-      choice(
-        field('const', seq('const', '(', $._field_reference, ')')),
-        field('const', $.string_literal),
-        field('field', seq('field', '(', $._field_reference, ')')),
-        field('filter', seq('filter', '(', $.filter_operator, $.string_literal, ')'))
-      )
-    ),
 
 
     field_class_property: $ => seq(
@@ -829,38 +802,6 @@ module.exports = grammar({
     ),
 
 
-    where_clause: $ => seq(
-      'where',
-      '(',
-      $.where_conditions,
-      ')'
-    ),
-
-    where_conditions: $ => seq(
-      $.where_condition,
-      repeat(seq(',', $.where_condition))
-    ),
-
-    where_condition: $ => seq(
-      field('field', alias($._field_reference, $.identifier)),
-      '=',
-      choice(
-        seq(
-          'field',
-          '(',
-          field('value', alias(seq(
-            $._condition_field_reference
-          ), $.field_ref)),
-          ')'
-        ),
-        seq(
-          'const',
-          '(',
-          field('value', $.string_literal),
-          ')'
-        )
-      )
-    ),
 
     filter_conditions: $ => seq(
       $.filter_condition,
