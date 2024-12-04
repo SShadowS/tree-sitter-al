@@ -322,7 +322,7 @@ module.exports = grammar({
       seq(
         field('property_name', 'TableRelation'),
         '=',
-        field('property_value', $.table_relation_value),
+        field('property_value', $.table_relation_expression),
         ';'
       ),
       seq(
