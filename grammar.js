@@ -19,10 +19,10 @@ module.exports = grammar({
       $.codeunit_declaration
     ),
 
-    function_call: $ => seq(
+    function_call: $ => prec(2, seq(  // Add precedence of 2
       field('function_name', $.identifier),
       field('arguments', optional($.argument_list))  // Make arguments optional
-    ),
+    )),
 
     object_id: $ => seq($.integer),
     object_name: $ => field('name', alias(choice(
