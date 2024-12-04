@@ -619,13 +619,25 @@ module.exports = grammar({
     table_relation_property: $ => seq(
       'TableRelation',
       '=',
-      $.table_relation_value,
+      field('relation', $.table_relation_expression),
       ';'
     ),
 
-    table_relation_value: $ => prec(1, choice(
+    table_relation_expression: $ => choice(
       $._simple_table_relation,
-      $.conditional_table_relation
+      $.if_table_relation
+    ),
+
+    if_table_relation: $ => prec.right(seq(
+      'IF',
+      '(',
+      field('condition', $.table_filter),
+      ')',
+      field('then_relation', $._table_reference),
+      optional(seq(
+        'ELSE',
+        field('else_relation', $.table_relation_expression)
+      ))
     )),
 
     _simple_table_relation: $ => seq(
@@ -634,19 +646,6 @@ module.exports = grammar({
       optional($.where_clause)
     ),
 
-    conditional_table_relation: $ => prec.right(seq(
-      'IF',
-      '(',
-      field('conditions', $.table_filters),
-      ')',
-      field('then_relation', seq(
-        field('table', $._table_reference),
-        optional(seq('.', field('field', $._field_reference))),
-        optional($.where_clause)
-      )),
-      'ELSE',
-      field('else_relation', $.table_relation_value)
-    )),
 
     table_filters: $ => seq(
       $.table_filter,
