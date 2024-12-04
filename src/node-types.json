@@ -1714,9 +1714,13 @@
         ]
       },
       "else_branch": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
+          {
+            "type": ";",
+            "named": false
+          },
           {
             "type": "assignment_statement",
             "named": true
@@ -1792,9 +1796,13 @@
         ]
       },
       "then_branch": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
+          {
+            "type": ";",
+            "named": false
+          },
           {
             "type": "assignment_statement",
             "named": true

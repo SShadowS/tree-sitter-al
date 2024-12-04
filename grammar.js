@@ -1134,12 +1134,12 @@ module.exports = grammar({
     ),
 
     // Define code blocks with explicit keyword handling
-    code_block: $ => seq(
+    code_block: $ => prec.right(1, seq(
       'begin',
       optional(repeat($._statement)),
       'end',
       optional(';')
-    ),
+    )),
 
     _object_element: $ => choice(
       $.property,
@@ -1148,40 +1148,41 @@ module.exports = grammar({
       $.keys
     ),
 
-    _statement: $ => prec(1, choice(
-      $.if_statement,  // Keep this first
-      $.repeat_statement,  // Add repeat...until support
-      $.case_statement,  // Add case statement support
-      $.exit_statement,  // Moved up before procedure_call
-      $.assignment_statement, 
-      $.procedure_call,  // Renamed to be more specific
-      $.get_statement,
-      $.find_set_statement,
-      $.find_first_statement,
-      $.find_last_statement,
-      $.next_statement,
-      $.insert_statement,
-      $.modify_statement,
-      $.delete_statement,
-      $.set_range_statement,
-      $.set_filter_statement,
-      $.reset_statement
+    _statement: $ => prec.right(1, seq(
+      choice(
+        $.if_statement,  // Keep this first
+        $.repeat_statement,  // Add repeat...until support
+        $.case_statement,  // Add case statement support
+        $.exit_statement,  // Moved up before procedure_call
+        $.assignment_statement, 
+        $.procedure_call,  // Renamed to be more specific
+        $.get_statement,
+        $.find_set_statement,
+        $.find_first_statement,
+        $.find_last_statement,
+        $.next_statement,
+        $.insert_statement,
+        $.modify_statement,
+        $.delete_statement,
+        $.set_range_statement,
+        $.set_filter_statement,
+        $.reset_statement
+      ),
+      optional(';')
     )),
 
     repeat_statement: $ => seq(
       'repeat',
       repeat1($._statement),
       'until',
-      field('condition', $._expression),
-      optional(';')
+      field('condition', $._expression)
     ),
 
 
     assignment_statement: $ => seq(
       field('left', $._assignable_expression),
       ':=',
-      field('right', $._expression),
-      ';'
+      field('right', $._expression)
     ),
 
     _assignable_expression: $ => choice(
@@ -1228,8 +1229,7 @@ module.exports = grammar({
 
 
     procedure_call: $ => seq(
-      field('call', choice($.function_call, $.method_call)),
-      ';'
+      field('call', choice($.function_call, $.method_call))
     ),
 
     // Individual method definitions
@@ -1377,8 +1377,7 @@ module.exports = grammar({
         field('run_trigger', $.boolean),
         optional(seq(',', field('system_id', $.boolean)))
       )),
-      ')',
-      ';'
+      ')'
     ),
 
     modify_statement: $ => seq(
@@ -1387,8 +1386,7 @@ module.exports = grammar({
       'Modify',
       '(',
       optional(field('run_trigger', $.boolean)),
-      ')',
-      ';'
+      ')'
     ),
 
     delete_statement: $ => seq(
@@ -1397,8 +1395,7 @@ module.exports = grammar({
       'Delete',
       '(',
       optional(field('run_trigger', $.boolean)),
-      ')',
-      ';'
+      ')'
     ),
 
     set_range_statement: $ => seq(
@@ -1413,8 +1410,7 @@ module.exports = grammar({
         ',',
         field('to_value', choice($.string_literal, $.identifier, $.integer))
       )),
-      ')',
-      ';'
+      ')'
     ),
 
     set_filter_statement: $ => seq(
@@ -1431,8 +1427,7 @@ module.exports = grammar({
           field('parameter', $._expression)
         )
       ),
-      ')',
-      ';'
+      ')'
     ),
 
     reset_statement: $ => seq(
@@ -1440,8 +1435,7 @@ module.exports = grammar({
       '.',
       'Reset',
       '(',
-      ')',
-      ';'
+      ')'
     ),
 
     object: $ => $._primary_expression,
@@ -1478,13 +1472,11 @@ module.exports = grammar({
     )),
 
     get_statement: $ => seq(
-      $.get_method,
-      ';'
+      $.get_method
     ),
 
     find_set_statement: $ => seq(
-      $.find_set_method,
-      ';'
+      $.find_set_method
     ),
 
     find_first_statement: $ => seq(
@@ -1492,8 +1484,7 @@ module.exports = grammar({
       '.',
       'FindFirst',
       '(',
-      ')',
-      ';'
+      ')'
     ),
 
     find_last_statement: $ => seq(
@@ -1501,8 +1492,7 @@ module.exports = grammar({
       '.',
       'FindLast',
       '(',
-      ')',
-      ';'
+      ')'
     ),
 
     next_statement: $ => seq(
@@ -1511,8 +1501,7 @@ module.exports = grammar({
       'Next',
       '(',
       optional(field('steps', $.integer)),
-      ')',
-      ';'
+      ')'
     ),
 
     case_statement: $ => seq(
@@ -1521,8 +1510,7 @@ module.exports = grammar({
       'of',
       repeat1($.case_clause),
       optional($.else_clause),
-      'end',
-      ';'
+      'end'
     ),
 
     case_clause: $ => seq(
@@ -1542,21 +1530,13 @@ module.exports = grammar({
     ),
 
     exit_statement: $ => choice(
-      $._simple_exit,
-      $._value_exit
-    ),
-
-    _simple_exit: $ => seq(
-      'exit',
-      ';'
-    ),
-
-    _value_exit: $ => seq(
-      'exit',
-      '(',
-      $._expression,
-      ')',
-      ';'
+      prec(1, 'exit'),  // Simple exit has lower precedence
+      prec(2, seq(      // Exit with expression has higher precedence
+        'exit',
+        '(',
+        $._expression,
+        ')'
+      ))
     ),
   }
 });
