@@ -10,12 +10,18 @@
 module.exports = grammar({
   name: "al",
 
+
   rules: {
     source_file: $ => repeat($._object),
 
     _object: $ => choice(
       $.table_declaration,
       $.codeunit_declaration
+    ),
+
+    function_call: $ => seq(
+      field('function_name', $.identifier),
+      field('arguments', $.argument_list)
     ),
 
     object_id: $ => seq($.integer),
@@ -266,7 +272,19 @@ module.exports = grammar({
       '()',
       $.code_block
     ),
+    
+    member_access: $ => prec.left(seq(
+      field('object', $._expression),
+      '.',
+      field('member', alias(choice($.identifier, $._quoted_identifier), $.member))
+    )),
 
+    method_call: $ => prec.left(seq(
+      field('object', $._expression),
+      '.',
+      field('method', alias(choice($.identifier, $._quoted_identifier), $.method_name)),
+      field('arguments', $.argument_list)
+    )),
 
     property_list: $ => prec(3, repeat1($.property)),
 
@@ -1158,13 +1176,6 @@ module.exports = grammar({
       optional(';')
     ),
 
-    method_call: $ => prec(2, seq(
-      field('target', choice(
-        $.identifier,
-        $.member_access
-      )),
-      field('arguments', $.argument_list)
-    )),
 
     assignment_statement: $ => seq(
       field('left', $._assignable_expression),
@@ -1188,53 +1199,36 @@ module.exports = grammar({
       ')'
     ),
 
-    _primary_expression: $ => choice(
+    // Adjusting the _primary_expression to have left associativity
+    _primary_expression: $ => prec.left(choice(
       $.integer,
       $.boolean,
       $.string_literal,
       $.identifier,
       $._quoted_identifier,
       seq('(', $._expression, ')')
-    ),
+    )),
 
+    // Increase the precedence of enum_member_access to resolve parsing conflicts
+    enum_member_access: $ => prec.left(seq(
+      field('enum_type', $._expression),
+      '::',
+      field('enum_value', $.identifier)
+    )),
+
+    // Updating _expression to include enum_member_access
     _expression: $ => choice(
       $._primary_expression,
-      $._callable_expression,
+      $.member_access,
+      $.method_call,
+      $.function_call,  // Add this line
       $.binary_expression,
       $.enum_member_access
     ),
 
-    enum_member_access: $ => seq(
-      field('enum_type', choice(
-        $.identifier,
-        $._quoted_identifier
-      )),
-      '::',
-      field('member', choice(
-        $.identifier,
-        $._quoted_identifier
-      ))
-    ),
-
-    _callable_expression: $ => choice(
-      $.method_call,
-      $.get_method,
-      $.insert_method,
-      $.modify_method,
-      $.modify_all_method,
-      $.delete_method,
-      $.delete_all_method,
-      $.set_range_method,
-      $.set_filter_method,
-      $.find_set_method,
-      $.find_first_method,
-      $.find_last_method,
-      $.next_method,
-      $.reset_method
-    ),
 
     procedure_call: $ => seq(
-      field('call', $.method_call),
+      field('call', choice($.function_call, $.method_call)),
       ';'
     ),
 
@@ -1450,24 +1444,8 @@ module.exports = grammar({
       ';'
     ),
 
-    method_invocation: $ => seq(
-      field('target', $._invocable_expression),
-      field('arguments', $.argument_list)
-    ),
-
-    _invocable_expression: $ => choice(
-      $.identifier,
-      $.member_access
-    ),
-
-    member_access: $ => seq(
-      field('object', $._primary_expression),
-      '.',
-      field('member', alias(choice(
-        $.identifier,
-        $._quoted_identifier
-      ), $.member))
-    ),
+    object: $ => $._primary_expression,
+    _simple_object: $ => alias($.identifier, $.object),
 
     binary_expression: $ => prec.left(2, choice(
       seq(  // Comparison operations
@@ -1564,16 +1542,16 @@ module.exports = grammar({
     ),
 
     exit_statement: $ => choice(
-      $.simple_exit,
-      $.value_exit
+      $._simple_exit,
+      $._value_exit
     ),
 
-    simple_exit: $ => seq(
+    _simple_exit: $ => seq(
       'exit',
       ';'
     ),
 
-    value_exit: $ => seq(
+    _value_exit: $ => seq(
       'exit',
       '(',
       $._expression,

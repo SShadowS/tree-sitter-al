@@ -113,9 +113,10 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (procedure_call
-          (identifier)
-          (argument_list
-            (string_literal)))))))
+          (function_call
+            (identifier)
+            (argument_list
+              (string_literal))))))))
 
 ==================
 Procedure With Var Section
@@ -157,6 +158,6 @@ codeunit 50100 MyCodeunit
               (identifier))))
         (assignment_statement
           (identifier)
-          (member_access_expression
-            (object)
+          (member_access
+            (identifier)
             (member)))))))

@@ -18,17 +18,20 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (procedure_call
-          (identifier)
-          (argument_list
-            (string_literal)))
+          (function_call
+            (identifier)
+            (argument_list
+              (string_literal))))
         (procedure_call
-          (identifier)
-          (argument_list
-            (string_literal)))
+          (function_call
+            (identifier)
+            (argument_list
+              (string_literal))))
         (procedure_call
-          (identifier)
-          (argument_list
-            (string_literal)))))))
+          (function_call
+            (identifier)
+            (argument_list
+              (string_literal))))))))
 
 ==================
 Record Method Calls
@@ -63,9 +66,10 @@ codeunit 50100 MyCodeunit
             (argument_list
               (string_literal))))
         (procedure_call
-          (identifier)
-          (argument_list
-            (string_literal)))
+          (function_call
+            (identifier)
+            (argument_list
+              (string_literal))))
         (set_range_statement
           (identifier)
           (string_literal)
@@ -109,27 +113,36 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (if_statement
-          (get_method
-            (record)
+          (method_call
+            (identifier)
+            (method_name)
             (argument_list
               (string_literal)))
           (procedure_call
-            (identifier)
-            (argument_list
-              (string_literal))))
+            (function_call
+              (identifier)
+              (argument_list
+                (string_literal)))))
         (if_statement
-          (find_set_method (record))
+          (method_call
+            (identifier)
+            (method_name)
+            (argument_list))
           (code_block
             (repeat_statement
               (if_statement
-                (next_method (object))
+                (method_call
+                  (identifier)
+                  (method_name)
+                  (argument_list))
                 (procedure_call
+                  (function_call
                   (identifier)
                   (argument_list
-                    (string_literal))))
+                    (string_literal)))))
               (binary_expression
-                (member_access_expression
-                  (object)
+                (member_access
+                  (identifier)
                   (member))
                 (comparison_operator)
                 (string_literal)))))))))
@@ -168,21 +181,23 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (if_statement
-          (get_method
-            (record)
+          (method_call
+            (identifier)
+            (method_name)
             (argument_list
               (string_literal)))
           (code_block
             (assignment_statement
               (identifier)
-              (member_access_expression
-                (object)
+              (member_access
+                (identifier)
                 (member)))
             (procedure_call
-              (identifier)
-              (argument_list
-                (string_literal)
-                (identifier)))
+              (function_call
+                (identifier)
+                (argument_list
+                  (string_literal)
+                  (identifier))))
             (set_filter_statement
               (identifier)
               (string_literal)
