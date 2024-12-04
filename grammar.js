@@ -21,7 +21,7 @@ module.exports = grammar({
 
     function_call: $ => seq(
       field('function_name', $.identifier),
-      field('arguments', $.argument_list)
+      field('arguments', optional($.argument_list))  // Make arguments optional
     ),
 
     object_id: $ => seq($.integer),
@@ -1201,7 +1201,11 @@ module.exports = grammar({
 
 
     procedure_call: $ => seq(
-      field('call', choice($.function_call, $.method_call))
+      field('call', choice(
+        $.function_call,
+        $.method_call,
+        alias($.identifier, $.function_name)  // Allow simple procedure names without ()
+      ))
     ),
 
     // Individual method definitions
