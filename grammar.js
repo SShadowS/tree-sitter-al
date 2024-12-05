@@ -279,7 +279,10 @@ module.exports = grammar({
     member_access: $ => prec(5, seq(
       field('object', $._expression),
       '.',
-      field('member', $.identifier)
+      field('member', choice(
+        $.identifier,
+        $._quoted_identifier
+      ))
     )),
 
     method_call: $ => prec.left(seq(
