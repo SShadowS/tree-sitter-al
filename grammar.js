@@ -218,36 +218,36 @@ module.exports = grammar({
     ),
 
     onvalidate_trigger: $ => seq(
-      'trigger',
-      'OnValidate',
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      choice('OnValidate', 'ONVALIDATE', 'Onvalidate'),
       '()',
       $.code_block
     ),
 
     onaftergetrecord_trigger: $ => seq(
-      'trigger',
-      'OnAfterGetRecord',
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      choice('OnAfterGetRecord', 'ONAFTERGETRECORD', 'Onaftergetrecord'),
       '()',
       $.code_block
     ),
 
     onafterinsertevent_trigger: $ => seq(
-      'trigger',
-      'OnAfterInsertEvent',
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      choice('OnAfterInsertEvent', 'ONAFTERINSERTEVENT', 'Onafterinsertevent'),
       '()',
       $.code_block
     ),
 
     onaftermodifyevent_trigger: $ => seq(
-      'trigger',
-      'OnAfterModifyEvent',
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      choice('OnAfterModifyEvent', 'ONAFTERMODIFYEVENT', 'Onaftermodifyevent'),
       '()',
       $.code_block
     ),
 
     onafterdeleteevent_trigger: $ => seq(
-      'trigger',
-      'OnAfterDeleteEvent',
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      choice('OnAfterDeleteEvent', 'ONAFTERDELETEEVENT', 'Onafterdeleteevent'),
       '()',
       $.code_block
     ),
