@@ -124,8 +124,8 @@ module.exports = grammar({
     )),
 
     onrun_trigger: $ => seq(
-      'trigger',
-      'OnRun',
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      choice('OnRun', 'ONRUN', 'Onrun'),
       '()',
       $.code_block
     ),
@@ -190,29 +190,29 @@ module.exports = grammar({
     ),
 
     oninsert_trigger: $ => seq(
-      'trigger',
-      'OnInsert',
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      choice('OnInsert', 'ONINSERT', 'Oninsert'),
       '()',
       $.code_block
     ),
 
     onmodify_trigger: $ => seq(
-      'trigger',
-      'OnModify',
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      choice('OnModify', 'ONMODIFY', 'Onmodify'),
       '()',
       $.code_block
     ),
 
     ondelete_trigger: $ => seq(
-      'trigger',
-      'OnDelete',
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      choice('OnDelete', 'ONDELETE', 'Ondelete'),
       '()',
       $.code_block
     ),
 
     onrename_trigger: $ => seq(
-      'trigger',
-      'OnRename',
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      choice('OnRename', 'ONRENAME', 'Onrename'),
       '()',
       $.code_block
     ),
