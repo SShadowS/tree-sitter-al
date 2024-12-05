@@ -1528,7 +1528,7 @@ module.exports = grammar({
     ),
 
     // New rule for case expressions
-    case_expression: $ => choice(
+    _case_expression: $ => choice(
       alias($._quoted_identifier, $.quoted_identifier),  // Add alias for better AST output
       $.identifier,
       $.member_access,
@@ -1537,7 +1537,7 @@ module.exports = grammar({
 
     case_statement: $ => seq(
       'case',
-      field('expression', $.case_expression),
+      field('expression', $._case_expression),
       'of',
       repeat1($.case_branch),
       optional($.else_branch),

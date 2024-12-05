@@ -311,31 +311,21 @@ table 50006 "Test Table"
 (source_file
   (table_declaration
     object_id: (object_id (integer))
-    object_name: (object_name
-      name: (name))
+    object_name: (object_name name: (name))
     (oninsert_trigger
       (code_block
         (case_statement
-          expression: (member_access
-            object: (string_literal)
-            member: (identifier))
+          expression: (quoted_identifier)
           (case_branch
             pattern: (qualified_enum_value
-              enum_type: (member_access
-                object: (string_literal)
-                member: (identifier))
               value: (identifier))
-            statements: (assignment_statement
-              left: (string_literal)
-              right: (string_literal)))
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (member_access
-                object: (string_literal)
-                member: (identifier))
-              value: (string_literal))
-            statements: (procedure_call
-              function_name: (identifier)
-              arguments: (argument_list
-                (string_literal)
-                (string_literal)))))))))
+              statements: (assignment_statement
+                left: (quoted_identifier)
+                right: (string_literal)))
+            (case_branch
+              pattern: (qualified_enum_value)
+              statements: (procedure_call
+                function_name: (identifier)
+                arguments: (argument_list
+                  (quoted_identifier)
+                  (string_literal)))))))))
