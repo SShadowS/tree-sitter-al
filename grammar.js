@@ -283,7 +283,7 @@ module.exports = grammar({
         $.member_access
       )),
       field('operator', '.'),
-      field('member', choice($.identifier, $._quoted_identifier))
+      field('member', $.member)
     )),
 
     method_call: $ => prec.left(2, seq(
