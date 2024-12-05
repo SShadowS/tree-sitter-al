@@ -1544,13 +1544,10 @@ module.exports = grammar({
     ),
 
     _branch_statements: $ => choice(
-      // Single statement with optional semicolon
-      seq($._statement, optional(';')),
-      // Multiple statements
-      seq(
-        repeat1(seq($._statement, ';')),
-        optional($._statement)
-      )
+      // Single statement
+      $._statement,
+      // Multiple statements in a block
+      $.code_block
     ),
 
     else_clause: $ => seq(
