@@ -10,10 +10,6 @@
 module.exports = grammar({
   name: "al",
 
-  conflicts: $ => [
-    [$._expression, $.procedure_call]
-  ],
-
   rules: {
     source_file: $ => repeat($._object),
 
@@ -281,8 +277,11 @@ module.exports = grammar({
       $._quoted_identifier
     ),
 
-    member_access: $ => prec.left(2, seq(
-      field('object', $._primary_expression),
+    member_access: $ => prec.left(3, seq(
+      field('object', choice(
+        $._primary_expression,
+        $.member_access
+      )),
       field('operator', '.'),
       field('member', $.member)
     )),
@@ -1533,19 +1532,10 @@ module.exports = grammar({
     ),
 
     _case_pattern: $ => choice(
-      $._single_pattern,
-      $.multi_pattern
-    ),
-
-    _single_pattern: $ => choice(
       $._literal_value,
       $.qualified_enum_value,
-      $.member_access
-    ),
-
-    multi_pattern: $ => seq(
-      $._single_pattern,
-      repeat1(seq(',', $._single_pattern))
+      $.member_access,
+      $.identifier
     ),
 
     _literal_value: $ => choice(
