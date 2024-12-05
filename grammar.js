@@ -1206,17 +1206,21 @@ module.exports = grammar({
     )),
 
     _argument: $ => choice(
-      alias($._quoted_identifier, $.quoted_identifier),
+      $._literal_argument,
       $._expression
     ),
 
-    // Adjusting the _primary_expression to have left associativity
-    _primary_expression: $ => prec.left(choice(
-      $.integer,
-      $.boolean,
+    _literal_argument: $ => prec(3, choice(
+      alias($._quoted_identifier, $.quoted_identifier),
       $.string_literal,
+      $.integer,
+      $.boolean
+    )),
+
+    // Adjusting the _primary_expression to have clear precedence
+    _primary_expression: $ => prec(2, choice(
+      $._literal_argument,
       $.identifier,
-      $._quoted_identifier,
       seq('(', $._expression, ')')
     )),
 
