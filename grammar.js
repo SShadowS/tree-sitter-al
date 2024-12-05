@@ -676,11 +676,23 @@ module.exports = grammar({
         '(',
         field('source_field', $._field_reference),
         ')'
+      ),
+      seq(
+        field('field', $._field_reference),
+        '=',
+        field('value', $.field_reference_expression)
       )
     ),
 
+    field_reference_expression: $ => seq(
+      'field',
+      '(',
+      field('field_name', $._field_reference),
+      ')'
+    ),
+
     where_clause: $ => seq(
-      'WHERE',
+      choice('WHERE', 'where'),
       '(',
       field('filters', $.table_filters),
       ')'
