@@ -1323,6 +1323,7 @@ module.exports = grammar({
       '(',
       ')'
     ),
+    ),
 
     find_last_method: $ => seq(
       field('object', alias($.identifier, $.object)),
