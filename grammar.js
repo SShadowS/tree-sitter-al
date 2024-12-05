@@ -281,15 +281,15 @@ module.exports = grammar({
       alias($._quoted_identifier, $.quoted_name)
     ),
 
-    member_access: $ => seq(
-      field('object', $._primary_expression),  // Only allow primary expressions as base
-      '.',
+    member_access: $ => prec.left(2, seq(
+      field('object', $._primary_expression),
+      field('operator', '.'),
       field('member', $.member)
-    ),
+    )),
 
-    method_call: $ => prec.left(seq(
-      field('object', $._expression),
-      '.',
+    method_call: $ => prec.left(2, seq(
+      field('object', $._primary_expression),
+      field('operator', '.'),
       field('method', alias(choice($.identifier, $._quoted_identifier), $.method_name)),
       field('arguments', $.argument_list)
     )),
@@ -1220,9 +1220,13 @@ module.exports = grammar({
     // Updating _expression to include enum_member_access
     _base_expression: $ => choice(
       $._primary_expression,
-      prec.left(6, $.member_access),  // Member access has high precedence
-      prec.left(5, $.method_call),    // Method calls slightly lower
-      prec.left(4, $.qualified_enum_value)  // Enum values lower still
+      $.chained_expression
+    ),
+
+    chained_expression: $ => choice(
+      $.member_access,
+      $.method_call,
+      $.qualified_enum_value
     ),
 
     _expression: $ => choice(
