@@ -689,12 +689,12 @@ module.exports = grammar({
       )
     ),
 
-    field_ref: $ => seq(
+    field_ref: $ => prec(2, seq(
       choice('field', 'FIELD', 'Field'),
       '(',
       field('referenced_field', $._field_reference),
       ')'
-    ),
+    )),
 
     where_clause: $ => seq(
       choice('where', 'WHERE', 'Where'),
