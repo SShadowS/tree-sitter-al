@@ -72,9 +72,9 @@ module.exports = grammar({
     permissions_value: $ => $.tabledata_permission_list,
 
     field_class_value: $ => choice(
-      'FlowField',
-      'FlowFilter',
-      'Normal'
+      choice('FlowField', 'FLOWFIELD', 'Flowfield'),
+      choice('FlowFilter', 'FLOWFILTER', 'Flowfilter'),
+      choice('Normal', 'NORMAL', 'Normal')
     ),
 
     calc_formula_value: $ => $._calc_formula_expression,
@@ -94,10 +94,10 @@ module.exports = grammar({
     option_caption_value: $ => $.string_literal,
 
     table_type_value: $ => choice(
-      'Normal',
-      'Temporary',
-      'External',
-      'System'
+      choice('Normal', 'NORMAL', 'Normal'),
+      choice('Temporary', 'TEMPORARY', 'Temporary'),
+      choice('External', 'EXTERNAL', 'External'),
+      choice('System', 'SYSTEM', 'System')
     ),
 
     table_type_property: $ => seq(
@@ -108,13 +108,13 @@ module.exports = grammar({
     ),
 
     data_classification_value: $ => choice(
-      'CustomerContent',
-      'EndUserIdentifiableInformation',
-      'AccountData',
-      'EndUserPseudonymousIdentifiers',
-      'OrganizationIdentifiableInformation',
-      'SystemMetadata',
-      'ToBeClassified'
+      choice('CustomerContent', 'CUSTOMERCONTENT', 'Customercontent'),
+      choice('EndUserIdentifiableInformation', 'ENDUSERIDENTIFIABLEINFORMATION', 'Enduseridentifiableinformation'),
+      choice('AccountData', 'ACCOUNTDATA', 'Accountdata'),
+      choice('EndUserPseudonymousIdentifiers', 'ENDUSERPSEUDONYMOUSIDENTIFIERS', 'Enduserpseudonymousidentifiers'),
+      choice('OrganizationIdentifiableInformation', 'ORGANIZATIONIDENTIFIABLEINFORMATION', 'Organizationidentifiableinformation'),
+      choice('SystemMetadata', 'SYSTEMMETADATA', 'Systemmetadata'),
+      choice('ToBeClassified', 'TOBECLASSIFIED', 'Tobeclassified')
     ),
 
     _codeunit_element: $ => prec(1, choice(
