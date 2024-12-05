@@ -18,3 +18,47 @@ table 50100 "CalcFormula Test"
         }
     }
 }
+
+---
+
+(source_file
+  (table_declaration
+    (object_id
+      (integer))
+    (object_name
+      (name))
+    (fields
+      (field_declaration
+        (integer)
+        (name)
+        (data_type)
+        (field_class_property
+          (field_class_value))
+        (calc_formula_property
+          (min_formula
+            (field_reference
+              (table)
+              (field))
+            (where_clause
+              (where_conditions
+                (where_condition
+                  (identifier)
+                  (field_ref
+                    (identifier))))))))
+      (field_declaration
+        (integer)
+        (name)
+        (data_type)
+        (field_class_property
+          (field_class_value))
+        (calc_formula_property
+          (max_formula
+            (field_reference
+              (table)
+              (field))
+            (where_clause
+              (where_conditions
+                (where_condition
+                  (identifier)
+                  (field_ref
+                    (identifier)))))))))))
