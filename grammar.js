@@ -657,11 +657,11 @@ module.exports = grammar({
 
     table_filter: $ => choice(
       seq(
-        field('field', $._field_reference),
+        field('filter_field', $._field_reference),
         '=',
         'CONST',
         '(',
-        field('value', choice(
+        field('const_value', choice(
           $.string_literal,
           $.identifier,
           $._quoted_identifier,
@@ -670,7 +670,7 @@ module.exports = grammar({
         ')'
       ),
       seq(
-        field('field', $._field_reference),
+        field('filter_field', $._field_reference),
         '=',
         'FIELD',
         '(',
@@ -678,7 +678,7 @@ module.exports = grammar({
         ')'
       ),
       seq(
-        field('field', $._field_reference),
+        field('filter_field', $._field_reference),
         '=',
         field('value', $.field_reference_expression)
       )
@@ -687,7 +687,7 @@ module.exports = grammar({
     field_reference_expression: $ => seq(
       'field',
       '(',
-      field('field_name', $._field_reference),
+      field('referenced_field', $._field_reference),
       ')'
     ),
 
