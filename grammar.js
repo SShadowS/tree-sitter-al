@@ -930,7 +930,8 @@ module.exports = grammar({
         'OnDrillDown', 'ONDRILLDOWN', 'OnDrillDown'
       )),
       '()',
-      $.code_block
+      $.code_block,
+      ';'
     ),
 
     keys: $ => seq(
