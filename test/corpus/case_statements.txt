@@ -288,3 +288,54 @@ table 50005 "Test Table"
               (assignment_statement
                 left: (identifier)
                 right: (string_literal)))))))))
+
+==================
+Case with member access patterns
+==================
+
+table 50006 "Test Table"
+{
+    trigger OnInsert()
+    begin
+        case "E-Mail Type" of
+            "E-Mail Type"::Contact:
+                "E-Mail" := '';
+            "E-Mail Type"::"E-Mail address":
+                VALIDATE("Contact No.", '');
+        end;
+    end;
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (object_id (integer))
+    object_name: (object_name
+      name: (name))
+    (oninsert_trigger
+      (code_block
+        (case_statement
+          expression: (member_access
+            object: (string_literal)
+            member: (identifier))
+          (case_branch
+            pattern: (qualified_enum_value
+              enum_type: (member_access
+                object: (string_literal)
+                member: (identifier))
+              value: (identifier))
+            statements: (assignment_statement
+              left: (string_literal)
+              right: (string_literal)))
+          (case_branch
+            pattern: (qualified_enum_value
+              enum_type: (member_access
+                object: (string_literal)
+                member: (identifier))
+              value: (string_literal))
+            statements: (procedure_call
+              function_name: (identifier)
+              arguments: (argument_list
+                (string_literal)
+                (string_literal)))))))))
