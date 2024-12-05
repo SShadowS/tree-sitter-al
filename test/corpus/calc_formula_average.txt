@@ -1,0 +1,15 @@
+==================
+Average Formula Test
+==================
+
+table 50100 "CalcFormula Test"
+{
+    fields
+    {
+        field(1; "Average Example"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = average("Sales Line".Amount where("Document Type" = field("No.")));
+        }
+    }
+}

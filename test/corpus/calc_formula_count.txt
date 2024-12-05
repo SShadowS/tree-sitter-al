@@ -1,0 +1,15 @@
+=================
+Count Formula Test
+=================
+
+table 50100 "CalcFormula Test"
+{
+    fields
+    {
+        field(1; "Count Example"; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count("Sales Line" where("Document No." = field("No.")));
+        }
+    }
+}

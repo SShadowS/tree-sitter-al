@@ -1,0 +1,21 @@
+==================
+Lookup Formula Test
+==================
+
+table 50100 "CalcFormula Test"
+{
+    fields
+    {
+        field(1; "Simple Lookup"; Text[100])
+        {
+            FieldClass = FlowField;
+            CalcFormula = lookup(Customer.Name where("No." = field("No.")));
+        }
+        field(2; "Complex Lookup"; Text[100])
+        {
+            FieldClass = FlowField;
+            CalcFormula = lookup(Customer.Name where("No." = field("No."),
+                                                    "Country Code" = const('US')));
+        }
+    }
+}

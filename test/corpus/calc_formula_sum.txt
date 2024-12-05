@@ -1,0 +1,15 @@
+===============
+Sum Formula Test
+===============
+
+table 50100 "CalcFormula Test"
+{
+    fields
+    {
+        field(1; "Sum Example"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = sum("Sales Line".Amount where("Document No." = field("No.")));
+        }
+    }
+}

@@ -1,0 +1,20 @@
+===================
+Min/Max Formula Test
+===================
+
+table 50100 "CalcFormula Test"
+{
+    fields
+    {
+        field(1; "Min Example"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = min("Sales Line"."Unit Price" where("Document No." = field("No.")));
+        }
+        field(2; "Max Example"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = max("Sales Line"."Unit Price" where("Document No." = field("No.")));
+        }
+    }
+}
