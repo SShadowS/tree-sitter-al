@@ -1209,12 +1209,17 @@ module.exports = grammar({
     ),
 
     // Individual method definitions
-    get_method: $ => prec(3, seq(
+    // Common base pattern for record operations
+    _record_operation: $ => prec(3, seq(
       field('record', alias($.identifier, $.record)),
-      '.',
+      '.'
+    )),
+
+    get_method: $ => seq(
+      $._record_operation,
       'Get',
       field('arguments', $.argument_list)
-    )),
+    ),
 
     insert_method: $ => seq(
       field('object', alias($.identifier, $.object)),
@@ -1345,8 +1350,7 @@ module.exports = grammar({
     ),
 
     insert_statement: $ => seq(
-      field('record', $.identifier),
-      '.',
+      $._record_operation,
       'Insert',
       '(',
       optional(seq(
@@ -1357,8 +1361,7 @@ module.exports = grammar({
     ),
 
     modify_statement: $ => seq(
-      field('record', $.identifier),
-      '.',
+      $._record_operation,
       'Modify',
       '(',
       optional(field('run_trigger', $.boolean)),
@@ -1366,8 +1369,7 @@ module.exports = grammar({
     ),
 
     delete_statement: $ => seq(
-      field('record', $.identifier),
-      '.',
+      $._record_operation,
       'Delete',
       '(',
       optional(field('run_trigger', $.boolean)),
@@ -1375,8 +1377,7 @@ module.exports = grammar({
     ),
 
     set_range_statement: $ => seq(
-      field('record', $.identifier),
-      '.',
+      $._record_operation,
       'SetRange',
       '(',
       field('field_name', choice($.identifier, $._quoted_identifier)),
@@ -1390,8 +1391,7 @@ module.exports = grammar({
     ),
 
     set_filter_statement: $ => seq(
-      field('record', $.identifier),
-      '.',
+      $._record_operation,
       'SetFilter',
       '(',
       field('field_name', choice($.identifier, $._quoted_identifier)),
@@ -1407,8 +1407,7 @@ module.exports = grammar({
     ),
 
     reset_statement: $ => seq(
-      field('record', $.identifier),
-      '.',
+      $._record_operation,
       'Reset',
       '(',
       ')'
@@ -1456,24 +1455,21 @@ module.exports = grammar({
     ),
 
     find_first_statement: $ => seq(
-      field('record', $.identifier),
-      '.',
+      $._record_operation,
       'FindFirst',
       '(',
       ')'
     ),
 
     find_last_statement: $ => seq(
-      field('record', $.identifier),
-      '.',
+      $._record_operation,
       'FindLast',
       '(',
       ')'
     ),
 
     next_statement: $ => seq(
-      field('record', $.identifier),
-      '.',
+      $._record_operation,
       'Next',
       '(',
       optional(field('steps', $.integer)),
