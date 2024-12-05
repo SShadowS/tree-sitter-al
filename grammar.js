@@ -277,13 +277,13 @@ module.exports = grammar({
       $._quoted_identifier
     ),
 
-    member_access: $ => prec.left(3, seq(
+    member_access: $ => prec.left(4, seq(
       field('object', choice(
         $._primary_expression,
         $.member_access
       )),
       field('operator', '.'),
-      field('member', $.member)
+      field('member', choice($.identifier, $._quoted_identifier))
     )),
 
     method_call: $ => prec.left(2, seq(
@@ -1535,7 +1535,8 @@ module.exports = grammar({
       $._literal_value,
       $.qualified_enum_value,
       $.member_access,
-      $.identifier
+      $.identifier,
+      $._quoted_identifier
     ),
 
     _literal_value: $ => choice(
@@ -1549,22 +1550,24 @@ module.exports = grammar({
       field('statements', $._branch_statements)
     ),
 
-    qualified_enum_value: $ => prec(2, seq(
+    qualified_enum_value: $ => prec(3, seq(
       field('enum_type', $._enum_type_reference),
-      '::',
+      token('::'),  // Make :: a token
       field('value', $._enum_value_reference)
     )),
 
     _enum_type_reference: $ => choice(
       $.identifier,
       $._quoted_identifier,
-      $.member_access
+      $.member_access,
+      $.string_literal
     ),
 
     _enum_value_reference: $ => choice(
       $.identifier,
       $._quoted_identifier,
-      $.string_literal
+      $.string_literal,
+      $.member_access
     ),
 
     _branch_statements: $ => choice(
