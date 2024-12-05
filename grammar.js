@@ -1457,21 +1457,18 @@ module.exports = grammar({
     _simple_object: $ => alias($.identifier, $.object),
 
     _binary_expression: $ => choice(
-      $.comparison_expression,
-      $.arithmetic_expression
+      // Comparison has higher precedence than arithmetic
+      prec.left(6, seq(
+        field('left', $._base_expression),
+        field('operator', $.comparison_operator), 
+        field('right', $._base_expression)
+      )),
+      prec.left(4, seq(
+        field('left', $._base_expression),
+        field('operator', $.arithmetic_operator),
+        field('right', $._base_expression)
+      ))
     ),
-
-    comparison_expression: $ => prec.left(6, seq(
-      field('left', $._base_expression),
-      field('operator', $.comparison_operator),
-      field('right', $._base_expression)
-    )),
-
-    arithmetic_expression: $ => prec.left(4, seq(
-      field('left', $._base_expression),
-      field('operator', $.arithmetic_operator),
-      field('right', $._base_expression)
-    )),
 
     if_statement: $ => prec.right(seq(
       'if',
