@@ -1196,19 +1196,18 @@ module.exports = grammar({
     ),
 
 
-    argument_list: $ => seq(
+    argument_list: $ => prec(2, seq(
       '(',
       optional(seq(
-        choice(
-          alias($._quoted_identifier, $.quoted_identifier),
-          $._expression
-        ),
-        repeat(seq(',', choice(
-          alias($._quoted_identifier, $.quoted_identifier),
-          $._expression
-        )))
+        $._argument,
+        repeat(seq(',', $._argument))
       )),
       ')'
+    )),
+
+    _argument: $ => choice(
+      alias($._quoted_identifier, $.quoted_identifier),
+      $._expression
     ),
 
     // Adjusting the _primary_expression to have left associativity
