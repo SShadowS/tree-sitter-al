@@ -1545,10 +1545,8 @@ module.exports = grammar({
     ),
 
     multi_pattern: $ => prec.left(2, seq(
-      field('pattern', seq(
-        $._single_pattern,
-        repeat1(seq(',', $._single_pattern))
-      ))
+      $._single_pattern,
+      repeat1(seq(',', $._single_pattern))
     )),
 
     _literal_value: $ => choice(
