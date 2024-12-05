@@ -19,6 +19,10 @@ module.exports = grammar({
       $.codeunit_declaration
     ),
 
+    _assignment_operator: $ => token(':='),
+    _double__colon: $ => token('::'),
+    _colon: $ => token(':'),
+
     function_call: $ => prec(2, seq(  // Add precedence of 2
       field('function_name', $.identifier),
       field('arguments', optional($.argument_list))  // Make arguments optional
@@ -1001,9 +1005,6 @@ module.exports = grammar({
       $.identifier  // Ensures custom types are recognized
     ),
 
-    // Set precedence of single colon ':' to 2
-    _colon: $ => token(prec(2, ':')),
-
     _procedure_name: $ => alias($.identifier, $.name),
 
     procedure_modifier: $ => choice('local', 'LOCAL', 'Local'),
@@ -1181,10 +1182,6 @@ module.exports = grammar({
       choice('until', 'UNTIL', 'Until'),
       field('condition', $._expression)
     ),
-
-
-    // Set precedence of assignment operator ':=' to 3
-    _assignment_operator: $ => token(prec(5, ':=')),
 
     assignment_statement: $ => seq(
       field('left', $._assignable_expression),
@@ -1799,14 +1796,11 @@ module.exports = grammar({
       field('statements', $._branch_statements)
     ),
 
-    // Define tokens in order from longest to shortest without precedence
-    _double__colon: $ => token('::'),        // Double colon
-
     qualified_enum_value: $ => seq(
       field('enum_type', $._enum_type_reference),
       field('operator', $._double__colon),
       field('value', $._enum_value_reference)
-    )),
+    ),
 
     _enum_type_reference: $ => choice(
       $._quoted_identifier,
