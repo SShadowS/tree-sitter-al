@@ -1007,12 +1007,12 @@ module.exports = grammar({
 
     _procedure_name: $ => alias($.identifier, $.name),
 
-    procedure_modifier: $ => 'local',
+    procedure_modifier: $ => choice('local', 'LOCAL', 'Local'),
 
     procedure: $ => seq(
       optional($.attribute_list),
       optional(field('modifier', $.procedure_modifier)), 
-      'procedure',
+      choice('procedure', 'PROCEDURE', 'Procedure'),
       field('name', $._procedure_name),
       '(',
       optional($.parameter_list),
@@ -1041,7 +1041,7 @@ module.exports = grammar({
       repeat(seq(';', $.parameter))
     ),
 
-    modifier: $ => 'var',
+    modifier: $ => choice('var', 'VAR', 'Var'),
 
     parameter: $ => seq(
       optional(field('modifier', $.modifier)),
@@ -1107,7 +1107,7 @@ module.exports = grammar({
       'false'
     ),
 
-    temporary: $ => 'temporary',
+    temporary: $ => choice('temporary', 'TEMPORARY', 'Temporary'),
 
     data_type: $ => choice(
       'Integer',
