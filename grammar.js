@@ -780,7 +780,12 @@ module.exports = grammar({
       'average',
       '(',
       field('target', $.field_reference),
-      optional($.where_clause),
+      optional(seq(
+        'where',
+        '(',
+        field('filters', $.table_filters),
+        ')'
+      )),
       ')'
     ),
 
