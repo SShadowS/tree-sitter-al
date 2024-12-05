@@ -33,10 +33,9 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (procedure_call
-          (function_call
-            (identifier)
-            (argument_list
-              (string_literal))))
+          (identifier)
+          (argument_list
+            (string_literal)))
         (get_statement
           (get_method
             (record)
@@ -46,13 +45,12 @@ codeunit 50100 MyCodeunit
           (identifier)
           (integer))
         (procedure_call
-          (function_call
-            (identifier)
-            (argument_list
-              (string_literal)
-              (identifier))))
-        (set_range_statement
           (identifier)
+          (argument_list
+            (string_literal)
+            (identifier)))
+        (set_range_statement
+          (record)
           (string_literal)
           (string_literal))
         (if_statement
@@ -62,10 +60,9 @@ codeunit 50100 MyCodeunit
             (argument_list))
           (code_block
             (procedure_call
-              (function_call
-                (identifier)
-                (argument_list
-                  (string_literal))))))))))
+              (identifier)
+              (argument_list
+                (string_literal)))))))))
 
 ==================
 Complex Parameter Calls
@@ -96,16 +93,15 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (procedure_call
-          (function_call
-            (identifier)
-            (argument_list
-              (string_literal)
-              (member_access
-                (identifier)
-                (member))
-              (member_access
-                (identifier)
-                (member)))))
+          (identifier)
+          (argument_list
+            (string_literal)
+            (member_access
+              (identifier)
+              (member))
+            (member_access
+              (identifier)
+              (member))))
         (if_statement
           (method_call
             (identifier)
@@ -116,7 +112,6 @@ codeunit 50100 MyCodeunit
                 (member))))
           (code_block
             (procedure_call
-              (function_call
-                (identifier)
-                (argument_list
-                  (string_literal))))))))))
+              (identifier)
+              (argument_list
+                (string_literal)))))))))

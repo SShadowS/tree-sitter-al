@@ -103,10 +103,9 @@ table 50100 "My Test Table"
     (oninsert_trigger
       (code_block
         (procedure_call
-          (function_call
-            (identifier)
-            (argument_list
-              (string_literal))))))
+          (identifier)
+          (argument_list
+            (string_literal)))))
     (procedure
       (name)
       (parameter_list

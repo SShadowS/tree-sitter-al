@@ -113,10 +113,9 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (procedure_call
-          (function_call
-            (identifier)
-            (argument_list
-              (string_literal))))))))
+          (identifier)
+          (argument_list
+            (string_literal)))))))
 
 ==================
 Procedure With Var Section
