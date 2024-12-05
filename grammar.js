@@ -1524,15 +1524,20 @@ module.exports = grammar({
       seq(
         field('pattern', $.case_pattern),
         ':',
-        field('body', $.branch_body)
+        field('body', $.case_body)
       )
     ),
 
-    branch_body: $ => choice(
+    case_body: $ => choice(
+      // Explicit block with begin/end
       $.code_block,
+      // Single statement with required semicolon
+      seq($._statement, ';'),
+      // Multiple statements must be in a block
       seq(
-        repeat1($._statement),
-        optional(';')
+        'begin',
+        repeat1(seq($._statement, ';')),
+        'end'
       )
     ),
 
