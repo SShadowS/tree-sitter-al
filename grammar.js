@@ -1213,17 +1213,20 @@ module.exports = grammar({
     // Removed enum_member_access as it's replaced by qualified_enum_value
 
     // Updating _expression to include enum_member_access
-    _expression: $ => choice(
+    _base_expression: $ => choice(
       $._primary_expression,
       $.member_access,
       $.method_call,
-      // Function calls in expressions use the same pattern as procedure_call
       seq(
         field('function_name', $.identifier),
         field('arguments', $.argument_list)
       ),
-      $.binary_expression,
       $.qualified_enum_value
+    ),
+
+    _expression: $ => choice(
+      $._base_expression,
+      $._binary_expression
     ),
 
 
@@ -1448,17 +1451,21 @@ module.exports = grammar({
     object: $ => $._primary_expression,
     _simple_object: $ => alias($.identifier, $.object),
 
-    binary_expression: $ => prec.left(2, choice(
-      seq(  // Comparison operations
-        field('left', $._expression),
-        field('operator', $.comparison_operator),
-        field('right', $._expression)
-      ),
-      seq(  // Arithmetic operations
-        field('left', $._expression),
-        field('operator', $.arithmetic_operator),
-        field('right', $._expression)
-      )
+    _binary_expression: $ => choice(
+      $.comparison_expression,
+      $.arithmetic_expression
+    ),
+
+    comparison_expression: $ => prec.left(6, seq(
+      field('left', $._base_expression),
+      field('operator', $.comparison_operator),
+      field('right', $._base_expression)
+    )),
+
+    arithmetic_expression: $ => prec.left(4, seq(
+      field('left', $._base_expression),
+      field('operator', $.arithmetic_operator),
+      field('right', $._base_expression)
     )),
 
     if_statement: $ => prec.right(seq(
