@@ -646,7 +646,7 @@ module.exports = grammar({
 
     _simple_table_relation: $ => seq(
       field('table', $._table_reference),
-      optional(seq('.', field('field', $._field_reference))),
+      optional(seq($.double_colon, field('field', $._field_reference))),
       optional($.where_clause)
     ),
 
@@ -1180,9 +1180,11 @@ module.exports = grammar({
     ),
 
 
+    assignment_operator: $ => token(prec(1, ':=')),
+
     assignment_statement: $ => seq(
       field('left', $._assignable_expression),
-      ':=',
+      field('operator', $.assignment_operator),
       field('right', $._expression)
     ),
 
@@ -1793,9 +1795,11 @@ module.exports = grammar({
       field('statements', $._branch_statements)
     ),
 
+    double_colon: $ => token('::'),
+
     qualified_enum_value: $ => prec(3, seq(
       field('enum_type', $._enum_type_reference),
-      token('::'),  // Make :: a token
+      field('operator', $.double_colon),
       field('value', $._enum_value_reference)
     )),
 
