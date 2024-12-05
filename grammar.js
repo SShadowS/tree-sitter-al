@@ -1222,7 +1222,7 @@ module.exports = grammar({
         field('arguments', $.argument_list)
       ),
       $.binary_expression,
-      $.enum_member_access
+      $.qualified_enum_value
     ),
 
 
