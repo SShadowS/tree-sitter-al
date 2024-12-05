@@ -1532,20 +1532,24 @@ module.exports = grammar({
     ),
 
     _case_pattern: $ => choice(
+      $._single_pattern,
+      $.multi_pattern
+    ),
+
+    _single_pattern: $ => choice(
       $._literal_value,
       $.qualified_enum_value,
       $.member_access,
       $.identifier,
-      $._quoted_identifier,
-      $.multi_pattern
+      $._quoted_identifier
     ),
 
-    multi_pattern: $ => seq(
-      field('patterns', seq(
-        $._case_pattern,
-        repeat1(seq(',', $._case_pattern))
+    multi_pattern: $ => prec.left(2, seq(
+      field('pattern', seq(
+        $._single_pattern,
+        repeat1(seq(',', $._single_pattern))
       ))
-    ),
+    )),
 
     _literal_value: $ => choice(
       $.integer,
