@@ -1001,6 +1001,8 @@ module.exports = grammar({
       $.identifier  // Ensures custom types are recognized
     ),
 
+    colon: $ => token(':'),
+
     _procedure_name: $ => alias($.identifier, $.name),
 
     procedure_modifier: $ => choice('local', 'LOCAL', 'Local'),
@@ -1762,7 +1764,7 @@ module.exports = grammar({
 
     case_branch: $ => seq(
       field('pattern', $._case_pattern),
-      ':',
+      field('separator', $.colon),
       field('statements', $._branch_statements)
     ),
 
@@ -1795,7 +1797,7 @@ module.exports = grammar({
       field('statements', $._branch_statements)
     ),
 
-    _double_colon: $ => token(prec(2, '::')),
+    _double_colon: $ => token(prec(1, '::')),
 
     qualified_enum_value: $ => prec(3, seq(
       field('enum_type', $._enum_type_reference),
