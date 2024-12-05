@@ -539,11 +539,11 @@ module.exports = grammar({
       ))
     ),
 
-    record_type: $ => seq(
+    record_type: $ => prec.right(seq(
       'Record',
       field('reference', $._table_reference),
       optional('Temporary')
-    ),
+    )),
 
     // Use existing _table_reference rule that already handles both plain and quoted identifiers 
     _table_reference: $ => choice(
