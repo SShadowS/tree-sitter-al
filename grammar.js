@@ -1549,14 +1549,22 @@ module.exports = grammar({
       field('statements', $._branch_statements)
     ),
 
-    qualified_enum_value: $ => seq(
-      field('enum_type', choice(
-        $.identifier,
-        $._quoted_identifier,
-        $.member_access
-      )),
+    qualified_enum_value: $ => prec(2, seq(
+      field('enum_type', $._enum_type_reference),
       '::',
-      field('value', $.identifier)
+      field('value', $._enum_value_reference)
+    )),
+
+    _enum_type_reference: $ => choice(
+      $.identifier,
+      $._quoted_identifier,
+      $.member_access
+    ),
+
+    _enum_value_reference: $ => choice(
+      $.identifier,
+      $._quoted_identifier,
+      $.string_literal
     ),
 
     _branch_statements: $ => choice(
