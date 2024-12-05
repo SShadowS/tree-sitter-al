@@ -1468,7 +1468,7 @@ module.exports = grammar({
       prec(1, alias($.identifier, $.function_name)),
       // Function call with arguments
       prec(2, seq(
-        field('function_name', $.identifier),
+        field('function_name', alias($.identifier, $.function_name)),
         field('arguments', $.argument_list)
       )),
       // Method call
