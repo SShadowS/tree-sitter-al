@@ -637,13 +637,13 @@ module.exports = grammar({
     ),
 
     if_table_relation: $ => prec.right(seq(
-      'IF',
+      choice('IF', 'if', 'If'),
       '(',
       field('condition', $.table_filter),
       ')',
       field('then_relation', $._table_reference),
       optional(seq(
-        'ELSE',
+        choice('ELSE', 'else', 'Else'),
         field('else_relation', $.table_relation_expression)
       ))
     )),
