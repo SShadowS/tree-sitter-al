@@ -680,7 +680,7 @@ module.exports = grammar({
       seq(
         field('filter_field', $._field_reference),
         '=',
-        field('value', $.field_reference_expression)
+        field('value', $.field_ref)
       )
     ),
 
