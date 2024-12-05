@@ -923,12 +923,12 @@ module.exports = grammar({
 
     field_trigger_declaration: $ => seq(
       choice('trigger', 'TRIGGER', 'Trigger'),
-      field('trigger_name', choice(
-        'OnValidate', 'ONVALIDATE', 'OnValidate',
-        'OnLookup', 'ONLOOKUP', 'Onlookup',
-        'OnAssistEdit', 'ONASSISTEDIT', 'OnAssistEdit',
-        'OnDrillDown', 'ONDRILLDOWN', 'OnDrillDown'
-      )),
+      field('type', alias(choice(
+        choice('OnValidate', 'ONVALIDATE', 'Onvalidate'),
+        choice('OnLookup', 'ONLOOKUP', 'Onlookup'),
+        choice('OnAssistEdit', 'ONASSISTEDIT', 'OnAssistEdit'),
+        choice('OnDrillDown', 'ONDRILLDOWN', 'OnDrillDown')
+      ), $.trigger_type)),
       '()',
       $.code_block,
       ';'
