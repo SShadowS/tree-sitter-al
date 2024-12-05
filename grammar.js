@@ -1515,15 +1515,25 @@ module.exports = grammar({
       'case',
       field('expression', $._expression),
       'of',
-      repeat1($.case_branch),
+      $.case_branches,
       optional($.else_clause),
       'end'
     ),
 
-    case_branch: $ => seq(
-      field('pattern', $.case_pattern),
-      ':',
-      repeat($._statement)
+    case_branches: $ => repeat1(
+      seq(
+        field('pattern', $.case_pattern),
+        ':',
+        field('body', $.branch_body)
+      )
+    ),
+
+    branch_body: $ => choice(
+      $.code_block,
+      seq(
+        repeat($._statement),
+        optional(';')
+      )
     ),
 
     case_pattern: $ => choice(
