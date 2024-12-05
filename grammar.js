@@ -1231,7 +1231,7 @@ module.exports = grammar({
 
     _expression: $ => choice(
       $._base_expression,
-      prec.left(1, $._binary_expression)  // Binary expressions have lowest precedence
+      prec.left(1, $.binary_expression)  // Binary expressions have lowest precedence
     ),
 
 
@@ -1456,7 +1456,7 @@ module.exports = grammar({
     object: $ => $._primary_expression,
     _simple_object: $ => alias($.identifier, $.object),
 
-    _binary_expression: $ => choice(
+    binary_expression: $ => choice(
       // Comparison has higher precedence than arithmetic
       prec.left(6, seq(
         field('left', $._base_expression),
