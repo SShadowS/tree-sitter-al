@@ -1122,12 +1122,12 @@ module.exports = grammar({
 
     _statement: $ => prec.right(1, seq(
       choice(
-        $.if_statement,  // Keep this first
-        $.repeat_statement,  // Add repeat...until support
-        $.case_statement,  // Add case statement support
-        $.exit_statement,  // Moved up before procedure_call
+        $.if_statement,
+        $.repeat_statement,
+        $.case_statement,
+        $.exit_statement,
         $.assignment_statement, 
-        $.procedure_call,  // Renamed to be more specific
+        $.procedure_call,  // This will be our only call type
         $.get_statement,
         $.find_set_statement,
         $.find_first_statement,
@@ -1194,7 +1194,11 @@ module.exports = grammar({
       $._primary_expression,
       $.member_access,
       $.method_call,
-      $.function_call,  // Add this line
+      // Function calls in expressions use the same pattern as procedure_call
+      seq(
+        field('function_name', $.identifier),
+        field('arguments', $.argument_list)
+      ),
       $.binary_expression,
       $.enum_member_access
     ),
