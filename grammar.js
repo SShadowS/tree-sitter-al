@@ -1209,7 +1209,7 @@ module.exports = grammar({
     )),
 
     // Increase the precedence of enum_member_access to resolve parsing conflicts
-    enum_member_access: $ => prec.left(seq(
+    enum_member_access: $ => prec(5, seq(
       field('enum_type', $._expression),
       '::',
       field('enum_value', $.identifier)
@@ -1521,14 +1521,15 @@ module.exports = grammar({
     ),
 
     case_clause: $ => seq(
-      field('value_set', $.value_set),
+      field('value_set', $._case_value),
       ':',
-      $.code_block
+      repeat($._statement)
     ),
 
-    value_set: $ => seq(
+    _case_value: $ => choice(
+      $.enum_member_access,
       $._expression,
-      repeat(seq(',', $._expression))
+      seq($._expression, repeat(seq(',', $._expression)))
     ),
 
     else_clause: $ => seq(
