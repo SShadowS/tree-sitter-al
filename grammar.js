@@ -166,11 +166,7 @@ module.exports = grammar({
     ),
 
     permission_type: $ => token(
-      prec.left(
-        repeat1(
-          choice('r', 'R', 'i', 'I', 'm', 'M', 'd', 'D', 'x', 'X')
-        )
-      )
+      prec(-1, /[rRiImMdDxX]+/)
     ),
 
     object_type: $ => choice(
