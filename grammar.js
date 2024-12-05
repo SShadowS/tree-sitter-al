@@ -1209,11 +1209,7 @@ module.exports = grammar({
     )),
 
     // Increase the precedence of enum_member_access to resolve parsing conflicts
-    enum_member_access: $ => prec(5, seq(
-      field('enum_type', $._expression),
-      '::',
-      field('enum_value', $.identifier)
-    )),
+    // Removed enum_member_access as it's replaced by qualified_enum_value
 
     // Updating _expression to include enum_member_access
     _expression: $ => choice(
@@ -1515,49 +1511,46 @@ module.exports = grammar({
       'case',
       field('expression', $._expression),
       'of',
-      $.case_branches,
-      optional($.else_clause),
+      repeat1($.case_branch),
       'end'
     ),
 
-    case_branches: $ => repeat1(
-      seq(
-        field('pattern', $.case_pattern),
-        ':',
-        field('body', $.case_body)
-      )
+    case_branch: $ => seq(
+      field('pattern', $._case_pattern),
+      ':',
+      field('statements', $._branch_statements)
     ),
 
-    case_body: $ => choice(
-      // Explicit block with begin/end
-      $.code_block,
-      // Single statement with required semicolon
-      seq($._statement, ';'),
-      // Multiple statements must be in a block
-      seq(
-        'begin',
-        repeat1(seq($._statement, ';')),
-        'end'
-      )
+    _case_pattern: $ => choice(
+      $._literal_value,
+      $.qualified_enum_value,
+      $.member_access
     ),
 
-    case_pattern: $ => choice(
-      $.literal_pattern,
-      $.enum_pattern,
-      $.multi_pattern
-    ),
-
-    literal_pattern: $ => choice(
+    _literal_value: $ => choice(
       $.integer,
       $.string_literal,
       $.boolean
     ),
 
-    enum_pattern: $ => $.enum_member_access,
+    qualified_enum_value: $ => seq(
+      field('enum_type', choice(
+        $.identifier,
+        $._quoted_identifier,
+        $.member_access
+      )),
+      '::',
+      field('value', $.identifier)
+    ),
 
-    multi_pattern: $ => seq(
-      field('first', choice($.literal_pattern, $.enum_pattern)),
-      repeat1(seq(',', choice($.literal_pattern, $.enum_pattern)))
+    _branch_statements: $ => choice(
+      // Single statement with optional semicolon
+      seq($._statement, optional(';')),
+      // Multiple statements
+      seq(
+        repeat1(seq($._statement, ';')),
+        optional($._statement)
+      )
     ),
 
     else_clause: $ => seq(
