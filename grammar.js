@@ -772,7 +772,7 @@ module.exports = grammar({
       '=',
       choice(
         seq(
-          'field',
+          choice('field', 'FIELD', 'Field'),
           '(',
           field('value', alias(seq(
             $._condition_field_reference
@@ -780,7 +780,7 @@ module.exports = grammar({
           ')'
         ),
         seq(
-          alias('const', $.const),
+          choice('const', 'CONST', 'Const'),
           '(',
           field('value', $.string_literal),
           ')'
