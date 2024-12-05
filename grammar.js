@@ -7,11 +7,6 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-function caseInsensitive(keyword) {
-  return new RegExp(keyword.split('')
-    .map(char => `[${char.toLowerCase()}${char.toUpperCase()}]`)
-    .join(''));
-}
 
 module.exports = grammar({
   name: "al",
@@ -1542,12 +1537,12 @@ module.exports = grammar({
     ),
 
     case_statement: $ => seq(
-      token(caseInsensitive('case')),
+      choice('case', 'CASE', 'Case'),
       field('expression', $._case_expression),
-      token(caseInsensitive('of')),
+      choice('of', 'OF', 'Of'),
       repeat1($.case_branch),
       optional($.else_branch),
-      token(caseInsensitive('end'))
+      choice('end', 'END', 'End')
     ),
 
     case_branch: $ => seq(
