@@ -718,29 +718,58 @@ module.exports = grammar({
       $.sum_formula, 
       $.average_formula,
       $.min_formula,
-      $.max_formula,
-      $.exist_formula
+      $.max_formula
     ),
 
     lookup_formula: $ => seq(
-      'Lookup',
+      'lookup',
       '(',
       field('target', $.field_reference),
-      optional($.where_clause),
+      optional(seq(
+        'where',
+        '(',
+        $.lookup_where_conditions,
+        ')'
+      )),
       ')'
     ),
 
+    lookup_where_conditions: $ => seq(
+      $.lookup_where_condition,
+      repeat(seq(',', $.lookup_where_condition))
+    ),
+
+    lookup_where_condition: $ => seq(
+      field('field', $._condition_field_reference),
+      '=',
+      choice(
+        seq(
+          'field',
+          '(',
+          field('value', alias(seq(
+            $._condition_field_reference
+          ), $.field_ref)),
+          ')'
+        ),
+        seq(
+          alias('const', $.const),
+          '(',
+          field('value', $.string_literal),
+          ')'
+        )
+      )
+    ),
+
     count_formula: $ => seq(
-      'Count',
+      'count',
       '(',
-      field('table', $._table_reference),
+      field('table', alias($._table_reference, $.table_reference)),
       optional($.where_clause),
       ')'
     ),
 
     sum_formula: $ => seq(
-      optional('-'),
-      'Sum',
+      'sum',
       '(',
       field('target', $.field_reference),
       optional($.where_clause),
@@ -748,8 +777,7 @@ module.exports = grammar({
     ),
 
     average_formula: $ => seq(
-      optional('-'),
-      'Average',
+      'average',
       '(',
       field('target', $.field_reference),
       optional($.where_clause),
@@ -757,7 +785,7 @@ module.exports = grammar({
     ),
 
     min_formula: $ => seq(
-      'Min',
+      'min',
       '(',
       field('target', $.field_reference),
       optional($.where_clause),
@@ -765,18 +793,9 @@ module.exports = grammar({
     ),
 
     max_formula: $ => seq(
-      'Max',
+      'max',
       '(',
       field('target', $.field_reference),
-      optional($.where_clause),
-      ')'
-    ),
-
-    exist_formula: $ => seq(
-      optional('-'),
-      'Exist',
-      '(',
-      field('table', $._table_reference),
       optional($.where_clause),
       ')'
     ),
