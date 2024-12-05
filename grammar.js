@@ -1217,10 +1217,6 @@ module.exports = grammar({
       $._primary_expression,
       $.member_access,
       $.method_call,
-      seq(
-        field('function_name', $.identifier),
-        field('arguments', $.argument_list)
-      ),
       $.qualified_enum_value
     ),
 
@@ -1232,12 +1228,12 @@ module.exports = grammar({
 
     procedure_call: $ => choice(
       // Simple procedure call without arguments
-      alias($.identifier, $.function_name),
-      // Function call with optional arguments
-      seq(
+      prec(1, alias($.identifier, $.function_name)),
+      // Function call with arguments
+      prec(2, seq(
         field('function_name', $.identifier),
         field('arguments', $.argument_list)
-      ),
+      )),
       // Method call
       $.method_call
     ),
