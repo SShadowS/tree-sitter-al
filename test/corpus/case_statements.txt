@@ -20,7 +20,8 @@ table 50000 "Test Table"
 (source_file
   (table_declaration
     object_id: (object_id (integer))
-    object_name: (object_name (name))
+    object_name: (object_name
+      name: (name))
     (oninsert_trigger
       (code_block
         (case_statement
@@ -68,7 +69,8 @@ table 50001 "Test Table"
 (source_file
   (table_declaration
     object_id: (object_id (integer))
-    object_name: (object_name (name))
+    object_name: (object_name
+      name: (name))
     (oninsert_trigger
       (code_block
         (case_statement
@@ -118,7 +120,8 @@ table 50002 "Test Table"
 (source_file
   (table_declaration
     object_id: (object_id (integer))
-    object_name: (object_name (name))
+    object_name: (object_name
+      name: (name))
     (oninsert_trigger
       (code_block
         (case_statement
@@ -159,7 +162,8 @@ table 50003 "Test Table"
 (source_file
   (table_declaration
     object_id: (object_id (integer))
-    object_name: (object_name (name))
+    object_name: (object_name
+      name: (name))
     (oninsert_trigger
       (code_block
         (case_statement
@@ -218,7 +222,8 @@ table 50004 "Test Table"
 (source_file
   (table_declaration
     object_id: (object_id (integer))
-    object_name: (object_name (name))
+    object_name: (object_name
+      name: (name))
     (oninsert_trigger
       (code_block
         (case_statement
@@ -262,7 +267,8 @@ table 50005 "Test Table"
 (source_file
   (table_declaration
     object_id: (object_id (integer))
-    object_name: (object_name (name))
+    object_name: (object_name
+      name: (name))
     (oninsert_trigger
       (code_block
         (case_statement
