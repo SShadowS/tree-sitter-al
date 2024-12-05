@@ -1518,7 +1518,7 @@ module.exports = grammar({
     ),
 
     // New rule for case expressions
-    _case_expression: $ => choice(
+    case_expression: $ => choice(
       $._quoted_identifier,
       $.identifier,
       $.member_access,
@@ -1527,7 +1527,7 @@ module.exports = grammar({
 
     case_statement: $ => seq(
       'case',
-      field('expression', $._case_expression),
+      field('expression', $.case_expression),
       'of',
       repeat1($.case_branch),
       optional($.else_branch),
