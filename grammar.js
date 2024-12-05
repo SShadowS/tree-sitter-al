@@ -930,8 +930,7 @@ module.exports = grammar({
         choice('OnDrillDown', 'ONDRILLDOWN', 'OnDrillDown')
       ), $.trigger_type)),
       '()',
-      $.code_block,
-      ';'
+      $.code_block
     ),
 
     keys: $ => seq(
