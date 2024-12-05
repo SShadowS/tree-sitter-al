@@ -1274,7 +1274,7 @@ module.exports = grammar({
     insert_method: $ => seq(
       field('object', alias($.identifier, $.object)),
       '.',
-      'Insert',
+      choice('Insert', 'INSERT', 'Insert'),
       '(',
       optional(seq(
         field('run_trigger', $.boolean),
@@ -1286,7 +1286,7 @@ module.exports = grammar({
     modify_method: $ => seq(
       field('object', alias($.identifier, $.object)),
       '.',
-      'Modify',
+      choice('Modify', 'MODIFY', 'Modify'),
       '(',
       optional(field('run_trigger', $.boolean)),
       ')'
@@ -1307,7 +1307,7 @@ module.exports = grammar({
     delete_method: $ => seq(
       field('object', alias($.identifier, $.object)),
       '.',
-      'Delete',
+      choice('Delete', 'DELETE', 'Delete'),
       '(',
       optional(field('run_trigger', $.boolean)),
       ')'
@@ -1369,7 +1369,7 @@ module.exports = grammar({
     find_first_method: $ => seq(
       field('object', alias($.identifier, $.object)),
       '.',
-      'FindFirst',
+      choice('FindFirst', 'FINDFIRST', 'Findfirst'),
       '(',
       ')'
     ),
@@ -1378,7 +1378,7 @@ module.exports = grammar({
     find_last_method: $ => seq(
       field('object', alias($.identifier, $.object)),
       '.',
-      'FindLast',
+      choice('FindLast', 'FINDLAST', 'Findlast'),
       '(',
       ')'
     ),
@@ -1386,7 +1386,7 @@ module.exports = grammar({
     next_method: $ => seq(
       field('object', alias($.identifier, $.object)),
       '.',
-      'Next',
+      choice('Next', 'NEXT', 'Next'),
       '(',
       optional(field('steps', $.integer)),
       ')'
@@ -1395,7 +1395,7 @@ module.exports = grammar({
     reset_method: $ => seq(
       field('object', alias($.identifier, $.object)),
       '.',
-      'Reset',
+      choice('Reset', 'RESET', 'Reset'),
       '(',
       ')'
     ),
