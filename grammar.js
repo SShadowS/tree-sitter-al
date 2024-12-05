@@ -189,12 +189,12 @@ module.exports = grammar({
       'permissionsetextension'
     ),
 
-    oninsert_trigger: $ => seq(
+    oninsert_trigger: $ => prec(2, seq(
       choice('trigger', 'TRIGGER', 'Trigger'),
       choice('OnInsert', 'ONINSERT', 'Oninsert'),
       '()',
       $.code_block
-    ),
+    )),
 
     onmodify_trigger: $ => seq(
       choice('trigger', 'TRIGGER', 'Trigger'),
