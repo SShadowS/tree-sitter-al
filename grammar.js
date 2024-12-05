@@ -684,7 +684,7 @@ module.exports = grammar({
       )
     ),
 
-    field_reference_expression: $ => seq(
+    field_ref: $ => seq(
       'field',
       '(',
       field('referenced_field', $._field_reference),
@@ -706,7 +706,7 @@ module.exports = grammar({
     where_condition: $ => seq(
       field('field', $._condition_field_reference),
       '=',
-      field('value', $.field_reference_expression)
+      field('value', $.field_ref)
     ),
 
     _field_reference: $ => choice(
