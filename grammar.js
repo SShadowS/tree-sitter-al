@@ -1523,15 +1523,19 @@ module.exports = grammar({
     ),
 
     _case_pattern: $ => choice(
-      $._literal_value,
-      $.qualified_enum_value,
-      $.member_access,
+      $.single_pattern,
       $.multi_pattern
     ),
 
+    single_pattern: $ => choice(
+      $._literal_value,
+      $.qualified_enum_value,
+      $.member_access
+    ),
+
     multi_pattern: $ => seq(
-      $._case_pattern,
-      repeat1(seq(',', $._case_pattern))
+      $.single_pattern,
+      repeat1(seq(',', $.single_pattern))
     ),
 
     _literal_value: $ => choice(
