@@ -1314,7 +1314,7 @@ module.exports = grammar({
         optional(seq(',', field('lock_record', $.boolean)))
       )),
       ')'
-    ),
+    )),
 
     find_first_method: $ => seq(
       field('object', alias($.identifier, $.object)),
@@ -1323,7 +1323,7 @@ module.exports = grammar({
       '(',
       ')'
     ),
-    ),
+    
 
     find_last_method: $ => seq(
       field('object', alias($.identifier, $.object)),
