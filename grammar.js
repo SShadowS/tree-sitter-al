@@ -1536,7 +1536,15 @@ module.exports = grammar({
       $.qualified_enum_value,
       $.member_access,
       $.identifier,
-      $._quoted_identifier
+      $._quoted_identifier,
+      $.multi_pattern
+    ),
+
+    multi_pattern: $ => seq(
+      field('patterns', seq(
+        $._case_pattern,
+        repeat1(seq(',', $._case_pattern))
+      ))
     ),
 
     _literal_value: $ => choice(
