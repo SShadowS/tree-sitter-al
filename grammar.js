@@ -276,14 +276,16 @@ module.exports = grammar({
       $.code_block
     ),
     
-    member_access: $ => prec(5, seq(
-      field('object', $._expression),
+    member: $ => choice(
+      $.identifier,
+      alias($._quoted_identifier, $.quoted_name)
+    ),
+
+    member_access: $ => seq(
+      field('object', $._base_expression),
       '.',
-      field('member', choice(
-        $.identifier,
-        $._quoted_identifier
-      ))
-    )),
+      field('member', $.member)
+    ),
 
     method_call: $ => prec.left(seq(
       field('object', $._expression),
@@ -1218,7 +1220,7 @@ module.exports = grammar({
     // Updating _expression to include enum_member_access
     _base_expression: $ => choice(
       $._primary_expression,
-      $.member_access,
+      prec.left(5, $.member_access),
       $.method_call,
       $.qualified_enum_value
     ),
