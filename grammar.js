@@ -10,6 +10,9 @@
 module.exports = grammar({
   name: "al",
 
+  conflicts: $ => [
+    [$._expression, $.procedure_call]
+  ],
 
   rules: {
     source_file: $ => repeat($._object),
