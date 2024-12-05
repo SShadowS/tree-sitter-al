@@ -1180,7 +1180,7 @@ module.exports = grammar({
     ),
 
 
-    _assignment_operator: $ => token(prec(1, ':=')),
+    _assignment_operator: $ => token(prec(3, ':=')),
 
     assignment_statement: $ => seq(
       field('left', $._assignable_expression),
@@ -1795,7 +1795,7 @@ module.exports = grammar({
       field('statements', $._branch_statements)
     ),
 
-    _double_colon: $ => token('::'),
+    _double_colon: $ => token(prec(2, '::')),
 
     qualified_enum_value: $ => prec(3, seq(
       field('enum_type', $._enum_type_reference),
