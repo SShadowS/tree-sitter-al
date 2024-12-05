@@ -1001,7 +1001,8 @@ module.exports = grammar({
       $.identifier  // Ensures custom types are recognized
     ),
 
-    _colon: $ => token(':'),
+    // Set precedence of single colon ':' to 2
+    _colon: $ => token(prec(2, ':')),
 
     _procedure_name: $ => alias($.identifier, $.name),
 
@@ -1182,6 +1183,7 @@ module.exports = grammar({
     ),
 
 
+    // Set precedence of assignment operator ':=' to 3
     _assignment_operator: $ => token(prec(3, ':=')),
 
     assignment_statement: $ => seq(
@@ -1797,7 +1799,8 @@ module.exports = grammar({
       field('statements', $._branch_statements)
     ),
 
-    _double__colon: $ => token(prec(1, '::')),
+    // Increase precedence of double colon '::' to 4
+    _double__colon: $ => token(prec(4, '::')),
 
     qualified_enum_value: $ => prec(3, seq(
       field('enum_type', $._enum_type_reference),
