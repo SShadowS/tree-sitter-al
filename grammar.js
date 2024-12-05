@@ -780,9 +780,9 @@ module.exports = grammar({
           ')'
         ),
         seq(
-          choice('const', 'CONST', 'Const'),
+          field('keyword', alias(choice('const', 'CONST', 'Const'), $.const)),
           '(',
-          field('value', $.string_literal),
+          optional(field('value', $.string_literal)),
           ')'
         )
       )
