@@ -1799,10 +1799,10 @@ module.exports = grammar({
       field('statements', $._branch_statements)
     ),
 
-    // Increase precedence of double colon '::' to 4
-    _double__colon: $ => token(prec(4, '::')),
+    // Define tokens in order from longest to shortest without precedence
+    _double__colon: $ => token('::'),        // Double colon
 
-    qualified_enum_value: $ => prec(3, seq(
+    qualified_enum_value: $ => seq(
       field('enum_type', $._enum_type_reference),
       field('operator', $._double__colon),
       field('value', $._enum_value_reference)
