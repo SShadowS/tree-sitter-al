@@ -922,12 +922,12 @@ module.exports = grammar({
     ),
 
     field_trigger_declaration: $ => seq(
-      'trigger',
+      choice('trigger', 'TRIGGER', 'Trigger'),
       field('trigger_name', choice(
-        'OnValidate',
-        'OnLookup',
-        'OnAssistEdit',
-        'OnDrillDown'
+        'OnValidate', 'ONVALIDATE', 'OnValidate',
+        'OnLookup', 'ONLOOKUP', 'Onlookup',
+        'OnAssistEdit', 'ONASSISTEDIT', 'OnAssistEdit',
+        'OnDrillDown', 'ONDRILLDOWN', 'OnDrillDown'
       )),
       '()',
       $.code_block
@@ -1177,9 +1177,9 @@ module.exports = grammar({
     )),
 
     repeat_statement: $ => seq(
-      'repeat',
+      choice('repeat', 'REPEAT', 'Repeat'),
       repeat1($._statement),
-      'until',
+      choice('until', 'UNTIL', 'Until'),
       field('condition', $._expression)
     ),
 
@@ -1611,9 +1611,9 @@ module.exports = grammar({
     ),
 
     exit_statement: $ => choice(
-      prec(1, 'exit'),  // Simple exit has lower precedence
+      prec(1, choice('exit', 'EXIT', 'Exit')),  // Simple exit has lower precedence
       prec(2, seq(      // Exit with expression has higher precedence
-        'exit',
+        choice('exit', 'EXIT', 'Exit'),
         '(',
         $._expression,
         ')'
