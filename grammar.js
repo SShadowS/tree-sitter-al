@@ -1304,7 +1304,7 @@ module.exports = grammar({
       ')'
     ),
 
-    find_set_method: $ => seq(
+    find_set_method: $ => prec(3, seq(
       field('record', alias($.identifier, $.record)),
       '.',
       'FindSet',
