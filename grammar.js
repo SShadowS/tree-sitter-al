@@ -276,10 +276,16 @@ module.exports = grammar({
       $.code_block
     ),
     
-    member_access: $ => prec.left(seq(
-      field('object', $._expression),
+    member_access: $ => prec.left(3, seq(  // Higher precedence than other expressions
+      field('object', choice(
+        $.string_literal,    // Explicitly list string literals first
+        $._primary_expression
+      )),
       '.',
-      field('member', alias(choice($.identifier, $._quoted_identifier), $.member))
+      field('member', choice(
+        $.identifier,
+        $._quoted_identifier
+      ))
     )),
 
     method_call: $ => prec.left(seq(
@@ -1184,6 +1190,7 @@ module.exports = grammar({
     ),
 
     _assignable_expression: $ => choice(
+      $.string_literal,      // List string literals first
       $.identifier,
       $.member_access
     ),
