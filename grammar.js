@@ -1063,7 +1063,8 @@ module.exports = grammar({
       repeat1(choice(
         /[^"\n\\]/,  // Any character except quote, newline or backslash
         /\\[\\'"]/,  // Escaped quotes or backslashes
-        /\./         // Allow dots in quoted identifiers
+        /\./,        // Allow dots in quoted identifiers
+        /-/         // Add hyphen support explicitly
       )),
       '"'
     )),
@@ -1188,9 +1189,8 @@ module.exports = grammar({
     ),
 
     _assignable_expression: $ => choice(
-      $.string_literal,      // List string literals first
+      $._quoted_identifier,  // Put quoted identifier first
       $.identifier,
-      $._quoted_identifier,  // Add support for quoted identifiers
       $.member_access
     ),
 
@@ -1517,9 +1517,17 @@ module.exports = grammar({
       ')'
     ),
 
+    // New rule for case expressions
+    _case_expression: $ => choice(
+      $._quoted_identifier,
+      $.identifier,
+      $.member_access,
+      $.qualified_enum_value
+    ),
+
     case_statement: $ => seq(
       'case',
-      field('expression', $._expression),
+      field('expression', $._case_expression),
       'of',
       repeat1($.case_branch),
       optional($.else_branch),
@@ -1568,16 +1576,14 @@ module.exports = grammar({
     )),
 
     _enum_type_reference: $ => choice(
-      $.identifier,
       $._quoted_identifier,
-      $.member_access,
-      $.string_literal
+      $.identifier,
+      $.member_access
     ),
 
     _enum_value_reference: $ => choice(
-      $.identifier,
       $._quoted_identifier,
-      $.string_literal,
+      $.identifier,
       $.member_access
     ),
 
