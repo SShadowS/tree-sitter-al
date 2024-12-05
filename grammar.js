@@ -697,7 +697,7 @@ module.exports = grammar({
     ),
 
     where_clause: $ => seq(
-      choice('WHERE', 'WHERE', 'Where'),
+      choice('where', 'WHERE', 'Where'),
       '(',
       field('conditions', $.where_conditions),
       ')'
