@@ -593,12 +593,12 @@ module.exports = grammar({
       'field',
       '(',
       field('id', $.integer),
-      token(';'),  // Make semicolon an explicit token
+      token(';'),  // Make semi_colon an explicit token
       field('name', alias(choice(
         $._quoted_identifier,
         $.identifier
       ), $.name)),
-      token(';'),  // Make semicolon an explicit token
+      token(';'),  // Make semi_colon an explicit token
       field('type', $.data_type),
       ')',
       optional(seq(
@@ -646,7 +646,7 @@ module.exports = grammar({
 
     _simple_table_relation: $ => seq(
       field('table', $._table_reference),
-      optional(seq($._double_colon, field('field', $._field_reference))),
+      optional(seq($._double__colon, field('field', $._field_reference))),
       optional($.where_clause)
     ),
 
@@ -1001,7 +1001,7 @@ module.exports = grammar({
       $.identifier  // Ensures custom types are recognized
     ),
 
-    colon: $ => token(':'),
+    _colon: $ => token(':'),
 
     _procedure_name: $ => alias($.identifier, $.name),
 
@@ -1764,7 +1764,7 @@ module.exports = grammar({
 
     case_branch: $ => seq(
       field('pattern', $._case_pattern),
-      field('separator', $.colon),
+      $._colon,
       field('statements', $._branch_statements)
     ),
 
@@ -1797,11 +1797,11 @@ module.exports = grammar({
       field('statements', $._branch_statements)
     ),
 
-    _double_colon: $ => token(prec(1, '::')),
+    _double__colon: $ => token(prec(1, '::')),
 
     qualified_enum_value: $ => prec(3, seq(
       field('enum_type', $._enum_type_reference),
-      field('operator', $._double_colon),
+      field('operator', $._double__colon),
       field('value', $._enum_value_reference)
     )),
 
