@@ -31,7 +31,7 @@ module.exports = grammar({
     ), $.name)),
 
     table_declaration: $ => seq(
-      'table', 
+      choice('table', 'TABLE', 'Table'),
       field('object_id', $.object_id),
       field('object_name', $.object_name),
       '{',
@@ -40,7 +40,7 @@ module.exports = grammar({
     ),
 
     codeunit_declaration: $ => seq(
-      'codeunit',
+      choice('codeunit', 'CODEUNIT', 'Codeunit'),
       field('object_id', $.object_id),
       field('object_name', $.object_name),
       '{',
@@ -439,7 +439,7 @@ module.exports = grammar({
     ),
 
     var_section: $ => seq(
-      'var',
+      choice('var', 'VAR', 'Var'),
       repeat1($.variable_declaration)
     ),
 
@@ -587,7 +587,7 @@ module.exports = grammar({
     ),
 
     fields: $ => seq(
-      'fields',
+      choice('fields', 'FIELDS', 'Fields'),
       '{',
       repeat($.field_declaration),
       '}'
@@ -934,7 +934,7 @@ module.exports = grammar({
     ),
 
     keys: $ => seq(
-      'keys',
+      choice('keys', 'KEYS', 'Keys'),
       '{',
       repeat($.key_declaration),
       '}'
@@ -1140,9 +1140,9 @@ module.exports = grammar({
 
     // Define code blocks with explicit keyword handling
     code_block: $ => prec.right(1, seq(
-      'begin',
+      choice('begin', 'BEGIN', 'Begin'),
       optional(repeat($._statement)),
-      'end',
+      choice('end', 'END', 'End'),
       optional(';')
     )),
 
