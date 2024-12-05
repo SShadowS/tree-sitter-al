@@ -1334,17 +1334,17 @@ module.exports = grammar({
       ')'
     ),
 
-    randomize_function: $ => choice(
-      // No parameters version
-      choice('RANDOMIZE', 'Randomize', 'randomize'),
-      // With parameters version  
+    randomize_function: $ => prec.left(2, choice(
+      // With parameters version (try this first)
       seq(
         choice('RANDOMIZE', 'Randomize', 'randomize'),
         '(',
         field('seed', $._expression),
         ')'
-      )
-    ),
+      ),
+      // No parameters version (try this second)
+      choice('RANDOMIZE', 'Randomize', 'randomize')
+    )),
 
     round_function: $ => seq(
       choice('ROUND', 'Round', 'round'),
