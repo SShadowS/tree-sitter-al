@@ -1222,8 +1222,222 @@ module.exports = grammar({
     _primary_expression: $ => prec(2, choice(
       $._literal_argument,
       $.identifier,
-      seq('(', $._expression, ')')
+      seq('(', $._expression, ')'),
+      $.built_in_function
     )),
+
+    built_in_function: $ => choice(
+      // Date/Time Functions
+      $.currentdatetime_function,
+      $.currentdate_function,
+      $.currenttime_function,
+      $.today_function,
+      $.workdate_function,
+      $.createdatetime_function,
+      $.time_function,
+
+      // System Functions
+      $.userid_function,
+      $.companyname_function,
+      $.serialnumber_function,
+      $.sessionid_function,
+      $.windowsloggedonuser_function,
+
+      // Math Functions
+      $.random_function,
+      $.randomize_function,
+      $.round_function,
+      $.abs_function,
+      $.power_function,
+
+      // Database Functions
+      $.count_function,
+      $.getrangemin_function,
+      $.getrangemax_function,
+      $.getfilters_function,
+
+      // String Functions
+      $.strlen_function,
+      $.copystr_function,
+      $.lowercase_function,
+      $.uppercase_function,
+      $.format_function
+    ),
+
+    // Date/Time Functions
+    currentdatetime_function: $ => choice(
+      'CURRENTDATETIME', 'CurrentDateTime', 'Currentdatetime'
+    ),
+
+    currentdate_function: $ => choice(
+      'CURRENTDATE', 'CurrentDate', 'Currentdate'
+    ),
+
+    currenttime_function: $ => choice(
+      'CURRENTTIME', 'CurrentTime', 'Currenttime'
+    ),
+
+    today_function: $ => choice(
+      'TODAY', 'Today', 'today'
+    ),
+
+    workdate_function: $ => choice(
+      'WORKDATE', 'WorkDate', 'Workdate'
+    ),
+
+    createdatetime_function: $ => seq(
+      choice('CREATEDATETIME', 'CreateDateTime', 'Createdatetime'),
+      '(',
+      field('date', $._expression),
+      ',',
+      field('time', $._expression),
+      ')'
+    ),
+
+    time_function: $ => seq(
+      choice('TIME', 'Time', 'time'),
+      '(',
+      field('hours', $._expression),
+      ',',
+      field('minutes', $._expression),
+      ',',
+      field('seconds', $._expression),
+      ')'
+    ),
+
+    // System Functions
+    userid_function: $ => choice(
+      'USERID', 'UserId', 'Userid'
+    ),
+
+    companyname_function: $ => choice(
+      'COMPANYNAME', 'CompanyName', 'Companyname'
+    ),
+
+    serialnumber_function: $ => choice(
+      'SERIALNUMBER', 'SerialNumber', 'Serialnumber'
+    ),
+
+    sessionid_function: $ => choice(
+      'SESSIONID', 'SessionId', 'Sessionid'
+    ),
+
+    windowsloggedonuser_function: $ => choice(
+      'WINDOWSLOGGEDONUSER', 'WindowsLoggedOnUser', 'Windowsloggedonuser'
+    ),
+
+    // Math Functions
+    random_function: $ => seq(
+      choice('RANDOM', 'Random', 'random'),
+      '(',
+      field('range', $._expression),
+      ')'
+    ),
+
+    randomize_function: $ => seq(
+      choice('RANDOMIZE', 'Randomize', 'randomize'),
+      optional(seq(
+        '(',
+        field('seed', $._expression),
+        ')'
+      ))
+    ),
+
+    round_function: $ => seq(
+      choice('ROUND', 'Round', 'round'),
+      '(',
+      field('number', $._expression),
+      optional(seq(
+        ',',
+        field('precision', $._expression)
+      )),
+      ')'
+    ),
+
+    abs_function: $ => seq(
+      choice('ABS', 'Abs', 'abs'),
+      '(',
+      field('number', $._expression),
+      ')'
+    ),
+
+    power_function: $ => seq(
+      choice('POWER', 'Power', 'power'),
+      '(',
+      field('base', $._expression),
+      ',',
+      field('exponent', $._expression),
+      ')'
+    ),
+
+    // Database Functions
+    count_function: $ => seq(
+      choice('COUNT', 'Count', 'count'),
+      '(',
+      field('record', $._expression),
+      ')'
+    ),
+
+    getrangemin_function: $ => seq(
+      choice('GETRANGEMIN', 'GetRangeMin', 'Getrangemin'),
+      '(',
+      field('field', $._expression),
+      ')'
+    ),
+
+    getrangemax_function: $ => seq(
+      choice('GETRANGEMAX', 'GetRangeMax', 'Getrangemax'),
+      '(',
+      field('field', $._expression),
+      ')'
+    ),
+
+    getfilters_function: $ => seq(
+      choice('GETFILTERS', 'GetFilters', 'Getfilters'),
+      '(',
+      field('record', $._expression),
+      ')'
+    ),
+
+    // String Functions
+    strlen_function: $ => seq(
+      choice('STRLEN', 'StrLen', 'Strlen'),
+      '(',
+      field('string', $._expression),
+      ')'
+    ),
+
+    copystr_function: $ => seq(
+      choice('COPYSTR', 'CopyStr', 'Copystr'),
+      '(',
+      field('string', $._expression),
+      ',',
+      field('position', $._expression),
+      optional(seq(',', field('length', $._expression))),
+      ')'
+    ),
+
+    lowercase_function: $ => seq(
+      choice('LOWERCASE', 'LowerCase', 'Lowercase'),
+      '(',
+      field('string', $._expression),
+      ')'
+    ),
+
+    uppercase_function: $ => seq(
+      choice('UPPERCASE', 'UpperCase', 'Uppercase'),
+      '(',
+      field('string', $._expression),
+      ')'
+    ),
+
+    format_function: $ => seq(
+      choice('FORMAT', 'Format', 'format'),
+      '(',
+      field('value', $._expression),
+      optional(seq(',', field('format_number', $._expression))),
+      ')'
+    ),
 
     // Increase the precedence of enum_member_access to resolve parsing conflicts
     // Removed enum_member_access as it's replaced by qualified_enum_value

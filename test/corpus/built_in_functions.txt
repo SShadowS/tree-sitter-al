@@ -1,0 +1,339 @@
+==================
+Built-in Functions
+==================
+
+codeunit 50100 "Built-in Functions Test"
+{
+    trigger OnRun()
+    begin
+        TestDateTimeFunctions();
+        TestSystemFunctions();
+        TestMathFunctions();
+        TestStringFunctions();
+        TestDatabaseFunctions();
+    end;
+
+    local procedure TestDateTimeFunctions()
+    var
+        DT: DateTime;
+        D: Date;
+        T: Time;
+    begin
+        DT := CURRENTDATETIME;
+        D := CurrentDate;
+        T := CURRENTTIME;
+        D := Today;
+        D := WorkDate;
+        DT := CreateDateTime(D, T);
+        T := Time(12, 0, 0);
+    end;
+
+    local procedure TestSystemFunctions()
+    var
+        User: Text;
+        Company: Text;
+        Serial: Text;
+        Session: Integer;
+        WindowsUser: Text;
+    begin
+        User := USERID;
+        Company := CompanyName;
+        Serial := SerialNumber;
+        Session := SESSIONID;
+        WindowsUser := WindowsLoggedOnUser;
+    end;
+
+    local procedure TestMathFunctions()
+    var
+        X: Integer;
+        Y: Decimal;
+    begin
+        X := Random(100);
+        Randomize(42);
+        Y := Round(3.14159, 0.01);
+        Y := Abs(-42);
+        Y := Power(2, 3);
+    end;
+
+    local procedure TestStringFunctions()
+    var
+        Str: Text;
+        Len: Integer;
+    begin
+        Len := STRLEN('Test');
+        Str := CopyStr('Hello World', 1, 5);
+        Str := LowerCase('HELLO');
+        Str := UpperCase('hello');
+        Str := Format(42);
+    end;
+
+    local procedure TestDatabaseFunctions()
+    var
+        Customer: Record Customer;
+        Count: Integer;
+        MinValue: Code[20];
+        MaxValue: Code[20];
+        Filters: Text;
+    begin
+        Count := COUNT(Customer);
+        MinValue := GetRangeMin(Customer."No.");
+        MaxValue := GetRangeMax(Customer."No.");
+        Filters := GetFilters(Customer);
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (name
+        (identifier)))
+    (onrun_trigger
+      (code_block
+        (procedure_call
+          (function_name
+            (identifier)))
+        (procedure_call
+          (function_name
+            (identifier)))
+        (procedure_call
+          (function_name
+            (identifier)))
+        (procedure_call
+          (function_name
+            (identifier)))
+        (procedure_call
+          (function_name
+            (identifier)))))
+    (procedure
+      (modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (currentdatetime_function)))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (currentdate_function)))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (currenttime_function)))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (today_function)))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (workdate_function)))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (createdatetime_function
+              (identifier)
+              (identifier))))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (time_function
+              (integer)
+              (integer)
+              (integer))))))
+    (procedure
+      (modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (userid_function)))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (companyname_function)))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (serialnumber_function)))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (sessionid_function)))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (windowsloggedonuser_function)))))
+    (procedure
+      (modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (random_function
+              (integer))))
+        (procedure_call
+          (built_in_function
+            (randomize_function
+              (integer))))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (round_function
+              (decimal)
+              (decimal))))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (abs_function
+              (integer))))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (power_function
+              (integer)
+              (integer))))))
+    (procedure
+      (modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (strlen_function
+              (string_literal))))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (copystr_function
+              (string_literal)
+              (integer)
+              (integer))))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (lowercase_function
+              (string_literal))))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (uppercase_function
+              (string_literal))))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (format_function
+              (integer))))))
+    (procedure
+      (modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (record_type
+              (identifier))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (code_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (code_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (count_function
+              (identifier))))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (getrangemin_function
+              (member_access
+                (identifier)
+                (member)))))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (getrangemax_function
+              (member_access
+                (identifier)
+                (member)))))
+        (assignment_statement
+          (identifier)
+          (built_in_function
+            (getfilters_function
+              (identifier))))))))
