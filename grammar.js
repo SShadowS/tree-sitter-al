@@ -278,7 +278,7 @@ module.exports = grammar({
     
     member: $ => choice(
       $.identifier,
-      alias($._quoted_identifier, $.quoted_name)
+      $._quoted_identifier
     ),
 
     member_access: $ => prec.left(2, seq(
