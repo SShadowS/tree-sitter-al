@@ -1334,13 +1334,16 @@ module.exports = grammar({
       ')'
     ),
 
-    randomize_function: $ => seq(
+    randomize_function: $ => choice(
+      // No parameters version
       choice('RANDOMIZE', 'Randomize', 'randomize'),
-      optional(seq(
+      // With parameters version  
+      seq(
+        choice('RANDOMIZE', 'Randomize', 'randomize'),
         '(',
         field('seed', $._expression),
         ')'
-      ))
+      )
     ),
 
     round_function: $ => seq(
