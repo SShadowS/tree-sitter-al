@@ -1220,10 +1220,10 @@ module.exports = grammar({
     // Updating _expression to include enum_member_access
     _base_expression: $ => choice(
       $._primary_expression,
-      $.chained_expression
+      $._chained_expression
     ),
 
-    chained_expression: $ => choice(
+    _chained_expression: $ => choice(
       $.member_access,
       $.method_call,
       $.qualified_enum_value
