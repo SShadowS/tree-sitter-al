@@ -1482,15 +1482,15 @@ module.exports = grammar({
     ),
 
     if_statement: $ => prec.right(seq(
-      'if',
+      choice('if', 'IF', 'If'),
       field('condition', $._expression),
-      'then',
+      choice('then', 'THEN', 'Then'),
       field('then_branch', choice(
         $._statement,
         $.code_block
       )),
       optional(seq(
-        'else',
+        choice('else', 'ELSE', 'Else'),
         field('else_branch', choice(
           $._statement,
           $.code_block
