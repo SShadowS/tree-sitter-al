@@ -282,7 +282,7 @@ module.exports = grammar({
     ),
 
     member_access: $ => seq(
-      field('object', $._base_expression),
+      field('object', $._primary_expression),  // Only allow primary expressions as base
       '.',
       field('member', $.member)
     ),
@@ -1220,14 +1220,14 @@ module.exports = grammar({
     // Updating _expression to include enum_member_access
     _base_expression: $ => choice(
       $._primary_expression,
-      prec.left(5, $.member_access),
-      $.method_call,
-      $.qualified_enum_value
+      prec.left(6, $.member_access),  // Member access has high precedence
+      prec.left(5, $.method_call),    // Method calls slightly lower
+      prec.left(4, $.qualified_enum_value)  // Enum values lower still
     ),
 
     _expression: $ => choice(
       $._base_expression,
-      $._binary_expression
+      prec.left(1, $._binary_expression)  // Binary expressions have lowest precedence
     ),
 
 
