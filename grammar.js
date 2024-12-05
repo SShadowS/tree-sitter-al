@@ -697,7 +697,7 @@ module.exports = grammar({
     ),
 
     where_clause: $ => seq(
-      choice('WHERE', 'where'),
+      choice('WHERE', 'WHERE', 'Where'),
       '(',
       field('conditions', $.where_conditions),
       ')'
@@ -750,11 +750,11 @@ module.exports = grammar({
     ),
 
     lookup_formula: $ => seq(
-      'lookup',
+      choice('lookup', 'LOOKUP', 'Lookup'),
       '(',
       field('target', $.field_reference),
       optional(seq(
-        'where',
+        choice('where', 'WHERE', 'Where'),
         '(',
         $.lookup_where_conditions,
         ')'
@@ -789,7 +789,7 @@ module.exports = grammar({
     ),
 
     count_formula: $ => seq(
-      'count',
+      choice('count', 'COUNT', 'Count'),
       '(',
       field('table', alias($._table_reference, $.table_reference)),
       optional($.where_clause),
@@ -797,7 +797,7 @@ module.exports = grammar({
     ),
 
     sum_formula: $ => seq(
-      'sum',
+      choice('sum', 'SUM', 'Sum'),
       '(',
       field('target', $.field_reference),
       optional($.where_clause),
@@ -805,7 +805,7 @@ module.exports = grammar({
     ),
 
     average_formula: $ => seq(
-      'average',
+      choice('average', 'AVERAGE', 'Average'),
       '(',
       field('target', $.field_reference),
       optional($.where_clause),
@@ -813,7 +813,7 @@ module.exports = grammar({
     ),
 
     min_formula: $ => seq(
-      'min',
+      choice('min', 'MIN', 'Min'),
       '(',
       field('target', $.field_reference),
       optional($.where_clause),
@@ -821,7 +821,7 @@ module.exports = grammar({
     ),
 
     max_formula: $ => seq(
-      'max',
+      choice('max', 'MAX', 'Max'),
       '(',
       field('target', $.field_reference),
       optional($.where_clause),
