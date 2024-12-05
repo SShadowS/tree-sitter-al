@@ -1531,7 +1531,7 @@ module.exports = grammar({
     branch_body: $ => choice(
       $.code_block,
       seq(
-        repeat($._statement),
+        repeat1($._statement),
         optional(';')
       )
     ),
