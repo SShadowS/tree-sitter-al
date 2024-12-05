@@ -694,8 +694,19 @@ module.exports = grammar({
     where_clause: $ => seq(
       choice('WHERE', 'where'),
       '(',
-      field('filters', $.table_filters),
+      field('conditions', $.where_conditions),
       ')'
+    ),
+
+    where_conditions: $ => seq(
+      $.where_condition,
+      repeat(seq(',', $.where_condition))
+    ),
+
+    where_condition: $ => seq(
+      field('field', $._condition_field_reference),
+      '=',
+      field('value', $.field_reference_expression)
     ),
 
     _field_reference: $ => choice(
