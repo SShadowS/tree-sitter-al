@@ -1515,21 +1515,34 @@ module.exports = grammar({
       'case',
       field('expression', $._expression),
       'of',
-      repeat1($.case_clause),
+      repeat1($.case_branch),
       optional($.else_clause),
       'end'
     ),
 
-    case_clause: $ => seq(
-      field('value_set', $._case_value),
+    case_branch: $ => seq(
+      field('pattern', $.case_pattern),
       ':',
       repeat($._statement)
     ),
 
-    _case_value: $ => choice(
-      $.enum_member_access,
-      $._expression,
-      seq($._expression, repeat(seq(',', $._expression)))
+    case_pattern: $ => choice(
+      $.literal_pattern,
+      $.enum_pattern,
+      $.multi_pattern
+    ),
+
+    literal_pattern: $ => choice(
+      $.integer,
+      $.string_literal,
+      $.boolean
+    ),
+
+    enum_pattern: $ => $.enum_member_access,
+
+    multi_pattern: $ => seq(
+      field('first', choice($.literal_pattern, $.enum_pattern)),
+      repeat1(seq(',', choice($.literal_pattern, $.enum_pattern)))
     ),
 
     else_clause: $ => seq(
