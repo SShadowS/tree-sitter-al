@@ -20,8 +20,8 @@ module.exports = grammar({
     ),
 
     _assignment_operator: $ => token(':='),
-    _double__colon: $ => token('::'),
-    _colon: $ => token(':'),
+    _double__colon: $ => token(prec(-1, '::')),
+    _colon: $ => token(/:(?!:)/),
 
     function_call: $ => prec(2, seq(  // Add precedence of 2
       field('function_name', $.identifier),
