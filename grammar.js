@@ -1184,7 +1184,7 @@ module.exports = grammar({
 
 
     // Set precedence of assignment operator ':=' to 3
-    _assignment_operator: $ => token(prec(3, ':=')),
+    _assignment_operator: $ => token(prec(5, ':=')),
 
     assignment_statement: $ => seq(
       field('left', $._assignable_expression),
