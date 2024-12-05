@@ -1190,6 +1190,7 @@ module.exports = grammar({
     _assignable_expression: $ => choice(
       $.string_literal,      // List string literals first
       $.identifier,
+      $._quoted_identifier,  // Add support for quoted identifiers
       $.member_access
     ),
 
