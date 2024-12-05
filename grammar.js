@@ -1204,12 +1204,16 @@ module.exports = grammar({
     ),
 
 
-    procedure_call: $ => seq(
-      field('call', choice(
-        $.function_call,
-        $.method_call,
-        alias($.identifier, $.function_name)  // Allow simple procedure names without ()
-      ))
+    procedure_call: $ => choice(
+      // Simple procedure call without arguments
+      alias($.identifier, $.function_name),
+      // Function call with optional arguments
+      seq(
+        field('function_name', $.identifier),
+        field('arguments', $.argument_list)
+      ),
+      // Method call
+      $.method_call
     ),
 
     // Individual method definitions
