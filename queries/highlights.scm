@@ -159,27 +159,34 @@
  (#match? @function.builtin "^(FORMAT|Format|format)$"))
 
 ; Function definitions
-(procedure name: (identifier) @function)
+(procedure
+  name: (_) @function)
 
 ; Function calls
-(procedure_call function_name: (identifier) @function.call)
-(method_call method: (identifier) @function.method)
+(function_call
+  function_name: (_) @function.call)
+(method_call
+  method: (_) @function.method)
 
 ; Variables and parameters
-(parameter parameter_name: (identifier) @variable.parameter)
-(variable_declaration name: (identifier) @variable)
+(parameter
+  parameter_name: (_) @variable.parameter)
+(variable_declaration
+  name: (_) @variable)
 
 ; Properties
-(property_name) @property
+(property
+  property_name: (_) @property)
 
 ; Field declarations
-(field_declaration name: (_) @field)
+(field_declaration
+  name: (_) @field)
 
 ; Object declarations
-(table_declaration 
-  object_name: (name) @type)
-(codeunit_declaration 
-  object_name: (name) @type)
+(table_declaration
+  object_name: (_) @type)
+(codeunit_declaration
+  object_name: (_) @type)
 
 ; Numbers
 (integer) @number
@@ -187,14 +194,9 @@
 ; Strings
 (string_literal) @string
 
-; Comments (if your grammar supports them)
-(comment) @comment
 
 ; Boolean literals
-[
-  "true"
-  "false"
-] @constant.builtin
+(boolean) @constant.builtin
 
 ; Punctuation
 ["(" ")" "{" "}" "[" "]" ";" ","] @punctuation.delimiter
@@ -203,4 +205,5 @@
 (object_id) @number
 
 ; Triggers
-(field_trigger_declaration type: (trigger_type) @keyword.control)
+(field_trigger_declaration
+  type: (_) @keyword.control)
