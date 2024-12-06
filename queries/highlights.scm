@@ -49,9 +49,6 @@
 
 ; Built-in types
 [
-  "BigInteger"
-  "BIGINTEGER"
-  "biginteger"
   "Blob"
   "BLOB"
   "blob"

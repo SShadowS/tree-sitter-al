@@ -484,7 +484,6 @@ module.exports = grammar({
     basic_type: $ => choice(
       // Numeric Types
       choice('Integer', 'INTEGER', 'Integer'),
-      choice('BigInteger', 'BIGINTEGER', 'Biginteger'),
       choice('Decimal', 'DECIMAL', 'Decimal'),
       choice('Byte', 'BYTE', 'Byte'),
       
