@@ -1100,10 +1100,10 @@ module.exports = grammar({
       ';'
     ),
 
-    // Define boolean literals before identifier rule to ensure proper precedence
+    // Define boolean literals as tokens with precedence
     boolean: $ => choice(
-      'true', 
-      'false'
+      token(prec(1, 'true')),
+      token(prec(1, 'false'))
     ),
 
     temporary: $ => choice('temporary', 'TEMPORARY', 'Temporary'),
