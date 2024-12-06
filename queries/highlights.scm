@@ -144,7 +144,10 @@
 (comment) @comment
 
 ; Boolean literals
-(boolean) @constant.builtin
+[
+  "true"
+  "false"
+] @constant.builtin
 
 ; Punctuation
 ["(" ")" "{" "}" "[" "]" ";" ","] @punctuation.delimiter
