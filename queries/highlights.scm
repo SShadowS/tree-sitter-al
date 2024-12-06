@@ -96,34 +96,67 @@
 ] @operator
 
 ; Built-in functions
-[
-  (currentdatetime_function)
-  (currentdate_function) 
-  (currenttime_function)
-  (today_function)
-  (workdate_function)
-  (createdatetime_function)
-  (time_function)
-  (userid_function)
-  (companyname_function)
-  (serialnumber_function)
-  (sessionid_function)
-  (windowsloggedonuser_function)
-  (random_function)
-  (randomize_function)
-  (round_function)
-  (abs_function)
-  (power_function)
-  (count_function)
-  (getrangemin_function)
-  (getrangemax_function)
-  (getfilters_function)
-  (strlen_function)
-  (copystr_function)
-  (lowercase_function)
-  (uppercase_function)
-  (format_function)
-] @function.builtin
+; Date/Time Functions
+((identifier) @function.builtin
+ (#match? @function.builtin "^(CURRENTDATETIME|CurrentDateTime|Currentdatetime)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(CURRENTDATE|CurrentDate|Currentdate)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(CURRENTTIME|CurrentTime|Currenttime)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(TODAY|Today|today)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(WORKDATE|WorkDate|Workdate)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(CREATEDATETIME|CreateDateTime|Createdatetime)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(TIME|Time|time)$"))
+
+; System Functions
+((identifier) @function.builtin
+ (#match? @function.builtin "^(USERID|UserId|Userid)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(COMPANYNAME|CompanyName|Companyname)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(SERIALNUMBER|SerialNumber|Serialnumber)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(SESSIONID|SessionId|Sessionid)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(WINDOWSLOGGEDONUSER|WindowsLoggedOnUser|Windowsloggedonuser)$"))
+
+; Math Functions
+((identifier) @function.builtin
+ (#match? @function.builtin "^(RANDOM|Random|random)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(RANDOMIZE|Randomize|randomize)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(ROUND|Round|round)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(ABS|Abs|abs)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(POWER|Power|power)$"))
+
+; Database Functions
+((identifier) @function.builtin
+ (#match? @function.builtin "^(COUNT|Count|count)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(GETRANGEMIN|GetRangeMin|Getrangemin)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(GETRANGEMAX|GetRangeMax|Getrangemax)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(GETFILTERS|GetFilters|Getfilters)$"))
+
+; String Functions
+((identifier) @function.builtin
+ (#match? @function.builtin "^(STRLEN|StrLen|Strlen)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(COPYSTR|CopyStr|Copystr)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(LOWERCASE|LowerCase|Lowercase)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(UPPERCASE|UpperCase|Uppercase)$"))
+((identifier) @function.builtin
+ (#match? @function.builtin "^(FORMAT|Format|format)$"))
 
 ; Function definitions
 (procedure name: (identifier) @function)
