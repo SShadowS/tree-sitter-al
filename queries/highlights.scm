@@ -96,7 +96,34 @@
 ] @operator
 
 ; Built-in functions
-(built_in_function) @function.builtin
+[
+  (currentdatetime_function)
+  (currentdate_function) 
+  (currenttime_function)
+  (today_function)
+  (workdate_function)
+  (createdatetime_function)
+  (time_function)
+  (userid_function)
+  (companyname_function)
+  (serialnumber_function)
+  (sessionid_function)
+  (windowsloggedonuser_function)
+  (random_function)
+  (randomize_function)
+  (round_function)
+  (abs_function)
+  (power_function)
+  (count_function)
+  (getrangemin_function)
+  (getrangemax_function)
+  (getfilters_function)
+  (strlen_function)
+  (copystr_function)
+  (lowercase_function)
+  (uppercase_function)
+  (format_function)
+] @function.builtin
 
 ; Function definitions
 (procedure name: (identifier) @function)
