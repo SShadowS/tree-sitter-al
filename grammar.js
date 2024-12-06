@@ -19,9 +19,9 @@ module.exports = grammar({
       $.codeunit_declaration
     ),
 
-    _assignment_operator: $ => token(':='),
-    _double__colon: $ => token(prec(-1, '::')),
-    _colon: $ => token(/:(?!:)/),
+    _assignment_operator: $ => token.immediate(':='),
+    _double__colon: $ => token.immediate('::'),
+    _colon: $ => token(':'),
 
     function_call: $ => prec(2, seq(  // Add precedence of 2
       field('function_name', $.identifier),
