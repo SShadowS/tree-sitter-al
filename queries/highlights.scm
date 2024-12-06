@@ -49,10 +49,10 @@
 
 ; Built-in types
 [
-  "Blob"
   "BLOB"
+  "Blob" 
   "blob"
-  "Boolean"
+  "Boolean" 
   "BOOLEAN"
   "boolean"
   "Code"

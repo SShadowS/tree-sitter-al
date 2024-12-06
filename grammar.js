@@ -505,7 +505,7 @@ module.exports = grammar({
       choice('Variant', 'VARIANT', 'Variant'),
       choice('Dialog', 'DIALOG', 'Dialog'),
       choice('Action', 'ACTION', 'Action'),
-      choice('Blob', 'BLOB', 'Blob'),
+      choice('BLOB', 'Blob', 'blob'),
       choice('FilterPageBuilder', 'FILTERPAGEBUILDER', 'Filterpagebuilder'),
       choice('JsonToken', 'JSONTOKEN', 'Jsontoken'),
       choice('JsonValue', 'JSONVALUE', 'Jsonvalue'),
