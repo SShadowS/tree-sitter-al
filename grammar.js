@@ -1152,13 +1152,13 @@ module.exports = grammar({
       $.keys
     ),
 
-    _statement: $ => prec.right(1, seq(
+    _statement: $ => prec.right(seq(
       choice(
         $.if_statement,
         $.repeat_statement,
         $.case_statement,
         $.exit_statement,
-        $.assignment_statement,
+        prec(2, $.assignment_statement),  // Increase precedence
         $.procedure_call,  // This will be our only call type
         $.get_statement,
         $.find_set_statement,
@@ -1183,7 +1183,7 @@ module.exports = grammar({
       field('condition', $._expression)
     ),
 
-    assignment_statement: $ => prec(3, seq(  // Increased precedence from 2 to 3
+    assignment_statement: $ => prec(3, seq(
       field('left', $._assignable_expression),
       field('operator', $._assignment_operator),
       field('right', $._expression)
@@ -1766,8 +1766,8 @@ module.exports = grammar({
       field('pattern', $._case_pattern),
       $._colon,
       field('statements', choice(
-        $._statement,     // Allow any statement directly
-        $.code_block      // Or a code block
+        $.code_block,                   // Allows multiple statements in a code block
+        seq($._statement, repeat($._statement))  // Allows multiple statements directly
       ))
     ),
 
