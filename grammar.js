@@ -1154,11 +1154,12 @@ module.exports = grammar({
 
     _statement: $ => prec.right(1, seq(
       choice(
+        $.case_branch_assignment, // Add new specific assignment type
         $.if_statement,
         $.repeat_statement,
         $.case_statement,
         $.exit_statement,
-        $.assignment_statement, 
+        $.assignment_statement,
         $.procedure_call,  // This will be our only call type
         $.get_statement,
         $.find_set_statement,
@@ -1174,6 +1175,13 @@ module.exports = grammar({
       ),
       optional(';')
     )),
+
+    // Add new rule specifically for case branch assignments
+    case_branch_assignment: $ => seq(
+      field('left', alias($.identifier, $.variable_name)), // Force identifier interpretation
+      field('operator', $._assignment_operator),
+      field('right', $._expression)
+    ),
 
     repeat_statement: $ => seq(
       choice('repeat', 'REPEAT', 'Repeat'),
