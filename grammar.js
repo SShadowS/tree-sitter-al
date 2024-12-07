@@ -1154,7 +1154,6 @@ module.exports = grammar({
 
     _statement: $ => prec.right(1, seq(
       choice(
-        $.case_branch_assignment, // Add new specific assignment type
         $.if_statement,
         $.repeat_statement,
         $.case_statement,
@@ -1176,12 +1175,6 @@ module.exports = grammar({
       optional(';')
     )),
 
-    // Add new rule specifically for case branch assignments
-    case_branch_assignment: $ => seq(
-      field('left', alias($.identifier, $.variable_name)), // Force identifier interpretation
-      field('operator', $._assignment_operator),
-      field('right', $._expression)
-    ),
 
     repeat_statement: $ => seq(
       choice('repeat', 'REPEAT', 'Repeat'),
@@ -1190,7 +1183,7 @@ module.exports = grammar({
       field('condition', $._expression)
     ),
 
-    assignment_statement: $ => prec(2, seq(  // Increase precedence for assignments
+    assignment_statement: $ => prec(3, seq(  // Higher precedence for assignments
       field('left', $._assignable_expression),
       field('operator', $._assignment_operator),
       field('right', $._expression)
