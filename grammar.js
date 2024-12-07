@@ -1190,14 +1190,14 @@ module.exports = grammar({
       field('condition', $._expression)
     ),
 
-    assignment_statement: $ => seq(
+    assignment_statement: $ => prec(2, seq(  // Increase precedence for assignments
       field('left', $._assignable_expression),
       field('operator', $._assignment_operator),
       field('right', $._expression)
-    ),
+    )),
 
     _assignable_expression: $ => choice(
-      alias($._quoted_identifier, $.quoted_identifier),  // Add alias for better AST output
+      alias($._quoted_identifier, $.quoted_identifier),
       $.identifier,
       $.member_access
     ),
@@ -1771,12 +1771,19 @@ module.exports = grammar({
     case_branch: $ => seq(
       field('pattern', $._case_pattern),
       $._colon,
-      field('statements', $._branch_statements)
+      field('statements', choice(
+        $.assignment_statement,  // Allow direct assignment statements
+        $.code_block            // Or a code block
+      ))
     ),
 
     _case_pattern: $ => choice(
-      $._single_pattern,
-      $.multi_pattern
+      $._literal_value,
+      $.qualified_enum_value, 
+      $.member_access,
+      $.identifier,
+      $._quoted_identifier,
+      $.string_literal  // Explicitly allow string literals as patterns
     ),
 
     _single_pattern: $ => choice(
