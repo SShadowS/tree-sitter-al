@@ -1746,21 +1746,21 @@ module.exports = grammar({
     ),
 
     // New rule for case expressions
-    _case_expression: $ => choice(
-      alias($._quoted_identifier, $.quoted_identifier),  // Add alias for better AST output
-      $.identifier,
-      $.member_access,
-      $.qualified_enum_value
-    ),
+    _case_expression: $ => prec(2, choice(
+      $._primary_expression,
+      $.member_access, 
+      $.qualified_enum_value,
+      $.function_call
+    )),
 
-    case_statement: $ => seq(
+    case_statement: $ => prec(2, seq(
       choice('case', 'CASE', 'Case'),
       field('expression', $._case_expression),
       choice('of', 'OF', 'Of'),
       repeat1($.case_branch),
       optional($.else_branch),
       choice('end', 'END', 'End')
-    ),
+    )),
 
     case_branch: $ => seq(
       field('pattern', $._case_pattern),
@@ -1771,14 +1771,15 @@ module.exports = grammar({
       ))
     ),
 
-    _case_pattern: $ => choice(
+    _case_pattern: $ => prec(2, choice(
       $._literal_value,
-      $.qualified_enum_value, 
-      $.member_access,
+      $.qualified_enum_value,
+      $.member_access, 
       $.identifier,
       $._quoted_identifier,
-      $.string_literal  // Explicitly allow string literals as patterns
-    ),
+      $.string_literal,
+      $.function_call
+    )),
 
     _single_pattern: $ => choice(
       $._literal_value,
