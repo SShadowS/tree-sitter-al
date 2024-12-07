@@ -1183,7 +1183,7 @@ module.exports = grammar({
       field('condition', $._expression)
     ),
 
-    assignment_statement: $ => prec(3, seq(  // Higher precedence for assignments
+    assignment_statement: $ => prec(3, seq(  // Increased precedence from 2 to 3
       field('left', $._assignable_expression),
       field('operator', $._assignment_operator),
       field('right', $._expression)
@@ -1192,7 +1192,8 @@ module.exports = grammar({
     _assignable_expression: $ => choice(
       alias($._quoted_identifier, $.quoted_identifier),
       $.identifier,
-      $.member_access
+      $.member_access,
+      $.qualified_enum_value  // Added to support enum assignments
     ),
 
 
@@ -1765,8 +1766,8 @@ module.exports = grammar({
       field('pattern', $._case_pattern),
       $._colon,
       field('statements', choice(
-        $.assignment_statement,  // Allow direct assignment statements
-        $.code_block            // Or a code block
+        $._statement,     // Allow any statement directly
+        $.code_block      // Or a code block
       ))
     ),
 
