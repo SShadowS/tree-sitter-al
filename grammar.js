@@ -825,15 +825,6 @@ module.exports = grammar({
 
 
 
-    filter_operator: $ => choice(
-      '<>',
-      '=',
-      '<=',
-      '>=',
-      '<',
-      '>',
-      'IN'
-    ),
 
     blank_zero_property: $ => seq(
       'BlankZero',
