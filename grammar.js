@@ -1745,12 +1745,13 @@ module.exports = grammar({
       ')'
     ),
 
-    // New rule for case expressions
+    // New rule for case expressions with explicit handling of identifiers
     _case_expression: $ => prec(2, choice(
-      $._primary_expression,
-      $.member_access, 
+      $.member_access,
       $.qualified_enum_value,
-      $.function_call
+      $.function_call,
+      // Put simple identifiers last and be explicit about them
+      alias($.identifier, $.simple_identifier)
     )),
 
     case_statement: $ => prec(2, seq(
