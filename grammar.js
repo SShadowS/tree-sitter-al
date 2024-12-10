@@ -23,7 +23,7 @@ module.exports = grammar({
     _double__colon: $ => token.immediate('::'),
     _colon: $ => token(':'),
 
-    function_call: $ => prec(2, seq(  // Add precedence of 2
+    function_call: $ => prec(3, seq(  // Increase precedence to 3
       field('function_name', $.identifier),
       field('arguments', optional($.argument_list))  // Make arguments optional
     )),
