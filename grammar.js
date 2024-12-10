@@ -136,7 +136,6 @@ module.exports = grammar({
       $.code_block
     ),
 
-    number: $ => /\d+/,
 
     _table_element: $ => prec(1, choice(
       $.fields,  // Fields section should be primary
@@ -175,21 +174,6 @@ module.exports = grammar({
       prec(-1, /[rRiImMdDxX]+/)
     ),
 
-    object_type: $ => choice(
-      'tabledata',
-      'table',
-      'codeunit',
-      'report',
-      'page',
-      'query',
-      'xmlport',
-      'controladdin',
-      'enum',
-      'interface',
-      'profile',
-      'permissionset',
-      'permissionsetextension'
-    ),
 
     oninsert_trigger: $ => seq(
       choice('trigger', 'TRIGGER', 'Trigger'),
@@ -656,10 +640,6 @@ module.exports = grammar({
     ),
 
 
-    table_filters: $ => seq(
-      $.table_filter,
-      repeat(seq(',', $.table_filter))
-    ),
 
     table_filter: $ => choice(
       seq(
@@ -843,10 +823,6 @@ module.exports = grammar({
 
 
 
-    filter_conditions: $ => seq(
-      $.filter_condition,
-      repeat(seq(',', $.filter_condition))
-    ),
 
     filter_condition: $ => seq(
       field('field', $._field_reference),
@@ -1074,17 +1050,6 @@ module.exports = grammar({
 
     integer: $ => /\d+/,
 
-    string: $ => prec(1, choice(  // Lower precedence than _quoted_identifier
-      $._quoted_identifier,
-      seq(
-        '"',
-        repeat(choice(
-          /[^"\n\\]/,   // Any char except quote, newline or backslash
-          /\\[\\'"]/    // Escaped quotes or backslashes
-        )),
-        '"'
-      )
-    )),
 
     string_literal: $ => token(seq(
       "'",
@@ -1795,10 +1760,6 @@ module.exports = grammar({
       $._quoted_identifier
     ),
 
-    multi_pattern: $ => prec.left(2, seq(
-      $._single_pattern,
-      repeat1(seq(',', $._single_pattern))
-    )),
 
     _literal_value: $ => choice(
       $.integer,
@@ -1834,10 +1795,6 @@ module.exports = grammar({
       $.code_block
     ),
 
-    else_clause: $ => seq(
-      'else',
-      $.code_block
-    ),
 
     exit_statement: $ => choice(
       prec(1, choice('exit', 'EXIT', 'Exit')),  // Simple exit has lower precedence
