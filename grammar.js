@@ -1767,8 +1767,8 @@ module.exports = grammar({
       field('pattern', $._case_pattern),
       $._colon,
       field('statements', choice(
-        $.code_block,                   // Allows multiple statements in a code block
-        seq($._statement, repeat($._statement))  // Allows multiple statements directly
+        $.code_block,           // Multiple statements must be in a block
+        $._statement           // Single statement without a block
       ))
     ),
 
