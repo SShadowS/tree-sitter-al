@@ -11,6 +11,8 @@
 module.exports = grammar({
   name: "al",
 
+  //word: $ => $.identifier,
+
   rules: {
     source_file: $ => repeat($._object),
 
@@ -23,10 +25,10 @@ module.exports = grammar({
     _double__colon: $ => token.immediate('::'),
     _colon: $ => token(':'),
 
-    function_call: $ => prec(3, seq(  // Increase precedence to 3
+    function_call: $ => seq(  // Increase precedence to 3
       field('function_name', $.identifier),
       field('arguments', optional($.argument_list))  // Make arguments optional
-    )),
+    ),
 
     object_id: $ => seq($.integer),
     object_name: $ => field('name', alias(choice(
@@ -1058,7 +1060,7 @@ module.exports = grammar({
 
     identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
 
-    _quoted_identifier: $ => prec(2, seq(
+    _quoted_identifier: $ => seq(
       '"',
       repeat1(choice(
         /[^"\n\\]/,  // Any character except quote, newline or backslash
@@ -1068,7 +1070,7 @@ module.exports = grammar({
         /\s/        // Allow spaces in quoted identifiers
       )),
       '"'
-    )),
+    ),
 
     integer: $ => /\d+/,
 
@@ -1154,12 +1156,12 @@ module.exports = grammar({
 
     _statement: $ => prec.right(seq(
       choice(
+        $.assignment_statement,
         $.if_statement,
         $.repeat_statement,
         $.case_statement,
         $.exit_statement,
-        prec(2, $.assignment_statement),  // Increase precedence
-        $.procedure_call,  // This will be our only call type
+        $.procedure_call,
         $.get_statement,
         $.find_set_statement,
         $.find_first_statement,
@@ -1183,11 +1185,11 @@ module.exports = grammar({
       field('condition', $._expression)
     ),
 
-    assignment_statement: $ => prec(3, seq(
-      field('left', $._assignable_expression),
-      field('operator', $._assignment_operator),
-      field('right', $._expression)
-    )),
+    assignment_statement: $ => seq(
+      field('left', $._assignable_expression),    // Can never be function call in AL
+      field('operator', $._assignment_operator),  // Is defined as a token
+      field('right', $._expression)               // Can be alot, but also contains a builtin function called Count
+    ),
 
     assignable_member_access: $ => prec.left(4, seq(
       field('object', choice(
@@ -1200,12 +1202,10 @@ module.exports = grammar({
     )),
 
     _assignable_expression: $ => choice(
-      alias($._quoted_identifier, $.quoted_identifier),
       $.identifier,
-      $.assignable_member_access,
-      $.qualified_enum_value  // Added to support enum assignments
+      alias($._quoted_identifier, $.quoted_identifier),
+      $.assignable_member_access
     ),
-
 
     argument_list: $ => prec(2, seq(
       '(',
@@ -1231,9 +1231,9 @@ module.exports = grammar({
     // Adjusting the _primary_expression to have clear precedence
     _primary_expression: $ => prec(2, choice(
       $._literal_argument,
-      $.identifier,
+      prec(3, $.identifier),
       seq('(', $._expression, ')'),
-      $.built_in_function
+      prec(2, $.built_in_function)
     )),
 
     built_in_function: $ => choice(
@@ -1452,10 +1452,6 @@ module.exports = grammar({
       ')'
     ),
 
-    // Increase the precedence of enum_member_access to resolve parsing conflicts
-    // Removed enum_member_access as it's replaced by qualified_enum_value
-
-    // Updating _expression to include enum_member_access
     _base_expression: $ => choice(
       $._primary_expression,
       $._chained_expression
@@ -1760,8 +1756,7 @@ module.exports = grammar({
       $.member_access,
       $.qualified_enum_value,
       $.function_call,
-      // Put simple identifiers last and be explicit about them
-      alias($.identifier, $.simple_identifier)
+      $.identifier
     )),
 
     case_statement: $ => prec(2, seq(
@@ -1777,8 +1772,8 @@ module.exports = grammar({
       field('pattern', $._case_pattern),
       $._colon,
       field('statements', choice(
-        $.code_block,           // Multiple statements must be in a block
-        $._statement           // Single statement without a block
+        $.code_block,
+        $._statement
       ))
     ),
 
@@ -1835,9 +1830,7 @@ module.exports = grammar({
     ),
 
     _branch_statements: $ => choice(
-      // Single statement
       $._statement,
-      // Multiple statements in a block
       $.code_block
     ),
 
