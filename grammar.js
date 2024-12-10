@@ -824,29 +824,6 @@ module.exports = grammar({
 
 
 
-    filter_condition: $ => seq(
-      field('field', $._field_reference),
-      $.filter_operator,
-      field('value', choice(
-        // Pattern 1: CONST(Value)
-        seq('CONST', '(', choice($.identifier, $._quoted_identifier, $.string_literal), ')'),
-        
-        // Pattern 2: FILTER(Value)  
-        seq('FILTER', '(', choice($.identifier, $._quoted_identifier, $.string_literal), ')'),
-        
-        // Pattern 3: FIELD(FieldName)
-        seq('FIELD', '(', choice($.identifier, $._quoted_identifier), ')'),
-        
-        // Pattern 4: FIELD(UPPERLIMIT(FieldName))
-        seq('FIELD', '(', 'UPPERLIMIT', '(', choice($.identifier, $._quoted_identifier), ')', ')'),
-        
-        // Pattern 5: FIELD(FILTER(FieldName))
-        seq('FIELD', '(', 'FILTER', '(', choice($.identifier, $._quoted_identifier), ')', ')'),
-        
-        // Pattern 6: FIELD(UPPERLIMIT(FILTER(FieldName)))
-        seq('FIELD', '(', 'UPPERLIMIT', '(', 'FILTER', '(', choice($.identifier, $._quoted_identifier), ')', ')', ')')
-      ))
-    ),
 
     filter_operator: $ => choice(
       '<>',
@@ -1459,88 +1436,12 @@ module.exports = grammar({
       field('arguments', $.argument_list)
     ),
 
-    insert_method: $ => seq(
-      field('object', alias($.identifier, $.object)),
-      '.',
-      choice('Insert', 'INSERT', 'Insert'),
-      '(',
-      optional(seq(
-        field('run_trigger', $.boolean),
-        optional(seq(',', field('insert_with_system_id', $.boolean)))
-      )),
-      ')'
-    ),
 
-    modify_method: $ => seq(
-      field('object', alias($.identifier, $.object)),
-      '.',
-      choice('Modify', 'MODIFY', 'Modify'),
-      '(',
-      optional(field('run_trigger', $.boolean)),
-      ')'
-    ),
 
-    modify_all_method: $ => seq(
-      field('object', alias($.identifier, $.object)),
-      '.',
-      'ModifyAll',
-      '(',
-      field('field', choice($.identifier, $._quoted_identifier)),
-      ',',
-      field('new_value', choice($.string_literal, $.identifier, $.boolean, $.integer)),
-      optional(seq(',', field('run_trigger', $.boolean))),
-      ')'
-    ),
 
-    delete_method: $ => seq(
-      field('object', alias($.identifier, $.object)),
-      '.',
-      choice('Delete', 'DELETE', 'Delete'),
-      '(',
-      optional(field('run_trigger', $.boolean)),
-      ')'
-    ),
 
-    delete_all_method: $ => seq(
-      field('object', alias($.identifier, $.object)),
-      '.',
-      'DeleteAll',
-      '(',
-      optional(field('run_trigger', $.boolean)),
-      ')'
-    ),
 
-    set_range_method: $ => seq(
-      field('object', alias($.identifier, $.object)),
-      '.',
-      'SetRange',
-      '(',
-      field('field', choice($.identifier, $._quoted_identifier)),
-      ',',
-      field('from_value', choice($.string_literal, $.identifier, $.integer)),
-      optional(seq(
-        ',',
-        field('to_value', choice($.string_literal, $.identifier, $.integer))
-      )),
-      ')'
-    ),
 
-    set_filter_method: $ => seq(
-      field('object', alias($.identifier, $.object)),
-      '.',
-      'SetFilter',
-      '(',
-      field('field', choice($.identifier, $._quoted_identifier)),
-      ',',
-      field('filter_string', $.string_literal),
-      repeat(
-        seq(
-          ',',
-          field('parameter', $._expression)
-        )
-      ),
-      ')'
-    ),
 
     find_set_method: $ => prec(3, seq(
       field('record', alias($.identifier, $.record)),
@@ -1554,39 +1455,10 @@ module.exports = grammar({
       ')'
     )),
 
-    find_first_method: $ => seq(
-      field('object', alias($.identifier, $.object)),
-      '.',
-      choice('FindFirst', 'FINDFIRST', 'Findfirst'),
-      '(',
-      ')'
-    ),
     
 
-    find_last_method: $ => seq(
-      field('object', alias($.identifier, $.object)),
-      '.',
-      choice('FindLast', 'FINDLAST', 'Findlast'),
-      '(',
-      ')'
-    ),
 
-    next_method: $ => seq(
-      field('object', alias($.identifier, $.object)),
-      '.',
-      choice('Next', 'NEXT', 'Next'),
-      '(',
-      optional(field('steps', $.integer)),
-      ')'
-    ),
 
-    reset_method: $ => seq(
-      field('object', alias($.identifier, $.object)),
-      '.',
-      choice('Reset', 'RESET', 'Reset'),
-      '(',
-      ')'
-    ),
 
     insert_statement: $ => seq(
       $._record_operation,
