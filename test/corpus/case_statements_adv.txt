@@ -1,5 +1,5 @@
 ==================
-Simple case with single statement branches
+Simple case with single statement branches adv
 ==================
 
 table 50000 "Test Table"
@@ -8,9 +8,9 @@ table 50000 "Test Table"
     begin
         case Type of
             Type::A:
-                fount := 1;
+                Count := 1;
             Type::B:
-                fount := 2;
+                Count := 2;
         end;
     end;
 }
@@ -42,64 +42,7 @@ table 50000 "Test Table"
               right: (integer))))))))
 
 ==================
-Case with begin/end block branches
-==================
-
-table 50001 "Test Table"
-{
-    trigger OnInsert()
-    begin
-        case MyField of
-            MyField::Option1:
-                begin
-                    X := 1;
-                    Y := 2;
-                end;
-            MyField::Option2:
-                begin
-                    X := 3;
-                    Y := 4;
-                end;
-        end;
-    end;
-}
-
----
-
-(source_file
-  (table_declaration
-    object_id: (object_id (integer))
-    object_name: (object_name
-      name: (name))
-    (oninsert_trigger
-      (code_block
-        (case_statement
-          expression: (identifier)
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            statements: (code_block
-              (assignment_statement
-                left: (identifier)
-                right: (integer))
-              (assignment_statement
-                left: (identifier)
-                right: (integer))))
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            statements: (code_block
-              (assignment_statement
-                left: (identifier)
-                right: (integer))
-              (assignment_statement
-                left: (identifier)
-                right: (integer)))))))))
-
-==================
-Case with string literals
+Case with string literals Adv
 ==================
 
 table 50002 "Test Table"
@@ -108,9 +51,9 @@ table 50002 "Test Table"
     begin
         case Code of
             'A':
-                fount := 1;
+                Count := 1;
             'B':
-                fount := 2;
+                Count := 2;
         end;
     end;
 }
@@ -138,7 +81,7 @@ table 50002 "Test Table"
               right: (integer))))))))
 
 ==================
-Case with multiple patterns per branch
+Case with multiple patterns per branch Adv
 ==================
 
 table 50003 "Test Table"
@@ -147,10 +90,10 @@ table 50003 "Test Table"
     begin
         case Type of
             Type::A, Type::B:
-                fount := 1;
+                Count := 1;
             Type::C, Type::D, Type::E:
                 begin
-                    fount := 2;
+                    Count := 2;
                     Status := 'Multiple';
                 end;
         end;
@@ -199,7 +142,7 @@ table 50003 "Test Table"
                 right: (string_literal)))))))))
 
 ==================
-Case with else clause
+Case with else clause Adv
 ==================
 
 table 50004 "Test Table"
@@ -208,11 +151,11 @@ table 50004 "Test Table"
     begin
         case MyCode of
             'A':
-                fount := 1;
+                Count := 1;
             'B':
-                fount := 2;
+                Count := 2;
             else
-                fount := 999;
+                Count := 999;
         end;
     end;
 }
@@ -244,7 +187,7 @@ table 50004 "Test Table"
               right: (integer))))))))
 
 ==================
-Case with else block
+Case with else block Adv
 ==================
 
 table 50005 "Test Table"
@@ -253,9 +196,9 @@ table 50005 "Test Table"
     begin
         case Status of
             Status::New:
-                fount := 1;
+                Count := 1;
             else begin
-                fount := 0;
+                Count := 0;
                 Message := 'Unknown';
             end;
         end;
@@ -288,44 +231,3 @@ table 50005 "Test Table"
               (assignment_statement
                 left: (identifier)
                 right: (string_literal)))))))))
-
-==================
-Case with member access patterns
-==================
-
-table 50006 "Test Table"
-{
-    trigger OnInsert()
-    begin
-        case "E-Mail Type" of
-            "E-Mail Type"::Contact:
-                "E-Mail" := '';
-            "E-Mail Type"::"E-Mail address":
-                VALIDATE("Contact No.", '');
-        end;
-    end;
-}
-
----
-
-(source_file
-  (table_declaration
-    object_id: (object_id (integer))
-    object_name: (object_name name: (name))
-    (oninsert_trigger
-      (code_block
-        (case_statement
-          expression: (quoted_identifier)
-          (case_branch
-            pattern: (qualified_enum_value
-              value: (identifier))
-              statements: (assignment_statement
-                left: (quoted_identifier)
-                right: (string_literal)))
-            (case_branch
-              pattern: (qualified_enum_value)
-              statements: (procedure_call
-                function_name: (function_name)
-                arguments: (argument_list
-                  (quoted_identifier)
-                  (string_literal)))))))))

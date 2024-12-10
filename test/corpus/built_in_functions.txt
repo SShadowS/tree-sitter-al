@@ -89,29 +89,27 @@ codeunit 50100 "Built-in Functions Test"
     (object_id
       (integer))
     (object_name
-      (name
-        (identifier)))
+      (name))
     (onrun_trigger
       (code_block
         (procedure_call
-          (function_name
-            (identifier)))
+          (function_name)
+          (argument_list))
         (procedure_call
-          (function_name
-            (identifier)))
+          (function_name)
+          (argument_list))
         (procedure_call
-          (function_name
-            (identifier)))
+          (function_name)
+          (argument_list))
         (procedure_call
-          (function_name
-            (identifier)))
+          (function_name)
+          (argument_list))
         (procedure_call
-          (function_name
-            (identifier)))))
+          (function_name)
+          (argument_list))))
     (procedure
-      (modifier)
-      (name
-        (identifier))
+      (procedure_modifier)
+      (name)
       (var_section
         (variable_declaration
           (identifier)
@@ -160,14 +158,21 @@ codeunit 50100 "Built-in Functions Test"
               (integer)
               (integer))))))
     (procedure
-      (modifier)
-      (name
-        (identifier))
+      (procedure_modifier)
+      (name)
       (var_section
         (variable_declaration
           (identifier)
           (type_specification
-            (basic_type)))
+            (text_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (text_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (text_type)))
         (variable_declaration
           (identifier)
           (type_specification
@@ -175,40 +180,31 @@ codeunit 50100 "Built-in Functions Test"
         (variable_declaration
           (identifier)
           (type_specification
-            (basic_type)))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type)))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_statement
-          (identifier)
-          (built_in_function
-            (userid_function)))
-        (assignment_statement
-          (identifier)
-          (built_in_function
-            (companyname_function)))
-        (assignment_statement
-          (identifier)
-          (built_in_function
-            (serialnumber_function)))
-        (assignment_statement
-          (identifier)
-          (built_in_function
-            (sessionid_function)))
-        (assignment_statement
-          (identifier)
-          (built_in_function
-            (windowsloggedonuser_function)))))
+            (text_type))))
+          (code_block
+            (assignment_statement
+              (identifier)
+              (built_in_function
+                (userid_function)))
+            (assignment_statement
+              (identifier)
+              (built_in_function
+                (companyname_function)))
+            (assignment_statement
+              (identifier)
+              (built_in_function
+                (serialnumber_function)))
+            (assignment_statement
+              (identifier)
+              (built_in_function
+                (sessionid_function)))
+            (assignment_statement
+              (identifier)
+              (built_in_function
+                (windowsloggedonuser_function)))))
     (procedure
-      (modifier)
-      (name
-        (identifier))
+      (procedure_modifier)
+      (name)
       (var_section
         (variable_declaration
           (identifier)

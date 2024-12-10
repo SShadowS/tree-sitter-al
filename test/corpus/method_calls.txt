@@ -20,15 +20,15 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (procedure_call
-          (identifier)
+          (function_name)
           (argument_list
             (string_literal)))
         (procedure_call
-          (identifier)
+          (function_name)
           (argument_list
             (string_literal)))
         (procedure_call
-          (identifier)
+          (function_name)
           (argument_list
             (string_literal)))))))
 
@@ -65,7 +65,7 @@ codeunit 50100 MyCodeunit
             (argument_list
               (string_literal))))
         (procedure_call
-          (identifier)
+          (function_name)
           (argument_list
             (string_literal)))
         (set_range_statement
@@ -117,7 +117,7 @@ codeunit 50100 MyCodeunit
             (argument_list
               (string_literal)))
           (procedure_call
-            (identifier)
+            (function_name)
             (argument_list
               (string_literal))))
         (if_statement
@@ -133,7 +133,7 @@ codeunit 50100 MyCodeunit
                   (method_name)
                   (argument_list))
                 (procedure_call
-                  (identifier)
+                  (function_name)
                   (argument_list
                     (string_literal))))
               (binary_expression
@@ -189,7 +189,7 @@ codeunit 50100 MyCodeunit
                 (identifier)
                 (member)))
             (procedure_call
-              (identifier)
+              (function_name)
               (argument_list
                 (string_literal)
                 (identifier)))

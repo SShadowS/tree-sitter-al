@@ -33,7 +33,7 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (procedure_call
-          (identifier)
+          (function_name)
           (argument_list
             (string_literal)))
         (get_statement
@@ -45,7 +45,7 @@ codeunit 50100 MyCodeunit
           (identifier)
           (integer))
         (procedure_call
-          (identifier)
+          (function_name)
           (argument_list
             (string_literal)
             (identifier)))
@@ -60,7 +60,7 @@ codeunit 50100 MyCodeunit
             (argument_list))
           (code_block
             (procedure_call
-              (identifier)
+              (function_name)
               (argument_list
                 (string_literal)))))))))
 
@@ -93,7 +93,7 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (procedure_call
-          (identifier)
+          (function_name)
           (argument_list
             (string_literal)
             (member_access
@@ -112,6 +112,6 @@ codeunit 50100 MyCodeunit
                 (member))))
           (code_block
             (procedure_call
-              (identifier)
+              (function_name)
               (argument_list
                 (string_literal)))))))))
