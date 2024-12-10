@@ -1189,10 +1189,20 @@ module.exports = grammar({
       field('right', $._expression)
     )),
 
+    assignable_member_access: $ => prec.left(4, seq(
+      field('object', choice(
+        $.identifier,
+        $._quoted_identifier,
+        $.assignable_member_access
+      )),
+      field('operator', '.'),
+      field('member', $.member)
+    )),
+
     _assignable_expression: $ => choice(
       alias($._quoted_identifier, $.quoted_identifier),
       $.identifier,
-      $.member_access,
+      $.assignable_member_access,
       $.qualified_enum_value  // Added to support enum assignments
     ),
 
