@@ -12,6 +12,7 @@ module.exports = grammar({
   name: "al",
 
   //word: $ => $.identifier,
+  extras: $ => [/\s/],
 
   rules: {
     source_file: $ => repeat($._object),
@@ -21,9 +22,12 @@ module.exports = grammar({
       $.codeunit_declaration
     ),
 
-    _assignment_operator: $ => token.immediate(':='),
-    _double__colon: $ => token.immediate('::'),
-    _colon: $ => token(':'),
+    // _assignment_operator: $ => token(':='),
+    // _double__colon: $ => token.immediate('::'),
+    // _colon: $ => token(':'),
+    _assignment_operator: $ => ':=',
+    _double__colon: $ => '::',
+    _colon: $ => ':',
 
     function_call: $ => seq(  // Increase precedence to 3
       field('function_name', $.identifier),
@@ -273,7 +277,7 @@ module.exports = grammar({
       field('member', $.member)
     )),
 
-    method_call: $ => prec.left(2, seq(
+    method_call: $ => prec.left(5, seq(
       field('object', $._primary_expression),
       field('operator', '.'),
       field('method', alias(choice($.identifier, $._quoted_identifier), $.method_name)),
@@ -1164,9 +1168,9 @@ module.exports = grammar({
     // Adjusting the _primary_expression to have clear precedence
     _primary_expression: $ => prec(2, choice(
       $._literal_argument,
-      prec(3, $.identifier),
+      $.identifier,
       seq('(', $._expression, ')'),
-      prec(2, $.built_in_function)
+      $.built_in_function
     )),
 
     built_in_function: $ => choice(
@@ -1427,13 +1431,6 @@ module.exports = grammar({
       field('arguments', $.argument_list)
     ),
 
-
-
-
-
-
-
-
     find_set_method: $ => prec(3, seq(
       field('record', alias($.identifier, $.record)),
       '.',
@@ -1445,11 +1442,6 @@ module.exports = grammar({
       )),
       ')'
     )),
-
-    
-
-
-
 
     insert_statement: $ => seq(
       $._record_operation,
@@ -1657,7 +1649,6 @@ module.exports = grammar({
       $._statement,
       $.code_block
     ),
-
 
     exit_statement: $ => choice(
       prec(1, choice('exit', 'EXIT', 'Exit')),  // Simple exit has lower precedence
