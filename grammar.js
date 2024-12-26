@@ -1609,8 +1609,29 @@ module.exports = grammar({
         field('enum_type', $._enum_type_reference),
         field('operator', $._double__colon),
         field('value', $._quoted_identifier)
-      )
+      ),
+      $.multi_pattern
     )),
+
+    multi_pattern: $ => seq(
+      $._single_pattern,
+      repeat1(seq(',', $._single_pattern))
+    ),
+
+    _single_pattern: $ => choice(
+      $._literal_value,
+      $.qualified_enum_value,
+      $.member_access,
+      $.identifier,
+      $._quoted_identifier,
+      $.string_literal,
+      $.function_call,
+      seq(
+        field('enum_type', $._enum_type_reference),
+        field('operator', $._double__colon),
+        field('value', $._quoted_identifier)
+      )
+    ),
 
     _single_pattern: $ => choice(
       $._literal_value,
