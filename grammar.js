@@ -7,6 +7,13 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+function ci(keyword) {
+  return new RegExp(keyword
+    .split('')
+    .map(char => `[${char.toLowerCase()}${char.toUpperCase()}]`)
+    .join('')
+  );
+}
 
 module.exports = grammar({
   name: "al",
@@ -1048,23 +1055,23 @@ module.exports = grammar({
     temporary: $ => choice('temporary', 'TEMPORARY', 'Temporary'),
 
     data_type: $ => choice(
-      choice('Integer', 'INTEGER', 'Integer'),
-      choice('Text', 'TEXT', 'Text'),
-      choice('Decimal', 'DECIMAL', 'Decimal'),
-      choice('Boolean', 'BOOLEAN', 'Boolean'),
-      choice('Option', 'OPTION', 'Option'),
-      choice('RecordId', 'RECORDID', 'Recordid'),
-      choice('DateTime', 'DATETIME', 'Datetime'),
-      choice('Date', 'DATE', 'Date'),
-      choice('Time', 'TIME', 'Time'),
-      choice('Blob', 'BLOB', 'Blob'),
-      choice('Duration', 'DURATION', 'Duration'),
-      choice('BigInteger', 'BIGINTEGER', 'Biginteger'),
-      choice('Guid', 'GUID', 'Guid'),
-      seq('Code', '[', field('size', $.integer), ']'),
-      seq('Text', '[', field('size', $.integer), ']'),
-      seq('Decimal', optional(seq('[', field('size', $.integer), optional(seq(':', field('decimals', $.integer))), ']'))),
-      seq('Enum', field('enum_type', $.identifier)),
+      ci('Integer'),
+      ci('Text'),
+      ci('Decimal'),
+      ci('Boolean'),
+      ci('Option'),
+      ci('RecordId'),
+      ci('DateTime'),
+      ci('Date'),
+      ci('Time'),
+      ci('Blob'),
+      ci('Duration'),
+      ci('BigInteger'),
+      ci('Guid'),
+      seq(ci('Code'), '[', field('size', $.integer), ']'),
+      seq(ci('Text'), '[', field('size', $.integer), ']'),
+      //seq(ci('Decimal'), optional(seq('[', field('size', $.integer), optional(seq(':', field('decimals', $.integer))), ']'))),
+      seq(ci('Enum'), field('enum_type', $.identifier)),
       seq(
         field('base_type', $.identifier),
         optional(seq(
@@ -1616,21 +1623,6 @@ module.exports = grammar({
     multi_pattern: $ => seq(
       $._single_pattern,
       repeat1(seq(',', $._single_pattern))
-    ),
-
-    _single_pattern: $ => choice(
-      $._literal_value,
-      $.qualified_enum_value,
-      $.member_access,
-      $.identifier,
-      $._quoted_identifier,
-      $.string_literal,
-      $.function_call,
-      seq(
-        field('enum_type', $._enum_type_reference),
-        field('operator', $._double__colon),
-        field('value', $._quoted_identifier)
-      )
     ),
 
     _single_pattern: $ => choice(
