@@ -1597,7 +1597,10 @@ module.exports = grammar({
       seq(
         field('enum_type', $._enum_type_reference),
         field('operator', $._double__colon),
-        field('value', $._quoted_identifier)
+        field('value', choice(
+          $._enum_value_reference,
+          $._quoted_identifier
+        ))
       ),
       $.multi_pattern
     )),
@@ -1628,11 +1631,16 @@ module.exports = grammar({
     ),
 
     qualified_enum_value: $ => prec.left(3, seq(
-      field('enum_type', $._enum_type_reference),
+      field('enum_type', choice(
+        $._enum_type_reference,
+        $.identifier,
+        $._quoted_identifier
+      )),
       field('operator', $._double__colon),
       field('value', choice(
         $._enum_value_reference,
-        $._quoted_identifier
+        $._quoted_identifier,
+        $.identifier
       ))
     )),
 
