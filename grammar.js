@@ -1600,11 +1600,16 @@ module.exports = grammar({
     _case_pattern: $ => prec(2, choice(
       $._literal_value,
       $.qualified_enum_value,
-      $.member_access, 
+      $.member_access,
       $.identifier,
       $._quoted_identifier,
       $.string_literal,
-      $.function_call
+      $.function_call,
+      seq(
+        field('enum_type', $._enum_type_reference),
+        field('operator', $._double__colon),
+        field('value', $._quoted_identifier)
+      )
     )),
 
     _single_pattern: $ => choice(
@@ -1627,11 +1632,14 @@ module.exports = grammar({
       field('statements', $._branch_statements)
     ),
 
-    qualified_enum_value: $ => seq(
+    qualified_enum_value: $ => prec.left(3, seq(
       field('enum_type', $._enum_type_reference),
       field('operator', $._double__colon),
-      field('value', $._enum_value_reference)
-    ),
+      field('value', choice(
+        $._enum_value_reference,
+        $._quoted_identifier
+      ))
+    )),
 
     _enum_type_reference: $ => choice(
       $._quoted_identifier,
@@ -1639,11 +1647,11 @@ module.exports = grammar({
       $.member_access
     ),
 
-    _enum_value_reference: $ => choice(
+    _enum_value_reference: $ => prec.left(2, choice(
       $._quoted_identifier,
       $.identifier,
       $.member_access
-    ),
+    )),
 
     _branch_statements: $ => choice(
       $._statement,
