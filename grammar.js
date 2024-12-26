@@ -403,12 +403,6 @@ module.exports = grammar({
       $._quoted_identifier
     ),
 
-    _object_identifier: $ => choice(
-      $.integer,
-      $.identifier,
-      $._quoted_identifier
-    ),
-
     drilldown_pageid_property: $ => seq(
       'DrillDownPageId',
       '=',
@@ -1089,13 +1083,6 @@ module.exports = grammar({
       optional(';')
     )),
 
-    _object_element: $ => choice(
-      $.property,
-      $.variable_declaration,
-      $.fields,
-      $.keys
-    ),
-
     _statement: $ => prec.right(seq(
       choice(
         $.assignment_statement,
@@ -1511,9 +1498,6 @@ module.exports = grammar({
       '(',
       ')'
     ),
-
-    object: $ => $._primary_expression,
-    _simple_object: $ => alias($.identifier, $.object),
 
     binary_expression: $ => choice(
       // Comparison has higher precedence than arithmetic
