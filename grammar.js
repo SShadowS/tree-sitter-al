@@ -457,7 +457,8 @@ module.exports = grammar({
       $.query_type,
       $.dotnet_type,
       $.list_type,
-      $.dictionary_type
+      $.dictionary_type,
+      $.custom_data_type
     ),
 
     list_type: $ => seq(
@@ -1070,17 +1071,17 @@ module.exports = grammar({
       ci('Guid'),
       seq(ci('Code'), '[', field('size', $.integer), ']'),
       seq(ci('Text'), '[', field('size', $.integer), ']'),
-      //seq(ci('Decimal'), optional(seq('[', field('size', $.integer), optional(seq(':', field('decimals', $.integer))), ']'))),
-      seq(ci('Enum'), field('enum_type', $.identifier)),
-      seq(
-        field('base_type', $.identifier),
-        optional(seq(
-          '[',
-          field('size', $.integer),
-          optional(seq(':', field('decimals', $.integer))),
-          ']'
-        ))
-      )
+      seq(ci('Enum'), field('enum_type', $.identifier))
+    ),
+
+    custom_data_type: $ => seq(
+      field('base_type', $.identifier),
+      optional(seq(
+        '[',
+        field('size', $.integer),
+        optional(seq(':', field('decimals', $.integer))),
+        ']'
+      ))
     ),
 
     // Define code blocks with explicit keyword handling
