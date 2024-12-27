@@ -1591,7 +1591,20 @@ module.exports = grammar({
         field('operator', $._double__colon),
         field('value', $._enum_value_reference)
       ),
-      $.multi_pattern
+      $.multi_pattern,
+      // Add explicit support for member access patterns
+      seq(
+        field('object', choice(
+          $.identifier,
+          $._quoted_identifier,
+          $.member_access
+        )),
+        field('operator', '.'),
+        field('member', choice(
+          $.identifier,
+          $._quoted_identifier
+        ))
+      )
     )),
 
     multi_pattern: $ => seq(
