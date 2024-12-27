@@ -1150,7 +1150,7 @@ module.exports = grammar({
     )),
 
     // Adjusting the _primary_expression to have clear precedence
-    _primary_expression: $ => prec(2, choice(
+    _primary_expression: $ => prec(1, choice(  // Lowered precedence to 1
       $._literal_argument,
       $.identifier,
       seq('(', $._expression, ')'),
@@ -1578,7 +1578,7 @@ module.exports = grammar({
       ))
     ),
 
-    _case_pattern: $ => prec(2, choice(
+    _case_pattern: $ => prec(3, choice(  // Increased precedence to 3
       $._literal_value,
       $.qualified_enum_value,
       $.member_access,
