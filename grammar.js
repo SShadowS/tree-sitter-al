@@ -1002,11 +1002,11 @@ module.exports = grammar({
     _quoted_identifier: $ => seq(
       '"',
       repeat1(choice(
-        /[^"\n\\]/,  // Any character except quote, newline or backslash
-        /\\[\\'"]/,  // Escaped quotes or backslashes
-        /\./,        // Allow dots in quoted identifiers
-        /-/,        // Add hyphen support explicitly
-        /\s/        // Allow spaces in quoted identifiers
+        /[^":\n\\]/,  // Any character except quote, colon, newline or backslash
+        /\\[\\'"]/,   // Escaped quotes or backslashes
+        /\./,         // Allow dots in quoted identifiers
+        /-/,          // Add hyphen support explicitly
+        /\s/          // Allow spaces in quoted identifiers
       )),
       '"'
     ),
