@@ -1597,10 +1597,7 @@ module.exports = grammar({
       seq(
         field('enum_type', $._enum_type_reference),
         field('operator', $._double__colon),
-        field('value', choice(
-          $._enum_value_reference,
-          $._quoted_identifier
-        ))
+        field('value', $._enum_value_reference)
       ),
       $.multi_pattern
     )),
