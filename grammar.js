@@ -1578,7 +1578,7 @@ module.exports = grammar({
       ))
     ),
 
-    _case_pattern: $ => prec(3, choice(  // Increased precedence to 3
+    _case_pattern: $ => prec(5, choice(  // Increased precedence to 5
       $._literal_value,
       $.qualified_enum_value,
       $.member_access,
