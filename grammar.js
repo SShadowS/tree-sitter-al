@@ -22,7 +22,7 @@ module.exports = grammar({
     ),
 
     _assignment_operator: $ => ':=',
-    _double__colon: $ => '::',
+    _double__colon: $ => token('::'),
     _colon: $ => ':',
 
     function_call: $ => seq(  // Increase precedence to 3
@@ -1636,27 +1636,30 @@ module.exports = grammar({
       field('enum_type', choice(
         $._enum_type_reference,
         $.identifier,
-        $._quoted_identifier
+        $._quoted_identifier,
+        $.member_access
       )),
       field('operator', $._double__colon),
       field('value', choice(
         $._enum_value_reference,
         $._quoted_identifier,
         $.identifier,
-        $.string_literal
+        $.string_literal,
+        $.member_access
       ))
     )),
 
-    _enum_type_reference: $ => choice(
+    _enum_type_reference: $ => prec.left(2, choice(
       $._quoted_identifier,
       $.identifier,
       $.member_access
-    ),
+    )),
 
     _enum_value_reference: $ => prec.left(2, choice(
       $._quoted_identifier,
       $.identifier,
-      $.member_access
+      $.member_access,
+      $.string_literal
     )),
 
     _branch_statements: $ => choice(
