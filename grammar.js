@@ -1629,7 +1629,8 @@ module.exports = grammar({
       field('value', choice(
         $._enum_value_reference,
         $._quoted_identifier,
-        $.identifier
+        $.identifier,
+        $.string_literal
       ))
     )),
 
