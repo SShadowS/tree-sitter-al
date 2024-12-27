@@ -22,7 +22,7 @@ module.exports = grammar({
     ),
 
     _assignment_operator: $ => ':=',
-    _double__colon: $ => token('::'),
+    _double__colon: $ => token(prec(1, '::')),
     _colon: $ => ':',
 
     function_call: $ => seq(  // Increase precedence to 3
