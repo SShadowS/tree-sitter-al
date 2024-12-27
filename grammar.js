@@ -37,7 +37,7 @@ module.exports = grammar({
     ), $.name)),
 
     table_declaration: $ => seq(
-      ci('table'),
+      /[tT][aA][bB][lL][eE]/,
       field('object_id', $.object_id),
       field('object_name', $.object_name),
       '{',
@@ -46,7 +46,7 @@ module.exports = grammar({
     ),
 
     codeunit_declaration: $ => seq(
-      ci('codeunit'),
+      /[cC][oO][dD][eE][uU][nN][iI][tT]/,
       field('object_id', $.object_id),
       field('object_name', $.object_name),
       '{',
@@ -78,9 +78,9 @@ module.exports = grammar({
     permissions_value: $ => $.tabledata_permission_list,
 
     field_class_value: $ => choice(
-      ci('FlowField'),
-      ci('FlowFilter'),
-      ci('Normal')
+      /[fF][lL][oO][wW][fF][iI][eE][lL][dD]/,
+      /[fF][lL][oO][wW][fF][iI][lL][tT][eE][rR]/,
+      /[nN][oO][rR][mM][aA][lL]/
     ),
 
     calc_formula_value: $ => $._calc_formula_expression,
@@ -100,10 +100,10 @@ module.exports = grammar({
     option_caption_value: $ => $.string_literal,
 
     table_type_value: $ => choice(
-      ci('Normal'),
-      ci('Temporary'),
-      ci('External'),
-      ci('System')
+      /[nN][oO][rR][mM][aA][lL]/,
+      /[tT][eE][mM][pP][oO][rR][aA][rR][yY]/,
+      /[eE][xX][tT][eE][rR][nN][aA][lL]/,
+      /[sS][yY][sS][tT][eE][mM]/
     ),
 
     table_type_property: $ => seq(
@@ -114,13 +114,13 @@ module.exports = grammar({
     ),
 
     data_classification_value: $ => choice(
-      ci('CustomerContent'),
-      ci('EndUserIdentifiableInformation'),
-      ci('AccountData'),
-      ci('EndUserPseudonymousIdentifiers'),
-      ci('OrganizationIdentifiableInformation'),
-      ci('SystemMetadata'),
-      ci('ToBeClassified')
+      /[cC][uU][sS][tT][oO][mM][eE][rR][cC][oO][nN][tT][eE][nN][tT]/,
+      /[eE][nN][dD][uU][sS][eE][rR][iI][dD][eE][nN][tT][iI][fF][iI][aA][bB][lL][eE][iI][nN][fF][oO][rR][mM][aA][tT][iI][oO][nN]/,
+      /[aA][cC][cC][oO][uU][nN][tT][dD][aA][tT][aA]/,
+      /[eE][nN][dD][uU][sS][eE][rR][pP][sS][eE][uU][dD][oO][nN][yY][mM][oO][uU][sS][iI][dD][eE][nN][tT][iI][fF][iI][eE][rR][sS]/,
+      /[oO][rR][gG][aA][nN][iI][zZ][aA][tT][iI][oO][nN][iI][dD][eE][nN][tT][iI][fF][iI][aA][bB][lL][eE][iI][nN][fF][oO][rR][mM][aA][tT][iI][oO][nN]/,
+      /[sS][yY][sS][tT][eE][mM][mM][eE][tT][aA][dD][aA][tT][aA]/,
+      /[tT][oO][bB][eE][cC][lL][aA][sS][sS][iI][fF][iI][eE][dD]/
     ),
 
     _codeunit_element: $ => prec(1, choice(
@@ -1039,22 +1039,22 @@ module.exports = grammar({
     temporary: $ => choice('temporary', 'TEMPORARY', 'Temporary'),
 
     data_type: $ => choice(
-      ci('Integer'),
-      ci('Text'),
-      ci('Decimal'),
-      ci('Boolean'),
-      ci('Option'),
-      ci('RecordId'),
-      ci('DateTime'),
-      ci('Date'),
-      ci('Time'),
-      ci('Blob'),
-      ci('Duration'),
-      ci('BigInteger'),
-      ci('Guid'),
-      seq(ci('Code'), '[', field('size', $.integer), ']'),
-      seq(ci('Text'), '[', field('size', $.integer), ']'),
-      seq(ci('Enum'), field('enum_type', $.identifier))
+      /[iI][nN][tT][eE][gG][eE][rR]/,
+      /[tT][eE][xX][tT]/,
+      /[dD][eE][cC][iI][mM][aA][lL]/,
+      /[bB][oO][oO][lL][eE][aA][nN]/,
+      /[oO][pP][tT][iI][oO][nN]/,
+      /[rR][eE][cC][oO][rR][dD][iI][dD]/,
+      /[dD][aA][tT][eE][tT][iI][mM][eE]/,
+      /[dD][aA][tT][eE]/,
+      /[tT][iI][mM][eE]/,
+      /[bB][lL][oO][bB]/,
+      /[dD][uU][rR][aA][tT][iI][oO][nN]/,
+      /[bB][iI][gG][iI][nN][tT][eE][gG][eE][rR]/,
+      /[gG][uU][iI][dD]/,
+      seq(/[cC][oO][dD][eE]/, '[', field('size', $.integer), ']'),
+      seq(/[tT][eE][xX][tT]/, '[', field('size', $.integer), ']'),
+      seq(/[eE][nN][uU][mM]/, field('enum_type', $.identifier))
     ),
 
     custom_data_type: $ => seq(
