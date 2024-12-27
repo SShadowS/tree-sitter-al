@@ -7,14 +7,6 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-function ci(keyword) {
-  return new RegExp(keyword
-    .split('')
-    .map(char => `[${char.toLowerCase()}${char.toUpperCase()}]`)
-    .join('')
-  );
-}
-
 module.exports = grammar({
   name: "al",
 
