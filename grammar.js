@@ -1142,7 +1142,7 @@ module.exports = grammar({
       $._expression
     ),
 
-    _literal_argument: $ => prec(3, choice(
+    _literal_argument: $ => prec(1, choice(
       alias($._quoted_identifier, $.quoted_identifier),
       $.string_literal,
       $.integer,
