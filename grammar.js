@@ -155,12 +155,12 @@ module.exports = grammar({
       ';'
     ),
 
-    allow_in_customizations_property: $ => seq(
+    allow_in_customizations_property: $ => prec(1, seq(
       'AllowInCustomizations', 
       '=',
-      $.allow_in_customizations_value,
+      $.boolean,
       ';'
-    ),
+    )),
 
     auto_format_expression_property: $ => seq(
       'AutoFormatExpression',
@@ -367,16 +367,10 @@ module.exports = grammar({
 
     property_list: $ => prec(3, repeat1($.property)),
 
-    property: $ => choice(
+    property: $ => prec(2, choice(
       $.access_by_permission_property,
       $.allow_in_customizations_property,
       $.auto_format_expression_property,
-      seq(
-        field('property_name', 'AllowInCustomizations'),
-        '=',
-        field('property_value', $.boolean),
-        ';'
-      ),
       seq(
         field('property_name', 'AutoFormatExpression'),
         '=',
