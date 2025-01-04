@@ -2,7 +2,7 @@
 
 ## Table Properties
 - [x] Access Property
-- [x] AccessByPermission Property
+- [x] AccessByPermission Property 
 - [x] AllowInCustomizations Property
 - [x] AutoFormatExpression Property
 - [ ] AutoFormatType Property
