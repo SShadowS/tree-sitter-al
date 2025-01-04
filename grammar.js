@@ -708,7 +708,7 @@ module.exports = grammar({
         )),
         '}'
       ))
-    ),
+    )),
 
     table_relation_property: $ => seq(
       'TableRelation',
@@ -1356,29 +1356,33 @@ module.exports = grammar({
     random_function: $ => seq(
       choice('RANDOM', 'Random', 'random'),
       '(',
-      field('range', $._expression),
+      field('range', $.integer),
       ')'
     ),
 
     randomize_function: $ => prec.left(2, choice(
-      // With parameters version (try this first)
+      // With optional parameters version (try this first)
       seq(
         choice('RANDOMIZE', 'Randomize', 'randomize'),
         '(',
-        field('seed', $._expression),
+        optional(field('seed', $.integer)),
         ')'
       ),
       // No parameters version (try this second)
       choice('RANDOMIZE', 'Randomize', 'randomize')
-    )),
+        )),
 
     round_function: $ => seq(
       choice('ROUND', 'Round', 'round'),
       '(',
-      field('number', $._expression),
+      field('number', $.decimal),
       optional(seq(
         ',',
-        field('precision', $._expression)
+        field('precision', $.decimal),
+        optional(seq(
+          ',',
+          field('direction', $.string_literal)  // Added direction parameter
+        ))
       )),
       ')'
     ),
@@ -1397,7 +1401,8 @@ module.exports = grammar({
       ',',
       field('exponent', $._expression),
       ')'
-    ),
+        ),
+
 
     // Database Functions
     count_function: $ => seq(
