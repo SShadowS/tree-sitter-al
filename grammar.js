@@ -672,7 +672,7 @@ module.exports = grammar({
       '}'
     ),
 
-    field_declaration: $ => seq(
+    field_declaration: $ => prec(2, seq(
       'field',
       '(',
       field('id', $.integer),
@@ -697,12 +697,7 @@ module.exports = grammar({
           $.auto_format_type_property,
           $.auto_increment_property,
           $.blank_numbers_property,
-          seq(
-            'AutoFormatExpression',
-            '=',
-            field('expression', $.string_literal),
-            ';'
-          ),
+          $.auto_format_expression_property,
           $.table_relation_property,
           $.field_class_property,
           $.calc_formula_property,
