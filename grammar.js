@@ -639,7 +639,7 @@ module.exports = grammar({
     if_table_relation: $ => prec.right(seq(
       choice('IF', 'if', 'If'),
       '(',
-      field('condition', $.table_filters),
+      field('condition', $.where_conditions),
       ')',
       field('then_relation', $._simple_table_relation),
       optional(seq(
@@ -650,16 +650,16 @@ module.exports = grammar({
 
     _simple_table_relation: $ => seq(
       field('table', $._table_reference),
-      optional(seq($._double__colon, field('field', $._field_reference))),
+      optional(seq($._double__colon, field('field', $._referenced_field))),
       optional($.where_clause)
     ),
 
 
 
-    table_filter: $ => choice(
+    where_condition: $ => choice(
       // CONST(<FieldConst>)
       seq(
-        field('filter_field', $._field_reference),
+        field('filter_field', $._referenced_field),
         '=',
         choice('CONST', 'const', 'Const'),
         '(',
@@ -674,18 +674,18 @@ module.exports = grammar({
       ),
       // FIELD(<SourceFieldName>)
       seq(
-        field('filter_field', $._field_reference),
+        field('field', $._referenced_field),
         '=',
         choice('FIELD', 'field', 'Field'),
         '(',
-        field('source_field', $._field_reference),
+        field('source_field', $._referenced_field),
         ')'
       )
     ),
 
-    table_filters: $ => seq(
-      $.table_filter,
-      repeat(seq(',', $.table_filter))
+    where_conditions: $ => seq(
+      $.where_condition,
+      repeat(seq(',', $.where_condition))
     ),
 
     filter_criteria: $ => /[^)]+/,
@@ -693,28 +693,21 @@ module.exports = grammar({
     field_ref: $ => prec(2, seq(
       choice('field', 'FIELD', 'Field'),
       '(',
-      field('referenced_field', $._field_reference),
+      field('_referenced_field', $._referenced_field),
       ')'
     )),
 
     where_clause: $ => seq(
       choice('where', 'WHERE', 'Where'),
       '(',
-      field('conditions', $.table_filters),
+      field('conditions', $.where_conditions),
       ')'
     ),
 
-    _field_reference: $ => choice(
+    _referenced_field: $ => alias(choice(
       $._quoted_identifier,
       $.identifier
-    ),
-
-    _condition_field_reference: $ => alias(choice(
-      $._quoted_identifier,
-      $.identifier
-    ), $.identifier),
-
-
+    ), $.field_ref),
 
     field_class_property: $ => seq(
       'FieldClass',
@@ -758,14 +751,14 @@ module.exports = grammar({
     ),
 
     lookup_where_condition: $ => seq(
-      field('field', $._condition_field_reference),
+      field('field', $._referenced_field),
       '=',
       choice(
         seq(
           choice('field', 'FIELD', 'Field'),
           '(',
           field('value', alias(seq(
-            $._condition_field_reference
+            $._referenced_field
           ), $.field_ref)),
           ')'
         ),
