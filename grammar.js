@@ -168,13 +168,6 @@ module.exports = grammar({
       /[tT][oO][bB][eE][cC][lL][aA][sS][sS][iI][fF][iI][eE][dD]/
     ),
 
-    access_by_permission_value: $ => seq(
-      'tabledata',
-      field('table_name', $._table_reference),
-      '=',
-      field('permission', $.permission_type)
-    ),
-
     _codeunit_element: $ => prec(1, choice(
       $.procedure,
       $.onrun_trigger,
