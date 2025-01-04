@@ -112,10 +112,42 @@ module.exports = grammar({
       /[pP][rR][iI][vV][aA][tT][eE]/
     ),
 
+    access_by_permission_value: $ => seq(
+      'tabledata',
+      field('table_name', $._table_reference),
+      '=',
+      field('permission', $.permission_type)
+    ),
+
+    allow_in_customizations_value: $ => $.boolean,
+
+    auto_format_expression_value: $ => $.string_literal,
+
     table_type_property: $ => seq(
       'TableType',
       '=',
       $.table_type_value,
+      ';'
+    ),
+
+    access_by_permission_property: $ => seq(
+      'AccessByPermission',
+      '=',
+      $.access_by_permission_value,
+      ';'
+    ),
+
+    allow_in_customizations_property: $ => seq(
+      'AllowInCustomizations', 
+      '=',
+      $.allow_in_customizations_value,
+      ';'
+    ),
+
+    auto_format_expression_property: $ => seq(
+      'AutoFormatExpression',
+      '=',
+      $.auto_format_expression_value,
       ';'
     ),
 
@@ -304,12 +336,9 @@ module.exports = grammar({
     property_list: $ => prec(3, repeat1($.property)),
 
     property: $ => choice(
-      seq(
-        field('property_name', 'AccessByPermission'),
-        '=',
-        field('property_value', $.access_by_permission_value),
-        ';'
-      ),
+      $.access_by_permission_property,
+      $.allow_in_customizations_property,
+      $.auto_format_expression_property,
       seq(
         field('property_name', 'AllowInCustomizations'),
         '=',
@@ -637,6 +666,9 @@ module.exports = grammar({
           $.data_classification_property,
           $.decimal_places_property,
           $.field_trigger_declaration,
+          $.access_by_permission_property,
+          $.allow_in_customizations_property,
+          $.auto_format_expression_property,
           seq(
             'AutoFormatExpression',
             '=',

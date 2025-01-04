@@ -2,9 +2,9 @@
 
 ## Table Properties
 - [x] Access Property
-- [ ] AccessByPermission Property
-- [ ] AllowInCustomizations Property
-- [ ] AutoFormatExpression Property
+- [x] AccessByPermission Property
+- [x] AllowInCustomizations Property
+- [x] AutoFormatExpression Property
 - [ ] AutoFormatType Property
 - [ ] AutoIncrement Property
 - [ ] BlankNumbers Property
