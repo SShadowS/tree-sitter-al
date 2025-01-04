@@ -759,9 +759,9 @@ module.exports = grammar({
         seq(
           choice('field', 'FIELD', 'Field'),
           '(',
-          field('value', alias(seq(
+          field('value', seq(
             $._referenced_field
-          ), $.field_ref)),
+          )),
           ')'
         ),
         seq(
