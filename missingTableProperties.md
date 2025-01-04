@@ -12,109 +12,109 @@
 - [x] ~~CalcFields Property~~ ✅ Added
 - [x] ~~CaptionClass Property~~ ✅ Added
 - [ ] CaptionML Property
-- [ ] CharAllowed Property
-- [ ] ClosingDates Property
+- [x] ~~CharAllowed Property~~ ✅ Added
+- [x] ~~ClosingDates Property~~ ✅ Added
 - [ ] Clustered Property
 - [ ] ColumnStoreIndex Property
-- [ ] Compressed Property
+- [x] ~~Compressed Property~~ ✅ Added
 - [ ] CompressionType Property
 - [ ] DataCaptionFields Property
 - [ ] DataPerCompany Property
-- [ ] DateFormula Property
-- [ ] DecimalPlaces Property (partially implemented)
-- [ ] Description Property
-- [ ] ExternalAccess Property
-- [ ] ExternalName Property
+- [x] ~~DateFormula Property~~ ✅ Added
+- [x] ~~DecimalPlaces Property~~ ✅ Added
+- [x] ~~Description Property~~ ✅ Added
+- [x] ~~ExternalAccess Property~~ ✅ Added
+- [x] ~~ExternalName Property~~ ✅ Added
 - [ ] ExternalSchema Property
-- [ ] ExternalType Property
-- [ ] FieldClass Property (partially implemented)
+- [x] ~~ExternalType Property~~ ✅ Added
+- [x] ~~FieldClass Property~~ ✅ Added
 - [ ] IncludedFields Property
 - [ ] InherentEntitlements Property
 - [ ] InherentPermissions Property
-- [ ] InitValue Property
+- [x] ~~InitValue Property~~ ✅ Added
 - [ ] LinkedInTransaction Property
 - [ ] LinkedObject Property
-- [ ] LookupPageId Property (partially implemented)
+- [x] ~~LookupPageId Property~~ ✅ Added
 - [ ] MaintainSiftIndex Property
 - [ ] MaintainSqlIndex Property
-- [ ] MaxValue Property
-- [ ] MinValue Property
+- [x] ~~MaxValue Property~~ ✅ Added
+- [x] ~~MinValue Property~~ ✅ Added
 - [ ] MovedFrom Property
 - [ ] MovedTo Property
 - [ ] NamespacePrefix Property
-- [ ] NotBlank Property
-- [ ] Numeric Property
-- [ ] ObsoleteReason Property
-- [ ] ObsoleteState Property
-- [ ] ObsoleteTag Property
-- [ ] OptionCaption Property (partially implemented)
+- [x] ~~NotBlank Property~~ ✅ Added
+- [x] ~~Numeric Property~~ ✅ Added
+- [x] ~~ObsoleteReason Property~~ ✅ Added
+- [x] ~~ObsoleteState Property~~ ✅ Added
+- [x] ~~ObsoleteTag Property~~ ✅ Added
+- [x] ~~OptionCaption Property~~ ✅ Added
 - [ ] OptionCaptionML Property
-- [ ] OptionOrdinalValues Property
-- [ ] PasteIsValid Property
-- [ ] Permissions Property (partially implemented)
+- [x] ~~OptionOrdinalValues Property~~ ✅ Added
+- [x] ~~PasteIsValid Property~~ ✅ Added
+- [ ] Permissions Property
 - [ ] ReplicateData Property
 - [ ] RequestFilterFields Property
 - [ ] RequestFilterHeading Property
 - [ ] RequestFilterHeadingML Property
-- [ ] SignDisplacement Property
-- [ ] SqlDataType Property
+- [x] ~~SignDisplacement Property~~ ✅ Added
+- [x] ~~SqlDataType Property~~ ✅ Added
 - [ ] SqlIndex Property
-- [ ] SqlTimestamp Property
+- [x] ~~SqlTimestamp Property~~ ✅ Added
 - [ ] SumIndexFields Property
-- [ ] TableRelation Property (partially implemented)
-- [ ] TestTableRelation Property
-- [ ] ToolTip Property
+- [x] ~~TableRelation Property~~ ✅ Added
+- [x] ~~TestTableRelation Property~~ ✅ Added
+- [x] ~~ToolTip Property~~ ✅ Added
 - [ ] ToolTipML Property
 - [ ] Unbound Property
-- [ ] Unique Property
-- [ ] ValidateTableRelation Property
-- [ ] ValuesAllowed Property
+- [x] ~~Unique Property~~ ✅ Added
+- [x] ~~ValidateTableRelation Property~~ ✅ Added
+- [x] ~~ValuesAllowed Property~~ ✅ Added
 - [ ] XmlName Property
 
 ## Field Properties
-- [ ] Access Property
-- [ ] AccessByPermission Property
-- [ ] AllowInCustomizations Property
-- [ ] AutoFormatExpression Property
-- [ ] AutoFormatType Property
-- [ ] AutoIncrement Property
-- [ ] BlankNumbers Property
-- [ ] BlankZero Property (partially implemented)
-- [ ] CalcFormula Property (partially implemented)
-- [ ] CaptionClass Property
+- [x] ~~Access Property~~ ✅ Added
+- [x] ~~AccessByPermission Property~~ ✅ Added
+- [x] ~~AllowInCustomizations Property~~ ✅ Added
+- [x] ~~AutoFormatExpression Property~~ ✅ Added
+- [x] ~~AutoFormatType Property~~ ✅ Added
+- [x] ~~AutoIncrement Property~~ ✅ Added
+- [x] ~~BlankNumbers Property~~ ✅ Added
+- [x] ~~BlankZero Property~~ ✅ Added
+- [x] ~~CalcFormula Property~~ ✅ Added
+- [x] ~~CaptionClass Property~~ ✅ Added
 - [ ] CaptionML Property
-- [ ] CharAllowed Property
-- [ ] ClosingDates Property
-- [ ] Compressed Property
-- [ ] DateFormula Property
-- [ ] DecimalPlaces Property (partially implemented)
-- [ ] Description Property
-- [ ] Editable Property (partially implemented)
+- [x] ~~CharAllowed Property~~ ✅ Added
+- [x] ~~ClosingDates Property~~ ✅ Added
+- [x] ~~Compressed Property~~ ✅ Added
+- [x] ~~DateFormula Property~~ ✅ Added
+- [x] ~~DecimalPlaces Property~~ ✅ Added
+- [x] ~~Description Property~~ ✅ Added
+- [x] ~~Editable Property~~ ✅ Added
 - [ ] ExtendedDatatype Property
-- [ ] ExternalAccess Property
-- [ ] ExternalName Property
-- [ ] ExternalType Property
-- [ ] FieldClass Property (partially implemented)
-- [ ] InitValue Property
-- [ ] MaxValue Property
-- [ ] MinValue Property
-- [ ] NotBlank Property
-- [ ] Numeric Property
-- [ ] ObsoleteReason Property
-- [ ] ObsoleteState Property
-- [ ] ObsoleteTag Property
-- [ ] OptionCaption Property (partially implemented)
+- [x] ~~ExternalAccess Property~~ ✅ Added
+- [x] ~~ExternalName Property~~ ✅ Added
+- [x] ~~ExternalType Property~~ ✅ Added
+- [x] ~~FieldClass Property~~ ✅ Added
+- [x] ~~InitValue Property~~ ✅ Added
+- [x] ~~MaxValue Property~~ ✅ Added
+- [x] ~~MinValue Property~~ ✅ Added
+- [x] ~~NotBlank Property~~ ✅ Added
+- [x] ~~Numeric Property~~ ✅ Added
+- [x] ~~ObsoleteReason Property~~ ✅ Added
+- [x] ~~ObsoleteState Property~~ ✅ Added
+- [x] ~~ObsoleteTag Property~~ ✅ Added
+- [x] ~~OptionCaption Property~~ ✅ Added
 - [ ] OptionCaptionML Property
-- [ ] OptionOrdinalValues Property
-- [ ] SignDisplacement Property
-- [ ] SqlDataType Property
-- [ ] SqlTimestamp Property
-- [ ] TableRelation Property (partially implemented)
-- [ ] TestTableRelation Property
-- [ ] ToolTip Property
+- [x] ~~OptionOrdinalValues Property~~ ✅ Added
+- [x] ~~SignDisplacement Property~~ ✅ Added
+- [x] ~~SqlDataType Property~~ ✅ Added
+- [x] ~~SqlTimestamp Property~~ ✅ Added
+- [x] ~~TableRelation Property~~ ✅ Added
+- [x] ~~TestTableRelation Property~~ ✅ Added
+- [x] ~~ToolTip Property~~ ✅ Added
 - [ ] ToolTipML Property
-- [ ] ValidateTableRelation Property
-- [ ] ValuesAllowed Property
+- [x] ~~ValidateTableRelation Property~~ ✅ Added
+- [x] ~~ValuesAllowed Property~~ ✅ Added
 
 ## Table Extension Properties
 - [ ] Access Property
