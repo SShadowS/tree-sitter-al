@@ -106,10 +106,23 @@ module.exports = grammar({
       /[sS][yY][sS][tT][eE][mM]/
     ),
 
+    access_value: $ => choice(
+      /[pP][uU][bB][lL][iI][cC]/,
+      /[iI][nN][tT][eE][rR][nN][aA][lL]/,
+      /[pP][rR][iI][vV][aA][tT][eE]/
+    ),
+
     table_type_property: $ => seq(
       'TableType',
       '=',
       $.table_type_value,
+      ';'
+    ),
+
+    access_property: $ => seq(
+      'Access',
+      '=',
+      $.access_value,
       ';'
     ),
 
@@ -159,7 +172,8 @@ module.exports = grammar({
       $.permissions_property,
       $.drilldown_pageid_property,
       $.lookup_pageid_property,
-      $.table_type_property
+      $.table_type_property,
+      $.access_property
     )),
 
     // For single table permission property
