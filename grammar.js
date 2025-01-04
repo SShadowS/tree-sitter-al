@@ -106,6 +106,43 @@ module.exports = grammar({
       /[sS][yY][sS][tT][eE][mM]/
     ),
 
+    closing_dates_value: $ => $.boolean,
+    char_allowed_value: $ => $.boolean,
+    compressed_value: $ => $.boolean,
+    date_formula_value: $ => $.string_literal,
+    description_value: $ => $.string_literal,
+    external_access_value: $ => choice(
+      'External',
+      'Internal',
+      'Local'
+    ),
+    external_name_value: $ => $.string_literal,
+    external_type_value: $ => $.string_literal,
+    init_value_value: $ => $._expression,
+    max_value_value: $ => $._expression, 
+    min_value_value: $ => $._expression,
+    not_blank_value: $ => $.boolean,
+    numeric_value: $ => $.boolean,
+    obsolete_reason_value: $ => $.string_literal,
+    obsolete_state_value: $ => choice(
+      'Pending',
+      'Removed'
+    ),
+    obsolete_tag_value: $ => $.string_literal,
+    option_ordinal_values_value: $ => $.string_literal,
+    paste_is_valid_value: $ => $.boolean,
+    sign_displacement_value: $ => $.boolean,
+    sql_data_type_value: $ => $.string_literal,
+    sql_timestamp_value: $ => $.boolean,
+    test_table_relation_value: $ => $.boolean,
+    tool_tip_value: $ => $.string_literal,
+    unique_value: $ => $.boolean,
+    validate_table_relation_value: $ => $.boolean,
+    values_allowed_value: $ => seq(
+      $.string_literal,
+      repeat(seq(',', $.string_literal))
+    ),
+
     access_value: $ => choice(
       /[pP][uU][bB][lL][iI][cC]/,
       /[iI][nN][tT][eE][rR][nN][aA][lL]/,
@@ -193,6 +230,188 @@ module.exports = grammar({
       'Access',
       '=',
       $.access_value,
+      ';'
+    ),
+
+    closing_dates_property: $ => seq(
+      'ClosingDates',
+      '=',
+      $.closing_dates_value,
+      ';'
+    ),
+
+    char_allowed_property: $ => seq(
+      'CharAllowed',
+      '=',
+      $.char_allowed_value,
+      ';'
+    ),
+
+    compressed_property: $ => seq(
+      'Compressed', 
+      '=',
+      $.compressed_value,
+      ';'
+    ),
+
+    date_formula_property: $ => seq(
+      'DateFormula',
+      '=',
+      $.date_formula_value,
+      ';'
+    ),
+
+    description_property: $ => seq(
+      'Description',
+      '=',
+      $.description_value,
+      ';'
+    ),
+
+    external_access_property: $ => seq(
+      'ExternalAccess',
+      '=',
+      $.external_access_value,
+      ';'
+    ),
+
+    external_name_property: $ => seq(
+      'ExternalName',
+      '=',
+      $.external_name_value,
+      ';'
+    ),
+
+    external_type_property: $ => seq(
+      'ExternalType',
+      '=',
+      $.external_type_value,
+      ';'
+    ),
+
+    init_value_property: $ => seq(
+      'InitValue',
+      '=',
+      $.init_value_value,
+      ';'
+    ),
+
+    max_value_property: $ => seq(
+      'MaxValue',
+      '=',
+      $.max_value_value,
+      ';'
+    ),
+
+    min_value_property: $ => seq(
+      'MinValue',
+      '=',
+      $.min_value_value,
+      ';'
+    ),
+
+    not_blank_property: $ => seq(
+      'NotBlank',
+      '=',
+      $.not_blank_value,
+      ';'
+    ),
+
+    numeric_property: $ => seq(
+      'Numeric',
+      '=',
+      $.numeric_value,
+      ';'
+    ),
+
+    obsolete_reason_property: $ => seq(
+      'ObsoleteReason',
+      '=',
+      $.obsolete_reason_value,
+      ';'
+    ),
+
+    obsolete_state_property: $ => seq(
+      'ObsoleteState',
+      '=',
+      $.obsolete_state_value,
+      ';'
+    ),
+
+    obsolete_tag_property: $ => seq(
+      'ObsoleteTag',
+      '=',
+      $.obsolete_tag_value,
+      ';'
+    ),
+
+    option_ordinal_values_property: $ => seq(
+      'OptionOrdinalValues',
+      '=',
+      $.option_ordinal_values_value,
+      ';'
+    ),
+
+    paste_is_valid_property: $ => seq(
+      'PasteIsValid',
+      '=',
+      $.paste_is_valid_value,
+      ';'
+    ),
+
+    sign_displacement_property: $ => seq(
+      'SignDisplacement',
+      '=',
+      $.sign_displacement_value,
+      ';'
+    ),
+
+    sql_data_type_property: $ => seq(
+      'SqlDataType',
+      '=',
+      $.sql_data_type_value,
+      ';'
+    ),
+
+    sql_timestamp_property: $ => seq(
+      'SqlTimestamp',
+      '=',
+      $.sql_timestamp_value,
+      ';'
+    ),
+
+    test_table_relation_property: $ => seq(
+      'TestTableRelation',
+      '=',
+      $.test_table_relation_value,
+      ';'
+    ),
+
+    tool_tip_property: $ => seq(
+      'ToolTip',
+      '=',
+      $.tool_tip_value,
+      ';'
+    ),
+
+    unique_property: $ => seq(
+      'Unique',
+      '=',
+      $.unique_value,
+      ';'
+    ),
+
+    validate_table_relation_property: $ => seq(
+      'ValidateTableRelation',
+      '=',
+      $.validate_table_relation_value,
+      ';'
+    ),
+
+    values_allowed_property: $ => seq(
+      'ValuesAllowed',
+      '=',
+      $.values_allowed_value,
       ';'
     ),
 
