@@ -5,9 +5,9 @@
 - [x] AccessByPermission Property 
 - [x] AllowInCustomizations Property
 - [x] AutoFormatExpression Property
-- [ ] AutoFormatType Property
-- [ ] AutoIncrement Property
-- [ ] BlankNumbers Property
+- [x] AutoFormatType Property
+- [x] AutoIncrement Property
+- [x] BlankNumbers Property
 - [ ] BlankZero Property (partially implemented)
 - [ ] CalcFields Property
 - [ ] CaptionClass Property

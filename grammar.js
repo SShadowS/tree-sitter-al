@@ -151,6 +151,27 @@ module.exports = grammar({
       ';'
     ),
 
+    auto_format_type_property: $ => seq(
+      'AutoFormatType',
+      '=',
+      $.auto_format_type_value,
+      ';'
+    ),
+
+    auto_increment_property: $ => seq(
+      'AutoIncrement',
+      '=',
+      $.auto_increment_value,
+      ';'
+    ),
+
+    blank_numbers_property: $ => seq(
+      'BlankNumbers',
+      '=',
+      $.blank_numbers_value,
+      ';'
+    ),
+
     access_property: $ => seq(
       'Access',
       '=',
@@ -662,6 +683,9 @@ module.exports = grammar({
           $.access_by_permission_property,
           $.allow_in_customizations_property,
           $.auto_format_expression_property,
+          $.auto_format_type_property,
+          $.auto_increment_property,
+          $.blank_numbers_property,
           seq(
             'AutoFormatExpression',
             '=',
