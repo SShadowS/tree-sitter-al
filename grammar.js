@@ -1106,9 +1106,6 @@ module.exports = grammar({
       '"'
     ),
 
-    integer: $ => /\d+/,
-
-
     string_literal: $ => token(seq(
       "'",
       repeat(choice(
@@ -1202,9 +1199,9 @@ module.exports = grammar({
     ),
 
     assignment_statement: $ => seq(
-      field('left', $._assignable_expression),    // Can never be function call in AL
-      field('operator', $._assignment_operator),  // Is defined as a token
-      field('right', $._expression)               // Can be alot, but also contains a builtin function called Count
+      field('left', $._assignable_expression),
+      field('operator', $._assignment_operator),
+      field('right', $._expression)
     ),
 
     assignable_member_access: $ => prec.left(4, seq(
@@ -1363,17 +1360,12 @@ module.exports = grammar({
       ')'
     ),
 
-    randomize_function: $ => prec.left(2, choice(
-      // With optional parameters version (try this first)
-      seq(
-        choice('RANDOMIZE', 'Randomize', 'randomize'),
-        '(',
-        optional(field('seed', $._expression)),
-        ')'
-      ),
-      // No parameters version (try this second)
-      choice('RANDOMIZE', 'Randomize', 'randomize')
-    )),
+    randomize_function: $ => seq(
+      choice('RANDOMIZE', 'Randomize', 'randomize'),
+      '(',
+      optional(field('seed', $._expression)),
+      ')'
+    ),
 
     round_function: $ => seq(
       choice('ROUND', 'Round', 'round'),
