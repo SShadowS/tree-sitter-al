@@ -119,7 +119,6 @@ module.exports = grammar({
       field('permission', $.permission_type)
     ),
 
-    allow_in_customizations_value: $ => $.boolean,
 
     auto_format_expression_value: $ => $.string_literal,
 
