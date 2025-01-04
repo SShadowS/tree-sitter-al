@@ -1090,9 +1090,19 @@ module.exports = grammar({
       ')'
     ),
 
+    filter_condition: $ => seq(
+      field('field', $._referenced_field),
+      '=',
+      choice('FILTER', 'filter', 'Filter'),
+      '(',
+      field('value', $.string_literal),
+      ')'
+    ),
+
     where_condition: $ => choice(
       $.const_filter,
-      $.field_filter
+      $.field_filter,
+      $.filter_condition
     ),
 
     where_conditions: $ => seq(
