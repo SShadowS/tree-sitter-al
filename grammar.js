@@ -1251,7 +1251,8 @@ module.exports = grammar({
       $._literal_argument,
       $.identifier,
       seq('(', $._expression, ')'),
-      $.built_in_function
+      $.built_in_function,
+      $.unary_expression  // Add unary expressions here
     )),
 
     built_in_function: $ => choice(
@@ -1486,8 +1487,14 @@ module.exports = grammar({
       $.qualified_enum_value
     ),
 
+    unary_expression: $ => prec(6, seq(
+      '-', 
+      $._expression
+    )),
+
     _expression: $ => choice(
       $._base_expression,
+      $.unary_expression,  // Add unary expressions with higher precedence
       prec.left(1, $.binary_expression)  // Binary expressions have lowest precedence
     ),
 
@@ -1725,8 +1732,13 @@ module.exports = grammar({
 
 
     decimal: $ => token(seq(
-      optional('-'),
+      optional('-'),  // Only allow negative sign
       seq(/\d+/, '.', /\d+/)
+    )),
+
+    integer: $ => token(seq(
+      optional('-'),  // Only allow negative sign
+      /\d+/
     )),
 
     _literal_value: $ => choice(
