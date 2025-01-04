@@ -9,8 +9,8 @@
 - [x] AutoIncrement Property
 - [x] BlankNumbers Property
 - [x] BlankZero Property
-- [ ] CalcFields Property
-- [ ] CaptionClass Property
+- [x] ~~CalcFields Property~~ ✅ Added
+- [x] ~~CaptionClass Property~~ ✅ Added
 - [ ] CaptionML Property
 - [ ] CharAllowed Property
 - [ ] ClosingDates Property

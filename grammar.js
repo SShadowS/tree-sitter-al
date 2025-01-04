@@ -370,6 +370,8 @@ module.exports = grammar({
       $.access_by_permission_property,
       $.allow_in_customizations_property,
       $.auto_format_expression_property,
+      $.calc_fields_property,
+      $.caption_class_property,
       seq(
         field('property_name', 'AutoFormatExpression'),
         '=',
@@ -467,6 +469,30 @@ module.exports = grammar({
       '=',
       $.string_literal,
       ';'
+    ),
+
+    caption_class_property: $ => seq(
+      'CaptionClass',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    calc_fields_property: $ => seq(
+      'CalcFields',
+      '=',
+      field('fields', $.calc_fields_list),
+      ';'
+    ),
+
+    calc_fields_list: $ => seq(
+      $.calc_field,
+      repeat(seq(',', $.calc_field))
+    ),
+
+    calc_field: $ => choice(
+      $.identifier,
+      $._quoted_identifier
     ),
 
     data_classification_property: $ => seq(
