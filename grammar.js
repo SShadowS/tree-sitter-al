@@ -99,6 +99,15 @@ module.exports = grammar({
 
     option_caption_value: $ => $.string_literal,
 
+    extended_datatype_value: $ => choice(
+      'PhoneNo',
+      'URL', 
+      'Email',
+      'Ratio',
+      'Duration',
+      'Masked'
+    ),
+
     table_type_value: $ => choice(
       /[nN][oO][rR][mM][aA][lL]/,
       /[tT][eE][mM][pP][oO][rR][aA][rR][yY]/,
@@ -413,6 +422,46 @@ module.exports = grammar({
       '=',
       $.values_allowed_value,
       ';'
+    ),
+
+    extended_datatype_property: $ => seq(
+      'ExtendedDatatype',
+      '=',
+      $.extended_datatype_value,
+      ';'
+    ),
+
+    caption_ml_property: $ => seq(
+      'CaptionML',
+      '=',
+      $.ml_value_list,
+      ';'
+    ),
+
+    option_caption_ml_property: $ => seq(
+      'OptionCaptionML',
+      '=',
+      $.ml_value_list,
+      ';'
+    ),
+
+    tool_tip_ml_property: $ => seq(
+      'ToolTipML',
+      '=',
+      $.ml_value_list,
+      ';'
+    ),
+
+    ml_value_list: $ => seq(
+      '[',
+      repeat1($.ml_value_pair),
+      ']'
+    ),
+
+    ml_value_pair: $ => seq(
+      field('language', $.identifier),
+      '=',
+      field('value', $.string_literal)
     ),
 
     data_classification_value: $ => choice(
@@ -975,7 +1024,11 @@ module.exports = grammar({
           $.tool_tip_property,
           $.unique_property,
           $.validate_table_relation_property,
-          $.values_allowed_property
+          $.values_allowed_property,
+          $.extended_datatype_property,
+          $.caption_ml_property,
+          $.option_caption_ml_property,
+          $.tool_tip_ml_property
         )),
         '}'
       ))

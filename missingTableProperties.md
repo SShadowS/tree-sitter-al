@@ -11,7 +11,7 @@
 - [x] BlankZero Property
 - [x] ~~CalcFields Property~~ ✅ Added
 - [x] ~~CaptionClass Property~~ ✅ Added
-- [ ] CaptionML Property
+- [x] ~~CaptionML Property~~ ✅ Added
 - [x] ~~CharAllowed Property~~ ✅ Added
 - [x] ~~ClosingDates Property~~ ✅ Added
 - [ ] Clustered Property
@@ -48,7 +48,7 @@
 - [x] ~~ObsoleteState Property~~ ✅ Added
 - [x] ~~ObsoleteTag Property~~ ✅ Added
 - [x] ~~OptionCaption Property~~ ✅ Added
-- [ ] OptionCaptionML Property
+- [x] ~~OptionCaptionML Property~~ ✅ Added
 - [x] ~~OptionOrdinalValues Property~~ ✅ Added
 - [x] ~~PasteIsValid Property~~ ✅ Added
 - [ ] Permissions Property
@@ -64,7 +64,7 @@
 - [x] ~~TableRelation Property~~ ✅ Added
 - [x] ~~TestTableRelation Property~~ ✅ Added
 - [x] ~~ToolTip Property~~ ✅ Added
-- [ ] ToolTipML Property
+- [x] ~~ToolTipML Property~~ ✅ Added
 - [ ] Unbound Property
 - [x] ~~Unique Property~~ ✅ Added
 - [x] ~~ValidateTableRelation Property~~ ✅ Added
@@ -90,7 +90,7 @@
 - [x] ~~DecimalPlaces Property~~ ✅ Added
 - [x] ~~Description Property~~ ✅ Added
 - [x] ~~Editable Property~~ ✅ Added
-- [ ] ExtendedDatatype Property
+- [x] ~~ExtendedDatatype Property~~ ✅ Added
 - [x] ~~ExternalAccess Property~~ ✅ Added
 - [x] ~~ExternalName Property~~ ✅ Added
 - [x] ~~ExternalType Property~~ ✅ Added
