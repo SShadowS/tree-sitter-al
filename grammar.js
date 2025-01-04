@@ -123,6 +123,24 @@ module.exports = grammar({
 
     auto_format_expression_value: $ => $.string_literal,
 
+    auto_format_type_value: $ => choice(
+      '0', // None
+      '1', // Phone Number
+      '2', // Currency
+      '3', // Date
+      '4', // Time
+      '5', // Date and Time
+      '6', // Amount
+      '7', // Quantity
+      '8', // Percentage
+      '9', // Custom
+      '10' // Custom with Format Expression
+    ),
+
+    auto_increment_value: $ => $.boolean,
+
+    blank_numbers_value: $ => $.boolean,
+
     table_type_property: $ => seq(
       'TableType',
       '=',
