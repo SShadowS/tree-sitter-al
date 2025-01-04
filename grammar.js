@@ -1622,7 +1622,15 @@ module.exports = grammar({
       $.copystr_function,
       $.lowercase_function,
       $.uppercase_function,
-      $.format_function
+      $.format_function,
+      $.substring_function,
+      $.padstr_function,
+      $.delchr_function,
+      $.delstr_function,
+      $.incstr_function,
+      $.selectstr_function,
+      $.strpos_function,
+      $.convertstr_function
     ),
 
     // Date/Time Functions
@@ -1800,6 +1808,94 @@ module.exports = grammar({
       '(',
       field('value', $._expression),
       optional(seq(',', field('format_number', $._expression))),
+      ')'
+    ),
+
+    // String Manipulation Functions
+    substring_function: $ => seq(
+      choice('SUBSTRING', 'Substring', 'substring'),
+      '(',
+      field('text', $._expression),
+      ',',
+      field('position', $._expression),
+      optional(seq(
+        ',',
+        field('length', $._expression)
+      )),
+      ')'
+    ),
+
+    padstr_function: $ => seq(
+      choice('PADSTR', 'PadStr', 'padstr'),
+      '(',
+      field('text', $._expression),
+      ',',
+      field('length', $._expression),
+      ',',
+      field('padding_char', $._expression),
+      ')'
+    ),
+
+    delchr_function: $ => seq(
+      choice('DELCHR', 'DelChr', 'delchr'),
+      '(',
+      field('text', $._expression),
+      ',',
+      field('position', choice(
+        seq('=', $.string_literal),
+        seq('<>', $.string_literal)
+      )),
+      ',',
+      field('chars', $._expression),
+      ')'
+    ),
+
+    delstr_function: $ => seq(
+      choice('DELSTR', 'DelStr', 'delstr'),
+      '(',
+      field('text', $._expression),
+      ',',
+      field('position', $._expression),
+      optional(seq(
+        ',',
+        field('length', $._expression)
+      )),
+      ')'
+    ),
+
+    incstr_function: $ => seq(
+      choice('INCSTR', 'IncStr', 'incstr'),
+      '(',
+      field('text', $._expression),
+      ')'
+    ),
+
+    selectstr_function: $ => seq(
+      choice('SELECTSTR', 'SelectStr', 'selectstr'),
+      '(',
+      field('number', $._expression),
+      ',',
+      field('string', $._expression),
+      ')'
+    ),
+
+    strpos_function: $ => seq(
+      choice('STRPOS', 'StrPos', 'strpos'),
+      '(',
+      field('text', $._expression),
+      ',',
+      field('subtext', $._expression),
+      ')'
+    ),
+
+    convertstr_function: $ => seq(
+      choice('CONVERTSTR', 'ConvertStr', 'convertstr'),
+      '(',
+      field('text', $._expression),
+      ',',
+      field('from_chars', $._expression),
+      ',',
+      field('to_chars', $._expression),
       ')'
     ),
 
