@@ -1840,13 +1840,17 @@ module.exports = grammar({
       choice('DELCHR', 'DelChr', 'delchr'),
       '(',
       field('text', $._expression),
-      ',',
-      field('where', choice(
-        seq('=', $.string_literal),
-        seq('<>', $.string_literal)
+      optional(seq(
+        ',',
+        field('where', choice(
+          seq('=', $.string_literal),
+          seq('<>', $.string_literal)
+        ))
       )),
-      ',',
-      field('which', $._expression),
+      optional(seq(
+        ',',
+        field('which', $._expression)
+      )),
       ')'
     ),
 
