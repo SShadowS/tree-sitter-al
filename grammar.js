@@ -360,6 +360,12 @@ module.exports = grammar({
         '=',
         field('property_value', $.data_classification_value),
         ';'
+      ),
+      seq(
+        field('property_name', 'ExtendedDatatype'),
+        '=',
+        field('property_value', $.identifier),
+        ';'
       )
     ),
 
@@ -619,9 +625,9 @@ module.exports = grammar({
     if_table_relation: $ => prec.right(seq(
       choice('IF', 'if', 'If'),
       '(',
-      field('condition', $.table_filter),
+      field('condition', $.table_filters),
       ')',
-      field('then_relation', $._table_reference),
+      field('then_relation', $._simple_table_relation),
       optional(seq(
         choice('ELSE', 'else', 'Else'),
         field('else_relation', $.table_relation_expression)
@@ -637,6 +643,7 @@ module.exports = grammar({
 
 
     table_filter: $ => choice(
+      // CONST(<FieldConst>)
       seq(
         field('filter_field', $._field_reference),
         '=',
@@ -646,10 +653,12 @@ module.exports = grammar({
           $.string_literal,
           $.identifier,
           $._quoted_identifier,
-          $.integer
+          $.integer,
+          $.boolean
         )),
         ')'
       ),
+      // FIELD(<SourceFieldName>)
       seq(
         field('filter_field', $._field_reference),
         '=',
@@ -657,13 +666,15 @@ module.exports = grammar({
         '(',
         field('source_field', $._field_reference),
         ')'
-      ),
-      seq(
-        field('filter_field', $._field_reference),
-        '=',
-        field('value', $.field_ref)
       )
     ),
+
+    table_filters: $ => seq(
+      $.table_filter,
+      repeat(seq(',', $.table_filter))
+    ),
+
+    filter_criteria: $ => /[^)]+/,
 
     field_ref: $ => prec(2, seq(
       choice('field', 'FIELD', 'Field'),
@@ -675,19 +686,8 @@ module.exports = grammar({
     where_clause: $ => seq(
       choice('where', 'WHERE', 'Where'),
       '(',
-      field('conditions', $.where_conditions),
+      field('conditions', $.table_filters),
       ')'
-    ),
-
-    where_conditions: $ => seq(
-      $.where_condition,
-      repeat(seq(',', $.where_condition))
-    ),
-
-    where_condition: $ => seq(
-      field('field', $._condition_field_reference),
-      '=',
-      field('value', $.field_ref)
     ),
 
     _field_reference: $ => choice(
@@ -1077,7 +1077,7 @@ module.exports = grammar({
 
     _statement: $ => prec.right(seq(
       choice(
-        $.assignment_statement,
+        prec(2, $.assignment_statement),
         $.if_statement,
         $.repeat_statement,
         $.case_statement,
@@ -1391,15 +1391,15 @@ module.exports = grammar({
 
 
     procedure_call: $ => choice(
-      // Simple procedure call without arguments
-      prec(1, alias($.identifier, $.function_name)),
+      // Method call
+      $.method_call,
       // Function call with arguments
       prec(2, seq(
         field('function_name', alias($.identifier, $.function_name)),
         field('arguments', $.argument_list)
       )),
-      // Method call
-      $.method_call
+      // Function call without arguments (no parentheses)
+      field('function_name', alias($.identifier, $.function_name))
     ),
 
     // Individual method definitions
@@ -1557,7 +1557,8 @@ module.exports = grammar({
       $.member_access,
       $.qualified_enum_value,
       $.function_call,
-      $.identifier
+      $.identifier,
+      alias($._quoted_identifier, $.quoted_identifier)
     )),
 
     case_statement: $ => prec(2, seq(
