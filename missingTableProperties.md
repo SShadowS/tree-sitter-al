@@ -1,0 +1,128 @@
+# Missing Table Properties
+
+## Table Properties
+- [x] Access Property
+- [ ] AccessByPermission Property
+- [ ] AllowInCustomizations Property
+- [ ] AutoFormatExpression Property
+- [ ] AutoFormatType Property
+- [ ] AutoIncrement Property
+- [ ] BlankNumbers Property
+- [ ] BlankZero Property (partially implemented)
+- [ ] CalcFields Property
+- [ ] CaptionClass Property
+- [ ] CaptionML Property
+- [ ] CharAllowed Property
+- [ ] ClosingDates Property
+- [ ] Clustered Property
+- [ ] ColumnStoreIndex Property
+- [ ] Compressed Property
+- [ ] CompressionType Property
+- [ ] DataCaptionFields Property
+- [ ] DataPerCompany Property
+- [ ] DateFormula Property
+- [ ] DecimalPlaces Property (partially implemented)
+- [ ] Description Property
+- [ ] ExternalAccess Property
+- [ ] ExternalName Property
+- [ ] ExternalSchema Property
+- [ ] ExternalType Property
+- [ ] FieldClass Property (partially implemented)
+- [ ] IncludedFields Property
+- [ ] InherentEntitlements Property
+- [ ] InherentPermissions Property
+- [ ] InitValue Property
+- [ ] LinkedInTransaction Property
+- [ ] LinkedObject Property
+- [ ] LookupPageId Property (partially implemented)
+- [ ] MaintainSiftIndex Property
+- [ ] MaintainSqlIndex Property
+- [ ] MaxValue Property
+- [ ] MinValue Property
+- [ ] MovedFrom Property
+- [ ] MovedTo Property
+- [ ] NamespacePrefix Property
+- [ ] NotBlank Property
+- [ ] Numeric Property
+- [ ] ObsoleteReason Property
+- [ ] ObsoleteState Property
+- [ ] ObsoleteTag Property
+- [ ] OptionCaption Property (partially implemented)
+- [ ] OptionCaptionML Property
+- [ ] OptionOrdinalValues Property
+- [ ] PasteIsValid Property
+- [ ] Permissions Property (partially implemented)
+- [ ] ReplicateData Property
+- [ ] RequestFilterFields Property
+- [ ] RequestFilterHeading Property
+- [ ] RequestFilterHeadingML Property
+- [ ] SignDisplacement Property
+- [ ] SqlDataType Property
+- [ ] SqlIndex Property
+- [ ] SqlTimestamp Property
+- [ ] SumIndexFields Property
+- [ ] TableRelation Property (partially implemented)
+- [ ] TestTableRelation Property
+- [ ] ToolTip Property
+- [ ] ToolTipML Property
+- [ ] Unbound Property
+- [ ] Unique Property
+- [ ] ValidateTableRelation Property
+- [ ] ValuesAllowed Property
+- [ ] XmlName Property
+
+## Field Properties
+- [ ] Access Property
+- [ ] AccessByPermission Property
+- [ ] AllowInCustomizations Property
+- [ ] AutoFormatExpression Property
+- [ ] AutoFormatType Property
+- [ ] AutoIncrement Property
+- [ ] BlankNumbers Property
+- [ ] BlankZero Property (partially implemented)
+- [ ] CalcFormula Property (partially implemented)
+- [ ] CaptionClass Property
+- [ ] CaptionML Property
+- [ ] CharAllowed Property
+- [ ] ClosingDates Property
+- [ ] Compressed Property
+- [ ] DateFormula Property
+- [ ] DecimalPlaces Property (partially implemented)
+- [ ] Description Property
+- [ ] Editable Property (partially implemented)
+- [ ] ExtendedDatatype Property
+- [ ] ExternalAccess Property
+- [ ] ExternalName Property
+- [ ] ExternalType Property
+- [ ] FieldClass Property (partially implemented)
+- [ ] InitValue Property
+- [ ] MaxValue Property
+- [ ] MinValue Property
+- [ ] NotBlank Property
+- [ ] Numeric Property
+- [ ] ObsoleteReason Property
+- [ ] ObsoleteState Property
+- [ ] ObsoleteTag Property
+- [ ] OptionCaption Property (partially implemented)
+- [ ] OptionCaptionML Property
+- [ ] OptionOrdinalValues Property
+- [ ] SignDisplacement Property
+- [ ] SqlDataType Property
+- [ ] SqlTimestamp Property
+- [ ] TableRelation Property (partially implemented)
+- [ ] TestTableRelation Property
+- [ ] ToolTip Property
+- [ ] ToolTipML Property
+- [ ] ValidateTableRelation Property
+- [ ] ValuesAllowed Property
+
+## Table Extension Properties
+- [ ] Access Property
+- [ ] Caption Property
+- [ ] CaptionML Property
+- [ ] DataCaptionFields Property
+- [ ] Description Property
+- [ ] DrillDownPageId Property
+- [ ] LookupPageId Property
+- [ ] Permissions Property
+- [ ] TableType Property
