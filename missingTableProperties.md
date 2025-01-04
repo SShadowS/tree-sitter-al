@@ -8,7 +8,7 @@
 - [x] AutoFormatType Property
 - [x] AutoIncrement Property
 - [x] BlankNumbers Property
-- [ ] BlankZero Property (partially implemented)
+- [x] BlankZero Property
 - [ ] CalcFields Property
 - [ ] CaptionClass Property
 - [ ] CaptionML Property
