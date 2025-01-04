@@ -62,9 +62,9 @@ module.exports = grammar({
     ),
 
     subtype_value: $ => choice(
-      'Install',
-      'Upgrade',
-      'Test'
+      /[iI][nN][sS][tT][aA][lL][lL]/,
+      /[uU][pP][gG][rR][aA][dD][eE]/,
+      /[tT][eE][sS][tT]/
     ),
 
     single_instance_value: $ => $.boolean,
@@ -80,7 +80,7 @@ module.exports = grammar({
     field_class_value: $ => choice(
       /[fF][lL][oO][wW][fF][iI][eE][lL][dD]/,
       /[fF][lL][oO][wW][fF][iI][lL][tT][eE][rR]/,
-      /[nN][oO][rR][mM][aA][lL]/
+      /[nN][oO][rR][mM][aA][lL]/,
     ),
 
     calc_formula_value: $ => $._calc_formula_expression,
@@ -92,20 +92,20 @@ module.exports = grammar({
     option_members_value: $ => choice(
       $.string_literal,
       seq(
-        $.option_member,
-        repeat(seq(',', $.option_member))
+      $.option_member,
+      repeat(seq(',', $.option_member))
       )
     ),
 
     option_caption_value: $ => $.string_literal,
 
     extended_datatype_value: $ => choice(
-      'PhoneNo',
-      'URL', 
-      'Email',
-      'Ratio',
-      'Duration',
-      'Masked'
+      /[pP][hH][oO][nN][eE][nN][oO]/,
+      /[uU][rR][lL]/, 
+      /[eE][mM][aA][iI][lL]/,
+      /[rR][aA][tT][iI][oO]/,
+      /[dD][uU][rR][aA][tT][iI][oO][nN]/,
+      /[mM][aA][sS][kK][eE][dD]/
     ),
 
     table_type_value: $ => choice(
@@ -121,9 +121,9 @@ module.exports = grammar({
     date_formula_value: $ => $.string_literal,
     description_value: $ => $.string_literal,
     external_access_value: $ => choice(
-      'External',
-      'Internal',
-      'Local'
+      /[eE][xX][tT][eE][rR][nN][aA][lL]/,
+      /[iI][nN][tT][eE][rR][nN][aA][lL]/,
+      /[lL][oO][cC][aA][lL]/
     ),
     external_name_value: $ => $.string_literal,
     external_type_value: $ => $.string_literal,
@@ -134,8 +134,8 @@ module.exports = grammar({
     numeric_value: $ => $.boolean,
     obsolete_reason_value: $ => $.string_literal,
     obsolete_state_value: $ => choice(
-      'Pending',
-      'Removed'
+      /[pP][eE][nN][dD][iI][nN][gG]/,
+      /[rR][eE][mM][oO][vV][eE][dD]/
     ),
     obsolete_tag_value: $ => $.string_literal,
     option_ordinal_values_value: $ => $.string_literal,
@@ -159,12 +159,11 @@ module.exports = grammar({
     ),
 
     access_by_permission_value: $ => seq(
-      'tabledata',
+      /[tT][aA][bB][lL][eE][dD][aA][tT][aA]/,
       field('table_name', $._table_reference),
       '=',
       field('permission', $.permission_type)
     ),
-
 
     auto_format_expression_value: $ => $.string_literal,
 
@@ -1071,13 +1070,13 @@ module.exports = grammar({
       '=',
       choice('CONST', 'const', 'Const'),
       '(',
-      field('value', choice(
+      optional(field('value', choice(
         $.string_literal,
         $.identifier,
         $._quoted_identifier,
         $.integer,
         $.boolean
-      )),
+      ))),
       ')'
     ),
 
@@ -1095,7 +1094,7 @@ module.exports = grammar({
       '=',
       choice('FILTER', 'filter', 'Filter'),
       '(',
-      field('value', $.string_literal),
+      field('value', $.filter_criteria),
       ')'
     ),
 
@@ -1134,7 +1133,9 @@ module.exports = grammar({
     field_class_property: $ => seq(
       'FieldClass',
       '=',
+      optional('"'),
       $.field_class_value,
+      optional('"'),
       ';'
     ),
 
@@ -1299,6 +1300,7 @@ module.exports = grammar({
         choice('OnDrillDown', 'ONDRILLDOWN', 'OnDrillDown')
       ), $.trigger_type)),
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
