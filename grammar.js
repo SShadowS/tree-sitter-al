@@ -1172,7 +1172,7 @@ module.exports = grammar({
 
     _statement: $ => prec.right(seq(
       choice(
-        prec(2, $.assignment_statement),
+        $.assignment_statement,
         $.if_statement,
         $.repeat_statement,
         $.case_statement,
@@ -1233,9 +1233,9 @@ module.exports = grammar({
     )),
 
     _argument: $ => choice(
+      $.decimal,
       $._literal_argument,
-      $._expression,
-      $.decimal
+      $._expression
     ),
 
     _literal_argument: $ => prec(1, choice(
@@ -1358,7 +1358,7 @@ module.exports = grammar({
     random_function: $ => seq(
       choice('RANDOM', 'Random', 'random'),
       '(',
-      field('range', $.integer),
+      field('range', $._expression),
       ')'
     ),
 
@@ -1367,20 +1367,20 @@ module.exports = grammar({
       seq(
         choice('RANDOMIZE', 'Randomize', 'randomize'),
         '(',
-        optional(field('seed', $.integer)),
+        optional(field('seed', $._expression)),
         ')'
       ),
       // No parameters version (try this second)
       choice('RANDOMIZE', 'Randomize', 'randomize')
-        )),
+    )),
 
     round_function: $ => seq(
       choice('ROUND', 'Round', 'round'),
       '(',
-      field('number', $.decimal),
+      field('number', $._expression),
       optional(seq(
         ',',
-        field('precision', $.decimal),
+        field('precision', $._expression),
         optional(seq(
           ',',
           field('direction', $.string_literal)  // Added direction parameter
@@ -1403,7 +1403,7 @@ module.exports = grammar({
       ',',
       field('exponent', $._expression),
       ')'
-        ),
+    ),
 
 
     // Database Functions
@@ -1726,10 +1726,7 @@ module.exports = grammar({
 
     decimal: $ => token(seq(
       optional('-'),
-      choice(
-        seq(/\d+/, '.', /\d+/),  // 123.456
-        seq('.', /\d+/)          // .456
-      )
+      seq(/\d+/, '.', /\d+/)
     )),
 
     _literal_value: $ => choice(
