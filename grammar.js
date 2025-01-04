@@ -1234,13 +1234,15 @@ module.exports = grammar({
 
     _argument: $ => choice(
       $._literal_argument,
-      $._expression
+      $._expression,
+      $.decimal
     ),
 
     _literal_argument: $ => prec(1, choice(
       alias($._quoted_identifier, $.quoted_identifier),
       $.string_literal,
       $.integer,
+      $.decimal,
       $.boolean
     )),
 
@@ -1722,8 +1724,17 @@ module.exports = grammar({
     ),
 
 
+    decimal: $ => token(seq(
+      optional('-'),
+      choice(
+        seq(/\d+/, '.', /\d+/),  // 123.456
+        seq('.', /\d+/)          // .456
+      )
+    )),
+
     _literal_value: $ => choice(
       $.integer,
+      $.decimal,
       $.string_literal,
       $.boolean
     ),
