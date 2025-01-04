@@ -1841,12 +1841,12 @@ module.exports = grammar({
       '(',
       field('text', $._expression),
       ',',
-      field('position', choice(
+      field('where', choice(
         seq('=', $.string_literal),
         seq('<>', $.string_literal)
       )),
       ',',
-      field('chars', $._expression),
+      field('which', $._expression),
       ')'
     ),
 
