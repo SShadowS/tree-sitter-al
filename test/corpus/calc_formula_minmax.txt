@@ -42,8 +42,9 @@ table 50100 "CalcFormula Test"
             (where_clause
               (where_conditions
                 (where_condition
-                  (identifier)
-                  (field_ref)))))))
+                  (field_filter
+                    (field_ref)
+                    (field_ref))))))))
       (field_declaration
         (integer)
         (name)
@@ -58,5 +59,6 @@ table 50100 "CalcFormula Test"
             (where_clause
               (where_conditions
                 (where_condition
-                  (identifier)
-                  (field_ref))))))))))
+                  (field_filter
+                    (field_ref)
+                    (field_ref)))))))))))

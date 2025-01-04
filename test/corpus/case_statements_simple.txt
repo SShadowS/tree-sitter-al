@@ -1,0 +1,42 @@
+==================
+Simple case with single statement branches
+==================
+
+table 50000 "Test Table"
+{
+    trigger OnInsert()
+    begin
+        case Type of
+            Type::A:
+                fount := 1;
+            Type::B:
+                fount := 2;
+        end;
+    end;
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (object_id (integer))
+    object_name: (object_name
+      name: (name))
+    (oninsert_trigger
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier))
+            statements: (assignment_statement
+              left: (identifier)
+              right: (integer)))
+          (case_branch
+            pattern: (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier))
+            statements: (assignment_statement
+              left: (identifier)
+              right: (integer))))))))

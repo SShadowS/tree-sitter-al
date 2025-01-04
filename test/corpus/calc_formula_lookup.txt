@@ -43,9 +43,8 @@ table 50100 "CalcFormula Test"
               (field))
             (lookup_where_conditions
               (lookup_where_condition
-                (identifier)
-                (field_ref
-                  (identifier)))))))
+                (field_ref)
+                (field_ref))))))
       (field_declaration
         (integer)
         (name)
@@ -60,10 +59,9 @@ table 50100 "CalcFormula Test"
               (field))
             (lookup_where_conditions
               (lookup_where_condition
-                (identifier)
-                (field_ref
-                  (identifier)))
+                (field_ref)
+                (field_ref))
               (lookup_where_condition
-                (identifier)
+                (field_ref)
                 (const)
                 (string_literal)))))))))
