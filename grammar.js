@@ -136,6 +136,13 @@ module.exports = grammar({
       /[tT][oO][bB][eE][cC][lL][aA][sS][sS][iI][fF][iI][eE][dD]/
     ),
 
+    access_by_permission_value: $ => seq(
+      'tabledata',
+      field('table_name', $._table_reference),
+      '=',
+      field('permission', $.permission_type)
+    ),
+
     _codeunit_element: $ => prec(1, choice(
       $.procedure,
       $.onrun_trigger,
@@ -297,6 +304,24 @@ module.exports = grammar({
     property_list: $ => prec(3, repeat1($.property)),
 
     property: $ => choice(
+      seq(
+        field('property_name', 'AccessByPermission'),
+        '=',
+        field('property_value', $.access_by_permission_value),
+        ';'
+      ),
+      seq(
+        field('property_name', 'AllowInCustomizations'),
+        '=',
+        field('property_value', $.boolean),
+        ';'
+      ),
+      seq(
+        field('property_name', 'AutoFormatExpression'),
+        '=',
+        field('property_value', $.string_literal),
+        ';'
+      ),
       seq(
         field('property_name', 'TableNo'),
         '=',
@@ -612,6 +637,12 @@ module.exports = grammar({
           $.data_classification_property,
           $.decimal_places_property,
           $.field_trigger_declaration,
+          seq(
+            'AutoFormatExpression',
+            '=',
+            field('expression', $.string_literal),
+            ';'
+          ),
           $.table_relation_property,
           $.field_class_property,
           $.calc_formula_property,
