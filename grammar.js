@@ -460,7 +460,7 @@ module.exports = grammar({
         field('property_value', $.identifier),
         ';'
       )
-    ),
+    )),
 
     caption_property: $ => seq(
       'Caption',
