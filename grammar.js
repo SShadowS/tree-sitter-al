@@ -1456,7 +1456,8 @@ module.exports = grammar({
 
     data_type: $ => choice(
       /[iI][nN][tT][eE][gG][eE][rR]/,
-      /[tT][eE][xX][tT]/,
+      seq(/[cC][oO][dD][eE]/, '[', field('size', $.integer), ']'),
+      seq(/[tT][eE][xX][tT]/, '[', field('size', $.integer), ']'),
       /[dD][eE][cC][iI][mM][aA][lL]/,
       /[bB][oO][oO][lL][eE][aA][nN]/,
       /[oO][pP][tT][iI][oO][nN]/,
@@ -1468,8 +1469,6 @@ module.exports = grammar({
       /[dD][uU][rR][aA][tT][iI][oO][nN]/,
       /[bB][iI][gG][iI][nN][tT][eE][gG][eE][rR]/,
       /[gG][uU][iI][dD]/,
-      seq(/[cC][oO][dD][eE]/, '[', field('size', $.integer), ']'),
-      seq(/[tT][eE][xX][tT]/, '[', field('size', $.integer), ']'),
       seq(/[eE][nN][uU][mM]/, field('enum_type', $.identifier))
     ),
 
