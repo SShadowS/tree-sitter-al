@@ -656,31 +656,33 @@ module.exports = grammar({
 
 
 
+    const_filter: $ => seq(
+      field('field', $._referenced_field),
+      '=',
+      choice('CONST', 'const', 'Const'),
+      '(',
+      field('value', choice(
+        $.string_literal,
+        $.identifier,
+        $._quoted_identifier,
+        $.integer,
+        $.boolean
+      )),
+      ')'
+    ),
+
+    field_filter: $ => seq(
+      field('field', $._referenced_field),
+      '=',
+      choice('FIELD', 'field', 'Field'),
+      '(',
+      field('value', $._referenced_field),
+      ')'
+    ),
+
     where_condition: $ => choice(
-      // CONST(<FieldConst>)
-      seq(
-        field('filter_field', $._referenced_field),
-        '=',
-        choice('CONST', 'const', 'Const'),
-        '(',
-        field('const_value', choice(
-          $.string_literal,
-          $.identifier,
-          $._quoted_identifier,
-          $.integer,
-          $.boolean
-        )),
-        ')'
-      ),
-      // FIELD(<SourceFieldName>)
-      seq(
-        field('field', $._referenced_field),
-        '=',
-        choice('FIELD', 'field', 'Field'),
-        '(',
-        field('source_field', $._referenced_field),
-        ')'
-      )
+      $.const_filter,
+      $.field_filter
     ),
 
     where_conditions: $ => seq(
