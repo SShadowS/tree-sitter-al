@@ -1736,7 +1736,6 @@ module.exports = grammar({
     count_function: $ => seq(
       choice('COUNT', 'Count', 'count'),
       '(',
-      field('record', $._expression),
       ')'
     ),
 
