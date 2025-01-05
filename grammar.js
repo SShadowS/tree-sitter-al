@@ -1925,7 +1925,9 @@ module.exports = grammar({
         field('arguments', $.argument_list)
       )),
       // Function call without arguments (no parentheses)
-      field('function_name', alias($.identifier, $.function_name))
+      field('function_name', alias($.identifier, $.function_name)),
+      // Built-in function calls (standalone)
+      $.built_in_function
     ),
 
     // Individual method definitions
