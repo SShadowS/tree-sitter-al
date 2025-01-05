@@ -1568,13 +1568,12 @@ module.exports = grammar({
       $.boolean
     )),
 
-    // Adjusting the _primary_expression to have clear precedence
-    _primary_expression: $ => prec(1, choice(  // Lowered precedence to 1
+    _primary_expression: $ => prec(1, choice(
       $._literal_argument,
       $.identifier,
       seq('(', $._expression, ')'),
       $.built_in_function,
-      $.unary_expression  // Add unary expressions here
+      $.unary_expression
     )),
 
     built_in_function: $ => choice(
