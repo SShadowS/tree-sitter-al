@@ -615,7 +615,7 @@ module.exports = grammar({
       $._quoted_identifier
     ),
 
-    member_access: $ => prec.left(4, seq(
+    member_access: $ => prec.left(2, seq(
       field('object', choice(
         $._primary_expression,
         $.member_access
@@ -624,7 +624,7 @@ module.exports = grammar({
       field('member', $.member)
     )),
 
-    method_call: $ => prec.left(5, seq(
+    method_call: $ => prec.left(3, seq(
       field('object', $._primary_expression),
       field('operator', '.'),
       field('method', alias(choice($.identifier, $._quoted_identifier), $.method_name)),
@@ -1732,33 +1732,6 @@ module.exports = grammar({
     ),
 
 
-    // Database Functions
-    count_function: $ => seq(
-      choice('COUNT', 'Count', 'count'),
-      '(',
-      ')'
-    ),
-
-    getrangemin_function: $ => seq(
-      choice('GETRANGEMIN', 'GetRangeMin', 'Getrangemin'),
-      '(',
-      field('field', $._expression),
-      ')'
-    ),
-
-    getrangemax_function: $ => seq(
-      choice('GETRANGEMAX', 'GetRangeMax', 'Getrangemax'),
-      '(',
-      field('field', $._expression),
-      ')'
-    ),
-
-    getfilters_function: $ => seq(
-      choice('GETFILTERS', 'GetFilters', 'Getfilters'),
-      '(',
-      field('record', $._expression),
-      ')'
-    ),
 
     // String Functions
     strlen_function: $ => seq(
