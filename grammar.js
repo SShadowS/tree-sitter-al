@@ -1539,20 +1539,10 @@ module.exports = grammar({
       field('right', $._expression)
     ),
 
-    assignable_member_access: $ => prec.left(4, seq(
-      field('object', choice(
-        $.identifier,
-        $._quoted_identifier,
-        $.assignable_member_access
-      )),
-      field('operator', '.'),
-      field('member', $.member)
-    )),
-
     _assignable_expression: $ => choice(
       $.identifier,
       alias($._quoted_identifier, $.quoted_identifier),
-      $.assignable_member_access
+      $.member_access
     ),
 
     argument_list: $ => prec(2, seq(
@@ -1930,7 +1920,7 @@ module.exports = grammar({
       // Method call
       $.method_call,
       // Function call with arguments
-      prec(2, seq(
+      prec.left(1,seq(
         field('function_name', alias($.identifier, $.function_name)),
         field('arguments', $.argument_list)
       )),
