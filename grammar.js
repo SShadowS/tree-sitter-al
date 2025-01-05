@@ -827,13 +827,13 @@ module.exports = grammar({
       $.array_type,
       $.basic_type,
       $.text_type,
+      $.code_type,
       $.record_type,
       $.codeunit_type, 
       $.query_type,
       $.dotnet_type,
       $.list_type,
-      $.dictionary_type,
-      $.custom_data_type
+      $.dictionary_type
     ),
 
     list_type: $ => seq(
