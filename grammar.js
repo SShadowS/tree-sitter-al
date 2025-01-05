@@ -1601,12 +1601,6 @@ module.exports = grammar({
       $.abs_function,
       $.power_function,
 
-      // Database Functions
-      $.count_function,
-      $.getrangemin_function,
-      $.getrangemax_function,
-      $.getfilters_function,
-
       // String Functions
       $.strlen_function,
       $.copystr_function,
