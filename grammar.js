@@ -1562,8 +1562,6 @@ module.exports = grammar({
 
     _primary_expression: $ => choice(
       $._literal_argument,
-      $.procedure_call,
-      $.procedure_call,
       prec(1, $.identifier),
       seq('(', $._expression, ')'),
       $.unary_expression,
