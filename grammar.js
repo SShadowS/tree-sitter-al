@@ -1809,7 +1809,7 @@ module.exports = grammar({
       $._chained_expression
     )),
 
-    _chained_expression: $ => prec(2, seq(
+    _chained_expression: $ => prec(3, seq(
       $._primary_expression,
       repeat1(
         choice(
