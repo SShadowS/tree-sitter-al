@@ -10,7 +10,7 @@
 module.exports = grammar({
   name: "al",
 
-  //word: $ => $.identifier,
+  word: $ => $.identifier,
   extras: $ => [/\s/],
 
   rules: {
@@ -616,10 +616,7 @@ module.exports = grammar({
     ),
 
     member_access: $ => prec.left(2, seq(
-      field('object', choice(
-        $._primary_expression,
-        $.member_access
-      )),
+      field('object', $._primary_expression),
       field('operator', '.'),
       field('member', $.member)
     )),
@@ -1245,11 +1242,6 @@ module.exports = grammar({
         alias($.identifier, $.field)
       ))
     ),
-
-
-
-
-
 
     blank_zero_property: $ => seq(
       'BlankZero',
