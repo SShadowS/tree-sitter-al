@@ -13,9 +13,6 @@ module.exports = grammar({
   word: $ => $.identifier,
   extras: $ => [/\s/],
 
-  conflicts: $ => [
-    [$.procedure_call, $._primary_expression],
-  ],
 
   rules: {
     source_file: $ => repeat($._object),
@@ -1341,6 +1338,7 @@ module.exports = grammar({
     ),
 
     simple_expression: $ => choice(
+      $.procedure_call,
       $._base_expression,
       $.unary_expression,
       prec.left(1, $.binary_expression)
@@ -1355,6 +1353,17 @@ module.exports = grammar({
       '(',
       field('arguments', $.simple_expression_list),
       ')'
+    ),
+
+    simple_expression: $ => choice(
+      $._base_expression,
+      $.unary_expression,
+      prec.left(1, $.binary_expression)
+    ),
+
+    simple_expression_list: $ => seq(
+      $.simple_expression,
+      repeat(seq(',', $.simple_expression))
     ),
 
     expression_list: $ => seq(
@@ -1516,7 +1525,6 @@ module.exports = grammar({
         $.repeat_statement,
         $.case_statement,
         $.exit_statement,
-        $.procedure_call,
         $.get_statement,
         $.find_set_statement,
         $.find_first_statement,
