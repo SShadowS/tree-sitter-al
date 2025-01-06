@@ -2089,7 +2089,7 @@ module.exports = grammar({
         $._enum_type_reference,
         $.identifier,
         $._quoted_identifier,
-        $.member_access
+        $._chained_expression
       )),
       field('operator', $._double__colon),
       field('value', choice(
@@ -2097,7 +2097,7 @@ module.exports = grammar({
         $._quoted_identifier,
         $.identifier,
         $.string_literal,
-        $.member_access
+        $._chained_expression
       ))
     )),
 
