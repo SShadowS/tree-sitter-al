@@ -618,9 +618,9 @@ module.exports = grammar({
 
 
     method_call: $ => prec.left(2, seq(
-      field('object', $._primary_expression),
-      field('operator', '.'),
-      field('method', $.identifier),
+      field('object', $._expression),
+      '.',
+      field('method_name', $.identifier),
       field('arguments', optional($.argument_list))
     )),
 
