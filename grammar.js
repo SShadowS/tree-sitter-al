@@ -1491,6 +1491,7 @@ module.exports = grammar({
     _statement: $ => prec.right(seq(
       choice(
         $.assignment_statement,
+        $.procedure_call,
         $.if_statement,
         $.repeat_statement,
         $.case_statement,
@@ -1823,13 +1824,13 @@ module.exports = grammar({
     member_access_tail: $ => prec.left(1, seq(
       '.',
       $.member
-    ),
+    )),
 
     method_call_tail: $ => prec.left(2, seq(
       '.',
       field('method', $.identifier),
       field('arguments', optional($.argument_list))
-    ),
+    )),
 
     qualified_enum_value_tail: $ => seq(
       '::',
@@ -1851,8 +1852,8 @@ module.exports = grammar({
 
 
     procedure_call: $ => prec.left(2, seq(
-      field('function_name', $.identifier),
-      field('arguments', optional($.argument_list))
+      field('function_name', alias ($.identifier, $.function_name)),
+      field('arguments', $.argument_list)
     )),
 
     // Individual method definitions
