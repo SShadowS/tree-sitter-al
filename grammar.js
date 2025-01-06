@@ -1118,10 +1118,7 @@ module.exports = grammar({
       ')'
     ),
 
-    _referenced_field: $ => alias(choice(
-      $._quoted_identifier,
-      $.identifier
-    ), $.field_ref),
+    _referenced_field: $ => alias($._chained_expression, $.field_ref),
 
     field_class_property: $ => seq(
       'FieldClass',
@@ -1227,17 +1224,7 @@ module.exports = grammar({
       ')'
     ),
 
-    field_reference: $ => seq(
-      field('table', choice(
-        alias($._quoted_identifier, $.table),
-        alias($.identifier, $.table)
-      )),
-      '.',
-      field('field', choice(
-        alias($._quoted_identifier, $.field),
-        alias($.identifier, $.field)
-      ))
-    ),
+    field_reference: $ => $._chained_expression,
 
     blank_zero_property: $ => seq(
       'BlankZero',
@@ -1538,9 +1525,9 @@ module.exports = grammar({
     ),
 
     _assignable_expression: $ => choice(
+      $._chained_expression,
       $.identifier,
-      alias($._quoted_identifier, $.quoted_identifier),
-      $.member_access
+      alias($._quoted_identifier, $.quoted_identifier)
     ),
 
     argument_list: $ => seq(
@@ -2020,7 +2007,7 @@ module.exports = grammar({
 
     // New rule for case expressions with explicit handling of identifiers
     _case_expression: $ => prec(2, choice(
-      $.member_access,
+      $._chained_expression,
       $.qualified_enum_value,
       $.function_call,
       $.identifier,
