@@ -1804,10 +1804,10 @@ module.exports = grammar({
       ')'
     ),
 
-    _base_expression: $ => choice(
+    _base_expression: $ => prec(1, choice(
       $._primary_expression,
       $._chained_expression
-    ),
+    )),
 
     _chained_expression: $ => prec(2, seq(
       $._primary_expression,
@@ -1841,13 +1841,13 @@ module.exports = grammar({
       $._expression
     )),
 
-    _expression: $ => choice(
+    _expression: $ => prec(2, choice(
       $._chained_expression,
       $._primary_expression,
       $.unary_expression,
       prec.left(1, $.binary_expression),
       $.procedure_call
-    ),
+    )),
 
 
     procedure_call: $ => prec.left(2, seq(
