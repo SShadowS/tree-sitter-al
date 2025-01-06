@@ -2032,10 +2032,10 @@ module.exports = grammar({
       ))
     ),
 
-    _case_pattern: $ => prec(5, choice(  // Increased precedence to 5
+    _case_pattern: $ => prec(5, choice(
       $._literal_value,
       $.qualified_enum_value,
-      $.member_access,
+      $._chained_expression,
       $.identifier,
       $._quoted_identifier,
       $.string_literal,
@@ -2045,20 +2045,7 @@ module.exports = grammar({
         field('operator', $._double__colon),
         field('value', $._enum_value_reference)
       ),
-      $.multi_pattern,
-      // Add explicit support for member access patterns
-      seq(
-        field('object', choice(
-          $.identifier,
-          $._quoted_identifier,
-          $.member_access
-        )),
-        field('operator', '.'),
-        field('member', choice(
-          $.identifier,
-          $._quoted_identifier
-        ))
-      )
+      $.multi_pattern
     )),
 
     multi_pattern: $ => seq(
