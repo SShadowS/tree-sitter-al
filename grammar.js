@@ -2056,7 +2056,7 @@ module.exports = grammar({
     _single_pattern: $ => choice(
       $._literal_value,
       $.qualified_enum_value,
-      $.member_access,
+      $._chained_expression,
       $.identifier,
       $._quoted_identifier
     ),
@@ -2104,13 +2104,13 @@ module.exports = grammar({
     _enum_type_reference: $ => prec.left(2, choice(
       $._quoted_identifier,
       $.identifier,
-      $.member_access
+      $._chained_expression
     )),
 
     _enum_value_reference: $ => prec.left(2, choice(
       $._quoted_identifier,
       $.identifier,
-      $.member_access,
+      $._chained_expression,
       $.string_literal
     )),
 
