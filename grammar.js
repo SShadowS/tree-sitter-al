@@ -13,6 +13,10 @@ module.exports = grammar({
   word: $ => $.identifier,
   extras: $ => [/\s/],
 
+  conflicts: $ => [
+    [$.procedure_call, $._primary_expression],
+  ],
+
   rules: {
     source_file: $ => repeat($._object),
 
@@ -1336,9 +1340,20 @@ module.exports = grammar({
       ']'
     ),
 
+    simple_expression: $ => choice(
+      $._base_expression,
+      $.unary_expression,
+      prec.left(1, $.binary_expression)
+    ),
+
+    simple_expression_list: $ => seq(
+      $.simple_expression,
+      repeat(seq(',', $.simple_expression))
+    ),
+
     attribute_arguments: $ => seq(
-      '(', 
-      field('arguments', $.expression_list), 
+      '(',
+      field('arguments', $.simple_expression_list),
       ')'
     ),
 
@@ -1562,7 +1577,8 @@ module.exports = grammar({
 
     _primary_expression: $ => choice(
       $._literal_argument,
-      prec(1, $.identifier),
+      $.procedure_call,
+      prec(-1, $.identifier),
       seq('(', $._expression, ')'),
       $.unary_expression,
       $.member_access
@@ -1835,7 +1851,7 @@ module.exports = grammar({
     ),
 
 
-    procedure_call: $ => prec.left(4, seq(
+    procedure_call: $ => prec.left(5, seq(
       field('function_name', $.identifier),
       field('arguments', optional($.argument_list))
     )),
