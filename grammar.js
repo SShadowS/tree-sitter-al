@@ -621,11 +621,11 @@ module.exports = grammar({
       field('member', $.member)
     )),
 
-    method_call: $ => prec.left(3, seq(
+    method_call: $ => prec.left(2, seq(
       field('object', $._primary_expression),
       field('operator', '.'),
-      field('method', alias(choice($.identifier, $._quoted_identifier), $.method_name)),
-      field('arguments', $.argument_list)
+      field('method', $.identifier),
+      field('arguments', optional($.argument_list))
     )),
 
     property_list: $ => prec(3, repeat1($.property)),
@@ -1420,7 +1420,7 @@ module.exports = grammar({
       ))
     ),
 
-    identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
+    identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/
 
     _quoted_identifier: $ => seq(
       '"',
@@ -1537,14 +1537,14 @@ module.exports = grammar({
       $.member_access
     ),
 
-    argument_list: $ => prec(2, seq(
+    argument_list: $ => seq(
       '(',
       optional(seq(
-        $._argument,
-        repeat(seq(',', $._argument))
+        $._expression,
+        repeat(seq(',', $._expression))
       )),
       ')'
-    )),
+    ),
 
     _argument: $ => choice(
       $.decimal,
@@ -1560,53 +1560,15 @@ module.exports = grammar({
       $.boolean
     )),
 
-    _primary_expression: $ => prec(1, choice(
+    _primary_expression: $ => choice(
       $._literal_argument,
+      $.procedure_call,
       $.identifier,
       seq('(', $._expression, ')'),
-      $.built_in_function,
-      $.unary_expression
-    )),
-
-    built_in_function: $ => choice(
-      // Date/Time Functions
-      $.currentdatetime_function,
-      $.currentdate_function,
-      $.currenttime_function,
-      $.today_function,
-      $.workdate_function,
-      $.createdatetime_function,
-      $.time_function,
-
-      // System Functions
-      $.userid_function,
-      $.companyname_function,
-      $.serialnumber_function,
-      $.sessionid_function,
-      $.windowsloggedonuser_function,
-
-      // Math Functions
-      $.random_function,
-      $.randomize_function,
-      $.round_function,
-      $.abs_function,
-      $.power_function,
-
-      // String Functions
-      $.strlen_function,
-      $.copystr_function,
-      $.lowercase_function,
-      $.uppercase_function,
-      $.format_function,
-      $.substring_function,
-      $.padstr_function,
-      $.delchr_function,
-      $.delstr_function,
-      $.incstr_function,
-      $.selectstr_function,
-      $.strpos_function,
-      $.convertstr_function
+      $.unary_expression,
+      $.member_access
     ),
+
 
     // Date/Time Functions
     currentdatetime_function: $ => choice(
@@ -1873,18 +1835,9 @@ module.exports = grammar({
     ),
 
 
-    procedure_call: $ => choice(
-      // Method call
-      $.method_call,
-      // Function call with arguments
-      prec.left(1,seq(
-        field('function_name', alias($.identifier, $.function_name)),
-        field('arguments', $.argument_list)
-      )),
-      // Function call without arguments (no parentheses)
-      field('function_name', alias($.identifier, $.function_name)),
-      // Built-in function calls (standalone)
-      $.built_in_function
+    procedure_call: $ => seq(
+      field('function_name', $.identifier),
+      field('arguments', optional($.argument_list))
     ),
 
     // Individual method definitions
