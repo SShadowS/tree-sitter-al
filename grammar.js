@@ -1566,14 +1566,13 @@ module.exports = grammar({
       $.boolean
     )),
 
-    _primary_expression: $ => choice(
+    _primary_expression: $ => prec(1, choice(
       $._literal_argument,
       $.procedure_call,
       prec(-1, $.identifier),
       seq('(', $._expression, ')'),
-      $.unary_expression,
-      $.member_access
-    ),
+      $.unary_expression
+    )),
 
 
     // Date/Time Functions
