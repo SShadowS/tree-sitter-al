@@ -1831,12 +1831,13 @@ module.exports = grammar({
 
     _expression: $ => choice(
       $._base_expression,
-      $.unary_expression,  // Add unary expressions with higher precedence
-      prec.left(1, $.binary_expression)  // Binary expressions have lowest precedence
+      $.unary_expression,
+      prec.left(1, $.binary_expression),
+      $.procedure_call
     ),
 
 
-    procedure_call: $ => prec.left(3, seq(
+    procedure_call: $ => prec.left(4, seq(
       field('function_name', $.identifier),
       field('arguments', optional($.argument_list))
     )),
@@ -2129,7 +2130,4 @@ module.exports = grammar({
     ),
   },
 
-  conflicts: $ => [
-    [$.procedure_call, $._primary_expression],
-  ]
 });
