@@ -1563,7 +1563,8 @@ module.exports = grammar({
     _primary_expression: $ => choice(
       $._literal_argument,
       $.procedure_call,
-      $.identifier,
+      $.procedure_call,
+      prec(1, $.identifier),
       seq('(', $._expression, ')'),
       $.unary_expression,
       $.member_access
@@ -1835,10 +1836,10 @@ module.exports = grammar({
     ),
 
 
-    procedure_call: $ => seq(
+    procedure_call: $ => prec.left(3, seq(
       field('function_name', $.identifier),
       field('arguments', optional($.argument_list))
-    ),
+    )),
 
     // Individual method definitions
     // Common base pattern for record operations
@@ -2126,5 +2127,9 @@ module.exports = grammar({
         ')'
       ))
     ),
-  }
+  },
+
+  conflicts: $ => [
+    [$.procedure_call, $._primary_expression],
+  ]
 });
