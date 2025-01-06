@@ -616,11 +616,6 @@ module.exports = grammar({
       $._quoted_identifier
     ),
 
-    member_access: $ => prec.left(2, seq(
-      field('object', $._primary_expression),
-      field('operator', '.'),
-      field('member', $.member)
-    )),
 
     method_call: $ => prec.left(2, seq(
       field('object', $._primary_expression),
@@ -1828,10 +1823,31 @@ module.exports = grammar({
       $._chained_expression
     ),
 
-    _chained_expression: $ => choice(
-      $.member_access,
-      $.method_call,
-      $.qualified_enum_value
+    _chained_expression: $ => prec(2, seq(
+      $._primary_expression,
+      repeat1(
+        choice(
+          $.member_access_tail,
+          $.method_call_tail,
+          $.qualified_enum_value_tail
+        )
+      )
+    )),
+
+    member_access_tail: $ => seq(
+      '.',
+      $.member
+    ),
+
+    method_call_tail: $ => seq(
+      '.',
+      field('method', $.identifier),
+      field('arguments', optional($.argument_list))
+    ),
+
+    qualified_enum_value_tail: $ => seq(
+      '::',
+      choice($.identifier, $._quoted_identifier)
     ),
 
     unary_expression: $ => prec(6, seq(
@@ -1840,7 +1856,8 @@ module.exports = grammar({
     )),
 
     _expression: $ => choice(
-      $._base_expression,
+      $._chained_expression,
+      $._primary_expression,
       $.unary_expression,
       prec.left(1, $.binary_expression),
       $.procedure_call
