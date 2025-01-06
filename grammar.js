@@ -1820,12 +1820,12 @@ module.exports = grammar({
       )
     )),
 
-    member_access_tail: $ => seq(
+    member_access_tail: $ => prec.left(1, seq(
       '.',
       $.member
     ),
 
-    method_call_tail: $ => seq(
+    method_call_tail: $ => prec.left(2, seq(
       '.',
       field('method', $.identifier),
       field('arguments', optional($.argument_list))
