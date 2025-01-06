@@ -1337,18 +1337,6 @@ module.exports = grammar({
       ']'
     ),
 
-    simple_expression: $ => choice(
-      $.procedure_call,
-      $._base_expression,
-      $.unary_expression,
-      prec.left(1, $.binary_expression)
-    ),
-
-    simple_expression_list: $ => seq(
-      $.simple_expression,
-      repeat(seq(',', $.simple_expression))
-    ),
-
     attribute_arguments: $ => seq(
       '(',
       field('arguments', $.expression_list),
