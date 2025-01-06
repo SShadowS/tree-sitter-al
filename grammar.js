@@ -1351,7 +1351,7 @@ module.exports = grammar({
 
     attribute_arguments: $ => seq(
       '(',
-      field('arguments', $.simple_expression_list),
+      field('arguments', $.expression_list),
       ')'
     ),
 
@@ -1859,7 +1859,7 @@ module.exports = grammar({
     ),
 
 
-    procedure_call: $ => prec.left(5, seq(
+    procedure_call: $ => prec.left(2, seq(
       field('function_name', $.identifier),
       field('arguments', optional($.argument_list))
     )),
