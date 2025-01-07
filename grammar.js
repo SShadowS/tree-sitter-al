@@ -616,14 +616,6 @@ module.exports = grammar({
       $._quoted_identifier
     ),
 
-
-    method_call: $ => prec.left(2, seq(
-      field('object', $._expression),
-      '.',
-      field('method_name', $.identifier),
-      field('arguments', optional($.argument_list))
-    )),
-
     property_list: $ => prec(3, repeat1($.property)),
 
     property: $ => prec(2, choice(
@@ -1325,17 +1317,6 @@ module.exports = grammar({
       ')'
     ),
 
-    simple_expression: $ => choice(
-      $._base_expression,
-      $.unary_expression,
-      prec.left(1, $.binary_expression)
-    ),
-
-    simple_expression_list: $ => seq(
-      $.simple_expression,
-      repeat(seq(',', $.simple_expression))
-    ),
-
     expression_list: $ => seq(
       $._expression,
       repeat(seq(',', $._expression))
@@ -1470,16 +1451,6 @@ module.exports = grammar({
       seq(/[eE][nN][uU][mM]/, field('enum_type', $.identifier))
     ),
 
-    custom_data_type: $ => seq(
-      field('base_type', $.identifier),
-      optional(seq(
-        '[',
-        field('size', $.integer),
-        optional(seq(':', field('decimals', $.integer))),
-        ']'
-      ))
-    ),
-
     // Define code blocks with explicit keyword handling
     code_block: $ => prec.right(1, seq(
       choice('begin', 'BEGIN', 'Begin'),
@@ -1494,19 +1465,7 @@ module.exports = grammar({
         $.procedure_call,
         $.if_statement,
         $.repeat_statement,
-        $.case_statement,
-        $.exit_statement,
-        $.get_statement,
-        $.find_set_statement,
-        $.find_first_statement,
-        $.find_last_statement,
-        $.next_statement,
-        $.insert_statement,
-        $.modify_statement,
-        $.delete_statement,
-        $.set_range_statement,
-        $.set_filter_statement,
-        $.reset_statement
+        $.case_statement
       ),
       optional(';')
     )),
@@ -1540,12 +1499,6 @@ module.exports = grammar({
       ')'
     ),
 
-    _argument: $ => choice(
-      $.decimal,
-      $._literal_argument,
-      $._expression
-    ),
-
     _literal_argument: $ => prec(1, choice(
       alias($._quoted_identifier, $.quoted_identifier),
       $.string_literal,
@@ -1561,249 +1514,6 @@ module.exports = grammar({
       seq('(', $._expression, ')'),
       $.unary_expression
     )),
-
-
-    // Date/Time Functions
-    currentdatetime_function: $ => choice(
-      'CURRENTDATETIME', 'CurrentDateTime', 'Currentdatetime'
-    ),
-
-    currentdate_function: $ => choice(
-      'CURRENTDATE', 'CurrentDate', 'Currentdate'
-    ),
-
-    currenttime_function: $ => choice(
-      'CURRENTTIME', 'CurrentTime', 'Currenttime'
-    ),
-
-    today_function: $ => choice(
-      'TODAY', 'Today', 'today'
-    ),
-
-    workdate_function: $ => choice(
-      'WORKDATE', 'WorkDate', 'Workdate'
-    ),
-
-    createdatetime_function: $ => seq(
-      choice('CREATEDATETIME', 'CreateDateTime', 'Createdatetime'),
-      '(',
-      field('date', $._expression),
-      ',',
-      field('time', $._expression),
-      ')'
-    ),
-
-    time_function: $ => seq(
-      choice('TIME', 'Time', 'time'),
-      '(',
-      field('hours', $._expression),
-      ',',
-      field('minutes', $._expression),
-      ',',
-      field('seconds', $._expression),
-      ')'
-    ),
-
-    // System Functions
-    userid_function: $ => choice(
-      'USERID', 'UserId', 'Userid'
-    ),
-
-    companyname_function: $ => choice(
-      'COMPANYNAME', 'CompanyName', 'Companyname'
-    ),
-
-    serialnumber_function: $ => choice(
-      'SERIALNUMBER', 'SerialNumber', 'Serialnumber'
-    ),
-
-    sessionid_function: $ => choice(
-      'SESSIONID', 'SessionId', 'Sessionid'
-    ),
-
-    windowsloggedonuser_function: $ => choice(
-      'WINDOWSLOGGEDONUSER', 'WindowsLoggedOnUser', 'Windowsloggedonuser'
-    ),
-
-    // Math Functions
-    random_function: $ => seq(
-      choice('RANDOM', 'Random', 'random'),
-      '(',
-      field('range', $._expression),
-      ')'
-    ),
-
-    randomize_function: $ => seq(
-      choice('RANDOMIZE', 'Randomize', 'randomize'),
-      '(',
-      optional(field('seed', $._expression)),
-      ')'
-    ),
-
-    round_function: $ => seq(
-      choice('ROUND', 'Round', 'round'),
-      '(',
-      field('number', $._expression),
-      optional(seq(
-        ',',
-        field('precision', $._expression),
-        optional(seq(
-          ',',
-          field('direction', $.string_literal)  // Added direction parameter
-        ))
-      )),
-      ')'
-    ),
-
-    abs_function: $ => seq(
-      choice('ABS', 'Abs', 'abs'),
-      '(',
-      field('number', $._expression),
-      ')'
-    ),
-
-    power_function: $ => seq(
-      choice('POWER', 'Power', 'power'),
-      '(',
-      field('base', $._expression),
-      ',',
-      field('exponent', $._expression),
-      ')'
-    ),
-
-
-
-    // String Functions
-    strlen_function: $ => seq(
-      choice('STRLEN', 'StrLen', 'Strlen'),
-      '(',
-      field('string', $._expression),
-      ')'
-    ),
-
-    copystr_function: $ => seq(
-      choice('COPYSTR', 'CopyStr', 'Copystr'),
-      '(',
-      field('string', $._expression),
-      ',',
-      field('position', $._expression),
-      optional(seq(',', field('length', $._expression))),
-      ')'
-    ),
-
-    lowercase_function: $ => seq(
-      choice('LOWERCASE', 'LowerCase', 'Lowercase'),
-      '(',
-      field('string', $._expression),
-      ')'
-    ),
-
-    uppercase_function: $ => seq(
-      choice('UPPERCASE', 'UpperCase', 'Uppercase'),
-      '(',
-      field('string', $._expression),
-      ')'
-    ),
-
-    format_function: $ => seq(
-      choice('FORMAT', 'Format', 'format'),
-      '(',
-      field('value', $._expression),
-      optional(seq(',', field('format_number', $._expression))),
-      ')'
-    ),
-
-    // String Manipulation Functions
-    substring_function: $ => seq(
-      choice('SUBSTRING', 'Substring', 'substring'),
-      '(',
-      field('text', $._expression),
-      ',',
-      field('position', $._expression),
-      optional(seq(
-        ',',
-        field('length', $._expression)
-      )),
-      ')'
-    ),
-
-    padstr_function: $ => seq(
-      choice('PADSTR', 'PadStr', 'padstr'),
-      '(',
-      field('text', $._expression),
-      ',',
-      field('length', $._expression),
-      ',',
-      field('padding_char', $._expression),
-      ')'
-    ),
-
-    delchr_function: $ => seq(
-      choice('DELCHR', 'DelChr', 'delchr'),
-      '(',
-      field('text', $._expression),
-      optional(seq(
-        ',',
-        field('where', choice(
-          seq('=', $.string_literal),
-          seq('<>', $.string_literal)
-        ))
-      )),
-      optional(seq(
-        ',',
-        field('which', $._expression)
-      )),
-      ')'
-    ),
-
-    delstr_function: $ => seq(
-      choice('DELSTR', 'DelStr', 'delstr'),
-      '(',
-      field('text', $._expression),
-      ',',
-      field('position', $._expression),
-      optional(seq(
-        ',',
-        field('length', $._expression)
-      )),
-      ')'
-    ),
-
-    incstr_function: $ => seq(
-      choice('INCSTR', 'IncStr', 'incstr'),
-      '(',
-      field('text', $._expression),
-      ')'
-    ),
-
-    selectstr_function: $ => seq(
-      choice('SELECTSTR', 'SelectStr', 'selectstr'),
-      '(',
-      field('number', $._expression),
-      ',',
-      field('string', $._expression),
-      ')'
-    ),
-
-    strpos_function: $ => seq(
-      choice('STRPOS', 'StrPos', 'strpos'),
-      '(',
-      field('text', $._expression),
-      ',',
-      field('subtext', $._expression),
-      ')'
-    ),
-
-    convertstr_function: $ => seq(
-      choice('CONVERTSTR', 'ConvertStr', 'convertstr'),
-      '(',
-      field('text', $._expression),
-      ',',
-      field('from_chars', $._expression),
-      ',',
-      field('to_chars', $._expression),
-      ')'
-    ),
 
     _base_expression: $ => prec(1, choice(
       $._primary_expression,
@@ -1863,88 +1573,6 @@ module.exports = grammar({
       '.'
     )),
 
-    get_method: $ => seq(
-      $._record_operation,
-      'Get',
-      field('arguments', $.argument_list)
-    ),
-
-    find_set_method: $ => prec(3, seq(
-      field('record', alias($.identifier, $.record)),
-      '.',
-      'FindSet',
-      '(',
-      optional(seq(
-        field('forward_order', $.boolean),
-        optional(seq(',', field('lock_record', $.boolean)))
-      )),
-      ')'
-    )),
-
-    insert_statement: $ => seq(
-      $._record_operation,
-      'Insert',
-      '(',
-      optional(seq(
-        field('run_trigger', $.boolean),
-        optional(seq(',', field('system_id', $.boolean)))
-      )),
-      ')'
-    ),
-
-    modify_statement: $ => seq(
-      $._record_operation,
-      'Modify',
-      '(',
-      optional(field('run_trigger', $.boolean)),
-      ')'
-    ),
-
-    delete_statement: $ => seq(
-      $._record_operation,
-      'Delete',
-      '(',
-      optional(field('run_trigger', $.boolean)),
-      ')'
-    ),
-
-    set_range_statement: $ => seq(
-      $._record_operation,
-      'SetRange',
-      '(',
-      field('field_name', choice($.identifier, $._quoted_identifier)),
-      ',',
-      field('from_value', choice($.string_literal, $.identifier, $.integer)),
-      optional(seq(
-        ',',
-        field('to_value', choice($.string_literal, $.identifier, $.integer))
-      )),
-      ')'
-    ),
-
-    set_filter_statement: $ => seq(
-      $._record_operation,
-      'SetFilter',
-      '(',
-      field('field_name', choice($.identifier, $._quoted_identifier)),
-      ',',
-      field('filter_expression', $.string_literal),
-      repeat(
-        seq(
-          ',',
-          field('parameter', $._expression)
-        )
-      ),
-      ')'
-    ),
-
-    reset_statement: $ => seq(
-      $._record_operation,
-      'Reset',
-      '(',
-      ')'
-    ),
-
     binary_expression: $ => choice(
       // Comparison has higher precedence than arithmetic
       prec.left(6, seq(
@@ -1975,36 +1603,6 @@ module.exports = grammar({
         ))
       ))
     )),
-
-    get_statement: $ => seq(
-      $.get_method
-    ),
-
-    find_set_statement: $ => seq(
-      $.find_set_method
-    ),
-
-    find_first_statement: $ => seq(
-      $._record_operation,
-      'FindFirst',
-      '(',
-      ')'
-    ),
-
-    find_last_statement: $ => seq(
-      $._record_operation,
-      'FindLast',
-      '(',
-      ')'
-    ),
-
-    next_statement: $ => seq(
-      $._record_operation,
-      'Next',
-      '(',
-      optional(field('steps', $.integer)),
-      ')'
-    ),
 
     // New rule for case expressions with explicit handling of identifiers
     _case_expression: $ => prec(2, choice(
@@ -2120,15 +1718,6 @@ module.exports = grammar({
       $.code_block
     ),
 
-    exit_statement: $ => choice(
-      prec(1, choice('exit', 'EXIT', 'Exit')),  // Simple exit has lower precedence
-      prec(2, seq(      // Exit with expression has higher precedence
-        choice('exit', 'EXIT', 'Exit'),
-        '(',
-        $._expression,
-        ')'
-      ))
-    ),
   },
 
 });
