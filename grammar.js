@@ -1484,11 +1484,7 @@ module.exports = grammar({
       field('right', $._expression)
     ),
 
-    _assignable_expression: $ => choice(
-      $._chained_expression,
-      $.identifier,
-      alias($._quoted_identifier, $.quoted_identifier)
-    ),
+    _assignable_expression: $ => $._expression,
 
     argument_list: $ => seq(
       '(',
@@ -1507,13 +1503,14 @@ module.exports = grammar({
       $.boolean
     )),
 
-    _primary_expression: $ => prec(1, choice(
-      $._literal_argument,
-      $.procedure_call,
-      prec(-1, $.identifier),
-      seq('(', $._expression, ')'),
-      $.unary_expression
-    )),
+    _primary_expression: $ => choice(
+      $._literal_value,
+      $.identifier,
+      $.parenthesized_expression,
+      $.unary_expression,
+      $.call_expression,
+      $.member_expression
+    ),
 
     _base_expression: $ => prec(1, choice(
       $._primary_expression,
@@ -1526,18 +1523,6 @@ module.exports = grammar({
       $.qualified_enum_value_tail
     )),
 
-    member_access: $ => prec.left(seq(
-      field('object', $._expression),
-      '.',
-      field('member', $.identifier)
-    )),
-
-    method_call: $ => prec.left(seq(
-      field('object', $._expression),
-      '.',
-      field('method_name', $.identifier),
-      field('arguments', $.argument_list)
-    )),
 
     qualified_enum_value_tail: $ => seq(
       '::',
@@ -1545,23 +1530,21 @@ module.exports = grammar({
     ),
 
     unary_expression: $ => prec(6, seq(
-      '-', 
+      '-',
       $._expression
     )),
 
-    _expression: $ => prec(2, choice(
-      $._chained_expression,
-      $._primary_expression,
+    _expression: $ => choice(
+      $.identifier,
+      $._literal_value,
+      $.parenthesized_expression,
       $.unary_expression,
-      prec.left(1, $.binary_expression),
-      $.procedure_call
-    )),
+      $.binary_expression,
+      $.member_expression,
+      $.call_expression
+    ),
 
 
-    procedure_call: $ => prec.left(2, seq(
-      field('function_name', alias ($.identifier, $.function_name)),
-      field('arguments', $.argument_list)
-    )),
 
     // Individual method definitions
     // Common base pattern for record operations
@@ -1571,16 +1554,15 @@ module.exports = grammar({
     )),
 
     binary_expression: $ => choice(
-      // Comparison has higher precedence than arithmetic
       prec.left(6, seq(
-        field('left', $._base_expression),
-        field('operator', $.comparison_operator), 
-        field('right', $._base_expression)
+        field('left', $._expression),
+        field('operator', $.comparison_operator),
+        field('right', $._expression)
       )),
       prec.left(4, seq(
-        field('left', $._base_expression),
+        field('left', $._expression),
         field('operator', $.arithmetic_operator),
-        field('right', $._base_expression)
+        field('right', $._expression)
       ))
     ),
 
