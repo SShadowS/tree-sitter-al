@@ -1486,6 +1486,11 @@ module.exports = grammar({
 
     _assignable_expression: $ => $._expression,
 
+    call_expression: $ => prec.left(8, seq(
+      field('function', $._expression),
+      field('arguments', $.argument_list)
+    )),
+
     argument_list: $ => seq(
       '(',
       optional(seq(
@@ -1543,6 +1548,12 @@ module.exports = grammar({
       $.member_expression,
       $.call_expression
     ),
+
+    member_expression: $ => prec.left(7, seq(
+      field('object', $._expression),
+      '.',
+      field('property', $.identifier)
+    )),
 
 
 
@@ -1655,6 +1666,12 @@ module.exports = grammar({
       $.decimal,
       $.string_literal,
       $.boolean
+    ),
+
+    parenthesized_expression: $ => seq(
+      '(',
+      $._expression,
+      ')'
     ),
 
     else_branch: $ => seq(
