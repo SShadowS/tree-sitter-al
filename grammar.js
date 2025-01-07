@@ -1520,26 +1520,23 @@ module.exports = grammar({
       $._chained_expression
     )),
 
-    _chained_expression: $ => prec(3, seq(
-      $._primary_expression,
-      repeat1(
-        choice(
-          $.member_access_tail,
-          $.method_call_tail,
-          $.qualified_enum_value_tail
-        )
-      )
+    _chained_expression: $ => prec(3, choice(
+      $.member_access,
+      $.method_call,
+      $.qualified_enum_value_tail
     )),
 
-    member_access_tail: $ => prec.left(1, seq(
+    member_access: $ => prec.left(seq(
+      field('object', $._expression),
       '.',
-      $.member
+      field('member', $.identifier)
     )),
 
-    method_call_tail: $ => prec.left(2, seq(
+    method_call: $ => prec.left(seq(
+      field('object', $._expression),
       '.',
-      field('method', $.identifier),
-      field('arguments', optional($.argument_list))
+      field('method_name', $.identifier),
+      field('arguments', $.argument_list)
     )),
 
     qualified_enum_value_tail: $ => seq(
