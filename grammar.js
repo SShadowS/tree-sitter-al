@@ -26,10 +26,6 @@ module.exports = grammar({
     _double__colon: $ => token(prec(1, '::')),
     _colon: $ => ':',
 
-    function_call: $ => seq(  // Increase precedence to 3
-      field('function_name', $.identifier),
-      field('arguments', optional($.argument_list))  // Make arguments optional
-    ),
 
     object_id: $ => seq($.integer),
     object_name: $ => field('name', alias(choice(
@@ -1491,7 +1487,7 @@ module.exports = grammar({
 
     _assignable_expression: $ => $._expression,
 
-    call_expression: $ => prec.left(8, seq(
+    call_expression: $ => prec(11, seq(
       field('function', $._expression),
       field('arguments', $.argument_list)
     )),
@@ -1545,13 +1541,13 @@ module.exports = grammar({
     )),
 
     _expression: $ => choice(
+      $.call_expression,
+      $.member_expression,
       $.identifier,
       $._literal_value,
       $.parenthesized_expression,
       $.unary_expression,
-      $.binary_expression,
-      $.member_expression,
-      $.call_expression
+      $.binary_expression
     ),
 
     member_expression: $ => prec.left(7, seq(
@@ -1600,12 +1596,9 @@ module.exports = grammar({
     )),
 
     // New rule for case expressions with explicit handling of identifiers
-    _case_expression: $ => prec(2, choice(
-      $._chained_expression,
-      $.qualified_enum_value,
-      $.function_call,
-      $.identifier,
-      alias($._quoted_identifier, $.quoted_identifier)
+    _case_expression: $ => prec.left(choice(
+      $.call_expression,
+      $._expression
     )),
 
     case_statement: $ => prec(2, seq(
