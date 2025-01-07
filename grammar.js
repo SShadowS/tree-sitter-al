@@ -1462,7 +1462,7 @@ module.exports = grammar({
     _statement: $ => prec.right(seq(
       choice(
         $.assignment_statement,
-        $.procedure_call,
+        $.call_expression,
         $.if_statement,
         $.repeat_statement,
         $.case_statement
