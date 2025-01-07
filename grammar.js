@@ -1534,7 +1534,7 @@ module.exports = grammar({
       choice($.identifier, $._quoted_identifier)
     ),
 
-    unary_expression: $ => prec(6, seq(
+    unary_expression: $ => prec.right(7, seq(
       '-',
       $._expression
     )),
