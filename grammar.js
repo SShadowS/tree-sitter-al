@@ -1523,8 +1523,8 @@ module.exports = grammar({
     )),
 
     _chained_expression: $ => prec(3, choice(
-      $.member_access,
-      $.method_call,
+      $.member_expression,
+      $.call_expression,
       $.qualified_enum_value_tail
     )),
 
