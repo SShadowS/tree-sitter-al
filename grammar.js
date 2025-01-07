@@ -1596,7 +1596,7 @@ module.exports = grammar({
     )),
 
     // New rule for case expressions with explicit handling of identifiers
-    _case_expression: $ => prec.left(choice(
+    _case_expression: $ => prec(10, choice(
       $.call_expression,
       $._expression
     )),
