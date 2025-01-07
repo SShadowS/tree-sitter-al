@@ -1626,7 +1626,7 @@ module.exports = grammar({
       $.identifier,
       $._quoted_identifier,
       $.string_literal,
-      $.function_call,
+      $.call_expression,
       seq(
         field('enum_type', $._enum_type_reference),
         field('operator', $._double__colon),
