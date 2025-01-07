@@ -1462,12 +1462,17 @@ module.exports = grammar({
     _statement: $ => prec.right(seq(
       choice(
         $.assignment_statement,
-        $.call_expression,
+        $.call_statement,
         $.if_statement,
         $.repeat_statement,
         $.case_statement
       ),
       optional(';')
+    )),
+
+    call_statement: $ => prec.left(seq(
+      field('function', $._expression),
+      field('arguments', $.argument_list)
     )),
 
 
