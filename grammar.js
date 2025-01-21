@@ -1469,8 +1469,11 @@ module.exports = grammar({
       optional(';')
     )),
 
-    procedure_call: $ => prec.left(seq(
-      field('function', $._expression),
+    procedure_call: $ => prec.left(8, seq(
+      field('function', choice(
+        $.identifier,
+        $.member_expression
+      )),
       field('arguments', $.argument_list)
     )),
 
@@ -1550,9 +1553,9 @@ module.exports = grammar({
     )),
 
     _expression: $ => choice(
-      $.field_access,
+      $.field_access,  // Check quoted field first
+      $.member_expression, // Then regular member access
       $.call_expression,
-      $.member_expression,
       $.identifier,
       $._literal_value,
       $.parenthesized_expression,
@@ -1560,13 +1563,16 @@ module.exports = grammar({
       $.binary_expression
     ),
 
-    member_expression: $ => prec.left(7, seq(
+    member_expression: $ => prec.left(6, seq(
       field('object', $._expression),
       '.',
-      field('property', choice(
-        $.identifier,
-        $._quoted_identifier
-      ))
+      field('property', $.identifier) // Only regular identifiers
+    )),
+
+    field_access: $ => prec.left(7, seq( // Higher precedence than member_expression
+      field('record', $._expression),
+      '.',
+      field('field', $._quoted_identifier)
     )),
 
 
