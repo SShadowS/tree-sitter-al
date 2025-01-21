@@ -1493,12 +1493,6 @@ module.exports = grammar({
 
     _assignable_expression: $ => $._expression,
 
-    field_access: $ => seq(
-      field('record', $.identifier),
-      '.',
-      field('field', $._quoted_identifier)
-    ),
-
     call_expression: $ => prec(11, seq(
       field('function', $._expression),
       field('arguments', $.argument_list)
