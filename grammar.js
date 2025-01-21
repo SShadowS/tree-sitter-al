@@ -1448,7 +1448,7 @@ module.exports = grammar({
       choice('begin', 'BEGIN', 'Begin'),
       optional(repeat($._statement)),
       choice('end', 'END', 'End'),
-      optional(';')
+      optional(token(';')) // Explicit token
     )),
 
     _statement: $ => prec.right(seq(
@@ -1540,8 +1540,8 @@ module.exports = grammar({
     )),
 
     _expression: $ => choice(
-      $.field_access,  // Check quoted field first
-      $.member_expression, // Then regular member access
+      $.field_access,  // Check quoted first 
+      $.member_expression, // Then regular members
       $.call_expression,
       $.identifier,
       $._literal_value,
@@ -1556,10 +1556,10 @@ module.exports = grammar({
       field('property', $.identifier) // Only non-quoted identifiers
     )),
 
-    field_access: $ => prec.left(10, seq( // Already correct, just verify
+    field_access: $ => prec.left(11, seq( // Higher precedence than member_expression
       field('record', $._expression),
       '.',
-      field('field', alias($._quoted_identifier, $.quoted_identifier))
+      field('field', $._quoted_identifier)
     )),
 
 
