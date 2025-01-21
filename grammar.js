@@ -1551,13 +1551,13 @@ module.exports = grammar({
       $.binary_expression
     ),
 
-    member_expression: $ => prec.left(6, seq(
+    member_expression: $ => prec.left(6, seq( // Lower precedence
       field('object', $._expression),
       '.',
-      field('property', $.identifier) // Only regular identifiers
+      field('property', $.identifier) // Only non-quoted identifiers
     )),
 
-    field_access: $ => prec.left(7, seq( // Higher precedence than member_expression
+    field_access: $ => prec.left(10, seq( // Higher precedence than member_expression (6)
       field('record', $._expression),
       '.',
       field('field', $._quoted_identifier)
