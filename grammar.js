@@ -32,11 +32,8 @@ module.exports = grammar({
 
     object_id: $ => seq($.integer),
     object_name: $ => field('name', choice(
-      seq(
-        $._quoted_identifier,
-        alias($._quoted_identifier.value, $.name) // Directly reference the value
-      ),
-      alias($.identifier, $.name) // Simple alias for regular identifiers
+      alias($._quoted_identifier, $.name),
+      alias($.identifier, $.name)
     )),
 
     table_declaration: $ => seq(
