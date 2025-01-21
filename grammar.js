@@ -31,10 +31,16 @@ module.exports = grammar({
 
 
     object_id: $ => seq($.integer),
-    object_name: $ => field('name', alias(choice(
-      $.identifier,
-      $._quoted_identifier
-    ), $.name)),
+    object_name: $ => field('name', choice(
+      seq(
+        $._quoted_identifier,
+        alias($._quoted_identifier.value, $.name)
+      ),
+      seq(
+        $.identifier,
+        alias($.identifier, $.name)
+      )
+    )),
 
     table_declaration: $ => seq(
       /[tT][aA][bB][lL][eE]/,
@@ -1396,17 +1402,11 @@ module.exports = grammar({
 
     identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
 
-    _quoted_identifier: $ => seq(
+    _quoted_identifier: $ => token(seq(
       '"',
-      repeat1(choice(
-        /[^":\n\\]/,  // Any character except quote, colon, newline or backslash
-        /\\[\\'"]/,   // Escaped quotes or backslashes
-        /\./,         // Allow dots in quoted identifiers
-        /-/,          // Add hyphen support explicitly
-        /\s/          // Allow spaces in quoted identifiers
-      )),
+      field('value', /[^"\n\\]+/), // Captures content between quotes
       '"'
-    ),
+    )),
 
     string_literal: $ => token(seq(
       "'",
