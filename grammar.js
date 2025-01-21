@@ -1290,11 +1290,9 @@ module.exports = grammar({
       ))
     ),
 
-    key_field: $ => choice($._quoted_identifier, $.identifier),
-
     key_field_list: $ => seq(
-      $.key_field,
-      repeat(seq(',', $.key_field))
+      choice($._quoted_identifier, $.identifier),
+      repeat(seq(',', choice($._quoted_identifier, $.identifier)))
     ),
 
     attribute_list: $ => repeat1($.attribute),
