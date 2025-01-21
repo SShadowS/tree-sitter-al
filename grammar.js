@@ -12,6 +12,9 @@ module.exports = grammar({
 
   word: $ => $.identifier,
   extras: $ => [/\s/],
+  conflicts: $ => [
+    [$.member_expression, $.field_access],
+  ],
 
 
   rules: {
@@ -1487,6 +1490,12 @@ module.exports = grammar({
 
     _assignable_expression: $ => $._expression,
 
+    field_access: $ => seq(
+      field('record', $.identifier),
+      '.',
+      field('field', $._quoted_identifier)
+    ),
+
     call_expression: $ => prec(11, seq(
       field('function', $._expression),
       field('arguments', $.argument_list)
@@ -1541,6 +1550,7 @@ module.exports = grammar({
     )),
 
     _expression: $ => choice(
+      $.field_access,
       $.call_expression,
       $.member_expression,
       $.identifier,
@@ -1553,7 +1563,10 @@ module.exports = grammar({
     member_expression: $ => prec.left(7, seq(
       field('object', $._expression),
       '.',
-      field('property', $.identifier)
+      field('property', choice(
+        $.identifier,
+        $._quoted_identifier
+      ))
     )),
 
 
