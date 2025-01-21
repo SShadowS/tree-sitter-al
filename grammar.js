@@ -1396,11 +1396,10 @@ module.exports = grammar({
 
     identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
 
-    _quoted_identifier: $ => token(prec(2, seq(
-      '"',
-      field('value', /[^"\n\\]+/),
-      '"'
-    ))),
+    _quoted_identifier: $ => alias(
+      token(prec(2, seq('"', /[^"\n\\]+/, '"'))),
+      $.quoted_identifier
+    ),
 
     string_literal: $ => token(seq(
       "'",
