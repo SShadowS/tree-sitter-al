@@ -1559,7 +1559,7 @@ module.exports = grammar({
     field_access: $ => prec.left(10, seq( // Already correct, just verify
       field('record', $._expression),
       '.',
-      field('field', $._quoted_identifier)
+      field('field', alias($._quoted_identifier, $.quoted_identifier))
     )),
 
 
