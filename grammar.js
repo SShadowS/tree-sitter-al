@@ -34,18 +34,10 @@ module.exports = grammar({
     object_name: $ => field('name', choice(
       seq(
         $._quoted_identifier,
-        alias($.quoted_name, $.name)  // Reference new quoted_name rule
+        alias($._quoted_identifier.value, $.name) // Directly reference the value
       ),
-      seq(
-        $.identifier,
-        alias($.identifier, $.name)
-      )
+      alias($.identifier, $.name) // Simple alias for regular identifiers
     )),
-
-    // Add new rule for quoted names
-    quoted_name: $ => prec(2,
-      field('value', $._quoted_identifier.value)
-    ),
 
     table_declaration: $ => seq(
       /[tT][aA][bB][lL][eE]/,
