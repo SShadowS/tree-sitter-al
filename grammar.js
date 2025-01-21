@@ -12,10 +12,6 @@ module.exports = grammar({
 
   word: $ => $.identifier,
   extras: $ => [/\s/],
-  conflicts: $ => [
-    [$.member_expression, $.field_access],
-  ],
-
 
   rules: {
     source_file: $ => repeat($._object),
@@ -32,8 +28,8 @@ module.exports = grammar({
 
     object_id: $ => seq($.integer),
     object_name: $ => field('name', choice(
-      alias($._quoted_identifier, $.name),
-      alias($.identifier, $.name)
+      $._quoted_identifier,
+      $.identifier
     )),
 
     table_declaration: $ => seq(
@@ -954,10 +950,10 @@ module.exports = grammar({
       '(',
       field('id', $.integer),
       token(';'),  // Make semi_colon an explicit token
-      field('name', alias(choice(
+      field('name', choice(
         $._quoted_identifier,
         $.identifier
-      ), $.name)),
+      )),
       token(';'),  // Make semi_colon an explicit token
       field('type', $.data_type),
       ')',
