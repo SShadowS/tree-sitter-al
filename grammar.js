@@ -1535,7 +1535,7 @@ module.exports = grammar({
       choice($.identifier, $._quoted_identifier)
     ),
 
-    unary_expression: $ => prec.right(7, seq(
+    unary_expression: $ => prec.right(7, seq( // Keep at 7 but verify context
       '-',
       $._expression
     )),
@@ -1551,13 +1551,13 @@ module.exports = grammar({
       $.binary_expression
     ),
 
-    member_expression: $ => prec.left(6, seq( // Lower precedence
+    member_expression: $ => prec.left(8, seq( // Increased from 6 to 8
       field('object', $._expression),
       '.',
       field('property', $.identifier) // Only non-quoted identifiers
     )),
 
-    field_access: $ => prec.left(10, seq( // Higher precedence than member_expression (6)
+    field_access: $ => prec.left(10, seq( // Already correct, just verify
       field('record', $._expression),
       '.',
       field('field', $._quoted_identifier)
