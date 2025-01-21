@@ -34,13 +34,18 @@ module.exports = grammar({
     object_name: $ => field('name', choice(
       seq(
         $._quoted_identifier,
-        alias($._quoted_identifier.value, $.name)
+        alias($.quoted_name, $.name)  // Reference new quoted_name rule
       ),
       seq(
         $.identifier,
         alias($.identifier, $.name)
       )
     )),
+
+    // Add new rule for quoted names
+    quoted_name: $ => prec(2,
+      field('value', $._quoted_identifier.value)
+    ),
 
     table_declaration: $ => seq(
       /[tT][aA][bB][lL][eE]/,
@@ -1402,11 +1407,11 @@ module.exports = grammar({
 
     identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
 
-    _quoted_identifier: $ => token(seq(
+    _quoted_identifier: $ => token(prec(2, seq(
       '"',
-      field('value', /[^"\n\\]+/), // Captures content between quotes
+      field('value', /[^"\n\\]+/),
       '"'
-    )),
+    ))),
 
     string_literal: $ => token(seq(
       "'",
