@@ -13,7 +13,9 @@ module.exports = grammar({
   word: $ => $.identifier,
   extras: $ => [/\s/],
 
-  conflicts: $ => [],
+  conflicts: $ => [
+    [$._chained_expression, $.qualified_enum_value, $._enum_type_reference]
+  ],
 
   rules: {
     source_file: $ => repeat($._object),
