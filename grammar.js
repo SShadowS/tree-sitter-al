@@ -13,9 +13,7 @@ module.exports = grammar({
   word: $ => $.identifier,
   extras: $ => [/\s/],
 
-  conflicts: $ => [
-    [$.simple_field_ref, $._referenced_field]
-  ],
+  conflicts: $ => [],
 
   rules: {
     source_file: $ => repeat($._object),
@@ -1043,14 +1041,14 @@ module.exports = grammar({
 
     _simple_table_relation: $ => seq(
       field('table', $._table_reference),
-      optional(seq($._double__colon, field('field', $._referenced_field))),
+      optional(seq($._double__colon, field('field', $.field_ref))),
       optional($.where_clause)
     ),
 
 
 
     const_filter: $ => seq(
-      field('field', $._referenced_field),
+      field('field', $.field_ref),
       '=',
       choice('CONST', 'const', 'Const'),
       '(',
@@ -1074,7 +1072,7 @@ module.exports = grammar({
     ),
 
     filter_condition: $ => seq(
-      field('field', $._referenced_field),
+      field('field', $.field_ref),
       '=',
       choice('FILTER', 'filter', 'Filter'),
       '(',
@@ -1100,7 +1098,7 @@ module.exports = grammar({
     explicit_field_ref: $ => prec(12, seq(
       choice('field', 'FIELD', 'Field'),
       '(',
-      field('_referenced_field', $._chained_expression),
+      field('field', $._chained_expression),
       ')'
     )),
 
@@ -1116,7 +1114,6 @@ module.exports = grammar({
       ')'
     ),
 
-    _referenced_field: $ => $._chained_expression,
 
     field_class_property: $ => seq(
       'FieldClass',
@@ -1162,15 +1159,13 @@ module.exports = grammar({
     ),
 
     lookup_where_condition: $ => seq(
-      field('field', $._referenced_field),
+      field('field', $.field_ref),
       '=',
       choice(
         seq(
           choice('field', 'FIELD', 'Field'),
           '(',
-          field('value', seq(
-            $._referenced_field
-          )),
+          field('value', $.field_ref),
           ')'
         ),
         seq(
