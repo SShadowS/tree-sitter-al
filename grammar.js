@@ -14,7 +14,6 @@ module.exports = grammar({
   extras: $ => [/\s/],
 
   conflicts: $ => [
-    [$._chained_expression, $.qualified_enum_value, $._enum_type_reference, $._enum_value_reference]
   ],
 
   rules: {
