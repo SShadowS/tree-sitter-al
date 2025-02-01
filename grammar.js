@@ -1106,10 +1106,10 @@ module.exports = grammar({
       $._chained_expression
     )),
 
-    calc_field_ref: $ => prec(2, choice(
+    calc_field_ref: $ => alias(prec(12, choice(
       $.explicit_field_ref,
       $.member_expression
-    )),
+    )), $.field_reference),
 
     where_clause: $ => seq(
       choice('where', 'WHERE', 'Where'),
