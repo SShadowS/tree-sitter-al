@@ -1094,8 +1094,6 @@ module.exports = grammar({
 
     filter_criteria: $ => /[^)]+/,
 
-    simple_field_ref: $ => alias($._chained_expression, $.field_ref),
-
     explicit_field_ref: $ => prec(12, seq(
       choice('field', 'FIELD', 'Field'),
       '(',
@@ -1105,7 +1103,7 @@ module.exports = grammar({
 
     field_ref: $ => prec(2, choice(
       $.explicit_field_ref,
-      $.simple_field_ref
+      $._chained_expression
     )),
 
     where_clause: $ => seq(
