@@ -1061,11 +1061,11 @@ module.exports = grammar({
     ),
 
     field_filter: $ => seq(
-      field('field', $._referenced_field),
+      field('field', alias($._chained_expression, $.field_ref)),
       '=',
       choice('FIELD', 'field', 'Field'),
       '(',
-      field('value', $._referenced_field),
+      field('value', $.field_ref),
       ')'
     ),
 
@@ -1094,7 +1094,7 @@ module.exports = grammar({
     field_ref: $ => prec(2, seq(
       choice('field', 'FIELD', 'Field'),
       '(',
-      field('_referenced_field', $._referenced_field),
+      field('_referenced_field', $._chained_expression),
       ')'
     )),
 
@@ -1105,7 +1105,7 @@ module.exports = grammar({
       ')'
     ),
 
-    _referenced_field: $ => alias($._chained_expression, $.field_ref),
+    _referenced_field: $ => $._chained_expression,
 
     field_class_property: $ => seq(
       'FieldClass',
