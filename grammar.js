@@ -1048,7 +1048,7 @@ module.exports = grammar({
 
 
 
-    const_filter: $ => seq(
+    const_filter: $ => prec(10, seq(
       field('field', $.field_ref),
       '=',
       choice('CONST', 'const', 'Const'),
@@ -1061,25 +1061,25 @@ module.exports = grammar({
         $.boolean
       ))),
       ')'
-    ),
+    )),
 
-    field_filter: $ => seq(
+    field_filter: $ => prec(10, seq(
       field('field', $.field_ref),
-      '=',
+      '=', 
       choice('FIELD', 'field', 'Field'),
       '(',
       field('value', $.field_ref),
       ')'
-    ),
+    )),
 
-    filter_condition: $ => seq(
+    filter_condition: $ => prec(10, seq(
       field('field', $.field_ref),
       '=',
       choice('FILTER', 'filter', 'Filter'),
       '(',
       field('value', $.filter_criteria),
       ')'
-    ),
+    )),
 
     where_condition: $ => choice(
       $.const_filter,
