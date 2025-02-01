@@ -13,7 +13,9 @@ module.exports = grammar({
   word: $ => $.identifier,
   extras: $ => [/\s/],
 
-  conflicts: $ => [],
+  conflicts: $ => [
+    [$.simple_field_ref, $._referenced_field]
+  ],
 
   rules: {
     source_file: $ => repeat($._object),
