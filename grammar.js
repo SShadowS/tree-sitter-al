@@ -1543,6 +1543,7 @@ module.exports = grammar({
       $.member_expression, // Then regular members
       $.call_expression,
       $.identifier,
+      $._quoted_identifier,      // Allow quoted identifiers as expressions
       $._literal_value,
       $.parenthesized_expression,
       $.unary_expression,
