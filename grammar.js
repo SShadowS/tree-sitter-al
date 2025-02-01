@@ -1093,12 +1093,12 @@ module.exports = grammar({
 
     simple_field_ref: $ => alias($._chained_expression, $.field_ref),
 
-    explicit_field_ref: $ => seq(
+    explicit_field_ref: $ => prec(12, seq(
       choice('field', 'FIELD', 'Field'),
       '(',
       field('_referenced_field', $._chained_expression),
       ')'
-    ),
+    )),
 
     field_ref: $ => prec(2, choice(
       $.explicit_field_ref,
