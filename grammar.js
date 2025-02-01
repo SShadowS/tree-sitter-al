@@ -1519,7 +1519,8 @@ module.exports = grammar({
     _chained_expression: $ => prec(3, choice(
       $.member_expression,
       $.call_expression,
-      $.qualified_enum_value_tail
+      $.qualified_enum_value_tail,
+      $._quoted_identifier
     )),
 
 
