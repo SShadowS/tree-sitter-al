@@ -1686,7 +1686,7 @@ module.exports = grammar({
       field('statements', $._branch_statements)
     ),
 
-    qualified_enum_value: $ => prec.left(3, seq(
+    qualified_enum_value: $ => prec.left(4, seq(
       field('enum_type', choice(
         $._enum_type_reference,
         $.identifier,
