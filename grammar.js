@@ -1106,6 +1106,11 @@ module.exports = grammar({
       $._chained_expression
     )),
 
+    calc_field_ref: $ => prec(2, choice(
+      $.explicit_field_ref,
+      $.member_expression
+    )),
+
     where_clause: $ => seq(
       choice('where', 'WHERE', 'Where'),
       '(',
@@ -1187,7 +1192,7 @@ module.exports = grammar({
     sum_formula: $ => seq(
       choice('sum', 'SUM', 'Sum'),
       '(',
-      field('target', $.field_ref),
+      field('target', $.calc_field_ref),
       optional($.where_clause),
       ')'
     ),
@@ -1195,7 +1200,7 @@ module.exports = grammar({
     average_formula: $ => seq(
       choice('average', 'AVERAGE', 'Average'),
       '(',
-      field('target', $.field_ref),
+      field('target', $.calc_field_ref),
       optional($.where_clause),
       ')'
     ),
@@ -1203,7 +1208,7 @@ module.exports = grammar({
     min_formula: $ => seq(
       choice('min', 'MIN', 'Min'),
       '(',
-      field('target', seq($.field_ref, not(lookahead('where')))),
+      field('target', $.calc_field_ref),
       optional($.where_clause),
       ')'
     ),
@@ -1211,7 +1216,7 @@ module.exports = grammar({
     max_formula: $ => seq(
       choice('max', 'MAX', 'Max'),
       '(',
-      field('target', seq($.field_ref, not(lookahead('where')))),
+      field('target', $.calc_field_ref),
       optional($.where_clause),
       ')'
     ),
