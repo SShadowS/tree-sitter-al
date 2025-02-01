@@ -1203,7 +1203,7 @@ module.exports = grammar({
     min_formula: $ => seq(
       choice('min', 'MIN', 'Min'),
       '(',
-      field('target', $.field_ref),
+      field('target', seq($.field_ref, not(lookahead('where')))),
       optional($.where_clause),
       ')'
     ),
@@ -1211,7 +1211,7 @@ module.exports = grammar({
     max_formula: $ => seq(
       choice('max', 'MAX', 'Max'),
       '(',
-      field('target', $.field_ref),
+      field('target', seq($.field_ref, not(lookahead('where')))),
       optional($.where_clause),
       ')'
     ),
