@@ -1144,7 +1144,7 @@ module.exports = grammar({
     lookup_formula: $ => seq(
       choice('lookup', 'LOOKUP', 'Lookup'),
       '(',
-      field('target', $.field_reference),
+      field('target', $.field_ref),
       optional(seq(
         choice('where', 'WHERE', 'Where'),
         '(',
@@ -1218,7 +1218,6 @@ module.exports = grammar({
       ')'
     ),
 
-    field_reference: $ => $._chained_expression,
 
     blank_zero_property: $ => seq(
       'BlankZero',
