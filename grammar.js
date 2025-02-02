@@ -1321,7 +1321,7 @@ module.exports = grammar({
 
     _procedure_name: $ => alias($.identifier, $.name),
 
-    procedure_modifier: $ => choice('local', 'LOCAL', 'Local'),
+    procedure_modifier: $ => choice('local', 'LOCAL', 'Local', 'internal', 'INTERNAL', 'Internal'),
 
     procedure: $ => seq(
       optional($.attribute_list),
