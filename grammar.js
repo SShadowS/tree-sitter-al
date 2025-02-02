@@ -38,7 +38,7 @@ module.exports = grammar({
     table_no_property: $ => seq(
       'TableNo',
       '=',
-      $.table_no_value,
+      $._table_no_value,
       ';'
     ),
 
@@ -76,7 +76,7 @@ module.exports = grammar({
     ),
 
     // Property value types for specific properties
-    table_no_value: $ => choice(
+    _table_no_value: $ => choice(
       $.integer,
       $.identifier
     ),
