@@ -1613,6 +1613,16 @@ module.exports = grammar({
         field('left', $._expression),
         field('operator', $.arithmetic_operator),
         field('right', $._expression)
+      )),
+      prec.left(3, seq(
+        field('left', $._expression),
+        field('operator', choice('and', 'AND', 'And')),
+        field('right', $._expression)
+      )),
+      prec.left(2, seq(
+        field('left', $._expression),
+        field('operator', choice('or', 'OR', 'Or')),
+        field('right', $._expression)
       ))
     ),
 
