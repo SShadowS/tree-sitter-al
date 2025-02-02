@@ -59,14 +59,14 @@ module.exports = grammar({
     drilldown_pageid_property: $ => seq(
       'DrillDownPageId',
       '=', 
-      field('value', $.page_id_value),
+      field('value', alias($.page_id_value, $.value)),
       ';'
     ),
 
     lookup_pageid_property: $ => seq(
       'LookupPageId',
       '=',
-      field('value', $.page_id_value),
+      field('value', alias($.page_id_value, $.value)),
       ';'
     ),
 
@@ -222,56 +222,56 @@ module.exports = grammar({
     table_type_property: $ => seq(
       'TableType',
       '=',
-      $.table_type_value,
+      field('value', alias($.table_type_value, $.value)),
       ';'
     ),
 
     access_by_permission_property: $ => seq(
       'AccessByPermission',
       '=',
-      $.access_by_permission_value,
+      field('value', alias($.access_by_permission_value, $.value)),
       ';'
     ),
 
     allow_in_customizations_property: $ => prec(1, seq(
       'AllowInCustomizations', 
       '=',
-      $.boolean,
+      field('value', alias($.boolean, $.value)),
       ';'
     )),
 
     auto_format_expression_property: $ => seq(
       'AutoFormatExpression',
       '=',
-      $.auto_format_expression_value,
+      field('value', alias($.auto_format_expression_value, $.value)),
       ';'
     ),
 
     auto_format_type_property: $ => seq(
       'AutoFormatType',
       '=',
-      $.auto_format_type_value,
+      field('value', alias($.auto_format_type_value, $.value)),
       ';'
     ),
 
     auto_increment_property: $ => seq(
       'AutoIncrement',
       '=',
-      $.auto_increment_value,
+      field('value', alias($.auto_increment_value, $.value)),
       ';'
     ),
 
     blank_numbers_property: $ => seq(
       'BlankNumbers',
       '=',
-      $.blank_numbers_value,
+      field('value', alias($.blank_numbers_value, $.value)),
       ';'
     ),
 
     access_property: $ => seq(
       'Access',
       '=',
-      $.access_value,
+      field('value', alias($.access_value, $.value)),
       ';'
     ),
 
