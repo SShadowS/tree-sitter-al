@@ -35,6 +35,27 @@ module.exports = grammar({
       $.identifier
     )),
 
+    table_no_property: $ => seq(
+      'TableNo',
+      '=',
+      $.table_no_value,
+      ';'
+    ),
+
+    subtype_property: $ => seq(
+      'Subtype',
+      '=',
+      $.subtype_value,
+      ';'
+    ),
+
+    single_instance_property: $ => seq(
+      'SingleInstance',
+      '=',
+      $.single_instance_value,
+      ';'
+    ),
+
     table_declaration: $ => seq(
       /[tT][aA][bB][lL][eE]/,
       field('object_id', $.object_id),
