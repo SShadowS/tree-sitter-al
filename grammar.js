@@ -545,7 +545,7 @@ module.exports = grammar({
       $.lookup_pageid_property,
       $.table_type_property,
       $.access_property,
-      $.fieldgroup_declaration
+      $.fieldgroups_section
     )),
 
     // For single table permission property
@@ -1739,7 +1739,19 @@ module.exports = grammar({
       field('group_type', $.identifier),
       token(';'),
       field('fields', $.fieldgroup_list),
-      ')'
+      ')',
+      optional(seq(
+        '{',
+        // (Leave empty or add fieldgroup properties in the future)
+        '}'
+      ))
+    ),
+
+    fieldgroups_section: $ => seq(
+      /[fF][iI][eE][lL][dD][gG][rR][oO][uU][pP][sS]/,
+      '{',
+      repeat($.fieldgroup_declaration),
+      '}'
     ),
 
     fieldgroup_list: $ => seq(
