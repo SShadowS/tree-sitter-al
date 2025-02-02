@@ -770,13 +770,6 @@ module.exports = grammar({
       ';'
     ),
 
-    lookup_pageid_property: $ => seq(
-      'LookupPageId',
-      '=',
-      choice($.identifier, $._quoted_identifier, $.integer),
-      ';'
-    ),
-
     decimal_places_property: $ => seq(
       'DecimalPlaces',
       '=',
