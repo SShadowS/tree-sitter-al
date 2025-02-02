@@ -1721,7 +1721,14 @@ module.exports = grammar({
       /\d+/
     )),
 
+    datetime_literal: $ => token(seq(
+      optional('-'),
+      /\d+/,
+      /[dD][tT]/
+    )),
+
     _literal_value: $ => choice(
+      $.datetime_literal,
       $.integer,
       $.decimal,
       $.string_literal,
