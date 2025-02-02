@@ -56,6 +56,41 @@ module.exports = grammar({
       ';'
     ),
 
+    drilldown_pageid_property: $ => seq(
+      'DrillDownPageId',
+      '=', 
+      field('value', $.page_id_value),
+      ';'
+    ),
+
+    lookup_pageid_property: $ => seq(
+      'LookupPageId',
+      '=',
+      field('value', $.page_id_value),
+      ';'
+    ),
+
+    field_class_property: $ => seq(
+      'FieldClass',
+      '=',
+      field('value', $.field_class_value),
+      ';'
+    ),
+
+    editable_property: $ => seq(
+      'Editable',
+      '=',
+      field('value', $.editable_value),
+      ';'
+    ),
+
+    extended_datatype_property: $ => seq(
+      'ExtendedDatatype',
+      '=',
+      field('value', $.extended_datatype_value),
+      ';'
+    ),
+
     table_declaration: $ => seq(
       /[tT][aA][bB][lL][eE]/,
       field('object_id', $.object_id),
@@ -88,6 +123,23 @@ module.exports = grammar({
     ),
 
     single_instance_value: $ => $.boolean,
+
+    field_class_value: $ => choice(
+      /[fF][lL][oO][wW][fF][iI][eE][lL][dD]/,
+      /[fF][lL][oO][wW][fF][iI][lL][tT][eE][rR]/,
+      /[nN][oO][rR][mM][aA][lL]/
+    ),
+
+    editable_value: $ => $.boolean,
+
+    extended_datatype_value: $ => choice(
+      /[pP][hH][oO][nN][eE][nN][oO]/,
+      /[uU][rR][lL]/, 
+      /[eE][mM][aA][iI][lL]/,
+      /[rR][aA][tT][iI][oO]/,
+      /[dD][uU][rR][aA][tT][iI][oO][nN]/,
+      /[mM][aA][sS][kK][eE][dD]/
+    ),
 
     page_id_value: $ => choice(
       $.integer,
@@ -655,76 +707,21 @@ module.exports = grammar({
       $.auto_format_expression_property,
       $.calc_fields_property,
       $.caption_class_property,
-      $.auto_format_expression_property,
       $.table_no_property,
       $.subtype_property,
       $.single_instance_property,
-      seq(
-        field('property_name', choice('DrillDownPageId', 'LookupPageId')),
-        '=',
-        field('property_value', $.page_id_value),
-        ';'
-      ),
-      seq(
-        field('property_name', 'Permissions'),
-        '=',
-        field('property_value', $.permissions_value),
-        ';'
-      ),
-      seq(
-        field('property_name', 'TableRelation'),
-        '=',
-        field('property_value', $.table_relation_expression),
-        ';'
-      ),
-      seq(
-        field('property_name', 'FieldClass'),
-        '=',
-        field('property_value', $.field_class_value),
-        ';'
-      ),
-      seq(
-        field('property_name', 'CalcFormula'),
-        '=',
-        field('property_value', $.calc_formula_value),
-        ';'
-      ),
-      seq(
-        field('property_name', 'BlankZero'),
-        '=',
-        field('property_value', $.blank_zero_value),
-        ';'
-      ),
-      seq(
-        field('property_name', 'Editable'),
-        '=',
-        field('property_value', $.editable_value),
-        ';'
-      ),
-      seq(
-        field('property_name', 'OptionMembers'),
-        '=',
-        field('property_value', $.option_members_value),
-        ';'
-      ),
-      seq(
-        field('property_name', 'OptionCaption'),
-        '=',
-        field('property_value', $.option_caption_value),
-        ';'
-      ),
-      seq(
-        field('property_name', 'DataClassification'),
-        '=',
-        field('property_value', $.data_classification_value),
-        ';'
-      ),
-      seq(
-        field('property_name', 'ExtendedDatatype'),
-        '=',
-        field('property_value', $.identifier),
-        ';'
-      )
+      $.drilldown_pageid_property,
+      $.lookup_pageid_property,
+      $.permissions_property,
+      $.table_relation_property,
+      $.field_class_property,
+      $.calc_formula_property,
+      $.blank_zero_property,
+      $.editable_property,
+      $.option_members_property,
+      $.option_caption_property,
+      $.data_classification_property,
+      $.extended_datatype_property
     )),
 
     caption_property: $ => seq(
