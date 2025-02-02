@@ -544,7 +544,8 @@ module.exports = grammar({
       $.drilldown_pageid_property,
       $.lookup_pageid_property,
       $.table_type_property,
-      $.access_property
+      $.access_property,
+      $.fieldgroup_declaration
     )),
 
     // For single table permission property
@@ -1730,6 +1731,25 @@ module.exports = grammar({
     _branch_statements: $ => choice(
       $._statement,
       $.code_block
+    ),
+
+    fieldgroup_declaration: $ => seq(
+      /[fF][iI][eE][lL][dD][gG][rR][oO][uU][pP]/,
+      '(',
+      field('group_type', $.identifier),
+      token(';'),
+      field('fields', $.fieldgroup_list),
+      ')'
+    ),
+
+    fieldgroup_list: $ => seq(
+      $.fieldgroup_field,
+      repeat(seq(',', $.fieldgroup_field))
+    ),
+
+    fieldgroup_field: $ => choice(
+      $.identifier,
+      $._quoted_identifier
     ),
 
     comment: $ => token(seq('//', /.*/)),
