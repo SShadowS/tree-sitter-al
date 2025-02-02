@@ -1115,7 +1115,14 @@ module.exports = grammar({
 
     field_ref: $ => prec(2, choice(
       $.explicit_field_ref,
-      $._chained_expression
+      $.non_call_chained_expression
+    )),
+
+    non_call_chained_expression: $ => prec(3, choice(
+      $.member_expression,
+      $.field_access,
+      $.qualified_enum_value_tail,
+      $._quoted_identifier
     )),
 
     calc_field_ref: $ => alias(prec(12, choice(
