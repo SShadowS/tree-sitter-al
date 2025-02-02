@@ -70,27 +70,6 @@ module.exports = grammar({
       ';'
     ),
 
-    field_class_property: $ => seq(
-      'FieldClass',
-      '=',
-      field('value', $.field_class_value),
-      ';'
-    ),
-
-    editable_property: $ => seq(
-      'Editable',
-      '=',
-      field('value', $.editable_value),
-      ';'
-    ),
-
-    extended_datatype_property: $ => seq(
-      'ExtendedDatatype',
-      '=',
-      field('value', $.extended_datatype_value),
-      ';'
-    ),
-
     table_declaration: $ => seq(
       /[tT][aA][bB][lL][eE]/,
       field('object_id', $.object_id),
