@@ -1565,7 +1565,7 @@ module.exports = grammar({
     ),
 
     unary_expression: $ => prec.right(7, seq( // Keep at 7 but verify context
-      '-',
+      choice('-', 'not', 'Not', 'NOT'),
       $._expression
     )),
 
