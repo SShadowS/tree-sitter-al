@@ -1,3 +1,7 @@
+===================
+AL Comments Test
+===================
+
 // A single-line comment at the very top
 
 /* 
@@ -27,3 +31,23 @@ table 50102 "Test Table with Comments"  /* Block comment appended to the table h
 }
 
 // A final single-line comment at the end of the file
+
+---
+
+(source_file
+  (table_declaration
+    (object_id (integer))
+    (object_name (quoted_identifier))
+    (fields
+      (field_declaration
+        (integer)
+        (quoted_identifier)
+        (data_type (identifier))
+        (code_block
+          (caption_property (string_literal))))
+      (field_declaration
+        (integer)
+        (quoted_identifier)
+        (data_type (identifier))
+        (code_block
+          (caption_property (string_literal))))))
