@@ -1216,8 +1216,8 @@ module.exports = grammar({
       choice(
         $.string_literal,  // Single string literal case
         seq(               // Multiple identifiers case
-          $.option_member,
-          repeat(seq(',', $.option_member))
+          optional($.option_member),
+          repeat(seq(',', optional($.option_member)))
         )
       ),
       ';'
