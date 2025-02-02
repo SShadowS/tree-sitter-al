@@ -923,7 +923,7 @@ module.exports = grammar({
         $.identifier
       )),
       token(';'),  // Make semi_colon an explicit token
-      field('type', $.data_type),
+      field('type', $.type_specification),
       ')',
       optional(seq(
         '{',
