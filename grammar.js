@@ -481,7 +481,7 @@ module.exports = grammar({
     extended_datatype_property: $ => seq(
       'ExtendedDatatype',
       '=',
-      $.extended_datatype_value,
+      field('value', $.extended_datatype_value),
       ';'
     ),
 
@@ -763,12 +763,6 @@ module.exports = grammar({
       $._quoted_identifier
     ),
 
-    drilldown_pageid_property: $ => seq(
-      'DrillDownPageId',
-      '=',
-      choice($.identifier, $._quoted_identifier, $.integer),
-      ';'
-    ),
 
     decimal_places_property: $ => seq(
       'DecimalPlaces',
