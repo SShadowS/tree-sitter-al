@@ -11,7 +11,7 @@ module.exports = grammar({
   name: "al",
 
   word: $ => $.identifier,
-  extras: $ => [/\s/],
+  extras: $ => [/\s/, $.comment],
 
   conflicts: $ => [
   ],
@@ -1723,6 +1723,8 @@ module.exports = grammar({
       $._statement,
       $.code_block
     ),
+
+    comment: $ => token(seq('//', /.*/)),
 
   },
 
