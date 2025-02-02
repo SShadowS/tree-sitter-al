@@ -655,24 +655,10 @@ module.exports = grammar({
       $.auto_format_expression_property,
       $.calc_fields_property,
       $.caption_class_property,
-      seq(
-        field('property_name', 'AutoFormatExpression'),
-        '=',
-        field('property_value', $.string_literal),
-        ';'
-      ),
-      seq(
-        field('property_name', 'TableNo'),
-        '=',
-        field('property_value', $.table_no_value),
-        ';'
-      ),
-      seq(
-        field('property_name', 'Subtype'),
-        '=', 
-        field('property_value', $.subtype_value),
-        ';'
-      ),
+      $.auto_format_expression_property,
+      $.table_no_property,
+      $.subtype_property,
+      $.single_instance_property,
       seq(
         field('property_name', 'SingleInstance'),
         '=',
