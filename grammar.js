@@ -38,21 +38,21 @@ module.exports = grammar({
     table_no_property: $ => seq(
       'TableNo',
       '=',
-      field('value', $._table_no_value),
+      field('value', alias($._table_no_value, $.value)),
       ';'
     ),
 
     subtype_property: $ => seq(
       'Subtype',
       '=', 
-      field('value', $.subtype_value),
+      field('value', alias($.subtype_value, $.value)),
       ';'
     ),
 
     single_instance_property: $ => seq(
       'SingleInstance',
       '=',
-      field('value', $.single_instance_value),
+      field('value', alias($.single_instance_value, $.value)),
       ';'
     ),
 
