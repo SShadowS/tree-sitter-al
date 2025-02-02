@@ -529,6 +529,7 @@ module.exports = grammar({
       choice('trigger', 'TRIGGER', 'Trigger'),
       choice('OnInsert', 'ONINSERT', 'Oninsert'),
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -536,6 +537,7 @@ module.exports = grammar({
       choice('trigger', 'TRIGGER', 'Trigger'),
       choice('OnModify', 'ONMODIFY', 'Onmodify'),
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -543,6 +545,7 @@ module.exports = grammar({
       choice('trigger', 'TRIGGER', 'Trigger'),
       choice('OnDelete', 'ONDELETE', 'Ondelete'),
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -550,6 +553,7 @@ module.exports = grammar({
       choice('trigger', 'TRIGGER', 'Trigger'),
       choice('OnRename', 'ONRENAME', 'Onrename'),
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -557,6 +561,7 @@ module.exports = grammar({
       choice('trigger', 'TRIGGER', 'Trigger'),
       choice('OnValidate', 'ONVALIDATE', 'Onvalidate'),
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -564,6 +569,7 @@ module.exports = grammar({
       choice('trigger', 'TRIGGER', 'Trigger'),
       choice('OnAfterGetRecord', 'ONAFTERGETRECORD', 'Onaftergetrecord'),
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -571,6 +577,7 @@ module.exports = grammar({
       choice('trigger', 'TRIGGER', 'Trigger'),
       choice('OnAfterInsertEvent', 'ONAFTERINSERTEVENT', 'Onafterinsertevent'),
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -578,6 +585,7 @@ module.exports = grammar({
       choice('trigger', 'TRIGGER', 'Trigger'),
       choice('OnAfterModifyEvent', 'ONAFTERMODIFYEVENT', 'Onaftermodifyevent'),
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -585,6 +593,7 @@ module.exports = grammar({
       choice('trigger', 'TRIGGER', 'Trigger'),
       choice('OnAfterDeleteEvent', 'ONAFTERDELETEEVENT', 'Onafterdeleteevent'),
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -592,6 +601,7 @@ module.exports = grammar({
       'trigger',
       'OnBeforeInsertEvent',
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -599,6 +609,7 @@ module.exports = grammar({
       'trigger',
       'OnBeforeModifyEvent',
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -606,6 +617,7 @@ module.exports = grammar({
       'trigger',
       'OnBeforeDeleteEvent',
       '()',
+      optional($.var_section),
       $.code_block
     ),
     
