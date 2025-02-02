@@ -1435,6 +1435,7 @@ module.exports = grammar({
     _statement: $ => prec.right(seq(
       choice(
         $.assignment_statement,
+        $.exit_statement,
         $.procedure_call,
         $.if_statement,
         $.repeat_statement,
@@ -1457,6 +1458,15 @@ module.exports = grammar({
       repeat1($._statement),
       choice('until', 'UNTIL', 'Until'),
       field('condition', $._expression)
+    ),
+
+    exit_statement: $ => seq(
+      'exit',
+      optional(seq(
+        '(',
+        field('return_value', $._expression),
+        ')'
+      ))
     ),
 
     assignment_statement: $ => seq(
