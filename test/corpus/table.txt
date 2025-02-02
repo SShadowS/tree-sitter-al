@@ -57,7 +57,7 @@ table 50100 "My Test Table"
     (object_id
       (integer))
     (object_name
-      (name))
+      (quoted_identifier))
     (caption_property
       (string_literal))
     (data_classification_property
@@ -65,24 +65,27 @@ table 50100 "My Test Table"
     (fields
       (field_declaration
         (integer)
-        (name)
-        (data_type
-              (integer))
+        (quoted_identifier)
+        (type_specification
+          (code_type
+            (integer)))
         (caption_property
           (string_literal))
         (data_classification_property
           (data_classification_value)))
       (field_declaration
         (integer)
-        (name)
-        (data_type
-          (integer))
+        (identifier)
+        (type_specification
+          (text_type
+            (integer)))
         (caption_property
           (string_literal)))
       (field_declaration
         (integer)
-        (name)
-        (data_type)
+        (identifier)
+        (type_specification
+          (basic_type))
         (caption_property
           (string_literal))
         (decimal_places_property
@@ -92,7 +95,7 @@ table 50100 "My Test Table"
       (key_declaration
         (name)
         (key_field_list
-          (key_field))
+          (quoted_identifier))
         (clustered_property
           (boolean))))
     (var_section
@@ -103,7 +106,7 @@ table 50100 "My Test Table"
     (oninsert_trigger
       (code_block
         (procedure_call
-          (function_name)
+          (identifier)
           (argument_list
             (string_literal)))))
     (procedure
@@ -120,7 +123,11 @@ table 50100 "My Test Table"
             (identifier)
             (comparison_operator)
             (string_literal))
-          (exit_statement
-            (boolean))
-          (exit_statement
-            (boolean)))))))
+          (procedure_call
+            (identifier)
+            (argument_list
+              (boolean)))
+          (procedure_call
+            (identifier)
+            (argument_list
+              (boolean))))))))

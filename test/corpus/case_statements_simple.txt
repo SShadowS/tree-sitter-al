@@ -21,7 +21,7 @@ table 50000 "Test Table"
   (table_declaration
     object_id: (object_id (integer))
     object_name: (object_name
-      name: (name))
+      name: (quoted_identifier))
     (oninsert_trigger
       (code_block
         (case_statement

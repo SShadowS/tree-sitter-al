@@ -27,41 +27,50 @@ table 50100 "CalcFormula Test"
     (object_id
       (integer))
     (object_name
-      (name))
+      (quoted_identifier))
     (fields
       (field_declaration
         (integer)
-        (name)
-        (data_type
-          (integer))
+        (quoted_identifier)
+        (type_specification
+          (text_type
+            (integer)))
         (field_class_property
           (field_class_value))
         (calc_formula_property
           (lookup_formula
-            (field_reference
-              (table)
-              (field))
+            (field_ref
+              (member_expression
+                (identifier)
+                (identifier)))
             (lookup_where_conditions
               (lookup_where_condition
-                (field_ref)
-                (field_ref))))))
+                (field_ref
+                  (quoted_identifier))
+                (field_ref
+                  (quoted_identifier)))))))
       (field_declaration
         (integer)
-        (name)
-        (data_type
-          (integer))
+        (quoted_identifier)
+        (type_specification
+          (text_type
+            (integer)))
         (field_class_property
           (field_class_value))
         (calc_formula_property
           (lookup_formula
-            (field_reference
-              (table)
-              (field))
+            (field_ref
+              (member_expression
+                (identifier)
+                (identifier)))
             (lookup_where_conditions
               (lookup_where_condition
-                (field_ref)
-                (field_ref))
+                (field_ref
+                  (quoted_identifier))
+                (field_ref
+                  (quoted_identifier)))
               (lookup_where_condition
-                (field_ref)
+                (field_ref
+                  (quoted_identifier))
                 (const)
                 (string_literal)))))))))

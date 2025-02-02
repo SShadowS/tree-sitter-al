@@ -15,13 +15,15 @@ codeunit 50100 "Test"
 (source_file
   (codeunit_declaration
     (object_id (integer))
-    (object_name (name))
+    (object_name
+      (quoted_identifier))
     (onrun_trigger
       (code_block
-        (get_statement
-          (get_method
-            (record)
-            (argument_list
-              (member_access
-                (identifier)
-                (member)))))))))
+        (procedure_call
+          (member_expression
+            (identifier)
+            (identifier))
+          (argument_list
+            (field_access
+              (identifier)
+              (quoted_identifier))))))))

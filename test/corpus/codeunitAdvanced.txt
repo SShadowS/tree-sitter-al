@@ -10,7 +10,7 @@ codeunit 50100 MyCodeunit
     (object_id
       (integer))
     (object_name
-      (name))))
+      (identifier))))
 
 ==================
 Codeunit With Properties
@@ -25,14 +25,20 @@ codeunit 50100 MyCodeunit
 (source_file
   (codeunit_declaration
     (object_id (integer))
-    (object_name (name))
+    (object_name
+      (identifier))
     (property_list
       (property
-        (table_no_value (identifier)))
+        (table_no_property
+          (value
+            (identifier))))
       (property
-        (subtype_value))
+        (subtype_property
+          (value)))
       (property
-        (single_instance_value (boolean))))))
+        (single_instance_property
+          (value
+            (boolean)))))))
 
 ==================
 Variable Declarations
@@ -50,7 +56,8 @@ codeunit 50100 MyCodeunit
 (source_file
   (codeunit_declaration
     (object_id (integer))
-    (object_name (name))
+    (object_name
+      (identifier))
     (var_section
       (variable_declaration
         (identifier) (type_specification (basic_type)))
@@ -78,7 +85,8 @@ codeunit 50100 MyCodeunit
 (source_file
   (codeunit_declaration
     (object_id (integer))
-    (object_name (name))
+    (object_name
+      (identifier))
     (procedure
       (procedure_modifier)
       (name)
@@ -92,8 +100,10 @@ codeunit 50100 MyCodeunit
           (type)))
       (return_type (basic_type))
       (code_block
-        (exit_statement 
-          (boolean))))))
+        (procedure_call
+          (identifier)
+          (argument_list
+            (boolean)))))))
 
 ==================
 Basic Trigger
@@ -109,11 +119,12 @@ codeunit 50100 MyCodeunit
 (source_file
   (codeunit_declaration
     (object_id (integer))
-    (object_name (name))
+    (object_name
+      (identifier))
     (onrun_trigger
       (code_block
         (procedure_call
-          (function_name)
+          (identifier)
           (argument_list
             (string_literal)))))))
 
@@ -135,7 +146,8 @@ codeunit 50100 MyCodeunit
 (source_file
   (codeunit_declaration
     (object_id (integer))
-    (object_name (name))
+    (object_name
+      (identifier))
     (procedure
       (procedure_modifier)
       (name)
@@ -150,13 +162,14 @@ codeunit 50100 MyCodeunit
         (variable_declaration
           (identifier) (type_specification (basic_type))))
       (code_block
-        (get_statement
-          (get_method
-            (record)
-            (argument_list
-              (identifier))))
+        (procedure_call
+          (member_expression
+            (identifier)
+            (identifier))
+          (argument_list
+            (identifier)))
         (assignment_statement
           (identifier)
-          (member_access
+          (field_access
             (identifier)
-            (member)))))))
+            (quoted_identifier)))))))

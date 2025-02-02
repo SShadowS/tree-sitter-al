@@ -26,39 +26,47 @@ table 50100 "CalcFormula Test"
     (object_id
       (integer))
     (object_name
-      (name))
+      (quoted_identifier))
     (fields
       (field_declaration
         (integer)
-        (name)
-        (data_type)
+        (quoted_identifier)
+        (type_specification
+          (basic_type))
         (field_class_property
           (field_class_value))
         (calc_formula_property
           (min_formula
-            (field_reference
-              (table)
-              (field))
+            (calc_field_ref
+              (field_reference
+                (quoted_identifier)
+                (quoted_identifier)))
             (where_clause
               (where_conditions
                 (where_condition
                   (field_filter
-                    (field_ref)
-                    (field_ref))))))))
+                    (field_ref
+                      (quoted_identifier))
+                    (field_ref
+                      (quoted_identifier)))))))))
       (field_declaration
         (integer)
-        (name)
-        (data_type)
+        (quoted_identifier)
+        (type_specification
+          (basic_type))
         (field_class_property
           (field_class_value))
         (calc_formula_property
           (max_formula
-            (field_reference
-              (table)
-              (field))
+            (calc_field_ref
+              (field_reference
+                (quoted_identifier)
+                (quoted_identifier)))
             (where_clause
               (where_conditions
                 (where_condition
                   (field_filter
-                    (field_ref)
-                    (field_ref)))))))))))
+                    (field_ref
+                      (quoted_identifier))
+                    (field_ref
+                      (quoted_identifier))))))))))))

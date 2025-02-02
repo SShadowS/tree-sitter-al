@@ -27,7 +27,7 @@ table 50001 "Test Table"
   (table_declaration
     object_id: (object_id (integer))
     object_name: (object_name
-      name: (name))
+      name: (quoted_identifier))
     (oninsert_trigger
       (code_block
         (case_statement
@@ -78,7 +78,7 @@ table 50002 "Test Table"
   (table_declaration
     object_id: (object_id (integer))
     object_name: (object_name
-      name: (name))
+      name: (quoted_identifier))
     (oninsert_trigger
       (code_block
         (case_statement
@@ -120,7 +120,7 @@ table 50003 "Test Table"
   (table_declaration
     object_id: (object_id (integer))
     object_name: (object_name
-      name: (name))
+      name: (quoted_identifier))
     (oninsert_trigger
       (code_block
         (case_statement
@@ -180,7 +180,7 @@ table 50004 "Test Table"
   (table_declaration
     object_id: (object_id (integer))
     object_name: (object_name
-      name: (name))
+      name: (quoted_identifier))
     (oninsert_trigger
       (code_block
         (case_statement
@@ -225,7 +225,7 @@ table 50005 "Test Table"
   (table_declaration
     object_id: (object_id (integer))
     object_name: (object_name
-      name: (name))
+      name: (quoted_identifier))
     (oninsert_trigger
       (code_block
         (case_statement

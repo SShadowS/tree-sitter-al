@@ -20,21 +20,24 @@ table 50006 "Test Table"
 (source_file
   (table_declaration
     object_id: (object_id (integer))
-    object_name: (object_name name: (name))
+    object_name: (object_name name: (quoted_identifier))
     (oninsert_trigger
       (code_block
         (case_statement
           expression: (quoted_identifier)
           (case_branch
             pattern: (qualified_enum_value
+              enum_type: (quoted_identifier)
               value: (identifier))
-              statements: (assignment_statement
-                left: (quoted_identifier)
-                right: (string_literal)))
+            statements: (assignment_statement
+              left: (quoted_identifier)
+              right: (string_literal)))
             (case_branch
-              pattern: (qualified_enum_value)
+              pattern: (qualified_enum_value
+                enum_type: (quoted_identifier)
+                value: (quoted_identifier))
               statements: (procedure_call
-                function_name: (function_name)
+                function: (identifier)
                 arguments: (argument_list
                   (quoted_identifier)
                   (string_literal)))))))))

@@ -18,7 +18,7 @@ codeunit 50100 "Array Types Test"
     (object_id
       (integer))
     (object_name
-      (name))
+      (quoted_identifier))
     (var_section
       (variable_declaration
         (identifier)
@@ -35,7 +35,8 @@ codeunit 50100 "Array Types Test"
             (integer)
             (type_specification
               (query_type
-                (query_type_value))))))
+                (query_type_value
+                  (quoted_identifier)))))))
       (variable_declaration
         (identifier)
         (type_specification

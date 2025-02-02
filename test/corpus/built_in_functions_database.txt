@@ -12,7 +12,7 @@ codeunit 50100 "Built-in Functions Test"
         MaxValue: Code[20];
         Filters: Text;
     begin
-        Count := COUNT(Customer);
+        Count := Customer.COUNT();
         MinValue := GetRangeMin(Customer."No.");
         MaxValue := GetRangeMax(Customer."No.");
         Filters := GetFilters(Customer);
@@ -26,11 +26,10 @@ codeunit 50100 "Built-in Functions Test"
     (object_id
       (integer))
     (object_name
-      (name))
+      (quoted_identifier))
     (procedure
-      (modifier)
-      (name
-        (identifier))
+      (procedure_modifier)
+      (name)
       (var_section
         (variable_declaration
           (identifier)
@@ -44,37 +43,44 @@ codeunit 50100 "Built-in Functions Test"
         (variable_declaration
           (identifier)
           (type_specification
-            (code_type)))
+            (code_type
+              (integer))))
         (variable_declaration
           (identifier)
           (type_specification
-            (code_type)))
+            (code_type
+              (integer))))
         (variable_declaration
           (identifier)
           (type_specification
-            (basic_type))))
+            (text_type))))
       (code_block
         (assignment_statement
           (identifier)
-          (built_in_function
-            (count_function
-              (identifier))))
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (argument_list)))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (getrangemin_function
-              (member_access
+          (call_expression
+            (identifier)
+              (argument_list
+              (field_access
                 (identifier)
-                (member)))))
+                (quoted_identifier)))))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (getrangemax_function
-              (member_access
+          (call_expression
+            (identifier)
+            (argument_list
+              (field_access
                 (identifier)
-                (member)))))
+                (quoted_identifier)))))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (getfilters_function
+          (call_expression
+            (identifier)
+            (argument_list
               (identifier))))))))

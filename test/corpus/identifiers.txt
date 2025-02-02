@@ -17,12 +17,14 @@ table 50100 MyTable
 (source_file
   (table_declaration
     (object_id (integer))
-    (object_name (name))
+    (object_name
+      (identifier))
     (fields
       (field_declaration
         (integer)
-        (name)
-        (data_type)))))
+        (identifier)
+        (type_specification
+          (basic_type))))))
 
 ==================
 Field identifiers
@@ -35,7 +37,7 @@ table 50105 "Field Test Table"
         field(1; "MyField"; Integer)
         {
         }
-        field(2; MyField2; Text)
+        field(2; MyField2; Text[100])
         {
         }
         field(3; "MyField No."; Code[20])
@@ -49,18 +51,23 @@ table 50105 "Field Test Table"
 (source_file
   (table_declaration
     (object_id (integer))
-    (object_name (name))
+    (object_name
+      (quoted_identifier))
     (fields
       (field_declaration
         (integer)
-        (name)
-        (data_type))
+        (quoted_identifier)
+        (type_specification
+          (basic_type)))
       (field_declaration
         (integer)
-        (name)
-        (data_type))
+        (identifier)
+        (type_specification
+          (text_type
+            (integer))))
       (field_declaration
         (integer)
-        (name)
-          (data_type
-            (integer))))))
+        (quoted_identifier)
+          (type_specification
+            (code_type
+              (integer)))))))

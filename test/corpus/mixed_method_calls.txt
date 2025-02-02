@@ -22,7 +22,8 @@ codeunit 50100 MyCodeunit
 (source_file
   (codeunit_declaration
     (object_id (integer))
-    (object_name (name))
+    (object_name
+      (identifier))
     (var_section
       (variable_declaration
         (identifier)
@@ -33,34 +34,40 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (procedure_call
-          (function_name)
+          (identifier)
           (argument_list
             (string_literal)))
-        (get_statement
-          (get_method
-            (record)
-            (argument_list
-              (string_literal))))
+        (procedure_call
+          (member_expression
+            (identifier)
+            (identifier))
+          (argument_list
+            (string_literal)))
         (assignment_statement
           (identifier)
           (integer))
         (procedure_call
-          (function_name)
+          (identifier)
           (argument_list
             (string_literal)
             (identifier)))
-        (set_range_statement
-          (record)
-          (string_literal)
-          (string_literal))
-        (if_statement
-          (method_call
+        (procedure_call
+          (member_expression
             (identifier)
-            (method_name)
+            (identifier))
+          (argument_list
+            (quoted_identifier)
+            (string_literal)
+            (string_literal)))
+        (if_statement
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
             (argument_list))
           (code_block
             (procedure_call
-              (function_name)
+              (identifier)
               (argument_list
                 (string_literal)))))))))
 
@@ -85,7 +92,8 @@ codeunit 50100 MyCodeunit
 (source_file
   (codeunit_declaration
     (object_id (integer))
-    (object_name (name))
+    (object_name
+      (identifier))
     (var_section
       (variable_declaration
         (identifier)
@@ -93,25 +101,26 @@ codeunit 50100 MyCodeunit
     (onrun_trigger
       (code_block
         (procedure_call
-          (function_name)
+          (identifier)
           (argument_list
             (string_literal)
-            (member_access
+            (field_access
               (identifier)
-              (member))
-            (member_access
+              (quoted_identifier))
+            (field_access
               (identifier)
-              (member))))
+              (quoted_identifier))))
         (if_statement
-          (method_call
-            (identifier)
-            (method_name)
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
             (argument_list
-              (member_access
+              (field_access
                 (identifier)
-                (member))))
+                (quoted_identifier))))
           (code_block
             (procedure_call
-              (function_name)
+              (identifier)
               (argument_list
                 (string_literal)))))))))

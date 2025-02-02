@@ -24,7 +24,7 @@ codeunit 50100 "Built-in Functions Test"
     (object_id
       (integer))
     (object_name
-      (name))
+      (quoted_identifier))
     (procedure
       (procedure_modifier)
       (name)
@@ -40,27 +40,31 @@ codeunit 50100 "Built-in Functions Test"
       (code_block
         (assignment_statement
           (identifier)
-          (built_in_function
-            (random_function
+          (call_expression
+            (identifier)
+            (argument_list
               (integer))))
         (procedure_call
-          (built_in_function
-            (randomize_function
-              (integer))))
+          (identifier)
+          (argument_list
+            (integer)))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (round_function
+          (call_expression
+            (identifier)
+            (argument_list
               (decimal)
               (decimal))))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (abs_function
+          (call_expression
+            (identifier)
+            (argument_list
               (integer))))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (power_function
+          (call_expression
+            (identifier)
+            (argument_list
               (integer)
               (integer))))))))
