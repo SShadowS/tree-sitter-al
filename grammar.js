@@ -1570,6 +1570,7 @@ module.exports = grammar({
     )),
 
     _expression: $ => choice(
+      $.enum_value_expression,
       $.field_access,  // Check quoted first 
       $.member_expression, // Then regular members
       $.call_expression,
@@ -1614,6 +1615,20 @@ module.exports = grammar({
         field('right', $._expression)
       ))
     ),
+
+    enum_value_expression: $ => prec(12, seq(
+      field('enum', choice(
+        $.field_access,
+        $.member_expression,
+        $.identifier,
+        $._quoted_identifier
+      )),
+      $._double__colon,
+      field('enum_member', choice(
+        $.identifier,
+        $._quoted_identifier
+      ))
+    )),
 
     if_statement: $ => prec.right(seq(
       choice('if', 'IF', 'If'),
