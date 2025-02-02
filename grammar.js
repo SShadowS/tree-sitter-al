@@ -828,7 +828,8 @@ module.exports = grammar({
       $.query_type,
       $.dotnet_type,
       $.list_type,
-      $.dictionary_type
+      $.dictionary_type,
+      $.label_type
     ),
 
     list_type: $ => seq(
@@ -847,6 +848,11 @@ module.exports = grammar({
       ',', 
       $.type_specification, 
       ']'
+    ),
+
+    label_type: $ => seq(
+      choice('Label', 'label', 'LABEL'),
+      $.string_literal
     ),
 
     basic_type: $ => choice(
