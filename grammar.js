@@ -149,17 +149,9 @@ module.exports = grammar({
 
     permissions_value: $ => $.tabledata_permission_list,
 
-    field_class_value: $ => choice(
-      /[fF][lL][oO][wW][fF][iI][eE][lL][dD]/,
-      /[fF][lL][oO][wW][fF][iI][lL][tT][eE][rR]/,
-      /[nN][oO][rR][mM][aA][lL]/,
-    ),
-
     calc_formula_value: $ => $._calc_formula_expression,
 
     blank_zero_value: $ => $.boolean,
-
-    editable_value: $ => $.boolean,
 
     option_members_value: $ => choice(
       $.string_literal,
@@ -170,15 +162,6 @@ module.exports = grammar({
     ),
 
     option_caption_value: $ => $.string_literal,
-
-    extended_datatype_value: $ => choice(
-      /[pP][hH][oO][nN][eE][nN][oO]/,
-      /[uU][rR][lL]/, 
-      /[eE][mM][aA][iI][lL]/,
-      /[rR][aA][tT][iI][oO]/,
-      /[dD][uU][rR][aA][tT][iI][oO][nN]/,
-      /[mM][aA][sS][kK][eE][dD]/
-    ),
 
     table_type_value: $ => choice(
       /[nN][oO][rR][mM][aA][lL]/,
