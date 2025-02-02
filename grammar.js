@@ -1390,6 +1390,10 @@ module.exports = grammar({
     ),
 
     comparison_operator: $ => choice(
+      '>=',
+      '<=',
+      '>',
+      '<',
       '<>',
       '='
     ),
