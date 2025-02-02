@@ -1115,10 +1115,10 @@ module.exports = grammar({
 
     field_ref: $ => prec(2, choice(
       $.explicit_field_ref,
-      $.non_call_chained_expression
+      $._non_call_chained_expression
     )),
 
-    non_call_chained_expression: $ => prec(3, choice(
+    _non_call_chained_expression: $ => prec(3, choice(
       $.member_expression,
       $.field_access,
       $.qualified_enum_value_tail,
