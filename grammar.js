@@ -14,6 +14,7 @@ module.exports = grammar({
   extras: $ => [/\s/, $.comment],
 
   conflicts: $ => [
+    [$.exit_statement]
   ],
 
   rules: {
