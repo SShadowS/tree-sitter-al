@@ -660,12 +660,6 @@ module.exports = grammar({
       $.subtype_property,
       $.single_instance_property,
       seq(
-        field('property_name', 'SingleInstance'),
-        '=',
-        field('property_value', $.single_instance_value),
-        ';'
-      ),
-      seq(
         field('property_name', choice('DrillDownPageId', 'LookupPageId')),
         '=',
         field('property_value', $.page_id_value),
