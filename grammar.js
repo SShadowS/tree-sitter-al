@@ -1565,7 +1565,7 @@ module.exports = grammar({
         field('operator', choice('or', 'OR', 'Or')),
         field('right', $._expression)
       )),
-      $.enum_value_expression,
+      $.qualified_enum_value,
       $.field_access, 
       $.member_expression,
       $.call_expression,
