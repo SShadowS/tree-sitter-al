@@ -1541,18 +1541,18 @@ module.exports = grammar({
 
     _expression: $ => choice(
       $.enum_value_expression,
-      $.field_access,  // Check quoted first 
-      $.member_expression, // Then regular members
+      $.field_access,
+      $.member_expression,
       $.call_expression,
       $.identifier,
-      $._quoted_identifier,      // Allow quoted identifiers as expressions
+      $._quoted_identifier,
       $._literal_value,
       $.parenthesized_expression,
       $.unary_expression,
       $.binary_expression
     ),
 
-    member_expression: $ => prec.left(8, seq( // Increased from 6 to 8
+    member_expression: $ => prec.left(8, seq(
       field('object', $._expression),
       '.',
       field('property', choice($.identifier, $._quoted_identifier))
