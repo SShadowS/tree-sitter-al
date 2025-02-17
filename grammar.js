@@ -1653,7 +1653,7 @@ module.exports = grammar({
 
     _case_pattern: $ => prec(5, choice(
       $._literal_value,
-      $.qualified_enum_value,
+      $.enum_value_expression,
       $._chained_expression,
       $.identifier,
       $._quoted_identifier,
