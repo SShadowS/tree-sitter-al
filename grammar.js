@@ -1549,8 +1549,7 @@ module.exports = grammar({
       $._quoted_identifier,
       $._literal_value,
       $.parenthesized_expression,
-      $.unary_expression,
-      $.binary_expression
+      $.unary_expression
     ),
 
     member_expression: $ => prec.left(8, seq(
