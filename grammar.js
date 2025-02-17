@@ -1377,6 +1377,7 @@ module.exports = grammar({
         alias($.text_type, $.type),
         alias($.code_type, $.type),
         alias($.record_type, $.type),
+        alias($.codeunit_type, $.type),
         alias($.array_type, $.type),
         alias($.identifier, $.type)
       ))
