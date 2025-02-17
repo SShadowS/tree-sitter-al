@@ -1555,7 +1555,7 @@ module.exports = grammar({
     member_expression: $ => prec.left(8, seq( // Increased from 6 to 8
       field('object', $._expression),
       '.',
-      field('property', $.identifier) // Only non-quoted identifiers
+      field('property', choice($.identifier, $._quoted_identifier))
     )),
 
     field_access: $ => prec.left(11, seq( // Higher precedence than member_expression
