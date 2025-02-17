@@ -1388,7 +1388,8 @@ module.exports = grammar({
       "'",
       repeat(choice(
         /[^'\\]/,      // Any char except quote or backslash
-        /\\[\\'"]/     // Escaped quotes or backslashes
+        /\\[\\'"]/,    // Backslash escapes
+        "''"           // Two consecutive single quotes as an escape
       )),
       "'"
     )),
