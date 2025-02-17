@@ -1580,7 +1580,7 @@ module.exports = grammar({
         field('operator', $.comparison_operator),
         field('right', $._expression)
       )),
-      prec.left(4, seq(
+      prec.left(7, seq(
         field('left', $._expression),
         field('operator', $.arithmetic_operator),
         field('right', $._expression)
