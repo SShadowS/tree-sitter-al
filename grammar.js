@@ -1541,8 +1541,32 @@ module.exports = grammar({
     )),
 
     _expression: $ => choice(
+      // Comparison operator expression
+      prec.left(6, seq(
+        field('left', $._expression),
+        field('operator', $.comparison_operator),
+        field('right', $._expression)
+      )),
+      // Arithmetic operator expression  
+      prec.left(7, seq(
+        field('left', $._expression),
+        field('operator', $.arithmetic_operator),
+        field('right', $._expression)
+      )),
+      // Logical AND expression
+      prec.left(3, seq(
+        field('left', $._expression),
+        field('operator', choice('and', 'AND', 'And')),
+        field('right', $._expression)
+      )),
+      // Logical OR expression
+      prec.left(2, seq(
+        field('left', $._expression),
+        field('operator', choice('or', 'OR', 'Or')),
+        field('right', $._expression)
+      )),
       $.enum_value_expression,
-      $.field_access,
+      $.field_access, 
       $.member_expression,
       $.call_expression,
       $.identifier,
@@ -1573,28 +1597,6 @@ module.exports = grammar({
       '.'
     )),
 
-    binary_expression: $ => choice(
-      prec.left(6, seq(
-        field('left', $._expression),
-        field('operator', $.comparison_operator),
-        field('right', $._expression)
-      )),
-      prec.left(7, seq(
-        field('left', $._expression),
-        field('operator', $.arithmetic_operator),
-        field('right', $._expression)
-      )),
-      prec.left(3, seq(
-        field('left', $._expression),
-        field('operator', choice('and', 'AND', 'And')),
-        field('right', $._expression)
-      )),
-      prec.left(2, seq(
-        field('left', $._expression),
-        field('operator', choice('or', 'OR', 'Or')),
-        field('right', $._expression)
-      ))
-    ),
 
     enum_value_expression: $ => prec(12, seq(
       field('enum', choice(
