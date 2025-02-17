@@ -25,7 +25,7 @@ module.exports = grammar({
       $.codeunit_declaration
     ),
 
-    _assignment_operator: $ => ':=',
+    _assignment_operator: $ => token(choice(':=', '+=', '-=', '*=', '/=')),
     _double__colon: $ => token(prec(1, '::')),
     _colon: $ => ':',
 
