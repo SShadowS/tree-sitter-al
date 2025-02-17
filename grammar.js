@@ -1310,6 +1310,7 @@ module.exports = grammar({
     return_type: $ => choice(
       $.array_type,
       $.basic_type,
+      $.code_type, // Added to support Code[<length>] return types
       $.text_type,
       $.record_type,
       $.codeunit_type,
