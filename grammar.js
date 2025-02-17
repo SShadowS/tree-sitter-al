@@ -773,6 +773,7 @@ module.exports = grammar({
       $.text_type,
       $.code_type,
       $.record_type,
+      $.recordref_type,
       $.codeunit_type, 
       $.query_type,
       $.dotnet_type,
@@ -866,6 +867,8 @@ module.exports = grammar({
       field('reference', $._table_reference),
       optional('Temporary')
     )),
+
+    recordref_type: $ => /[rR][eE][cC][oO][rR][dD][rR][eE][fF]/,
 
     // Use existing _table_reference rule that already handles both plain and quoted identifiers 
     _table_reference: $ => choice(
