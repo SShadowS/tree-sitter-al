@@ -1465,7 +1465,7 @@ module.exports = grammar({
       choice('exit', 'EXIT', 'Exit'),
       optional(seq(
         '(',
-        field('return_value', $._expression),
+        optional(field('return_value', $._expression)),
         ')'
       ))
     ),
