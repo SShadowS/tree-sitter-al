@@ -33,11 +33,11 @@ codeunit 50100 MyCodeunit
         (type_specification (basic_type))))
     (onrun_trigger
       (code_block
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list
             (string_literal)))
-        (procedure_call
+        (call_expression
           (member_expression
             (identifier)
             (identifier))
@@ -46,12 +46,12 @@ codeunit 50100 MyCodeunit
         (assignment_statement
           (identifier)
           (integer))
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list
             (string_literal)
             (identifier)))
-        (procedure_call
+        (call_expression
           (member_expression
             (identifier)
             (identifier))
@@ -66,7 +66,7 @@ codeunit 50100 MyCodeunit
               (identifier))
             (argument_list))
           (code_block
-            (procedure_call
+            (call_expression
               (identifier)
               (argument_list
                 (string_literal)))))))))
@@ -100,7 +100,7 @@ codeunit 50100 MyCodeunit
         (type_specification (record_type (identifier)))))
     (onrun_trigger
       (code_block
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list
             (string_literal)
@@ -120,7 +120,7 @@ codeunit 50100 MyCodeunit
                 (identifier)
                 (quoted_identifier))))
           (code_block
-            (procedure_call
+            (call_expression
               (identifier)
               (argument_list
                 (string_literal)))))))))

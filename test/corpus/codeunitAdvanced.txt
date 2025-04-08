@@ -100,10 +100,8 @@ codeunit 50100 MyCodeunit
           (type)))
       (return_type (basic_type))
       (code_block
-        (procedure_call
-          (identifier)
-          (argument_list
-            (boolean)))))))
+        (exit_statement
+          (boolean))))))
 
 ==================
 Basic Trigger
@@ -123,7 +121,7 @@ codeunit 50100 MyCodeunit
       (identifier))
     (onrun_trigger
       (code_block
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list
             (string_literal)))))))
@@ -162,7 +160,7 @@ codeunit 50100 MyCodeunit
         (variable_declaration
           (identifier) (type_specification (basic_type))))
       (code_block
-        (procedure_call
+        (call_expression
           (member_expression
             (identifier)
             (identifier))

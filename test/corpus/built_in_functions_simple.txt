@@ -24,18 +24,18 @@ codeunit 50100 "Built-in Functions Test"
       (quoted_identifier))
     (onrun_trigger
       (code_block
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list))
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list))
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list))
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list))
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list))))))

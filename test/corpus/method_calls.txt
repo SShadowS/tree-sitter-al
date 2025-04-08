@@ -19,15 +19,15 @@ codeunit 50100 MyCodeunit
       (identifier))
     (onrun_trigger
       (code_block
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list
             (string_literal)))
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list
             (string_literal)))
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list
             (string_literal)))))))
@@ -60,17 +60,17 @@ codeunit 50100 MyCodeunit
           (record_type (identifier)))))
     (onrun_trigger
       (code_block
-        (procedure_call
+        (call_expression
           (member_expression
             (identifier)
             (identifier))
           (argument_list
             (string_literal)))
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list
             (string_literal)))
-        (procedure_call
+        (call_expression
           (member_expression
             (identifier)
             (identifier))
@@ -78,7 +78,7 @@ codeunit 50100 MyCodeunit
             (quoted_identifier)
             (string_literal)
             (string_literal)))
-        (procedure_call
+        (call_expression
           (member_expression
             (identifier)
             (identifier))
@@ -126,7 +126,7 @@ codeunit 50100 MyCodeunit
               (identifier))
             (argument_list
               (string_literal)))
-          (procedure_call
+          (call_expression
             (identifier)
             (argument_list
               (string_literal))))
@@ -144,16 +144,15 @@ codeunit 50100 MyCodeunit
                     (identifier)
                     (identifier))
                   (argument_list))
-                (procedure_call
+                (call_expression
                   (identifier)
                   (argument_list
                     (string_literal))))
-              (binary_expression
-                (field_access
-                  (identifier)
-                  (quoted_identifier))
-                (comparison_operator)
-                (string_literal)))))))))
+              (field_access
+                (identifier)
+                (quoted_identifier))
+              (comparison_operator)
+              (string_literal))))))))
 
 ==================
 Mixed Method Calls With Parameters
@@ -202,12 +201,12 @@ codeunit 50100 MyCodeunit
               (field_access
                 (identifier)
                 (quoted_identifier)))
-            (procedure_call
+            (call_expression
               (identifier)
               (argument_list
                 (string_literal)
                 (identifier)))
-            (procedure_call
+            (call_expression
               (member_expression
                 (identifier)
                 (identifier))

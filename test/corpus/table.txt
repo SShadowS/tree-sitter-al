@@ -105,7 +105,7 @@ table 50100 "My Test Table"
               (basic_type))))
     (oninsert_trigger
       (code_block
-        (procedure_call
+        (call_expression
           (identifier)
           (argument_list
             (string_literal)))))
@@ -119,15 +119,10 @@ table 50100 "My Test Table"
         (basic_type))
       (code_block
         (if_statement
-          (binary_expression
-            (identifier)
-            (comparison_operator)
-            (string_literal))
-          (procedure_call
-            (identifier)
-            (argument_list
-              (boolean)))
-          (procedure_call
-            (identifier)
-            (argument_list
-              (boolean))))))))
+          (identifier)
+          (comparison_operator)
+          (string_literal)
+          (exit_statement
+            (boolean))
+          (exit_statement
+            (boolean)))))))

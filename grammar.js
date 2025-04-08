@@ -22,7 +22,355 @@ module.exports = grammar({
 
     _object: $ => choice(
       $.table_declaration,
-      $.codeunit_declaration
+      $.codeunit_declaration,
+      $.pageextension_declaration,
+      $.page_declaration
+    ),
+
+    pageextension_declaration: $ => seq(
+      /[pP][aA][gG][eE][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
+      field('object_id', $.object_id),
+      field('object_name', $.object_name),
+      /[eE][xX][tT][eE][nN][dD][sS]/,
+      field('base_object', choice($._quoted_identifier, $.identifier)),
+      '{',
+      repeat($._pageextension_element),
+      '}'
+    ),
+
+    _pageextension_element: $ => choice(
+      $.actions_section,
+      $.property_list
+    ),
+
+    actions_section: $ => seq(
+      /[aA][cC][tT][iI][oO][nN][sS]/,
+      '{',
+      repeat(choice(
+        $._action_group,
+        $.area_action_section
+      )),
+      '}'
+    ),
+
+    area_action_section: $ => seq(
+      /[aA][rR][eE][aA]/,
+      '(',
+      field('type', choice(
+        /[pP][rR][oO][cC][eE][sS][sS][iI][nN][gG]/,
+        /[rR][eE][pP][oO][rR][tT][iI][nN][gG]/,
+        /[nN][aA][vV][iI][gG][aA][tT][iI][oO][nN]/,
+        /[cC][rR][eE][aA][tT][iI][oO][nN]/
+      )),
+      ')',
+      '{',
+      repeat($.action_declaration),
+      '}'
+    ),
+
+    _action_group: $ => choice(
+      $.addfirst_action_group,
+      $.addlast_action_group,
+      $.addafter_action_group,
+      $.addbefore_action_group,
+      $.modify_action_group
+    ),
+
+    addfirst_action_group: $ => seq(
+      /[aA][dD][dD][fF][iI][rR][sS][tT]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($._action_element),
+      '}'
+    ),
+
+    addlast_action_group: $ => seq(
+      /[aA][dD][dD][lL][aA][sS][tT]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($._action_element),
+      '}'
+    ),
+
+    addafter_action_group: $ => seq(
+      /[aA][dD][dD][aA][fF][tT][eE][rR]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($._action_element),
+      '}'
+    ),
+
+    addbefore_action_group: $ => seq(
+      /[aA][dD][dD][bB][eE][fF][oO][rR][eE]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($._action_element),
+      '}'
+    ),
+
+    modify_action_group: $ => seq(
+      /[mM][oO][dD][iI][fF][yY]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($._action_element),
+      '}'
+    ),
+
+    _action_element: $ => choice(
+      $.action_declaration,
+      $.actionref_declaration
+    ),
+
+    action_declaration: $ => seq(
+      /[aA][cC][tT][iI][oO][nN]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $.action_property,
+        $.trigger_declaration,
+        $.var_section
+      )),
+      '}'
+    ),
+
+    actionref_declaration: $ => seq(
+      /[aA][cC][tT][iI][oO][nN][rR][eE][fF]/,
+      '(',
+      field('promoted_name', choice($.identifier, $._quoted_identifier)),
+      ';',
+      field('action_name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $.action_property,
+        $.trigger_declaration,
+        $.var_section
+      )),
+      '}'
+    ),
+
+    action_property: $ => choice(
+      $.application_area_property,
+      $.caption_property,
+      $.image_property,
+      $.run_object_property,
+      $.run_page_link_property,
+      $.run_page_view_property,
+      $.tool_tip_property,
+      $.enabled_property,
+      $.visible_property,
+      $.scope_property,
+      $.promoted_property,
+      $.promoted_category_property,
+      $.promoted_only_property,
+      $.promoted_is_big_property
+    ),
+
+    application_area_property: $ => seq(
+      'ApplicationArea',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    usage_category_property: $ => seq(
+      'UsageCategory',
+      '=',
+      field('value', choice(
+        /[aA][dD][mM][iI][nN][iI][sS][tT][rR][aA][tT][iI][oO][nN]/,
+        /[dD][oO][cC][uU][mM][eE][nN][tT][sS]/,
+        /[lL][iI][sS][tT][sS]/,
+        /[rR][eE][pP][oO][rR][tT][sS]/,
+        /[tT][aA][sS][kK][sS]/,
+        $.identifier,
+        $._quoted_identifier
+      )),
+      ';'
+    ),
+
+    source_table_property: $ => seq(
+      'SourceTable',
+      '=',
+      field('value', choice($.integer, $.identifier, $._quoted_identifier)),
+      ';'
+    ),
+
+    page_type_property: $ => seq(
+      'PageType',
+      '=',
+      field('value', choice(
+        /[cC][aA][rR][dD]/,
+        /[lL][iI][sS][tT]/,
+        /[rR][oO][lL][eE][cC][eE][nN][tT][eE][rR]/,
+        /[wW][oO][rR][kK][sS][hH][eE][eE][tT]/,
+        /[sS][tT][aA][nN][dD][aA][rR][dD][dD][iI][aA][lL][oO][gG]/,
+        /[cC][oO][nN][fF][iI][rR][mM][dD][iI][aA][lL][oO][gG]/,
+        /[nN][aA][vV][iI][gG][aA][tT][iI][oO][nN][pP][aA][nN][eE]/,
+        /[hH][eE][aA][dD][lL][iI][nN][eE][sS]/,
+        /[dD][oO][cC][uU][mM][eE][nN][tT]/,
+        /[aA][pP][iI]/,
+        /[cC][aA][rR][dD][pP][aA][rR][tT]/,
+        $.identifier,
+        $._quoted_identifier
+      )),
+      ';'
+    ),
+
+    cardpart_property: $ => seq(
+      choice('CardPart', 'CARDPART', 'Cardpart'),
+      '=',
+      field('value', choice(
+        $.boolean,
+        $.integer,
+        $.identifier,
+        $._quoted_identifier
+      )),
+      ';'
+    ),
+
+    image_property: $ => seq(
+      'Image',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier)),
+      ';'
+    ),
+
+    run_object_property: $ => seq(
+      'RunObject',
+      '=',
+      field('value', $.run_object_value),
+      ';'
+    ),
+
+    run_object_value: $ => seq(
+      choice('Page', 'PAGE', 'page', 'Report', 'REPORT', 'report'),
+      field('page_name', choice($.identifier, $._quoted_identifier))
+    ),
+
+    run_page_link_property: $ => seq(
+      'RunPageLink',
+      '=',
+      field('value', $.run_page_link_value),
+      ';'
+    ),
+
+    run_page_view_property: $ => seq(
+      'RunPageView',
+      '=',
+      field('value', choice(
+        $.string_literal,
+        $.identifier, // Simple identifier like 'Ascending'
+        seq( // sorting(...) pattern
+          $.identifier, // e.g., 'sorting'
+          '(',
+          // Comma-separated list of one or more quoted identifiers
+          seq(
+            $._quoted_identifier,
+            repeat(seq(',', $._quoted_identifier))
+          ),
+          ')'
+        )
+      )),
+      ';'
+    ),
+
+    run_page_link_value: $ => seq(
+      field('field', choice($.identifier, $._quoted_identifier)),
+      '=',
+      field('filter_type', choice(
+        seq(
+          /[cC][oO][nN][sS][tT]/,
+          '(',
+          field('const_value', choice($.identifier, $._quoted_identifier)),
+          ')'
+        ),
+        seq(
+          /[fF][iI][eE][lL][dD]/,
+          '(',
+          field('field_value', choice($.identifier, $._quoted_identifier)),
+          ')'
+        )
+      )),
+      repeat(seq(
+        ',',
+        field('field', choice($.identifier, $._quoted_identifier)),
+        '=',
+        field('filter_type', choice(
+          seq(
+            /[cC][oO][nN][sS][tT]/,
+            '(',
+            field('const_value', choice($.identifier, $._quoted_identifier)),
+            ')'
+          ),
+          seq(
+            /[fF][iI][eE][lL][dD]/,
+            '(',
+            field('field_value', choice($.identifier, $._quoted_identifier)),
+            ')'
+          )
+        ))
+      ))
+    ),
+
+    enabled_property: $ => seq(
+      'Enabled',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    visible_property: $ => seq(
+      'Visible',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    scope_property: $ => seq(
+      'Scope',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier)),
+      ';'
+    ),
+
+    promoted_property: $ => seq(
+      'Promoted',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    promoted_category_property: $ => seq(
+      'PromotedCategory',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    promoted_only_property: $ => seq(
+      'PromotedOnly',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    promoted_is_big_property: $ => seq(
+      'PromotedIsBig',
+      '=',
+      field('value', $.boolean),
+      ';'
     ),
 
     _assignment_operator: $ => token(choice(':=', '+=', '-=', '*=', '/=')),
@@ -71,6 +419,20 @@ module.exports = grammar({
       ';'
     ),
 
+    card_page_id_property: $ => seq(
+      'CardPageId',
+      '=',
+      field('value', alias($.page_id_value, $.value)),
+      ';'
+    ),
+
+    promoted_action_categories_property: $ => seq(
+      'PromotedActionCategories',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
     table_declaration: $ => seq(
       /[tT][aA][bB][lL][eE]/,
       field('object_id', $.object_id),
@@ -88,6 +450,224 @@ module.exports = grammar({
       optional($.property_list),
       optional(repeat($._codeunit_element)),
       '}'
+    ),
+
+    page_declaration: $ => seq(
+      /[pP][aA][gG][eE]/,
+      field('object_id', $.object_id),
+      field('object_name', $.object_name),
+      '{',
+      repeat($._page_element),
+      '}'
+    ),
+
+    _page_element: $ => choice(
+      $.property_list,
+      $.layout_section,
+      $.actions_section,
+      $.procedure,
+      $.var_section,
+      $.trigger_declaration,
+      $.description_property,
+      $.caption_property,
+      $.scope_property,
+      $.promoted_property,
+      $.promoted_category_property,
+      $.promoted_only_property,
+      $.promoted_is_big_property,
+      $.run_object_property,
+      $.run_page_link_property,
+      $.run_page_view_property,
+      $.image_property,
+      $.tool_tip_property
+    ),
+
+    layout_section: $ => seq(
+      /[lL][aA][yY][oO][uU][tT]/,
+      '{',
+      repeat($._layout_element),
+      '}'
+    ),
+
+    _layout_element: $ => choice(
+      $.area_section,
+      $.group_section,
+      $.repeater_section,
+      $.field_section,
+      $.part_section
+    ),
+
+    area_section: $ => seq(
+      /[aA][rR][eE][aA]/,
+      '(',
+      field('type', choice(
+        /[cC][oO][nN][tT][eE][nN][tT]/,
+        /[fF][aA][cC][tT][bB][oO][xX][eE][sS]/,
+        /[fF][iI][lL][tT][eE][rR]/
+      )),
+      ')',
+      '{',
+      repeat($._layout_element),
+      '}'
+    ),
+
+    group_section: $ => seq(
+      /[gG][rR][oO][uU][pP]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $._layout_element,
+        $.property_list
+      )),
+      '}'
+    ),
+
+    repeater_section: $ => seq(
+      /[rR][eE][pP][eE][aA][tT][eE][rR]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $._layout_element,
+        $.property_list
+      )),
+      '}'
+    ),
+
+    field_section: $ => choice(
+      // Standard field
+      seq(
+        /[fF][iI][eE][lL][dD]/,
+        '(',
+        field('name', choice($.identifier, $._quoted_identifier)),
+        ')',
+        '{',
+        repeat(choice(
+          $.property_list,
+          $.caption_property,
+          $.application_area_property,
+          $.tool_tip_property,
+          $.visible_property,
+          $.enabled_property,
+          $.source_expr_property,
+          $.editable_property,
+          $.description_property,
+          $.lookup_pageid_property
+        )),
+        '}'
+      ),
+      // Field with control name
+      seq(
+        /[fF][iI][eE][lL][dD]/,
+        '(',
+        field('name', choice($.identifier, $._quoted_identifier)),
+        ')',
+        '(',
+        field('control_name', choice($.identifier, $._quoted_identifier)),
+        ')',
+        '{',
+        repeat(choice(
+          $.property_list,
+          $.caption_property,
+          $.application_area_property,
+          $.tool_tip_property,
+          $.visible_property,
+          $.enabled_property,
+          $.source_expr_property,
+          $.editable_property,
+          $.description_property,
+          $.lookup_pageid_property
+        )),
+        '}'
+      ),
+      // Combined field with ID and Source/Name: field(ControlId; SourceOrFieldName) { ... }
+      seq(
+        /[fF][iI][eE][lL][dD]/,
+        '(',
+        // ControlId can be string, quoted identifier, integer, or identifier
+        field('control_id', choice($.string_literal, $._quoted_identifier, $.integer, $.identifier)),
+        ';',
+        // SourceOrFieldName can be identifier or quoted identifier
+        field('source_or_field_name', choice($.identifier, $._quoted_identifier)),
+        ')',
+        '{',
+        // Combined list of possible properties from both original patterns
+        repeat(choice(
+          $.property_list,
+          $.caption_property,
+          $.application_area_property,
+          $.tool_tip_property,
+          $.visible_property,
+          $.enabled_property,
+          $.lookup_pageid_property,
+          $.run_object_property,
+          $.run_page_link_property,
+          $.source_expr_property,
+          $.editable_property
+        )),
+        '}'
+      )
+    ),
+
+    part_section: $ => seq(
+      /[pP][aA][rR][tT]/,
+      '(',
+      field('name', choice($.string_literal, $.identifier, $._quoted_identifier)),
+      ';',
+      field('page_name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $.property_list,
+        $.application_area_property,
+        $.caption_property,
+        $.sub_page_link_property
+      )),
+      '}'
+    ),
+
+    sub_page_link_property: $ => seq(
+      'SubPageLink',
+      '=',
+      field('value', $.run_page_link_value),
+      ';'
+    ),
+
+    source_expr_property: $ => seq(
+      'SourceExpr',
+      '=',
+      field('value', choice(
+        $.identifier,
+        $._quoted_identifier,
+        $.string_literal,
+        $.member_expression,
+        $.field_access
+      )),
+      ';'
+    ),
+
+    trigger_declaration: $ => seq(
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      field('type', alias(choice(
+        /[oO][nN][aA][fF][tT][eE][rR][gG][eE][tT][rR][eE][cC][oO][rR][dD]/,
+        /[oO][nN][iI][nN][iI][tT]/,
+        /[oO][nN][oO][pP][eE][nN][pP][aA][gG][eE]/,
+        /[oO][nN][cC][lL][oO][sS][eE][pP][aA][gG][eE]/,
+        /[oO][nN][fF][iI][nN][dD][rR][eE][cC][oO][rR][dD]/,
+        /[oO][nN][nN][eE][xX][tT][rR][eE][cC][oO][rR][dD]/,
+        /[oO][nN][qQ][uU][eE][rR][yY][cC][lL][oO][sS][eE]/,
+        /[oO][nN][aA][cC][tT][iI][oO][nN]/
+      ), $.trigger_type)),
+      '()',
+      // Give higher precedence to the standard structure
+      prec(1, seq(
+        optional($.var_section),
+        $.code_block
+      ))
+      // Removed the ambiguous alternative structure for now
     ),
 
     // Property value types for specific properties
@@ -676,6 +1256,8 @@ module.exports = grammar({
       $.single_instance_property,
       $.drilldown_pageid_property,
       $.lookup_pageid_property,
+      $.card_page_id_property,
+      $.promoted_action_categories_property,
       $.permissions_property,
       $.table_relation_property,
       $.field_class_property,
@@ -685,7 +1267,13 @@ module.exports = grammar({
       $.option_members_property,
       $.option_caption_property,
       $.data_classification_property,
-      $.extended_datatype_property
+      $.extended_datatype_property,
+      $.source_table_property,
+      $.page_type_property,
+      $.application_area_property,
+      $.usage_category_property,
+      $.cardpart_property,
+      $.description_property
     )),
 
     caption_property: $ => seq(
@@ -868,7 +1456,6 @@ module.exports = grammar({
       field('reference', $._table_reference),
       optional('Temporary')
     )),
-
     recordref_type: $ => /[rR][eE][cC][oO][rR][dD][rR][eE][fF]/,
     fieldref_type: $ => /[fF][iI][eE][lL][dD][rR][eE][fF]/,
 
@@ -1441,26 +2028,22 @@ module.exports = grammar({
       optional(token(';')) // Explicit token
     )),
 
+    _expression_statement: $ => $._expression, // New rule
+
     _statement: $ => prec.right(seq(
       choice(
         $.assignment_statement,
         $.exit_statement,
-        $.procedure_call,
+        // $.call_expression, // Removed direct call_expression
         $.if_statement,
         $.repeat_statement,
-        $.case_statement
+        $.case_statement,
+        $._expression_statement // Added expression statement
       ),
       optional(';')
     )),
 
-    procedure_call: $ => prec.left(8, seq(
-      field('function', choice(
-        $.identifier,
-        $.member_expression
-      )),
-      field('arguments', $.argument_list)
-    )),
-
+    // Removed procedure_call rule
 
     repeat_statement: $ => seq(
       choice('repeat', 'REPEAT', 'Repeat'),
@@ -1486,8 +2069,14 @@ module.exports = grammar({
 
     _assignable_expression: $ => $._expression,
 
+    // Unified call expression rule
     call_expression: $ => prec(11, seq(
-      field('function', $._expression),
+      // Function can be an identifier, member access, or field access
+      field('function', choice(
+        $.identifier,
+        $.member_expression,
+        $.field_access
+      )),
       field('arguments', $.argument_list)
     )),
 
@@ -1513,7 +2102,7 @@ module.exports = grammar({
       $.identifier,
       $.parenthesized_expression,
       $.unary_expression,
-      $.call_expression,
+      // $.call_expression, // Handled in _expression
       $.member_expression
     ),
 
@@ -1588,8 +2177,6 @@ module.exports = grammar({
       field('field', $._quoted_identifier)
     )),
 
-
-
     // Individual method definitions
     // Common base pattern for record operations
     _record_operation: $ => prec(3, seq(
@@ -1629,11 +2216,8 @@ module.exports = grammar({
       ))
     )),
 
-    // New rule for case expressions with explicit handling of identifiers
-    _case_expression: $ => prec(10, choice(
-      $.call_expression,
-      $._expression
-    )),
+    // Case expression uses the general _expression rule
+    _case_expression: $ => $._expression,
 
     case_statement: $ => prec(2, seq(
       choice('case', 'CASE', 'Case'),
@@ -1660,7 +2244,7 @@ module.exports = grammar({
       $.identifier,
       $._quoted_identifier,
       $.string_literal,
-      $.call_expression,
+      // $.call_expression, // Handled by _expression in _case_pattern -> _single_pattern
       $.multi_pattern
     )),
 
