@@ -12,11 +12,10 @@ codeunit 50100 "Built-in Functions Test"
         Session: Integer;
         WindowsUser: Text;
     begin
-        User := USERID;
-        Company := CompanyName;
-        Serial := SerialNumber;
-        Session := SESSIONID;
-        WindowsUser := WindowsLoggedOnUser;
+        User := USERID();
+        Company := CompanyName();
+        Serial := SerialNumber();
+        Session := SESSIONID();
     end;
 }
 
@@ -27,7 +26,7 @@ codeunit 50100 "Built-in Functions Test"
     (object_id
       (integer))
     (object_name
-      (name))
+      (quoted_identifier))
     (procedure
       (procedure_modifier)
       (name)
@@ -55,21 +54,21 @@ codeunit 50100 "Built-in Functions Test"
           (code_block
             (assignment_statement
               (identifier)
-              (built_in_function
-                (userid_function)))
+              (call_expression
+                (identifier)
+                (argument_list)))
             (assignment_statement
               (identifier)
-              (built_in_function
-                (companyname_function)))
+              (call_expression
+                (identifier)
+                (argument_list)))
             (assignment_statement
               (identifier)
-              (built_in_function
-                (serialnumber_function)))
+              (call_expression
+                (identifier)
+                (argument_list)))
             (assignment_statement
               (identifier)
-              (built_in_function
-                (sessionid_function)))
-            (assignment_statement
-              (identifier)
-              (built_in_function
-                (windowsloggedonuser_function)))))))
+              (call_expression
+                (identifier)
+                (argument_list)))))))

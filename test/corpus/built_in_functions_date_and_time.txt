@@ -27,7 +27,7 @@ codeunit 50100 "Built-in Functions Test"
     (object_id
       (integer))
     (object_name
-      (name))
+      (quoted_identifier))
     (procedure
       (procedure_modifier)
       (name)
@@ -47,34 +47,31 @@ codeunit 50100 "Built-in Functions Test"
       (code_block
         (assignment_statement
           (identifier)
-          (built_in_function
-            (currentdatetime_function)))
+          (identifier))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (currentdate_function)))
+          (identifier))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (currenttime_function)))
+          (identifier))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (today_function)))
+          (identifier))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (workdate_function)))
+          (identifier))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (createdatetime_function
+          (call_expression
+            (identifier)
+            (argument_list
               (identifier)
               (identifier))))
         (assignment_statement
           (identifier)
-          (built_in_function
-            (time_function
+          (call_expression
+            (identifier)
+            (argument_list
               (integer)
               (integer)
               (integer))))))))

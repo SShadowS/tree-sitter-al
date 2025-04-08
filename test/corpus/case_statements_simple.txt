@@ -21,22 +21,22 @@ table 50000 "Test Table"
   (table_declaration
     object_id: (object_id (integer))
     object_name: (object_name
-      name: (name))
+      name: (quoted_identifier))
     (oninsert_trigger
       (code_block
         (case_statement
           expression: (identifier)
           (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
+            pattern: (enum_value_expression
+              enum: (identifier)
+              enum_member: (identifier))
             statements: (assignment_statement
               left: (identifier)
               right: (integer)))
           (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
+            pattern: (enum_value_expression
+              enum: (identifier)
+              enum_member: (identifier))
             statements: (assignment_statement
               left: (identifier)
               right: (integer))))))))

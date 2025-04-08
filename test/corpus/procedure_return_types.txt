@@ -39,7 +39,7 @@ codeunit 50100 "Return Types Test"
     (object_id
       (integer))
     (object_name
-      (name))
+      (quoted_identifier))
     (procedure
       (name)
       (return_type
@@ -83,7 +83,7 @@ codeunit 50100 "Return Types Test"
     (procedure
       (name)
       (code_block
-        (procedure_call
-          (function_name)
+        (call_expression
+          (identifier)
           (argument_list
             (string_literal)))))))
