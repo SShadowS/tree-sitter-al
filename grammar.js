@@ -1373,10 +1373,10 @@ type_specification: $ => choice(
   $.enum_type
 ),
 
-enum_type: $ => alias(seq(
-  token(prec(1, choice('Enum', 'ENUM', 'enum'))),
+enum_type: $ => prec(1, seq(
+  choice('Enum', 'ENUM', 'enum'),
   field('enum_name', choice($.identifier, $._quoted_identifier))
-), $.field_enum_type),
+)),
 
     page_type: $ => seq(
       prec(1, choice('Page', 'PAGE', 'page')),
@@ -1590,6 +1590,7 @@ enum_type: $ => alias(seq(
         '}'
       ))
     ),
+
 
     table_relation_property: $ => seq(
       'TableRelation',
@@ -1910,7 +1911,6 @@ enum_type: $ => alias(seq(
     return_value: $ => field('return_value', $.identifier),
 
     _procedure_return_specification: $ => seq(
-      optional($.return_value),
       ':',
       field('return_type', $.return_type)
     ),
@@ -1941,10 +1941,22 @@ enum_type: $ => alias(seq(
       '(',
       optional($.parameter_list),
       ')',
-      optional(';'),
       optional($._procedure_return_specification),
-      optional($.var_section),
-      $.code_block
+      // Explicitly handle semicolon presence/absence
+      choice(
+        // Case 1: Semicolon IS present
+        seq(
+          ';',
+          optional($.var_section),
+          $.code_block
+        ),
+        // Case 2: Semicolon is NOT present
+        seq(
+          // No semicolon here
+          optional($.var_section),
+          $.code_block
+        )
+      )
     ),
 
     comparison_operator: $ => choice(
@@ -2032,11 +2044,7 @@ enum_type: $ => alias(seq(
       /[bB][lL][oO][bB]/,
       /[dD][uU][rR][aA][tT][iI][oO][nN]/,
       /[bB][iI][gG][iI][nN][tT][eE][gG][eE][rR]/,
-      /[gG][uU][iI][dD]/,
-      seq(
-        choice(/[eE][nN][uU][mM]/, 'Enum', 'ENUM', 'enum'),
-        field('enum_type', choice($.identifier, $._quoted_identifier))
-      )
+      /[gG][uU][iI][dD]/
     ),
 
     // Define code blocks with explicit keyword handling
