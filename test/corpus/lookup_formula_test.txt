@@ -1,0 +1,42 @@
+==================
+Lookup formula with table.field syntax
+==================
+
+table 50000 "Test Table"
+{
+    fields
+    {
+        field(1; "Field1"; Code[20])
+        {
+            CalcFormula = Lookup(Contact."E-Mail" WHERE("No." = FIELD("Contact No.")));
+        }
+    }
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (object_id
+      (integer))
+    object_name: (object_name
+      name: (quoted_identifier))
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (calc_formula_property
+          (lookup_formula
+            target: (field_ref
+              (field_access
+                record: (identifier)
+                field: (quoted_identifier)))
+            (lookup_where_conditions
+              (lookup_where_condition
+                field: (field_ref
+                  (quoted_identifier))
+                value: (field_ref
+                  (quoted_identifier))))))))))
