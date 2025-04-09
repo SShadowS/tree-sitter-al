@@ -1915,6 +1915,11 @@ enum_type: $ => prec(1, seq(
       field('return_type', $.return_type)
     ),
 
+    _procedure_named_return: $ => seq(
+      $.return_value,
+      $._procedure_return_specification
+    ),
+
     return_type: $ => choice(
       $.array_type,
       $.basic_type,
@@ -1941,7 +1946,18 @@ enum_type: $ => prec(1, seq(
       '(',
       optional($.parameter_list),
       ')',
-      optional($._procedure_return_specification),
+      optional(choice(
+        // Simple return type: (): Integer
+        seq(
+          $._procedure_return_specification,
+          optional(';')
+        ),
+        // Named return: () Result: Integer
+        seq(
+          $._procedure_named_return,
+          optional(';')
+        )
+      )),
       // Explicitly handle semicolon presence/absence
       choice(
         // Case 1: Semicolon IS present
