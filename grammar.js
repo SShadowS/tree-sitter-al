@@ -1355,20 +1355,36 @@ module.exports = grammar({
       ';'
     ),
 
-    type_specification: $ => choice(
-      $.array_type,
-      $.basic_type,
-      $.text_type,
-      $.code_type,
-      $.record_type,
-      $.recordref_type,
-      $.fieldref_type,
-      $.codeunit_type, 
-      $.query_type,
-      $.dotnet_type,
-      $.list_type,
-      $.dictionary_type,
-      $.label_type
+type_specification: $ => choice(
+  $.array_type,
+  $.basic_type,
+  $.text_type,
+  $.code_type,
+  $.record_type,
+  $.recordref_type,
+  $.fieldref_type,
+  $.codeunit_type, 
+  $.query_type,
+  $.dotnet_type,
+  $.list_type,
+  $.dictionary_type,
+  $.label_type,
+  $.page_type,
+  $.enum_type
+),
+
+enum_type: $ => alias(seq(
+  token(prec(1, choice('Enum', 'ENUM', 'enum'))),
+  field('enum_name', choice($.identifier, $._quoted_identifier))
+), $.field_enum_type),
+
+    page_type: $ => seq(
+      prec(1, choice('Page', 'PAGE', 'page')),
+      field('reference', choice(
+        $.integer,
+        $._quoted_identifier,
+        $.identifier
+      ))
     ),
 
     list_type: $ => seq(
@@ -1396,45 +1412,45 @@ module.exports = grammar({
 
     basic_type: $ => choice(
       // Numeric Types
-      choice('Integer', 'INTEGER', 'Integer'),
-      choice('Decimal', 'DECIMAL', 'Decimal'),
-      choice('Byte', 'BYTE', 'Byte'),
+      prec(1, choice('Integer', 'INTEGER', 'Integer')),
+      prec(1, choice('Decimal', 'DECIMAL', 'Decimal')),
+      prec(1, choice('Byte', 'BYTE', 'Byte')),
       
       // Text Types
-      choice('Char', 'CHAR', 'Char'),
+      prec(1, choice('Char', 'CHAR', 'Char')),
       
       // Date/Time Types
-      choice('Date', 'DATE', 'Date'),
-      choice('Time', 'TIME', 'Time'),
-      choice('DateTime', 'DATETIME', 'Datetime'),
-      choice('Duration', 'DURATION', 'Duration'),
-      choice('DateFormula', 'DATEFORMULA', 'Dateformula'),
+      prec(1, choice('Date', 'DATE', 'Date')),
+      prec(1, choice('Time', 'TIME', 'Time')),
+      prec(1, choice('DateTime', 'DATETIME', 'Datetime')),
+      prec(1, choice('Duration', 'DURATION', 'Duration')),
+      prec(1, choice('DateFormula', 'DATEFORMULA', 'Dateformula')),
       
       // Other Types
-      choice('Boolean', 'BOOLEAN', 'Boolean'),
-      choice('Option', 'OPTION', 'Option'),
-      choice('Guid', 'GUID', 'Guid'),
-      choice('RecordId', 'RECORDID', 'Recordid'),
-      choice('Variant', 'VARIANT', 'Variant'),
-      choice('Dialog', 'DIALOG', 'Dialog'),
-      choice('Action', 'ACTION', 'Action'),
-      choice('BLOB', 'Blob', 'blob'),
-      choice('FilterPageBuilder', 'FILTERPAGEBUILDER', 'Filterpagebuilder'),
-      choice('JsonToken', 'JSONTOKEN', 'Jsontoken'),
-      choice('JsonValue', 'JSONVALUE', 'Jsonvalue'),
-      choice('JsonArray', 'JSONARRAY', 'Jsonarray'),
-      choice('JsonObject', 'JSONOBJECT', 'Jsonobject'),
-      choice('Media', 'MEDIA', 'Media'),
-      choice('MediaSet', 'MEDIASET', 'Mediaset'),
-      choice('OStream', 'OSTREAM', 'Ostream'),
-      choice('InStream', 'INSTREAM', 'Instream'),
-      choice('OutStream', 'OUTSTREAM', 'Outstream'),
-      choice('SecretText', 'SECRETTEXT', 'Secrettext'),
-      choice('Label', 'LABEL', 'Label')
+      prec(1, choice('Boolean', 'BOOLEAN', 'Boolean')),
+      prec(1, choice('Option', 'OPTION', 'Option')),
+      prec(1, choice('Guid', 'GUID', 'Guid')),
+      prec(1, choice('RecordId', 'RECORDID', 'Recordid')),
+      prec(1, choice('Variant', 'VARIANT', 'Variant')),
+      prec(1, choice('Dialog', 'DIALOG', 'Dialog')),
+      prec(1, choice('Action', 'ACTION', 'Action')),
+      prec(1, choice('BLOB', 'Blob', 'blob')),
+      prec(1, choice('FilterPageBuilder', 'FILTERPAGEBUILDER', 'Filterpagebuilder')),
+      prec(1, choice('JsonToken', 'JSONTOKEN', 'Jsontoken')),
+      prec(1, choice('JsonValue', 'JSONVALUE', 'Jsonvalue')),
+      prec(1, choice('JsonArray', 'JSONARRAY', 'Jsonarray')),
+      prec(1, choice('JsonObject', 'JSONOBJECT', 'Jsonobject')),
+      prec(1, choice('Media', 'MEDIA', 'Media')),
+      prec(1, choice('MediaSet', 'MEDIASET', 'Mediaset')),
+      prec(1, choice('OStream', 'OSTREAM', 'Ostream')),
+      prec(1, choice('InStream', 'INSTREAM', 'Instream')),
+      prec(1, choice('OutStream', 'OUTSTREAM', 'Outstream')),
+      prec(1, choice('SecretText', 'SECRETTEXT', 'Secrettext')),
+      prec(1, choice('Label', 'LABEL', 'Label'))
     ),
 
     text_type: $ => seq(
-      'Text',
+      prec(1, 'Text'),
       optional(seq(
         '[',
         field('length', $.integer),
@@ -1443,7 +1459,7 @@ module.exports = grammar({
     ),
 
     code_type: $ => seq(
-      'Code',
+      prec(1, 'Code'),
       optional(seq(
         '[',
         field('length', $.integer),
@@ -1452,7 +1468,7 @@ module.exports = grammar({
     ),
 
     record_type: $ => prec.right(seq(
-      'Record',
+      prec(1, 'Record'),
       field('reference', $._table_reference),
       optional('Temporary')
     )),
@@ -1467,7 +1483,7 @@ module.exports = grammar({
     ),
 
     codeunit_type: $ => seq(
-      'Codeunit',
+      prec(1, 'Codeunit'),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
@@ -1476,7 +1492,7 @@ module.exports = grammar({
     ),
 
     query_type: $ => seq(
-      'Query',
+      prec(1, 'Query'),
       field('reference', $.query_type_value)
     ),
 
@@ -1487,12 +1503,12 @@ module.exports = grammar({
     ),
 
     dotnet_type: $ => seq(
-      'DotNet',
+      prec(1, 'DotNet'),
       field('reference', $.identifier)
     ),
 
     array_type: $ => seq(
-      'array',
+      prec(1, 'array'),
       '[',
       field('size', $.integer),
       ']',
@@ -1507,7 +1523,7 @@ module.exports = grammar({
       '}'
     ),
 
-    field_declaration: $ => prec(2, seq(
+    field_declaration: $ => seq(
       'field',
       '(',
       field('id', $.integer),
@@ -1573,7 +1589,7 @@ module.exports = grammar({
         )),
         '}'
       ))
-    )),
+    ),
 
     table_relation_property: $ => seq(
       'TableRelation',
@@ -1973,7 +1989,7 @@ module.exports = grammar({
     identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
 
     _quoted_identifier: $ => alias(
-      token(prec(2, seq('"', /[^"\n\\]+/, '"'))),
+      token(prec(10, seq('"', /[^"\n\\]+/, '"'))),
       $.quoted_identifier
     ),
 
@@ -2017,7 +2033,10 @@ module.exports = grammar({
       /[dD][uU][rR][aA][tT][iI][oO][nN]/,
       /[bB][iI][gG][iI][nN][tT][eE][gG][eE][rR]/,
       /[gG][uU][iI][dD]/,
-      seq(/[eE][nN][uU][mM]/, field('enum_type', $.identifier))
+      seq(
+        choice(/[eE][nN][uU][mM]/, 'Enum', 'ENUM', 'enum'),
+        field('enum_type', choice($.identifier, $._quoted_identifier))
+      )
     ),
 
     // Define code blocks with explicit keyword handling
