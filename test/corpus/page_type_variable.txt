@@ -1,0 +1,76 @@
+==================
+Page Type Variable Test
+==================
+
+page 50000 "Test Page"
+{
+    actions
+    {
+        area(Processing)
+        {
+            action(DownloadTemplateAction)
+            {
+                ApplicationArea = All;
+                Caption = 'Download Template';
+                Image = "ElectronicDoc";
+                trigger OnAction()
+                var
+                    DownloadCountryTemplatePage: Page "CDO Download Country Template";
+                begin
+                    DownloadCountryTemplatePage.LookupMode := true;
+                    if DownloadCountryTemplatePage.RunModal = Action::LookupOK then
+                        DownloadCountryTemplatePage.DownloadAndImport();
+                end;
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (page_declaration
+    object_id: (object_id
+      (integer))
+    object_name: (object_name
+      name: (quoted_identifier))
+    (actions_section
+      (area_action_section
+        (action_declaration
+          name: (identifier)
+          (action_property
+            (application_area_property
+              value: (identifier)))
+          (action_property
+            (caption_property
+              (string_literal)))
+          (action_property
+            (image_property
+              value: (quoted_identifier)))
+          (trigger_declaration
+            type: (trigger_type)
+            (var_section
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (page_type
+                    reference: (quoted_identifier)))))
+            (code_block
+              (assignment_statement
+                left: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                right: (boolean))
+              (if_statement
+                left: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                operator: (comparison_operator)
+                right: (qualified_enum_value
+                  enum_type: (identifier)
+                  value: (identifier))
+                then_branch: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list))))))))))

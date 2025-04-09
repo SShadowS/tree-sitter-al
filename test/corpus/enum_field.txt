@@ -1,0 +1,29 @@
+==================
+Enum field in table
+==================
+
+table 50000 "Test Table"
+{
+    fields
+    {
+        field(1; "Field1"; Enum MyEnum)
+        {
+        }
+    }
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (object_id
+      (integer))
+    object_name: (object_name
+      name: (quoted_identifier))
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (enum_type
+            enum_name: (identifier)))))))
