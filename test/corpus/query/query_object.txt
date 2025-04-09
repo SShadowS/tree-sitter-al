@@ -1,0 +1,150 @@
+===================
+Basic Query Test
+===================
+
+query 50102 "Top Customer Overview"
+{
+    QueryType = Normal;
+    Caption = 'Top Customer Overview';
+
+    // Teaching tip title and text. Available from version 23
+    AboutTitle = 'Analyze your customers (slice and dice your data)';
+    AboutText = 'Use this data cube to analyze your customers. You can group and/or the data on any dimension you like.';
+
+    // Controls the help link for this query. Available from version 23
+    ContextSensitiveHelpPage = 'customer_query_help.html';
+
+    // Category to show the query under in Tell Me (search) and in role explorer under Report and Analysis. Available from version 23
+    UsageCategory = ReportsAndAnalysis;
+
+
+    DataAccessIntent = ReadOnly; // use this to read data from the secondary database replica to speed up performance
+
+    elements
+    {
+        dataitem(Customer; Customer)
+        {
+            column(Name; Name)
+            {
+            }
+            column(No; "No.")
+            {
+            }
+            column(Sales_LCY; "Sales (LCY)")
+            {
+            }
+            column(Profit_LCY; "Profit (LCY)")
+            {
+            }
+            column(Country_Region_Code; "Country/Region Code")
+            {
+            }
+            column(City; City)
+            {
+            }
+            column(Global_Dimension_1_Code; "Global Dimension 1 Code")
+            {
+            }
+            column(Global_Dimension_2_Code; "Global Dimension 2 Code")
+            {
+            }
+            column(Salesperson_Code; "Salesperson Code")
+            {
+            }
+            dataitem(Salesperson_Purchaser; "Salesperson/Purchaser")
+            {
+                DataItemLink = Code = Customer."Salesperson Code";
+                column(SalesPersonName; Name)
+                {
+                }
+                dataitem(Country_Region; "Country/Region")
+                {
+                    DataItemLink = Code = Customer."Country/Region Code";
+                    column(CountryRegionName; Name)
+                    {
+                    }
+                }
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (query_declaration
+    object_id: (object_id
+      (integer))
+    object_name: (object_name
+      name: (quoted_identifier))
+    (query_type_property)
+    (caption_property
+      (string_literal))
+    (comment)
+    (about_title_property
+      value: (string_literal))
+    (about_text_property
+      value: (string_literal))
+    (comment)
+    (context_sensitive_help_page_property
+      value: (string_literal))
+    (comment)
+    (property_list
+      (property
+        (usage_category_property
+          value: (identifier))))
+    (data_access_intent_property)
+    (comment)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (dataitem_section
+          name: (identifier)
+          table_name: (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)))
+          (column_section
+            name: (identifier)
+            field_name: (identifier))
+          (dataitem_section
+            name: (identifier)
+            table_name: (quoted_identifier)
+            (data_item_link_property
+              value: (data_item_link_value
+                field: (identifier)
+                linked_field: (identifier)
+                linked_field_name: (quoted_identifier)))
+            (column_section
+              name: (identifier)
+              field_name: (identifier))))))))

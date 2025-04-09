@@ -24,7 +24,131 @@ module.exports = grammar({
       $.table_declaration,
       $.codeunit_declaration,
       $.pageextension_declaration,
-      $.page_declaration
+      $.page_declaration,
+      $.query_declaration
+    ),
+
+    query_declaration: $ => seq(
+      /[qQ][uU][eE][rR][yY]/,
+      field('object_id', $.object_id),
+      field('object_name', $.object_name),
+      '{',
+      repeat($._query_element),
+      '}'
+    ),
+
+    _query_element: $ => choice(
+      $.query_type_property,
+      $.caption_property,
+      $.about_title_property,
+      $.about_text_property,
+      $.context_sensitive_help_page_property,
+      $.usage_category_property,
+      $.data_access_intent_property,
+      $.elements_section,
+      $.property_list
+    ),
+
+    about_title_property: $ => seq(
+      'AboutTitle',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    about_text_property: $ => seq(
+      'AboutText',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    context_sensitive_help_page_property: $ => seq(
+      'ContextSensitiveHelpPage',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    data_access_intent_property: $ => seq(
+      'DataAccessIntent',
+      '=',
+      field('value', choice(
+        /[rR][eE][aA][dD][oO][nN][lL][yY]/,
+        /[rR][eE][aA][dD][wW][rR][iI][tT][eE]/
+      )),
+      ';'
+    ),
+
+    query_type_property: $ => seq(
+      'QueryType',
+      '=',
+      field('value', choice(
+        /[nN][oO][rR][mM][aA][lL]/,
+        /[aA][pP][iI]/,
+        /[fF][iI][lL][tT][eE][rR]/
+      )),
+      ';'
+    ),
+
+    elements_section: $ => seq(
+      /[eE][lL][eE][mM][eE][nN][tT][sS]/,
+      '{',
+      repeat($.dataitem_section),
+      '}'
+    ),
+
+    dataitem_section: $ => seq(
+      /[dD][aA][tT][aA][iI][tT][eE][mM]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ';',
+      field('table_name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $.column_section,
+        $.dataitem_section,
+        $.data_item_link_property
+      )),
+      '}'
+    ),
+
+    data_item_link_property: $ => seq(
+      'DataItemLink',
+      '=',
+      field('value', $.data_item_link_value),
+      ';'
+    ),
+
+    data_item_link_value: $ => seq(
+      field('field', choice($.identifier, $._quoted_identifier)),
+      '=',
+      field('linked_field', choice($.identifier, $._quoted_identifier)),
+      '.',
+      field('linked_field_name', choice($.identifier, $._quoted_identifier)),
+      repeat(seq(
+        ',',
+        field('field', choice($.identifier, $._quoted_identifier)),
+        '=',
+        field('linked_field', choice($.identifier, $._quoted_identifier)),
+        '.',
+        field('linked_field_name', choice($.identifier, $._quoted_identifier))
+      ))
+    ),
+
+    column_section: $ => seq(
+      /[cC][oO][lL][uU][mM][nN]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ';',
+      field('field_name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $.property_list
+      )),
+      '}'
     ),
 
     pageextension_declaration: $ => seq(
