@@ -572,7 +572,7 @@ module.exports = grammar({
       field('object_name', $.object_name),
       '{',
       optional($.property_list),
-      optional(repeat($._codeunit_element)),
+      repeat($._codeunit_element),
       '}'
     ),
 
@@ -1213,9 +1213,9 @@ module.exports = grammar({
     ),
 
     _codeunit_element: $ => prec(1, choice(
-      $.procedure,
-      $.onrun_trigger,
-      $.var_section
+      seq(optional($.attribute_list), $.procedure),
+      seq(optional($.attribute_list), $.onrun_trigger),
+      seq(optional($.attribute_list), $.var_section)
     )),
 
     onrun_trigger: $ => seq(
@@ -1628,7 +1628,7 @@ enum_type: $ => prec(1, seq(
 
     dotnet_type: $ => seq(
       prec(1, 'DotNet'),
-      field('reference', $.identifier)
+      field('reference', choice($.identifier, $.string_literal))
     ),
 
     array_type: $ => seq(
@@ -2063,40 +2063,38 @@ enum_type: $ => prec(1, seq(
     procedure_modifier: $ => choice('local', 'LOCAL', 'Local', 'internal', 'INTERNAL', 'Internal'),
 
     procedure: $ => seq(
-      optional($.attribute_list),
       optional(field('modifier', $.procedure_modifier)), 
       choice('procedure', 'PROCEDURE', 'Procedure'),
       field('name', $._procedure_name),
       '(',
       optional($.parameter_list),
       ')',
-      optional(choice(
-        // Simple return type: (): Integer
-        seq(
-          $._procedure_return_specification,
-          optional(';')
-        ),
-        // Named return: () Result: Integer
-        seq(
-          $._procedure_named_return,
-          optional(';')
-        )
-      )),
-      // Explicitly handle semicolon presence/absence
+      // Choice between having a return type OR just an optional semicolon
       choice(
-        // Case 1: Semicolon IS present
+        // Path 1: Return type is present
         seq(
-          ';',
+          choice( // The return type block itself
+            seq(
+              $._procedure_return_specification, // : ReturnType
+              optional(';') // Optional semicolon *after* the return type spec
+            ),
+            seq(
+              $._procedure_named_return, // ReturnValue : ReturnType
+              optional(';') // Optional semicolon *after* the return type spec
+            )
+          ),
+          // Followed directly by var/code block
           optional($.var_section),
           $.code_block
         ),
-        // Case 2: Semicolon is NOT present
+        // Path 2: No return type, optional semicolon allowed before var/code block
         seq(
-          // No semicolon here
+          optional(';'), 
           optional($.var_section),
           $.code_block
         )
-      )
+      ),
+      optional(';') // Optional semicolon after end
     ),
 
     comparison_operator: $ => choice(
@@ -2205,9 +2203,24 @@ enum_type: $ => prec(1, seq(
         $.if_statement,
         $.repeat_statement,
         $.case_statement,
+        $.for_statement,  // Added for loop support
         $._expression_statement // Added expression statement
       ),
       optional(';')
+    )),
+
+    for_statement: $ => prec.right(seq(
+      choice('for', 'FOR', 'For'),
+      field('variable', $.identifier),
+      ':=',
+      field('start', $._expression),
+      choice('to', 'TO', 'To'),
+      field('end', $._expression),
+      choice('do', 'DO', 'Do'),
+      field('body', choice(
+        $._statement,
+        $.code_block
+      ))
     )),
 
     // Removed procedure_call rule
@@ -2321,15 +2334,15 @@ enum_type: $ => prec(1, seq(
         field('operator', choice('or', 'OR', 'Or')),
         field('right', $._expression)
       )),
-      $.qualified_enum_value,
-      $.field_access, 
-      $.member_expression,
-      $.call_expression,
-      $.identifier,
-      $._quoted_identifier,
-      $._literal_value,
-      $.parenthesized_expression,
-      $.unary_expression
+  $.qualified_enum_value,
+  $.field_access,  // Added with higher priority than member_expression
+  $.member_expression,
+  $.call_expression,
+  $.identifier,
+  $._quoted_identifier,
+  $._literal_value,
+  $.parenthesized_expression,
+  $.unary_expression
     ),
 
     member_expression: $ => prec.left(8, seq(
