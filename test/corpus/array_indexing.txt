@@ -1,0 +1,87 @@
+==================
+Array Indexing Expressions
+==================
+
+codeunit 50117 "Array Indexing Test"
+{
+    procedure Process()
+    var
+        Tab: array[10] of Integer;
+        LF: array[10] of Integer;
+        CR: array[10] of Integer;
+    begin
+        Tab[1] := 9;
+        LF[1] := 10;
+        CR[1] := 13;
+        
+        Tab[2] := Tab[1] + 5;
+        LF[3] := LF[1] * 2;
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (quoted_identifier))
+    (procedure
+      (name)
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (array_type
+              (integer)
+              (type_specification
+                (basic_type)))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (array_type
+              (integer)
+              (type_specification
+                (basic_type)))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (array_type
+              (integer)
+              (type_specification
+                (basic_type))))))
+      (code_block
+        (assignment_statement
+          (subscript_expression
+            (identifier)
+            (integer))
+          (integer))
+        (assignment_statement
+          (subscript_expression
+            (identifier)
+            (integer))
+          (integer))
+        (assignment_statement
+          (subscript_expression
+            (identifier)
+            (integer))
+          (integer))
+        (assignment_statement
+          (subscript_expression
+            (identifier)
+            (integer))
+          (subscript_expression
+            (identifier)
+            (integer))
+              (arithmetic_operator)
+              (integer))
+        (assignment_statement
+          (subscript_expression
+            (identifier)
+            (integer))
+          (subscript_expression
+            (identifier)
+            (integer))
+              (arithmetic_operator)
+              (integer))))))

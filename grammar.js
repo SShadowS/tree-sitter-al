@@ -11,7 +11,7 @@ module.exports = grammar({
   name: "al",
 
   word: $ => $.identifier,
-  extras: $ => [/\s/, $.comment],
+  extras: $ => [/\s/, $.comment, $.pragma],
 
   conflicts: $ => [
     [$.exit_statement]
@@ -571,8 +571,12 @@ module.exports = grammar({
       field('object_id', $.object_id),
       field('object_name', $.object_name),
       '{',
-      optional($.property_list),
-      repeat($._codeunit_element),
+      optional($.property_list), // Single optional property_list for all properties
+      repeat(choice(
+        $.var_section,
+        seq(optional($.attribute_list), $.procedure),
+        seq(optional($.attribute_list), $.onrun_trigger)
+      )),
       '}'
     ),
 
@@ -1212,11 +1216,6 @@ module.exports = grammar({
       /[tT][oO][bB][eE][cC][lL][aA][sS][sS][iI][fF][iI][eE][dD]/
     ),
 
-    _codeunit_element: $ => prec(1, choice(
-      seq(optional($.attribute_list), $.procedure),
-      seq(optional($.attribute_list), $.onrun_trigger),
-      seq(optional($.attribute_list), $.var_section)
-    )),
 
     onrun_trigger: $ => seq(
       choice('trigger', 'TRIGGER', 'Trigger'),
@@ -1367,7 +1366,10 @@ module.exports = grammar({
       $._quoted_identifier
     ),
 
-    property_list: $ => prec(3, repeat1($.property)),
+    property_list: $ => prec.left(3, seq(
+      $.property,
+      repeat($.property)
+    )),
 
     property: $ => prec(2, choice(
       $.access_by_permission_property,
@@ -1397,7 +1399,10 @@ module.exports = grammar({
       $.application_area_property,
       $.usage_category_property,
       $.cardpart_property,
-      $.description_property
+      $.description_property,
+      $.obsolete_state_property,
+      $.obsolete_reason_property,
+      $.obsolete_tag_property
     )),
 
     caption_property: $ => seq(
@@ -1471,12 +1476,45 @@ module.exports = grammar({
       repeat1($.variable_declaration)
     ),
 
-    variable_declaration: $ => seq(
+    variable_declaration: $ => choice(
+      // Special case for Label with string literal and optional attributes
+      seq(
+        field('name', $.identifier),
+        ':',
+        choice('Label', 'LABEL', 'label'),
+        field('value', $.string_literal),
+        optional(seq(
+          ',',  // Comma separator
+          field('attributes', seq(
+            $.label_attribute,
+            repeat(seq(',', $.label_attribute))
+          ))
+        )),
+        ';'
+      ),
+      // Variable with value assignment
+      seq(
+        field('name', $.identifier),
+        ':',
+        optional(field('type', $.type_specification)),
+        ':=',
+        field('value', $._expression),
+        ';'
+      ),
+      // Regular variable declaration
+      seq(
+        field('name', $.identifier),
+        ':',
+        field('type', $.type_specification),
+        optional(field('temporary', $.temporary)),
+        ';'
+      )
+    ),
+
+    label_attribute: $ => seq(
       field('name', $.identifier),
-      ':',
-      field('type', $.type_specification),
-      optional(field('temporary', $.temporary)),
-      ';'
+      optional('='), // Make the equals sign explicitly optional
+      field('value', choice($.boolean, $.string_literal, $.integer))
     ),
 
 type_specification: $ => choice(
@@ -1492,7 +1530,6 @@ type_specification: $ => choice(
   $.dotnet_type,
   $.list_type,
   $.dictionary_type,
-  $.label_type,
   $.page_type,
   $.enum_type
 ),
@@ -1529,10 +1566,6 @@ enum_type: $ => prec(1, seq(
       ']'
     ),
 
-    label_type: $ => seq(
-      choice('Label', 'label', 'LABEL'),
-      $.string_literal
-    ),
 
     basic_type: $ => choice(
       // Numeric Types
@@ -1570,7 +1603,15 @@ enum_type: $ => prec(1, seq(
       prec(1, choice('InStream', 'INSTREAM', 'Instream')),
       prec(1, choice('OutStream', 'OUTSTREAM', 'Outstream')),
       prec(1, choice('SecretText', 'SECRETTEXT', 'Secrettext')),
-      prec(1, choice('Label', 'LABEL', 'Label'))
+      prec(1, choice('Label', 'LABEL', 'Label')),
+      
+      // XML Types
+      prec(1, choice('XmlDocument', 'XMLDOCUMENT', 'Xmldocument')),
+      prec(1, choice('XmlNode', 'XMLNODE', 'Xmlnode')),
+      prec(1, choice('XmlElement', 'XMLELEMENT', 'Xmlelement')),
+      prec(1, choice('XmlNodeList', 'XMLNODELIST', 'Xmlnodelist')),
+      prec(1, choice('XmlAttribute', 'XMLATTRIBUTE', 'Xmlattribute')),
+      prec(1, choice('XmlAttributeCollection', 'XMLATTRIBUTECOLLECTION', 'Xmlattributecollection'))
     ),
 
     text_type: $ => seq(
@@ -2055,6 +2096,7 @@ enum_type: $ => prec(1, seq(
       $.dotnet_type,
       $.list_type,
       $.dictionary_type,
+      $.enum_type, // Added to support Enum types
       $.identifier  // Ensures custom types are recognized
     ),
 
@@ -2069,32 +2111,25 @@ enum_type: $ => prec(1, seq(
       '(',
       optional($.parameter_list),
       ')',
-      // Choice between having a return type OR just an optional semicolon
-      choice(
-        // Path 1: Return type is present
+      // Return type block
+      optional(choice(
         seq(
-          choice( // The return type block itself
-            seq(
-              $._procedure_return_specification, // : ReturnType
-              optional(';') // Optional semicolon *after* the return type spec
-            ),
-            seq(
-              $._procedure_named_return, // ReturnValue : ReturnType
-              optional(';') // Optional semicolon *after* the return type spec
-            )
-          ),
-          // Followed directly by var/code block
-          optional($.var_section),
-          $.code_block
+          $._procedure_return_specification, // : ReturnType
+          optional(';') // Optional semicolon *after* the return type spec
         ),
-        // Path 2: No return type, optional semicolon allowed before var/code block
         seq(
-          optional(';'), 
-          optional($.var_section),
-          $.code_block
+          $._procedure_named_return, // ReturnValue : ReturnType
+          optional(';') // Optional semicolon *after* the return type spec
         )
-      ),
-      optional(';') // Optional semicolon after end
+      )),
+      // Optional semicolon allowed
+      optional(';'),
+      // Optional var section 
+      optional($.var_section),
+      // Code block required
+      $.code_block,
+      // Optional semicolon after end
+      optional(';')
     ),
 
     comparison_operator: $ => choice(
@@ -2132,8 +2167,10 @@ enum_type: $ => prec(1, seq(
         alias($.record_type, $.type),
         alias($.codeunit_type, $.type),
         alias($.array_type, $.type),
+        alias($.enum_type, $.type), // Added to support Enum types
         alias($.identifier, $.type)
-      ))
+      )),
+      optional(field('temporary', $.temporary))
     ),
 
     identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
@@ -2143,15 +2180,25 @@ enum_type: $ => prec(1, seq(
       $.quoted_identifier
     ),
 
-    string_literal: $ => token(seq(
-      "'",
-      repeat(choice(
-        /[^'\\]/,      // Any char except quote or backslash
-        /\\[\\'"]/,    // Backslash escapes
-        "''"           // Two consecutive single quotes as an escape
-      )),
-      "'"
-    )),
+    string_literal: $ => token(
+      choice(
+        // Empty string
+        seq("'", "'"),
+        
+        // Non-empty string
+        seq(
+          "'",
+          repeat1(choice(
+            /[^'\\]+/,     // One or more chars except quote or backslash
+            /\\[\\'"]/,    // Backslash escapes
+            /\\#[0-9]#+/,  // AL-specific placeholder escape sequences like \#1#### with multiple # for formatting
+            /\\#[0-9]/,    // AL-specific placeholder escape sequences like \#1
+            "''"           // Two consecutive single quotes as an escape
+          )),
+          "'"
+        )
+      )
+    ),
 
     clustered_property: $ => seq(
       'Clustered',
@@ -2208,6 +2255,7 @@ enum_type: $ => prec(1, seq(
       ),
       optional(';')
     )),
+
 
     for_statement: $ => prec.right(seq(
       choice('for', 'FOR', 'For'),
@@ -2334,16 +2382,50 @@ enum_type: $ => prec(1, seq(
         field('operator', choice('or', 'OR', 'Or')),
         field('right', $._expression)
       )),
-  $.qualified_enum_value,
-  $.field_access,  // Added with higher priority than member_expression
-  $.member_expression,
-  $.call_expression,
-  $.identifier,
-  $._quoted_identifier,
-  $._literal_value,
-  $.parenthesized_expression,
-  $.unary_expression
+      $.enum_keyword_qualified_value, // Added support for Enum::"Type"::"Value"
+      $.qualified_enum_value,
+      $.field_access,  // Added with higher priority than member_expression
+      $.member_expression,
+      $.subscript_expression, // Added for array indexing expressions like Tab[1]
+      $.call_expression,
+      $.identifier,
+      $._quoted_identifier,
+      $._literal_value,
+      $.parenthesized_expression,
+      $.unary_expression,
+      // Preprocessor directives
+      $.preprocessor_directive
     ),
+    
+    // Rule for array indexing/subscript expressions
+    subscript_expression: $ => prec.left(9, seq(
+      field('array', $._expression),
+      '[',
+      field('index', $._expression),
+      ']'
+    )),
+    
+    preprocessor_directive: $ => choice(
+      $.if_directive,
+      $.endif_directive,
+      $.else_directive,
+      $.ifdef_directive,
+      $.ifndef_directive,
+      $.define_directive,
+      $.undef_directive,
+      $.region_directive,
+      $.endregion_directive
+    ),
+    
+    if_directive: $ => seq('#if', $.identifier),
+    endif_directive: $ => '#endif',
+    else_directive: $ => '#else',
+    ifdef_directive: $ => seq('#ifdef', $.identifier),
+    ifndef_directive: $ => seq('#ifndef', $.identifier),
+    define_directive: $ => seq('#define', $.identifier),
+    undef_directive: $ => seq('#undef', $.identifier),
+    region_directive: $ => prec.right(seq('#region', optional($.string_literal))),
+    endregion_directive: $ => '#endregion',
 
     member_expression: $ => prec.left(8, seq(
       field('object', $._expression),
@@ -2484,6 +2566,21 @@ enum_type: $ => prec(1, seq(
       field('statements', $._branch_statements)
     ),
 
+    // Rule for expressions using Enum keyword with double qualification (Enum::"Type"::"Value")
+    enum_keyword_qualified_value: $ => prec.left(5, seq(
+      choice('Enum', 'ENUM', 'enum'),
+      field('operator1', $._double__colon),
+      field('enum_type', choice(
+        $._quoted_identifier,
+        $.identifier
+      )),
+      field('operator2', $._double__colon),
+      field('value', choice(
+        $._quoted_identifier,
+        $.identifier
+      ))
+    )),
+
     qualified_enum_value: $ => prec.left(4, seq(
       field('enum_type', choice(
         $._enum_type_reference,
@@ -2549,6 +2646,8 @@ enum_type: $ => prec(1, seq(
       $.identifier,
       $._quoted_identifier
     ),
+
+    pragma: $ => /#pragma[^\n]*/,
 
     comment: $ => token(seq('//', /.*/)),
 

@@ -1,0 +1,61 @@
+==================
+Enum Keyword Qualification
+==================
+
+codeunit 50120 "Enum Keyword Qualification Test"
+{
+    local procedure Initialize()
+    var
+        CopilotCapability: Codeunit "Copilot Capability";
+    begin
+        if not CopilotCapability.IsCapabilityRegistered(Enum::"Copilot Capability"::"CDO Translation of HTML Email") then
+            CopilotCapability.RegisterCapability(Enum::"Copilot Capability"::"CDO Translation of HTML Email", CapabilityDocumentationUrlLbl);
+
+        MaxTokensCount := 8192;
+        DefaultTemperature := 0.7;
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (quoted_identifier))
+    (procedure
+      (procedure_modifier)
+      (name)
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (codeunit_type
+              (quoted_identifier)))))
+      (code_block
+        (if_statement
+          (unary_expression
+            (call_expression
+              (member_expression
+                (identifier)
+                (identifier))
+              (argument_list
+                (enum_keyword_qualified_value
+                  (quoted_identifier)
+                  (quoted_identifier)))))
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (argument_list
+              (enum_keyword_qualified_value
+                (quoted_identifier)
+                (quoted_identifier))
+              (identifier))))
+        (assignment_statement
+          (identifier)
+          (integer))
+        (assignment_statement
+          (identifier)
+          (decimal))))))

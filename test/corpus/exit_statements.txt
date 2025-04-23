@@ -1,0 +1,84 @@
+===================================
+Basic Exit Statement Patterns
+===================================
+
+codeunit 50200 "Exit Statements Test"
+{
+    procedure SimpleExit()
+    begin
+        exit; // Simple exit without parameters
+    end;
+
+    procedure ExitWithLiteral(): Integer
+    begin
+        exit(42); // Exit with a literal value
+    end;
+
+    procedure ExitWithVariable(): Integer
+    var
+        Value: Integer;
+    begin
+        Value := 100;
+        exit(Value); // Exit with a variable
+    end;
+
+    procedure ExitWithRecord(): Record Customer
+    var
+        Customer: Record Customer;
+    begin
+        exit(Customer); // Exit with a record
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (quoted_identifier))
+    (procedure
+      (name)
+      (code_block
+        (exit_statement)
+        (comment)))
+    (procedure
+      (name)
+      (return_type
+        (basic_type))
+      (code_block
+        (exit_statement
+          (integer))
+        (comment)))
+    (procedure
+      (name)
+      (return_type
+        (basic_type))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (integer))
+        (exit_statement
+          (identifier))
+        (comment)))
+    (procedure
+      (name)
+      (return_type
+        (record_type
+          (identifier)))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (record_type
+              (identifier)))))
+      (code_block
+        (exit_statement
+          (identifier))
+        (comment)))))

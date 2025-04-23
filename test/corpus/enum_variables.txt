@@ -1,0 +1,413 @@
+==================
+Enum Variable Declaration
+==================
+
+codeunit 50110 "Enum Variables Test"
+{
+    var
+        StatusEnum: Enum "Status Enum";
+        PlainEnum: Enum PlainEnum;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (quoted_identifier))
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (enum_type
+            (quoted_identifier))))
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (enum_type
+            (identifier)))))))
+
+==================
+Enum Variable Assignment
+==================
+
+codeunit 50111 "Enum Assignment Test"
+{
+    procedure AssignEnumValues()
+    var
+        StatusEnum: Enum "Status Enum";
+        PlainEnum: Enum PlainEnum;
+    begin
+        StatusEnum := "Status Enum"::Open;
+        PlainEnum := PlainEnum::Active;
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (quoted_identifier))
+    (procedure
+      (name)
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (enum_type
+              (quoted_identifier))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (enum_type
+              (identifier)))))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (qualified_enum_value
+            (quoted_identifier)
+            (identifier)))
+        (assignment_statement
+          (identifier)
+          (qualified_enum_value
+            (identifier)
+            (identifier)))))))
+
+==================
+Enum Comparison in If Statement
+==================
+
+codeunit 50112 "Enum Comparison Test"
+{
+    procedure CompareEnumValues()
+    var
+        StatusEnum: Enum "Status Enum";
+    begin
+        StatusEnum := "Status Enum"::Open;
+        
+        if StatusEnum = "Status Enum"::Open then
+            Message('Status is Open');
+        
+        if StatusEnum <> "Status Enum"::Closed then
+            Message('Status is not Closed');
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (quoted_identifier))
+    (procedure
+      (name)
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (enum_type
+              (quoted_identifier)))))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (qualified_enum_value
+            (quoted_identifier)
+            (identifier)))
+        (if_statement
+          (identifier)
+          (comparison_operator)
+          (qualified_enum_value
+            (quoted_identifier)
+            (identifier))
+          (call_expression
+            (identifier)
+            (argument_list
+              (string_literal))))
+        (if_statement
+          (identifier)
+          (comparison_operator)
+          (qualified_enum_value
+            (quoted_identifier)
+            (identifier))
+          (call_expression
+            (identifier)
+            (argument_list
+              (string_literal))))))))
+
+==================
+Enum in Case Statement
+==================
+
+codeunit 50113 "Enum Case Test"
+{
+    procedure HandleEnumCases()
+    var
+        StatusEnum: Enum "Status Enum";
+    begin
+        StatusEnum := "Status Enum"::Open;
+        
+        case StatusEnum of
+            "Status Enum"::Open:
+                Message('Status is Open');
+            "Status Enum"::Pending:
+                Message('Status is Pending');
+            "Status Enum"::Closed:
+                Message('Status is Closed');
+        end;
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (quoted_identifier))
+    (procedure
+      (name)
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (enum_type
+              (quoted_identifier)))))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (qualified_enum_value
+            (quoted_identifier)
+            (identifier)))
+        (case_statement
+          (identifier)
+          (case_branch
+            (enum_value_expression
+              (quoted_identifier)
+              (identifier))
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal))))
+          (case_branch
+            (enum_value_expression
+              (quoted_identifier)
+              (identifier))
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal))))
+          (case_branch
+            (enum_value_expression
+              (quoted_identifier)
+              (identifier))
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal)))))))))
+
+==================
+Quoted Enum Values
+==================
+
+codeunit 50114 "Quoted Enum Values Test"
+{
+    procedure UseQuotedEnumValues()
+    var
+        QuotedEnum: Enum "My Quoted Enum";
+    begin
+        QuotedEnum := "My Quoted Enum"::"First Value";
+        
+        if QuotedEnum = "My Quoted Enum"::"Second Value" then
+            Message('It is the second value');
+            
+        case QuotedEnum of
+            "My Quoted Enum"::"First Value":
+                Message('It is the first value');
+            "My Quoted Enum"::"Second Value":
+                Message('It is the second value');
+            "My Quoted Enum"::"Third Value":
+                Message('It is the third value');
+        end;
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (quoted_identifier))
+    (procedure
+      (name)
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (enum_type
+              (quoted_identifier)))))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (qualified_enum_value
+            (quoted_identifier)
+            (quoted_identifier)))
+        (if_statement
+          (identifier)
+          (comparison_operator)
+          (qualified_enum_value
+            (quoted_identifier)
+            (quoted_identifier))
+          (call_expression
+            (identifier)
+            (argument_list
+              (string_literal))))
+        (case_statement
+          (identifier)
+          (case_branch
+            (enum_value_expression
+              (quoted_identifier)
+              (quoted_identifier))
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal))))
+          (case_branch
+            (enum_value_expression
+              (quoted_identifier)
+              (quoted_identifier))
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal))))
+          (case_branch
+            (enum_value_expression
+              (quoted_identifier)
+              (quoted_identifier))
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal)))))))))
+
+==================
+Return Enum Value
+==================
+
+codeunit 50115 "Enum Return Test"
+{
+    procedure GetStatusEnum(): Enum "Status Enum"
+    begin
+        exit("Status Enum"::Open);
+    end;
+    
+    procedure GetNamedEnum() Result: Enum "Status Enum"
+    begin
+        Result := "Status Enum"::Pending;
+        exit(Result);
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (quoted_identifier))
+    (procedure
+      (name)
+      (return_type
+        (enum_type
+          (quoted_identifier)))
+      (code_block
+        (exit_statement
+          (qualified_enum_value
+            (quoted_identifier)
+            (identifier)))))
+    (procedure
+      (name)
+      (return_value
+        (identifier))
+      (return_type
+        (enum_type
+          (quoted_identifier)))
+      (code_block
+        (assignment_statement
+          (identifier)
+          (qualified_enum_value
+            (quoted_identifier)
+            (identifier)))
+        (exit_statement
+          (identifier))))))
+
+==================
+Parameter of Enum Type
+==================
+
+codeunit 50116 "Enum Parameter Test"
+{
+    procedure ProcessStatus(Status: Enum "Status Enum")
+    begin
+        case Status of
+            "Status Enum"::Open:
+                Message('Processing open status');
+            "Status Enum"::Pending:
+                Message('Processing pending status');
+            "Status Enum"::Closed:
+                Message('Processing closed status');
+        end;
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    (object_id
+      (integer))
+    (object_name
+      (quoted_identifier))
+    (procedure
+      (name)
+      (parameter_list
+        (parameter
+          (name)
+          (type
+            (quoted_identifier))))
+      (code_block
+        (case_statement
+          (identifier)
+          (case_branch
+            (enum_value_expression
+              (quoted_identifier)
+              (identifier))
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal))))
+          (case_branch
+            (enum_value_expression
+              (quoted_identifier)
+              (identifier))
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal))))
+          (case_branch
+            (enum_value_expression
+              (quoted_identifier)
+              (identifier))
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal)))))))))
