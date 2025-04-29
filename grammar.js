@@ -1566,7 +1566,20 @@ type_specification: $ => choice(
   $.dictionary_type,
   $.page_type,
   $.enum_type,
+  $.option_type, // Added Option type
   $.interface_type // Added Interface type
+),
+
+// Handles 'Option' type, optionally followed by members (used in parameters)
+option_type: $ => seq(
+  prec(1, choice('Option', 'OPTION', 'Option')),
+  optional($.option_member_list)
+),
+
+// Helper for comma-separated list of option members
+option_member_list: $ => seq(
+  $.option_member,
+  repeat(seq(',', $.option_member))
 ),
 
 interface_type: $ => seq(
@@ -1628,7 +1641,7 @@ enum_type: $ => prec(1, seq(
       
       // Other Types
       prec(1, choice('Boolean', 'BOOLEAN', 'Boolean')),
-      prec(1, choice('Option', 'OPTION', 'Option')),
+      // Option removed, handled by option_type
       prec(1, choice('Guid', 'GUID', 'Guid')),
       prec(1, choice('RecordId', 'RECORDID', 'Recordid')),
       prec(1, choice('Variant', 'VARIANT', 'Variant')),
