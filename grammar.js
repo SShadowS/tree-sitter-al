@@ -1546,12 +1546,12 @@ module.exports = grammar({
     ),
 
     // Simplified parameter rule using the main type_specification
-    parameter: $ => seq(
-      optional(field('modifier', $.modifier)),
-      field('parameter_name', alias($.identifier, $.name)),
-      ':',
-      field('parameter_type', $.type_specification) // Use the main type_specification
-    ),
+    // parameter: $ => seq( // Original rule moved into the choice below
+    //   optional(field('modifier', $.modifier)),
+    //   field('parameter_name', alias($.identifier, $.name)),
+    //   ':',
+    //   field('parameter_type', $.type_specification) // Use the main type_specification
+    // ),
 
     // Specific rule for inline option parameters
     _parameter_option: $ => seq(
