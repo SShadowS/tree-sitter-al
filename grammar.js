@@ -2482,8 +2482,7 @@ enum_type: $ => prec(1, seq(
       $._quoted_identifier,
       $._literal_value,
       $.parenthesized_expression,
-      $.unary_expression, // (prec 7)
-      $.preprocessor_directive
+      $.unary_expression // (prec 7)
     ),
 
     // 'in' operator
@@ -2510,28 +2509,6 @@ enum_type: $ => prec(1, seq(
       field('index', $._expression),
       ']'
     )),
-    
-    preprocessor_directive: $ => choice(
-      $.if_directive,
-      $.endif_directive,
-      $.else_directive,
-      $.ifdef_directive,
-      $.ifndef_directive,
-      $.define_directive,
-      $.undef_directive,
-      $.region_directive,
-      $.endregion_directive
-    ),
-    
-    if_directive: $ => seq('#if', $.identifier),
-    endif_directive: $ => '#endif',
-    else_directive: $ => '#else',
-    ifdef_directive: $ => seq('#ifdef', $.identifier),
-    ifndef_directive: $ => seq('#ifndef', $.identifier),
-    define_directive: $ => seq('#define', $.identifier),
-    undef_directive: $ => seq('#undef', $.identifier),
-    region_directive: $ => prec.right(seq('#region', optional($.string_literal))),
-    endregion_directive: $ => '#endregion',
 
     member_expression: $ => prec.left(11, seq( // Increased precedence to match field_access
       field('object', $._expression),
@@ -2760,7 +2737,7 @@ enum_type: $ => prec(1, seq(
       $._quoted_identifier
     ),
 
-    pragma: $ => /#pragma[^\n]*/,
+    pragma: $ => /#[^\n]*/, // Match any line starting with #
 
     comment: $ => token(seq('//', /.*/)),
 
