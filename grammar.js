@@ -2582,20 +2582,18 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
-    // Removed overall prec(5) - precedence handled within choices now
+    // _case_pattern now directly handles single or multiple patterns
     _case_pattern: $ => choice(
-      $._literal_value,
-      $.enum_value_expression,
-      // $._chained_expression, // Now handled by _single_pattern within multi_pattern
-      $.identifier,
-      $._quoted_identifier,
-      // $.string_literal, // Removed redundant direct inclusion, covered by _literal_value
-      // $.call_expression, // Handled by _expression in _case_pattern -> _single_pattern
-      // Removed multi_pattern from here, logic moved into _case_pattern itself
+      // Case 1: Multiple patterns separated by commas
+      seq(
+        $._single_pattern,
+        repeat1(seq(',', $._single_pattern))
+      ),
+      // Case 2: A single pattern element
+      $._single_pattern
     ),
 
-    // Removed multi_pattern rule, logic integrated into _case_pattern
-
+    // _single_pattern defines the elements allowed within a case pattern
     _single_pattern: $ => choice(
       $._literal_value,
       $.enum_value_expression, // Match the full Record.Field::Value or EnumType::Value pattern
