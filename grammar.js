@@ -2591,13 +2591,10 @@ enum_type: $ => prec(1, seq(
       $._quoted_identifier,
       // $.string_literal, // Removed redundant direct inclusion, covered by _literal_value
       // $.call_expression, // Handled by _expression in _case_pattern -> _single_pattern
-      $.multi_pattern // Removed specific precedence here
+      // Removed multi_pattern from here, logic moved into _case_pattern itself
     ),
 
-    multi_pattern: $ => seq(
-      $._single_pattern,
-      repeat1(seq(',', $._single_pattern))
-    ),
+    // Removed multi_pattern rule, logic integrated into _case_pattern
 
     _single_pattern: $ => choice(
       $._literal_value,
