@@ -2592,7 +2592,7 @@ enum_type: $ => prec(1, seq(
       $.string_literal,
       // $.call_expression, // Handled by _expression in _case_pattern -> _single_pattern
       prec(6, $.multi_pattern) // Give multi_pattern higher precedence within the pattern choice
-    )),
+    ),
 
     multi_pattern: $ => seq(
       $._single_pattern,
