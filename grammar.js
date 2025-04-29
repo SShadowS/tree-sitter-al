@@ -2193,7 +2193,7 @@ enum_type: $ => prec(1, seq(
         $._procedure_return_specification, // : ReturnType
         $._procedure_named_return // ReturnValue : ReturnType
       )),
-      // optional(';'), // REMOVE THIS - Semicolon doesn't belong here
+      optional(';'), // Re-introduce the optional semicolon here
       // Optional var section
       optional($.var_section),
       // Code block required
