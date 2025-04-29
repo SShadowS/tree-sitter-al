@@ -1480,7 +1480,7 @@ module.exports = grammar({
 
     tabledata_permission_list: $ => seq(
       $.tabledata_permission,
-      optional(seq(',', $.tabledata_permission))
+      repeat(seq(',', $.tabledata_permission)) // Changed optional to repeat for multiple permissions
     ),
 
     tabledata_permission: $ => seq(
