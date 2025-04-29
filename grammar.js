@@ -1571,7 +1571,7 @@ type_specification: $ => choice(
 ),
 
 // Handles 'Option' type keyword followed by optional members
-option_type: $ => prec(1, seq(
+option_type: $ => prec(10, seq( // Increased precedence
   choice('Option', 'OPTION', 'Option'),
   optional($.option_member_list) // Members are part of the type
 )),
