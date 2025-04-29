@@ -2432,7 +2432,7 @@ enum_type: $ => prec(1, seq(
       field('property', choice($.identifier, $._quoted_identifier))
     )),
 
-    field_access: $ => prec.left(11, seq( // Higher precedence than member_expression
+    field_access: $ => prec.left(12, seq( // Increased precedence over member_expression
       field('record', $._expression),
       '.',
       field('field', $._quoted_identifier)
