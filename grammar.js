@@ -1577,10 +1577,10 @@ option_type: $ => prec(10, seq( // Increased precedence
 )),
 
 // Helper for comma-separated list of option members
-option_member_list: $ => seq( // Removed precedence
+option_member_list: $ => prec.left(1, seq( // Re-added precedence
   $.option_member,
   repeat(seq(',', $.option_member))
-), // Removed extra parenthesis
+)), // Removed extra parenthesis
 
 interface_type: $ => seq(
   prec(1, choice('Interface', 'INTERFACE', 'interface')),
