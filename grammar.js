@@ -2582,7 +2582,8 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
-    _case_pattern: $ => prec(5, choice(
+    // Removed overall prec(5) - precedence handled within choices now
+    _case_pattern: $ => choice(
       $._literal_value,
       $.enum_value_expression,
       // $._chained_expression, // Now handled by _single_pattern within multi_pattern
@@ -2590,7 +2591,7 @@ enum_type: $ => prec(1, seq(
       $._quoted_identifier,
       $.string_literal,
       // $.call_expression, // Handled by _expression in _case_pattern -> _single_pattern
-      $.multi_pattern
+      prec(6, $.multi_pattern) // Give multi_pattern higher precedence within the pattern choice
     )),
 
     multi_pattern: $ => seq(
