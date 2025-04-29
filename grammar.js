@@ -2298,7 +2298,7 @@ enum_type: $ => prec(1, seq(
     _assignable_expression: $ => $._expression,
 
     // Unified call expression rule
-    call_expression: $ => prec(11, seq(
+    call_expression: $ => prec(12, seq( // Increased precedence to 12 (higher than member_expression)
       // Function can be an identifier, member access, or field access
       field('function', choice(
         $.identifier,
