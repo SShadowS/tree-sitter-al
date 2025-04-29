@@ -571,7 +571,7 @@ module.exports = grammar({
       field('object_id', $.object_id),
       field('object_name', $.object_name),
       '{',
-      optional($.property_list), // Single optional property_list for all properties
+      prec(4, optional($.property_list)), // Prioritize properties over procedures starting with same keywords
       repeat(choice(
         $.var_section,
         seq(optional($.attribute_list), $.procedure),
@@ -2100,7 +2100,7 @@ enum_type: $ => prec(1, seq(
       $.identifier  // Ensures custom types are recognized
     ),
 
-    _procedure_name: $ => alias($.identifier, $.name),
+    _procedure_name: $ => alias(choice($.identifier, $._quoted_identifier), $.name),
 
     procedure_modifier: $ => choice('local', 'LOCAL', 'Local', 'internal', 'INTERNAL', 'Internal'),
 
@@ -2123,8 +2123,7 @@ enum_type: $ => prec(1, seq(
         )
       )),
       // Optional semicolon allowed
-      optional(';'),
-      // Optional var section 
+      // Optional var section
       optional($.var_section),
       // Code block required
       $.code_block,
@@ -2427,7 +2426,7 @@ enum_type: $ => prec(1, seq(
     region_directive: $ => prec.right(seq('#region', optional($.string_literal))),
     endregion_directive: $ => '#endregion',
 
-    member_expression: $ => prec.left(8, seq(
+    member_expression: $ => prec.left(11, seq( // Increased precedence to match field_access
       field('object', $._expression),
       '.',
       field('property', choice($.identifier, $._quoted_identifier))
@@ -2567,7 +2566,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     // Rule for expressions using Enum keyword with double qualification (Enum::"Type"::"Value")
-    enum_keyword_qualified_value: $ => prec.left(5, seq(
+    enum_keyword_qualified_value: $ => prec.left(9, seq( // Increased precedence
       choice('Enum', 'ENUM', 'enum'),
       field('operator1', $._double__colon),
       field('enum_type', choice(
@@ -2581,7 +2580,7 @@ enum_type: $ => prec(1, seq(
       ))
     )),
 
-    qualified_enum_value: $ => prec.left(4, seq(
+    qualified_enum_value: $ => prec.left(9, seq( // Increased precedence
       field('enum_type', choice(
         $._enum_type_reference,
         $.identifier,
