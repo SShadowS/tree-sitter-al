@@ -1617,7 +1617,8 @@ enum_type: $ => prec(1, seq(
       prec(1, choice('OutStream', 'OUTSTREAM', 'Outstream')),
       prec(1, choice('SecretText', 'SECRETTEXT', 'Secrettext')),
       prec(1, choice('Label', 'LABEL', 'Label')),
-      
+      prec(1, choice('ModuleInfo', 'MODULEINFO', 'Moduleinfo')), // Added ModuleInfo
+
       // XML Types
       prec(1, choice('XmlDocument', 'XMLDOCUMENT', 'Xmldocument')),
       prec(1, choice('XmlNode', 'XMLNODE', 'Xmlnode')),
