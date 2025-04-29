@@ -13,10 +13,6 @@ module.exports = grammar({
   word: $ => $.identifier,
   extras: $ => [/\s/, $.comment, $.pragma],
 
-  conflicts: $ => [
-    [$.exit_statement]
-  ],
-
   rules: {
     source_file: $ => repeat($._object),
 
@@ -1486,7 +1482,7 @@ module.exports = grammar({
 
     var_section: $ => seq(
       choice('var', 'VAR', 'Var'),
-      repeat1($.variable_declaration)
+      repeat($.variable_declaration)
     ),
 
     variable_declaration: $ => choice(
@@ -2288,7 +2284,7 @@ enum_type: $ => prec(1, seq(
       field('condition', $._expression)
     ),
 
-    exit_statement: $ => seq(
+    exit_statement: $ => prec(13, seq(
       choice('exit', 'EXIT', 'Exit'),
       optional(seq(
         '(',
