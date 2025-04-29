@@ -2202,16 +2202,14 @@ enum_type: $ => prec(1, seq(
       optional($.parameter_list),
       ')',
       // Return type block
+      optional(';'),
       optional(choice(
         $._procedure_return_specification, // : ReturnType
         $._procedure_named_return // ReturnValue : ReturnType
       )),
-      optional(';'), // Re-introduce the optional semicolon here
-      // Optional var section
+      optional(';'),
       optional($.var_section),
-      // Code block required
       $.code_block,
-      // Optional semicolon after end
       optional(';')
     ),
 
