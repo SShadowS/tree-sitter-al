@@ -2601,7 +2601,7 @@ enum_type: $ => prec(1, seq(
     _case_pattern: $ => prec(5, choice(
       $._literal_value,
       $.enum_value_expression,
-      $._chained_expression,
+      // $._chained_expression, // Now handled by _single_pattern within multi_pattern
       $.identifier,
       $._quoted_identifier,
       $.string_literal,
@@ -2617,7 +2617,7 @@ enum_type: $ => prec(1, seq(
     _single_pattern: $ => choice(
       $._literal_value,
       $.enum_value_expression, // Match the full Record.Field::Value or EnumType::Value pattern
-      // $._chained_expression, // Covered by enum_value_expression in this context
+      $._chained_expression, // Allow member expressions like Value.IsInteger
       $.identifier, // Keep for simple identifiers
       $._quoted_identifier // Keep for quoted identifiers
     ),
