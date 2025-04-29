@@ -2394,9 +2394,27 @@ enum_type: $ => prec(1, seq(
       $.parenthesized_expression,
       $.unary_expression,
       // Preprocessor directives
-      $.preprocessor_directive
+      $.preprocessor_directive,
+      $.in_expression // Added 'in' expression
     ),
-    
+
+    // 'in' operator
+    in_operator: $ => choice('in', 'IN', 'In'),
+
+    // List literal for 'in' expression or other contexts
+    list_literal: $ => seq(
+      '[',
+      optional($.expression_list), // Use existing expression_list for comma-separated expressions
+      ']'
+    ),
+
+    // 'in' expression rule (precedence 5, lower than comparisons)
+    in_expression: $ => prec.left(5, seq(
+      field('left', $._expression),
+      field('operator', $.in_operator),
+      field('right', $.list_literal) // Right side is typically a list literal
+    )),
+
     // Rule for array indexing/subscript expressions
     subscript_expression: $ => prec.left(9, seq(
       field('array', $._expression),
