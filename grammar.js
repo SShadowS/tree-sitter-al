@@ -1570,14 +1570,11 @@ type_specification: $ => choice(
   $.interface_type // Added Interface type
 ),
 
-// Handles 'Option' type, optionally followed by members (used in parameters)
-option_type: $ => seq(
-  prec(1, choice('Option', 'OPTION', 'Option')),
-  optional($.option_member_list)
-),
+// Handles 'Option' type keyword
+option_type: $ => prec(1, choice('Option', 'OPTION', 'Option')),
 
 // Helper for comma-separated list of option members
-option_member_list: $ => prec.left(1, seq( // Added prec.left(1, ...) for associativity
+option_member_list: $ => prec.left(1, seq(
   $.option_member,
   repeat(seq(',', $.option_member))
 )),
@@ -2213,9 +2210,10 @@ enum_type: $ => prec(1, seq(
       optional(field('modifier', $.modifier)),
       field('parameter_name', alias($.identifier, $.name)),
       ':',
-      // Use the comprehensive type_specification rule for parameter types
       field('parameter_type', $.type_specification),
-      optional(field('temporary', $.temporary))
+      // Optionally capture the list of members if the type is Option
+      optional(field('option_members', $.option_member_list))
+      // Removed temporary field as it's not valid for parameters
     ),
 
     identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
