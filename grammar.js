@@ -2220,7 +2220,8 @@ enum_type: $ => prec(1, seq(
       '-',
       '*',
       '/',
-      choice('div', 'DIV', 'Div') // Added div operator
+      /[dD][iI][vV]/, // Add case-insensitive div
+      /[mM][oO][dD]/  // Add case-insensitive mod
     ),
 
 
@@ -2431,10 +2432,17 @@ enum_type: $ => prec(1, seq(
         field('operator', $.comparison_operator),
         field('right', $._expression)
       )),
-      // Arithmetic operator expression  
+      // Arithmetic operator expression (Multiplication, Division, Div, Mod)
       prec.left(7, seq(
         field('left', $._expression),
-        field('operator', $.arithmetic_operator),
+        // Explicitly list operators for this precedence level
+        field('operator', choice('*', '/', /[dD][iI][vV]/, /[mM][oO][dD]/)),
+        field('right', $._expression)
+      )),
+      // Arithmetic operator expression (Addition, Subtraction) - Stays the same
+      prec.left(6, seq(
+        field('left', $._expression),
+        field('operator', choice('+', '-')),
         field('right', $._expression)
       )),
       // Logical AND expression
