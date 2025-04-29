@@ -2053,10 +2053,11 @@ enum_type: $ => prec(1, seq(
       ';'
     )),
 
-    // New rule for option members
+    // Rule for option members (used in lists like parameters or OptionMembers property)
     option_member: $ => choice(
       $.identifier,
-      $._quoted_identifier
+      $._quoted_identifier,
+      $.string_literal // Added string literal for members like " "
     ),
 
     option_caption_property: $ => seq(
