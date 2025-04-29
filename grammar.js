@@ -1577,10 +1577,10 @@ option_type: $ => seq(
 ),
 
 // Helper for comma-separated list of option members
-option_member_list: $ => seq(
+option_member_list: $ => prec.left(1, seq( // Added prec.left(1, ...) for associativity
   $.option_member,
   repeat(seq(',', $.option_member))
-),
+)),
 
 interface_type: $ => seq(
   prec(1, choice('Interface', 'INTERFACE', 'interface')),
