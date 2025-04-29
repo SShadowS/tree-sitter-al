@@ -1596,8 +1596,10 @@ type_specification: $ => choice(
   $.dictionary_type,
   $.page_type,
   $.enum_type,
-  $.option_type, // Added Option type
-  $.interface_type // Added Interface type
+  $.option_type,
+  $.interface_type,
+  $.identifier, // Allow plain identifiers as types (e.g., HttpClient, DotNet types)
+  $._quoted_identifier // Allow quoted identifiers as types
 ),
 
 // Handles 'Option' type keyword followed by optional members
