@@ -2633,6 +2633,12 @@ enum_type: $ => prec(1, seq(
       /\d+/
     )),
 
+    time_literal: $ => token(seq(
+      optional('-'),
+      /\d+/,
+      /[tT]/
+    )),
+
     datetime_literal: $ => token(seq(
       optional('-'),
       /\d+/,
@@ -2646,6 +2652,7 @@ enum_type: $ => prec(1, seq(
     )),
 
     _literal_value: $ => choice(
+      $.time_literal, // Added time_literal
       $.datetime_literal,
       $.duration_literal,
       $.integer,
