@@ -1551,7 +1551,26 @@ module.exports = grammar({
       field('parameter_name', alias($.identifier, $.name)),
       ':',
       field('parameter_type', $.type_specification) // Use the main type_specification
-      // Option members are handled within option_type inside type_specification
+    ),
+
+    // Specific rule for inline option parameters
+    _parameter_option: $ => seq(
+      optional(field('modifier', $.modifier)),
+      field('parameter_name', alias($.identifier, $.name)),
+      ':',
+      choice('option', 'OPTION', 'Option'), // Match the keyword
+      field('parameter_type', alias($.option_member_list, $.option_type)) // Reuse option_member_list for members
+    ),
+
+    // Updated parameter rule to choose between standard types and inline options
+    parameter: $ => choice(
+      $._parameter_option, // Try matching inline option first
+      seq( // Standard parameter with type_specification
+        optional(field('modifier', $.modifier)),
+        field('parameter_name', alias($.identifier, $.name)),
+        ':',
+        field('parameter_type', $.type_specification)
+      )
     ),
 
     label_attribute: $ => seq(
