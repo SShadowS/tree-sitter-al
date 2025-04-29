@@ -2237,15 +2237,6 @@ enum_type: $ => prec(1, seq(
 
     modifier: $ => choice('var', 'VAR', 'Var'),
 
-    parameter: $ => seq(
-      optional(field('modifier', $.modifier)),
-      field('parameter_name', alias($.identifier, $.name)),
-      ':',
-      field('parameter_type', $.type_specification) // Use the main type_specification
-      // Option members are handled within option_type inside type_specification
-      // Removed temporary field as it's not valid for parameters
-    ),
-
     identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
 
     _quoted_identifier: $ => alias(
