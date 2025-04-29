@@ -2589,7 +2589,7 @@ enum_type: $ => prec(1, seq(
       // $._chained_expression, // Now handled by _single_pattern within multi_pattern
       $.identifier,
       $._quoted_identifier,
-      $.string_literal,
+      // $.string_literal, // Removed redundant direct inclusion, covered by _literal_value
       // $.call_expression, // Handled by _expression in _case_pattern -> _single_pattern
       prec(6, $.multi_pattern) // Give multi_pattern higher precedence within the pattern choice
     ),
