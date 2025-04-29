@@ -1569,7 +1569,9 @@ module.exports = grammar({
         optional(field('modifier', $.modifier)),
         field('parameter_name', alias($.identifier, $.name)),
         ':',
-        field('parameter_type', $.type_specification)
+        field('parameter_type', $.type_specification),
+        // Add optional temporary keyword after type for records
+        optional(field('temporary', $.temporary)) 
       )
     ),
 
