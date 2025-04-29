@@ -2228,10 +2228,8 @@ enum_type: $ => prec(1, seq(
         seq(
           "'",
           repeat1(choice(
-            /[^'\\]+/,     // One or more chars except quote or backslash
-            /\\[\\'"]/,    // Backslash escapes
-            /\\#[0-9]#+/,  // AL-specific placeholder escape sequences like \#1#### with multiple # for formatting
-            /\\#[0-9]/,    // AL-specific placeholder escape sequences like \#1
+            /[^'\\\n]+/,   // One or more chars except quote, backslash, or newline
+            /\\./,         // Match any escaped character (e.g., \\, \', \", \#, etc.)
             "''"           // Two consecutive single quotes as an escape
           )),
           "'"
