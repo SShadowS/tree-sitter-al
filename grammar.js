@@ -2199,16 +2199,8 @@ enum_type: $ => prec(1, seq(
       optional(field('modifier', $.modifier)),
       field('parameter_name', alias($.identifier, $.name)),
       ':',
-      field('parameter_type', choice(
-        alias($.basic_type, $.type),
-        alias($.text_type, $.type),
-        alias($.code_type, $.type),
-        alias($.record_type, $.type),
-        alias($.codeunit_type, $.type),
-        alias($.array_type, $.type),
-        alias($.enum_type, $.type), // Added to support Enum types
-        alias($.identifier, $.type)
-      )),
+      // Use the comprehensive type_specification rule for parameter types
+      field('parameter_type', $.type_specification),
       optional(field('temporary', $.temporary))
     ),
 
