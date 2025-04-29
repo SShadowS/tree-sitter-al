@@ -1554,27 +1554,6 @@ module.exports = grammar({
       // Option members are handled within option_type inside type_specification
     ),
 
-
-    // Helper rule for type specifications excluding the 'Option' keyword - NO LONGER NEEDED, inlined in field_declaration
-    // _non_option_type_specification: $ => choice(
-      $.array_type,
-      $.basic_type,
-      $.text_type,
-      $.code_type,
-      $.record_type,
-      $.recordref_type,
-      $.fieldref_type,
-      $.codeunit_type,
-      $.query_type,
-      $.dotnet_type,
-      $.list_type,
-      $.dictionary_type,
-      $.page_type,
-      $.enum_type,
-      // Option type is handled separately in the parameter rule above
-      $.interface_type
-    // ), // End of commented out _non_option_type_specification
-
     label_attribute: $ => seq(
       field('name', $.identifier),
       optional('='), // Make the equals sign explicitly optional
