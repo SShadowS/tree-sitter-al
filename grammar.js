@@ -2600,10 +2600,10 @@ enum_type: $ => prec(1, seq(
 
     _single_pattern: $ => choice(
       $._literal_value,
-      $.qualified_enum_value,
-      $._chained_expression,
-      $.identifier,
-      $._quoted_identifier
+      $.enum_value_expression, // Match the full Record.Field::Value or EnumType::Value pattern
+      // $._chained_expression, // Covered by enum_value_expression in this context
+      $.identifier, // Keep for simple identifiers
+      $._quoted_identifier // Keep for quoted identifiers
     ),
 
 
