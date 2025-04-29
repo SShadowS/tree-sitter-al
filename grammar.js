@@ -21,7 +21,31 @@ module.exports = grammar({
       $.codeunit_declaration,
       $.pageextension_declaration,
       $.page_declaration,
-      $.query_declaration
+      $.query_declaration,
+      $.enumextension_declaration // Added enumextension
+    ),
+
+    enumextension_declaration: $ => seq(
+      /[eE][nN][uU][mM][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
+      field('object_id', $.object_id),
+      field('object_name', $.object_name),
+      /[eE][xX][tT][eE][nN][dD][sS]/,
+      field('base_object', choice($._quoted_identifier, $.identifier)),
+      '{',
+      repeat($.enum_value_declaration),
+      '}'
+    ),
+
+    enum_value_declaration: $ => seq(
+      /[vV][aA][lL][uU][eE]/,
+      '(',
+      field('value_id', $.integer),
+      ';',
+      field('value_name', choice($._quoted_identifier, $.identifier, $.string_literal)), // Allow string literal for value name
+      ')',
+      '{',
+      repeat($.property), // Reuse existing property rule, might need refinement
+      '}'
     ),
 
     query_declaration: $ => seq(
@@ -1411,7 +1435,8 @@ module.exports = grammar({
       $.obsolete_state_property,
       $.obsolete_reason_property,
       $.obsolete_tag_property,
-      $.access_property // Added Access property
+      $.access_property, // Added Access property
+      $.caption_property // Added Caption property for enum values
     )),
 
     caption_property: $ => seq(
