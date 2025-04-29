@@ -2289,10 +2289,21 @@ enum_type: $ => prec(1, seq(
         $.if_statement,
         $.repeat_statement,
         $.case_statement,
-        $.for_statement,  // Added for loop support
-        $._expression_statement // Added expression statement
+        $.for_statement,
+        $.while_statement, // Added while statement
+        $._expression_statement
       ),
       optional(';')
+    )),
+
+    while_statement: $ => prec.right(seq(
+      choice('while', 'WHILE', 'While'),
+      field('condition', $._expression),
+      choice('do', 'DO', 'Do'),
+      field('body', choice(
+        $._statement,
+        $.code_block
+      ))
     )),
 
 
@@ -2325,7 +2336,7 @@ enum_type: $ => prec(1, seq(
         token.immediate('('), // Ensure '(' immediately follows 'exit' if present
         optional(field('return_value', $._expression)),
         ')'
-      ))
+      )))
     )),
 
     assignment_statement: $ => seq(
