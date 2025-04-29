@@ -1510,10 +1510,18 @@ module.exports = grammar({
       repeat($.variable_declaration)
     ),
 
+    // Helper rule for comma-separated variable names
+    _variable_name_list: $ => seq(
+      field('name', $.identifier),
+      repeat(seq(',', field('name', $.identifier)))
+    ),
+
     variable_declaration: $ => choice(
       // Special case for Label with string literal and optional attributes
+      // Note: Labels typically don't support multiple declarations on one line in standard AL,
+      // but we keep the structure consistent for now. If issues arise, this might need adjustment.
       seq(
-        field('name', $.identifier),
+        field('names', $._variable_name_list), // Use list rule
         ':',
         choice('Label', 'LABEL', 'label'),
         field('value', $.string_literal),
@@ -1526,18 +1534,19 @@ module.exports = grammar({
         )),
         ';'
       ),
-      // Variable with value assignment
+      // Variable with value assignment (Multiple assignment on one line is not standard AL)
+      // This part might need review if complex initializations are common.
       seq(
-        field('name', $.identifier),
+        field('names', $._variable_name_list), // Use list rule
         ':',
         optional(field('type', $.type_specification)),
         ':=',
-        field('value', $._expression),
+        field('value', $._expression), // Assigns the same value to all variables in the list
         ';'
       ),
-      // Regular variable declaration
+      // Regular variable declaration (supporting multiple names)
       seq(
-        field('name', $.identifier),
+        field('names', $._variable_name_list), // Use list rule
         ':',
         field('type', $.type_specification),
         optional(field('temporary', $.temporary)),
