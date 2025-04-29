@@ -1580,7 +1580,7 @@ option_type: $ => prec(10, seq( // Increased precedence
 option_member_list: $ => seq( // Removed precedence
   $.option_member,
   repeat(seq(',', $.option_member))
-)),
+), // Removed extra parenthesis
 
 interface_type: $ => seq(
   prec(1, choice('Interface', 'INTERFACE', 'interface')),
