@@ -2530,7 +2530,7 @@ enum_type: $ => prec(1, seq(
     )),
 
 
-    enum_value_expression: $ => prec(12, seq(
+    enum_value_expression: $ => prec(13, seq( // Increased precedence to help distinguish from expression
       field('enum', choice(
         $.field_access,
         $.member_expression,
