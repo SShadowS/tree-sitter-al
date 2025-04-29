@@ -1402,7 +1402,8 @@ module.exports = grammar({
       $.description_property,
       $.obsolete_state_property,
       $.obsolete_reason_property,
-      $.obsolete_tag_property
+      $.obsolete_tag_property,
+      $.access_property // Added Access property
     )),
 
     caption_property: $ => seq(
