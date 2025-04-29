@@ -1545,6 +1545,46 @@ module.exports = grammar({
       )
     ),
 
+    // Define two distinct parameter structures to resolve ambiguity with Option members
+    parameter: $ => choice(
+      // Parameter with Option type and members
+      prec(2, seq(
+        optional(field('modifier', $.modifier)),
+        field('parameter_name', alias($.identifier, $.name)),
+        ':',
+        field('parameter_type', $.option_type), // Match 'Option' keyword
+        optional(field('option_members', $.option_member_list)) // Match optional members that follow
+      )),
+      // Parameter with other types
+      prec(1, seq(
+        optional(field('modifier', $.modifier)),
+        field('parameter_name', alias($.identifier, $.name)),
+        ':',
+        // Use an alias to keep 'type_specification' node name consistent in the tree
+        field('parameter_type', alias($._non_option_type_specification, $.type_specification))
+      ))
+    ),
+
+    // Helper rule for type specifications excluding the 'Option' keyword
+    _non_option_type_specification: $ => choice(
+      $.array_type,
+      $.basic_type,
+      $.text_type,
+      $.code_type,
+      $.record_type,
+      $.recordref_type,
+      $.fieldref_type,
+      $.codeunit_type,
+      $.query_type,
+      $.dotnet_type,
+      $.list_type,
+      $.dictionary_type,
+      $.page_type,
+      $.enum_type,
+      // Option type is handled separately in the parameter rule above
+      $.interface_type
+    ),
+
     label_attribute: $ => seq(
       field('name', $.identifier),
       optional('='), // Make the equals sign explicitly optional
@@ -1756,7 +1796,8 @@ enum_type: $ => prec(1, seq(
         $.identifier
       )),
       token(';'),  // Make semi_colon an explicit token
-      field('type', $.type_specification),
+      // Use the non-option type spec here as Option fields don't list members inline
+      field('type', alias($._non_option_type_specification, $.type_specification)),
       ')',
       optional(seq(
         '{',
@@ -2157,7 +2198,8 @@ enum_type: $ => prec(1, seq(
       $.dictionary_type,
       $.enum_type, // Added to support Enum types
       $.interface_type, // Added Interface type
-      $.identifier  // Ensures custom types are recognized
+      $.identifier // Ensures custom types are recognized
+      // Option type is handled separately
     ),
 
     _procedure_name: $ => alias(choice($.identifier, $._quoted_identifier), $.name),
@@ -2214,8 +2256,8 @@ enum_type: $ => prec(1, seq(
       optional(field('modifier', $.modifier)),
       field('parameter_name', alias($.identifier, $.name)),
       ':',
-      field('parameter_type', $.type_specification)
-      // Option members are now handled within option_type
+      field('parameter_type', alias($._non_option_type_specification, $.type_specification)) // Use the non-option version here
+      // Option members are handled by the specific parameter rule
       // Removed temporary field as it's not valid for parameters
     ),
 
