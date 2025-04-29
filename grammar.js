@@ -2530,7 +2530,7 @@ enum_type: $ => prec(1, seq(
     )),
 
 
-    enum_value_expression: $ => prec(13, seq( // Increased precedence to help distinguish from expression
+    enum_value_expression: $ => prec(11, seq( // Adjusted precedence (was 13)
       field('enum', choice(
         $.field_access,
         $.member_expression,
@@ -2591,7 +2591,7 @@ enum_type: $ => prec(1, seq(
       $._quoted_identifier,
       // $.string_literal, // Removed redundant direct inclusion, covered by _literal_value
       // $.call_expression, // Handled by _expression in _case_pattern -> _single_pattern
-      prec(6, $.multi_pattern) // Give multi_pattern higher precedence within the pattern choice
+      $.multi_pattern // Removed specific precedence here
     ),
 
     multi_pattern: $ => seq(
