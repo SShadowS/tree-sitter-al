@@ -1540,7 +1540,16 @@ type_specification: $ => choice(
   $.list_type,
   $.dictionary_type,
   $.page_type,
-  $.enum_type
+  $.enum_type,
+  $.interface_type // Added Interface type
+),
+
+interface_type: $ => seq(
+  prec(1, choice('Interface', 'INTERFACE', 'interface')),
+  field('reference', choice(
+    $._quoted_identifier,
+    $.identifier
+  ))
 ),
 
 enum_type: $ => prec(1, seq(
@@ -2107,6 +2116,7 @@ enum_type: $ => prec(1, seq(
       $.list_type,
       $.dictionary_type,
       $.enum_type, // Added to support Enum types
+      $.interface_type, // Added Interface type
       $.identifier  // Ensures custom types are recognized
     ),
 
