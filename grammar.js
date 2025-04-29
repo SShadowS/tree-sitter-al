@@ -1765,24 +1765,8 @@ enum_type: $ => prec(1, seq(
         $.identifier
       )),
       token(';'),  // Make semi_colon an explicit token
-      // Use the non-option type spec here as Option fields don't list members inline
-      field('type', choice( // Inlined _non_option_type_specification
-        $.array_type,
-        $.basic_type,
-        $.text_type,
-        $.code_type,
-        $.record_type,
-        $.recordref_type,
-        $.fieldref_type,
-        $.codeunit_type,
-        $.query_type,
-        $.dotnet_type,
-        $.list_type,
-        $.dictionary_type,
-        $.page_type,
-        $.enum_type,
-        $.interface_type
-      )),
+      // Use the consistent type_specification rule
+      field('type', $.type_specification),
       ')',
       optional(seq(
         '{',
@@ -2170,22 +2154,8 @@ enum_type: $ => prec(1, seq(
       $._procedure_return_specification
     ),
 
-    return_type: $ => choice(
-      $.array_type,
-      $.basic_type,
-      $.code_type, // Added to support Code[<length>] return types
-      $.text_type,
-      $.record_type,
-      $.codeunit_type,
-      $.query_type,
-      $.dotnet_type,
-      $.list_type,
-      $.dictionary_type,
-      $.enum_type, // Added to support Enum types
-      $.interface_type, // Added Interface type
-      $.identifier // Ensures custom types are recognized
-      // Option type is handled separately
-    ),
+    // Use the consistent type_specification rule for return types
+    return_type: $ => $.type_specification,
 
     _procedure_name: $ => alias(choice($.identifier, $._quoted_identifier), $.name),
 
