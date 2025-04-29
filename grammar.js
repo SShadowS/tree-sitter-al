@@ -1577,7 +1577,7 @@ option_type: $ => prec(10, seq( // Increased precedence
 )),
 
 // Helper for comma-separated list of option members
-option_member_list: $ => prec.left(1, seq(
+option_member_list: $ => seq( // Removed precedence
   $.option_member,
   repeat(seq(',', $.option_member))
 )),
