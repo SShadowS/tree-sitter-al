@@ -2287,7 +2287,7 @@ enum_type: $ => prec(1, seq(
     exit_statement: $ => prec(13, seq(
       choice('exit', 'EXIT', 'Exit'),
       optional(seq(
-        '(',
+        token.immediate('('), // Ensure '(' immediately follows 'exit' if present
         optional(field('return_value', $._expression)),
         ')'
       ))
