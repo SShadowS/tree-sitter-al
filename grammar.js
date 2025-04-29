@@ -1690,6 +1690,7 @@ enum_type: $ => prec(1, seq(
       prec(1, choice('Label', 'LABEL', 'Label')),
       prec(1, choice('ModuleInfo', 'MODULEINFO', 'Moduleinfo')), // Added ModuleInfo
       prec(1, choice('ObjectType', 'OBJECTTYPE', 'Objecttype')), // Added ObjectType
+      prec(1, choice('KeyRef', 'KEYREF', 'Keyref')), // Added KeyRef
 
       // XML Types
       prec(1, choice('XmlDocument', 'XMLDOCUMENT', 'Xmldocument')),
