@@ -575,9 +575,21 @@ module.exports = grammar({
       repeat(choice(
         $.var_section,
         seq(optional($.attribute_list), $.procedure),
-        seq(optional($.attribute_list), $.onrun_trigger)
+        seq(optional($.attribute_list), $.onrun_trigger),
+        seq(optional($.attribute_list), $.generic_trigger) // Added generic trigger support
       )),
       '}'
+    ),
+
+    // Generic trigger rule for codeunits etc.
+    generic_trigger: $ => seq(
+      choice('trigger', 'TRIGGER', 'Trigger'),
+      field('name', alias($.identifier, $.trigger_name)), // Use identifier for the trigger name
+      '(',
+      optional($.parameter_list), // Allow optional parameters
+      ')',
+      optional($.var_section),
+      $.code_block
     ),
 
     page_declaration: $ => seq(
