@@ -2291,7 +2291,7 @@ enum_type: $ => prec(1, seq(
         optional(field('return_value', $._expression)),
         ')'
       ))
-    ),
+    )),
 
     assignment_statement: $ => seq(
       field('left', $._assignable_expression),
