@@ -1648,6 +1648,7 @@ enum_type: $ => prec(1, seq(
       prec(1, choice('SecretText', 'SECRETTEXT', 'Secrettext')),
       prec(1, choice('Label', 'LABEL', 'Label')),
       prec(1, choice('ModuleInfo', 'MODULEINFO', 'Moduleinfo')), // Added ModuleInfo
+      prec(1, choice('ObjectType', 'OBJECTTYPE', 'Objecttype')), // Added ObjectType
 
       // XML Types
       prec(1, choice('XmlDocument', 'XMLDOCUMENT', 'Xmldocument')),
