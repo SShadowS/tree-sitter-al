@@ -2426,51 +2426,57 @@ enum_type: $ => prec(1, seq(
     )),
 
     _expression: $ => choice(
-      // Comparison operator expression
-      prec.left(6, seq(
-        field('left', $._expression),
-        field('operator', $.comparison_operator),
-        field('right', $._expression)
-      )),
-      // Arithmetic operator expression (Multiplication, Division, Div, Mod)
+      // --- Binary Operators First ---
+      // Arithmetic operator expression (*, /, div, mod) (prec 7)
       prec.left(7, seq(
         field('left', $._expression),
         // Explicitly list operators for this precedence level
         field('operator', choice('*', '/', /[dD][iI][vV]/, /[mM][oO][dD]/)),
         field('right', $._expression)
       )),
-      // Arithmetic operator expression (Addition, Subtraction) - Stays the same
+      // Arithmetic operator expression (+, -) (prec 6)
       prec.left(6, seq(
         field('left', $._expression),
         field('operator', choice('+', '-')),
         field('right', $._expression)
       )),
-      // Logical AND expression
+      // Comparison operator expression (prec 6)
+      prec.left(6, seq(
+        field('left', $._expression),
+        field('operator', $.comparison_operator),
+        field('right', $._expression)
+      )),
+      // 'in' expression (prec 5)
+      prec.left(5, seq(
+        field('left', $._expression),
+        field('operator', $.in_operator),
+        field('right', $.list_literal) // Right side is typically a list literal
+      )),
+      // Logical AND expression (prec 3)
       prec.left(3, seq(
         field('left', $._expression),
         field('operator', choice('and', 'AND', 'And')),
         field('right', $._expression)
       )),
-      // Logical OR expression
+      // Logical OR expression (prec 2)
       prec.left(2, seq(
         field('left', $._expression),
         field('operator', choice('or', 'OR', 'Or')),
         field('right', $._expression)
       )),
-      $.enum_keyword_qualified_value, // Added support for Enum::"Type"::"Value"
-      $.qualified_enum_value,
-      $.field_access,  // Added with higher priority than member_expression
-      $.member_expression,
-      $.subscript_expression, // Added for array indexing expressions like Tab[1]
-      $.call_expression,
+      // --- Other Expression Forms ---
+      $.enum_keyword_qualified_value, // (prec 9)
+      $.qualified_enum_value, // (prec 9)
+      $.field_access,  // (prec 12)
+      $.member_expression, // (prec 11)
+      $.subscript_expression, // (prec 9)
+      $.call_expression, // (prec 12)
       $.identifier,
       $._quoted_identifier,
       $._literal_value,
       $.parenthesized_expression,
-      $.unary_expression,
-      // Preprocessor directives
-      $.preprocessor_directive,
-      $.in_expression // Added 'in' expression
+      $.unary_expression, // (prec 7)
+      $.preprocessor_directive
     ),
 
     // 'in' operator
