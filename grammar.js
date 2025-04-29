@@ -2145,7 +2145,8 @@ enum_type: $ => prec(1, seq(
       '+',
       '-',
       '*',
-      '/'
+      '/',
+      choice('div', 'DIV', 'Div') // Added div operator
     ),
 
 
