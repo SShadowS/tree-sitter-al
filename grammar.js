@@ -336,7 +336,8 @@ module.exports = grammar({
       $.promoted_property,
       $.promoted_category_property,
       $.promoted_only_property,
-      $.promoted_is_big_property
+      $.promoted_is_big_property,
+      $.shortcut_key_property
     ),
 
     application_area_property: $ => seq(
@@ -531,6 +532,13 @@ module.exports = grammar({
       'PromotedIsBig',
       '=',
       field('value', $.boolean),
+      ';'
+    ),
+
+    shortcut_key_property: $ => seq(
+      'ShortCutKey',
+      '=',
+      field('value', $.string_literal),
       ';'
     ),
 
@@ -947,6 +955,34 @@ module.exports = grammar({
       repeat(seq(',', $.string_literal))
     ),
 
+    // NEW HIGH PRIORITY PROPERTIES - Value Rules
+    data_caption_fields_value: $ => seq(
+      choice($._quoted_identifier, $.string_literal),
+      repeat(seq(',', choice($._quoted_identifier, $.string_literal)))
+    ),
+
+    extensible_value: $ => $.boolean,
+
+    data_per_company_value: $ => $.boolean,
+
+    replicate_data_value: $ => $.boolean,
+
+    column_store_index_value: $ => seq(
+      choice($.identifier, $._quoted_identifier),
+      repeat(seq(',', choice($.identifier, $._quoted_identifier)))
+    ),
+
+    compression_type_value: $ => choice(
+      /[nN][oO][nN][eE]/,
+      /[pP][aA][gG][eE]/,
+      /[rR][oO][wW]/,
+      /[uU][nN][sS][pP][eE][cC][iI][fF][iI][eE][dD]/
+    ),
+
+    inherent_permissions_value: $ => $.permission_type,
+
+    inherent_entitlements_value: $ => $.permission_type,
+
     access_value: $ => choice(
       /[pP][uU][bB][lL][iI][cC]/,
       /[iI][nN][tT][eE][rR][nN][aA][lL]/,
@@ -1225,6 +1261,63 @@ module.exports = grammar({
       ';'
     ),
 
+    // NEW HIGH PRIORITY PROPERTIES - Property Rules
+    data_caption_fields_property: $ => seq(
+      'DataCaptionFields',
+      '=',
+      field('value', $.data_caption_fields_value),
+      ';'
+    ),
+
+    extensible_property: $ => seq(
+      'Extensible',
+      '=',
+      field('value', $.extensible_value),
+      ';'
+    ),
+
+    data_per_company_property: $ => seq(
+      'DataPerCompany',
+      '=',
+      field('value', $.data_per_company_value),
+      ';'
+    ),
+
+    replicate_data_property: $ => seq(
+      'ReplicateData',
+      '=',
+      field('value', $.replicate_data_value),
+      ';'
+    ),
+
+    column_store_index_property: $ => seq(
+      'ColumnStoreIndex',
+      '=',
+      field('value', $.column_store_index_value),
+      ';'
+    ),
+
+    compression_type_property: $ => seq(
+      'CompressionType',
+      '=',
+      field('value', $.compression_type_value),
+      ';'
+    ),
+
+    inherent_permissions_property: $ => seq(
+      'InherentPermissions',
+      '=',
+      field('value', $.inherent_permissions_value),
+      ';'
+    ),
+
+    inherent_entitlements_property: $ => seq(
+      'InherentEntitlements',
+      '=',
+      field('value', $.inherent_entitlements_value),
+      ';'
+    ),
+
     caption_ml_property: $ => seq(
       'CaptionML',
       '=',
@@ -1456,7 +1549,16 @@ module.exports = grammar({
       $.obsolete_reason_property,
       $.obsolete_tag_property,
       $.access_property, // Added Access property
-      $.caption_property // Added Caption property for enum values
+      $.caption_property, // Added Caption property for enum values
+      // NEW HIGH PRIORITY PROPERTIES
+      $.data_caption_fields_property,
+      $.extensible_property,
+      $.data_per_company_property,
+      $.replicate_data_property,
+      $.column_store_index_property,
+      $.compression_type_property,
+      $.inherent_permissions_property,
+      $.inherent_entitlements_property
     )),
 
     caption_property: $ => seq(
