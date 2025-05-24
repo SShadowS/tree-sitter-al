@@ -93,12 +93,16 @@ codeunit 50100 MyCodeunit
       (parameter_list
         (parameter
           (name)
-          (type))
+          (type_specification
+            (basic_type)))
         (parameter
           (modifier)
           (name)
-          (type)))
-      (return_type (basic_type))
+          (type_specification
+            (text_type))))
+      (return_type 
+        (type_specification
+          (basic_type)))
       (code_block
         (exit_statement
           (boolean))))))
@@ -152,8 +156,9 @@ codeunit 50100 MyCodeunit
       (parameter_list
         (parameter
           (name)
-          (type
-            (integer))))
+          (type_specification
+            (code_type
+              (integer)))))
       (var_section
         (variable_declaration
           (identifier) (type_specification (record_type (identifier))))

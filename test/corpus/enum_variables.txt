@@ -327,8 +327,9 @@ codeunit 50115 "Enum Return Test"
     (procedure
       (name)
       (return_type
-        (enum_type
-          (quoted_identifier)))
+        (type_specification
+          (enum_type
+            (quoted_identifier))))
       (code_block
         (exit_statement
           (qualified_enum_value
@@ -339,8 +340,9 @@ codeunit 50115 "Enum Return Test"
       (return_value
         (identifier))
       (return_type
-        (enum_type
-          (quoted_identifier)))
+        (type_specification
+          (enum_type
+            (quoted_identifier))))
       (code_block
         (assignment_statement
           (identifier)
@@ -382,8 +384,9 @@ codeunit 50116 "Enum Parameter Test"
       (parameter_list
         (parameter
           (name)
-          (type
-            (quoted_identifier))))
+          (type_specification
+            (enum_type
+              (quoted_identifier)))))
       (code_block
         (case_statement
           (identifier)

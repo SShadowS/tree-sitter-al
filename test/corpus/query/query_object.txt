@@ -78,8 +78,10 @@ query 50102 "Top Customer Overview"
     object_name: (object_name
       name: (quoted_identifier))
     (query_type_property)
-    (caption_property
-      (string_literal))
+    (property_list
+      (property
+        (caption_property
+        (string_literal))))
     (comment)
     (about_title_property
       value: (string_literal))

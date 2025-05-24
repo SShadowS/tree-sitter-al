@@ -114,9 +114,11 @@ table 50100 "My Test Table"
       (parameter_list
         (parameter
           (name)
-          (type)))
+          (type_specification
+            (text_type))))
       (return_type
-        (basic_type))
+        (type_specification
+          (basic_type)))
       (code_block
         (if_statement
           (identifier)

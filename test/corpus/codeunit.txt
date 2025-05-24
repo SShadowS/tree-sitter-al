@@ -33,13 +33,16 @@ codeunit 50100 "My Test Codeunit"
       (parameter_list
         (parameter
           (name)
-          (type))
+          (type_specification
+            (basic_type)))
         (parameter
           (name)
-          (type)))
-      (return_type (basic_type))
+          (type_specification
+            (basic_type))))
+      (return_type 
+        (type_specification
+          (basic_type)))
       (code_block
         (exit_statement
           (identifier)
-          (arithmetic_operator)
           (identifier))))))

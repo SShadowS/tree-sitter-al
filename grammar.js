@@ -208,7 +208,24 @@ module.exports = grammar({
       )),
       ')',
       '{',
-      repeat($.action_declaration),
+      repeat(choice(
+        $.action_declaration,
+        $.action_group_section
+      )),
+      '}'
+    ),
+
+    action_group_section: $ => seq(
+      /[gG][rR][oO][uU][pP]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $.action_declaration,
+        $.action_property,
+        $.property_list
+      )),
       '}'
     ),
 
@@ -471,14 +488,14 @@ module.exports = grammar({
     enabled_property: $ => seq(
       'Enabled',
       '=',
-      field('value', $.boolean),
+      field('value', choice($.boolean, $.identifier, $._quoted_identifier)),
       ';'
     ),
 
     visible_property: $ => seq(
       'Visible',
       '=',
-      field('value', $.boolean),
+      field('value', choice($.boolean, $.identifier, $._quoted_identifier)),
       ';'
     ),
 
@@ -715,7 +732,8 @@ module.exports = grammar({
           $.source_expr_property,
           $.editable_property,
           $.description_property,
-          $.lookup_pageid_property
+          $.lookup_pageid_property,
+          $.field_trigger_declaration
         )),
         '}'
       ),
@@ -739,7 +757,8 @@ module.exports = grammar({
           $.source_expr_property,
           $.editable_property,
           $.description_property,
-          $.lookup_pageid_property
+          $.lookup_pageid_property,
+          $.field_trigger_declaration
         )),
         '}'
       ),
@@ -750,8 +769,8 @@ module.exports = grammar({
         // ControlId can be string, quoted identifier, integer, or identifier
         field('control_id', choice($.string_literal, $._quoted_identifier, $.integer, $.identifier)),
         ';',
-        // SourceOrFieldName can be identifier or quoted identifier
-        field('source_or_field_name', choice($.identifier, $._quoted_identifier)),
+        // SourceOrFieldName can be identifier, quoted identifier, or complex expression
+        field('source_or_field_name', $._expression),
         ')',
         '{',
         // Combined list of possible properties from both original patterns
@@ -766,7 +785,8 @@ module.exports = grammar({
           $.run_object_property,
           $.run_page_link_property,
           $.source_expr_property,
-          $.editable_property
+          $.editable_property,
+          $.field_trigger_declaration
         )),
         '}'
       )

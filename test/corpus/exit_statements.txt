@@ -46,7 +46,8 @@ codeunit 50200 "Exit Statements Test"
     (procedure
       (name)
       (return_type
-        (basic_type))
+        (type_specification
+          (basic_type)))
       (code_block
         (exit_statement
           (integer))
@@ -54,7 +55,8 @@ codeunit 50200 "Exit Statements Test"
     (procedure
       (name)
       (return_type
-        (basic_type))
+        (type_specification
+          (basic_type)))
       (var_section
         (variable_declaration
           (identifier)
@@ -70,8 +72,9 @@ codeunit 50200 "Exit Statements Test"
     (procedure
       (name)
       (return_type
-        (record_type
-          (identifier)))
+        (type_specification
+          (record_type
+            (identifier))))
       (var_section
         (variable_declaration
           (identifier)
