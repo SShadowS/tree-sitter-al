@@ -73,10 +73,9 @@ query 50102 "Top Customer Overview"
 
 (source_file
   (query_declaration
-    object_id: (object_id
-      (integer))
-    object_name: (object_name
-      name: (quoted_identifier))
+    object_id:
+      (integer)
+    object_name: (quoted_identifier)
     (query_type_property)
     (property_list
       (property

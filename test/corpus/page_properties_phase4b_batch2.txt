@@ -1,0 +1,72 @@
+==================
+Page Properties Phase 4B Batch 2 - Web Service Properties
+==================
+
+page 50111 "Test Phase 4B Batch 2"
+{
+    PageType = API;
+    SourceTable = Customer;
+    EntityCaption = 'Customer Entity';
+    EntityCaptionML = ENU='Customer Entity',DAN='Kundeobjekt';
+    EntityName = 'customer';
+    EntitySetCaption = 'Customers';
+    EntitySetCaptionML = ENU='Customers',DAN='Kunder';
+    EntitySetName = 'customers';
+
+    layout
+    {
+        area(content)
+        {
+            group(General)
+            {
+                field("No."; Rec."No.")
+                {
+                }
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (page_declaration
+    object_id:
+      (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (source_table_property
+      value: (identifier))
+    (entity_caption_property
+      value: (string_literal))
+    (entity_caption_ml_property
+      value: (ml_value_list
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))))
+    (entity_name_property
+      value: (string_literal))
+    (entity_set_caption_property
+      value: (string_literal))
+    (entity_set_caption_ml_property
+      value: (ml_value_list
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))))
+    (entity_set_name_property
+      value: (string_literal))
+    (layout_section
+      (area_section
+        (group_section
+          name: (identifier)
+          (field_section
+            control_id: (quoted_identifier)
+            source_or_field_name: (field_access
+              record: (identifier)
+              field: (quoted_identifier))))))))

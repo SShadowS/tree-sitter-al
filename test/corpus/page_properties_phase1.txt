@@ -1,0 +1,75 @@
+==================
+Page Properties Phase 1
+==================
+
+page 50002 "Test Page Phase 1"
+{
+    PageType = Card;
+    SourceTable = Customer;
+    AboutText = 'This page shows customer information';
+    AboutTextML = ENU = 'Customer info', DAN = 'Kunde info';
+    AboutTitle = 'Customer Card';
+    AboutTitleML = ENU = 'Customer Card', DAN = 'Kundekort';
+    CardPageId = "Customer Card";
+    DeleteAllowed = true;
+    InsertAllowed = false; 
+    ModifyAllowed = true;
+    SourceTableTemporary = false;
+
+    layout
+    {
+        area(content)
+        {
+            field(Name; Rec.Name) { }
+        }
+    }
+}
+
+---
+
+(source_file
+  (page_declaration
+    object_id:
+      (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (source_table_property
+      value: (identifier))
+    (page_about_text_property
+      value: (string_literal))
+    (page_about_text_ml_property
+      value: (ml_value_list
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))))
+    (page_about_title_property
+      value: (string_literal))
+    (page_about_title_ml_property
+      value: (ml_value_list
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))))
+    (card_page_id_property
+      value: (page_id_value
+        (quoted_identifier)))
+    (delete_allowed_property
+      value: (boolean))
+    (insert_allowed_property
+      value: (boolean))
+    (modify_allowed_property
+      value: (boolean))
+    (source_table_temporary_property
+      value: (boolean))
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier)))))))

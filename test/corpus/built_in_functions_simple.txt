@@ -18,10 +18,8 @@ codeunit 50100 "Built-in Functions Test"
 
 (source_file
   (codeunit_declaration
-    (object_id
-      (integer))
-    (object_name
-      (quoted_identifier))
+    (integer)
+    (quoted_identifier)
     (onrun_trigger
       (code_block
         (call_expression

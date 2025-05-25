@@ -7,10 +7,8 @@ codeunit 50100 MyCodeunit
 ---
 (source_file
   (codeunit_declaration
-    (object_id
-      (integer))
-    (object_name
-      (identifier))))
+    (integer)
+    (identifier)))
 
 ==================
 Codeunit With Properties
@@ -24,9 +22,8 @@ codeunit 50100 MyCodeunit
 ---
 (source_file
   (codeunit_declaration
-    (object_id (integer))
-    (object_name
-      (identifier))
+    (integer)
+    (identifier)
     (property_list
       (property
         (table_no_property
@@ -55,9 +52,8 @@ codeunit 50100 MyCodeunit
 ---
 (source_file
   (codeunit_declaration
-    (object_id (integer))
-    (object_name
-      (identifier))
+    (integer)
+    (identifier)
     (var_section
       (variable_declaration
         (identifier) (type_specification (basic_type)))
@@ -84,9 +80,8 @@ codeunit 50100 MyCodeunit
 ---
 (source_file
   (codeunit_declaration
-    (object_id (integer))
-    (object_name
-      (identifier))
+    (integer)
+    (identifier)
     (procedure
       (procedure_modifier)
       (name)
@@ -120,9 +115,8 @@ codeunit 50100 MyCodeunit
 ---
 (source_file
   (codeunit_declaration
-    (object_id (integer))
-    (object_name
-      (identifier))
+    (integer)
+    (identifier)
     (onrun_trigger
       (code_block
         (call_expression
@@ -147,9 +141,8 @@ codeunit 50100 MyCodeunit
 ---
 (source_file
   (codeunit_declaration
-    (object_id (integer))
-    (object_name
-      (identifier))
+    (integer)
+    (identifier)
     (procedure
       (procedure_modifier)
       (name)

@@ -42,49 +42,34 @@ page 50001 "Test Page Actions"
 
 (source_file
   (page_declaration
-    object_id: (object_id
-      (integer))
-    object_name: (object_name
-      name: (quoted_identifier))
-    (property_list
-      (property
-        (caption_property
-          (string_literal))))
-    (property_list
-      (property
-        (page_type_property)))
-    (property_list
-      (property
-        (source_table_property
-          value: (identifier))))
+    object_id:
+      (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+          (string_literal))
+    (page_type_property)
+    (source_table_property
+          value: (identifier))
     (actions_section
       (area_action_section
         (action_group_section
           name: (identifier)
-          (property_list
-            (property
-              (caption_property
-                (string_literal))))
-          (action_property
-            (image_property
-              value: (quoted_identifier)))
+          (caption_property
+            (string_literal))
+          (image_property
+            value: (quoted_identifier))
           (action_declaration
             name: (identifier)
-            (action_property
-              (application_area_property
-                value: (identifier)))
-            (action_property
-              (caption_property
-                (string_literal)))
-            (action_property
-              (enabled_property
-                value: (identifier)))
-            (action_property
-              (visible_property
-                value: (identifier)))
-            (action_property
-              (image_property
-                value: (identifier)))
+            (application_area_property
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (enabled_property
+              value: (identifier))
+            (visible_property
+              value: (identifier))
+            (image_property
+              value: (identifier))
             (trigger_declaration
               type: (trigger_type)
               (code_block

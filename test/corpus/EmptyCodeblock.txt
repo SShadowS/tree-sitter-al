@@ -17,9 +17,8 @@ table 50101 "Empty Code Block Test"
 
 (source_file
 (table_declaration
-    (object_id (integer))
-    (object_name
-      (quoted_identifier))
+    (integer)
+    (quoted_identifier)
     (oninsert_trigger
       (code_block))
     (procedure

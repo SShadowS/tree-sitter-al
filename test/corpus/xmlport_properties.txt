@@ -1,0 +1,131 @@
+==================
+XMLPort Properties
+==================
+
+xmlport 50000 "Test XMLPort"
+{
+    Caption = 'Test XMLPort';
+    Direction = Export;
+    Format = Xml;
+    InherentPermissions = X;
+    InherentEntitlements = X;
+    CaptionML = ENU = 'Test XMLPort', DAN = 'Test XMLPort';
+    Description = 'Test XMLPort description';
+
+    schema
+    {
+        textelement(Root)
+        {
+            XmlName = 'Root';
+            MinOccurs = Once;
+            MaxOccurs = Unbounded;
+            NamespacePrefix = 'ns';
+
+            tableelement(Customer; Customer)
+            {
+                XmlName = 'Customer';
+                AutoReplace = true;
+                AutoSave = true;
+                AutoUpdate = true;
+                LinkFields = "No."=FIELD("No.");
+                LinkTable = Customer;
+                LinkTableForceInsert = true;
+                Unbound = false;
+                RequestFilterFields = "No.", Name;
+                RequestFilterHeading = 'Customer Filter';
+                RequestFilterHeadingML = ENU = 'Customer Filter', DAN = 'Kundefilter';
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (xmlport_declaration
+    object_id:
+      (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (direction_property)
+    (format_property)
+    (inherent_permissions_property
+      value: (inherent_permissions_value
+        (permission_type)))
+    (inherent_entitlements_property
+      value: (inherent_entitlements_value
+        (permission_type)))
+    (caption_ml_property
+      (ml_value_list
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))))
+    (description_property
+      value: (description_value
+        (string_literal)))
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_property
+          (xml_name_property
+            value: (string_literal)))
+        (xmlport_table_property
+          (min_occurs_property
+            value: (min_occurs_value)))
+        (xmlport_table_property
+          (max_occurs_property
+            value: (max_occurs_value)))
+        (xmlport_table_property
+          (namespace_prefix_property
+            (string_literal)))
+        (xmlport_table_element
+          name: (identifier)
+          source_table: (identifier)
+          (xmlport_table_property
+            (xml_name_property
+              value: (string_literal)))
+          (xmlport_table_property
+            (auto_replace_property
+              (boolean)))
+          (xmlport_table_property
+            (auto_save_property
+              (boolean)))
+          (xmlport_table_property
+            (auto_update_property
+              (boolean)))
+          (xmlport_table_property
+            (link_fields_property
+              (link_fields_value
+                (field_mapping
+                  (quoted_identifier)
+                  (quoted_identifier)))))
+          (xmlport_table_property
+            (link_table_property
+              value: (identifier)))
+          (xmlport_table_property
+            (link_table_force_insert_property
+              value: (boolean)))
+          (xmlport_table_property
+            (unbound_property
+              value: (boolean)))
+          (xmlport_table_property
+            (request_filter_fields_property
+              (request_filter_fields_value
+                (quoted_identifier)
+                (identifier))))
+          (xmlport_table_property
+            (request_filter_heading_property
+              (string_literal)))
+          (xmlport_table_property
+            (request_filter_heading_ml_property
+              (ml_value_list
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))))))))))

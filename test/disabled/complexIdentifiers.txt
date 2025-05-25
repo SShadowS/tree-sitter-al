@@ -55,7 +55,7 @@ codeunit 50104 "Business Logic"
 
 (source_file
   (page_declaration
-    (object_id (integer))
+    (integer)
     (object_name (string))
     (var_section
       (var_declaration (name) (data_type))
@@ -72,14 +72,14 @@ codeunit 50104 "Business Logic"
     (procedure_definition
       (procedure_name (name))))
   (enum_declaration
-    (object_id (integer))
+    (integer)
     (object_name (string))
     (enum_value_list
       (enum_value (integer) (string))
       (enum_value (integer) (string))
       (enum_value (integer) (name))))
   (query_declaration
-    (object_id (integer))
+    (integer)
     (object_name (string))
     (query_elements
       (dataitem
@@ -88,7 +88,7 @@ codeunit 50104 "Business Logic"
         (column (name) (name))
         (column (string) (string)))))
   (codeunit_declaration
-    (object_id (integer))
+    (integer)
     (object_name (string))
     (procedure_definition
       (procedure_name (name))

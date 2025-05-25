@@ -1,0 +1,52 @@
+==================
+Page Properties Phase 2B - Complex Properties
+==================
+
+page 50004 "Test Page Phase 2B"
+{
+    PageType = Card;
+    SourceTable = Customer;
+    DataAccessIntent = ReadOnly;
+    DataCaptionExpression = 'Format(''%1 - %2'', Name, City)';
+    InstructionalText = 'Use this page to manage customer information';
+    InstructionalTextML = ENU = 'Customer management', DAN = 'Kundestyring';
+
+    layout
+    {
+        area(content)
+        {
+            field(Name; Rec.Name) { }
+        }
+    }
+}
+
+---
+
+(source_file
+  (page_declaration
+    object_id:
+      (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (source_table_property
+      value: (identifier))
+    (data_access_intent_property)
+    (data_caption_expression_property
+      value: (string_literal))
+    (instructional_text_property
+      value: (string_literal))
+    (instructional_text_ml_property
+      value: (ml_value_list
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))))
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier)))))))

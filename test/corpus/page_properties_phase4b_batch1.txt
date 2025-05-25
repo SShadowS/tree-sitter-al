@@ -1,0 +1,51 @@
+==================
+Page Properties Phase 4B Batch 1 - AdditionalSearchTermsML
+==================
+
+page 50110 "Test Phase 4B Batch 1"
+{
+    PageType = Card;
+    SourceTable = Customer;
+    AdditionalSearchTermsML = ENU='Search,Terms,English',DAN='Søge,Termer,Dansk';
+
+    layout
+    {
+        area(content)
+        {
+            group(General)
+            {
+                field("No."; Rec."No.")
+                {
+                }
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (page_declaration
+    object_id:
+      (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (source_table_property
+      value: (identifier))
+    (additional_search_terms_ml_property
+      value: (ml_value_list
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))
+        (ml_value_pair
+          language: (identifier)
+          value: (string_literal))))
+    (layout_section
+      (area_section
+        (group_section
+          name: (identifier)
+          (field_section
+            control_id: (quoted_identifier)
+            source_or_field_name: (field_access
+              record: (identifier)
+              field: (quoted_identifier))))))))

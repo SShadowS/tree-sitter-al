@@ -1,0 +1,60 @@
+==================
+Page Properties Phase 4C - Remaining Low Priority Properties
+==================
+
+page 50112 "Test Phase 4C Properties"
+{
+    PageType = Card;
+    SourceTable = Customer;
+    
+    ContextSensitiveHelpPage = 'https://help.example.com/customer';
+    HelpLink = 'https://docs.example.com/customer-guide';
+    IsPreview = true;
+    ODataKeyFields = "No.","Name";
+    QueryCategory = 'Customer Management';
+
+    layout
+    {
+        area(content)
+        {
+            group(General)
+            {
+                field("No."; Rec."No.")
+                {
+                }
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (page_declaration
+    object_id:
+      (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (source_table_property
+      value: (identifier))
+    (context_sensitive_help_page_property
+      value: (string_literal))
+    (help_link_property
+      value: (string_literal))
+    (is_preview_property
+      value: (boolean))
+    (odata_key_fields_property
+      value: (odata_key_fields_value
+        (quoted_identifier)
+        (quoted_identifier)))
+    (query_category_property
+      value: (string_literal))
+    (layout_section
+      (area_section
+        (group_section
+          name: (identifier)
+          (field_section
+            control_id: (quoted_identifier)
+            source_or_field_name: (field_access
+              record: (identifier)
+              field: (quoted_identifier))))))))

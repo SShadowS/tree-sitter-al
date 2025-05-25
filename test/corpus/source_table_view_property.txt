@@ -1,0 +1,118 @@
+===========
+SourceTableView Property Test
+===========
+
+page 50000 "Test Page"
+{
+    SourceTableView = SORTING("Source Document", "Source No.")
+                     WHERE("Source Document" = CONST("Sales Order"));
+
+    layout
+    {
+        area(Content)
+        {
+            field(Field1; "Field 1")
+            {
+                Caption = 'Test Field 1';
+            }
+        }
+    }
+}
+
+page 50001 "Test Page 2"
+{
+    SourceTableView = SORTING("Document No.") ORDER(Descending);
+
+    layout
+    {
+        area(Content)
+        {
+            field(Field1; "Field 1")
+            {
+                Caption = 'Test Field 1';
+            }
+        }
+    }
+}
+
+page 50002 "Test Page 3"
+{
+    SourceTableView = WHERE("Type" = CONST(Item));
+
+    layout
+    {
+        area(Content)
+        {
+            field(Field1; "Field 1")
+            {
+                Caption = 'Test Field 1';
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (source_table_view_property
+      value: (source_table_view_value
+        (sorting_clause
+          fields: (field_reference_list
+            (field_reference
+              (quoted_identifier))
+            (field_reference
+              (quoted_identifier))))
+        (where_clause
+          conditions: (where_conditions
+            (where_condition
+              (const_filter
+                field: (field_ref
+                  (quoted_identifier))
+                value: (quoted_identifier)))))))
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+            source_or_field_name: (quoted_identifier)
+          (caption_property
+            (string_literal))))))
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (source_table_view_property
+      value: (source_table_view_value
+        (sorting_clause
+          fields: (field_reference_list
+            (field_reference
+              (quoted_identifier))))
+        (order_clause
+          direction: (order_direction))))
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+            source_or_field_name: (quoted_identifier)
+          (caption_property
+            (string_literal))))))
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (source_table_view_property
+      value: (source_table_view_value
+        (where_clause
+          conditions: (where_conditions
+            (where_condition
+              (const_filter
+                field: (field_ref
+                  (quoted_identifier))
+                value: (identifier)))))))
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+            source_or_field_name: (quoted_identifier)
+          (caption_property
+            (string_literal)))))))

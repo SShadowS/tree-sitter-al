@@ -1,0 +1,306 @@
+==================
+High Priority Properties
+==================
+
+table 50000 "Test Table"
+{
+    DataCaptionFields = "No.", Name;
+    Extensible = true;
+    DataPerCompany = true;
+    ReplicateData = false;
+    ColumnStoreIndex = PrimaryKey;
+    CompressionType = Page;
+    InherentPermissions = X;
+    InherentEntitlements = RI;
+
+    fields
+    {
+        field(1; "No."; Code[20])
+        {
+            Caption = 'No.';
+            NotBlank = true;
+        }
+        
+        field(2; Name; Text[100])
+        {
+            Caption = 'Name';
+        }
+    }
+    
+    keys
+    {
+        key(PrimaryKey; "No.")
+        {
+            Clustered = true;
+        }
+    }
+}
+
+---
+
+(source_file
+  (table_declaration
+    (integer)
+    (quoted_identifier)
+        (data_caption_fields_property
+          (data_caption_fields_value
+            (quoted_identifier)
+            (identifier)))
+        (extensible_property
+          (extensible_value
+            (boolean)))
+        (data_per_company_property
+          (data_per_company_value
+            (boolean)))
+        (replicate_data_property
+          (replicate_data_value
+            (boolean)))
+        (column_store_index_property
+          (column_store_index_value
+            (identifier)))
+        (compression_type_property
+          (compression_type_value))
+        (inherent_permissions_property
+          (inherent_permissions_value
+            (permission_type)))
+        (inherent_entitlements_property
+          (inherent_entitlements_value
+            (permission_type)))
+        (fields
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (code_type
+                (integer)))
+            (caption_property
+              (string_literal))
+            (not_blank_property
+              (not_blank_value
+                (boolean))))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (text_type
+                (integer)))
+            (caption_property
+              (string_literal))))
+        (keys
+          (key_declaration
+            (name)
+            (key_field_list
+              (quoted_identifier))
+            (clustered_property
+              (boolean))))))
+
+==================
+Medium/Low Priority Properties
+==================
+
+table 50001 "Test Table Low Priority"
+{
+    Description = 'Test table with low priority properties';
+    ExternalSchema = 'dbo';
+    PasteIsValid = true;
+    ObsoleteState = Pending;
+    ObsoleteReason = 'Testing obsolete properties';
+    ObsoleteTag = '1.0';
+      CaptionML = ENU = 'Test Table EN', DAN = 'Test Tabel DK';
+    ExternalName = 'ExternalTable';
+    MovedFrom = 'Old location';
+    MovedTo = 'New location';
+    LinkedInTransaction = true;
+    LinkedObject = 'Related object';
+
+    fields
+    {
+        field(1; "Key"; Code[10])
+        {
+            CaptionML = ENU='Key', DAN='Nøgle';
+        }
+    }
+}
+
+---
+
+(source_file
+      (table_declaration
+        (integer)
+        (quoted_identifier)
+        (description_property
+          (description_value
+            (string_literal)))
+        (external_schema_property
+          (string_literal))
+        (paste_is_valid_property
+          (paste_is_valid_value
+            (boolean)))
+        (obsolete_state_property
+          (obsolete_state_value))
+        (obsolete_reason_property
+          (obsolete_reason_value
+            (string_literal)))
+        (obsolete_tag_property
+          (obsolete_tag_value
+            (string_literal)))
+        (caption_ml_property
+          (ml_value_list
+            (ml_value_pair
+              (identifier)
+              (string_literal))
+            (ml_value_pair
+              (identifier)
+              (string_literal))))
+        (external_name_property
+          (external_name_value
+            (string_literal)))
+        (moved_from_property
+          (string_literal))
+        (moved_to_property
+          (string_literal))
+        (linked_in_transaction_property
+          (boolean))
+        (linked_object_property
+          (string_literal))
+        (fields
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (code_type
+                (integer)))
+            (caption_ml_property
+              (ml_value_list
+                (ml_value_pair
+                  (identifier)
+                  (string_literal))
+                (ml_value_pair
+                  (identifier)
+                  (string_literal))))))))
+
+
+==================
+Field Properties 
+==================
+
+table 50002 "Test Field Properties"
+{
+    fields
+    {
+        field(1; "No."; Code[20])
+        {
+            Caption = 'No.';
+            ToolTip = 'Specifies the number.';
+            ToolTipML = ENU='Specifies the number.', DAN='Angiver nummeret.';
+            CaptionML = ENU='No.', DAN='Nummer';
+            BlankZero = true;
+            NotBlank = true;
+            AutoIncrement = false;
+            AccessByPermission = tabledata Customer=R;
+            AllowInCustomizations = true;
+            AutoFormatExpression = '<precision, 2:2><standard format,0>';
+            AutoFormatType = 10;
+            BlankNumbers = BlankZero;
+            ClosingDates = true;
+            DataClassification = CustomerContent;
+            TableRelation = Customer."No.";
+            CharAllowed = 'AZ';
+            DateFormula = true;
+            ExtendedDatatype = URL;
+            Compressed = true;
+            OptionCaption = 'A,B,C';
+            OptionCaptionML = ENU='A,B,C', DAN='A,B,C';
+        }
+    }
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (caption_property
+          (string_literal))
+        (tool_tip_property
+          (tool_tip_value
+            (string_literal)))
+        (tool_tip_ml_property
+          (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal))
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal))))
+        (caption_ml_property
+          (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal))
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal))))
+        (blank_zero_property
+          (blank_zero_value
+            (boolean)))
+        (not_blank_property
+          value: (not_blank_value
+            (boolean)))
+        (auto_increment_property
+          value: (value
+            (boolean)))
+        (access_by_permission_property
+          value: (value
+            table_name: (identifier)
+            permission: (permission_type)))
+        (allow_in_customizations_property
+          value: (value))
+        (auto_format_expression_property
+          value: (value
+            (string_literal)))
+        (auto_format_type_property
+          value: (value))
+        (blank_numbers_property
+          value: (value
+            (identifier)))
+        (closing_dates_property
+          value: (closing_dates_value
+            (boolean)))
+        (data_classification_property
+          (data_classification_value))
+        (table_relation_property
+          relation: (table_relation_expression
+            table: (identifier)
+            field: (field_ref
+              (quoted_identifier))))
+        (char_allowed_property
+          value: (value
+            (string_literal)))
+        (date_formula_property
+          value: (date_formula_value
+            (boolean)))
+        (extended_datatype_property
+          value: (extended_datatype_value))
+        (compressed_property
+          value: (compressed_value
+            (boolean)))
+        (option_caption_property
+          (option_caption_value
+            (string_literal)))
+        (option_caption_ml_property
+          (ml_value_list
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal))
+            (ml_value_pair
+              language: (identifier)
+              value: (string_literal))))))))

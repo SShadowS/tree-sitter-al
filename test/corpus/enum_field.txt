@@ -16,10 +16,8 @@ table 50000 "Test Table"
 
 (source_file
   (table_declaration
-    object_id: (object_id
-      (integer))
-    object_name: (object_name
-      name: (quoted_identifier))
+    object_id: (integer)
+    object_name: (quoted_identifier)
     (fields
       (field_declaration
         id: (integer)
