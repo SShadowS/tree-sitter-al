@@ -1599,7 +1599,14 @@ module.exports = grammar({
         /[oO][nN][fF][iI][nN][dD][rR][eE][cC][oO][rR][dD]/,
         /[oO][nN][nN][eE][xX][tT][rR][eE][cC][oO][rR][dD]/,
         /[oO][nN][qQ][uU][eE][rR][yY][cC][lL][oO][sS][eE]/,
-        /[oO][nN][aA][cC][tT][iI][oO][nN]/
+        /[oO][nN][aA][cC][tT][iI][oO][nN]/,
+        // Additional page-level triggers
+        /[oO][nN][aA][fF][tT][eE][rR][gG][eE][tT][cC][uU][rR][rR][rR][eE][cC][oO][rR][dD]/,
+        /[oO][nN][nN][eE][wW][rR][eE][cC][oO][rR][dD]/,
+        /[oO][nN][iI][nN][sS][eE][rR][tT][rR][eE][cC][oO][rR][dD]/,
+        /[oO][nN][mM][oO][dD][iI][fF][yY][rR][eE][cC][oO][rR][dD]/,
+        /[oO][nN][dD][eE][lL][eE][tT][eE][rR][eE][cC][oO][rR][dD]/,
+        /[oO][nN][qQ][uU][eE][rR][yY][cC][lL][oO][sS][eE][pP][aA][gG][eE]/
       ), $.trigger_type)),
       '()',
       // Give higher precedence to the standard structure
@@ -3487,6 +3494,7 @@ enum_type: $ => prec(1, seq(
     _assignable_expression: $ => $._expression,
 
     // Unified call expression rule
+// Unified call expression rule
     call_expression: $ => prec(12, seq( // Increased precedence to 12 (higher than member_expression)
       // Function can be an identifier, member access, or field access
       field('function', choice(
@@ -3496,7 +3504,7 @@ enum_type: $ => prec(1, seq(
       )),
       field('arguments', $.argument_list)
     )),
-
+    
     argument_list: $ => seq(
       '(',
       optional(seq(
@@ -3586,12 +3594,14 @@ enum_type: $ => prec(1, seq(
         field('right', $._expression)
       )),
       // --- Other Expression Forms ---
+      // Method chains (put this first among non-binary expressions for higher precedence)
+      $.call_expression, // (prec 12)
       $.enum_keyword_qualified_value, // (prec 9)
       $.qualified_enum_value, // (prec 9)
+      $.database_reference, // (prec 9)
       $.field_access,  // (prec 12)
       $.member_expression, // (prec 11)
       $.subscript_expression, // (prec 9)
-      $.call_expression, // (prec 12)
       $.identifier,
       $._quoted_identifier,
       $._literal_value,
@@ -3765,6 +3775,13 @@ enum_type: $ => prec(1, seq(
       'else',
       field('statements', $._branch_statements)
     ),
+
+    // DATABASE references (DATABASE::Customer pattern)
+    database_reference: $ => prec.left(9, seq(
+      choice('DATABASE', 'database', 'Database'),
+      '::',
+      field('table_name', choice($.identifier, $._quoted_identifier))
+    )),
 
     // Rule for expressions using Enum keyword with double qualification (Enum::"Type"::"Value")
     enum_keyword_qualified_value: $ => prec.left(9, seq( // Increased precedence
