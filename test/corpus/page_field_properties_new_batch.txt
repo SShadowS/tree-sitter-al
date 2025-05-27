@@ -1,0 +1,72 @@
+==================
+Newly Implemented Page Field Properties
+==================
+
+page 50200 "New Properties Test"
+{
+    layout
+    {
+        area(content)
+        {
+            field(Field1; Rec.Description)
+            {
+                MultiLine = true;
+                NavigationPageId = "Customer Card";
+                QuickEntry = false;
+                RowSpan = 3;
+                ShowCaption = true;
+                ShowMandatory = false;
+                Style = StandardAccent;
+                StyleExpr = MyStyleFunction();
+            }
+
+            field(Field2; Rec.Amount)
+            {
+                Style = Strong;
+                StyleExpr = 'IF(Amount > 1000, "Attention", "Standard")';
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier))
+          (multi_line_property
+            value: (boolean))
+          (navigation_page_id_property
+            value: (page_id_value
+              (quoted_identifier)))
+          (quick_entry_property
+            value: (boolean))
+          (row_span_property
+            value: (integer))
+          (show_caption_property
+            value: (boolean))
+          (show_mandatory_property
+            value: (boolean))
+          (style_property
+            value: (style_value))
+          (style_expr_property
+            value: (call_expression
+              function: (identifier)
+              arguments: (argument_list))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier))
+          (style_property
+            value: (style_value))
+          (style_expr_property
+            value: (string_literal)))))))

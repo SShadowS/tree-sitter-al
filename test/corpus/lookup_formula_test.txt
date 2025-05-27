@@ -29,10 +29,9 @@ table 50000 "Test Table"
             length: (integer)))
         (calc_formula_property
           (lookup_formula
-            target: (field_ref
-              (field_access
-                record: (identifier)
-                field: (quoted_identifier)))
+            target: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
             (lookup_where_conditions
               (lookup_where_condition
                 field: (field_ref

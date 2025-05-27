@@ -1,0 +1,66 @@
+================================================================================
+Control Add-in Declaration
+================================================================================
+
+controladdin "Test.ControlAddin"
+{
+    RequestedHeight = 300;
+    RequestedWidth = 400;
+    VerticalStretch = true;
+    HorizontalStretch = false;
+
+    Scripts = 
+        'script1.js',
+        'script2.js';
+
+    StyleSheets = 'styles.css';
+
+    event OnReady();
+    event OnValueChanged(value: Text);
+    
+    procedure Initialize();
+    procedure SetValue(newValue: Text);
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (controladdin_declaration
+    object_name: (quoted_identifier)
+    (controladdin_property
+      name: (identifier)
+      value: (integer))
+    (controladdin_property
+      name: (identifier)
+      value: (integer))
+    (controladdin_property
+      name: (identifier)
+      value: (boolean))
+    (controladdin_property
+      name: (identifier)
+      value: (boolean))
+    (controladdin_property
+      name: (identifier)
+      value: (string_literal)
+      value: (string_literal))
+    (controladdin_property
+      name: (identifier)
+      value: (string_literal))
+    (controladdin_event
+      name: (identifier))
+    (controladdin_event
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name)
+          parameter_type: (type_specification
+            (text_type)))))
+    (controladdin_procedure
+      name: (identifier))
+    (controladdin_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name)
+          parameter_type: (type_specification
+            (text_type)))))))

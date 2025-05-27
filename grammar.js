@@ -11,19 +11,26 @@ module.exports = grammar({
   name: "al",
 
   word: $ => $.identifier,
-  extras: $ => [/\s/, $.comment, $.pragma],
+  extras: $ => [/\s/, $.comment, $.multiline_comment, $.pragma],
 
   rules: {
     source_file: $ => repeat($._object),
 
     _object: $ => choice(
       $.table_declaration,
+      $.tableextension_declaration,
       $.codeunit_declaration,
       $.pageextension_declaration,
       $.page_declaration,
       $.query_declaration,
+      $.enum_declaration,
       $.enumextension_declaration, 
-      $.xmlport_declaration 
+      $.xmlport_declaration,
+      $.interface_declaration,
+      $.dotnet_declaration,
+      $.report_declaration,
+      $.permissionset_declaration,
+      $.controladdin_declaration
     ),
     
     xmlport_declaration: $ => seq(
@@ -326,6 +333,19 @@ module.exports = grammar({
       )
     ),
 
+    enum_declaration: $ => seq(
+      /[eE][nN][uU][mM]/,
+      field('object_id', $.integer),
+      field('object_name', choice($._quoted_identifier, $.identifier)),
+      optional(seq(
+        /[iI][mM][pP][lL][eE][mM][eE][nN][tT][sS]/,
+        field('interface', choice($._quoted_identifier, $.identifier))
+      )),
+      '{',
+      repeat(choice($.property, $.enum_value_declaration)),
+      '}'
+    ),
+
     enumextension_declaration: $ => seq(
       /[eE][nN][uU][mM][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
       field('object_id', $.integer),
@@ -505,7 +525,8 @@ module.exports = grammar({
       field('value', choice(
         $.string_literal,
         $.identifier,
-        $._quoted_identifier
+        $._quoted_identifier,
+        $.call_expression
       )),
       ';'
     ),
@@ -717,14 +738,60 @@ module.exports = grammar({
     filter_value: $ => choice(
       $.string_literal,
       $.integer,
-      $.const_expression
+      $.const_expression,
+      $.filter_expression_function
     ),
     
+    filter_expression_function: $ => seq(
+      choice('FILTER', 'filter', 'Filter'),
+      '(',
+      field('value', choice(
+        $.filter_or_expression,
+        $.filter_not_equal_expression,
+        $.range_expression,
+        $.integer,
+        $.string_literal,
+        $._quoted_identifier,
+        $.identifier
+      )),
+      ')'
+    ),
+
+    filter_or_expression: $ => prec(10, seq(
+      choice($.integer, $.identifier, $._quoted_identifier, $.string_literal),
+      repeat1(seq(
+        '|',
+        choice($.integer, $.identifier, $._quoted_identifier, $.string_literal)
+      ))
+    )),
+
+    filter_not_equal_expression: $ => seq(
+      '<>',
+      field('value', choice(
+        $.string_literal,
+        $.integer,
+        $._quoted_identifier,
+        $.identifier
+      ))
+    ),
+
+    range_expression: $ => seq(
+      optional(field('start', choice($.integer, $.identifier, $._quoted_identifier, $.string_literal))),
+      '..',
+      optional(field('end', choice($.integer, $.identifier, $._quoted_identifier, $.string_literal)))
+    ),
+
     const_expression: $ => seq(
       /[cC][oO][nN][sS][tT]/,
       '(',
-      choice($.string_literal, $.identifier)
-      ,
+      optional(choice(
+        $.string_literal,
+        $.identifier,
+        $._quoted_identifier,
+        $.integer,
+        $.boolean,
+        $.database_reference
+      )),
       ')'
     ),
     
@@ -732,14 +799,6 @@ module.exports = grammar({
       field('field', $.field_reference),
       field('operator', $.filter_operator),
       field('value', $.filter_value)
-    ),
-    
-    filter_expression_list: $ => seq(
-      $.filter_expression,
-      repeat(seq(
-        optional(/[aA][nN][dD]/),
-        $.filter_expression
-      ))
     ),
     
     // Ensure at least one clause is present to avoid empty string match
@@ -764,12 +823,12 @@ module.exports = grammar({
       )
     ),
     
-    source_table_view_property: $ => seq(
-      'SourceTableView',
+    source_table_view_property: $ => prec(10, seq(
+      choice('SourceTableView', 'sourcetableview', 'SOURCETABLEVIEW'),
       '=',
       field('value', $.source_table_view_value),
       ';'
-    ),
+    )),
 
     elements_section: $ => seq(
       /[eE][lL][eE][mM][eE][nN][tT][sS]/,
@@ -843,7 +902,32 @@ module.exports = grammar({
     ),
 
     _pageextension_element: $ => choice(
+      $.layout_section,
       $.actions_section,
+      $.property_list,
+      $.var_section,
+      $.trigger_declaration,
+      $.procedure
+    ),
+
+    tableextension_declaration: $ => seq(
+      /[tT][aA][bB][lL][eE][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
+      field('object_id', $.integer),
+      field('object_name', choice($._quoted_identifier, $.identifier)),
+      /[eE][xX][tT][eE][nN][dD][sS]/,
+      field('base_object', choice($._quoted_identifier, $.identifier)),
+      '{',
+      repeat($._tableextension_element),
+      '}'
+    ),
+
+    _tableextension_element: $ => choice(
+      $.fields,
+      $.keys,
+      $.fieldgroups_section,
+      $.procedure,
+      $.var_section,
+      $.trigger_declaration,
       $.property_list
     ),
 
@@ -851,6 +935,7 @@ module.exports = grammar({
       /[aA][cC][tT][iI][oO][nN][sS]/,
       '{',
       repeat(choice(
+        $._action_element,
         $._action_group,
         $.area_action_section
       )),
@@ -864,12 +949,14 @@ module.exports = grammar({
         /[pP][rR][oO][cC][eE][sS][sS][iI][nN][gG]/,
         /[rR][eE][pP][oO][rR][tT][iI][nN][gG]/,
         /[nN][aA][vV][iI][gG][aA][tT][iI][oO][nN]/,
-        /[cC][rR][eE][aA][tT][iI][oO][nN]/
+        /[cC][rR][eE][aA][tT][iI][oO][nN]/,
+        /[pP][rR][oO][mM][oO][tT][eE][dD]/,
+        /[sS][yY][sS][tT][eE][mM][aA][cC][tT][iI][oO][nN][sS]/
       )),
       ')',
       '{',
       repeat(choice(
-        $.action_declaration,
+        $._action_element,
         $.action_group_section,
         $.separator_action
       )),
@@ -884,6 +971,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $.action_declaration,
+        $.actionref_declaration,
+        $.action_group_section,
         $._action_property,
         $.separator_action
       )),
@@ -906,7 +995,8 @@ module.exports = grammar({
       $.addlast_action_group,
       $.addafter_action_group,
       $.addbefore_action_group,
-      $.modify_action_group
+      $.modify_action_group,
+      $.modify_action
     ),
 
     addfirst_action_group: $ => seq(
@@ -915,7 +1005,11 @@ module.exports = grammar({
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat($._action_element),
+      repeat(choice(
+        $._action_element,
+        $.action_group_section,
+        $.separator_action
+      )),
       '}'
     ),
 
@@ -925,7 +1019,11 @@ module.exports = grammar({
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat($._action_element),
+      repeat(choice(
+        $._action_element,
+        $.action_group_section,
+        $.separator_action
+      )),
       '}'
     ),
 
@@ -935,7 +1033,11 @@ module.exports = grammar({
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat($._action_element),
+      repeat(choice(
+        $._action_element,
+        $.action_group_section,
+        $.separator_action
+      )),
       '}'
     ),
 
@@ -945,7 +1047,11 @@ module.exports = grammar({
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat($._action_element),
+      repeat(choice(
+        $._action_element,
+        $.action_group_section,
+        $.separator_action
+      )),
       '}'
     ),
 
@@ -955,13 +1061,28 @@ module.exports = grammar({
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat($._action_element),
+      repeat(choice(
+        $._action_element,
+        $.action_group_section,
+        $.separator_action
+      )),
       '}'
     ),
 
+    modify_action: $ => prec(2, seq(
+      /[mM][oO][dD][iI][fF][yY]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($._action_property),
+      '}'
+    )),
+
     _action_element: $ => choice(
       $.action_declaration,
-      $.actionref_declaration
+      $.actionref_declaration,
+      $.systemaction_declaration
     ),
 
     action_declaration: $ => seq(
@@ -994,28 +1115,57 @@ module.exports = grammar({
       '}'
     ),
 
+    systemaction_declaration: $ => seq(
+      /[sS][yY][sS][tT][eE][mM][aA][cC][tT][iI][oO][nN]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $._action_property,
+        $.trigger_declaration,
+        $.var_section
+      )),
+      '}'
+    ),
+
     _action_property: $ => choice(
+      $.access_by_permission_property,
+      $.allowed_file_extensions_property,
+      $.allow_multiple_files_property,
       $.application_area_property,
       $.caption_property,
-      $.image_property,
-      $.run_object_property,
-      $.run_page_link_property,
-      $.run_page_view_property,
-      $.tool_tip_property,
+      $.custom_action_type_property,
+      $.ellipsis_property,
       $.enabled_property,
-      $.visible_property,
-      $.scope_property,
+      $.file_upload_action_property,
+      $.file_upload_row_action_property,
+      $.gesture_property,
+      $.image_property,
+      $.in_footer_bar_property,
+      $.is_header_property,
       $.promoted_property,
       $.promoted_category_property,
-      $.promoted_only_property,
       $.promoted_is_big_property,
-      $.shortcut_key_property
+      $.promoted_only_property,
+      $.run_object_property,
+      $.run_page_link_property,
+      $.run_page_mode_property,
+      $.run_page_on_rec_property,
+      $.run_page_view_property,
+      $.scope_property,
+      $.shortcut_key_property,
+      $.tool_tip_property,
+      $.visible_property
     ),
 
     application_area_property: $ => seq(
       'ApplicationArea',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', seq(
+        choice($.identifier, $._quoted_identifier, $.string_literal),
+        repeat(seq(',', choice($.identifier, $._quoted_identifier, $.string_literal)))
+      )),
       ';'
     ),
 
@@ -1056,6 +1206,7 @@ module.exports = grammar({
         /[dD][oO][cC][uU][mM][eE][nN][tT]/,
         /[aA][pP][iI]/,
         /[cC][aA][rR][dD][pP][aA][rR][tT]/,
+        $.string_literal,
         $.identifier,
         $._quoted_identifier
       )),
@@ -1077,7 +1228,7 @@ module.exports = grammar({
     image_property: $ => seq(
       'Image',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier)),
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
       ';'
     ),
 
@@ -1089,14 +1240,22 @@ module.exports = grammar({
     ),
 
     run_object_value: $ => seq(
-      choice('Page', 'PAGE', 'page', 'Report', 'REPORT', 'report'),
-      field('page_name', choice($.identifier, $._quoted_identifier))
+      choice(
+        'Page', 'PAGE', 'page', 
+        'Report', 'REPORT', 'report',
+        'Codeunit', 'CODEUNIT', 'codeunit',
+        'Table', 'TABLE', 'table'
+      ),
+      field('object_ref', choice($.integer, $.identifier, $._quoted_identifier))
     ),
 
     run_page_link_property: $ => seq(
       'RunPageLink',
       '=',
-      field('value', $.run_page_link_value),
+      field('value', seq(
+        $.run_page_link_value,
+        repeat(seq(',', $.run_page_link_value))
+      )),
       ';'
     ),
 
@@ -1115,7 +1274,8 @@ module.exports = grammar({
             repeat(seq(',', $._quoted_identifier))
           ),
           ')'
-        )
+        ),
+        $.where_clause // Support WHERE clause syntax
       )),
       ';'
     ),
@@ -1127,7 +1287,7 @@ module.exports = grammar({
         seq(
           /[cC][oO][nN][sS][tT]/,
           '(',
-          field('const_value', choice($.identifier, $._quoted_identifier)),
+          field('const_value', choice($.identifier, $._quoted_identifier, $.integer, $.string_literal)),
           ')'
         ),
         seq(
@@ -1136,25 +1296,6 @@ module.exports = grammar({
           field('field_value', choice($.identifier, $._quoted_identifier)),
           ')'
         )
-      )),
-      repeat(seq(
-        ',',
-        field('field', choice($.identifier, $._quoted_identifier)),
-        '=',
-        field('filter_type', choice(
-          seq(
-            /[cC][oO][nN][sS][tT]/,
-            '(',
-            field('const_value', choice($.identifier, $._quoted_identifier)),
-            ')'
-          ),
-          seq(
-            /[fF][iI][eE][lL][dD]/,
-            '(',
-            field('field_value', choice($.identifier, $._quoted_identifier)),
-            ')'
-          )
-        ))
       ))
     ),
 
@@ -1207,10 +1348,31 @@ module.exports = grammar({
       ';'
     ),
 
-    shortcut_key_property: $ => seq(
-      'ShortCutKey',
+    shortcut_key_property: $ => prec(10, seq(
+      choice('ShortcutKey', 'ShortCutKey', 'SHORTCUTKEY', 'shortcutkey'),
       '=',
-      field('value', $.string_literal),
+      field('value', choice($.string_literal, $._quoted_identifier)),
+      ';'
+    )),
+
+    in_footer_bar_property: $ => seq(
+      'InFooterBar',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    run_page_mode_property: $ => seq(
+      'RunPageMode',
+      '=',
+      field('value', $.run_page_mode_value),
+      ';'
+    ),
+
+    run_page_on_rec_property: $ => seq(
+      'RunPageOnRec',
+      '=',
+      field('value', $.boolean),
       ';'
     ),
 
@@ -1239,31 +1401,45 @@ module.exports = grammar({
       ';'
     ),
 
+    event_subscriber_instance_property: $ => seq(
+      'EventSubscriberInstance',
+      '=',
+      field('value', alias($.event_subscriber_instance_value, $.value)),
+      ';'
+    ),
+
     drilldown_pageid_property: $ => seq(
-      'DrillDownPageId',
+      choice('DrillDownPageId', 'DrillDownPageID'),
       '=', 
       field('value', alias($.page_id_value, $.value)),
       ';'
     ),
 
     lookup_pageid_property: $ => seq(
-      'LookupPageId',
+      choice('LookupPageId', 'LookupPageID'),
       '=',
       field('value', alias($.page_id_value, $.value)),
       ';'
     ),
 
     card_page_id_property: $ => seq(
-      'CardPageId',
+      /[cC][aA][rR][dD][pP][aA][gG][eE][iI][dD]/,
       '=',
       field('value', $.page_id_value),
       ';'
     ),
 
     promoted_action_categories_property: $ => seq(
-      'PromotedActionCategories',
+      choice('PromotedActionCategories', 'promotedactioncategories', 'PROMOTEDACTIONCATEGORIES'),
       '=',
       field('value', $.string_literal),
+      ';'
+    ),
+
+    implementation_property: $ => seq(
+      'Implementation',
+      '=',
+      field('value', $.implementation_value),
       ';'
     ),
 
@@ -1280,6 +1456,7 @@ module.exports = grammar({
       /[cC][oO][dD][eE][uU][nN][iI][tT]/,
       field('object_id', $.integer),
       field('object_name', choice($._quoted_identifier, $.identifier)),
+      optional($.implements_clause),
       '{',
       prec(4, optional($.property_list)), // Prioritize properties over procedures starting with same keywords
       repeat(choice(
@@ -1289,6 +1466,11 @@ module.exports = grammar({
         seq(optional($.attribute_list), $.generic_trigger) 
       )),
       '}'
+    ),
+
+    implements_clause: $ => seq(
+      /[iI][mM][pP][lL][eE][mM][eE][nN][tT][sS]/,
+      field('interface', choice($._quoted_identifier, $.identifier))
     ),
 
     // Generic trigger rule for codeunits etc.
@@ -1311,12 +1493,300 @@ module.exports = grammar({
       '}'
     ),
 
+    controladdin_declaration: $ => seq(
+      /[cC][oO][nN][tT][rR][oO][lL][aA][dD][dD][iI][nN]/,
+      field('object_name', choice($._quoted_identifier, $.identifier)),
+      '{',
+      repeat($._controladdin_element),
+      '}'
+    ),
+
+    _controladdin_element: $ => choice(
+      $.controladdin_property,
+      $.controladdin_event,
+      $.controladdin_procedure
+    ),
+
+    controladdin_property: $ => seq(
+      field('name', $.identifier),
+      '=',
+      field('value', choice(
+        $.integer,
+        $.boolean,
+        $.string_literal,
+        seq(
+          $.string_literal,
+          repeat(seq(',', $.string_literal))
+        )
+      )),
+      ';'
+    ),
+
+    controladdin_event: $ => seq(
+      optional($.attribute_list),
+      'event',
+      field('name', $.identifier),
+      '(',
+      optional($.parameter_list),
+      ')',
+      ';'
+    ),
+
+    controladdin_procedure: $ => seq(
+      'procedure',
+      field('name', $.identifier),
+      '(',
+      optional($.parameter_list),
+      ')',
+      ';'
+    ),
+
+    interface_declaration: $ => seq(
+      /[iI][nN][tT][eE][rR][fF][aA][cC][eE]/,
+      field('object_name', choice($._quoted_identifier, $.identifier)),
+      '{',
+      repeat($.interface_procedure),
+      '}'
+    ),
+
+    interface_procedure: $ => seq(
+      /[pP][rR][oO][cC][eE][dD][uU][rR][eE]/,
+      field('name', $.identifier),
+      '(',
+      optional($.parameter_list),
+      ')',
+      optional(seq(':', field('return_type', $.type_specification))),
+      ';'
+    ),
+
+    report_declaration: $ => seq(
+      /[rR][eE][pP][oO][rR][tT]/,
+      field('object_id', $.integer),
+      field('object_name', choice($._quoted_identifier, $.identifier)),
+      '{',
+      repeat($._report_element),
+      '}'
+    ),
+
+    _report_element: $ => choice(
+      $.property_list,
+      $.dataset_section,
+      $.labels_section,
+      $.requestpage_section,
+      $.actions_section,
+      $.var_section,
+      seq(optional($.attribute_list), $.procedure),
+      seq(optional($.attribute_list), $.generic_trigger)
+    ),
+
+    labels_section: $ => seq(
+      /[lL][aA][bB][eE][lL][sS]/,
+      '{',
+      repeat($._label_element),
+      '}'
+    ),
+
+    _label_element: $ => choice(
+      $.label_declaration
+    ),
+
+    label_declaration: $ => seq(
+      field('name', $.identifier),
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    dataset_section: $ => seq(
+      'dataset',
+      '{',
+      repeat($.report_dataitem_section),
+      '}'
+    ),
+
+    report_dataitem_section: $ => seq(
+      'dataitem',
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ';',
+      choice($._quoted_identifier, $.identifier),
+      ')',
+      '{',
+      repeat(choice(
+        $.report_column_section, 
+        $.report_dataitem_section,
+        $.property,
+        seq(optional($.attribute_list), $.generic_trigger)
+      )),
+      '}'
+    ),
+
+    report_column_section: $ => seq(
+      'column',
+      '(',
+      field('name', $.identifier),
+      ';',
+      field('source', $.identifier),
+      ')',
+      '{',
+      repeat($.property),
+      '}'
+    ),
+
+    requestpage_section: $ => seq(
+      'requestpage',
+      '{',
+      repeat(choice(
+        $.property,
+        $.layout_section, 
+        $.actions_section,
+        $.generic_trigger
+      )),
+      '}'
+    ),
+
+    permissionset_declaration: $ => seq(
+      /[pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT]/,
+      field('object_id', $.integer),
+      field('object_name', choice($._quoted_identifier, $.identifier)),
+      '{',
+      repeat($._permissionset_element),
+      '}'
+    ),
+
+    _permissionset_element: $ => choice(
+      $.assignable_property,
+      $.caption_property,
+      $.permissionset_permissions
+    ),
+
+    assignable_property: $ => seq(
+      'Assignable',
+      '=',
+      choice('true', 'false'),
+      ';'
+    ),
+
+    permissionset_permissions: $ => seq(
+      'Permissions',
+      '=',
+      $.permission_list,
+      ';'
+    ),
+
+    permission_list: $ => seq(
+      $.permission_entry,
+      repeat(seq(',', $.permission_entry))
+    ),
+
+    permission_entry: $ => choice(
+      $.tabledata_permission_entry,
+      $.table_permission_entry,
+      $.page_permission_entry,
+      $.report_permission_entry,
+      $.codeunit_permission_entry,
+      $.system_permission_entry
+    ),
+
+    tabledata_permission_entry: $ => seq(
+      choice('tabledata', 'TableData', 'Tabledata', 'TABLEDATA'),
+      choice($._quoted_identifier, $.identifier, $.integer),
+      '=',
+      $.permission_type
+    ),
+
+    table_permission_entry: $ => seq(
+      choice('table', 'Table', 'TABLE'),
+      choice($._quoted_identifier, $.identifier, $.integer),
+      '=',
+      $.permission_type
+    ),
+
+    page_permission_entry: $ => seq(
+      choice('page', 'Page', 'PAGE'),
+      choice($._quoted_identifier, $.identifier),
+      '=',
+      $.permission_type
+    ),
+
+    report_permission_entry: $ => seq(
+      choice('report', 'Report', 'REPORT'),
+      choice($._quoted_identifier, $.identifier),
+      '=',
+      $.permission_type
+    ),
+
+    codeunit_permission_entry: $ => seq(
+      choice('codeunit', 'Codeunit', 'CODEUNIT'),
+      choice($._quoted_identifier, $.identifier),
+      '=',
+      $.permission_type
+    ),
+
+    system_permission_entry: $ => seq(
+      choice('system', 'System', 'SYSTEM'),
+      choice($._quoted_identifier, $.identifier),
+      '=',
+      $.permission_type
+    ),
+
+    dotnet_declaration: $ => seq(
+      /[dD][oO][tT][nN][eE][tT]/,
+      '{',
+      repeat($.assembly_declaration),
+      '}'
+    ),
+
+    assembly_declaration: $ => seq(
+      /[aA][sS][sS][eE][mM][bB][lL][yY]/,
+      '(',
+      field('name', choice($.string_literal, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $.assembly_property,
+        $.type_declaration
+      )),
+      '}'
+    ),
+
+    assembly_property: $ => choice(
+      seq('Version', '=', field('value', choice($.string_literal, $._quoted_identifier)), ';'),
+      seq('Culture', '=', field('value', choice($.string_literal, $._quoted_identifier)), ';'),
+      seq('PublicKeyToken', '=', field('value', choice($.string_literal, $._quoted_identifier)), ';')
+    ),
+
+    type_declaration: $ => seq(
+      /[tT][yY][pP][eE]/,
+      '(',
+      field('dotnet_type', choice(
+        $.string_literal, 
+        $._quoted_identifier,
+        $.dotnet_type_name
+      )),
+      ';',
+      field('al_name', choice(
+        $.string_literal, 
+        $._quoted_identifier,
+        $.identifier
+      )),
+      ')',
+      '{',
+      // Type body can be empty or contain additional declarations
+      '}'
+    ),
+
+    dotnet_type_name: $ => token(seq(
+      /[A-Za-z_][A-Za-z0-9_]*/,
+      repeat(seq('.', /[A-Za-z_][A-Za-z0-9_]*/))
+    )),
+
     _page_element: $ => choice(
       // Place source_table_view_property at the top for higher precedence
       $.source_table_view_property,
       $.layout_section,
       $.actions_section,
-      $.procedure,
+      seq(optional($.attribute_list), $.procedure),  // Support attributed procedures in pages
       $.var_section,
       $.trigger_declaration,
       
@@ -1340,6 +1810,7 @@ module.exports = grammar({
       $.promoted_category_property,
       $.promoted_only_property,
       $.promoted_is_big_property,
+      $.promoted_action_categories_property,
       $.run_object_property,
       $.run_page_link_property,
       $.run_page_view_property,
@@ -1395,7 +1866,18 @@ module.exports = grammar({
       $.help_link_property,
       $.is_preview_property,
       $.odata_key_fields_property,
-      $.query_category_property
+      $.query_category_property,
+      
+      // Page View Properties
+      $.filters_property,
+      
+      // Obsolete Properties
+      $.obsolete_reason_property,
+      $.obsolete_state_property,
+      $.obsolete_tag_property,
+      $.order_by_property,
+      $.shared_layout_property,
+      $.data_item_table_view_property
     ),
 
     layout_section: $ => seq(
@@ -1408,9 +1890,61 @@ module.exports = grammar({
     _layout_element: $ => choice(
       $.area_section,
       $.group_section,
+      $.cuegroup_section,
+      $.grid_section,
       $.repeater_section,
       $.field_section,
-      $.part_section
+      $.part_section,
+      $.systempart_section,
+      $.usercontrol_section,
+      $.fixed_section,
+      $.label_section,
+      $.actions_section,
+      $.addfirst_layout_modification,
+      $.addlast_layout_modification,
+      $.addafter_layout_modification,
+      $.addbefore_layout_modification
+    ),
+
+    // Layout modification rules for pageextensions
+    addfirst_layout_modification: $ => seq(
+      /[aA][dD][dD][fF][iI][rR][sS][tT]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($._layout_element),
+      '}'
+    ),
+
+    addlast_layout_modification: $ => seq(
+      /[aA][dD][dD][lL][aA][sS][tT]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($._layout_element),
+      '}'
+    ),
+
+    addafter_layout_modification: $ => seq(
+      /[aA][dD][dD][aA][fF][tT][eE][rR]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($._layout_element),
+      '}'
+    ),
+
+    addbefore_layout_modification: $ => seq(
+      /[aA][dD][dD][bB][eE][fF][oO][rR][eE]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($._layout_element),
+      '}'
     ),
 
     area_section: $ => seq(
@@ -1419,7 +1953,10 @@ module.exports = grammar({
       field('type', choice(
         /[cC][oO][nN][tT][eE][nN][tT]/,
         /[fF][aA][cC][tT][bB][oO][xX][eE][sS]/,
-        /[fF][iI][lL][tT][eE][rR]/
+        /[fF][iI][lL][tT][eE][rR]/,
+        /[rR][oO][lL][eE][cC][eE][nN][tT][eE][rR]/,
+        /[pP][rR][oO][mM][pP][tT][oO][pP][tT][iI][oO][nN][sS]/,
+        /[sS][yY][sS][tT][eE][mM][aA][cC][tT][iI][oO][nN][sS]/
       )),
       ')',
       '{',
@@ -1435,7 +1972,88 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._layout_element,
-        $.property_list
+        $.property_list,
+        $.instructional_text_property,
+        $.visible_property,
+        $.enabled_property,
+        $.cuegroup_layout_property,
+        $.freeze_column_property,
+        $.grid_layout_property,
+        $.indentation_column_property,
+        $.indentation_controls_property,
+        $.show_as_tree_property,
+        $.tree_initial_state_property
+      )),
+      '}'
+    ),
+
+    cuegroup_section: $ => seq(
+      /[cC][uU][eE][gG][rR][oO][uU][pP]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $.field_section,
+        $.actions_section,
+        $.property_list,
+        $.caption_property,
+        $.visible_property,
+        $.enabled_property,
+        $.cuegroup_layout_property
+      )),
+      '}'
+    ),
+
+    grid_section: $ => seq(
+      /[gG][rR][iI][dD]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $._layout_element,
+        $.property_list,
+        $.caption_property,
+        $.show_caption_property,
+        $.visible_property,
+        $.enabled_property,
+        $.grid_layout_property
+      )),
+      '}'
+    ),
+
+    fixed_section: $ => seq(
+      /[fF][iI][xX][eE][dD]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $._layout_element,
+        $.property_list,
+        $.visible_property,
+        $.enabled_property
+      )),
+      '}'
+    ),
+
+    label_section: $ => seq(
+      /[lL][aA][bB][eE][lL]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $.property_list,
+        $.application_area_property,
+        $.caption_property,
+        $.caption_ml_property,
+        $.visible_property,
+        $.enabled_property,
+        $.show_caption_property,
+        $.style_property,
+        $.style_expr_property
       )),
       '}'
     ),
@@ -1448,7 +2066,9 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._layout_element,
-        $.property_list
+        $.property_list,
+        $.visible_property,
+        $.freeze_column_property
       )),
       '}'
     ),
@@ -1463,6 +2083,7 @@ module.exports = grammar({
         '{',
         repeat(choice(
       $.caption_property,
+      $.caption_class_property,
       $.application_area_property,
       $.tool_tip_property,
       $.tool_tip_ml_property,
@@ -1471,7 +2092,9 @@ module.exports = grammar({
       $.source_expr_property,
       $.editable_property,
       $.description_property,
+      $.lookup_property,
       $.lookup_pageid_property,
+      $.drilldown_pageid_property,
       $.option_caption_property,
       $.table_relation_property,
       $.decimal_places_property,
@@ -1481,7 +2104,25 @@ module.exports = grammar({
       $.column_span_property,
       $.drill_down_property,
       $.hide_value_property,
-      $.importance_property
+      $.multi_line_property,
+      $.importance_property,
+      $.navigation_page_id_property,
+      $.quick_entry_property,
+      $.row_span_property,
+      $.show_caption_property,
+      $.show_mandatory_property,
+      $.style_property,
+      $.style_expr_property,
+      $.blank_zero_property,
+      $.extended_datatype_property,
+      $.auto_format_expression_property,
+      $.auto_format_type_property,
+      // Missing field properties
+      $.access_by_permission_property,
+      // Obsolete Properties for fields
+      $.obsolete_reason_property,
+      $.obsolete_state_property,
+      $.obsolete_tag_property
         )),
         '}'
       ),
@@ -1497,6 +2138,7 @@ module.exports = grammar({
         '{',
         repeat(choice(
           $.caption_property,
+          $.caption_class_property,
           $.application_area_property,
           $.tool_tip_property,
           $.tool_tip_ml_property,
@@ -1505,11 +2147,25 @@ module.exports = grammar({
           $.source_expr_property,
           $.editable_property,
           $.description_property,
+          $.lookup_property,
           $.lookup_pageid_property,
           $.option_caption_property,
           $.table_relation_property,
           $.decimal_places_property,
-          $.field_trigger_declaration
+          $.sign_displacement_property,
+          $.title_property,
+          $.odata_edm_type_property,
+          $.field_trigger_declaration,
+          $.blank_zero_property,
+          $.extended_datatype_property,
+          $.auto_format_expression_property,
+          $.auto_format_type_property,
+          // Missing field properties
+          $.access_by_permission_property,
+          // Obsolete Properties for fields
+          $.obsolete_reason_property,
+          $.obsolete_state_property,
+          $.obsolete_tag_property
         )),
         '}'
       ),
@@ -1527,12 +2183,15 @@ module.exports = grammar({
         // Combined list of possible properties from both original patterns
         repeat(choice(
           $.caption_property,
+          $.caption_class_property,
           $.application_area_property,
           $.tool_tip_property,
           $.tool_tip_ml_property,
           $.visible_property,
           $.enabled_property,
+          $.lookup_property,
           $.lookup_pageid_property,
+          $.drilldown_pageid_property,
           $.run_object_property,
           $.run_page_link_property,
           $.source_expr_property,
@@ -1546,7 +2205,26 @@ module.exports = grammar({
           $.column_span_property,
           $.drill_down_property,
           $.hide_value_property,
-          $.importance_property
+          $.multi_line_property,
+          $.importance_property,
+          $.navigation_page_id_property,
+          $.quick_entry_property,
+          $.row_span_property,
+          $.show_caption_property,
+          $.show_mandatory_property,
+          $.sign_displacement_property,
+          $.style_property,
+          $.style_expr_property,
+          $.title_property,
+          $.odata_edm_type_property,
+          $.blank_zero_property,
+          $.extended_datatype_property,
+          // Missing field properties
+          $.access_by_permission_property,
+          // Obsolete Properties for fields
+          $.obsolete_reason_property,
+          $.obsolete_state_property,
+          $.obsolete_tag_property
         )),
         '}'
       )
@@ -1564,7 +2242,49 @@ module.exports = grammar({
         $.property_list,
         $.application_area_property,
         $.caption_property,
-        $.sub_page_link_property
+        $.multiplicity_property,
+        $.provider_property,
+        $.show_filter_property,
+        $.sub_page_link_property,
+        $.sub_page_view_property,
+        $.update_propagation_property,
+        $.visible_property
+      )),
+      '}'
+    ),
+
+    systempart_section: $ => seq(
+      /[sS][yY][sS][tT][eE][mM][pP][aA][rR][tT]/,
+      '(',
+      field('control_id', choice($.string_literal, $.identifier, $._quoted_identifier)),
+      ';',
+      field('systempart_type', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $.property_list,
+        $.application_area_property,
+        $.visible_property
+      )),
+      '}'
+    ),
+
+    usercontrol_section: $ => seq(
+      /[uU][sS][eE][rR][cC][oO][nN][tT][rR][oO][lL]/,
+      '(',
+      field('control_id', choice($.identifier, $._quoted_identifier)),
+      ';',
+      field('addin_name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $.application_area_property,
+        $.visible_property,
+        $.enabled_property,
+        $.editable_property,
+        $.trigger_declaration,
+        $.var_section,
+        $.code_block
       )),
       '}'
     ),
@@ -1572,7 +2292,31 @@ module.exports = grammar({
     sub_page_link_property: $ => seq(
       'SubPageLink',
       '=',
-      field('value', $.run_page_link_value),
+      field('value', seq(
+        $.run_page_link_value,
+        repeat(seq(',', $.run_page_link_value))
+      )),
+      ';'
+    ),
+
+    sub_page_view_property: $ => seq(
+      'SubPageView',
+      '=',
+      field('value', choice(
+        $.string_literal,
+        $.identifier, // Simple identifier like 'Ascending'
+        seq( // sorting(...) pattern
+          $.identifier, // e.g., 'sorting'
+          '(',
+          // Comma-separated list of one or more quoted identifiers
+          seq(
+            $._quoted_identifier,
+            repeat(seq(',', $._quoted_identifier))
+          ),
+          ')'
+        ),
+        $.where_clause // Support WHERE clause syntax
+      )),
       ';'
     ),
 
@@ -1606,15 +2350,24 @@ module.exports = grammar({
         /[oO][nN][iI][nN][sS][eE][rR][tT][rR][eE][cC][oO][rR][dD]/,
         /[oO][nN][mM][oO][dD][iI][fF][yY][rR][eE][cC][oO][rR][dD]/,
         /[oO][nN][dD][eE][lL][eE][tT][eE][rR][eE][cC][oO][rR][dD]/,
-        /[oO][nN][qQ][uU][eE][rR][yY][cC][lL][oO][sS][eE][pP][aA][gG][eE]/
+        /[oO][nN][qQ][uU][eE][rR][yY][cC][lL][oO][sS][eE][pP][aA][gG][eE]/,
+        // Support for custom trigger names (Control Add-in triggers, etc.)
+        $.identifier
       ), $.trigger_type)),
-      '()',
-      // Give higher precedence to the standard structure
-      prec(1, seq(
-        optional($.var_section),
-        $.code_block
-      ))
-      // Removed the ambiguous alternative structure for now
+      choice(
+        seq('(', optional($.parameter_list), ')'),
+        seq()
+      ),
+      optional(seq(':', $.type_specification)),
+      choice(
+        // Standard trigger with code block
+        prec(2, seq(
+          optional($.var_section),
+          $.code_block
+        )),
+        // Control add-in trigger declaration ending with semicolon (without code block)
+        prec(1, ';')
+      )
     ),
 
     // Property value types for specific properties
@@ -1631,13 +2384,27 @@ module.exports = grammar({
 
     single_instance_value: $ => $.boolean,
 
+    event_subscriber_instance_value: $ => choice(
+      /[mM][aA][nN][uU][aA][lL]/,
+      /[sS][tT][aA][tT][iI][cC]/
+    ),
+
+    implementation_value: $ => seq(
+      field('interface', $._quoted_identifier),
+      '=',
+      field('implementation', $._quoted_identifier)
+    ),
+
     field_class_value: $ => choice(
       /[fF][lL][oO][wW][fF][iI][eE][lL][dD]/,
       /[fF][lL][oO][wW][fF][iI][lL][tT][eE][rR]/,
       /[nN][oO][rR][mM][aA][lL]/
     ),
 
-    editable_value: $ => $.boolean,
+    editable_value: $ => choice(
+      prec(2, $.boolean),
+      prec(1, $._expression)
+    ),
 
     extended_datatype_value: $ => choice(
       /[pP][hH][oO][nN][eE][nN][oO]/,
@@ -1645,7 +2412,8 @@ module.exports = grammar({
       /[eE][mM][aA][iI][lL]/,
       /[rR][aA][tT][iI][oO]/,
       /[dD][uU][rR][aA][tT][iI][oO][nN]/,
-      /[mM][aA][sS][kK][eE][dD]/
+      /[mM][aA][sS][kK][eE][dD]/,
+      /[rR][iI][cC][hH][cC][oO][nN][tT][eE][nN][tT]/
     ),
 
     // Values for the first 5 missing Page Field Properties
@@ -1654,7 +2422,24 @@ module.exports = grammar({
     importance_value: $ => choice(
       /[sS][tT][aA][nN][dD][aA][rR][dD]/,
       /[aA][dD][dD][iI][tT][iI][oO][nN][aA][lL]/,
-      /[pP][rR][oO][mM][oO][tT][eE][dD]/
+      /[pP][rR][oO][mM][oO][tT][eE][dD]/,
+      prec(10, $._quoted_identifier)  // Higher precedence for quoted values
+    ),
+
+    style_value: $ => choice(
+      /[sS][tT][aA][nN][dD][aA][rR][dD]/,
+      /[sS][tT][aA][nN][dD][aA][rR][dD][aA][cC][cC][eE][nN][tT]/,
+      /[sS][tT][rR][oO][nN][gG]/,
+      /[sS][tT][rR][oO][nN][gG][aA][cC][cC][eE][nN][tT]/,
+      /[aA][tT][tT][eE][nN][tT][iI][oO][nN]/,
+      /[fF][aA][vV][oO][rR][aA][bB][lL][eE]/,
+      /[uU][nN][fF][aA][vV][oO][rR][aA][bB][lL][eE]/
+    ),
+
+    run_page_mode_value: $ => choice(
+      /[eE][dD][iI][tT]/,
+      /[vV][iI][eE][wW]/,
+      /[cC][rR][eE][aA][tT][eE]/
     ),
 
     // First 5 missing Page Field Properties
@@ -1678,9 +2463,33 @@ module.exports = grammar({
       field('value', $.boolean),
       ';'
     ),
+
+    lookup_property: $ => prec(1, seq(
+      'Lookup',
+      '=',
+      field('value', $.boolean),
+      ';'
+    )),
+
+    promoted_only_property: $ => seq(
+      'PromotedOnly',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
     
-    hide_value_property: $ => seq(
+    hide_value_property: $ => prec(12, seq(
       'HideValue',
+      '=',
+      field('value', choice(
+        prec(2, $.boolean),
+        prec(1, $._expression)
+      )),
+      ';'
+    )),
+    
+    multi_line_property: $ => seq(
+      'MultiLine',
       '=',
       field('value', $.boolean),
       ';'
@@ -1693,25 +2502,68 @@ module.exports = grammar({
       ';'
     ),
 
+    navigation_page_id_property: $ => seq(
+      'NavigationPageId',
+      '=',
+      field('value', $.page_id_value),
+      ';'
+    ),
+
+    quick_entry_property: $ => seq(
+      'QuickEntry',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    row_span_property: $ => seq(
+      'RowSpan',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
+    show_caption_property: $ => seq(
+      'ShowCaption',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    show_mandatory_property: $ => seq(
+      'ShowMandatory',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    style_property: $ => seq(
+      'Style',
+      '=',
+      field('value', $.style_value),
+      ';'
+    ),
+
+    style_expr_property: $ => seq(
+      'StyleExpr',
+      '=',
+      field('value', choice(
+        $.string_literal,
+        $.identifier,
+        $._quoted_identifier,
+        $.call_expression
+      )),
+      ';'
+    ),
+
     page_id_value: $ => choice(
       $.integer,
       $.identifier,
       prec(1, $._quoted_identifier)
     ),
 
-    permissions_value: $ => $.tabledata_permission_list,
-
-    calc_formula_value: $ => $._calc_formula_expression,
 
     blank_zero_value: $ => $.boolean,
-
-    option_members_value: $ => choice(
-      $.string_literal,
-      seq(
-      $.option_member,
-      repeat(seq(',', $.option_member))
-      )
-    ),
 
     option_caption_value: $ => $.string_literal,
 
@@ -1922,7 +2774,7 @@ module.exports = grammar({
     ),
 
     description_property: $ => seq(
-      'Description',
+      /[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]/,
       '=',
       field('value', $.description_value),
       ';'
@@ -2186,6 +3038,7 @@ module.exports = grammar({
       choice('trigger', 'TRIGGER', 'Trigger'),
       choice('OnRun', 'ONRUN', 'Onrun'),
       '()',
+      optional($.var_section),
       $.code_block
     ),
 
@@ -2205,7 +3058,7 @@ module.exports = grammar({
       $.onbeforemodifyevent_trigger,
       $.onbeforedeleteevent_trigger,
       $.keys,
-      $.procedure,
+      seq(optional($.attribute_list), $.procedure),
       $.caption_property,
       $.data_classification_property,
       $.var_section,
@@ -2248,6 +3101,13 @@ module.exports = grammar({
       'Permissions',
       '=',
       $.tabledata_permission_list,
+      ';'
+    ),
+
+    test_permissions_property: $ => seq(
+      'TestPermissions',
+      '=',
+      choice('Disabled', 'NonRestrictive', 'Restrictive', 'InherentPermissions'),
       ';'
     ),
 
@@ -2352,11 +3212,6 @@ module.exports = grammar({
       $.code_block
     ),
     
-    member: $ => choice(
-      $.identifier,
-      $._quoted_identifier
-    ),
-
     property_list: $ => prec.left(3, seq(
       $.property,
       repeat($.property)
@@ -2371,16 +3226,20 @@ module.exports = grammar({
       $.table_no_property,
       $.subtype_property,
       $.single_instance_property,
+      $.event_subscriber_instance_property,
       $.drilldown_pageid_property,
       $.lookup_pageid_property,
       $.card_page_id_property,
       $.promoted_action_categories_property,
+      $.implementation_property,
       $.permissions_property,
+      $.test_permissions_property,
       $.table_relation_property,
       $.field_class_property,
       $.calc_formula_property,
       $.blank_zero_property,
       $.editable_property,
+      $.processing_only_property,
       $.option_members_property,
       $.option_caption_property,
       $.data_classification_property,
@@ -2432,12 +3291,25 @@ module.exports = grammar({
       $.assist_edit_property,
       $.column_span_property,
       $.drill_down_property,
+      $.lookup_property,
       $.hide_value_property,
-      $.importance_property
+      $.multi_line_property,
+      $.importance_property,
+      $.navigation_page_id_property,
+      $.quick_entry_property,
+      $.row_span_property,
+      $.show_caption_property,
+      $.show_mandatory_property,
+      $.style_property,
+      $.style_expr_property,
+      $.save_values_property,
+      $.data_item_table_view_property,
+      $.promoted_only_property,
+      $.shortcut_key_property
     )),
 
     caption_property: $ => seq(
-      'Caption',
+      /[cC][aA][pP][tT][iI][oO][nN]/,
       '=',
       $.string_literal,
       ';'
@@ -2446,7 +3318,7 @@ module.exports = grammar({
     caption_class_property: $ => seq(
       'CaptionClass',
       '=',
-      field('value', $.string_literal),
+      field('value', $._expression),
       ';'
     ),
 
@@ -2481,7 +3353,7 @@ module.exports = grammar({
     ),
 
     tabledata_permission: $ => seq(
-      'tabledata', 
+      choice('tabledata', 'TableData', 'TABLEDATA'), 
       field('table_name', $._table_identifier),
       '=',
       field('permission', $.permission_type)
@@ -2489,7 +3361,8 @@ module.exports = grammar({
 
     _table_identifier: $ => choice(
       $.identifier,
-      $._quoted_identifier
+      $._quoted_identifier,
+      $.integer
     ),
 
 
@@ -2502,25 +3375,29 @@ module.exports = grammar({
       ';'
     ),
 
-    var_section: $ => seq(
+    var_section: $ => prec.right(seq(
+      optional(choice('protected', 'PROTECTED', 'Protected')),
       choice('var', 'VAR', 'Var'),
-      repeat($.variable_declaration)
-    ),
+      repeat(choice(
+        $.attribute_list,
+        $.variable_declaration
+      ))
+    )),
 
     // Helper rule for comma-separated variable names
     _variable_name_list: $ => seq(
-      field('name', $.identifier),
-      repeat(seq(',', field('name', $.identifier)))
+      field('name', choice($.identifier, $._quoted_identifier)),
+      repeat(seq(',', field('name', choice($.identifier, $._quoted_identifier))))
     ),
 
     variable_declaration: $ => choice(
       // Special case for Label with string literal and optional attributes
       // Note: Labels typically don't support multiple declarations on one line in standard AL,
       // but we keep the structure consistent for now. If issues arise, this might need adjustment.
-      seq(
+      prec(2, seq(
         field('names', $._variable_name_list), // Use list rule
         ':',
-        choice('Label', 'LABEL', 'label'),
+        field('type', choice('Label', 'LABEL', 'label')),
         field('value', $.string_literal),
         optional(seq(
           ',',  // Comma separator
@@ -2530,7 +3407,7 @@ module.exports = grammar({
           ))
         )),
         ';'
-      ),
+      )),
       // Variable with value assignment (Multiple assignment on one line is not standard AL)
       // This part might need review if complex initializations are common.
       seq(
@@ -2541,14 +3418,14 @@ module.exports = grammar({
         field('value', $._expression), // Assigns the same value to all variables in the list
         ';'
       ),
-      // Regular variable declaration (supporting multiple names)
-      seq(
+      // Regular variable declaration (supporting multiple names) with optional attributes
+      prec(1, seq(
         field('names', $._variable_name_list), // Use list rule
         ':',
         field('type', $.type_specification),
         optional(field('temporary', $.temporary)),
         ';'
-      )
+      ))
     ),
 
     // Simplified parameter rule using the main type_specification
@@ -2573,7 +3450,7 @@ module.exports = grammar({
       $._parameter_option, // Try matching inline option first
       seq( // Standard parameter with type_specification
         optional(field('modifier', $.modifier)),
-        field('parameter_name', alias($.identifier, $.name)),
+        field('parameter_name', alias(choice($.identifier, $._quoted_identifier), $.name)),
         ':',
         field('parameter_type', $.type_specification),
         // Add optional temporary keyword after type for records
@@ -2597,6 +3474,8 @@ type_specification: $ => choice(
   $.fieldref_type,
   $.codeunit_type, 
   $.query_type,
+  $.testpage_type,
+  $.report_type,
   $.dotnet_type,
   $.list_type,
   $.dictionary_type,
@@ -2604,24 +3483,38 @@ type_specification: $ => choice(
   $.enum_type,
   $.option_type,
   $.interface_type,
+  $.controladdin_type,
   $.identifier, // Allow plain identifiers as types (e.g., HttpClient, DotNet types)
   $._quoted_identifier // Allow quoted identifiers as types
 ),
 
 // Handles 'Option' type keyword followed by optional members
-option_type: $ => prec(10, seq( // Increased precedence
+option_type: $ => prec.left(10, seq( // Increased precedence, left associative
   choice('Option', 'OPTION', 'Option'),
   optional($.option_member_list) // Members are part of the type
 )),
 
-// Helper for comma-separated list of option members
-option_member_list: $ => prec.left(1, seq( // Re-added precedence
-  $.option_member,
-  repeat(seq(',', $.option_member))
-)), // Removed extra parenthesis
+// Helper for comma-separated list of option members  
+option_member_list: $ => prec.left(1, choice(
+  // Standard case: member followed by optional members
+  seq(
+    $.option_member,
+    repeat(seq(',', optional($.option_member)))
+  ),
+  // Edge case: starts with empty but has content
+  repeat1(seq(',', optional($.option_member)))
+)),
 
 interface_type: $ => seq(
   prec(1, choice('Interface', 'INTERFACE', 'interface')),
+  field('reference', choice(
+    $._quoted_identifier,
+    $.identifier
+  ))
+),
+
+controladdin_type: $ => seq(
+  choice('ControlAddIn', 'CONTROLADDIN', 'controladdin'),
   field('reference', choice(
     $._quoted_identifier,
     $.identifier
@@ -2635,6 +3528,15 @@ enum_type: $ => prec(1, seq(
 
     page_type: $ => seq(
       prec(1, choice('Page', 'PAGE', 'page')),
+      field('reference', choice(
+        $.integer,
+        $._quoted_identifier,
+        $.identifier
+      ))
+    ),
+
+    report_type: $ => seq(
+      prec(1, choice('Report', 'REPORT', 'report')),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
@@ -2712,7 +3614,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     text_type: $ => seq(
-      prec(1, 'Text'),
+      prec(1, choice('Text', 'TEXT', 'text')),
       optional(seq(
         '[',
         field('length', $.integer),
@@ -2721,7 +3623,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     code_type: $ => seq(
-      prec(1, 'Code'),
+      prec(1, choice('Code', 'CODE', 'code')),
       optional(seq(
         '[',
         field('length', $.integer),
@@ -2730,9 +3632,9 @@ enum_type: $ => prec(1, seq(
     ),
 
     record_type: $ => prec.right(seq(
-      prec(1, 'Record'),
+      prec(1, choice('Record', 'RECORD', 'record')),
       field('reference', $._table_reference),
-      optional('Temporary')
+      optional(choice('Temporary', 'TEMPORARY', 'temporary'))
     )),
     recordref_type: $ => /[rR][eE][cC][oO][rR][dD][rR][eE][fF]/,
     fieldref_type: $ => /[fF][iI][eE][lL][dD][rR][eE][fF]/,
@@ -2745,17 +3647,27 @@ enum_type: $ => prec(1, seq(
     ),
 
     codeunit_type: $ => seq(
-      prec(1, 'Codeunit'),
+      prec(1, choice('Codeunit', 'codeunit')),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
-        $.identifier
+        $.identifier,
+        $.member_expression
       ))
     ),
 
     query_type: $ => seq(
       prec(1, 'Query'),
       field('reference', $.query_type_value)
+    ),
+
+    testpage_type: $ => seq(
+      prec(1, 'TestPage'),
+      field('reference', choice(
+        $.integer,
+        $._quoted_identifier,
+        $.identifier
+      ))
     ),
 
     query_type_value: $ => choice(
@@ -2765,8 +3677,8 @@ enum_type: $ => prec(1, seq(
     ),
 
     dotnet_type: $ => seq(
-      prec(1, 'DotNet'),
-      field('reference', choice($.identifier, $.string_literal))
+      prec(1, choice('DotNet', 'DOTNET', 'dotnet')),
+      field('reference', choice($.identifier, $.string_literal, $._quoted_identifier))
     ),
 
     array_type: $ => seq(
@@ -2903,7 +3815,8 @@ enum_type: $ => prec(1, seq(
         $.identifier,
         $._quoted_identifier,
         $.integer,
-        $.boolean
+        $.boolean,
+        $.database_reference
       ))),
       ')'
     )),
@@ -2920,13 +3833,11 @@ enum_type: $ => prec(1, seq(
     filter_condition: $ => prec(10, seq(
       field('field', $.field_ref),
       '=',
-      choice('FILTER', 'filter', 'Filter'),
-      '(',
-      field('value', $.filter_criteria),
-      ')'
+      field('filter', $.filter_expression_function)
     )),
 
     where_condition: $ => choice(
+      $.filter_expression,  // Add filter_expression for SourceTableView
       $.const_filter,
       $.field_filter,
       $.filter_condition
@@ -2948,7 +3859,8 @@ enum_type: $ => prec(1, seq(
 
     field_ref: $ => prec(2, choice(
       $.explicit_field_ref,
-      $._non_call_chained_expression
+      $._non_call_chained_expression,
+      $.identifier
     )),
 
     _non_call_chained_expression: $ => prec(3, choice(
@@ -2969,9 +3881,11 @@ enum_type: $ => prec(1, seq(
     field_class_property: $ => seq(
       'FieldClass',
       '=',
-      optional('"'),
-      $.field_class_value,
-      optional('"'),
+      field('value', choice(
+        $.string_literal,
+        $._quoted_identifier,
+        $.field_class_value
+      )),
       ';'
     ),
 
@@ -2988,13 +3902,19 @@ enum_type: $ => prec(1, seq(
       $.sum_formula, 
       $.average_formula,
       $.min_formula,
-      $.max_formula
+      $.max_formula,
+      $.exist_formula
     ),
 
-    lookup_formula: $ => seq(
+    lookup_formula: $ => prec(10, seq(
       choice('lookup', 'LOOKUP', 'Lookup'),
       '(',
-      field('target', $.field_ref),
+      field('target', choice(
+        prec(20, $.member_expression),
+        prec(15, $.field_access),
+        prec(10, $._quoted_identifier),
+        prec(5, $.identifier)
+      )),
       optional(choice(
         // Original lookup where clause format
         seq(
@@ -3007,7 +3927,14 @@ enum_type: $ => prec(1, seq(
         $.where_clause
       )),
       ')'
-    ),
+    )),
+
+    lookup_field_ref: $ => prec(15, choice(
+      $.member_expression,
+      $.field_access,
+      $._quoted_identifier,
+      $.identifier
+    )),
 
     lookup_where_conditions: $ => seq(
       $.lookup_where_condition,
@@ -3027,7 +3954,7 @@ enum_type: $ => prec(1, seq(
         seq(
           field('keyword', alias(choice('const', 'CONST', 'Const'), $.const)),
           '(',
-          optional(field('value', $.string_literal)),
+          optional(field('value', choice($.string_literal, $.identifier, $._quoted_identifier, $.integer))),
           ')'
         )
       )
@@ -3088,25 +4015,6 @@ enum_type: $ => prec(1, seq(
     ),
     
     // Keep the original calc-related rules for backward compatibility during migration
-    calc_where_condition: $ => prec(15, seq(
-      field('field', $.field_ref),
-      '=',
-      choice(
-        seq(
-          choice('field', 'FIELD', 'Field'),
-          '(',
-          field('target_field', $.field_ref),
-          ')'
-        ),
-        seq(
-          choice('const', 'CONST', 'Const'),
-          '(',
-          optional(field('value', choice($.string_literal, $.field_ref))),
-          ')'
-        )
-      )
-    )),
-
     count_formula: $ => seq(
       choice('count', 'COUNT', 'Count'),
       '(',
@@ -3147,6 +4055,14 @@ enum_type: $ => prec(1, seq(
       ')'
     ),
 
+    exist_formula: $ => seq(
+      choice('exist', 'EXIST', 'Exist'),
+      '(',
+      field('table', alias($._table_reference, $.table_reference)),
+      $.where_clause,
+      ')'
+    ),
+
 
     blank_zero_property: $ => seq(
       'BlankZero',
@@ -3159,6 +4075,13 @@ enum_type: $ => prec(1, seq(
       'Editable',
       '=',
       $.editable_value,
+      ';'
+    ),
+
+    processing_only_property: $ => seq(
+      'ProcessingOnly',
+      '=',
+      choice('true', 'false'),
       ';'
     ),
 
@@ -3197,7 +4120,11 @@ enum_type: $ => prec(1, seq(
         choice('OnAssistEdit', 'ONASSISTEDIT', 'OnAssistEdit'),
         choice('OnDrillDown', 'ONDRILLDOWN', 'OnDrillDown')
       ), $.trigger_type)),
-      '()',
+      choice(
+        seq('(', optional($.parameter_list), ')'),
+        seq()
+      ),
+      optional(seq(':', $.type_specification)),
       optional($.var_section),
       $.code_block
     ),
@@ -3272,7 +4199,7 @@ enum_type: $ => prec(1, seq(
       repeat(seq(',', choice($._quoted_identifier, $.identifier)))
     ),
 
-    attribute_list: $ => repeat1($.attribute),
+    attribute_list: $ => prec.left(repeat1($.attribute)),
 
     attribute: $ => seq(
       '[', 
@@ -3318,12 +4245,17 @@ enum_type: $ => prec(1, seq(
       '(',
       optional($.parameter_list),
       ')',
-      // Return type block
-      optional(';'),
+      // Return type can be followed by optional semicolon or directly by var/begin
       optional(choice(
-        $._procedure_return_specification, // : ReturnType
-        $._procedure_named_return // ReturnValue : ReturnType
+        seq(
+          choice(
+            $._procedure_return_specification, // : ReturnType
+            $._procedure_named_return // ReturnValue : ReturnType
+          ),
+          optional(';')
+        )
       )),
+      // Optional semicolon even when there's no return type (for test procedures)
       optional(';'),
       optional($.var_section),
       $.code_block,
@@ -3338,16 +4270,6 @@ enum_type: $ => prec(1, seq(
       '<>',
       '='
     ),
-
-    arithmetic_operator: $ => choice(
-      '+',
-      '-',
-      '*',
-      '/',
-      /[dD][iI][vV]/, // Add case-insensitive div
-      /[mM][oO][dD]/  // Add case-insensitive mod
-    ),
-
 
     parameter_list: $ => seq(
       $.parameter,
@@ -3374,6 +4296,7 @@ enum_type: $ => prec(1, seq(
           repeat1(choice(
             /[^'\\\n]+/,   // One or more chars except quote, backslash, or newline
             /\\./,         // Match any escaped character (e.g., \\, \', \", \#, etc.)
+            /\\/,          // Single backslash (for character literals like '\')
             "''"           // Two consecutive single quotes as an escape
           )),
           "'"
@@ -3396,22 +4319,6 @@ enum_type: $ => prec(1, seq(
 
     temporary: $ => choice('temporary', 'TEMPORARY', 'Temporary'),
 
-    data_type: $ => choice(
-      /[iI][nN][tT][eE][gG][eE][rR]/,
-      seq(/[cC][oO][dD][eE]/, '[', field('size', $.integer), ']'),
-      seq(/[tT][eE][xX][tT]/, '[', field('size', $.integer), ']'),
-      /[dD][eE][cC][iI][mM][aA][lL]/,
-      /[bB][oO][oO][lL][eE][aA][nN]/,
-      /[oO][pP][tT][iI][oO][nN]/,
-      /[rR][eE][cC][oO][rR][dD][iI][dD]/,
-      /[dD][aA][tT][eE][tT][iI][mM][eE]/,
-      /[dD][aA][tT][eE]/,
-      /[tT][iI][mM][eE]/,
-      /[bB][lL][oO][bB]/,
-      /[dD][uU][rR][aA][tT][iI][oO][nN]/,
-      /[bB][iI][gG][iI][nN][tT][eE][gG][eE][rR]/,
-      /[gG][uU][iI][dD]/
-    ),
 
     // Define code blocks with explicit keyword handling
     code_block: $ => prec.right(1, seq(
@@ -3436,6 +4343,7 @@ enum_type: $ => prec(1, seq(
         $.repeat_statement,
         $.case_statement,
         $.for_statement,
+        $.foreach_statement,
         $.while_statement, 
         $._expression_statement
       ),
@@ -3467,11 +4375,23 @@ enum_type: $ => prec(1, seq(
       ))
     )),
 
+    foreach_statement: $ => prec.right(seq(
+      choice('foreach', 'FOREACH', 'Foreach'),
+      field('variable', $.identifier),
+      choice('in', 'IN', 'In'),
+      field('iterable', $._expression),
+      choice('do', 'DO', 'Do'),
+      field('body', choice(
+        $._statement,
+        $.code_block
+      ))
+    )),
+
     // Removed procedure_call rule
 
     repeat_statement: $ => seq(
       choice('repeat', 'REPEAT', 'Repeat'),
-      repeat1($._statement),
+      repeat($._statement),
       choice('until', 'UNTIL', 'Until'),
       field('condition', $._expression)
     ),
@@ -3539,15 +4459,16 @@ enum_type: $ => prec(1, seq(
     _chained_expression: $ => prec(3, choice(
       $.member_expression,
       $.call_expression,
+      $.field_access,
       $.qualified_enum_value_tail,
       $._quoted_identifier
     )),
 
 
-    qualified_enum_value_tail: $ => seq(
+    qualified_enum_value_tail: $ => prec.left(15, seq( // Higher precedence to attach to field_access
       '::',
       choice($.identifier, $._quoted_identifier)
-    ),
+    )),
 
     unary_expression: $ => prec.right(7, seq( // Keep at 7 but verify context
       choice('-', 'not', 'Not', 'NOT'),
@@ -3597,7 +4518,7 @@ enum_type: $ => prec(1, seq(
       // Method chains (put this first among non-binary expressions for higher precedence)
       $.call_expression, // (prec 12)
       $.enum_keyword_qualified_value, // (prec 9)
-      $.qualified_enum_value, // (prec 9)
+      $.qualified_enum_value, // (prec 20)
       $.database_reference, // (prec 9)
       $.field_access,  // (prec 12)
       $.member_expression, // (prec 11)
@@ -3619,13 +4540,6 @@ enum_type: $ => prec(1, seq(
       ']'
     ),
 
-    // 'in' expression rule (precedence 5, lower than comparisons)
-    in_expression: $ => prec.left(5, seq(
-      field('left', $._expression),
-      field('operator', $.in_operator),
-      field('right', $.list_literal) // Right side is typically a list literal
-    )),
-
     // Rule for array indexing/subscript expressions
     subscript_expression: $ => prec.left(9, seq(
       field('array', $._expression),
@@ -3646,15 +4560,7 @@ enum_type: $ => prec(1, seq(
       field('field', $._quoted_identifier)
     )),
 
-    // Individual method definitions
-    // Common base pattern for record operations
-    _record_operation: $ => prec(3, seq(
-      field('record', alias($.identifier, $.record)),
-      '.'
-    )),
-
-
-    enum_value_expression: $ => prec(11, seq( // Adjusted precedence (was 13)
+    enum_value_expression: $ => prec(13, seq( // Increased precedence to beat field_access
       field('enum', choice(
         $.field_access,
         $.member_expression,
@@ -3721,6 +4627,7 @@ enum_type: $ => prec(1, seq(
     _single_pattern: $ => choice(
       $._literal_value,
       $.enum_value_expression, // Match the full Record.Field::Value or EnumType::Value pattern
+      $.database_reference, // Allow DATABASE::"Table Name" patterns
       $._chained_expression, // Allow member expressions like Value.IsInteger
       $.identifier, // Keep for simple identifiers
       $._quoted_identifier // Keep for quoted identifiers
@@ -3739,7 +4646,7 @@ enum_type: $ => prec(1, seq(
 
     time_literal: $ => token(seq(
       optional('-'),
-      /\d+/,
+      /\d+(\.\d+)?/,  // Allow decimal time values like 235959.999T
       /[tT]/
     )),
 
@@ -3772,7 +4679,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     else_branch: $ => seq(
-      'else',
+      choice('else', 'ELSE', 'Else'),
       field('statements', $._branch_statements)
     ),
 
@@ -3798,11 +4705,12 @@ enum_type: $ => prec(1, seq(
       ))
     )),
 
-    qualified_enum_value: $ => prec.left(9, seq( // Increased precedence
+    qualified_enum_value: $ => prec.left(20, seq( // Increased precedence
       field('enum_type', choice(
         $._enum_type_reference,
         $.identifier,
         $._quoted_identifier,
+        $.field_access,
         $._chained_expression
       )),
       field('operator', $._double__colon),
@@ -3825,7 +4733,8 @@ enum_type: $ => prec(1, seq(
       $._quoted_identifier,
       $.identifier,
       $._chained_expression,
-      $.string_literal
+      $.string_literal,
+      $._enum_keyword  // Common AL keywords used as enum values
     )),
 
     _branch_statements: $ => choice(
@@ -3847,12 +4756,12 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
-    fieldgroups_section: $ => seq(
+    fieldgroups_section: $ => prec(3, seq(
       /[fF][iI][eE][lL][dD][gG][rR][oO][uU][pP][sS]/,
       '{',
       repeat($.fieldgroup_declaration),
       '}'
-    ),
+    )),
 
     fieldgroup_list: $ => seq(
       $.fieldgroup_field,
@@ -3864,9 +4773,328 @@ enum_type: $ => prec(1, seq(
       $._quoted_identifier
     ),
 
+    multiplicity_property: $ => seq(
+      'Multiplicity',
+      '=',
+      field('value', $.multiplicity_value),
+      ';'
+    ),
+
+    multiplicity_value: $ => choice(
+      /[oO][nN][eE]/,
+      /[mM][aA][nN][yY]/
+    ),
+
+    show_filter_property: $ => seq(
+      'ShowFilter',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    update_propagation_property: $ => seq(
+      'UpdatePropagation',
+      '=',
+      field('value', $.update_propagation_value),
+      ';'
+    ),
+
+    update_propagation_value: $ => choice(
+      /[nN][oO]/,
+      /[uU][pP][dD][aA][tT][eE][dD]/,
+      /[bB][oO][tT][hH]/,
+      $.string_literal,
+      $.identifier,
+      $._quoted_identifier
+    ),
+
+    cuegroup_layout_property: $ => seq(
+      'CuegroupLayout',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    freeze_column_property: $ => seq(
+      'FreezeColumn',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    grid_layout_property: $ => seq(
+      'GridLayout',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    show_as_tree_property: $ => seq(
+      'ShowAsTree',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    tree_initial_state_property: $ => seq(
+      'TreeInitialState',
+      '=',
+      field('value', $.tree_initial_state_value),
+      ';'
+    ),
+
+    tree_initial_state_value: $ => choice(
+      /[cC][oO][lL][lL][aA][pP][sS][eE][aA][lL][lL]/,
+      /[eE][xX][pP][aA][nN][dD][aA][lL][lL]/
+    ),
+
+    custom_action_type_property: $ => seq(
+      'CustomActionType',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    allowed_file_extensions_property: $ => seq(
+      'AllowedFileExtensions',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    allow_multiple_files_property: $ => seq(
+      'AllowMultipleFiles',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    file_upload_action_property: $ => seq(
+      'FileUploadAction',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    file_upload_row_action_property: $ => seq(
+      'FileUploadRowAction',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    odata_edm_type_property: $ => seq(
+      'ODataEDMType',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    sign_displacement_property: $ => seq(
+      'SignDisplacement',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    title_property: $ => seq(
+      'Title',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    filters_property: $ => seq(
+      'Filters',
+      '=',
+      field('value', choice(
+        $.identifier,
+        $._quoted_identifier,
+        $.string_literal,
+        $.filter_expression
+      )),
+      ';'
+    ),
+
+    order_by_property: $ => seq(
+      'OrderBy',
+      '=',
+      field('value', choice(
+        $.identifier,
+        $._quoted_identifier,
+        $.string_literal
+      )),
+      ';'
+    ),
+
+    filter_expression: $ => seq(
+      choice(
+        $.where_clause,
+        $.sorting_clause,
+        seq($.where_clause, $.sorting_clause),
+        seq($.sorting_clause, $.where_clause)
+      )
+    ),
+
+    ellipsis_property: $ => seq(
+      'Ellipsis',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    gesture_property: $ => seq(
+      'Gesture',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    is_header_property: $ => seq(
+      'IsHeader',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    provider_property: $ => seq(
+      'Provider',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    indentation_column_property: $ => seq(
+      'IndentationColumn',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    indentation_controls_property: $ => seq(
+      'IndentationControls',
+      '=',
+      field('value', choice(
+        $.identifier,
+        $._quoted_identifier,
+        $.string_literal
+      )),
+      ';'
+    ),
+
+    shared_layout_property: $ => seq(
+      'SharedLayout',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    data_item_table_view_property: $ => seq(
+      'DataItemTableView',
+      '=',
+      field('value', choice(
+        $.sorting_expression,
+        $.source_table_view_value
+      )),
+      ';'
+    ),
+
+    sorting_expression: $ => seq(
+      choice('SORTING', 'Sorting', 'sorting'),
+      '(',
+      $.field_list,
+      ')'
+    ),
+
+    field_list: $ => seq(
+      choice($.identifier, $._quoted_identifier),
+      repeat(seq(',', choice($.identifier, $._quoted_identifier)))
+    ),
+
     pragma: $ => /#[^\n]*/, // Match any line starting with #
 
     comment: $ => token(seq('//', /.*/)),
+
+    multiline_comment: $ => token(seq(
+      '/*',
+      /[^*]*\*+([^/*][^*]*\*+)*/,
+      '/'
+    )),
+
+    // AL keywords that can be used as enum values
+    // Comprehensive list covering object types, data types, control flow, and other common keywords
+    _enum_keyword: $ => choice(
+      // Object types
+      'DATABASE', 'database', 'Database',
+      'Table', 'table', 'TABLE',
+      'Page', 'page', 'PAGE', 
+      'Report', 'report', 'REPORT',
+      'Codeunit', 'codeunit', 'CODEUNIT',
+      'Query', 'query', 'QUERY',
+      'XMLport', 'xmlport', 'XMLPORT',
+      'Enum', 'enum', 'ENUM',
+      'Interface', 'interface', 'INTERFACE',
+      'ControlAddin', 'controladdin', 'CONTROLADDIN',
+      
+      // Data types
+      'Text', 'text', 'TEXT',
+      'Code', 'code', 'CODE',
+      'Integer', 'integer', 'INTEGER',
+      'Decimal', 'decimal', 'DECIMAL',
+      'Boolean', 'boolean', 'BOOLEAN',
+      'Date', 'date', 'DATE',
+      'Time', 'time', 'TIME',
+      'DateTime', 'datetime', 'DATETIME',
+      'Guid', 'guid', 'GUID',
+      'Blob', 'blob', 'BLOB',
+      'BigInteger', 'biginteger', 'BIGINTEGER',
+      'Option', 'option', 'OPTION',
+      'Record', 'record', 'RECORD',
+      
+      // Control flow keywords
+      'If', 'if', 'IF',
+      'Then', 'then', 'THEN',
+      'Else', 'else', 'ELSE',
+      'While', 'while', 'WHILE',
+      'For', 'for', 'FOR',
+      'Repeat', 'repeat', 'REPEAT',
+      'Until', 'until', 'UNTIL',
+      'Case', 'case', 'CASE',
+      'Of', 'of', 'OF',
+      'Exit', 'exit', 'EXIT',
+      'Break', 'break', 'BREAK',
+      
+      // Visibility and scope
+      'Local', 'local', 'LOCAL',
+      'Global', 'global', 'GLOBAL',
+      'Protected', 'protected', 'PROTECTED',
+      'Internal', 'internal', 'INTERNAL',
+      'Public', 'public', 'PUBLIC',
+      
+      // Boolean values
+      'True', 'true', 'TRUE',
+      'False', 'false', 'FALSE',
+      
+      // Operators
+      'And', 'and', 'AND',
+      'Or', 'or', 'OR',
+      'Not', 'not', 'NOT',
+      'Div', 'div', 'DIV',
+      'Mod', 'mod', 'MOD',
+      
+      // Other common keywords
+      'Var', 'var', 'VAR',
+      'Procedure', 'procedure', 'PROCEDURE',
+      'Function', 'function', 'FUNCTION',
+      'Trigger', 'trigger', 'TRIGGER',
+      'Begin', 'begin', 'BEGIN',
+      'End', 'end', 'END',
+      'With', 'with', 'WITH',
+      'Do', 'do', 'DO'
+    ),
+
+
+
 
   },
 
