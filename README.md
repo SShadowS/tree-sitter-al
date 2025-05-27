@@ -6,56 +6,35 @@ A [tree-sitter](https://tree-sitter.github.io/tree-sitter/) parser for the AL pr
 
 This project provides a complete grammar definition for parsing AL (Application Language) source code, enabling syntax highlighting, code analysis, and language tooling support for Business Central development.
 
-**Current Status:** Active development - Core language features are implemented with ongoing improvements for advanced constructs.
+### Known Issues & Limitations
 
-## Features
+Based on analysis of 396 AL files from production codebases, **363 files (91.7%) parse successfully**. The remaining 33 files reveal these known issues:
 
-### Supported AL Constructs
-- ✅ **Object Types**: Tables, Pages, Codeunits, Queries, Page Extensions, Enum Extensions
-- ✅ **Data Types**: Record, Codeunit, Page, Query, Option, Enum, Text, Code, Integer, Boolean, etc.
-- ✅ **Control Structures**: If/Else, Case, For, While, Repeat/Until
-- ✅ **Procedures**: Local/Internal modifiers, parameters, return types, variable sections
-- ✅ **Triggers**: Object triggers (OnRun, OnAction, etc.) and field triggers
-- ✅ **Properties**: All major object and field properties with proper value types
-- ✅ **Expressions**: Method calls, member access, arithmetic/logical operations
-- ✅ **Action Groups**: Page action grouping and variable-driven properties
-- ✅ **Complex Formulas**: CalcFormula expressions, table relations, filters
+#### Critical Parsing Issues
+- **Standalone semicolons**: Empty statements with just `;` in object properties cause parsing failures
+- **Multi-line Permissions property**: Complex tabledata permission lists spanning multiple lines not fully supported
+- **Property placement**: Some property ordering combinations cause unexpected parsing behavior
 
-### Language Bindings
-- Node.js/JavaScript
-- Python
-- Rust
-- Go
-- Swift
-- C/C++
+#### Feature Gaps
+- **Report-specific constructs**: Some report objects with complex dataset structures
+- **Advanced Codeunit patterns**: Complex permission declarations in codeunit headers
+- **Legacy .NET integration**: Some OnPrem-specific .NET/DLL related constructs
+- **Control Add-in definitions**: Partial support for custom control add-in declarations
 
-## Project Structure
+#### Expression Limitations  
+- **Complex macro definitions**: Advanced preprocessor patterns not fully supported
+- **Nested IF expressions**: Some deeply nested conditional expressions in property values
+- **Advanced method chaining**: Complex fluent API patterns may need refinement
 
-```
-tree-sitter-al/
-├── grammar.js              # Main grammar definition
-├── src/                   # Generated parser source code
-├── test/corpus/           # Test cases for grammar validation
-│   ├── table.txt         # Table object tests
-│   ├── page_action_groups.txt # Page with action groups
-│   ├── codeunit.txt      # Codeunit tests
-│   ├── method_calls.txt  # Method call patterns
-│   └── ...               # Additional test files
-├── bindings/             # Language-specific bindings
-│   ├── node/            # Node.js bindings
-│   ├── python/          # Python bindings
-│   ├── rust/            # Rust bindings
-│   └── ...              # Other language bindings
-├── CONVENTIONS.md        # Grammar development guidelines
-├── TREERULES.md         # Tree-sitter rule reference
-└── package.json         # Project configuration
-```
+#### Recovery & Robustness
+- **Error propagation**: Single syntax errors can cascade and affect subsequent parsing
+- **Whitespace sensitivity**: Some edge cases with unusual spacing/formatting
+- **Comment placement**: Complex comment patterns between properties occasionally problematic
 
 ### Key Files
 
 - **`grammar.js`**: The heart of the project - defines all AL language grammar rules
 - **`test/corpus/`**: Comprehensive test suite with AL code examples and expected parse trees
-- **`CONVENTIONS.md`**: Best practices for grammar development and AL language handling
 - **`src/`**: Auto-generated C code for the parser (don't edit manually)
 
 ## Development Setup
@@ -63,13 +42,6 @@ tree-sitter-al/
 ### Prerequisites
 - Node.js (v16+)
 - tree-sitter CLI: `npm install -g tree-sitter-cli`
-
-### Installation
-```bash
-git clone https://github.com/[username]/tree-sitter-al
-cd tree-sitter-al
-npm install
-```
 
 ### Building the Parser
 ```bash
@@ -166,61 +138,6 @@ echo "your AL code" | tree-sitter parse --debug
 tree-sitter build --wasm  # WebAssembly
 npm run build            # Native bindings
 ```
-
-## Language Support Status
-
-### Object Types
-| Object Type | Status | Notes |
-|-------------|--------|-------|
-| Table | ✅ Complete | Full property and trigger support |
-| Page | ✅ Complete | Including action groups, layout sections |
-| Codeunit | ✅ Complete | Procedures, triggers, variable sections |
-| Query | ✅ Complete | Elements, data items, properties |
-| Page Extension | ✅ Complete | Action modifications, field additions |
-| Enum Extension | ✅ Complete | Value definitions with properties |
-
-### Advanced Features
-- ✅ **Variable-driven Properties**: `Enabled = MyVariable`
-- ✅ **Complex Method Calls**: `Record.FIELDNO("Field Name")`
-- ✅ **CalcFormula Expressions**: Lookup, Sum, Count, Average, Min, Max
-- ✅ **Table Relations**: IF conditions, FIELD/CONST filters
-- ✅ **Action Groups**: Nested action organization
-- ✅ **Error Recovery**: Graceful handling of syntax errors
-
-### Known Limitations
-- Some advanced C/AL legacy constructs may need refinement
-- Complex macro definitions are not fully supported
-- Some edge cases in nested expressions may need improvement
-
-## Technical Details
-
-### Grammar Architecture
-- **Modular Design**: Separate rules for each object type and construct
-- **Precedence Handling**: Explicit operator precedence using `prec.left/right`
-- **Error Recovery**: Strategic use of optional rules and error tokens
-- **Performance**: Optimized for typical AL file sizes and complexity
-
-### Precedence Levels
-1. **Primary Expressions**: Identifiers, literals, parentheses
-2. **Member Access**: `Record.Field`, `Object.Method()`
-3. **Unary Operations**: `-`, `NOT`
-4. **Multiplicative**: `*`, `/`, `DIV`, `MOD`
-5. **Additive**: `+`, `-`
-6. **Comparison**: `=`, `<>`, `<`, `>`, `<=`, `>=`
-7. **Logical AND**: `AND`
-8. **Logical OR**: `OR`
-
-### Key Design Decisions
-- **Case-insensitive keywords**: Using regex patterns for AL's case-insensitive nature
-- **Field precedence**: Properties vs. procedures resolved through precedence
-- **Expression parsing**: Left-associative for most operators
-- **String handling**: Support for AL's single-quote strings with escape sequences
-
-## References
-
-- [AL Language Documentation](https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-dev-overview)
-- [Tree-sitter Documentation](https://tree-sitter.github.io/tree-sitter/)
-- [Tree-sitter Grammar DSL](https://tree-sitter.github.io/tree-sitter/creating-parsers#the-grammar-dsl)
 
 ---
 
