@@ -24,6 +24,7 @@ module.exports = grammar({
       $.pageextension_declaration,
       $.page_declaration,
       $.pagecustomization_declaration,
+      $.profile_declaration,
       $.query_declaration,
       $.enum_declaration,
       $.enumextension_declaration, 
@@ -1509,6 +1510,14 @@ module.exports = grammar({
       field('target_page', choice($._quoted_identifier, $.identifier)),
       '{',
       repeat($._pagecustomization_element),
+      '}'
+    ),
+
+    profile_declaration: $ => seq(
+      /[pP][rR][oO][fF][iI][lL][eE]/,
+      field('object_name', choice($._quoted_identifier, $.identifier)),
+      '{',
+      repeat($._profile_element),
       '}'
     ),
 
@@ -5229,6 +5238,47 @@ enum_type: $ => prec(1, seq(
       '=',
       field('value', $.filter_expression),
       ';'
+    ),
+
+    // Profile elements
+    _profile_element: $ => choice(
+      $.profile_description_property,
+      $.profile_rolecenter_property,
+      $.profile_caption_property,
+      $.profile_customizations_property
+    ),
+
+    profile_description_property: $ => seq(
+      'Description',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    profile_rolecenter_property: $ => seq(
+      'RoleCenter',
+      '=',
+      field('value', choice($._quoted_identifier, $.identifier)),
+      ';'
+    ),
+
+    profile_caption_property: $ => seq(
+      'Caption',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    profile_customizations_property: $ => seq(
+      'Customizations',
+      '=',
+      field('value', $.customizations_list),
+      ';'
+    ),
+
+    customizations_list: $ => seq(
+      choice($._quoted_identifier, $.identifier),
+      repeat(seq(',', choice($._quoted_identifier, $.identifier)))
     ),
 
   },

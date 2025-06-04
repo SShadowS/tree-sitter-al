@@ -6172,6 +6172,25 @@
     }
   },
   {
+    "type": "customizations_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "data_access_intent_property",
     "named": true,
     "fields": {}
@@ -22780,6 +22799,116 @@
     "fields": {}
   },
   {
+    "type": "profile_caption_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "profile_customizations_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "customizations_list",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "profile_declaration",
+    "named": true,
+    "fields": {
+      "object_name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "profile_caption_property",
+          "named": true
+        },
+        {
+          "type": "profile_customizations_property",
+          "named": true
+        },
+        {
+          "type": "profile_description_property",
+          "named": true
+        },
+        {
+          "type": "profile_rolecenter_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "profile_description_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "profile_rolecenter_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "promoted_action_categories_property",
     "named": true,
     "fields": {
@@ -26044,6 +26173,10 @@
         },
         {
           "type": "permissionset_declaration",
+          "named": true
+        },
+        {
+          "type": "profile_declaration",
           "named": true
         },
         {
@@ -32747,6 +32880,10 @@
     "named": false
   },
   {
+    "type": "Customizations",
+    "named": false
+  },
+  {
     "type": "DATABASE",
     "named": false
   },
@@ -32852,6 +32989,10 @@
   },
   {
     "type": "DeleteAllowed",
+    "named": false
+  },
+  {
+    "type": "Description",
     "named": false
   },
   {
@@ -33915,6 +34056,10 @@
     "named": false
   },
   {
+    "type": "RoleCenter",
+    "named": false
+  },
+  {
     "type": "RowSpan",
     "named": false
   },
@@ -34429,11 +34574,11 @@
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "controladdin",
