@@ -1597,14 +1597,27 @@ module.exports = grammar({
     ),
 
     _report_element: $ => choice(
-      $.property_list,
       $.dataset_section,
       $.labels_section,
       $.requestpage_section,
       $.actions_section,
       $.var_section,
       seq(optional($.attribute_list), $.procedure),
-      seq(optional($.attribute_list), $.generic_trigger)
+      seq(optional($.attribute_list), $.generic_trigger),
+      
+      // Report properties directly as elements
+      $.caption_property,
+      $.processing_only_property,
+      $.usage_category_property,
+      $.application_area_property,
+      $.additional_search_terms_property,
+      $.additional_search_terms_ml_property,
+      $.description_property,
+      $.scope_property,
+      $.permissions_property,
+      $.obsolete_state_property,
+      $.obsolete_reason_property,
+      $.obsolete_tag_property
     ),
 
     labels_section: $ => seq(

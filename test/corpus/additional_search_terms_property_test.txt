@@ -15,17 +15,11 @@ report 12345 "Test Report"
   (report_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property_list
-      (property
-        (caption_property
-          (string_literal))))
-    (property_list
-      (property
-        (processing_only_property)))
-    (property_list
-      (property
-        (additional_search_terms_property
-          value: (string_literal))))))
+    (caption_property
+      (string_literal))
+    (processing_only_property)
+    (additional_search_terms_property
+      value: (string_literal))))
 
 ================================================================================
 AdditionalSearchTerms property in page
@@ -100,22 +94,12 @@ report 78910 "Complete Report"
   (report_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property_list
-      (property
-        (caption_property
-          (string_literal))))
-    (property_list
-      (property
-        (processing_only_property)))
-    (property_list
-      (property
-        (usage_category_property)))
-    (property_list
-      (property
-        (application_area_property
-          value: (identifier))))
-    (property_list
-      (property
-        (additional_search_terms_property
-          value: (string_literal))))
+    (caption_property
+      (string_literal))
+    (processing_only_property)
+    (usage_category_property)
+    (application_area_property
+      value: (identifier))
+    (additional_search_terms_property
+      value: (string_literal))
     (dataset_section)))
