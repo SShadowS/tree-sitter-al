@@ -4503,6 +4503,12 @@ enum_type: $ => prec(1, seq(
 
     _expression: $ => choice(
       // --- Binary Operators First ---
+      // Range expression (..) (prec 8)
+      prec.left(8, seq(
+        field('left', $._expression),
+        field('operator', '..'),
+        field('right', $._expression)
+      )),
       // Arithmetic operator expression (*, /, div, mod) (prec 7)
       prec.left(7, seq(
         field('left', $._expression),
