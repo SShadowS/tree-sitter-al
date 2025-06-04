@@ -4389,8 +4389,8 @@ enum_type: $ => prec(1, seq(
 
     // Define boolean literals as tokens with precedence
     boolean: $ => choice(
-      token(prec(1, 'true')),
-      token(prec(1, 'false'))
+      token(prec(1, choice('true', 'TRUE', 'True'))),
+      token(prec(1, choice('false', 'FALSE', 'False')))
     ),
 
     temporary: $ => choice('temporary', 'TEMPORARY', 'Temporary'),
@@ -4736,6 +4736,7 @@ enum_type: $ => prec(1, seq(
       $.qualified_enum_value,   // Match EnumType::EnumValue pattern
       $.database_reference, // Allow DATABASE::"Table Name" patterns
       $._chained_expression, // Allow member expressions like Value.IsInteger
+      $.unary_expression, // Allow NOT expressions in case patterns
       // Boolean expressions for CASE TRUE OF patterns
       prec(10, seq(
         field('left', $._expression),

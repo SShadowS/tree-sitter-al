@@ -19986,8 +19986,21 @@
             "type": "PREC",
             "value": 1,
             "content": {
-              "type": "STRING",
-              "value": "true"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "true"
+                },
+                {
+                  "type": "STRING",
+                  "value": "TRUE"
+                },
+                {
+                  "type": "STRING",
+                  "value": "True"
+                }
+              ]
             }
           }
         },
@@ -19997,8 +20010,21 @@
             "type": "PREC",
             "value": 1,
             "content": {
-              "type": "STRING",
-              "value": "false"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "false"
+                },
+                {
+                  "type": "STRING",
+                  "value": "FALSE"
+                },
+                {
+                  "type": "STRING",
+                  "value": "False"
+                }
+              ]
             }
           }
         }
@@ -21849,6 +21875,10 @@
         {
           "type": "SYMBOL",
           "name": "_chained_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "unary_expression"
         },
         {
           "type": "PREC",

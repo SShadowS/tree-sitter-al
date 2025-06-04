@@ -24,7 +24,7 @@ table 50010 "Test Table"
     (oninsert_trigger
       (code_block
         (case_statement
-          expression: (identifier)
+          expression: (boolean)
           (case_branch
             left: (identifier)
             operator: (comparison_operator)
@@ -74,7 +74,7 @@ table 50011 "Test Table"
     (onvalidate_trigger
       (code_block
         (case_statement
-          expression: (identifier)
+          expression: (boolean)
           (case_branch
             left: (identifier)
             operator: (comparison_operator)
@@ -86,6 +86,45 @@ table 50011 "Test Table"
             left: (identifier)
             operator: (comparison_operator)
             right: (integer)
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list))))))))
+
+==================
+Case TRUE OF with NOT expression
+==================
+
+table 50012 "Test Table"
+{
+    trigger OnModify()
+    begin
+        CASE TRUE OF
+            NOT ValidateStatus:
+                ERROR('Invalid status');
+            ELSE
+                ProcessRecord();
+        END;
+    end;
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (onmodify_trigger
+      (code_block
+        (case_statement
+          expression: (boolean)
+          (case_branch
+            pattern: (unary_expression
+              (identifier))
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (else_branch
             statements: (call_expression
               function: (identifier)
               arguments: (argument_list))))))))
