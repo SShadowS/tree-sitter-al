@@ -2598,7 +2598,8 @@ module.exports = grammar({
         $.string_literal,
         $.identifier,
         $._quoted_identifier,
-        $.call_expression
+        $.call_expression,
+        $.boolean
       )),
       ';'
     ),
