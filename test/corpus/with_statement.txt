@@ -1,0 +1,130 @@
+================================================================================
+WITH statement with record variable and code block
+================================================================================
+
+codeunit 50000 "WITH Test"
+{
+    procedure TestWithStatement()
+    var
+        Customer: Record Customer;
+    begin
+        WITH Customer DO BEGIN
+            INIT;
+            Name := 'Test Customer';
+            INSERT;
+        END;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (with_statement
+          record_variable: (identifier)
+          body: (code_block
+            (identifier)
+            (assignment_statement
+              left: (identifier)
+              right: (string_literal))
+            (identifier)))))))
+
+================================================================================
+WITH statement with single statement
+================================================================================
+
+codeunit 50001 "WITH Single Test"
+{
+    procedure TestWithStatementSingle()
+    var
+        Item: Record Item;
+    begin
+        WITH Item DO
+            DELETE;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (with_statement
+          record_variable: (identifier)
+          body: (identifier))))))
+
+================================================================================
+Nested WITH statements
+================================================================================
+
+codeunit 50002 "Nested WITH Test"
+{
+    procedure TestNestedWith()
+    var
+        SalesHeader: Record "Sales Header";
+        SalesLine: Record "Sales Line";
+    begin
+        WITH SalesHeader DO BEGIN
+            INIT;
+            WITH SalesLine DO BEGIN
+                INIT;
+                "Document Type" := SalesHeader."Document Type";
+            END;
+        END;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (with_statement
+          record_variable: (identifier)
+          body: (code_block
+            (identifier)
+            (with_statement
+              record_variable: (identifier)
+              body: (code_block
+                (identifier)
+                (assignment_statement
+                  left: (quoted_identifier)
+                  right: (field_access
+                    record: (identifier)
+                    field: (quoted_identifier)))))))))))

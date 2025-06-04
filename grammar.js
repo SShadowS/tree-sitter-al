@@ -4360,7 +4360,8 @@ enum_type: $ => prec(1, seq(
         $.case_statement,
         $.for_statement,
         $.foreach_statement,
-        $.while_statement, 
+        $.while_statement,
+        $.with_statement,
         $._expression_statement
       ),
       optional(';')
@@ -4376,6 +4377,15 @@ enum_type: $ => prec(1, seq(
       ))
     )),
 
+    with_statement: $ => prec.right(seq(
+      choice('with', 'WITH', 'With'),
+      field('record_variable', $._expression),
+      choice('do', 'DO', 'Do'),
+      field('body', choice(
+        $._statement,
+        $.code_block
+      ))
+    )),
 
     for_statement: $ => prec.right(seq(
       choice('for', 'FOR', 'For'),

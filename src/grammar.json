@@ -19843,6 +19843,10 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "with_statement"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "_expression_statement"
               }
             ]
@@ -19888,6 +19892,74 @@
           {
             "type": "FIELD",
             "name": "condition",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_expression"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "do"
+              },
+              {
+                "type": "STRING",
+                "value": "DO"
+              },
+              {
+                "type": "STRING",
+                "value": "Do"
+              }
+            ]
+          },
+          {
+            "type": "FIELD",
+            "name": "body",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_statement"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "code_block"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "with_statement": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "with"
+              },
+              {
+                "type": "STRING",
+                "value": "WITH"
+              },
+              {
+                "type": "STRING",
+                "value": "With"
+              }
+            ]
+          },
+          {
+            "type": "FIELD",
+            "name": "record_variable",
             "content": {
               "type": "SYMBOL",
               "name": "_expression"
