@@ -3319,6 +3319,12 @@ module.exports = grammar({
       /[cC][aA][pP][tT][iI][oO][nN]/,
       '=',
       $.string_literal,
+      optional(seq(
+        ',',
+        choice('Locked', 'locked', 'LOCKED'),
+        '=',
+        $.boolean
+      )),
       ';'
     ),
 

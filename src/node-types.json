@@ -3417,9 +3417,13 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "boolean",
+          "named": true
+        },
         {
           "type": "string_literal",
           "named": true
@@ -33060,6 +33064,10 @@
     "named": false
   },
   {
+    "type": "LOCKED",
+    "named": false
+  },
+  {
     "type": "LOOKUP",
     "named": false
   },
@@ -33097,6 +33105,10 @@
   },
   {
     "type": "Local",
+    "named": false
+  },
+  {
+    "type": "Locked",
     "named": false
   },
   {
@@ -34154,11 +34166,11 @@
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "controladdin",
@@ -34194,11 +34206,11 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "div",
@@ -34330,6 +34342,10 @@
   },
   {
     "type": "local",
+    "named": false
+  },
+  {
+    "type": "locked",
     "named": false
   },
   {
