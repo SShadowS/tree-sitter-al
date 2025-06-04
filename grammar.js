@@ -525,12 +525,7 @@ module.exports = grammar({
     data_caption_expression_property: $ => seq(
       'DataCaptionExpression',
       '=',
-      field('value', choice(
-        $.string_literal,
-        $.identifier,
-        $._quoted_identifier,
-        $.call_expression
-      )),
+      field('value', $._expression),
       ';'
     ),
 
@@ -2661,7 +2656,10 @@ module.exports = grammar({
     sql_data_type_value: $ => $.string_literal,
     sql_timestamp_value: $ => $.boolean,
     test_table_relation_value: $ => $.boolean,
-    tool_tip_value: $ => $.string_literal,
+    tool_tip_value: $ => seq(
+      $.string_literal,
+      optional(seq(',', 'Comment', '=', $.string_literal))
+    ),
     unique_value: $ => $.boolean,
     validate_table_relation_value: $ => $.boolean,
     values_allowed_value: $ => seq(
