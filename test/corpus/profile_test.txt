@@ -121,3 +121,91 @@ profile MinimalProfile
       value: (string_literal))
     (profile_rolecenter_property
       value: (quoted_identifier))))
+
+================================================================================
+Profile with extended properties
+================================================================================
+
+profile ExtendedProfile
+{
+    Enabled = true;
+    ProfileDescription = 'Extended profile with all properties';
+    Caption = 'Extended Profile';
+    RoleCenter = "Advanced Role Center";
+    Promoted = false;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (profile_declaration
+    object_name: (identifier)
+    (profile_enabled_property
+      value: (boolean))
+    (profile_description_property2
+      value: (string_literal))
+    (profile_caption_property
+      value: (string_literal))
+    (profile_rolecenter_property
+      value: (quoted_identifier))
+    (profile_promoted_property
+      value: (boolean))))
+
+================================================================================
+Profile with mixed property types
+================================================================================
+
+profile MixedProfile
+{
+    Enabled = false;
+    Description = 'Traditional description property';
+    ProfileDescription = 'New style description property';
+    RoleCenter = SimpleRoleCenter;
+    Promoted = true;
+    Customizations = "Custom Page 1", "Custom Page 2";
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (profile_declaration
+    object_name: (identifier)
+    (profile_enabled_property
+      value: (boolean))
+    (profile_description_property
+      value: (string_literal))
+    (profile_description_property2
+      value: (string_literal))
+    (profile_rolecenter_property
+      value: (identifier))
+    (profile_promoted_property
+      value: (boolean))
+    (profile_customizations_property
+      value: (customizations_list
+        (quoted_identifier)
+        (quoted_identifier)))))
+
+================================================================================
+Profile with empty customizations
+================================================================================
+
+profile EmptyCustomizationsProfile
+{
+    Description = 'Profile with empty customizations';
+    RoleCenter = "Role Center";
+    Customizations =;
+    Caption = 'Empty Customizations';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (profile_declaration
+    object_name: (identifier)
+    (profile_description_property
+      value: (string_literal))
+    (profile_rolecenter_property
+      value: (quoted_identifier))
+    (profile_customizations_property)
+    (profile_caption_property
+      value: (string_literal))))

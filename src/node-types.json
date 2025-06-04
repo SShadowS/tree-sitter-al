@@ -23470,7 +23470,7 @@
     "fields": {
       "value": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "customizations_list",
@@ -23516,6 +23516,18 @@
           "named": true
         },
         {
+          "type": "profile_description_property2",
+          "named": true
+        },
+        {
+          "type": "profile_enabled_property",
+          "named": true
+        },
+        {
+          "type": "profile_promoted_property",
+          "named": true
+        },
+        {
           "type": "profile_rolecenter_property",
           "named": true
         }
@@ -23532,6 +23544,54 @@
         "types": [
           {
             "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "profile_description_property2",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "profile_enabled_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "profile_promoted_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
             "named": true
           }
         ]
@@ -34490,6 +34550,10 @@
     "named": false
   },
   {
+    "type": "ProfileDescription",
+    "named": false
+  },
+  {
     "type": "Promoted",
     "named": false
   },
@@ -35128,11 +35192,11 @@
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "controladdin",

@@ -24566,6 +24566,18 @@
         {
           "type": "SYMBOL",
           "name": "profile_customizations_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "profile_enabled_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "profile_description_property2"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "profile_promoted_property"
         }
       ]
     },
@@ -24668,8 +24680,16 @@
           "type": "FIELD",
           "name": "value",
           "content": {
-            "type": "SYMBOL",
-            "name": "customizations_list"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "customizations_list"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         },
         {
@@ -24718,6 +24738,81 @@
               }
             ]
           }
+        }
+      ]
+    },
+    "profile_enabled_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "Enabled"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "boolean"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "profile_description_property2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ProfileDescription"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "profile_promoted_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "Promoted"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "boolean"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
         }
       ]
     }

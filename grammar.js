@@ -5285,7 +5285,10 @@ enum_type: $ => prec(1, seq(
       $.profile_description_property,
       $.profile_rolecenter_property,
       $.profile_caption_property,
-      $.profile_customizations_property
+      $.profile_customizations_property,
+      $.profile_enabled_property,
+      $.profile_description_property2,
+      $.profile_promoted_property
     ),
 
     profile_description_property: $ => seq(
@@ -5312,13 +5315,34 @@ enum_type: $ => prec(1, seq(
     profile_customizations_property: $ => seq(
       'Customizations',
       '=',
-      field('value', $.customizations_list),
+      field('value', optional($.customizations_list)),
       ';'
     ),
 
     customizations_list: $ => seq(
       choice($._quoted_identifier, $.identifier),
       repeat(seq(',', choice($._quoted_identifier, $.identifier)))
+    ),
+
+    profile_enabled_property: $ => seq(
+      'Enabled',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    profile_description_property2: $ => seq(
+      'ProfileDescription',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    profile_promoted_property: $ => seq(
+      'Promoted',
+      '=',
+      field('value', $.boolean),
+      ';'
     ),
 
   },
