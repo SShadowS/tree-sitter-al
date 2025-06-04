@@ -2104,7 +2104,8 @@ module.exports = grammar({
         $._layout_element,
         $.property_list,
         $.visible_property,
-        $.freeze_column_property
+        $.freeze_column_property,
+        $.enabled_property
       )),
       '}'
     ),
@@ -2477,6 +2478,7 @@ module.exports = grammar({
       seq(optional('"'), /[sS][tT][rR][oO][nN][gG]/, optional('"')),
       seq(optional('"'), /[sS][tT][rR][oO][nN][gG][aA][cC][cC][eE][nN][tT]/, optional('"')),
       seq(optional('"'), /[aA][tT][tT][eE][nN][tT][iI][oO][nN]/, optional('"')),
+      seq(optional('"'), /[aA][tT][tT][eE][nN][tT][iI][oO][nN][aA][cC][cC][eE][nN][tT]/, optional('"')),
       seq(optional('"'), /[fF][aA][vV][oO][rR][aA][bB][lL][eE]/, optional('"')),
       seq(optional('"'), /[uU][nN][fF][aA][vV][oO][rR][aA][bB][lL][eE]/, optional('"'))
     ),

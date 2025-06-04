@@ -9274,6 +9274,10 @@
               {
                 "type": "SYMBOL",
                 "name": "freeze_column_property"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "enabled_property"
               }
             ]
           }
@@ -10945,6 +10949,39 @@
             {
               "type": "PATTERN",
               "value": "[aA][tT][tT][eE][nN][tT][iI][oO][nN]"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "\""
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "\""
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "PATTERN",
+              "value": "[aA][tT][tT][eE][nN][tT][iI][oO][nN][aA][cC][cC][eE][nN][tT]"
             },
             {
               "type": "CHOICE",

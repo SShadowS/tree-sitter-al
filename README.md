@@ -8,9 +8,13 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,117 files (83.9%) parse successfully**.
+Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,136 files (85.3%) parse successfully**.
 
 Recent improvements include:
+- **Boolean literal support** - Enhanced support for uppercase boolean literals (TRUE, FALSE) alongside lowercase variants
+- **Case pattern matching** - Added support for unary expressions (NOT) in case statement patterns
+- **Complex property syntax** - Support for Caption and ToolTip properties with Comment parameters for multilingual applications
+- **Expression support** - DataCaptionExpression now supports complex string concatenations and expressions
 - **Page customization objects** - Full support for `pagecustomization` declarations with view modifications
 - **Complete built-in function coverage** - All AL built-in functions across database, math, string, date/time categories
 - **Advanced language constructs** - Interface operators, multi-dimensional arrays, range expressions
