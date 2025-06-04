@@ -3343,7 +3343,9 @@ module.exports = grammar({
       $.save_values_property,
       $.data_item_table_view_property,
       $.promoted_only_property,
-      $.shortcut_key_property
+      $.shortcut_key_property,
+      $.additional_search_terms_property,
+      $.additional_search_terms_ml_property
     )),
 
     caption_property: $ => seq(
