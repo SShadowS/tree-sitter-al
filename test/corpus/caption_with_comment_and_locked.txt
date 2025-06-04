@@ -1,0 +1,92 @@
+================================================================================
+Caption property with Comment and Locked parameters
+================================================================================
+
+table 123 "Test Table"
+{
+    Caption = 'Test Table';
+    
+    fields
+    {
+        field(1; "Simple Field"; Text[50])
+        {
+            Caption = 'Simple Caption';
+        }
+        
+        field(2; "Field with Comment"; Text[50])
+        {
+            Caption = 'Field Caption', Comment = 'This is a translation note';
+        }
+        
+        field(3; "Field with Locked"; Text[50])
+        {
+            Caption = 'Locked Caption', Locked = true;
+        }
+        
+        field(4; "Field with Both"; Text[50])
+        {
+            Caption = 'Both Caption', Comment = 'Translation comment', Locked = false;
+        }
+        
+        field(5; "Another Order"; Text[50])
+        {
+            Caption = 'Another Caption', Locked = true, Comment = 'Comment after locked';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (caption_property
+          (string_literal)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (caption_property
+          (string_literal)
+          (string_literal)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (caption_property
+          (string_literal)
+          (boolean)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (caption_property
+          (string_literal)
+          (string_literal)
+          (boolean)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (caption_property
+          (string_literal)
+          (boolean)
+          (string_literal))))))
