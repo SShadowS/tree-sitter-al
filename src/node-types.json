@@ -12574,6 +12574,10 @@
         {
           "type": "visible_property",
           "named": true
+        },
+        {
+          "type": "width_property",
+          "named": true
         }
       ]
     }
@@ -23067,6 +23071,10 @@
           "named": true
         },
         {
+          "type": "width_property",
+          "named": true
+        },
+        {
           "type": "xml_name_property",
           "named": true
         }
@@ -30974,6 +30982,22 @@
     }
   },
   {
+    "type": "width_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "with_statement",
     "named": true,
     "fields": {
@@ -34012,6 +34036,10 @@
     "named": false
   },
   {
+    "type": "Width",
+    "named": false
+  },
+  {
     "type": "With",
     "named": false
   },
@@ -34166,11 +34194,11 @@
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "controladdin",
@@ -34310,11 +34338,11 @@
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "interface",

@@ -2117,6 +2117,7 @@ module.exports = grammar({
       $.navigation_page_id_property,
       $.quick_entry_property,
       $.row_span_property,
+      $.width_property,
       $.show_caption_property,
       $.show_mandatory_property,
       $.style_property,
@@ -2163,6 +2164,7 @@ module.exports = grammar({
           $.decimal_places_property,
           $.sign_displacement_property,
           $.title_property,
+          $.width_property,
           $.odata_edm_type_property,
           $.field_trigger_declaration,
           $.blank_zero_property,
@@ -2220,6 +2222,7 @@ module.exports = grammar({
           $.navigation_page_id_property,
           $.quick_entry_property,
           $.row_span_property,
+          $.width_property,
           $.show_caption_property,
           $.show_mandatory_property,
           $.sign_displacement_property,
@@ -2524,6 +2527,13 @@ module.exports = grammar({
 
     row_span_property: $ => seq(
       'RowSpan',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
+    width_property: $ => seq(
+      'Width',
       '=',
       field('value', $.integer),
       ';'
@@ -3305,6 +3315,7 @@ module.exports = grammar({
       $.navigation_page_id_property,
       $.quick_entry_property,
       $.row_span_property,
+      $.width_property,
       $.show_caption_property,
       $.show_mandatory_property,
       $.style_property,

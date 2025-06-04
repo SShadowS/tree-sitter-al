@@ -1,0 +1,136 @@
+================================================================================
+Width property in page field
+================================================================================
+
+page 50000 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(Icon; Icon)
+            {
+                ApplicationArea = All;
+                ShowCaption = false;
+                Width = 1;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (application_area_property
+            value: (identifier))
+          (show_caption_property
+            value: (boolean))
+          (width_property
+            value: (integer)))))))
+
+================================================================================
+Width property with various values
+================================================================================
+
+page 50001 "Width Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(SmallIcon; SmallIcon)
+            {
+                Width = 1;
+            }
+            field(MediumIcon; MediumIcon)
+            {
+                Width = 5;
+            }
+            field(LargeIcon; LargeIcon)
+            {
+                Width = 10;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (width_property
+            value: (integer)))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (width_property
+            value: (integer)))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (width_property
+            value: (integer)))))))
+
+================================================================================
+Width property in different field formats
+================================================================================
+
+page 50002 "Field Format Test"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(Field1)
+            {
+                Width = 2;
+            }
+            field(Field2)(Control2)
+            {
+                Width = 3;
+            }
+            field("Field3"; FieldName)
+            {
+                Width = 4;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          name: (identifier)
+          (width_property
+            value: (integer)))
+        (field_section
+          name: (identifier)
+          control_name: (identifier)
+          (width_property
+            value: (integer)))
+        (field_section
+          control_id: (quoted_identifier)
+          source_or_field_name: (identifier)
+          (width_property
+            value: (integer)))))))
