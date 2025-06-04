@@ -1556,7 +1556,7 @@ module.exports = grammar({
       optional($.parameter_list),
       ')',
       optional(seq(':', field('return_type', $.type_specification))),
-      ';'
+      optional(';')
     ),
 
     report_declaration: $ => seq(
