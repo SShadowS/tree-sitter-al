@@ -4637,11 +4637,11 @@ enum_type: $ => prec(1, seq(
       ']'
     ),
 
-    // Rule for array indexing/subscript expressions
+    // Rule for array indexing/subscript expressions (supports multi-dimensional arrays)
     subscript_expression: $ => prec.left(9, seq(
       field('array', $._expression),
       '[',
-      field('index', $._expression),
+      field('indices', $.expression_list),
       ']'
     )),
 

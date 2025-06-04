@@ -1,0 +1,229 @@
+==================
+Multi-dimensional array assignment
+==================
+
+table 50020 "Test Table"
+{
+    trigger OnInsert()
+    var
+        TempResultWord: array[10, 2] of Text;
+        NoOfCaptions: Integer;
+        StartWord: Text;
+        EndWord: Text;
+    begin
+        NoOfCaptions := NoOfCaptions + 1;
+        TempResultWord[NoOfCaptions, 1] := StartWord;
+        TempResultWord[NoOfCaptions, 2] := EndWord;
+    end;
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (oninsert_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (array_type
+              sizes: (integer)
+              sizes: (integer)
+              (type_specification
+                (text_type)))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (assignment_statement
+          left: (identifier)
+          left: (identifier)
+          right: (integer))
+        (assignment_statement
+          left: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              (identifier)
+              (integer)))
+          right: (identifier))
+        (assignment_statement
+          left: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              (identifier)
+              (integer)))
+          right: (identifier))))))
+
+==================
+Multi-dimensional array access in expressions
+==================
+
+table 50021 "Test Table"
+{
+    trigger OnValidate()
+    var
+        Matrix: array[5, 3] of Integer;
+        Result: Integer;
+    begin
+        Result := Matrix[1, 2] + Matrix[3, 1];
+        if Matrix[2, 3] > 0 then
+            Message('Positive');
+    end;
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (onvalidate_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (array_type
+              sizes: (integer)
+              sizes: (integer)
+              (type_specification
+                (basic_type)))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_statement
+          left: (identifier)
+          left: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              (integer)
+              (integer)))
+          right: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              (integer)
+              (integer))))
+        (if_statement
+          left: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              (integer)
+              (integer)))
+          operator: (comparison_operator)
+          right: (integer)
+          then_branch: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))))
+
+==================
+Three-dimensional array access
+==================
+
+table 50022 "Test Table"
+{
+    trigger OnInsert()
+    var
+        Cube: array[2, 3, 4] of Decimal;
+    begin
+        Cube[1, 2, 3] := 42.5;
+    end;
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (oninsert_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (array_type
+              sizes: (integer)
+              sizes: (integer)
+              sizes: (integer)
+              (type_specification
+                (basic_type))))))
+      (code_block
+        (assignment_statement
+          left: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              (integer)
+              (integer)
+              (integer)))
+          right: (decimal))))))
+
+==================
+Array access with variable indices
+==================
+
+table 50023 "Test Table"
+{
+    trigger OnInsert()
+    var
+        Data: array[10, 5] of Text;
+        i, j: Integer;
+    begin
+        Data[i, j] := 'Test';
+        Data[i + 1, j - 1] := Data[i, j];
+    end;
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (oninsert_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (array_type
+              sizes: (integer)
+              sizes: (integer)
+              (type_specification
+                (text_type)))))
+        (variable_declaration
+          name: (identifier)
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_statement
+          left: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              (identifier)
+              (identifier)))
+          right: (string_literal))
+        (assignment_statement
+          left: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              left: (identifier)
+              right: (integer)
+              left: (identifier)
+              right: (integer)))
+          right: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              (identifier)
+              (identifier))))))))

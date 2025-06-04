@@ -32,5 +32,6 @@ codeunit 50118 "Simple Array Indexing Test"
         (assignment_statement
           (subscript_expression
             (identifier)
-            (integer))
+            (expression_list
+              (integer)))
           (integer))))))
