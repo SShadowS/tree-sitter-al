@@ -3629,8 +3629,25 @@
           "name": "trigger_declaration"
         },
         {
-          "type": "SYMBOL",
-          "name": "procedure"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "attribute_list"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "procedure"
+            }
+          ]
         }
       ]
     },

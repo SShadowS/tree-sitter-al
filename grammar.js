@@ -913,7 +913,7 @@ module.exports = grammar({
       $.property_list,
       $.var_section,
       $.trigger_declaration,
-      $.procedure
+      seq(optional($.attribute_list), $.procedure)
     ),
 
     tableextension_declaration: $ => seq(
