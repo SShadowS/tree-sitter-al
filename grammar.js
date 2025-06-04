@@ -1519,7 +1519,7 @@ module.exports = grammar({
           repeat(seq(',', $.string_literal))
         )
       )),
-      ';'
+      optional(';')
     ),
 
     controladdin_event: $ => seq(
@@ -1529,7 +1529,7 @@ module.exports = grammar({
       '(',
       optional($.parameter_list),
       ')',
-      ';'
+      optional(';')
     ),
 
     controladdin_procedure: $ => seq(
@@ -1538,7 +1538,7 @@ module.exports = grammar({
       '(',
       optional($.parameter_list),
       ')',
-      ';'
+      optional(';')
     ),
 
     interface_declaration: $ => seq(
