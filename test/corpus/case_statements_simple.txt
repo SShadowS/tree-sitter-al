@@ -26,16 +26,16 @@ table 50000 "Test Table"
         (case_statement
           expression: (identifier)
           (case_branch
-            pattern: (enum_value_expression
-              enum: (identifier)
-              enum_member: (identifier))
+            pattern: (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier))
             statements: (assignment_statement
               left: (identifier)
               right: (integer)))
           (case_branch
-            pattern: (enum_value_expression
-              enum: (identifier)
-              enum_member: (identifier))
+            pattern: (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier))
             statements: (assignment_statement
               left: (identifier)
               right: (integer))))))))

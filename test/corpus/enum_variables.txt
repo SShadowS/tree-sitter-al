@@ -181,7 +181,7 @@ codeunit 50113 "Enum Case Test"
         (case_statement
           (identifier)
           (case_branch
-            (enum_value_expression
+            (qualified_enum_value
               (quoted_identifier)
               (identifier))
             (call_expression
@@ -189,7 +189,7 @@ codeunit 50113 "Enum Case Test"
               (argument_list
                 (string_literal))))
           (case_branch
-            (enum_value_expression
+            (qualified_enum_value
               (quoted_identifier)
               (identifier))
             (call_expression
@@ -197,7 +197,7 @@ codeunit 50113 "Enum Case Test"
               (argument_list
                 (string_literal))))
           (case_branch
-            (enum_value_expression
+            (qualified_enum_value
               (quoted_identifier)
               (identifier))
             (call_expression
@@ -264,7 +264,7 @@ codeunit 50114 "Quoted Enum Values Test"
         (case_statement
           (identifier)
           (case_branch
-            (enum_value_expression
+            (qualified_enum_value
               (quoted_identifier)
               (quoted_identifier))
             (call_expression
@@ -272,7 +272,7 @@ codeunit 50114 "Quoted Enum Values Test"
               (argument_list
                 (string_literal))))
           (case_branch
-            (enum_value_expression
+            (qualified_enum_value
               (quoted_identifier)
               (quoted_identifier))
             (call_expression
@@ -280,7 +280,7 @@ codeunit 50114 "Quoted Enum Values Test"
               (argument_list
                 (string_literal))))
           (case_branch
-            (enum_value_expression
+            (qualified_enum_value
               (quoted_identifier)
               (quoted_identifier))
             (call_expression
@@ -377,7 +377,7 @@ codeunit 50116 "Enum Parameter Test"
         (case_statement
           (identifier)
           (case_branch
-            (enum_value_expression
+            (qualified_enum_value
               (quoted_identifier)
               (identifier))
             (call_expression
@@ -385,7 +385,7 @@ codeunit 50116 "Enum Parameter Test"
               (argument_list
                 (string_literal))))
           (case_branch
-            (enum_value_expression
+            (qualified_enum_value
               (quoted_identifier)
               (identifier))
             (call_expression
@@ -393,7 +393,7 @@ codeunit 50116 "Enum Parameter Test"
               (argument_list
                 (string_literal))))
           (case_branch
-            (enum_value_expression
+            (qualified_enum_value
               (quoted_identifier)
               (identifier))
             (call_expression

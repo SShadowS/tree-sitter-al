@@ -26,16 +26,16 @@ table 50006 "Test Table"
         (case_statement
           expression: (quoted_identifier)
           (case_branch
-            pattern: (enum_value_expression
-              enum: (quoted_identifier)
-              enum_member: (identifier))
+            pattern: (qualified_enum_value
+              enum_type: (quoted_identifier)
+              value: (identifier))
             statements: (assignment_statement
               left: (quoted_identifier)
               right: (string_literal)))
             (case_branch
-              pattern: (enum_value_expression
-                enum: (quoted_identifier)
-                enum_member: (quoted_identifier))
+              pattern: (qualified_enum_value
+                enum_type: (quoted_identifier)
+                value: (quoted_identifier))
               statements: (call_expression
                 function: (identifier)
                 arguments: (argument_list

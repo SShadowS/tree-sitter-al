@@ -796,9 +796,12 @@ module.exports = grammar({
     ),
     
     filter_expression: $ => seq(
-      field('field', $.field_reference),
-      field('operator', $.filter_operator),
-      field('value', $.filter_value)
+      choice(
+        $.where_clause,
+        $.sorting_clause,
+        seq($.where_clause, $.sorting_clause),
+        seq($.sorting_clause, $.where_clause)
+      )
     ),
     
     // Ensure at least one clause is present to avoid empty string match
@@ -1091,11 +1094,11 @@ module.exports = grammar({
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat(choice(
+      repeat(seq(optional(';'), choice(
         $._action_property,
         $.trigger_declaration,
         $.var_section
-      )),
+      ))),
       '}'
     ),
 
@@ -1107,11 +1110,11 @@ module.exports = grammar({
       field('action_name', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat(choice(
+      repeat(seq(optional(';'), choice(
         $._action_property,
         $.trigger_declaration,
         $.var_section
-      )),
+      ))),
       '}'
     ),
 
@@ -1121,11 +1124,11 @@ module.exports = grammar({
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat(choice(
+      repeat(seq(optional(';'), choice(
         $._action_property,
         $.trigger_declaration,
         $.var_section
-      )),
+      ))),
       '}'
     ),
 
@@ -1144,6 +1147,9 @@ module.exports = grammar({
       $.image_property,
       $.in_footer_bar_property,
       $.is_header_property,
+      $.obsolete_reason_property,
+      $.obsolete_state_property,
+      $.obsolete_tag_property,
       $.promoted_property,
       $.promoted_category_property,
       $.promoted_is_big_property,
@@ -1268,10 +1274,10 @@ module.exports = grammar({
         seq( // sorting(...) pattern
           $.identifier, // e.g., 'sorting'
           '(',
-          // Comma-separated list of one or more quoted identifiers
+          // Comma-separated list of one or more identifiers (quoted or unquoted)
           seq(
-            $._quoted_identifier,
-            repeat(seq(',', $._quoted_identifier))
+            choice($.identifier, $._quoted_identifier),
+            repeat(seq(',', choice($.identifier, $._quoted_identifier)))
           ),
           ')'
         ),
@@ -1480,6 +1486,7 @@ module.exports = grammar({
       '(',
       optional($.parameter_list), // Allow optional parameters
       ')',
+      optional(seq(':', $.type_specification)), // Add support for return types
       optional($.var_section),
       $.code_block
     ),
@@ -1489,7 +1496,7 @@ module.exports = grammar({
       field('object_id', $.integer),
       field('object_name', choice($._quoted_identifier, $.identifier)),
       '{',
-      repeat($._page_element),
+      repeat(seq(optional(';'), $._page_element)),
       '}'
     ),
 
@@ -2114,6 +2121,7 @@ module.exports = grammar({
       $.style_property,
       $.style_expr_property,
       $.blank_zero_property,
+      $.blank_numbers_property,
       $.extended_datatype_property,
       $.auto_format_expression_property,
       $.auto_format_type_property,
@@ -2157,6 +2165,7 @@ module.exports = grammar({
           $.odata_edm_type_property,
           $.field_trigger_declaration,
           $.blank_zero_property,
+          $.blank_numbers_property,
           $.extended_datatype_property,
           $.auto_format_expression_property,
           $.auto_format_type_property,
@@ -2218,7 +2227,10 @@ module.exports = grammar({
           $.title_property,
           $.odata_edm_type_property,
           $.blank_zero_property,
+          $.blank_numbers_property,
           $.extended_datatype_property,
+          $.auto_format_expression_property,
+          $.auto_format_type_property,
           // Missing field properties
           $.access_by_permission_property,
           // Obsolete Properties for fields
@@ -2427,13 +2439,13 @@ module.exports = grammar({
     ),
 
     style_value: $ => choice(
-      /[sS][tT][aA][nN][dD][aA][rR][dD]/,
-      /[sS][tT][aA][nN][dD][aA][rR][dD][aA][cC][cC][eE][nN][tT]/,
-      /[sS][tT][rR][oO][nN][gG]/,
-      /[sS][tT][rR][oO][nN][gG][aA][cC][cC][eE][nN][tT]/,
-      /[aA][tT][tT][eE][nN][tT][iI][oO][nN]/,
-      /[fF][aA][vV][oO][rR][aA][bB][lL][eE]/,
-      /[uU][nN][fF][aA][vV][oO][rR][aA][bB][lL][eE]/
+      seq(optional('"'), /[sS][tT][aA][nN][dD][aA][rR][dD]/, optional('"')),
+      seq(optional('"'), /[sS][tT][aA][nN][dD][aA][rR][dD][aA][cC][cC][eE][nN][tT]/, optional('"')),
+      seq(optional('"'), /[sS][tT][rR][oO][nN][gG]/, optional('"')),
+      seq(optional('"'), /[sS][tT][rR][oO][nN][gG][aA][cC][cC][eE][nN][tT]/, optional('"')),
+      seq(optional('"'), /[aA][tT][tT][eE][nN][tT][iI][oO][nN]/, optional('"')),
+      seq(optional('"'), /[fF][aA][vV][oO][rR][aA][bB][lL][eE]/, optional('"')),
+      seq(optional('"'), /[uU][nN][fF][aA][vV][oO][rR][aA][bB][lL][eE]/, optional('"'))
     ),
 
     run_page_mode_value: $ => choice(
@@ -2470,13 +2482,6 @@ module.exports = grammar({
       field('value', $.boolean),
       ';'
     )),
-
-    promoted_only_property: $ => seq(
-      'PromotedOnly',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
     
     hide_value_property: $ => prec(12, seq(
       'HideValue',
@@ -2685,6 +2690,7 @@ module.exports = grammar({
 
     blank_numbers_value: $ => choice(
       $.boolean,
+      $.string_literal,     // String literal values like "BlankNeg"
       $.identifier,         // Variable or property references like "BlankZero"
       $._quoted_identifier  // Quoted property references
     ),
@@ -3384,10 +3390,17 @@ module.exports = grammar({
       ))
     )),
 
+    // Helper rule for unquoted variable names (allows certain keywords as identifiers)
+    _unquoted_variable_name: $ => choice(
+      $.identifier,
+      // Allow the keyword 'Description' to be treated as an identifier in variable contexts
+      alias(/[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]/, $.identifier)
+    ),
+
     // Helper rule for comma-separated variable names
     _variable_name_list: $ => seq(
-      field('name', choice($.identifier, $._quoted_identifier)),
-      repeat(seq(',', field('name', choice($.identifier, $._quoted_identifier))))
+      field('name', choice($._unquoted_variable_name, $._quoted_identifier)),
+      repeat(seq(',', field('name', choice($._unquoted_variable_name, $._quoted_identifier))))
     ),
 
     variable_declaration: $ => choice(
@@ -3614,7 +3627,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     text_type: $ => seq(
-      prec(1, choice('Text', 'TEXT', 'text')),
+      prec(15, choice('Text', 'TEXT', 'text')), // Even higher precedence
       optional(seq(
         '[',
         field('length', $.integer),
@@ -4258,8 +4271,7 @@ enum_type: $ => prec(1, seq(
       // Optional semicolon even when there's no return type (for test procedures)
       optional(';'),
       optional($.var_section),
-      $.code_block,
-      optional(';')
+      $.code_block
     ),
 
     comparison_operator: $ => choice(
@@ -4613,11 +4625,13 @@ enum_type: $ => prec(1, seq(
     ),
 
     // _case_pattern now directly handles single or multiple patterns
+    // Updated to handle pragmas that may split pattern lists
     _case_pattern: $ => choice(
       // Case 1: Multiple patterns separated by commas
       seq(
+        optional(','), // Allow optional leading comma for pragma-split patterns
         $._single_pattern,
-        repeat1(seq(',', $._single_pattern))
+        repeat(seq(',', optional($._single_pattern))) // Make patterns optional after comma for pragma handling
       ),
       // Case 2: A single pattern element
       $._single_pattern
@@ -4626,7 +4640,8 @@ enum_type: $ => prec(1, seq(
     // _single_pattern defines the elements allowed within a case pattern
     _single_pattern: $ => choice(
       $._literal_value,
-      $.enum_value_expression, // Match the full Record.Field::Value or EnumType::Value pattern
+      $.enum_value_expression, // Match the full Record.Field::Value pattern
+      $.qualified_enum_value,   // Match EnumType::EnumValue pattern
       $.database_reference, // Allow DATABASE::"Table Name" patterns
       $._chained_expression, // Allow member expressions like Value.IsInteger
       $.identifier, // Keep for simple identifiers
@@ -4785,13 +4800,6 @@ enum_type: $ => prec(1, seq(
       /[mM][aA][nN][yY]/
     ),
 
-    show_filter_property: $ => seq(
-      'ShowFilter',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
-
     update_propagation_property: $ => seq(
       'UpdatePropagation',
       '=',
@@ -4825,7 +4833,7 @@ enum_type: $ => prec(1, seq(
     grid_layout_property: $ => seq(
       'GridLayout',
       '=',
-      field('value', $.boolean),
+      field('value', $.grid_layout_value),
       ';'
     ),
 
@@ -4846,6 +4854,11 @@ enum_type: $ => prec(1, seq(
     tree_initial_state_value: $ => choice(
       /[cC][oO][lL][lL][aA][pP][sS][eE][aA][lL][lL]/,
       /[eE][xX][pP][aA][nN][dD][aA][lL][lL]/
+    ),
+
+    grid_layout_value: $ => choice(
+      /[cC][oO][lL][uU][mM][nN][sS]/,
+      /[rR][oO][wW][sS]/
     ),
 
     custom_action_type_property: $ => seq(
@@ -4890,13 +4903,6 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    sign_displacement_property: $ => seq(
-      'SignDisplacement',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
-
     title_property: $ => seq(
       'Title',
       '=',
@@ -4925,15 +4931,6 @@ enum_type: $ => prec(1, seq(
         $.string_literal
       )),
       ';'
-    ),
-
-    filter_expression: $ => seq(
-      choice(
-        $.where_clause,
-        $.sorting_clause,
-        seq($.where_clause, $.sorting_clause),
-        seq($.sorting_clause, $.where_clause)
-      )
     ),
 
     ellipsis_property: $ => seq(
@@ -5037,7 +5034,6 @@ enum_type: $ => prec(1, seq(
       'ControlAddin', 'controladdin', 'CONTROLADDIN',
       
       // Data types
-      'Text', 'text', 'TEXT',
       'Code', 'code', 'CODE',
       'Integer', 'integer', 'INTEGER',
       'Decimal', 'decimal', 'DECIMAL',
