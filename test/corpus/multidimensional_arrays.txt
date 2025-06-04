@@ -1,0 +1,94 @@
+================================================================================
+Multi-dimensional arrays in procedure parameters
+================================================================================
+
+codeunit 123 Test
+{
+    procedure GetData(var ExpectedParts: array[20, 100] of Text[1024])
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (procedure
+      name: (name)
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name)
+          parameter_type: (type_specification
+            (array_type
+              sizes: (integer)
+              sizes: (integer)
+              (type_specification
+                (text_type
+                  length: (integer)))))))
+      (code_block))))
+
+================================================================================
+Single-dimensional array for comparison
+================================================================================
+
+codeunit 123 Test
+{
+    procedure GetData(var InputData: array[20] of Text[1024])
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (procedure
+      name: (name)
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name)
+          parameter_type: (type_specification
+            (array_type
+              sizes: (integer)
+              (type_specification
+                (text_type
+                  length: (integer)))))))
+      (code_block))))
+
+================================================================================
+Three-dimensional array
+================================================================================
+
+codeunit 123 Test
+{
+    procedure GetData(var Data: array[10, 20, 30] of Integer)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (procedure
+      name: (name)
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name)
+          parameter_type: (type_specification
+            (array_type
+              sizes: (integer)
+              sizes: (integer)
+              sizes: (integer)
+              (type_specification
+                (basic_type))))))
+      (code_block))))

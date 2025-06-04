@@ -10,6 +10,7 @@
 module.exports = grammar({
   name: "al",
 
+
   word: $ => $.identifier,
   extras: $ => [/\s/, $.comment, $.multiline_comment, $.pragma],
 
@@ -2402,9 +2403,9 @@ module.exports = grammar({
     ),
 
     implementation_value: $ => seq(
-      field('interface', $._quoted_identifier),
+      field('interface', choice($._quoted_identifier, $.identifier)),
       '=',
-      field('implementation', $._quoted_identifier)
+      field('implementation', choice($._quoted_identifier, $.identifier))
     ),
 
     field_class_value: $ => choice(
@@ -3626,23 +3627,23 @@ enum_type: $ => prec(1, seq(
       prec(1, choice('XmlAttributeCollection', 'XMLATTRIBUTECOLLECTION', 'Xmlattributecollection'))
     ),
 
-    text_type: $ => seq(
-      prec(15, choice('Text', 'TEXT', 'text')), // Even higher precedence
+    text_type: $ => prec.left(15, seq(
+      choice('Text', 'TEXT', 'text'),
       optional(seq(
         '[',
         field('length', $.integer),
         ']'
       ))
-    ),
+    )),
 
-    code_type: $ => seq(
-      prec(1, choice('Code', 'CODE', 'code')),
+    code_type: $ => prec.left(15, seq(
+      choice('Code', 'CODE', 'code'),
       optional(seq(
         '[',
         field('length', $.integer),
         ']'
       ))
-    ),
+    )),
 
     record_type: $ => prec.right(seq(
       prec(1, choice('Record', 'RECORD', 'record')),
@@ -3659,15 +3660,15 @@ enum_type: $ => prec(1, seq(
       $._quoted_identifier  // Already has precedence 2
     ),
 
-    codeunit_type: $ => seq(
-      prec(1, choice('Codeunit', 'codeunit')),
+    codeunit_type: $ => prec.right(20, seq(
+      choice('Codeunit', 'codeunit'),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
         $.identifier,
         $.member_expression
       ))
-    ),
+    )),
 
     query_type: $ => seq(
       prec(1, 'Query'),
@@ -3697,7 +3698,10 @@ enum_type: $ => prec(1, seq(
     array_type: $ => seq(
       prec(1, 'array'),
       '[',
-      field('size', $.integer),
+      field('sizes', seq(
+        $.integer,
+        repeat(seq(',', $.integer))
+      )),
       ']',
       'of',
       $.type_specification
@@ -4513,6 +4517,18 @@ enum_type: $ => prec(1, seq(
         field('left', $._expression),
         field('operator', $.in_operator),
         field('right', $.list_literal) // Right side is typically a list literal
+      )),
+      // 'is' expression (prec 5) - interface type checking
+      prec.left(5, seq(
+        field('left', $._expression),
+        field('operator', choice('is', 'IS', 'Is')),
+        field('right', $.type_specification)
+      )),
+      // 'as' expression (prec 5) - interface casting
+      prec.left(5, seq(
+        field('left', $._expression),
+        field('operator', choice('as', 'AS', 'As')),
+        field('right', $.type_specification)
       )),
       // Logical AND expression (prec 3)
       prec.left(3, seq(
