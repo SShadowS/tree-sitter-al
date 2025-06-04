@@ -4729,6 +4729,22 @@ enum_type: $ => prec(1, seq(
       $.qualified_enum_value,   // Match EnumType::EnumValue pattern
       $.database_reference, // Allow DATABASE::"Table Name" patterns
       $._chained_expression, // Allow member expressions like Value.IsInteger
+      // Boolean expressions for CASE TRUE OF patterns
+      prec(10, seq(
+        field('left', $._expression),
+        field('operator', $.comparison_operator),
+        field('right', $._expression)
+      )),
+      prec(10, seq(
+        field('left', $._expression),
+        field('operator', choice('and', 'AND', 'And')),
+        field('right', $._expression)
+      )),
+      prec(10, seq(
+        field('left', $._expression),
+        field('operator', choice('or', 'OR', 'Or')),
+        field('right', $._expression)
+      )),
       $.identifier, // Keep for simple identifiers
       $._quoted_identifier // Keep for quoted identifiers
     ),

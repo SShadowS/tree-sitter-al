@@ -1,0 +1,91 @@
+==================
+Case TRUE OF with comparison expressions
+==================
+
+table 50010 "Test Table"
+{
+    trigger OnInsert()
+    begin
+        CASE TRUE OF
+            TableNo = DATABASE::Vendor:
+                RecRef.GETTABLE(Vendor);
+            TableNo = DATABASE::Customer:
+                RecRef.GETTABLE(Customer);
+        END;
+    end;
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (oninsert_trigger
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (database_reference
+              table_name: (identifier))
+            statements: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (identifier))))
+          (case_branch
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (database_reference
+              table_name: (identifier))
+            statements: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (identifier)))))))))
+
+==================
+Case TRUE OF with simple comparison
+==================
+
+table 50011 "Test Table"
+{
+    trigger OnValidate()
+    begin
+        CASE TRUE OF
+            Amount = 0:
+                Clear();
+            Amount > 10:
+                Process();
+        END;
+    end;
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (onvalidate_trigger
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (integer)
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (case_branch
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (integer)
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list))))))))

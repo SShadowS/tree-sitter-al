@@ -3818,7 +3818,67 @@
         "required": true,
         "types": [
           {
+            "type": "*",
+            "named": false
+          },
+          {
+            "type": "+",
+            "named": false
+          },
+          {
             "type": ",",
+            "named": false
+          },
+          {
+            "type": "-",
+            "named": false
+          },
+          {
+            "type": "..",
+            "named": false
+          },
+          {
+            "type": "/",
+            "named": false
+          },
+          {
+            "type": "AND",
+            "named": false
+          },
+          {
+            "type": "AS",
+            "named": false
+          },
+          {
+            "type": "And",
+            "named": false
+          },
+          {
+            "type": "As",
+            "named": false
+          },
+          {
+            "type": "IS",
+            "named": false
+          },
+          {
+            "type": "Is",
+            "named": false
+          },
+          {
+            "type": "OR",
+            "named": false
+          },
+          {
+            "type": "Or",
+            "named": false
+          },
+          {
+            "type": "and",
+            "named": false
+          },
+          {
+            "type": "as",
             "named": false
           },
           {
@@ -3827,6 +3887,10 @@
           },
           {
             "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_operator",
             "named": true
           },
           {
@@ -3846,6 +3910,10 @@
             "named": true
           },
           {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
             "type": "enum_value_expression",
             "named": true
           },
@@ -3858,11 +3926,31 @@
             "named": true
           },
           {
+            "type": "in_operator",
+            "named": true
+          },
+          {
             "type": "integer",
             "named": true
           },
           {
+            "type": "is",
+            "named": false
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
             "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "or",
+            "named": false
+          },
+          {
+            "type": "parenthesized_expression",
             "named": true
           },
           {
@@ -3882,7 +3970,19 @@
             "named": true
           },
           {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
             "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
             "named": true
           }
         ]
