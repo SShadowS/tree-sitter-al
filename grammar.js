@@ -23,6 +23,7 @@ module.exports = grammar({
       $.codeunit_declaration,
       $.pageextension_declaration,
       $.page_declaration,
+      $.pagecustomization_declaration,
       $.query_declaration,
       $.enum_declaration,
       $.enumextension_declaration, 
@@ -1498,6 +1499,16 @@ module.exports = grammar({
       field('object_name', choice($._quoted_identifier, $.identifier)),
       '{',
       repeat(seq(optional(';'), $._page_element)),
+      '}'
+    ),
+
+    pagecustomization_declaration: $ => seq(
+      /[pP][aA][gG][eE][cC][uU][sS][tT][oO][mM][iI][zZ][aA][tT][iI][oO][nN]/,
+      field('object_name', choice($._quoted_identifier, $.identifier)),
+      /[cC][uU][sS][tT][oO][mM][iI][zZ][eE][sS]/,
+      field('target_page', choice($._quoted_identifier, $.identifier)),
+      '{',
+      repeat($._pagecustomization_element),
       '}'
     ),
 
@@ -5138,8 +5149,87 @@ enum_type: $ => prec(1, seq(
       'Do', 'do', 'DO'
     ),
 
+    // Page customization elements
+    _pagecustomization_element: $ => choice(
+      $.views_section
+    ),
 
+    views_section: $ => seq(
+      /[vV][iI][eE][wW][sS]/,
+      '{',
+      repeat($._views_modification),
+      '}'
+    ),
 
+    _views_modification: $ => choice(
+      $.addfirst_views,
+      $.addlast_views,
+      $.addafter_views,
+      $.addbefore_views
+    ),
+
+    addfirst_views: $ => seq(
+      /[aA][dD][dD][fF][iI][rR][sS][tT]/,
+      '{',
+      repeat($.view_definition),
+      '}'
+    ),
+
+    addlast_views: $ => seq(
+      /[aA][dD][dD][lL][aA][sS][tT]/,
+      '{',
+      repeat($.view_definition),
+      '}'
+    ),
+
+    addafter_views: $ => seq(
+      /[aA][dD][dD][aA][fF][tT][eE][rR]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($.view_definition),
+      '}'
+    ),
+
+    addbefore_views: $ => seq(
+      /[aA][dD][dD][bB][eE][fF][oO][rR][eE]/,
+      '(',
+      field('target', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($.view_definition),
+      '}'
+    ),
+
+    view_definition: $ => seq(
+      'view',
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat($._view_property),
+      '}'
+    ),
+
+    _view_property: $ => choice(
+      $.view_caption_property,
+      $.view_filters_property
+    ),
+
+    view_caption_property: $ => seq(
+      'Caption',
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    view_filters_property: $ => seq(
+      'Filters',
+      '=',
+      field('value', $.filter_expression),
+      ';'
+    ),
 
   },
 

@@ -1,0 +1,182 @@
+================================================================================
+Page customization with addfirst views
+================================================================================
+
+pagecustomization "Test Page Customization" customizes "Target Page"
+{
+    views
+    {
+        addfirst
+        {
+            view(Open)
+            {
+                Caption = 'Open';
+                Filters = where(Status = const(Open));
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pagecustomization_declaration
+    object_name: (quoted_identifier)
+    target_page: (quoted_identifier)
+    (views_section
+      (addfirst_views
+        (view_definition
+          name: (identifier)
+          (view_caption_property
+            value: (string_literal))
+          (view_filters_property
+            value: (filter_expression
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (identifier))
+                      value: (identifier))))))))))))
+
+================================================================================
+Page customization with addlast views
+================================================================================
+
+pagecustomization "Test Customization" customizes "Base Page"
+{
+    views
+    {
+        addlast
+        {
+            view(Closed)
+            {
+                Caption = 'Closed Items';
+                Filters = where(Status = const(Closed));
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pagecustomization_declaration
+    object_name: (quoted_identifier)
+    target_page: (quoted_identifier)
+    (views_section
+      (addlast_views
+        (view_definition
+          name: (identifier)
+          (view_caption_property
+            value: (string_literal))
+          (view_filters_property
+            value: (filter_expression
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (identifier))
+                      value: (identifier))))))))))))
+
+================================================================================
+Page customization with addafter views
+================================================================================
+
+pagecustomization "Enhanced Page" customizes "Original Page"
+{
+    views
+    {
+        addafter(ExistingView)
+        {
+            view(NewView)
+            {
+                Caption = 'New View';
+                Filters = where(Type = const(Special));
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pagecustomization_declaration
+    object_name: (quoted_identifier)
+    target_page: (quoted_identifier)
+    (views_section
+      (addafter_views
+        target: (identifier)
+        (view_definition
+          name: (identifier)
+          (view_caption_property
+            value: (string_literal))
+          (view_filters_property
+            value: (filter_expression
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (identifier))
+                      value: (identifier))))))))))))
+
+================================================================================
+Page customization with multiple views
+================================================================================
+
+pagecustomization "Multi View Page" customizes "Base Page"
+{
+    views
+    {
+        addfirst
+        {
+            view(Active)
+            {
+                Caption = 'Active Records';
+                Filters = where(Status = const(Active));
+            }
+            view(Pending)
+            {
+                Caption = 'Pending Items';
+                Filters = where(Status = const(Pending));
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pagecustomization_declaration
+    object_name: (quoted_identifier)
+    target_page: (quoted_identifier)
+    (views_section
+      (addfirst_views
+        (view_definition
+          name: (identifier)
+          (view_caption_property
+            value: (string_literal))
+          (view_filters_property
+            value: (filter_expression
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (identifier))
+                      value: (identifier))))))))
+        (view_definition
+          name: (identifier)
+          (view_caption_property
+            value: (string_literal))
+          (view_filters_property
+            value: (filter_expression
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (identifier))
+                      value: (identifier))))))))))))
