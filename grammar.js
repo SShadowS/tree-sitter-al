@@ -2435,7 +2435,8 @@ module.exports = grammar({
 
     event_subscriber_instance_value: $ => choice(
       /[mM][aA][nN][uU][aA][lL]/,
-      /[sS][tT][aA][tT][iI][cC]/
+      /[sS][tT][aA][tT][iI][cC]/,
+      /[sS][tT][aA][tT][iI][cC][aA][uU][tT][oO][mM][aA][tT][iI][cC]/
     ),
 
     implementation_value: $ => seq(
