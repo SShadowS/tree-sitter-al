@@ -15,7 +15,10 @@ module.exports = grammar({
   extras: $ => [/\s/, $.comment, $.multiline_comment, $.pragma],
 
   rules: {
-    source_file: $ => repeat($._object),
+    source_file: $ => seq(
+      optional($.namespace_declaration),
+      repeat($._object)
+    ),
 
     _object: $ => choice(
       $.table_declaration,
@@ -34,6 +37,17 @@ module.exports = grammar({
       $.report_declaration,
       $.permissionset_declaration,
       $.controladdin_declaration
+    ),
+
+    namespace_declaration: $ => seq(
+      'namespace',
+      field('name', $.namespace_name),
+      ';'
+    ),
+
+    namespace_name: $ => seq(
+      $.identifier,
+      repeat(seq('.', $.identifier))
     ),
     
     xmlport_declaration: $ => seq(

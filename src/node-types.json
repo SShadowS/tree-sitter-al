@@ -21356,6 +21356,37 @@
     }
   },
   {
+    "type": "namespace_declaration",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "namespace_name",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "namespace_name",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "namespace_prefix_property",
     "named": true,
     "fields": {},
@@ -27029,6 +27060,10 @@
         },
         {
           "type": "interface_declaration",
+          "named": true
+        },
+        {
+          "type": "namespace_declaration",
           "named": true
         },
         {
@@ -35314,11 +35349,11 @@
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "controladdin",
@@ -35354,11 +35389,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
@@ -35516,6 +35551,10 @@
     "type": "multiline_comment",
     "named": true,
     "extra": true
+  },
+  {
+    "type": "namespace",
+    "named": false
   },
   {
     "type": "not",
