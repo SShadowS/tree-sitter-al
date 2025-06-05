@@ -1,0 +1,193 @@
+================================================================================
+Enum with AssignmentCompatibility property
+================================================================================
+
+enum 50000 "Test Enum"
+{
+    AssignmentCompatibility = true;
+    Extensible = false;
+
+    value(0; "None")
+    {
+        Caption = 'None';
+    }
+    value(1; "Basic")
+    {
+        Caption = 'Basic';
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property
+      (assignment_compatibility_property
+        value: (assignment_compatibility_value
+          (boolean))))
+    (property
+      (extensible_property
+        value: (extensible_value
+          (boolean))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (quoted_identifier)
+      (property
+        (caption_property
+          (string_literal))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (quoted_identifier)
+      (property
+        (caption_property
+          (string_literal))))))
+
+================================================================================
+Enum with AssignmentCompatibility false
+================================================================================
+
+enum 50001 "Test Enum False"
+{
+    AssignmentCompatibility = false;
+
+    value(0; "Option")
+    {
+        Caption = 'Option';
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property
+      (assignment_compatibility_property
+        value: (assignment_compatibility_value
+          (boolean))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (quoted_identifier)
+      (property
+        (caption_property
+          (string_literal))))))
+
+================================================================================
+Enum with both AssignmentCompatibility and Extensible properties
+================================================================================
+
+enum 50002 ComplexEnum
+{
+    AssignmentCompatibility = true;
+    Extensible = true;
+    Caption = 'Complex Enum Example';
+
+    value(1; First)
+    {
+        Caption = 'First Option';
+    }
+    value(2; Second)
+    {
+        Caption = 'Second Option';
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (property
+      (assignment_compatibility_property
+        value: (assignment_compatibility_value
+          (boolean))))
+    (property
+      (extensible_property
+        value: (extensible_value
+          (boolean))))
+    (property
+      (caption_property
+        (string_literal)))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)
+      (property
+        (caption_property
+          (string_literal))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)
+      (property
+        (caption_property
+          (string_literal))))))
+
+================================================================================
+Enum with only AssignmentCompatibility property
+================================================================================
+
+enum 50003 "Minimal Enum"
+{
+    AssignmentCompatibility = true;
+
+    value(0; "Single")
+    {
+        Caption = 'Single Value';
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property
+      (assignment_compatibility_property
+        value: (assignment_compatibility_value
+          (boolean))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (quoted_identifier)
+      (property
+        (caption_property
+          (string_literal))))))
+
+================================================================================
+Enum with uppercase TRUE/FALSE values
+================================================================================
+
+enum 50004 "Case Test"
+{
+    AssignmentCompatibility = TRUE;
+    Extensible = FALSE;
+
+    value(1; "Test")
+    {
+        Caption = 'Test Value';
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property
+      (assignment_compatibility_property
+        value: (assignment_compatibility_value
+          (boolean))))
+    (property
+      (extensible_property
+        value: (extensible_value
+          (boolean))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (quoted_identifier)
+      (property
+        (caption_property
+          (string_literal))))))

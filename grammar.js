@@ -2711,6 +2711,8 @@ module.exports = grammar({
 
     replicate_data_value: $ => $.boolean,
 
+    assignment_compatibility_value: $ => $.boolean,
+
     column_store_index_value: $ => seq(
       choice($.identifier, $._quoted_identifier),
       repeat(seq(',', choice($.identifier, $._quoted_identifier)))
@@ -3041,6 +3043,13 @@ module.exports = grammar({
       'ReplicateData',
       '=',
       field('value', $.replicate_data_value),
+      ';'
+    ),
+
+    assignment_compatibility_property: $ => seq(
+      'AssignmentCompatibility',
+      '=',
+      field('value', $.assignment_compatibility_value),
       ';'
     ),
 
@@ -3389,7 +3398,8 @@ module.exports = grammar({
       $.promoted_only_property,
       $.shortcut_key_property,
       $.additional_search_terms_property,
-      $.additional_search_terms_ml_property
+      $.additional_search_terms_ml_property,
+      $.assignment_compatibility_property
     )),
 
     caption_property: $ => seq(

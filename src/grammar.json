@@ -11947,6 +11947,10 @@
       "type": "SYMBOL",
       "name": "boolean"
     },
+    "assignment_compatibility_value": {
+      "type": "SYMBOL",
+      "name": "boolean"
+    },
     "column_store_index_value": {
       "type": "SEQ",
       "members": [
@@ -13132,6 +13136,31 @@
           "content": {
             "type": "SYMBOL",
             "name": "replicate_data_value"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "assignment_compatibility_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "AssignmentCompatibility"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "assignment_compatibility_value"
           }
         },
         {
@@ -14712,6 +14741,10 @@
           {
             "type": "SYMBOL",
             "name": "additional_search_terms_ml_property"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "assignment_compatibility_property"
           }
         ]
       }

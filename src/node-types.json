@@ -2100,6 +2100,37 @@
     "fields": {}
   },
   {
+    "type": "assignment_compatibility_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assignment_compatibility_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "assignment_compatibility_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "boolean",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "assignment_statement",
     "named": true,
     "fields": {
@@ -23803,6 +23834,10 @@
           "named": true
         },
         {
+          "type": "assignment_compatibility_property",
+          "named": true
+        },
+        {
           "type": "assist_edit_property",
           "named": true
         },
@@ -33325,6 +33360,10 @@
     "named": false
   },
   {
+    "type": "AssignmentCompatibility",
+    "named": false
+  },
+  {
     "type": "AssistEdit",
     "named": false
   },
@@ -35303,11 +35342,11 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "div",
