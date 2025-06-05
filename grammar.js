@@ -1527,7 +1527,10 @@ module.exports = grammar({
     _controladdin_element: $ => choice(
       $.controladdin_property,
       $.controladdin_event,
-      $.controladdin_procedure
+      $.controladdin_procedure,
+      $.obsolete_state_property,
+      $.obsolete_reason_property,
+      $.obsolete_tag_property
     ),
 
     controladdin_property: $ => seq(
