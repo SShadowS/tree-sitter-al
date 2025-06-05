@@ -38,11 +38,17 @@
    - Write efficient and concise rule definitions.
    - Minimize unnecessary lookahead and backtracking.
 
-10. **Document Your Grammar**
+10. **Property Organization**
+    - Use centralized property categories for DRY principle maintenance.
+    - Organize properties by semantic purpose: `_universal_properties`, `_display_properties`, `_validation_properties`, `_data_properties`, `_navigation_properties`, `_access_properties`, `_object_specific_properties`.
+    - Compose specific property groups from categories: `_field_properties`, `_page_properties`, `_table_properties`, `_report_properties`.
+    - Add new properties to appropriate semantic categories, not scattered throughout object-specific rules.
+
+11. **Document Your Grammar**
     - Provide clear documentation and examples.
     - Include test cases covering various language features.
 
-11. **Stay Updated with AL Changes**
+12. **Stay Updated with AL Changes**
     - Monitor updates to the AL language.
     - Update the grammar to maintain compatibility.
 

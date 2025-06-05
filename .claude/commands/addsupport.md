@@ -15,7 +15,8 @@ Follow these steps:
 9. If the tests pass, commit the changes with a message of what was added or fixed.
 
 - Keep tests comprehensive to cover edge cases
-A file is never done until it has been tested against the grammar and ALL tests have passed. So requires a `tree-sitter generate && tree-sitter test` to ensure the grammar is correct and the parser works as expected.
+- A file is never done until it has been tested against the grammar and ALL tests have passed. So requires a `tree-sitter generate && tree-sitter test` to ensure the grammar is correct and the parser works as expected.
+- Never use `tree-sitter test -f FILENAME` as this -f flag doesn't exist.
 
 ## Resources
 [tree-sitter documentation](https://tree-sitter.github.io/tree-sitter/)

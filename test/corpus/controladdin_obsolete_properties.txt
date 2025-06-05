@@ -21,14 +21,20 @@ controladdin "Test Label"
 (source_file
   (controladdin_declaration
     object_name: (quoted_identifier)
-    (obsolete_state_property
-      value: (obsolete_state_value))
-    (obsolete_reason_property
-      value: (obsolete_reason_value
-        (string_literal)))
-    (obsolete_tag_property
-      value: (obsolete_tag_value
-        (string_literal)))
+    (property_list
+      (property
+        (obsolete_state_property
+          value: (obsolete_state_value))))
+    (property_list
+      (property
+        (obsolete_reason_property
+          value: (obsolete_reason_value
+            (string_literal)))))
+    (property_list
+      (property
+        (obsolete_tag_property
+          value: (obsolete_tag_value
+            (string_literal)))))
     (controladdin_property
       name: (identifier)
       value: (string_literal)
@@ -64,11 +70,15 @@ controladdin "Removed Control"
 (source_file
   (controladdin_declaration
     object_name: (quoted_identifier)
-    (obsolete_state_property
-      value: (obsolete_state_value))
-    (obsolete_reason_property
-      value: (obsolete_reason_value
-        (string_literal)))
+    (property_list
+      (property
+        (obsolete_state_property
+          value: (obsolete_state_value))))
+    (property_list
+      (property
+        (obsolete_reason_property
+          value: (obsolete_reason_value
+            (string_literal)))))
     (controladdin_property
       name: (identifier)
       value: (integer))
@@ -97,8 +107,10 @@ controladdin SimpleObsolete
 (source_file
   (controladdin_declaration
     object_name: (identifier)
-    (obsolete_state_property
-      value: (obsolete_state_value))
+    (property_list
+      (property
+        (obsolete_state_property
+          value: (obsolete_state_value))))
     (controladdin_property
       name: (identifier)
       value: (boolean))
@@ -127,11 +139,15 @@ controladdin "Case Test"
 (source_file
   (controladdin_declaration
     object_name: (quoted_identifier)
-    (obsolete_state_property
-      value: (obsolete_state_value))
-    (obsolete_reason_property
-      value: (obsolete_reason_value
-        (string_literal)))
+    (property_list
+      (property
+        (obsolete_state_property
+          value: (obsolete_state_value))))
+    (property_list
+      (property
+        (obsolete_reason_property
+          value: (obsolete_reason_value
+            (string_literal)))))
     (controladdin_property
       name: (identifier)
       value: (integer))
@@ -163,20 +179,26 @@ controladdin "Mixed Properties"
     (controladdin_property
       name: (identifier)
       value: (string_literal))
-    (obsolete_state_property
-      value: (obsolete_state_value))
+    (property_list
+      (property
+        (obsolete_state_property
+          value: (obsolete_state_value))))
     (controladdin_property
       name: (identifier)
       value: (boolean))
-    (obsolete_tag_property
-      value: (obsolete_tag_value
-        (string_literal)))
+    (property_list
+      (property
+        (obsolete_tag_property
+          value: (obsolete_tag_value
+            (string_literal)))))
     (controladdin_property
       name: (identifier)
       value: (integer))
-    (obsolete_reason_property
-      value: (obsolete_reason_value
-        (string_literal)))
+    (property_list
+      (property
+        (obsolete_reason_property
+          value: (obsolete_reason_value
+            (string_literal)))))
     (controladdin_event
       name: (identifier)
       (parameter_list

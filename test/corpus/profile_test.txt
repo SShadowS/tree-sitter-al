@@ -14,12 +14,17 @@ profile TestProfile
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (profile_description_property
-      value: (string_literal))
+    (property_list
+      (property
+        (description_property
+          value: (description_value
+            (string_literal)))))
     (profile_rolecenter_property
       value: (quoted_identifier))
-    (profile_caption_property
-      value: (string_literal))))
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))))
 
 ================================================================================
 Profile with customizations list
@@ -38,12 +43,17 @@ profile DocumentCapture
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (profile_description_property
-      value: (string_literal))
+    (property_list
+      (property
+        (description_property
+          value: (description_value
+            (string_literal)))))
     (profile_rolecenter_property
       value: (quoted_identifier))
-    (profile_caption_property
-      value: (string_literal))
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))
     (profile_customizations_property
       value: (customizations_list
         (quoted_identifier)
@@ -66,8 +76,11 @@ profile SimpleProfile
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (profile_description_property
-      value: (string_literal))
+    (property_list
+      (property
+        (description_property
+          value: (description_value
+            (string_literal)))))
     (profile_rolecenter_property
       value: (quoted_identifier))
     (profile_customizations_property
@@ -91,12 +104,17 @@ profile UnquotedProfile
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (profile_description_property
-      value: (string_literal))
+    (property_list
+      (property
+        (description_property
+          value: (description_value
+            (string_literal)))))
     (profile_rolecenter_property
       value: (identifier))
-    (profile_caption_property
-      value: (string_literal))
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))
     (profile_customizations_property
       value: (customizations_list
         (identifier)
@@ -117,8 +135,11 @@ profile MinimalProfile
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (profile_description_property
-      value: (string_literal))
+    (property_list
+      (property
+        (description_property
+          value: (description_value
+            (string_literal)))))
     (profile_rolecenter_property
       value: (quoted_identifier))))
 
@@ -144,8 +165,10 @@ profile ExtendedProfile
       value: (boolean))
     (profile_description_property2
       value: (string_literal))
-    (profile_caption_property
-      value: (string_literal))
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))
     (profile_rolecenter_property
       value: (quoted_identifier))
     (profile_promoted_property
@@ -172,8 +195,11 @@ profile MixedProfile
     object_name: (identifier)
     (profile_enabled_property
       value: (boolean))
-    (profile_description_property
-      value: (string_literal))
+    (property_list
+      (property
+        (description_property
+          value: (description_value
+            (string_literal)))))
     (profile_description_property2
       value: (string_literal))
     (profile_rolecenter_property
@@ -202,10 +228,15 @@ profile EmptyCustomizationsProfile
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (profile_description_property
-      value: (string_literal))
+    (property_list
+      (property
+        (description_property
+          value: (description_value
+            (string_literal)))))
     (profile_rolecenter_property
       value: (quoted_identifier))
     (profile_customizations_property)
-    (profile_caption_property
-      value: (string_literal))))
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))))

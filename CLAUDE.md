@@ -161,7 +161,18 @@ Dont put comments in the parse tree, as they are not supported by tree-sitter.
 - Use error recovery strategies for graceful error handling
 - Leverage `choice`, `seq`, `optional`, `repeat` combinators
 
-### Common Workflow
+### Property Development Workflow
+**Adding New Properties** (follow centralized architecture):
+1. Determine semantic category: universal, display, validation, data, navigation, access, or object-specific
+2. Add property definition to individual property rules section
+3. Add property to appropriate semantic category (`_universal_properties`, etc.)
+4. Property automatically available in composed groups (`_field_properties`, `_page_properties`, etc.)
+5. Create test cases covering the property in relevant object contexts
+6. Test with `tree-sitter generate && tree-sitter test`
+
+**DO NOT** add properties directly to object-specific choice lists - use centralized categories
+
+### General Development Workflow
 1. Study AL construct syntax and semantics
 2. Check existing patterns in grammar.js for reuse
 3. Add grammar rules to appropriate section

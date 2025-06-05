@@ -1,0 +1,52 @@
+22-
+23-    _object: $ => choice(
+24:      $.table_declaration,
+25-      $.tableextension_declaration,
+26:      $.codeunit_declaration,
+27-      $.pageextension_declaration,
+28-      $.page_declaration,
+29-      $.pagecustomization_declaration,
+30-      $.profile_declaration,
+31-      $.query_declaration,
+32-      $.enum_declaration,
+33-      $.enumextension_declaration, 
+34-      $.xmlport_declaration,
+35-      $.interface_declaration,
+36-      $.dotnet_declaration,
+--
+1454-    ),
+1455-
+1456:    table_declaration: $ => seq(
+1457-      /[tT][aA][bB][lL][eE]/,
+1458-      field('object_id', $.integer),
+1459-      field('object_name', choice($._quoted_identifier, $.identifier)),
+1460-      '{',
+1461-      repeat($._table_element),
+1462-      '}'
+1463-    ),
+1464-
+1465:    codeunit_declaration: $ => seq(
+1466-      /[cC][oO][dD][eE][uU][nN][iI][tT]/,
+1467-      field('object_id', $.integer),
+1468-      field('object_name', choice($._quoted_identifier, $.identifier)),
+1469-      optional($.implements_clause),
+1470-      '{',
+1471-      prec(4, optional($.property_list)), // Prioritize properties over procedures starting with same keywords
+1472-      repeat(choice(
+1473-        $.var_section,
+1474-        seq(optional($.attribute_list), $.procedure),
+1475-        seq(optional($.attribute_list), $.onrun_trigger),
+--
+1496-    ),
+1497-
+1498:    page_declaration: $ => seq(
+1499-      /[pP][aA][gG][eE]/,
+1500-      field('object_id', $.integer),
+1501-      field('object_name', choice($._quoted_identifier, $.identifier)),
+1502-      '{',
+1503-      repeat(seq(optional(';'), $._page_element)),
+1504-      '}'
+1505-    ),
+1506-
+1507-    pagecustomization_declaration: $ => seq(
+1508-      /[pP][aA][gG][eE][cC][uU][sS][tT][oO][mM][iI][zZ][aA][tT][iI][oO][nN]/,

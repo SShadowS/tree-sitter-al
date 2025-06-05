@@ -23,26 +23,22 @@ enum 50000 "Test Enum"
   (enum_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      (assignment_compatibility_property
-        value: (assignment_compatibility_value
-          (boolean))))
-    (property
-      (extensible_property
-        value: (extensible_value
-          (boolean))))
+    (assignment_compatibility_property
+      value: (assignment_compatibility_value
+        (boolean)))
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
     (enum_value_declaration
       value_id: (integer)
       value_name: (quoted_identifier)
-      (property
-        (caption_property
-          (string_literal))))
+      (caption_property
+        (string_literal)))
     (enum_value_declaration
       value_id: (integer)
       value_name: (quoted_identifier)
-      (property
-        (caption_property
-          (string_literal))))))
+      (caption_property
+        (string_literal)))))
 
 ================================================================================
 Enum with AssignmentCompatibility false
@@ -64,16 +60,14 @@ enum 50001 "Test Enum False"
   (enum_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      (assignment_compatibility_property
-        value: (assignment_compatibility_value
-          (boolean))))
+    (assignment_compatibility_property
+      value: (assignment_compatibility_value
+        (boolean)))
     (enum_value_declaration
       value_id: (integer)
       value_name: (quoted_identifier)
-      (property
-        (caption_property
-          (string_literal))))))
+      (caption_property
+        (string_literal)))))
 
 ================================================================================
 Enum with both AssignmentCompatibility and Extensible properties
@@ -101,29 +95,24 @@ enum 50002 ComplexEnum
   (enum_declaration
     object_id: (integer)
     object_name: (identifier)
-    (property
-      (assignment_compatibility_property
-        value: (assignment_compatibility_value
-          (boolean))))
-    (property
-      (extensible_property
-        value: (extensible_value
-          (boolean))))
-    (property
+    (assignment_compatibility_property
+      value: (assignment_compatibility_value
+        (boolean)))
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
+    (caption_property
+      (string_literal))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)
       (caption_property
         (string_literal)))
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier)
-      (property
-        (caption_property
-          (string_literal))))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
-      (property
-        (caption_property
-          (string_literal))))))
+      (caption_property
+        (string_literal)))))
 
 ================================================================================
 Enum with only AssignmentCompatibility property
@@ -145,16 +134,14 @@ enum 50003 "Minimal Enum"
   (enum_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      (assignment_compatibility_property
-        value: (assignment_compatibility_value
-          (boolean))))
+    (assignment_compatibility_property
+      value: (assignment_compatibility_value
+        (boolean)))
     (enum_value_declaration
       value_id: (integer)
       value_name: (quoted_identifier)
-      (property
-        (caption_property
-          (string_literal))))))
+      (caption_property
+        (string_literal)))))
 
 ================================================================================
 Enum with uppercase TRUE/FALSE values
@@ -177,17 +164,14 @@ enum 50004 "Case Test"
   (enum_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      (assignment_compatibility_property
-        value: (assignment_compatibility_value
-          (boolean))))
-    (property
-      (extensible_property
-        value: (extensible_value
-          (boolean))))
+    (assignment_compatibility_property
+      value: (assignment_compatibility_value
+        (boolean)))
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
     (enum_value_declaration
       value_id: (integer)
       value_name: (quoted_identifier)
-      (property
-        (caption_property
-          (string_literal))))))
+      (caption_property
+        (string_literal)))))

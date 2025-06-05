@@ -24,26 +24,23 @@ enum 50200 SendTo implements IAddressProvider
     object_id: (integer)
     object_name: (identifier)
     interface: (identifier)
-    (property
-      (extensible_property
-        value: (extensible_value
-          (boolean))))
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier)
-      (property
-        (implementation_property
-          value: (implementation_value
-            interface: (identifier)
-            implementation: (identifier)))))
+      (implementation_property
+        value: (implementation_value
+          interface: (identifier)
+          implementation: (identifier))))
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier)
-      (property
-        (implementation_property
-          value: (implementation_value
-            interface: (identifier)
-            implementation: (identifier)))))))
+      (implementation_property
+        value: (implementation_value
+          interface: (identifier)
+          implementation: (identifier))))))
 
 ================================================================================
 Enum with quoted identifier implementations
@@ -72,19 +69,17 @@ enum 50201 "Communication Method" implements "IMessageProvider"
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier)
-      (property
-        (implementation_property
-          value: (implementation_value
-            interface: (quoted_identifier)
-            implementation: (quoted_identifier)))))
+      (implementation_property
+        value: (implementation_value
+          interface: (quoted_identifier)
+          implementation: (quoted_identifier))))
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier)
-      (property
-        (implementation_property
-          value: (implementation_value
-            interface: (quoted_identifier)
-            implementation: (quoted_identifier)))))))
+      (implementation_property
+        value: (implementation_value
+          interface: (quoted_identifier)
+          implementation: (quoted_identifier))))))
 
 ================================================================================
 Enum with mixed quoted and unquoted implementations
@@ -113,19 +108,17 @@ enum 50202 PaymentMethod implements IPaymentProcessor
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier)
-      (property
-        (implementation_property
-          value: (implementation_value
-            interface: (quoted_identifier)
-            implementation: (identifier)))))
+      (implementation_property
+        value: (implementation_value
+          interface: (quoted_identifier)
+          implementation: (identifier))))
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier)
-      (property
-        (implementation_property
-          value: (implementation_value
-            interface: (identifier)
-            implementation: (quoted_identifier)))))))
+      (implementation_property
+        value: (implementation_value
+          interface: (identifier)
+          implementation: (quoted_identifier))))))
 
 ================================================================================
 Enum with multiple properties including implementation
@@ -155,29 +148,24 @@ enum 50203 DocumentType implements IDocumentHandler
     object_id: (integer)
     object_name: (identifier)
     interface: (identifier)
-    (property
-      (extensible_property
-        value: (extensible_value
-          (boolean))))
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier)
-      (property
-        (caption_property
-          (string_literal)))
-      (property
-        (implementation_property
-          value: (implementation_value
-            interface: (identifier)
-            implementation: (identifier)))))
+      (caption_property
+        (string_literal))
+      (implementation_property
+        value: (implementation_value
+          interface: (identifier)
+          implementation: (identifier))))
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier)
-      (property
-        (implementation_property
-          value: (implementation_value
-            interface: (identifier)
-            implementation: (identifier))))
-      (property
-        (caption_property
-          (string_literal))))))
+      (implementation_property
+        value: (implementation_value
+          interface: (identifier)
+          implementation: (identifier)))
+      (caption_property
+        (string_literal)))))
