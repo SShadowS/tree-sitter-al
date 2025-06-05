@@ -1190,15 +1190,7 @@ module.exports = grammar({
     usage_category_property: $ => seq(
       'UsageCategory',
       '=',
-      field('value', choice(
-        /[aA][dD][mM][iI][nN][iI][sS][tT][rR][aA][tT][iI][oO][nN]/,
-                /[dD][oO][cC][uU][mM][eE][nN][tT][sS]/,
-        /[lL][iI][sS][tT][sS]/,
-        /[rR][eE][pP][oO][rR][tT][sS]/,
-        /[tT][aA][sS][kK][sS]/,
-        $.identifier,
-        $._quoted_identifier
-      )),
+      field('value', $.usage_category_value),
       ';'
     ),
 
@@ -1620,6 +1612,7 @@ module.exports = grammar({
       // Report properties directly as elements
       $.caption_property,
       $.processing_only_property,
+      $.use_request_page_property,
       $.usage_category_property,
       $.application_area_property,
       $.additional_search_terms_property,
@@ -1679,7 +1672,7 @@ module.exports = grammar({
       '(',
       field('name', $.identifier),
       ';',
-      field('source', $.identifier),
+      field('source', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
       repeat($.property),
@@ -2464,7 +2457,8 @@ module.exports = grammar({
     // Property value types for specific properties
     _table_no_value: $ => choice(
       $.integer,
-      $.identifier
+      $.identifier,
+      $._quoted_identifier
     ),
 
     subtype_value: $ => choice(
@@ -2681,6 +2675,16 @@ module.exports = grammar({
       $.identifier  // Allow variable references
     ),
     description_value: $ => $.string_literal,
+    usage_category_value: $ => choice(
+      /[aA][dD][mM][iI][nN][iI][sS][tT][rR][aA][tT][iI][oO][nN]/,
+      /[dD][oO][cC][uU][mM][eE][nN][tT][sS]/,
+      /[lL][iI][sS][tT][sS]/,
+      /[rR][eE][pP][oO][rR][tT][sS]/,
+      /[tT][aA][sS][kK][sS]/,
+      /[rR][eE][pP][oO][rR][tT][sS][aA][nN][dD][aA][nN][aA][lL][yY][sS][iI][sS]/,
+      $.identifier,
+      $._quoted_identifier
+    ),
     external_access_value: $ => choice(
       /[eE][xX][tT][eE][rR][nN][aA][lL]/,
       /[iI][nN][tT][eE][rR][nN][aA][lL]/,
@@ -3347,6 +3351,7 @@ module.exports = grammar({
       $.blank_zero_property,
       $.editable_property,
       $.processing_only_property,
+      $.use_request_page_property,
       $.option_members_property,
       $.option_caption_property,
       $.data_classification_property,
@@ -4217,7 +4222,20 @@ enum_type: $ => prec(1, seq(
     processing_only_property: $ => seq(
       'ProcessingOnly',
       '=',
-      choice('true', 'false'),
+      choice(
+        /[tT][rR][uU][eE]/,
+        /[fF][aA][lL][sS][eE]/
+      ),
+      ';'
+    ),
+
+    use_request_page_property: $ => seq(
+      'UseRequestPage',
+      '=',
+      choice(
+        /[tT][rR][uU][eE]/,
+        /[fF][aA][lL][sS][eE]/
+      ),
       ';'
     ),
 

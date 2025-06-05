@@ -4913,37 +4913,8 @@
           "type": "FIELD",
           "name": "value",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "[aA][dD][mM][iI][nN][iI][sS][tT][rR][aA][tT][iI][oO][nN]"
-              },
-              {
-                "type": "PATTERN",
-                "value": "[dD][oO][cC][uU][mM][eE][nN][tT][sS]"
-              },
-              {
-                "type": "PATTERN",
-                "value": "[lL][iI][sS][tT][sS]"
-              },
-              {
-                "type": "PATTERN",
-                "value": "[rR][eE][pP][oO][rR][tT][sS]"
-              },
-              {
-                "type": "PATTERN",
-                "value": "[tT][aA][sS][kK][sS]"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_quoted_identifier"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "usage_category_value"
           }
         },
         {
@@ -7155,6 +7126,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "use_request_page_property"
+        },
+        {
+          "type": "SYMBOL",
           "name": "usage_category_property"
         },
         {
@@ -7408,8 +7383,17 @@
           "type": "FIELD",
           "name": "source",
           "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_quoted_identifier"
+              }
+            ]
           }
         },
         {
@@ -10811,6 +10795,10 @@
         {
           "type": "SYMBOL",
           "name": "identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_quoted_identifier"
         }
       ]
     },
@@ -11797,6 +11785,43 @@
     "description_value": {
       "type": "SYMBOL",
       "name": "string_literal"
+    },
+    "usage_category_value": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[aA][dD][mM][iI][nN][iI][sS][tT][rR][aA][tT][iI][oO][nN]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[dD][oO][cC][uU][mM][eE][nN][tT][sS]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[lL][iI][sS][tT][sS]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[rR][eE][pP][oO][rR][tT][sS]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[tT][aA][sS][kK][sS]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[rR][eE][pP][oO][rR][tT][sS][aA][nN][dD][aA][nN][aA][lL][yY][sS][iI][sS]"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_quoted_identifier"
+        }
+      ]
     },
     "external_access_value": {
       "type": "CHOICE",
@@ -14564,6 +14589,10 @@
           {
             "type": "SYMBOL",
             "name": "processing_only_property"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "use_request_page_property"
           },
           {
             "type": "SYMBOL",
@@ -19164,12 +19193,42 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "true"
+              "type": "PATTERN",
+              "value": "[tT][rR][uU][eE]"
             },
             {
-              "type": "STRING",
-              "value": "false"
+              "type": "PATTERN",
+              "value": "[fF][aA][lL][sS][eE]"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "use_request_page_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "UseRequestPage"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[tT][rR][uU][eE]"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[fF][aA][lL][sS][eE]"
             }
           ]
         },
