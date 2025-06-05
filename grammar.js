@@ -1870,7 +1870,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $.property_list
+        $.property
       )),
       '}'
     ),
@@ -1884,7 +1884,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $.property_list,
+        $.property,
         $.visible_property
       )),
       '}'
