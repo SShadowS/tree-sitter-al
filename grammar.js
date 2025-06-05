@@ -2931,7 +2931,8 @@ module.exports = grammar({
       $.sub_page_link_property,
       $.sub_page_view_property,
       $.update_propagation_property,
-      $.visible_property
+      $.visible_property,
+      $.provider_property
     )),
 
     caption_property: $ => seq(
