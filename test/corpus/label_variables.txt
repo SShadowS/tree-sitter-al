@@ -7,7 +7,10 @@ page 123 "Test Page"
     var
         CancelEmail: Label 'Are you sure you want to cancel this mail?';
         ReplySubjectText: Label 'RE:';
+        FromAddressLookup: Option "Fixed","User Setup",Salesperson,"Use From E-Mail Address Field";
+        MyImportance: Option Low,Normal,High;
         BccRecipients: Text;
+        CcRecipients: Text;
 }
 
 --------------------------------------------------------------------------------
@@ -23,6 +26,34 @@ page 123 "Test Page"
       (variable_declaration
         name: (identifier)
         value: (string_literal))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (option_type
+            (option_member_list
+              (option_member
+                (quoted_identifier))
+              (option_member
+                (quoted_identifier))
+              (option_member
+                (identifier))
+              (option_member
+                (quoted_identifier))))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (option_type
+            (option_member_list
+              (option_member
+                (identifier))
+              (option_member
+                (identifier))
+              (option_member
+                (identifier))))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (text_type)))
       (variable_declaration
         name: (identifier)
         type: (type_specification
@@ -58,3 +89,55 @@ codeunit 456 "Test Codeunit"
       (variable_declaration
         name: (identifier)
         value: (string_literal)))))
+
+================================================================================
+Known issue: Importance variable name conflicts with property
+================================================================================
+
+page 123 "Test Page"
+{
+    var
+        // This currently fails because "Importance" is a reserved property name
+        // FromAddressLookup: Option "Fixed","User Setup",Salesperson,"Use From E-Mail Address Field";
+        // Importance: Option Low,Normal,High;
+        
+        // Workaround: use different variable name
+        A: Option "Fixed","User Setup",Salesperson,"Use From E-Mail Address Field";
+        ImportanceLevel: Option Low,Normal,High;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (var_section
+      (comment)
+      (comment)
+      (comment)
+      (comment)
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (option_type
+            (option_member_list
+              (option_member
+                (quoted_identifier))
+              (option_member
+                (quoted_identifier))
+              (option_member
+                (identifier))
+              (option_member
+                (quoted_identifier))))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (option_type
+            (option_member_list
+              (option_member
+                (identifier))
+              (option_member
+                (identifier))
+              (option_member
+                (identifier)))))))))
