@@ -3038,7 +3038,7 @@ module.exports = grammar({
       // Special case for Label with string literal and optional attributes
       // Note: Labels typically don't support multiple declarations on one line in standard AL,
       // but we keep the structure consistent for now. If issues arise, this might need adjustment.
-      prec(2, seq(
+      prec(10, seq(
         field('names', $._variable_name_list), // Use list rule
         ':',
         field('type', choice('Label', 'LABEL', 'label')),
@@ -3243,7 +3243,6 @@ enum_type: $ => prec(1, seq(
       prec(1, choice('InStream', 'INSTREAM', 'Instream')),
       prec(1, choice('OutStream', 'OUTSTREAM', 'Outstream')),
       prec(1, choice('SecretText', 'SECRETTEXT', 'Secrettext')),
-      prec(1, choice('Label', 'LABEL', 'Label')),
       prec(1, choice('ModuleInfo', 'MODULEINFO', 'Moduleinfo')), 
       prec(1, choice('ObjectType', 'OBJECTTYPE', 'Objecttype')), 
       prec(1, choice('KeyRef', 'KEYREF', 'Keyref')), 

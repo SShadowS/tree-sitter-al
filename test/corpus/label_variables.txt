@@ -1,0 +1,60 @@
+================================================================================
+Label variable declarations
+================================================================================
+
+page 123 "Test Page"
+{
+    var
+        CancelEmail: Label 'Are you sure you want to cancel this mail?';
+        ReplySubjectText: Label 'RE:';
+        BccRecipients: Text;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        value: (string_literal))
+      (variable_declaration
+        name: (identifier)
+        value: (string_literal))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (text_type))))))
+
+================================================================================
+Label variables with attributes
+================================================================================
+
+codeunit 456 "Test Codeunit"
+{
+    var
+        MyLabel: Label 'Sample text', Comment='This is a comment', Locked=true;
+        SimpleLabel: Label 'Simple';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        value: (string_literal)
+        attributes: (label_attribute
+          name: (identifier)
+          value: (string_literal))
+        attributes: (label_attribute
+          name: (identifier)
+          value: (boolean)))
+      (variable_declaration
+        name: (identifier)
+        value: (string_literal)))))
