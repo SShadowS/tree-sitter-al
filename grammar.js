@@ -825,6 +825,7 @@ module.exports = grammar({
       repeat(choice(
         $._action_element,
         $._action_group,
+        $.action_group_section,
         $.area_action_section
       )),
       '}'
@@ -4993,6 +4994,7 @@ enum_type: $ => prec(1, seq(
       $.navigation_page_id_property, // Navigation target
       $.run_object_property,         // Action target object
       $.run_page_link_property,      // Page link parameters
+      $.shortcut_key_property,       // Keyboard shortcut
       $.card_page_id_property,       // Associated card page
     ),
 
