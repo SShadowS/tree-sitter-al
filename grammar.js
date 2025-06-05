@@ -3025,7 +3025,9 @@ module.exports = grammar({
     _unquoted_variable_name: $ => choice(
       $.identifier,
       // Allow the keyword 'Description' to be treated as an identifier in variable contexts
-      alias(/[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]/, $.identifier)
+      alias(/[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]/, $.identifier),
+      // Allow the keyword 'Importance' to be treated as an identifier in variable contexts
+      alias(/[iI][mM][pP][oO][rR][tT][aA][nN][cC][eE]/, $.identifier)
     ),
 
     // Helper rule for comma-separated variable names

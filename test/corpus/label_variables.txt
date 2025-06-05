@@ -8,7 +8,7 @@ page 123 "Test Page"
         CancelEmail: Label 'Are you sure you want to cancel this mail?';
         ReplySubjectText: Label 'RE:';
         FromAddressLookup: Option "Fixed","User Setup",Salesperson,"Use From E-Mail Address Field";
-        MyImportance: Option Low,Normal,High;
+        Importance: Option Low,Normal,High;
         BccRecipients: Text;
         CcRecipients: Text;
 }
@@ -91,19 +91,15 @@ codeunit 456 "Test Codeunit"
         value: (string_literal)))))
 
 ================================================================================
-Known issue: Importance variable name conflicts with property
+Property keywords as variable names
 ================================================================================
 
 page 123 "Test Page"
 {
     var
-        // This currently fails because "Importance" is a reserved property name
-        // FromAddressLookup: Option "Fixed","User Setup",Salesperson,"Use From E-Mail Address Field";
-        // Importance: Option Low,Normal,High;
-        
-        // Workaround: use different variable name
-        A: Option "Fixed","User Setup",Salesperson,"Use From E-Mail Address Field";
-        ImportanceLevel: Option Low,Normal,High;
+        // Test that property keywords can be used as variable names
+        Description: Text;
+        Importance: Option Low,Normal,High;
 }
 
 --------------------------------------------------------------------------------
@@ -114,22 +110,10 @@ page 123 "Test Page"
     object_name: (quoted_identifier)
     (var_section
       (comment)
-      (comment)
-      (comment)
-      (comment)
       (variable_declaration
         name: (identifier)
         type: (type_specification
-          (option_type
-            (option_member_list
-              (option_member
-                (quoted_identifier))
-              (option_member
-                (quoted_identifier))
-              (option_member
-                (identifier))
-              (option_member
-                (quoted_identifier))))))
+          (text_type)))
       (variable_declaration
         name: (identifier)
         type: (type_specification
