@@ -1,0 +1,237 @@
+================================================================================
+Page field with MinValue property using integer
+================================================================================
+
+page 50000 "Test Page"
+{
+    layout
+    {
+        area(content)
+        {
+            group(General)
+            {
+                field(Amount; Amount)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Amount';
+                    MinValue = 0;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (group_section
+          name: (identifier)
+          (field_section
+            control_id: (identifier)
+            source_or_field_name: (identifier)
+            (application_area_property
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (min_value_property
+              value: (min_value_value
+                (integer)))))))))
+
+================================================================================
+Page field with MaxValue property using expression
+================================================================================
+
+page 50001 "Test Page 2"
+{
+    layout
+    {
+        area(content)
+        {
+            group(General)
+            {
+                field(Percentage; Percentage)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Percentage';
+                    MaxValue = 100;
+                    MinValue = 0;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (group_section
+          name: (identifier)
+          (field_section
+            control_id: (identifier)
+            source_or_field_name: (identifier)
+            (application_area_property
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (max_value_property
+              value: (max_value_value
+                (integer)))
+            (min_value_property
+              value: (min_value_value
+                (integer)))))))))
+
+================================================================================
+Page field with MinValue using decimal and variable expression
+================================================================================
+
+page 50002 "Test Page 3"
+{
+    layout
+    {
+        area(content)
+        {
+            group(General)
+            {
+                field(Price; Price)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Price';
+                    MinValue = 0.01;
+                    MaxValue = MaxPrice;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (group_section
+          name: (identifier)
+          (field_section
+            control_id: (identifier)
+            source_or_field_name: (identifier)
+            (application_area_property
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (min_value_property
+              value: (min_value_value
+                (decimal)))
+            (max_value_property
+              value: (max_value_value
+                (identifier)))))))))
+
+================================================================================
+Page field with control name and MinValue property
+================================================================================
+
+page 50003 "Test Page 4"
+{
+    layout
+    {
+        area(content)
+        {
+            group(General)
+            {
+                field(Amount)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Amount';
+                    MinValue = 0;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (group_section
+          name: (identifier)
+          (field_section
+            name: (identifier)
+            (application_area_property
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (min_value_property
+              value: (min_value_value
+                (integer)))))))))
+
+================================================================================
+Page field with complex expression in MaxValue
+================================================================================
+
+page 50004 "Test Page 5"
+{
+    layout
+    {
+        area(content)
+        {
+            group(General)
+            {
+                field("Stock Level"; Rec."Stock Level")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Stock Level';
+                    MinValue = MinStockLevel();
+                    MaxValue = GetMaxCapacity() * SafetyFactor;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (group_section
+          name: (identifier)
+          (field_section
+            control_id: (quoted_identifier)
+            source_or_field_name: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            (application_area_property
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (min_value_property
+              value: (min_value_value
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))))
+            (max_value_property
+              value: (max_value_value
+                left: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                right: (identifier)))))))))

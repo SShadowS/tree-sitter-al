@@ -2159,6 +2159,8 @@ module.exports = grammar({
       $.option_caption_property,
       $.table_relation_property,
       $.decimal_places_property,
+      $.min_value_property,
+      $.max_value_property,
       $.field_trigger_declaration,
       // First 5 missing Page Field Properties
       $.assist_edit_property,
@@ -2220,6 +2222,8 @@ module.exports = grammar({
           $.option_caption_property,
           $.table_relation_property,
           $.decimal_places_property,
+          $.min_value_property,
+          $.max_value_property,
           $.sign_displacement_property,
           $.title_property,
           $.width_property,
@@ -2274,6 +2278,8 @@ module.exports = grammar({
           $.option_caption_property,
           $.table_relation_property,
           $.decimal_places_property,
+          $.min_value_property,
+          $.max_value_property,
           $.field_trigger_declaration,
           // First 5 missing Page Field Properties
           $.assist_edit_property,
