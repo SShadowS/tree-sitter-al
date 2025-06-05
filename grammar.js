@@ -1748,8 +1748,8 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $._layout_element,
-        $.property_list
+        $.property,
+        $._layout_element
       )),
       '}'
     ),
@@ -1761,9 +1761,9 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
+        $.property,
         $.field_section,
-        $.actions_section,
-        $.property_list
+        $.actions_section
       )),
       '}'
     ),
@@ -1775,8 +1775,8 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $._layout_element,
-        $.property_list
+        $.property,
+        $._layout_element
       )),
       '}'
     ),
@@ -1788,10 +1788,8 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $._layout_element,
-        $.property_list,
-        $.visible_property,
-        $.enabled_property
+        $.property,
+        $._layout_element
       )),
       '}'
     ),
@@ -1802,9 +1800,7 @@ module.exports = grammar({
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat(choice(
-        $.property_list
-      )),
+      repeat($.property),
       '}'
     ),
 
@@ -1815,8 +1811,8 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $._layout_element,
-        $.property_list
+        prec(2, $.property),
+        $._layout_element
       )),
       '}'
     ),
@@ -1899,10 +1895,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $.property_list,
-        $.visible_property,
-        $.enabled_property,
-        $.editable_property,
+        $.property,
         $.trigger_declaration,
         $.var_section,
         $.code_block
@@ -2932,7 +2925,8 @@ module.exports = grammar({
       $.additional_search_terms_property,
       $.additional_search_terms_ml_property,
       $.sub_page_link_property,
-      $.sub_page_view_property
+      $.sub_page_view_property,
+      $.visible_property
     )),
 
     caption_property: $ => seq(

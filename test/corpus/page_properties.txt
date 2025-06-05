@@ -68,17 +68,17 @@ page 50000 "Test Page"
     (description_property
       value: (description_value
         (string_literal)))
-    (usage_category_property)
+    (usage_category_property
+      value: (usage_category_value))
     (application_area_property
       value: (identifier))
     (layout_section
       (area_section
         (group_section
           name: (identifier)
-          (property_list
-            (property
-              (caption_property
-                (string_literal))))
+          (property
+            (caption_property
+              (string_literal)))
           (field_section
             control_id: (quoted_identifier)
             source_or_field_name: (field_access

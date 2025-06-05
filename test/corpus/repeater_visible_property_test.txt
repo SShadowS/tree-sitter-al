@@ -1,0 +1,40 @@
+================================================================================
+Repeater with Visible property
+================================================================================
+
+page 50000 "Test Repeater Page"
+{
+    layout
+    {
+        area(content)
+        {
+            repeater(Lines)
+            {
+                Visible = ShowFactBox;
+                field("Test"; TestField)
+                {
+                    ApplicationArea = All;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (repeater_section
+          name: (identifier)
+          (property
+            (visible_property
+              value: (identifier)))
+          (field_section
+            control_id: (quoted_identifier)
+            source_or_field_name: (identifier)
+            (application_area_property
+              value: (identifier))))))))
