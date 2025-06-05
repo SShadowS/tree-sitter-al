@@ -2921,6 +2921,7 @@ module.exports = grammar({
       $.style_property,
       $.style_expr_property,
       $.save_values_property,
+      $.show_filter_property,
       $.data_item_table_view_property,
       $.promoted_only_property,
       $.shortcut_key_property,
@@ -4601,6 +4602,247 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
+    // Missing page properties - Clear operations
+    clear_actions_property: $ => seq(
+      'ClearActions',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    clear_layout_property: $ => seq(
+      'ClearLayout',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    clear_views_property: $ => seq(
+      'ClearViews',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    // ShowAs property (different from ShowAsTree)
+    show_as_property: $ => seq(
+      'ShowAs',
+      '=',
+      field('value', choice(
+        /[sS][pP][lL][iI][tT][bB][uU][tT][tT][oO][nN]/,  // SplitButton
+        /[mM][eE][nN][uU]/,                               // Menu
+        /[bB][uU][tT][tT][oO][nN]/                        // Button
+      )),
+      ';'
+    ),
+
+    // Low priority properties
+    importance_additional_property: $ => seq(
+      'ImportanceAdditional',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    include_caption_property: $ => seq(
+      'IncludeCaption',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    // Critical report layout properties
+    default_rendering_layout_property: $ => seq(
+      'DefaultRenderingLayout',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    excel_layout_property: $ => seq(
+      'ExcelLayout',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    rdlc_layout_property: $ => seq(
+      'RDLCLayout',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    word_layout_property: $ => seq(
+      'WordLayout',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    // High priority report properties
+    allow_scheduling_property: $ => seq(
+      'AllowScheduling',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    preview_mode_property: $ => seq(
+      'PreviewMode',
+      '=',
+      field('value', choice(
+        /[nN][oO][rR][mM][aA][lL]/,        // Normal
+        /[pP][rR][iI][nN][tT][lL][aA][yY][oO][uU][tT]/,  // PrintLayout
+        /[nN][oO][nN][eE]/                 // None
+      )),
+      ';'
+    ),
+
+    show_print_status_property: $ => seq(
+      'ShowPrintStatus',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    transaction_type_property: $ => seq(
+      'TransactionType',
+      '=',
+      field('value', choice(
+        /[uU][pP][dD][aA][tT][eE]/,        // Update
+        /[sS][nN][aA][pP][sS][hH][oO][tT]/, // Snapshot
+        /[bB][rR][oO][wW][sS][eE]/          // Browse
+      )),
+      ';'
+    ),
+
+    execution_timeout_property: $ => seq(
+      'ExecutionTimeout',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
+    format_region_property: $ => seq(
+      'FormatRegion',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    use_system_printer_property: $ => seq(
+      'UseSystemPrinter',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    maximum_dataset_size_property: $ => seq(
+      'MaximumDatasetSize',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
+    // Table external/integration properties
+    optimize_for_text_search_property: $ => seq(
+      'OptimizeForTextSearch',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    // Medium priority report properties
+    enable_external_assemblies_property: $ => seq(
+      'EnableExternalAssemblies',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    enable_external_images_property: $ => seq(
+      'EnableExternalImages',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    enable_hyperlinks_property: $ => seq(
+      'EnableHyperlinks',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    excel_layout_multiple_data_sheets_property: $ => seq(
+      'ExcelLayoutMultipleDataSheets',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    maximum_document_count_property: $ => seq(
+      'MaximumDocumentCount',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
+    paper_source_default_page_property: $ => seq(
+      'PaperSourceDefaultPage',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    paper_source_first_page_property: $ => seq(
+      'PaperSourceFirstPage',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    paper_source_last_page_property: $ => seq(
+      'PaperSourceLastPage',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    // Low priority report properties
+    pdf_font_embedding_property: $ => seq(
+      'PdfFontEmbedding',
+      '=',
+      field('value', choice(
+        /[yY][eE][sS]/,                    // Yes
+        /[nN][oO]/,                       // No
+        /[nN][oO][nN][sS][tT][aA][nN][dD][aA][rR][dD]/ // NonStandard
+      )),
+      ';'
+    ),
+
+    print_only_if_detail_property: $ => seq(
+      'PrintOnlyIfDetail',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    word_merge_data_item_property: $ => seq(
+      'WordMergeDataItem',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    data_item_link_reference_property: $ => seq(
+      'DataItemLinkReference',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
     title_property: $ => seq(
       'Title',
       '=',
@@ -5158,6 +5400,15 @@ enum_type: $ => prec(1, seq(
       $.save_values_property,
       $.show_filter_property,
       
+      // Page inheritance and layout properties
+      $.clear_actions_property,
+      $.clear_layout_property,
+      $.clear_views_property,
+      $.show_as_property,
+      $.importance_additional_property,
+      $.include_caption_property,
+      $.cuegroup_layout_property,
+      
       // Web service properties
       $.entity_caption_property,
       $.entity_caption_ml_property,
@@ -5222,6 +5473,9 @@ enum_type: $ => prec(1, seq(
       
       // Table-specific classification
       $.data_classification_property,
+      
+      // Table external/integration properties
+      $.optimize_for_text_search_property,
     ),
 
     // Composed property group for report-level properties
@@ -5235,6 +5489,40 @@ enum_type: $ => prec(1, seq(
       $.scope_property,
       $.additional_search_terms_property,
       $.additional_search_terms_ml_property,
+      
+      // Report layout properties (critical)
+      $.default_rendering_layout_property,
+      $.excel_layout_property,
+      $.rdlc_layout_property,
+      $.word_layout_property,
+      
+      // Report execution properties
+      $.allow_scheduling_property,
+      $.preview_mode_property,
+      $.show_print_status_property,
+      $.transaction_type_property,
+      $.execution_timeout_property,
+      $.format_region_property,
+      $.use_system_printer_property,
+      $.maximum_dataset_size_property,
+      
+      // Report external features
+      $.enable_external_assemblies_property,
+      $.enable_external_images_property,
+      $.enable_hyperlinks_property,
+      $.excel_layout_multiple_data_sheets_property,
+      $.maximum_document_count_property,
+      
+      // Report print settings
+      $.paper_source_default_page_property,
+      $.paper_source_first_page_property,
+      $.paper_source_last_page_property,
+      $.pdf_font_embedding_property,
+      $.print_only_if_detail_property,
+      
+      // Report data item properties
+      $.word_merge_data_item_property,
+      $.data_item_link_reference_property,
       
       // Note: processing_only_property and use_request_page_property are in _object_specific_properties
     ),

@@ -1,0 +1,56 @@
+================================================================================
+ShowFilter property in part sections
+================================================================================
+
+page 123 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            part("TestPart"; "Test Part Page")
+            {
+                ApplicationArea = All;
+                ShowFilter = true;
+                SubPageLink = "No." = field("No.");
+            }
+            part("AnotherPart"; "Another Part Page")
+            {
+                ShowFilter = false;
+                ApplicationArea = All;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (part_section
+          name: (quoted_identifier)
+          page_name: (quoted_identifier)
+          (property
+            (application_area_property
+              value: (identifier)))
+          (property
+            (show_filter_property
+              value: (boolean)))
+          (property
+            (sub_page_link_property
+              value: (run_page_link_value
+                field: (quoted_identifier)
+                field_value: (quoted_identifier)))))
+        (part_section
+          name: (quoted_identifier)
+          page_name: (quoted_identifier)
+          (property
+            (show_filter_property
+              value: (boolean)))
+          (property
+            (application_area_property
+              value: (identifier))))))))
