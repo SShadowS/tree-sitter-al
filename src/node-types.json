@@ -201,6 +201,10 @@
           "named": true
         },
         {
+          "type": "freeze_column_property",
+          "named": true
+        },
+        {
           "type": "gesture_property",
           "named": true
         },
@@ -459,6 +463,10 @@
           "named": true
         },
         {
+          "type": "freeze_column_property",
+          "named": true
+        },
+        {
           "type": "gesture_property",
           "named": true
         },
@@ -712,6 +720,10 @@
         },
         {
           "type": "file_upload_row_action_property",
+          "named": true
+        },
+        {
+          "type": "freeze_column_property",
           "named": true
         },
         {
@@ -13702,6 +13714,10 @@
           "named": true
         },
         {
+          "type": "freeze_column_property",
+          "named": true
+        },
+        {
           "type": "hide_value_property",
           "named": true
         },
@@ -16128,6 +16144,30 @@
     "type": "format_property",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "freeze_column_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "generic_trigger",
@@ -21414,6 +21454,10 @@
           "named": true
         },
         {
+          "type": "freeze_column_property",
+          "named": true
+        },
+        {
           "type": "gesture_property",
           "named": true
         },
@@ -22652,6 +22696,10 @@
           "named": true
         },
         {
+          "type": "freeze_column_property",
+          "named": true
+        },
+        {
           "type": "help_link_property",
           "named": true
         },
@@ -23249,6 +23297,10 @@
         },
         {
           "type": "filters_property",
+          "named": true
+        },
+        {
+          "type": "freeze_column_property",
           "named": true
         },
         {
@@ -24515,6 +24567,10 @@
           "named": true
         },
         {
+          "type": "freeze_column_property",
+          "named": true
+        },
+        {
           "type": "hide_value_property",
           "named": true
         },
@@ -24931,6 +24987,10 @@
           "named": true
         },
         {
+          "type": "freeze_column_property",
+          "named": true
+        },
+        {
           "type": "hide_value_property",
           "named": true
         },
@@ -24944,6 +25004,14 @@
         },
         {
           "type": "inherent_permissions_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_property",
           "named": true
         },
         {
@@ -27784,6 +27852,10 @@
           "named": true
         },
         {
+          "type": "freeze_column_property",
+          "named": true
+        },
+        {
           "type": "gesture_property",
           "named": true
         },
@@ -29223,6 +29295,10 @@
         },
         {
           "type": "file_upload_row_action_property",
+          "named": true
+        },
+        {
+          "type": "freeze_column_property",
           "named": true
         },
         {
@@ -35417,6 +35493,10 @@
     "named": false
   },
   {
+    "type": "FreezeColumn",
+    "named": false
+  },
+  {
     "type": "Function",
     "named": false
   },
@@ -36739,11 +36819,11 @@
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "controladdin",
@@ -36779,11 +36859,11 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "div",

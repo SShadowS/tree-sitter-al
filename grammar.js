@@ -2906,6 +2906,7 @@ module.exports = grammar({
       // First 5 missing Page Field Properties
       $.assist_edit_property,
       $.column_span_property,
+      $.freeze_column_property,
       $.drill_down_property,
       $.lookup_property,
       $.hide_value_property,
@@ -4955,6 +4956,7 @@ enum_type: $ => prec(1, seq(
       $.width_property,              // Element width
       $.row_span_property,           // Grid row spanning
       $.column_span_property,        // Grid column spanning
+      $.freeze_column_property,      // Column freezing in repeaters
       $.importance_property,         // Priority/emphasis level
       $.show_caption_property,       // Caption visibility
       $.show_mandatory_property,     // Mandatory field indication
