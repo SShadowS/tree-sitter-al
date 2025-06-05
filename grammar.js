@@ -2930,6 +2930,7 @@ module.exports = grammar({
       $.instructional_text_ml_property,
       $.sub_page_link_property,
       $.sub_page_view_property,
+      $.update_propagation_property,
       $.visible_property
     )),
 

@@ -1,0 +1,91 @@
+================================================================================
+UpdatePropagation property in part section
+================================================================================
+
+page 50000 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            part(PrintService; "Test Part")
+            {
+                ApplicationArea = All;
+                UpdatePropagation = Both;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (property
+            (application_area_property
+              value: (identifier)))
+          (property
+            (update_propagation_property
+              value: (update_propagation_value))))))))
+
+================================================================================
+UpdatePropagation property with different values
+================================================================================
+
+page 50001 "Test Page 2"
+{
+    layout
+    {
+        area(Content)
+        {
+            part(Service1; "Test Part 1")
+            {
+                UpdatePropagation = Both;
+            }
+            part(Service2; "Test Part 2")  
+            {
+                UpdatePropagation = No;
+            }
+            part(Service3; "Test Part 3")
+            {
+                UpdatePropagation = Updated;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (property
+            (update_propagation_property
+              value: (update_propagation_value))))
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (property
+            (update_propagation_property
+              value: (update_propagation_value
+                (identifier)))))
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (property
+            (update_propagation_property
+              value: (update_propagation_value
+                (identifier)))))))))

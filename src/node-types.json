@@ -25195,6 +25195,10 @@
           "named": true
         },
         {
+          "type": "update_propagation_property",
+          "named": true
+        },
+        {
           "type": "usage_category_property",
           "named": true
         },
@@ -31167,6 +31171,45 @@
     }
   },
   {
+    "type": "update_propagation_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "update_propagation_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "update_propagation_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "usage_category_property",
     "named": true,
     "fields": {
@@ -36601,6 +36644,10 @@
     "named": false
   },
   {
+    "type": "UpdatePropagation",
+    "named": false
+  },
+  {
     "type": "UsageCategory",
     "named": false
   },
@@ -36819,11 +36866,11 @@
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "controladdin",
@@ -36859,11 +36906,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
@@ -36963,11 +37010,11 @@
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "interface",
