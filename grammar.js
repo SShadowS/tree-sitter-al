@@ -1693,6 +1693,8 @@ module.exports = grammar({
     _permissionset_element: $ => choice(
       $.assignable_property,
       $.caption_property,
+      $.access_property,
+      $.included_permission_sets_property,
       $.permissionset_permissions
     ),
 
@@ -1701,6 +1703,18 @@ module.exports = grammar({
       '=',
       choice('true', 'false'),
       ';'
+    ),
+
+    included_permission_sets_property: $ => seq(
+      'IncludedPermissionSets',
+      '=',
+      field('value', $.included_permission_sets_list),
+      ';'
+    ),
+
+    included_permission_sets_list: $ => seq(
+      choice($._quoted_identifier, $.identifier),
+      repeat(seq(',', choice($._quoted_identifier, $.identifier)))
     ),
 
     permissionset_permissions: $ => seq(

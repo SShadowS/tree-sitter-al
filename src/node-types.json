@@ -17807,6 +17807,41 @@
     }
   },
   {
+    "type": "included_permission_sets_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "included_permission_sets_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "included_permission_sets_list",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "indentation_column_property",
     "named": true,
     "fields": {
@@ -23351,11 +23386,19 @@
       "required": false,
       "types": [
         {
+          "type": "access_property",
+          "named": true
+        },
+        {
           "type": "assignable_property",
           "named": true
         },
         {
           "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "included_permission_sets_property",
           "named": true
         },
         {
@@ -33966,6 +34009,10 @@
     "named": false
   },
   {
+    "type": "IncludedPermissionSets",
+    "named": false
+  },
+  {
     "type": "IndentationColumn",
     "named": false
   },
@@ -35216,11 +35263,11 @@
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "controladdin",
@@ -35256,11 +35303,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
@@ -35360,11 +35407,11 @@
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "interface",

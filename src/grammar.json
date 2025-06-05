@@ -7461,6 +7461,14 @@
         },
         {
           "type": "SYMBOL",
+          "name": "access_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "included_permission_sets_property"
+        },
+        {
+          "type": "SYMBOL",
           "name": "permissionset_permissions"
         }
       ]
@@ -7492,6 +7500,74 @@
         {
           "type": "STRING",
           "value": ";"
+        }
+      ]
+    },
+    "included_permission_sets_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "IncludedPermissionSets"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "included_permission_sets_list"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "included_permission_sets_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_quoted_identifier"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "identifier"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_quoted_identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  }
+                ]
+              }
+            ]
+          }
         }
       ]
     },
