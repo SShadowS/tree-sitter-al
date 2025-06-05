@@ -52,8 +52,7 @@ module.exports = grammar({
     
     xmlport_declaration: $ => seq(
       /[xX][mM][lL][pP][oO][rR][tT]/,
-      field('object_id', $.integer),
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      $._object_header_base,
       '{',
       repeat($._xmlport_element),
       '}'
@@ -64,26 +63,7 @@ module.exports = grammar({
       $.var_section,
       $.procedure,
       $.trigger_declaration,
-      
-      // All XMLPort properties directly
-      $.caption_property,
-      $.inherent_permissions_property,
-      $.inherent_entitlements_property,
-      $.caption_ml_property,
-      $.description_property,
-      $.external_schema_property,
-      $.paste_is_valid_property,
-      $.obsolete_reason_property,
-      $.obsolete_state_property,
-      $.obsolete_tag_property,
-      $.moved_from_property,
-      $.moved_to_property,
-      $.linked_in_transaction_property,
-      $.linked_object_property,
-      $.application_area_property,
-      $.access_property,
-      $.direction_property,
-      $.format_property
+      $._xmlport_properties
     ),
     
     // XMLPort specific properties
@@ -138,8 +118,9 @@ module.exports = grammar({
     ),
     
     xmlport_table_property: $ => choice(
-      $.caption_property,
-      $.application_area_property,
+      $._universal_properties,    // caption, application_area, tool_tip, tool_tip_ml
+      
+      // XMLPort table-specific properties
       $.auto_replace_property,
       $.auto_save_property, 
       $.auto_update_property,
@@ -155,63 +136,28 @@ module.exports = grammar({
       $.request_filter_fields_property,
       $.request_filter_heading_property,
       $.request_filter_heading_ml_property,
-      $.tool_tip_property,
-      $.tool_tip_ml_property
     ),
     
     // 11. Unbound Property
-    unbound_property: $ => seq(
-      'Unbound',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    unbound_property: $ => seq('Unbound', $._boolean_property_template),
     
     // 12. XmlName Property
-    xml_name_property: $ => seq(
-      'XmlName',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    xml_name_property: $ => seq('XmlName', $._string_property_template),
     
     // 13. MovedFrom Property
-    moved_from_property: $ => seq(
-      'MovedFrom',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    moved_from_property: $ => seq('MovedFrom', $._string_property_template),
     
     // 14. MovedTo Property
-    moved_to_property: $ => seq(
-      'MovedTo',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    moved_to_property: $ => seq('MovedTo', $._string_property_template),
     
     // 15. LinkedInTransaction Property
-    linked_in_transaction_property: $ => seq(
-      'LinkedInTransaction',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    linked_in_transaction_property: $ => seq('LinkedInTransaction', $._boolean_property_template),
     
     // 16. LinkedObject Property
-    linked_object_property: $ => seq(
-      'LinkedObject',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    linked_object_property: $ => seq('LinkedObject', $._string_property_template),
     
     // 17. RequestFilterFields Property
-    request_filter_fields_value: $ => seq(
-      choice($.identifier, $._quoted_identifier),
-      repeat(seq(',', choice($.identifier, $._quoted_identifier)))
-    ),
+    request_filter_fields_value: $ => $._identifier_choice_list,
     
     request_filter_fields_property: $ => seq(
       'RequestFilterFields',
@@ -245,12 +191,7 @@ module.exports = grammar({
     ),
     
     // 7. LinkTableForceInsert Property
-    link_table_force_insert_property: $ => seq(
-      'LinkTableForceInsert',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    link_table_force_insert_property: $ => seq('LinkTableForceInsert', $._boolean_property_template),
     
     // 8. MaxOccurs Property
     max_occurs_value: $ => choice(
@@ -342,7 +283,7 @@ module.exports = grammar({
         $._quoted_identifier,
         // Support FIELD("FieldName") syntax
         seq(
-          choice('FIELD', 'Field', 'field'),
+          $._field_keyword,
           '(',
           choice($.identifier, $._quoted_identifier, $.string_literal),
           ')'
@@ -352,23 +293,21 @@ module.exports = grammar({
 
     enum_declaration: $ => seq(
       /[eE][nN][uU][mM]/,
-      field('object_id', $.integer),
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      $._object_header_base,
       optional(seq(
         /[iI][mM][pP][lL][eE][mM][eE][nN][tT][sS]/,
-        field('interface', choice($._quoted_identifier, $.identifier))
+        field('interface', $._identifier_choice)
       )),
       '{',
-      repeat(choice($.property, $.enum_value_declaration)),
+      repeat(choice($._enum_properties, $.enum_value_declaration)),
       '}'
     ),
 
     enumextension_declaration: $ => seq(
       /[eE][nN][uU][mM][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
-      field('object_id', $.integer),
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      $._object_header_base,
       /[eE][xX][tT][eE][nN][dD][sS]/,
-      field('base_object', choice($._quoted_identifier, $.identifier)),
+      field('base_object', $._identifier_choice),
       '{',
       repeat($.enum_value_declaration),
       '}'
@@ -382,44 +321,28 @@ module.exports = grammar({
       field('value_name', choice($._quoted_identifier, $.identifier, $.string_literal)), // Allow string literal for value name
       ')',
       '{',
-      repeat($.property), // Reuse existing property rule, might need refinement
+      repeat($._enum_properties), // Use centralized enum properties
       '}'
     ),
 
     query_declaration: $ => seq(
       /[qQ][uU][eE][rR][yY]/,
-      field('object_id', $.integer),
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      $._object_header_base,
       '{',
       repeat($._query_element),
       '}'
     ),
 
     _query_element: $ => choice(
-      $.query_type_property,
-      $.caption_property,
-      $.about_title_property,
-      $.about_text_property,
-      $.context_sensitive_help_page_property,
-      $.usage_category_property,
-      $.data_access_intent_property,
-      $.elements_section,
-      $.property_list
+      $._universal_properties,       // caption, description, application_area, etc.
+      $._query_properties,           // query-specific properties
+      $.elements_section,            // dataitem and column definitions
+      $.property_list               // generic property container
     ),
 
-    about_title_property: $ => seq(
-      'AboutTitle',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    about_title_property: $ => seq('AboutTitle', $._string_property_template),
 
-    about_text_property: $ => seq(
-      'AboutText',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    about_text_property: $ => seq('AboutText', $._string_property_template),
 
     // Page-specific version of AboutText
     page_about_text_property: $ => seq(
@@ -454,72 +377,27 @@ module.exports = grammar({
     ),
 
     // Delete Allowed Property
-    delete_allowed_property: $ => seq(
-      'DeleteAllowed',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    delete_allowed_property: $ => seq('DeleteAllowed', $._boolean_property_template),
 
     // Insert Allowed Property
-    insert_allowed_property: $ => seq(
-      'InsertAllowed',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    insert_allowed_property: $ => seq('InsertAllowed', $._boolean_property_template),
 
     // Modify Allowed Property
-    modify_allowed_property: $ => seq(
-      'ModifyAllowed',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    modify_allowed_property: $ => seq('ModifyAllowed', $._boolean_property_template),
 
     // Source Table Temporary Property
-    source_table_temporary_property: $ => seq(
-      'SourceTableTemporary',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    source_table_temporary_property: $ => seq('SourceTableTemporary', $._boolean_property_template),
 
     // Phase 2A - Medium Priority Boolean Page Properties
-    analysis_mode_enabled_property: $ => seq(
-      'AnalysisModeEnabled',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    analysis_mode_enabled_property: $ => seq('AnalysisModeEnabled', $._boolean_property_template),
 
-    auto_split_key_property: $ => seq(
-      'AutoSplitKey',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    auto_split_key_property: $ => seq('AutoSplitKey', $._boolean_property_template),
 
-    change_tracking_allowed_property: $ => seq(
-      'ChangeTrackingAllowed',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    change_tracking_allowed_property: $ => seq('ChangeTrackingAllowed', $._boolean_property_template),
 
-    delayed_insert_property: $ => seq(
-      'DelayedInsert',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    delayed_insert_property: $ => seq('DelayedInsert', $._boolean_property_template),
 
-    links_allowed_property: $ => seq(
-      'LinksAllowed',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    links_allowed_property: $ => seq('LinksAllowed', $._boolean_property_template),
 
     multiple_new_lines_property: $ => seq(
       'MultipleNewLines',
@@ -674,10 +552,7 @@ module.exports = grammar({
       ';'
     ),
     
-    odata_key_fields_value: $ => seq(
-      choice($.identifier, $._quoted_identifier),
-      repeat(seq(',', choice($.identifier, $._quoted_identifier)))
-    ),
+    odata_key_fields_value: $ => $._identifier_choice_list,
 
     odata_key_fields_property: $ => seq(
       'ODataKeyFields',
@@ -755,7 +630,7 @@ module.exports = grammar({
     ),
     
     filter_expression_function: $ => seq(
-      choice('FILTER', 'filter', 'Filter'),
+      $._filter_keyword,
       '(',
       field('value', choice(
         $.filter_or_expression,
@@ -907,10 +782,9 @@ module.exports = grammar({
 
     pageextension_declaration: $ => seq(
       /[pP][aA][gG][eE][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
-      field('object_id', $.integer),
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      $._object_header_base,
       /[eE][xX][tT][eE][nN][dD][sS]/,
-      field('base_object', choice($._quoted_identifier, $.identifier)),
+      field('base_object', $._identifier_choice),
       '{',
       repeat($._pageextension_element),
       '}'
@@ -919,7 +793,7 @@ module.exports = grammar({
     _pageextension_element: $ => choice(
       $.layout_section,
       $.actions_section,
-      $.property_list,
+      $._page_properties,     // Centralized page properties
       $.var_section,
       $.trigger_declaration,
       seq(optional($.attribute_list), $.procedure)
@@ -927,10 +801,9 @@ module.exports = grammar({
 
     tableextension_declaration: $ => seq(
       /[tT][aA][bB][lL][eE][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
-      field('object_id', $.integer),
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      $._object_header_base,
       /[eE][xX][tT][eE][nN][dD][sS]/,
-      field('base_object', choice($._quoted_identifier, $.identifier)),
+      field('base_object', $._identifier_choice),
       '{',
       repeat($._tableextension_element),
       '}'
@@ -943,7 +816,7 @@ module.exports = grammar({
       $.procedure,
       $.var_section,
       $.trigger_declaration,
-      $.property_list
+      $._table_properties     // Centralized table properties
     ),
 
     actions_section: $ => seq(
@@ -1144,38 +1017,7 @@ module.exports = grammar({
       '}'
     ),
 
-    _action_property: $ => choice(
-      $.access_by_permission_property,
-      $.allowed_file_extensions_property,
-      $.allow_multiple_files_property,
-      $.application_area_property,
-      $.caption_property,
-      $.custom_action_type_property,
-      $.ellipsis_property,
-      $.enabled_property,
-      $.file_upload_action_property,
-      $.file_upload_row_action_property,
-      $.gesture_property,
-      $.image_property,
-      $.in_footer_bar_property,
-      $.is_header_property,
-      $.obsolete_reason_property,
-      $.obsolete_state_property,
-      $.obsolete_tag_property,
-      $.promoted_property,
-      $.promoted_category_property,
-      $.promoted_is_big_property,
-      $.promoted_only_property,
-      $.run_object_property,
-      $.run_page_link_property,
-      $.run_page_mode_property,
-      $.run_page_on_rec_property,
-      $.run_page_view_property,
-      $.scope_property,
-      $.shortcut_key_property,
-      $.tool_tip_property,
-      $.visible_property
-    ),
+    _action_property: $ => $._action_properties,
 
     application_area_property: $ => seq(
       'ApplicationArea',
@@ -1224,7 +1066,7 @@ module.exports = grammar({
     ),
 
     cardpart_property: $ => seq(
-      choice('CardPart', 'CARDPART', 'Cardpart'),
+      $._cardpart_keyword,
       '=',
       field('value', choice(
         $.boolean,
@@ -1455,8 +1297,7 @@ module.exports = grammar({
 
     table_declaration: $ => seq(
       /[tT][aA][bB][lL][eE]/,
-      field('object_id', $.integer),
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      $._object_header_base,
       '{',
       repeat($._table_element),
       '}'
@@ -1464,8 +1305,7 @@ module.exports = grammar({
 
     codeunit_declaration: $ => seq(
       /[cC][oO][dD][eE][uU][nN][iI][tT]/,
-      field('object_id', $.integer),
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      $._object_header_base,
       optional($.implements_clause),
       '{',
       prec(4, optional($.property_list)), // Prioritize properties over procedures starting with same keywords
@@ -1497,8 +1337,7 @@ module.exports = grammar({
 
     page_declaration: $ => seq(
       /[pP][aA][gG][eE]/,
-      field('object_id', $.integer),
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      $._object_header_base,
       '{',
       repeat(seq(optional(';'), $._page_element)),
       '}'
@@ -1506,9 +1345,9 @@ module.exports = grammar({
 
     pagecustomization_declaration: $ => seq(
       /[pP][aA][gG][eE][cC][uU][sS][tT][oO][mM][iI][zZ][aA][tT][iI][oO][nN]/,
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      field('object_name', $._identifier_choice),
       /[cC][uU][sS][tT][oO][mM][iI][zZ][eE][sS]/,
-      field('target_page', choice($._quoted_identifier, $.identifier)),
+      field('target_page', $._identifier_choice),
       '{',
       repeat($._pagecustomization_element),
       '}'
@@ -1516,7 +1355,7 @@ module.exports = grammar({
 
     profile_declaration: $ => seq(
       /[pP][rR][oO][fF][iI][lL][eE]/,
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      field('object_name', $._identifier_choice),
       '{',
       repeat($._profile_element),
       '}'
@@ -1524,19 +1363,17 @@ module.exports = grammar({
 
     controladdin_declaration: $ => seq(
       /[cC][oO][nN][tT][rR][oO][lL][aA][dD][dD][iI][nN]/,
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      field('object_name', $._identifier_choice),
       '{',
       repeat($._controladdin_element),
       '}'
     ),
 
     _controladdin_element: $ => choice(
-      $.controladdin_property,
-      $.controladdin_event,
-      $.controladdin_procedure,
-      $.obsolete_state_property,
-      $.obsolete_reason_property,
-      $.obsolete_tag_property
+      $._controladdin_properties,    // Centralized properties
+      $.controladdin_event,          // ControlAddIn structural elements
+      $.controladdin_procedure,      // ControlAddIn structural elements
+      $.property_list               // Generic fallback
     ),
 
     controladdin_property: $ => seq(
@@ -1575,7 +1412,7 @@ module.exports = grammar({
 
     interface_declaration: $ => seq(
       /[iI][nN][tT][eE][rR][fF][aA][cC][eE]/,
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      field('object_name', $._identifier_choice),
       '{',
       repeat($.interface_procedure),
       '}'
@@ -1593,36 +1430,26 @@ module.exports = grammar({
 
     report_declaration: $ => seq(
       /[rR][eE][pP][oO][rR][tT]/,
-      field('object_id', $.integer),
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      $._object_header_base,
       '{',
       repeat($._report_element),
       '}'
     ),
 
     _report_element: $ => choice(
+      // Structural report elements (not properties)
       $.dataset_section,
       $.labels_section,
       $.requestpage_section,
       $.actions_section,
       $.var_section,
+      
+      // Report procedures and triggers
       seq(optional($.attribute_list), $.procedure),
       seq(optional($.attribute_list), $.generic_trigger),
       
-      // Report properties directly as elements
-      $.caption_property,
-      $.processing_only_property,
-      $.use_request_page_property,
-      $.usage_category_property,
-      $.application_area_property,
-      $.additional_search_terms_property,
-      $.additional_search_terms_ml_property,
-      $.description_property,
-      $.scope_property,
-      $.permissions_property,
-      $.obsolete_state_property,
-      $.obsolete_reason_property,
-      $.obsolete_tag_property
+      // All report properties now centralized
+      $._report_properties,
     ),
 
     labels_section: $ => seq(
@@ -1655,7 +1482,7 @@ module.exports = grammar({
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ';',
-      choice($._quoted_identifier, $.identifier),
+      $._identifier_choice,
       ')',
       '{',
       repeat(choice(
@@ -1693,19 +1520,16 @@ module.exports = grammar({
 
     permissionset_declaration: $ => seq(
       /[pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT]/,
-      field('object_id', $.integer),
-      field('object_name', choice($._quoted_identifier, $.identifier)),
+      $._object_header_base,
       '{',
       repeat($._permissionset_element),
       '}'
     ),
 
     _permissionset_element: $ => choice(
-      $.assignable_property,
-      $.caption_property,
-      $.access_property,
-      $.included_permission_sets_property,
-      $.permissionset_permissions
+      $._permissionset_properties,   // Centralized properties
+      $.permissionset_permissions,   // PermissionSet structural elements
+      $.property_list                // Generic fallback
     ),
 
     assignable_property: $ => seq(
@@ -1722,10 +1546,7 @@ module.exports = grammar({
       ';'
     ),
 
-    included_permission_sets_list: $ => seq(
-      choice($._quoted_identifier, $.identifier),
-      repeat(seq(',', choice($._quoted_identifier, $.identifier)))
-    ),
+    included_permission_sets_list: $ => $._identifier_choice_list,
 
     permissionset_permissions: $ => seq(
       'Permissions',
@@ -1748,15 +1569,15 @@ module.exports = grammar({
       $.system_permission_entry
     ),
 
-    tabledata_permission_entry: $ => seq(
-      choice('tabledata', 'TableData', 'Tabledata', 'TABLEDATA'),
+    tabledata_permission_entry: $ => prec(1, seq(
+      $._tabledata_keyword,
       choice($._quoted_identifier, $.identifier, $.integer),
       '=',
       $.permission_type
-    ),
+    )),
 
     table_permission_entry: $ => seq(
-      choice('table', 'Table', 'TABLE'),
+      $._table_permission_keyword,
       choice($._quoted_identifier, $.identifier, $.integer),
       '=',
       $.permission_type
@@ -1764,28 +1585,28 @@ module.exports = grammar({
 
     page_permission_entry: $ => seq(
       choice('page', 'Page', 'PAGE'),
-      choice($._quoted_identifier, $.identifier),
+      $._identifier_choice,
       '=',
       $.permission_type
     ),
 
     report_permission_entry: $ => seq(
       choice('report', 'Report', 'REPORT'),
-      choice($._quoted_identifier, $.identifier),
+      $._identifier_choice,
       '=',
       $.permission_type
     ),
 
     codeunit_permission_entry: $ => seq(
       choice('codeunit', 'Codeunit', 'CODEUNIT'),
-      choice($._quoted_identifier, $.identifier),
+      $._identifier_choice,
       '=',
       $.permission_type
     ),
 
     system_permission_entry: $ => seq(
       choice('system', 'System', 'SYSTEM'),
-      choice($._quoted_identifier, $.identifier),
+      $._identifier_choice,
       '=',
       $.permission_type
     ),
@@ -1842,102 +1663,18 @@ module.exports = grammar({
     )),
 
     _page_element: $ => choice(
-      // Place source_table_view_property at the top for higher precedence
-      $.source_table_view_property,
+      // Structural page elements (not properties)
       $.layout_section,
       $.actions_section,
       seq(optional($.attribute_list), $.procedure),  // Support attributed procedures in pages
       $.var_section,
       $.trigger_declaration,
       
-      // All page properties directly as elements
-      $.page_type_property,
-      $.source_table_property,
-      $.editable_property,        // Add missing editable property
-      $.enabled_property,         // Add missing enabled property
-      $.visible_property,         // Add missing visible property
-      $.data_caption_fields_property,
-      $.extensible_property,
-      $.inherent_permissions_property,
-      $.inherent_entitlements_property,
-      $.caption_ml_property,
-      $.description_property,
-      $.usage_category_property,
-      $.application_area_property,
-      $.caption_property,
-      $.scope_property,
-      $.promoted_property,
-      $.promoted_category_property,
-      $.promoted_only_property,
-      $.promoted_is_big_property,
-      $.promoted_action_categories_property,
-      $.run_object_property,
-      $.run_page_link_property,
-      $.run_page_view_property,
-      $.image_property,
-      $.tool_tip_property,
-      $.permissions_property,
+      // All page properties now centralized
+      $._page_properties,
       
-      // Phase 1 additions - high priority page properties
-      $.page_about_text_property,
-      $.page_about_text_ml_property,
-      $.page_about_title_property,
-      $.page_about_title_ml_property,
-      $.card_page_id_property,
-      $.delete_allowed_property,
-      $.insert_allowed_property,
-      $.modify_allowed_property,
-      $.source_table_temporary_property,
-      
-      // Phase 2A additions - medium priority boolean page properties
-      $.analysis_mode_enabled_property,
-      $.auto_split_key_property,
-      $.change_tracking_allowed_property,
-      $.delayed_insert_property,
-      $.links_allowed_property,
-      $.multiple_new_lines_property,
-      $.populate_all_fields_property,
-      
-      // Phase 2B additions - medium priority complex page properties
-      $.data_access_intent_property,
-      $.data_caption_expression_property,
-      $.instructional_text_property,
-      $.instructional_text_ml_property,
-      
-      // Phase 4A additions - high + medium priority page properties
-      $.access_by_permission_page_property,
-      $.prompt_mode_property,
-      $.refresh_on_activate_property,
-      $.save_values_property,
-      $.show_filter_property,
-      $.additional_search_terms_property,
-      $.additional_search_terms_ml_property,
-      
-      // Phase 4B Batch 2 - Web Service Properties
-      $.entity_caption_property,
-      $.entity_caption_ml_property,
-      $.entity_name_property,
-      $.entity_set_caption_property,
-      $.entity_set_caption_ml_property,
-      $.entity_set_name_property,
-      
-      // Phase 4C - Remaining Low Priority Properties
-      $.context_sensitive_help_page_property,
-      $.help_link_property,
-      $.is_preview_property,
-      $.odata_key_fields_property,
-      $.query_category_property,
-      
-      // Page View Properties
-      $.filters_property,
-      
-      // Obsolete Properties
-      $.obsolete_reason_property,
-      $.obsolete_state_property,
-      $.obsolete_tag_property,
-      $.order_by_property,
-      $.shared_layout_property,
-      $.data_item_table_view_property
+      // Special case: source_table_view_property at the top for higher precedence  
+      $.source_table_view_property,
     ),
 
     layout_section: $ => seq(
@@ -1969,42 +1706,22 @@ module.exports = grammar({
     // Layout modification rules for pageextensions
     addfirst_layout_modification: $ => seq(
       /[aA][dD][dD][fF][iI][rR][sS][tT]/,
-      '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
-      ')',
-      '{',
-      repeat($._layout_element),
-      '}'
+      $._layout_modification_template
     ),
 
     addlast_layout_modification: $ => seq(
       /[aA][dD][dD][lL][aA][sS][tT]/,
-      '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
-      ')',
-      '{',
-      repeat($._layout_element),
-      '}'
+      $._layout_modification_template
     ),
 
     addafter_layout_modification: $ => seq(
       /[aA][dD][dD][aA][fF][tT][eE][rR]/,
-      '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
-      ')',
-      '{',
-      repeat($._layout_element),
-      '}'
+      $._layout_modification_template
     ),
 
     addbefore_layout_modification: $ => seq(
       /[aA][dD][dD][bB][eE][fF][oO][rR][eE]/,
-      '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
-      ')',
-      '{',
-      repeat($._layout_element),
-      '}'
+      $._layout_modification_template
     ),
 
     area_section: $ => seq(
@@ -2032,17 +1749,7 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._layout_element,
-        $.property_list,
-        $.instructional_text_property,
-        $.visible_property,
-        $.enabled_property,
-        $.cuegroup_layout_property,
-        $.freeze_column_property,
-        $.grid_layout_property,
-        $.indentation_column_property,
-        $.indentation_controls_property,
-        $.show_as_tree_property,
-        $.tree_initial_state_property
+        $.property_list
       )),
       '}'
     ),
@@ -2056,11 +1763,7 @@ module.exports = grammar({
       repeat(choice(
         $.field_section,
         $.actions_section,
-        $.property_list,
-        $.caption_property,
-        $.visible_property,
-        $.enabled_property,
-        $.cuegroup_layout_property
+        $.property_list
       )),
       '}'
     ),
@@ -2073,12 +1776,7 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._layout_element,
-        $.property_list,
-        $.caption_property,
-        $.show_caption_property,
-        $.visible_property,
-        $.enabled_property,
-        $.grid_layout_property
+        $.property_list
       )),
       '}'
     ),
@@ -2105,15 +1803,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $.property_list,
-        $.application_area_property,
-        $.caption_property,
-        $.caption_ml_property,
-        $.visible_property,
-        $.enabled_property,
-        $.show_caption_property,
-        $.style_property,
-        $.style_expr_property
+        $.property_list
       )),
       '}'
     ),
@@ -2126,77 +1816,23 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._layout_element,
-        $.property_list,
-        $.visible_property,
-        $.freeze_column_property,
-        $.enabled_property
+        $.property_list
       )),
       '}'
     ),
 
     field_section: $ => choice(
-      // Standard field
+      // Standard field: field(Name) { ... }
       seq(
         /[fF][iI][eE][lL][dD]/,
         '(',
         field('name', choice($.identifier, $._quoted_identifier)),
         ')',
         '{',
-        repeat(choice(
-      $.caption_property,
-      $.caption_class_property,
-      $.application_area_property,
-      $.tool_tip_property,
-      $.tool_tip_ml_property,
-      $.visible_property,
-      $.enabled_property,
-      $.source_expr_property,
-      $.editable_property,
-      $.description_property,
-      $.lookup_property,
-      $.lookup_pageid_property,
-      $.drilldown_pageid_property,
-      $.option_caption_property,
-      $.table_relation_property,
-      $.decimal_places_property,
-      $.min_value_property,
-      $.max_value_property,
-      $.field_trigger_declaration,
-      // First 5 missing Page Field Properties
-      $.assist_edit_property,
-      $.column_span_property,
-      $.drill_down_property,
-      $.hide_value_property,
-      $.multi_line_property,
-      $.importance_property,
-      $.navigation_page_id_property,
-      $.quick_entry_property,
-      $.row_span_property,
-      $.width_property,
-      $.show_caption_property,
-      $.show_mandatory_property,
-      $.style_property,
-      $.style_expr_property,
-      $.blank_zero_property,
-      $.blank_numbers_property,
-      $.extended_datatype_property,
-      $.auto_format_expression_property,
-      $.auto_format_type_property,
-      // About properties for fields
-      $.page_about_title_property,
-      $.page_about_text_property,
-      $.page_about_title_ml_property,
-      $.page_about_text_ml_property,
-      // Missing field properties
-      $.access_by_permission_property,
-      // Obsolete Properties for fields
-      $.obsolete_reason_property,
-      $.obsolete_state_property,
-      $.obsolete_tag_property
-        )),
+        repeat($._field_properties),
         '}'
       ),
-      // Field with control name
+      // Field with control name: field(Name)(ControlName) { ... }
       seq(
         /[fF][iI][eE][lL][dD]/,
         '(',
@@ -2206,49 +1842,10 @@ module.exports = grammar({
         field('control_name', choice($.identifier, $._quoted_identifier)),
         ')',
         '{',
-        repeat(choice(
-          $.caption_property,
-          $.caption_class_property,
-          $.application_area_property,
-          $.tool_tip_property,
-          $.tool_tip_ml_property,
-          $.visible_property,
-          $.enabled_property,
-          $.source_expr_property,
-          $.editable_property,
-          $.description_property,
-          $.lookup_property,
-          $.lookup_pageid_property,
-          $.option_caption_property,
-          $.table_relation_property,
-          $.decimal_places_property,
-          $.min_value_property,
-          $.max_value_property,
-          $.sign_displacement_property,
-          $.title_property,
-          $.width_property,
-          $.odata_edm_type_property,
-          $.field_trigger_declaration,
-          $.blank_zero_property,
-          $.blank_numbers_property,
-          $.extended_datatype_property,
-          $.auto_format_expression_property,
-          $.auto_format_type_property,
-          // About properties for fields
-          $.page_about_title_property,
-          $.page_about_text_property,
-          $.page_about_title_ml_property,
-          $.page_about_text_ml_property,
-          // Missing field properties
-          $.access_by_permission_property,
-          // Obsolete Properties for fields
-          $.obsolete_reason_property,
-          $.obsolete_state_property,
-          $.obsolete_tag_property
-        )),
+        repeat($._field_properties),
         '}'
       ),
-      // Combined field with ID and Source/Name: field(ControlId; SourceOrFieldName) { ... }
+      // Combined field: field(ControlId; SourceOrFieldName) { ... }
       seq(
         /[fF][iI][eE][lL][dD]/,
         '(',
@@ -2259,63 +1856,7 @@ module.exports = grammar({
         field('source_or_field_name', $._expression),
         ')',
         '{',
-        // Combined list of possible properties from both original patterns
-        repeat(choice(
-          $.caption_property,
-          $.caption_class_property,
-          $.application_area_property,
-          $.tool_tip_property,
-          $.tool_tip_ml_property,
-          $.visible_property,
-          $.enabled_property,
-          $.lookup_property,
-          $.lookup_pageid_property,
-          $.drilldown_pageid_property,
-          $.run_object_property,
-          $.run_page_link_property,
-          $.source_expr_property,
-          $.editable_property,
-          $.option_caption_property,
-          $.table_relation_property,
-          $.decimal_places_property,
-          $.min_value_property,
-          $.max_value_property,
-          $.field_trigger_declaration,
-          // First 5 missing Page Field Properties
-          $.assist_edit_property,
-          $.column_span_property,
-          $.drill_down_property,
-          $.hide_value_property,
-          $.multi_line_property,
-          $.importance_property,
-          $.navigation_page_id_property,
-          $.quick_entry_property,
-          $.row_span_property,
-          $.width_property,
-          $.show_caption_property,
-          $.show_mandatory_property,
-          $.sign_displacement_property,
-          $.style_property,
-          $.style_expr_property,
-          $.title_property,
-          $.odata_edm_type_property,
-          $.blank_zero_property,
-          $.blank_numbers_property,
-          $.extended_datatype_property,
-          $.auto_format_expression_property,
-          $.auto_format_type_property,
-          // About properties for fields
-          $.page_about_title_property,
-          $.page_about_text_property,
-          $.page_about_title_ml_property,
-          $.page_about_text_ml_property,
-          // Missing field properties
-          $.access_by_permission_property,
-          // Obsolete Properties for fields
-          $.obsolete_reason_property,
-          $.obsolete_state_property,
-          $.obsolete_tag_property
-        )),
+        repeat($._field_properties),
         '}'
       )
     ),
@@ -2329,16 +1870,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $.property_list,
-        $.application_area_property,
-        $.caption_property,
-        $.multiplicity_property,
-        $.provider_property,
-        $.show_filter_property,
-        $.sub_page_link_property,
-        $.sub_page_view_property,
-        $.update_propagation_property,
-        $.visible_property
+        $.property_list
       )),
       '}'
     ),
@@ -2353,7 +1885,6 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $.property_list,
-        $.application_area_property,
         $.visible_property
       )),
       '}'
@@ -2368,7 +1899,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $.application_area_property,
+        $.property_list,
         $.visible_property,
         $.enabled_property,
         $.editable_property,
@@ -2482,9 +2013,9 @@ module.exports = grammar({
     ),
 
     implementation_value: $ => seq(
-      field('interface', choice($._quoted_identifier, $.identifier)),
+      field('interface', $._identifier_choice),
       '=',
-      field('implementation', choice($._quoted_identifier, $.identifier))
+      field('implementation', $._identifier_choice)
     ),
 
     field_class_value: $ => choice(
@@ -3152,16 +2683,22 @@ module.exports = grammar({
 
 
     onrun_trigger: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      $._trigger_keyword,
       choice('OnRun', 'ONRUN', 'Onrun'),
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
 
     _table_element: $ => prec(1, choice(
+      // Structural table elements (not properties)
       $.fields,  // Fields section should be primary
+      $.keys,
+      $.fieldgroups_section,
+      $.var_section,
+      
+      // Table triggers
       $.oninsert_trigger,
       $.onmodify_trigger,
       $.ondelete_trigger,
@@ -3174,43 +2711,12 @@ module.exports = grammar({
       $.onbeforeinsertevent_trigger,
       $.onbeforemodifyevent_trigger,
       $.onbeforedeleteevent_trigger,
-      $.keys,
+      
+      // Procedures
       seq(optional($.attribute_list), $.procedure),
-      $.caption_property,
-      $.data_classification_property,
-      $.var_section,
-      $.permissions_property,
-      $.drilldown_pageid_property,
-      $.lookup_pageid_property,
-      $.table_type_property,
-      $.access_property,
-      $.fieldgroups_section,
       
-      // Existing table-related properties
-      $.moved_from_property,
-      $.moved_to_property,
-      $.linked_in_transaction_property,
-      $.linked_object_property,
-      
-      // HIGH PRIORITY properties
-      $.data_caption_fields_property,
-      $.extensible_property,
-      $.data_per_company_property,
-      $.replicate_data_property,
-      $.column_store_index_property,
-      $.compression_type_property,
-      $.inherent_permissions_property,
-      $.inherent_entitlements_property,
-      
-      // MEDIUM/LOW PRIORITY properties
-      $.external_schema_property,
-      $.paste_is_valid_property,
-      $.description_property,
-      $.obsolete_reason_property,
-      $.obsolete_state_property,
-      $.obsolete_tag_property,
-      $.caption_ml_property,
-      $.external_name_property
+      // All table properties now centralized
+      $._table_properties,
     )),
 
     // For single table permission property
@@ -3234,97 +2740,97 @@ module.exports = grammar({
 
 
     oninsert_trigger: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      $._trigger_keyword,
       choice('OnInsert', 'ONINSERT', 'Oninsert'),
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
     onmodify_trigger: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      $._trigger_keyword,
       choice('OnModify', 'ONMODIFY', 'Onmodify'),
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
     ondelete_trigger: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      $._trigger_keyword,
       choice('OnDelete', 'ONDELETE', 'Ondelete'),
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
     onrename_trigger: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      $._trigger_keyword,
       choice('OnRename', 'ONRENAME', 'Onrename'),
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
     onvalidate_trigger: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      $._trigger_keyword,
       choice('OnValidate', 'ONVALIDATE', 'Onvalidate'),
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
     onaftergetrecord_trigger: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      $._trigger_keyword,
       choice('OnAfterGetRecord', 'ONAFTERGETRECORD', 'Onaftergetrecord'),
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
     onafterinsertevent_trigger: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      $._trigger_keyword,
       choice('OnAfterInsertEvent', 'ONAFTERINSERTEVENT', 'Onafterinsertevent'),
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
     onaftermodifyevent_trigger: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      $._trigger_keyword,
       choice('OnAfterModifyEvent', 'ONAFTERMODIFYEVENT', 'Onaftermodifyevent'),
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
     onafterdeleteevent_trigger: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      $._trigger_keyword,
       choice('OnAfterDeleteEvent', 'ONAFTERDELETEEVENT', 'Onafterdeleteevent'),
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
     onbeforeinsertevent_trigger: $ => seq(
-      'trigger',
+      $._trigger_keyword,
       'OnBeforeInsertEvent',
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
     onbeforemodifyevent_trigger: $ => seq(
-      'trigger',
+      $._trigger_keyword,
       'OnBeforeModifyEvent',
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
 
     onbeforedeleteevent_trigger: $ => seq(
-      'trigger',
+      $._trigger_keyword,
       'OnBeforeDeleteEvent',
-      '()',
+      $._trigger_parameters,
       optional($.var_section),
       $.code_block
     ),
@@ -3348,7 +2854,6 @@ module.exports = grammar({
       $.lookup_pageid_property,
       $.card_page_id_property,
       $.promoted_action_categories_property,
-      $.implementation_property,
       $.permissions_property,
       $.test_permissions_property,
       $.table_relation_property,
@@ -3375,7 +2880,6 @@ module.exports = grammar({
       $.caption_property, 
       // NEW HIGH PRIORITY PROPERTIES
       $.data_caption_fields_property,
-      $.extensible_property,
       $.data_per_company_property,
       $.replicate_data_property,
       $.column_store_index_property,
@@ -3427,7 +2931,8 @@ module.exports = grammar({
       $.shortcut_key_property,
       $.additional_search_terms_property,
       $.additional_search_terms_ml_property,
-      $.assignment_compatibility_property
+      $.sub_page_link_property,
+      $.sub_page_view_property
     )),
 
     caption_property: $ => seq(
@@ -3490,7 +2995,7 @@ module.exports = grammar({
     ),
 
     tabledata_permission: $ => seq(
-      choice('tabledata', 'TableData', 'TABLEDATA'), 
+      $._tabledata_keyword,
       field('table_name', $._table_identifier),
       '=',
       field('permission', $.permission_type)
@@ -4273,7 +3778,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     field_trigger_declaration: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      $._trigger_keyword,
       field('type', alias(choice(
         choice('OnValidate', 'ONVALIDATE', 'Onvalidate'),
         choice('OnLookup', 'ONLOOKUP', 'Onlookup'),
@@ -4355,8 +3860,8 @@ enum_type: $ => prec(1, seq(
     ),
 
     key_field_list: $ => seq(
-      choice($._quoted_identifier, $.identifier),
-      repeat(seq(',', choice($._quoted_identifier, $.identifier)))
+      $._identifier_choice,
+      repeat(seq(',', $._identifier_choice))
     ),
 
     attribute_list: $ => prec.left(repeat1($.attribute)),
@@ -5365,13 +4870,8 @@ enum_type: $ => prec(1, seq(
 
     // Profile elements
     _profile_element: $ => choice(
-      $.profile_description_property,
-      $.profile_rolecenter_property,
-      $.profile_caption_property,
-      $.profile_customizations_property,
-      $.profile_enabled_property,
-      $.profile_description_property2,
-      $.profile_promoted_property
+      $._profile_properties,         // Centralized properties
+      $.property_list               // Generic fallback
     ),
 
     profile_description_property: $ => seq(
@@ -5384,7 +4884,7 @@ enum_type: $ => prec(1, seq(
     profile_rolecenter_property: $ => seq(
       'RoleCenter',
       '=',
-      field('value', choice($._quoted_identifier, $.identifier)),
+      field('value', $._identifier_choice),
       ';'
     ),
 
@@ -5403,16 +4903,16 @@ enum_type: $ => prec(1, seq(
     ),
 
     customizations_list: $ => seq(
-      choice($._quoted_identifier, $.identifier),
-      repeat(seq(',', choice($._quoted_identifier, $.identifier)))
+      $._identifier_choice,
+      repeat(seq(',', $._identifier_choice))
     ),
 
-    profile_enabled_property: $ => seq(
+    profile_enabled_property: $ => prec(2, seq(
       'Enabled',
       '=',
       field('value', $.boolean),
       ';'
-    ),
+    )),
 
     profile_description_property2: $ => seq(
       'ProfileDescription',
@@ -5427,6 +4927,432 @@ enum_type: $ => prec(1, seq(
       field('value', $.boolean),
       ';'
     ),
+
+    // =============================================================================
+    // CENTRALIZED PROPERTY CATEGORIES
+    // =============================================================================
+    // Semantic property organization for DRY principle and easier maintenance
+
+    // Universal properties - apply to most AL object types
+    _universal_properties: $ => choice(
+      $.caption_property,
+      $.caption_ml_property,
+      $.description_property,
+      $.application_area_property,
+      $.tool_tip_property,
+      $.tool_tip_ml_property,
+      $.obsolete_reason_property,
+      $.obsolete_state_property,
+      $.obsolete_tag_property,
+      $.usage_category_property,
+    ),
+
+    // Display/UI control properties
+    _display_properties: $ => choice(
+      $.visible_property,             // Element visibility
+      $.enabled_property,             // Interaction enabled state
+      $.editable_property,           // Edit permission
+      $.style_property,              // Visual styling
+      $.style_expr_property,         // Dynamic styling
+      $.width_property,              // Element width
+      $.row_span_property,           // Grid row spanning
+      $.column_span_property,        // Grid column spanning
+      $.importance_property,         // Priority/emphasis level
+      $.show_caption_property,       // Caption visibility
+      $.show_mandatory_property,     // Mandatory field indication
+      $.multi_line_property,         // Multi-line text support
+      $.hide_value_property,         // Value masking (e.g., passwords)
+    ),
+
+    // Data validation properties
+    _validation_properties: $ => choice(
+      $.min_value_property,          // Minimum allowed value
+      $.max_value_property,          // Maximum allowed value
+      $.not_blank_property,          // Required field validation
+      $.numeric_property,            // Numeric input only
+      $.decimal_places_property,     // Decimal precision
+      $.blank_zero_property,         // Display blank for zero
+      $.blank_numbers_property,      // Blank number display rules
+      $.unique_property,             // Uniqueness constraint
+      $.values_allowed_property,     // Enumerated valid values
+      $.validate_table_relation_property, // FK validation
+    ),
+
+    // Data source/relationship properties
+    _data_properties: $ => choice(
+      $.source_expr_property,        // Data source expression
+      $.table_relation_property,     // Foreign key relationship
+      $.calc_fields_property,        // Calculated field definition
+      $.calc_formula_property,       // Calculation formula
+      $.lookup_property,             // Lookup behavior
+      $.auto_format_expression_property, // Format expression
+      $.auto_format_type_property,   // Format type
+      $.auto_increment_property,     // Auto-increment behavior
+      $.field_class_property,        // Field classification
+      $.init_value_property,         // Default value
+    ),
+
+    // Navigation/interaction properties
+    _navigation_properties: $ => choice(
+      $.lookup_pageid_property,      // Lookup page reference
+      $.drilldown_pageid_property,   // Drill-down page reference
+      $.navigation_page_id_property, // Navigation target
+      $.run_object_property,         // Action target object
+      $.run_page_link_property,      // Page link parameters
+      $.card_page_id_property,       // Associated card page
+    ),
+
+    // Access control properties
+    _access_properties: $ => choice(
+      $.access_property,             // Access level
+      $.permissions_property,        // Permission definitions
+      $.inherent_permissions_property, // Built-in permissions
+      $.inherent_entitlements_property, // Built-in entitlements
+      $.test_permissions_property,   // Test environment permissions
+      // Note: access_by_permission_property conflicts with access_by_permission_page_property
+      // Pages use the page-specific version; other objects use the general version
+    ),
+
+    // Object-specific properties that are unique to specific object types
+    // These only make sense in particular contexts and cannot be universally applied
+    _object_specific_properties: $ => choice(
+      // Page-specific
+      $.page_type_property,          // Page type (List, Card, etc.)
+      $.source_table_property,       // Source table reference
+      
+      // Codeunit-specific
+      $.table_no_property,           // Associated table
+      $.single_instance_property,    // Singleton pattern
+      $.subtype_property,           // Codeunit subtype
+      $.event_subscriber_instance_property, // Event handling
+      
+      // Table-specific
+      $.table_type_property,         // Table type (Normal, Temporary, etc.)
+      $.data_per_company_property,   // Multi-tenancy support
+      $.replicate_data_property,     // Replication settings
+      
+      // Report-specific
+      $.processing_only_property,    // Processing-only report
+      $.use_request_page_property,   // Request page usage
+    ),
+
+    // Query-specific properties that are unique to query objects
+    _query_properties: $ => choice(
+      $.query_type_property,         // Query type (Normal, API, Filter)
+      $.about_title_property,        // Teaching tip title
+      $.about_text_property,         // Teaching tip text  
+      $.context_sensitive_help_page_property, // Help page reference
+      $.data_access_intent_property, // Database replica access
+      $.query_category_property,     // Query categorization
+    ),
+
+    // PermissionSet-specific properties that are unique to permissionset objects
+    _permissionset_properties: $ => choice(
+      $._universal_properties,       // caption, description, obsolete_*
+      $._access_properties,         // access, permissions, inherent_*
+      // PermissionSet-specific
+      $.assignable_property,
+      $.included_permission_sets_property,
+    ),
+
+    // ControlAddIn-specific properties that are unique to controladdin objects
+    _controladdin_properties: $ => choice(
+      $._universal_properties,       // caption, description, obsolete_*, application_area
+      // ControlAddIn-specific
+      $.controladdin_property,
+    ),
+
+    // Profile-specific properties that are unique to profile objects
+    _profile_properties: $ => choice(
+      // Profile-specific (higher precedence to override universal ones)
+      $.profile_description_property,
+      $.profile_rolecenter_property,
+      $.profile_customizations_property,
+      $.profile_description_property2,
+      $.profile_caption_property,
+      $.profile_enabled_property,
+      $.profile_promoted_property,
+      // Universal properties (lower precedence)
+      $._universal_properties,       // obsolete_*, application_area, tool_tip_*
+      $._display_properties,         // visible, style_*, width, importance, etc.
+    ),
+
+    // Enum-specific properties that are unique to enum objects
+    _enum_properties: $ => choice(
+      $._universal_properties,       // caption, description, obsolete_*, application_area
+      $._access_properties,         // access, permissions, inherent_*
+      // Enum-specific
+      $.extensible_property,
+      $.assignment_compatibility_property,
+      $.implementation_property,    // Interface implementations
+    ),
+
+    // Composed property groups for different object contexts
+    _field_properties: $ => choice(
+      $._universal_properties,
+      $._display_properties,
+      $._validation_properties,
+      $._data_properties,
+      $._navigation_properties,
+      $.field_trigger_declaration,   // Field-specific triggers
+      // Field-specific additional properties
+      $.assist_edit_property,
+      $.quick_entry_property,
+      $.caption_class_property,
+      $.option_caption_property,
+      $.sign_displacement_property,
+      $.title_property,
+      $.extended_datatype_property,
+      $.page_about_title_property,
+      $.page_about_text_property,
+      $.page_about_title_ml_property,
+      $.page_about_text_ml_property,
+      $.odata_edm_type_property,
+      $.drill_down_property,
+      $.access_by_permission_property,
+    ),
+
+    // Composed property group for page-level properties
+    // This replaces the scattered page property list in _page_element
+    _page_properties: $ => choice(
+      $._universal_properties,
+      $._display_properties,
+      $._access_properties,
+      $._navigation_properties,
+      $._object_specific_properties,
+      
+      // Page-specific data management properties
+      $.data_caption_expression_property,
+      $.data_access_intent_property,
+      $.data_caption_fields_property,
+      $.extensible_property,
+      
+      // Page behavior properties
+      $.delete_allowed_property,
+      $.insert_allowed_property,
+      $.modify_allowed_property,
+      $.source_table_temporary_property,
+      $.analysis_mode_enabled_property,
+      $.auto_split_key_property,
+      $.change_tracking_allowed_property,
+      $.delayed_insert_property,
+      $.links_allowed_property,
+      $.multiple_new_lines_property,
+      $.populate_all_fields_property,
+      
+      // Page UI properties
+      $.instructional_text_property,
+      $.instructional_text_ml_property,
+      $.image_property,
+      $.page_about_text_property,
+      $.page_about_text_ml_property,
+      $.page_about_title_property,
+      $.page_about_title_ml_property,
+      
+      // Page workflow properties
+      $.prompt_mode_property,
+      $.refresh_on_activate_property,
+      $.save_values_property,
+      $.show_filter_property,
+      
+      // Web service properties
+      $.entity_caption_property,
+      $.entity_caption_ml_property,
+      $.entity_name_property,
+      $.entity_set_caption_property,
+      $.entity_set_caption_ml_property,
+      $.entity_set_name_property,
+      $.odata_key_fields_property,
+      
+      // Help and documentation properties
+      $.context_sensitive_help_page_property,
+      $.help_link_property,
+      $.is_preview_property,
+      $.additional_search_terms_property,
+      $.additional_search_terms_ml_property,
+      
+      // Page action properties
+      $.scope_property,
+      $.promoted_property,
+      $.promoted_category_property,
+      $.promoted_only_property,
+      $.promoted_is_big_property,
+      $.promoted_action_categories_property,
+      
+      // Query and filter properties
+      $.query_category_property,
+      $.filters_property,
+      $.order_by_property,
+      $.shared_layout_property,
+      $.data_item_table_view_property,
+      
+      // Page-specific access by permission property (different from general access_by_permission_property)
+      $.access_by_permission_page_property,
+    ),
+
+    // Composed property group for table-level properties
+    // This replaces the scattered table property list in _table_element
+    _table_properties: $ => choice(
+      $._universal_properties,
+      $._access_properties,
+      $._navigation_properties,
+      $._object_specific_properties,
+      
+      // Table-specific data management properties
+      $.data_caption_fields_property,
+      $.extensible_property,
+      $.column_store_index_property,
+      $.compression_type_property,
+      // Note: data_per_company_property and replicate_data_property are in _object_specific_properties
+      
+      // Table metadata properties
+      $.external_schema_property,
+      $.paste_is_valid_property,
+      $.external_name_property,
+      // Note: table_type_property is already included in _object_specific_properties
+      
+      // Table relationship properties
+      $.moved_from_property,
+      $.moved_to_property,
+      $.linked_in_transaction_property,
+      $.linked_object_property,
+      
+      // Table-specific classification
+      $.data_classification_property,
+    ),
+
+    // Composed property group for report-level properties
+    // This replaces the scattered report property list in _report_element
+    _report_properties: $ => choice(
+      $._universal_properties,
+      $._access_properties,
+      $._object_specific_properties,
+      
+      // Report-specific properties
+      $.scope_property,
+      $.additional_search_terms_property,
+      $.additional_search_terms_ml_property,
+      
+      // Note: processing_only_property and use_request_page_property are in _object_specific_properties
+    ),
+
+    // =============================================================================
+    // CENTRALIZED TRIGGER ARCHITECTURE
+    // =============================================================================
+    // Semantic trigger organization for DRY principle and easier maintenance
+
+    // XMLPort property group - leverages centralized categories
+    _xmlport_properties: $ => choice(
+      $._universal_properties,    // caption, application_area, tool_tip, obsolete_*, description
+      $._access_properties,       // inherent_permissions, inherent_entitlements, access
+      
+      // XMLPort-specific properties only
+      $.direction_property,
+      $.format_property,
+      $.paste_is_valid_property,
+      $.moved_from_property,
+      $.moved_to_property,
+      $.linked_in_transaction_property,
+      $.linked_object_property,
+      $.external_schema_property,
+    ),
+
+    // Action property group - leverages centralized categories  
+    _action_properties: $ => choice(
+      $._universal_properties,    // caption, application_area, obsolete_*, tool_tip
+      $._display_properties,      // enabled, visible
+      $._navigation_properties,   // run_object, run_page_link, shortcut_key
+      $._access_properties,       // access_by_permission
+      
+      // Action-specific properties only
+      $.allowed_file_extensions_property,
+      $.allow_multiple_files_property,
+      $.custom_action_type_property,
+      $.ellipsis_property,
+      $.file_upload_action_property,
+      $.file_upload_row_action_property,
+      $.gesture_property,
+      $.image_property,
+      $.in_footer_bar_property,
+      $.is_header_property,
+      $.promoted_property,
+      $.promoted_category_property,
+      $.promoted_is_big_property,
+      $.promoted_only_property,
+      $.run_page_mode_property,
+      $.run_page_on_rec_property,
+      $.run_page_view_property,
+      $.scope_property,
+    ),
+
+    // Centralized trigger components for DRY principle
+    _trigger_keyword: $ => choice('trigger', 'TRIGGER', 'Trigger'),
+
+    // Trigger parameter patterns (simplified from '()' duplication)
+    _trigger_parameters: $ => '()',
+
+    // Centralized identifier choice pattern (appears 35+ times)
+    _identifier_choice: $ => choice($._quoted_identifier, $.identifier),
+
+    // Centralized property template for DRY principle
+    _boolean_property_template: $ => seq(
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    _string_property_template: $ => seq(
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    // Centralized extension object pattern for DRY principle
+    _extension_object_base: $ => seq(
+      field('object_id', $.integer),
+      field('object_name', $._identifier_choice),
+      /[eE][xX][tT][eE][nN][dD][sS]/,
+      field('base_object', $._identifier_choice)
+    ),
+
+    // Centralized layout modification template for DRY principle
+    _layout_modification_template: $ => seq(
+      '(',
+      field('target', $._identifier_choice),
+      ')',
+      '{',
+      repeat($._layout_element),
+      '}'
+    ),
+
+    // Centralized object declaration header for DRY principle
+    _object_header_base: $ => seq(
+      field('object_id', $.integer),
+      field('object_name', $._identifier_choice)
+    ),
+
+    // Centralized comma-separated list templates for DRY principle
+    _identifier_choice_list: $ => seq(
+      $._identifier_choice,
+      repeat(seq(',', $._identifier_choice))
+    ),
+
+    _field_mapping_list: $ => seq(
+      $.field_mapping,
+      repeat(seq(',', $.field_mapping))
+    ),
+
+    _expression_list: $ => seq(
+      $._expression,
+      repeat(seq(',', $._expression))
+    ),
+
+    // Centralized case-insensitive keyword patterns for DRY principle
+    _field_keyword: $ => choice('FIELD', 'Field', 'field'),
+    _filter_keyword: $ => choice('FILTER', 'filter', 'Filter'),
+    _cardpart_keyword: $ => choice('CardPart', 'CARDPART', 'Cardpart'),
+    _tabledata_keyword: $ => choice('tabledata', 'TableData', 'Tabledata', 'TABLEDATA'),
+    _table_permission_keyword: $ => choice('table', 'Table', 'TABLE'),
 
   },
 
