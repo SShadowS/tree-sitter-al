@@ -1,0 +1,149 @@
+================================================================================
+InstructionalText property in page group
+================================================================================
+
+page 50000 "Test Page"
+{
+    PageType = Card;
+    
+    layout
+    {
+        area(Content)
+        {
+            group(Setup)
+            {
+                ShowCaption = false;
+                InstructionalText = 'To use the service, you need to set up the connection.';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (layout_section
+      (area_section
+        (group_section
+          name: (identifier)
+          (property
+            (show_caption_property
+              value: (boolean)))
+          (property
+            (instructional_text_property
+              value: (string_literal))))))))
+
+================================================================================
+InstructionalTextML property in page group
+================================================================================
+
+page 50001 "ML Test Page"
+{
+    PageType = Card;
+    
+    layout
+    {
+        area(Content)
+        {
+            group(MLSetup)
+            {
+                ShowCaption = false;
+                InstructionalTextML = ENU='Setup instructions', FRA='Instructions de configuration';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (layout_section
+      (area_section
+        (group_section
+          name: (identifier)
+          (property
+            (show_caption_property
+              value: (boolean)))
+          (property
+            (instructional_text_ml_property
+              value: (ml_value_list
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))))))))))
+
+================================================================================
+InstructionalText in wizard page pattern
+================================================================================
+
+page 50002 "Wizard Page"
+{
+    PageType = NavigatePage;
+    
+    layout
+    {
+        area(Content)
+        {
+            group(Step1)
+            {
+                ShowCaption = false;
+                Visible = StartStepVisible;
+                group("Welcome Setup")
+                {
+                    Caption = 'Welcome to Setup';
+                    Visible = StartStepVisible;
+                    group(Instructions)
+                    {
+                        ShowCaption = false;
+                        InstructionalText = 'To start the setup, choose Next.';
+                    }
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property
+      value: (identifier))
+    (layout_section
+      (area_section
+        (group_section
+          name: (identifier)
+          (property
+            (show_caption_property
+              value: (boolean)))
+          (property
+            (visible_property
+              value: (identifier)))
+          (group_section
+            name: (quoted_identifier)
+            (property
+              (caption_property
+                (string_literal)))
+            (property
+              (visible_property
+                value: (identifier)))
+            (group_section
+              name: (identifier)
+              (property
+                (show_caption_property
+                  value: (boolean)))
+              (property
+                (instructional_text_property
+                  value: (string_literal))))))))))

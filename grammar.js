@@ -2925,6 +2925,8 @@ module.exports = grammar({
       $.shortcut_key_property,
       $.additional_search_terms_property,
       $.additional_search_terms_ml_property,
+      $.instructional_text_property,
+      $.instructional_text_ml_property,
       $.sub_page_link_property,
       $.sub_page_view_property,
       $.visible_property
