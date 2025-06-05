@@ -2156,6 +2156,11 @@ module.exports = grammar({
       $.extended_datatype_property,
       $.auto_format_expression_property,
       $.auto_format_type_property,
+      // About properties for fields
+      $.page_about_title_property,
+      $.page_about_text_property,
+      $.page_about_title_ml_property,
+      $.page_about_text_ml_property,
       // Missing field properties
       $.access_by_permission_property,
       // Obsolete Properties for fields
@@ -2201,6 +2206,11 @@ module.exports = grammar({
           $.extended_datatype_property,
           $.auto_format_expression_property,
           $.auto_format_type_property,
+          // About properties for fields
+          $.page_about_title_property,
+          $.page_about_text_property,
+          $.page_about_title_ml_property,
+          $.page_about_text_ml_property,
           // Missing field properties
           $.access_by_permission_property,
           // Obsolete Properties for fields
@@ -2264,6 +2274,11 @@ module.exports = grammar({
           $.extended_datatype_property,
           $.auto_format_expression_property,
           $.auto_format_type_property,
+          // About properties for fields
+          $.page_about_title_property,
+          $.page_about_text_property,
+          $.page_about_title_ml_property,
+          $.page_about_text_ml_property,
           // Missing field properties
           $.access_by_permission_property,
           // Obsolete Properties for fields
