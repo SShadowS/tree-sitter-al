@@ -340,17 +340,11 @@ module.exports = grammar({
       $.property_list               // generic property container
     ),
 
-    about_title_property: $ => seq('AboutTitle', $._string_property_template),
+    about_title_property: $ => seq(choice('AboutTitle', 'ABOUTTITLE', 'abouttitle'), $._string_property_template),
 
-    about_text_property: $ => seq('AboutText', $._string_property_template),
+    about_text_property: $ => seq(choice('AboutText', 'ABOUTTEXT', 'abouttext'), $._string_property_template),
 
-    // Page-specific version of AboutText
-    page_about_text_property: $ => seq(
-      'AboutText',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    // CONSOLIDATED: page_about_text_property → about_text_property
 
     // Page-specific version of AboutTextML
     page_about_text_ml_property: $ => seq(
@@ -360,13 +354,7 @@ module.exports = grammar({
       ';'
     ),
 
-    // Page-specific version of AboutTitle
-    page_about_title_property: $ => seq(
-      'AboutTitle',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    // CONSOLIDATED: page_about_title_property → about_title_property
 
     // Page-specific version of AboutTitleML
     page_about_title_ml_property: $ => seq(
@@ -436,12 +424,7 @@ module.exports = grammar({
     ),
 
     // Phase 4A - High + Medium Priority Page Properties
-    access_by_permission_page_property: $ => seq(
-      'AccessByPermission',
-      '=',
-      field('value', $.access_by_permission_value),
-      ';'
-    ),
+    // Removed: access_by_permission_page_property - now using universal access_by_permission_property
 
     prompt_mode_property: $ => seq(
       'PromptMode',
@@ -1153,7 +1136,7 @@ module.exports = grammar({
     ),
 
     enabled_property: $ => seq(
-      'Enabled',
+      choice('Enabled', 'ENABLED', 'enabled'),
       '=',
       field('value', $._expression),
       ';'
@@ -1174,7 +1157,7 @@ module.exports = grammar({
     ),
 
     promoted_property: $ => seq(
-      'Promoted',
+      choice('Promoted', 'PROMOTED', 'promoted'),
       '=',
       field('value', $.boolean),
       ';'
@@ -2205,7 +2188,6 @@ module.exports = grammar({
       $.boolean,
       $.identifier  // Allow variable references
     ),
-    description_value: $ => $.string_literal,
     usage_category_value: $ => choice(
       /[aA][dD][mM][iI][nN][iI][sS][tT][rR][aA][tT][iI][oO][nN]/,
       /[dD][oO][cC][uU][mM][eE][nN][tT][sS]/,
@@ -2409,9 +2391,9 @@ module.exports = grammar({
     ),
 
     description_property: $ => seq(
-      /[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]/,
+      alias(/[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]/, 'Description'),
       '=',
-      field('value', $.description_value),
+      field('value', $.string_literal),
       ';'
     ),
 
@@ -2937,7 +2919,7 @@ module.exports = grammar({
     )),
 
     caption_property: $ => seq(
-      /[cC][aA][pP][tT][iI][oO][nN]/,
+      choice('Caption', 'CAPTION', 'caption'),
       '=',
       $.string_literal,
       repeat(seq(
@@ -3022,6 +3004,8 @@ module.exports = grammar({
       optional(choice('protected', 'PROTECTED', 'Protected')),
       choice('var', 'VAR', 'Var'),
       repeat(choice(
+        $.comment,
+        $.multiline_comment,
         $.attribute_list,
         $.variable_declaration
       ))
@@ -3502,7 +3486,6 @@ enum_type: $ => prec(1, seq(
       repeat(seq(',', $.where_condition))
     ),
 
-    filter_criteria: $ => /[^)]+/,
 
     explicit_field_ref: $ => prec(12, seq(
       choice('field', 'FIELD', 'Field'),
@@ -3583,12 +3566,6 @@ enum_type: $ => prec(1, seq(
       ')'
     )),
 
-    lookup_field_ref: $ => prec(15, choice(
-      $.member_expression,
-      $.field_access,
-      $._quoted_identifier,
-      $.identifier
-    )),
 
     lookup_where_conditions: $ => seq(
       $.lookup_where_condition,
@@ -4110,27 +4087,8 @@ enum_type: $ => prec(1, seq(
       ')'
     ),
 
-    _literal_argument: $ => prec(1, choice(
-      alias($._quoted_identifier, $.quoted_identifier),
-      $.string_literal,
-      $.integer,
-      $.decimal,
-      $.boolean
-    )),
 
-    _primary_expression: $ => choice(
-      $._literal_value,
-      $.identifier,
-      $.parenthesized_expression,
-      $.unary_expression,
-      // $.call_expression, // Handled in _expression
-      $.member_expression
-    ),
 
-    _base_expression: $ => prec(1, choice(
-      $._primary_expression,
-      $._chained_expression
-    )),
 
     _chained_expression: $ => prec(3, choice(
       $.member_expression,
@@ -4487,17 +4445,6 @@ enum_type: $ => prec(1, seq(
       $._quoted_identifier
     ),
 
-    multiplicity_property: $ => seq(
-      'Multiplicity',
-      '=',
-      field('value', $.multiplicity_value),
-      ';'
-    ),
-
-    multiplicity_value: $ => choice(
-      /[oO][nN][eE]/,
-      /[mM][aA][nN][yY]/
-    ),
 
     update_propagation_property: $ => seq(
       'UpdatePropagation',
@@ -4529,36 +4476,8 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    grid_layout_property: $ => seq(
-      'GridLayout',
-      '=',
-      field('value', $.grid_layout_value),
-      ';'
-    ),
 
-    show_as_tree_property: $ => seq(
-      'ShowAsTree',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
 
-    tree_initial_state_property: $ => seq(
-      'TreeInitialState',
-      '=',
-      field('value', $.tree_initial_state_value),
-      ';'
-    ),
-
-    tree_initial_state_value: $ => choice(
-      /[cC][oO][lL][lL][aA][pP][sS][eE][aA][lL][lL]/,
-      /[eE][xX][pP][aA][nN][dD][aA][lL][lL]/
-    ),
-
-    grid_layout_value: $ => choice(
-      /[cC][oO][lL][uU][mM][nN][sS]/,
-      /[rR][oO][wW][sS]/
-    ),
 
     custom_action_type_property: $ => seq(
       'CustomActionType',
@@ -4901,23 +4820,6 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    indentation_column_property: $ => seq(
-      'IndentationColumn',
-      '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
-      ';'
-    ),
-
-    indentation_controls_property: $ => seq(
-      'IndentationControls',
-      '=',
-      field('value', choice(
-        $.identifier,
-        $._quoted_identifier,
-        $.string_literal
-      )),
-      ';'
-    ),
 
     shared_layout_property: $ => seq(
       'SharedLayout',
@@ -5117,12 +5019,7 @@ enum_type: $ => prec(1, seq(
       $.property_list               // Generic fallback
     ),
 
-    profile_description_property: $ => seq(
-      'Description',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    // CONSOLIDATED: profile_description_property → description_property
 
     profile_rolecenter_property: $ => seq(
       'RoleCenter',
@@ -5131,12 +5028,7 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    profile_caption_property: $ => seq(
-      'Caption',
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    // CONSOLIDATED: profile_caption_property -> caption_property
 
     profile_customizations_property: $ => seq(
       'Customizations',
@@ -5150,12 +5042,7 @@ enum_type: $ => prec(1, seq(
       repeat(seq(',', $._identifier_choice))
     ),
 
-    profile_enabled_property: $ => prec(2, seq(
-      'Enabled',
-      '=',
-      field('value', $.boolean),
-      ';'
-    )),
+    // CONSOLIDATED: profile_enabled_property → enabled_property
 
     profile_description_property2: $ => seq(
       'ProfileDescription',
@@ -5164,12 +5051,7 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    profile_promoted_property: $ => seq(
-      'Promoted',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    // CONSOLIDATED: profile_promoted_property → promoted_property
 
     // =============================================================================
     // CENTRALIZED PROPERTY CATEGORIES
@@ -5254,8 +5136,8 @@ enum_type: $ => prec(1, seq(
       $.inherent_permissions_property, // Built-in permissions
       $.inherent_entitlements_property, // Built-in entitlements
       $.test_permissions_property,   // Test environment permissions
-      // Note: access_by_permission_property conflicts with access_by_permission_page_property
-      // Pages use the page-specific version; other objects use the general version
+      $.access_by_permission_property, // General access by permission (used in actions)
+      // Note: Pages use access_by_permission_page_property; other objects use access_by_permission_property
     ),
 
     // Object-specific properties that are unique to specific object types
@@ -5310,13 +5192,12 @@ enum_type: $ => prec(1, seq(
     // Profile-specific properties that are unique to profile objects
     _profile_properties: $ => choice(
       // Profile-specific (higher precedence to override universal ones)
-      $.profile_description_property,
+      $.description_property,
       $.profile_rolecenter_property,
       $.profile_customizations_property,
       $.profile_description_property2,
-      $.profile_caption_property,
-      $.profile_enabled_property,
-      $.profile_promoted_property,
+      $.caption_property,
+      $.promoted_property,
       // Universal properties (lower precedence)
       $._universal_properties,       // obsolete_*, application_area, tool_tip_*
       $._display_properties,         // visible, style_*, width, importance, etc.
@@ -5348,8 +5229,8 @@ enum_type: $ => prec(1, seq(
       $.sign_displacement_property,
       $.title_property,
       $.extended_datatype_property,
-      $.page_about_title_property,
-      $.page_about_text_property,
+      $.about_title_property,
+      $.about_text_property,
       $.page_about_title_ml_property,
       $.page_about_text_ml_property,
       $.odata_edm_type_property,
@@ -5389,9 +5270,9 @@ enum_type: $ => prec(1, seq(
       $.instructional_text_property,
       $.instructional_text_ml_property,
       $.image_property,
-      $.page_about_text_property,
+      $.about_text_property,
       $.page_about_text_ml_property,
-      $.page_about_title_property,
+      $.about_title_property,
       $.page_about_title_ml_property,
       
       // Page workflow properties
@@ -5440,8 +5321,7 @@ enum_type: $ => prec(1, seq(
       $.shared_layout_property,
       $.data_item_table_view_property,
       
-      // Page-specific access by permission property (different from general access_by_permission_property)
-      $.access_by_permission_page_property,
+      // Note: access_by_permission_property is now in _access_properties for universal use
     ),
 
     // Composed property group for table-level properties
@@ -5599,12 +5479,6 @@ enum_type: $ => prec(1, seq(
     ),
 
     // Centralized extension object pattern for DRY principle
-    _extension_object_base: $ => seq(
-      field('object_id', $.integer),
-      field('object_name', $._identifier_choice),
-      /[eE][xX][tT][eE][nN][dD][sS]/,
-      field('base_object', $._identifier_choice)
-    ),
 
     // Centralized layout modification template for DRY principle
     _layout_modification_template: $ => seq(
@@ -5628,15 +5502,6 @@ enum_type: $ => prec(1, seq(
       repeat(seq(',', $._identifier_choice))
     ),
 
-    _field_mapping_list: $ => seq(
-      $.field_mapping,
-      repeat(seq(',', $.field_mapping))
-    ),
-
-    _expression_list: $ => seq(
-      $._expression,
-      repeat(seq(',', $._expression))
-    ),
 
     // Centralized case-insensitive keyword patterns for DRY principle
     _field_keyword: $ => choice('FIELD', 'Field', 'field'),
@@ -5644,6 +5509,22 @@ enum_type: $ => prec(1, seq(
     _cardpart_keyword: $ => choice('CardPart', 'CARDPART', 'Cardpart'),
     _tabledata_keyword: $ => choice('tabledata', 'TableData', 'Tabledata', 'TABLEDATA'),
     _table_permission_keyword: $ => choice('table', 'Table', 'TABLE'),
+
+    // Missing alias target rules
+    const: $ => choice('const', 'CONST', 'Const'),
+    name: $ => choice($.identifier, $._quoted_identifier),
+    quoted_identifier: $ => $._quoted_identifier,
+    table_reference: $ => $._table_reference,
+    trigger_name: $ => $.identifier,
+    trigger_type: $ => $.identifier,
+    value: $ => choice(
+      $.identifier,
+      $._quoted_identifier,
+      $.string_literal,
+      $.integer,
+      $.boolean,
+      $._expression
+    ),
 
   },
 
