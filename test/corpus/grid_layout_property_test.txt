@@ -30,9 +30,8 @@ report 123 "Test Report"
         (area_section
           (grid_section
             name: (identifier)
-            (property
-              (grid_layout_property
-                value: (grid_layout_value)))))))))
+            (grid_layout_property
+              value: (grid_layout_value))))))))
 
 ================================================================================
 GridLayout property with Rows value
@@ -66,9 +65,8 @@ report 124 "Test Report"
         (area_section
           (grid_section
             name: (identifier)
-            (property
-              (grid_layout_property
-                value: (grid_layout_value)))))))))
+            (grid_layout_property
+              value: (grid_layout_value))))))))
 
 ================================================================================
 GridLayout property combined with other grid properties
@@ -103,12 +101,10 @@ report 125 "Test Report"
         (area_section
           (grid_section
             name: (identifier)
-            (property
-              (show_caption_property
-                value: (boolean)))
-            (property
-              (grid_layout_property
-                value: (grid_layout_value)))))))))
+            (show_caption_property
+              value: (boolean))
+            (grid_layout_property
+              value: (grid_layout_value))))))))
 
 ================================================================================
 GridLayout property in page grid sections
@@ -139,12 +135,10 @@ page 126 "Test Page"
       (area_section
         (grid_section
           name: (identifier)
-          (property
-            (grid_layout_property
-              value: (grid_layout_value)))
-          (property
-            (show_caption_property
-              value: (boolean))))))))
+          (grid_layout_property
+            value: (grid_layout_value))
+          (show_caption_property
+            value: (boolean)))))))
 
 ================================================================================
 GridLayout property case variations
@@ -186,16 +180,13 @@ report 127 "Test Report"
         (area_section
           (grid_section
             name: (identifier)
-            (property
-              (grid_layout_property
-                value: (grid_layout_value))))
+            (grid_layout_property
+              value: (grid_layout_value)))
           (grid_section
             name: (identifier)
-            (property
-              (grid_layout_property
-                value: (grid_layout_value))))
+            (grid_layout_property
+              value: (grid_layout_value)))
           (grid_section
             name: (identifier)
-            (property
-              (grid_layout_property
-                value: (grid_layout_value)))))))))
+            (grid_layout_property
+              value: (grid_layout_value))))))))

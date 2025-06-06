@@ -1472,7 +1472,7 @@ module.exports = grammar({
       repeat(choice(
         $.report_column_section, 
         $.report_dataitem_section,
-        $.property,
+        $._universal_properties,
         seq(optional($.attribute_list), $.generic_trigger)
       )),
       '}'
@@ -1486,7 +1486,7 @@ module.exports = grammar({
       field('source', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat($.property),
+      repeat($._field_properties),
       '}'
     ),
 
@@ -1494,7 +1494,7 @@ module.exports = grammar({
       'requestpage',
       '{',
       repeat(choice(
-        $.property,
+        $._page_properties,
         $.layout_section, 
         $.actions_section,
         $.generic_trigger
@@ -1732,7 +1732,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $.property,
+        $._page_properties,
         $._layout_element
       )),
       '}'
@@ -1745,7 +1745,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $.property,
+        $._page_properties,
         $.field_section,
         $.actions_section
       )),
@@ -1759,7 +1759,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $.property,
+        $._page_properties,
         $._layout_element
       )),
       '}'
@@ -1772,7 +1772,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $.property,
+        $._page_properties,
         $._layout_element
       )),
       '}'
@@ -1784,7 +1784,7 @@ module.exports = grammar({
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat($.property),
+      repeat($._universal_properties),
       '}'
     ),
 
@@ -1861,10 +1861,7 @@ module.exports = grammar({
       field('systempart_type', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat(choice(
-        $.property,
-        $.visible_property
-      )),
+      repeat($._page_properties),
       '}'
     ),
 
@@ -1877,7 +1874,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        $.property,
+        $._page_properties,
         $.trigger_declaration,
         $.var_section,
         $.code_block
