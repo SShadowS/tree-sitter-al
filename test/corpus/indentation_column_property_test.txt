@@ -1,0 +1,81 @@
+================================================================================
+IndentationColumn property in repeater sections
+================================================================================
+
+page 60855 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            repeater("Repeater")
+            {
+                IndentationColumn = 1;
+                field(TestField; TestField)
+                {
+                    ApplicationArea = All;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (repeater_section
+          name: (quoted_identifier)
+          (indentation_column_property
+            value: (integer))
+          (field_section
+            control_id: (identifier)
+            source_or_field_name: (identifier)
+            (application_area_property
+              value: (identifier))))))))
+
+================================================================================
+IndentationColumn property with different values
+================================================================================
+
+page 50001 "Test Page 2"
+{
+    layout
+    {
+        area(Content)
+        {
+            repeater("Rep1")
+            {
+                IndentationColumn = 0;
+            }
+            repeater("Rep2")
+            {
+                IndentationColumn = 5;
+                FreezeColumn = "Test Column";
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (repeater_section
+          name: (quoted_identifier)
+          (indentation_column_property
+            value: (integer)))
+        (repeater_section
+          name: (quoted_identifier)
+          (indentation_column_property
+            value: (integer))
+          (freeze_column_property
+            value: (quoted_identifier)))))))

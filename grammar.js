@@ -1795,7 +1795,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
-        prec(2, $.property),
+        $._page_properties,
         $._layout_element
       )),
       '}'
@@ -2905,6 +2905,7 @@ module.exports = grammar({
       $.assist_edit_property,
       $.column_span_property,
       $.freeze_column_property,
+      $.indentation_column_property,
       $.grid_layout_property,
       $.drill_down_property,
       $.lookup_property,
@@ -4498,8 +4499,12 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-
-
+    indentation_column_property: $ => seq(
+      'IndentationColumn',
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
 
     custom_action_type_property: $ => seq(
       'CustomActionType',
@@ -5105,6 +5110,7 @@ enum_type: $ => prec(1, seq(
       $.row_span_property,           // Grid row spanning
       $.column_span_property,        // Grid column spanning
       $.freeze_column_property,      // Column freezing in repeaters
+      $.indentation_column_property, // Column indentation in repeaters
       $.grid_layout_property,        // Grid layout direction (Rows/Columns)
       $.importance_property,         // Priority/emphasis level
       $.show_caption_property,       // Caption visibility
