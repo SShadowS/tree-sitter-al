@@ -17,6 +17,7 @@ module.exports = grammar({
   rules: {
     source_file: $ => seq(
       optional($.namespace_declaration),
+      repeat($.using_statement),
       repeat($._object)
     ),
 
@@ -48,6 +49,12 @@ module.exports = grammar({
     namespace_name: $ => seq(
       $.identifier,
       repeat(seq('.', $.identifier))
+    ),
+
+    using_statement: $ => seq(
+      'using',
+      field('namespace', $.namespace_name),
+      ';'
     ),
     
     xmlport_declaration: $ => seq(
@@ -84,7 +91,9 @@ module.exports = grammar({
       field('value', choice(
         /[xX][mM][lL]/,
         /[vV][aA][rR][iI][aA][bB][lL][eE]/,
-        /[fF][iI][xX][eE][dD]/
+        /[vV][aA][rR][iI][aA][bB][lL][eE][tT][eE][xX][tT]/,
+        /[fF][iI][xX][eE][dD]/,
+        /[fF][iI][xX][eE][dD][tT][eE][xX][tT]/
       )),
       ';'
     ),
@@ -106,7 +115,11 @@ module.exports = grammar({
       field('name', choice($.identifier, $._quoted_identifier)),
       optional(seq(
         ';',
-        field('source_table', choice($.identifier, $._quoted_identifier))
+        field('source_table', choice(
+          $.identifier, 
+          $._quoted_identifier,
+          $.field_access  // Support Table.Field syntax
+        ))
       )),
       ')',
       '{',
@@ -340,9 +353,49 @@ module.exports = grammar({
       $.property_list               // generic property container
     ),
 
-    about_title_property: $ => seq(choice('AboutTitle', 'ABOUTTITLE', 'abouttitle'), $._string_property_template),
+    about_title_property: $ => seq(
+      choice('AboutTitle', 'ABOUTTITLE', 'abouttitle'),
+      '=',
+      field('value', $.string_literal),
+      repeat(seq(
+        ',',
+        choice(
+          seq(
+            choice('Locked', 'locked', 'LOCKED'),
+            '=',
+            $.boolean
+          ),
+          seq(
+            choice('Comment', 'comment', 'COMMENT'),
+            '=',
+            $.string_literal
+          )
+        )
+      )),
+      ';'
+    ),
 
-    about_text_property: $ => seq(choice('AboutText', 'ABOUTTEXT', 'abouttext'), $._string_property_template),
+    about_text_property: $ => seq(
+      choice('AboutText', 'ABOUTTEXT', 'abouttext'),
+      '=',
+      field('value', $.string_literal),
+      repeat(seq(
+        ',',
+        choice(
+          seq(
+            choice('Locked', 'locked', 'LOCKED'),
+            '=',
+            $.boolean
+          ),
+          seq(
+            choice('Comment', 'comment', 'COMMENT'),
+            '=',
+            $.string_literal
+          )
+        )
+      )),
+      ';'
+    ),
 
     // CONSOLIDATED: page_about_text_property → about_text_property
 
@@ -413,6 +466,21 @@ module.exports = grammar({
       'InstructionalText',
       '=',
       field('value', $.string_literal),
+      repeat(seq(
+        ',',
+        choice(
+          seq(
+            choice('Locked', 'locked', 'LOCKED'),
+            '=',
+            $.boolean
+          ),
+          seq(
+            choice('Comment', 'comment', 'COMMENT'),
+            '=',
+            $.string_literal
+          )
+        )
+      )),
       ';'
     ),
 
@@ -794,6 +862,7 @@ module.exports = grammar({
 
     _tableextension_element: $ => choice(
       $.fields,
+      $.modify_field_declaration,  // Add direct modify field support
       $.keys,
       $.fieldgroups_section,
       $.procedure,
@@ -947,7 +1016,10 @@ module.exports = grammar({
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat($._action_property),
+      repeat(choice(
+        $._action_property,
+        seq(optional($.attribute_list), $.trigger_declaration)
+      )),
       '}'
     )),
 
@@ -1297,7 +1369,7 @@ module.exports = grammar({
         $.var_section,
         seq(optional($.attribute_list), $.procedure),
         seq(optional($.attribute_list), $.onrun_trigger),
-        seq(optional($.attribute_list), $.generic_trigger) 
+        seq(optional($.attribute_list), $.trigger_declaration) 
       )),
       '}'
     ),
@@ -1308,16 +1380,6 @@ module.exports = grammar({
     ),
 
     // Generic trigger rule for codeunits etc.
-    generic_trigger: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
-      field('name', alias($.identifier, $.trigger_name)), // Use identifier for the trigger name
-      '(',
-      optional($.parameter_list), // Allow optional parameters
-      ')',
-      optional(seq(':', $.type_specification)), // Add support for return types
-      optional($.var_section),
-      $.code_block
-    ),
 
     page_declaration: $ => seq(
       /[pP][aA][gG][eE]/,
@@ -1430,7 +1492,7 @@ module.exports = grammar({
       
       // Report procedures and triggers
       seq(optional($.attribute_list), $.procedure),
-      seq(optional($.attribute_list), $.generic_trigger),
+      seq(optional($.attribute_list), $.trigger_declaration),
       
       // All report properties now centralized
       $._report_properties,
@@ -1473,7 +1535,7 @@ module.exports = grammar({
         $.report_column_section, 
         $.report_dataitem_section,
         $._universal_properties,
-        seq(optional($.attribute_list), $.generic_trigger)
+        seq(optional($.attribute_list), $.trigger_declaration)
       )),
       '}'
     ),
@@ -1497,7 +1559,7 @@ module.exports = grammar({
         $._page_properties,
         $.layout_section, 
         $.actions_section,
-        $.generic_trigger
+        $.trigger_declaration
       )),
       '}'
     ),
@@ -1684,7 +1746,11 @@ module.exports = grammar({
       $.addfirst_layout_modification,
       $.addlast_layout_modification,
       $.addafter_layout_modification,
-      $.addbefore_layout_modification
+      $.addbefore_layout_modification,
+      $.movefirst_layout_modification,
+      $.movelast_layout_modification,
+      $.moveafter_layout_modification,
+      $.movebefore_layout_modification
     ),
 
     // Layout modification rules for pageextensions
@@ -1706,6 +1772,26 @@ module.exports = grammar({
     addbefore_layout_modification: $ => seq(
       /[aA][dD][dD][bB][eE][fF][oO][rR][eE]/,
       $._layout_modification_template
+    ),
+
+    movefirst_layout_modification: $ => seq(
+      /[mM][oO][vV][eE][fF][iI][rR][sS][tT]/,
+      $._move_layout_modification_template
+    ),
+
+    movelast_layout_modification: $ => seq(
+      /[mM][oO][vV][eE][lL][aA][sS][tT]/,
+      $._move_layout_modification_template
+    ),
+
+    moveafter_layout_modification: $ => seq(
+      /[mM][oO][vV][eE][aA][fF][tT][eE][rR]/,
+      $._move_layout_modification_template
+    ),
+
+    movebefore_layout_modification: $ => seq(
+      /[mM][oO][vV][eE][bB][eE][fF][oO][rR][eE]/,
+      $._move_layout_modification_template
     ),
 
     area_section: $ => seq(
@@ -1784,7 +1870,10 @@ module.exports = grammar({
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat($._universal_properties),
+      repeat(choice(
+        $._universal_properties,
+        $._display_properties
+      )),
       '}'
     ),
 
@@ -1939,25 +2028,7 @@ module.exports = grammar({
 
     trigger_declaration: $ => seq(
       choice('trigger', 'TRIGGER', 'Trigger'),
-      field('type', alias(choice(
-        /[oO][nN][aA][fF][tT][eE][rR][gG][eE][tT][rR][eE][cC][oO][rR][dD]/,
-        /[oO][nN][iI][nN][iI][tT]/,
-        /[oO][nN][oO][pP][eE][nN][pP][aA][gG][eE]/,
-        /[oO][nN][cC][lL][oO][sS][eE][pP][aA][gG][eE]/,
-        /[oO][nN][fF][iI][nN][dD][rR][eE][cC][oO][rR][dD]/,
-        /[oO][nN][nN][eE][xX][tT][rR][eE][cC][oO][rR][dD]/,
-        /[oO][nN][qQ][uU][eE][rR][yY][cC][lL][oO][sS][eE]/,
-        /[oO][nN][aA][cC][tT][iI][oO][nN]/,
-        // Additional page-level triggers
-        /[oO][nN][aA][fF][tT][eE][rR][gG][eE][tT][cC][uU][rR][rR][rR][eE][cC][oO][rR][dD]/,
-        /[oO][nN][nN][eE][wW][rR][eE][cC][oO][rR][dD]/,
-        /[oO][nN][iI][nN][sS][eE][rR][tT][rR][eE][cC][oO][rR][dD]/,
-        /[oO][nN][mM][oO][dD][iI][fF][yY][rR][eE][cC][oO][rR][dD]/,
-        /[oO][nN][dD][eE][lL][eE][tT][eE][rR][eE][cC][oO][rR][dD]/,
-        /[oO][nN][qQ][uU][eE][rR][yY][cC][lL][oO][sS][eE][pP][aA][gG][eE]/,
-        // Support for custom trigger names (Control Add-in triggers, etc.)
-        $.identifier
-      ), $.trigger_type)),
+      field('name', alias($.identifier, $.trigger_name)), // Unified to use 'name' like generic_trigger
       choice(
         seq('(', optional($.parameter_list), ')'),
         seq()
@@ -1966,6 +2037,7 @@ module.exports = grammar({
       choice(
         // Standard trigger with code block
         prec(2, seq(
+          optional(';'), // Allow optional semicolon after trigger declaration
           optional($.var_section),
           $.code_block
         )),
@@ -2137,6 +2209,13 @@ module.exports = grammar({
       ';'
     ),
 
+    show_as_tree_property: $ => seq(
+      'ShowAsTree',
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
     grid_layout_property: $ => seq(
       /[gG][rR][iI][dD][lL][aA][yY][oO][uU][tT]/,
       '=',
@@ -2237,7 +2316,7 @@ module.exports = grammar({
     test_table_relation_value: $ => $.boolean,
     tool_tip_value: $ => seq(
       $.string_literal,
-      optional(seq(',', 'Comment', '=', $.string_literal))
+      optional(seq(',', choice('Comment', 'comment', 'COMMENT'), '=', $.string_literal))
     ),
     unique_value: $ => $.boolean,
     validate_table_relation_value: $ => $.boolean,
@@ -2336,7 +2415,10 @@ module.exports = grammar({
     allow_in_customizations_property: $ => prec(1, seq(
       'AllowInCustomizations', 
       '=',
-      field('value', alias($.boolean, $.value)),
+      field('value', choice(
+        alias($.boolean, $.value),
+        alias(choice('Never', 'NEVER', 'never'), $.value)
+      )),
       ';'
     )),
 
@@ -2914,6 +2996,7 @@ module.exports = grammar({
       $.row_span_property,
       $.width_property,
       $.show_caption_property,
+      $.show_as_tree_property,
       $.show_mandatory_property,
       $.style_property,
       $.style_expr_property,
@@ -2946,7 +3029,7 @@ module.exports = grammar({
             $.boolean
           ),
           seq(
-            'Comment',
+            choice('Comment', 'comment', 'COMMENT'),
             '=',
             $.string_literal
           )
@@ -2956,7 +3039,7 @@ module.exports = grammar({
     ),
 
     caption_class_property: $ => seq(
-      'CaptionClass',
+      choice('CaptionClass', 'CAPTIONCLASS', 'captionclass'),
       '=',
       field('value', $._expression),
       ';'
@@ -3346,7 +3429,7 @@ enum_type: $ => prec(1, seq(
     fields: $ => seq(
       choice('fields', 'FIELDS', 'Fields'),
       '{',
-      repeat($.field_declaration),
+      repeat(choice($.field_declaration, $.modify_field_declaration)),
       '}'
     ),
 
@@ -3367,6 +3450,7 @@ enum_type: $ => prec(1, seq(
         '{',
         repeat(choice(
           $.caption_property,
+          $.caption_class_property,
           $.data_classification_property,
           $.decimal_places_property,
           $.field_trigger_declaration,
@@ -3419,6 +3503,67 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
+    modify_field_declaration: $ => seq(
+      'modify',
+      '(',
+      field('name', choice(
+        $._quoted_identifier,
+        $.identifier
+      )),
+      ')',
+      '{',
+      repeat(choice(
+        $.field_trigger_declaration,
+        seq(optional($.attribute_list), $.trigger_declaration),
+        $.caption_property,
+        $.data_classification_property,
+        $.decimal_places_property,
+        $.access_by_permission_property,
+        $.allow_in_customizations_property,
+        $.auto_format_expression_property,
+        $.auto_format_type_property,
+        $.auto_increment_property,
+        $.blank_numbers_property,
+        $.table_relation_property,
+        $.field_class_property,
+        $.calc_formula_property,
+        $.blank_zero_property,
+        $.editable_property,
+        $.option_members_property,
+        $.option_caption_property,
+        $.closing_dates_property,
+        $.char_allowed_property,
+        $.compressed_property,
+        $.date_formula_property,
+        $.description_property,
+        $.external_access_property,
+        $.external_name_property,
+        $.external_type_property,
+        $.init_value_property,
+        $.max_value_property,
+        $.min_value_property,
+        $.not_blank_property,
+        $.numeric_property,
+        $.obsolete_reason_property,
+        $.obsolete_state_property,
+        $.obsolete_tag_property,
+        $.option_ordinal_values_property,
+        $.paste_is_valid_property,
+        $.sign_displacement_property,
+        $.sql_data_type_property,
+        $.sql_timestamp_property,
+        $.test_table_relation_property,
+        $.tool_tip_property,
+        $.unique_property,
+        $.validate_table_relation_property,
+        $.values_allowed_property,
+        $.extended_datatype_property,
+        $.caption_ml_property,
+        $.option_caption_ml_property,
+        $.tool_tip_ml_property
+      )),
+      '}'
+    ),
 
     table_relation_property: $ => seq(
       'TableRelation',
@@ -3775,6 +3920,7 @@ enum_type: $ => prec(1, seq(
       $._trigger_keyword,
       field('type', alias(choice(
         choice('OnValidate', 'ONVALIDATE', 'Onvalidate'),
+        choice('OnAfterValidate', 'ONAFTERVALIDATE', 'OnAfterValidate'),
         choice('OnLookup', 'ONLOOKUP', 'Onlookup'),
         choice('OnAssistEdit', 'ONASSISTEDIT', 'OnAssistEdit'),
         choice('OnDrillDown', 'ONDRILLDOWN', 'OnDrillDown')
@@ -3878,7 +4024,7 @@ enum_type: $ => prec(1, seq(
       repeat(seq(',', $._expression))
     ),
 
-    return_value: $ => field('return_value', $.identifier),
+    return_value: $ => field('return_value', choice($.identifier, $._quoted_identifier)),
 
     _procedure_return_specification: $ => seq(
       ':',
@@ -3895,7 +4041,7 @@ enum_type: $ => prec(1, seq(
 
     _procedure_name: $ => alias(choice($.identifier, $._quoted_identifier), $.name),
 
-    procedure_modifier: $ => choice('local', 'LOCAL', 'Local', 'internal', 'INTERNAL', 'Internal'),
+    procedure_modifier: $ => choice('local', 'LOCAL', 'Local', 'internal', 'INTERNAL', 'Internal', 'protected', 'PROTECTED', 'Protected'),
 
     procedure: $ => seq(
       optional(field('modifier', $.procedure_modifier)), 
@@ -4131,31 +4277,10 @@ enum_type: $ => prec(1, seq(
 
     _expression: $ => choice(
       // --- Binary Operators First ---
-      // Range expression (..) (prec 8)
-      prec.left(8, seq(
-        field('left', $._expression),
-        field('operator', '..'),
-        field('right', $._expression)
-      )),
-      // Arithmetic operator expression (*, /, div, mod) (prec 7)
-      prec.left(7, seq(
-        field('left', $._expression),
-        // Explicitly list operators for this precedence level
-        field('operator', choice('*', '/', /[dD][iI][vV]/, /[mM][oO][dD]/)),
-        field('right', $._expression)
-      )),
-      // Arithmetic operator expression (+, -) (prec 6)
-      prec.left(6, seq(
-        field('left', $._expression),
-        field('operator', choice('+', '-')),
-        field('right', $._expression)
-      )),
-      // Comparison operator expression (prec 6)
-      prec.left(6, seq(
-        field('left', $._expression),
-        field('operator', $.comparison_operator),
-        field('right', $._expression)
-      )),
+      $.range_expression,       // (prec 8)
+      $.multiplicative_expression, // (prec 7) 
+      $.additive_expression,    // (prec 6)
+      $.comparison_expression,  // (prec 4)
       // 'in' expression (prec 5)
       prec.left(5, seq(
         field('left', $._expression),
@@ -4174,18 +4299,7 @@ enum_type: $ => prec(1, seq(
         field('operator', choice('as', 'AS', 'As')),
         field('right', $.type_specification)
       )),
-      // Logical AND expression (prec 3)
-      prec.left(3, seq(
-        field('left', $._expression),
-        field('operator', choice('and', 'AND', 'And')),
-        field('right', $._expression)
-      )),
-      // Logical OR expression (prec 2)
-      prec.left(2, seq(
-        field('left', $._expression),
-        field('operator', choice('or', 'OR', 'Or')),
-        field('right', $._expression)
-      )),
+      $.logical_expression,
       // --- Other Expression Forms ---
       // Method chains (put this first among non-binary expressions for higher precedence)
       $.call_expression, // (prec 12)
@@ -4200,6 +4314,46 @@ enum_type: $ => prec(1, seq(
       $._literal_value,
       $.parenthesized_expression,
       $.unary_expression // (prec 7)
+    ),
+
+    // Explicit binary expression rules for proper precedence handling
+    range_expression: $ => prec.left(8, seq(
+      field('left', $._expression),
+      field('operator', '..'),
+      field('right', $._expression)
+    )),
+
+    multiplicative_expression: $ => prec.left(7, seq(
+      field('left', $._expression),
+      field('operator', choice('*', '/', /[dD][iI][vV]/, /[mM][oO][dD]/)),
+      field('right', $._expression)
+    )),
+
+    additive_expression: $ => prec.left(6, seq(
+      field('left', $._expression),
+      field('operator', choice('+', '-')),
+      field('right', $._expression)
+    )),
+
+    comparison_expression: $ => prec.left(4, seq(
+      field('left', $._expression),
+      field('operator', $.comparison_operator),
+      field('right', $._expression)
+    )),
+
+    logical_expression: $ => choice(
+      // Logical AND expression (prec 3)
+      prec.left(3, seq(
+        field('left', $._expression),
+        field('operator', choice('and', 'AND', 'And')),
+        field('right', $._expression)
+      )),
+      // Logical OR expression (prec 2)
+      prec.left(2, seq(
+        field('left', $._expression),
+        field('operator', choice('or', 'OR', 'Or')),
+        field('right', $._expression)
+      ))
     ),
 
     // 'in' operator
@@ -4305,7 +4459,9 @@ enum_type: $ => prec(1, seq(
       $.database_reference, // Allow DATABASE::"Table Name" patterns
       $._chained_expression, // Allow member expressions like Value.IsInteger
       $.unary_expression, // Allow NOT expressions in case patterns
-      // Boolean expressions for CASE TRUE OF patterns
+      // Complex parenthesized expressions for CASE TRUE OF patterns
+      prec(12, $.parenthesized_expression),
+      // Boolean expressions for CASE TRUE OF patterns  
       prec(10, seq(
         field('left', $._expression),
         field('operator', $.comparison_operator),
@@ -4360,8 +4516,8 @@ enum_type: $ => prec(1, seq(
       $.duration_literal,
       $.integer,
       $.decimal,
-      $.string_literal,
-      $.boolean
+      $.boolean,
+      $.string_literal
     ),
 
     parenthesized_expression: $ => seq(
@@ -4499,7 +4655,7 @@ enum_type: $ => prec(1, seq(
     indentation_column_property: $ => seq(
       'IndentationColumn',
       '=',
-      field('value', $.integer),
+      field('value', choice($.integer, $.identifier, $._quoted_identifier)),
       ';'
     ),
 
@@ -4855,10 +5011,7 @@ enum_type: $ => prec(1, seq(
     data_item_table_view_property: $ => seq(
       'DataItemTableView',
       '=',
-      field('value', choice(
-        $.sorting_expression,
-        $.source_table_view_value
-      )),
+      field('value', $.source_table_view_value),
       ';'
     ),
 
@@ -5086,6 +5239,7 @@ enum_type: $ => prec(1, seq(
     _universal_properties: $ => choice(
       $.caption_property,
       $.caption_ml_property,
+      $.caption_class_property,
       $.description_property,
       $.application_area_property,
       $.tool_tip_property,
@@ -5111,6 +5265,7 @@ enum_type: $ => prec(1, seq(
       $.grid_layout_property,        // Grid layout direction (Rows/Columns)
       $.importance_property,         // Priority/emphasis level
       $.show_caption_property,       // Caption visibility
+      $.show_as_tree_property,       // Tree-style presentation
       $.show_mandatory_property,     // Mandatory field indication
       $.multi_line_property,         // Multi-line text support
       $.hide_value_property,         // Value masking (e.g., passwords)
@@ -5250,13 +5405,13 @@ enum_type: $ => prec(1, seq(
       // Field-specific additional properties
       $.assist_edit_property,
       $.quick_entry_property,
-      $.caption_class_property,
       $.option_caption_property,
       $.sign_displacement_property,
       $.title_property,
       $.extended_datatype_property,
       $.about_title_property,
       $.about_text_property,
+      $.instructional_text_property,
       $.page_about_title_ml_property,
       $.page_about_text_ml_property,
       $.odata_edm_type_property,
@@ -5468,6 +5623,10 @@ enum_type: $ => prec(1, seq(
       $._access_properties,       // access_by_permission
       
       // Action-specific properties only
+      $.about_title_property,
+      $.about_text_property,
+      $.page_about_title_ml_property,
+      $.page_about_text_ml_property,
       $.allowed_file_extensions_property,
       $.allow_multiple_files_property,
       $.custom_action_type_property,
@@ -5520,6 +5679,14 @@ enum_type: $ => prec(1, seq(
       '{',
       repeat($._layout_element),
       '}'
+    ),
+
+    _move_layout_modification_template: $ => seq(
+      '(',
+      field('target', $._identifier_choice),
+      ';',
+      field('element', $._identifier_choice),
+      ')'
     ),
 
     // Centralized object declaration header for DRY principle
