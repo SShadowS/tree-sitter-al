@@ -1913,6 +1913,17 @@ module.exports = grammar({
           ),
           ')'
         ),
+        seq( // sorting(...) ORDER(...) pattern
+          $.identifier, // e.g., 'sorting'
+          '(',
+          // Comma-separated list of one or more quoted identifiers
+          seq(
+            $._quoted_identifier,
+            repeat(seq(',', $._quoted_identifier))
+          ),
+          ')',
+          $.order_clause
+        ),
         $.where_clause // Support WHERE clause syntax
       )),
       ';'
@@ -2923,7 +2934,9 @@ module.exports = grammar({
       $.sub_page_view_property,
       $.update_propagation_property,
       $.visible_property,
-      $.provider_property
+      $.provider_property,
+      $.about_title_property,
+      $.about_text_property
     )),
 
     caption_property: $ => seq(

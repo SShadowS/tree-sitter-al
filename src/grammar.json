@@ -8371,6 +8371,52 @@
                 ]
               },
               {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "("
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_quoted_identifier"
+                      },
+                      {
+                        "type": "REPEAT",
+                        "content": {
+                          "type": "SEQ",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": ","
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "_quoted_identifier"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "STRING",
+                    "value": ")"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "order_clause"
+                  }
+                ]
+              },
+              {
                 "type": "SYMBOL",
                 "name": "where_clause"
               }
@@ -12484,6 +12530,14 @@
           {
             "type": "SYMBOL",
             "name": "provider_property"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "about_title_property"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "about_text_property"
           }
         ]
       }
