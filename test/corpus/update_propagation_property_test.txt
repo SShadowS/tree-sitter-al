@@ -28,12 +28,10 @@ page 50000 "Test Page"
         (part_section
           name: (identifier)
           page_name: (quoted_identifier)
-          (property
-            (application_area_property
-              value: (identifier)))
-          (property
-            (update_propagation_property
-              value: (update_propagation_value))))))))
+          (application_area_property
+            value: (identifier))
+          (update_propagation_property
+            value: (update_propagation_value)))))))
 
 ================================================================================
 UpdatePropagation property with different values
@@ -72,20 +70,17 @@ page 50001 "Test Page 2"
         (part_section
           name: (identifier)
           page_name: (quoted_identifier)
-          (property
-            (update_propagation_property
-              value: (update_propagation_value))))
+          (update_propagation_property
+              value: (update_propagation_value)))
         (part_section
           name: (identifier)
           page_name: (quoted_identifier)
-          (property
-            (update_propagation_property
+          (update_propagation_property
               value: (update_propagation_value
-                (identifier)))))
+                (identifier))))
         (part_section
           name: (identifier)
           page_name: (quoted_identifier)
-          (property
-            (update_propagation_property
+          (update_propagation_property
               value: (update_propagation_value
-                (identifier)))))))))
+                (identifier))))))))

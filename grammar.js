@@ -1849,9 +1849,7 @@ module.exports = grammar({
       field('page_name', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat(choice(
-        $.property
-      )),
+      repeat($._page_properties),
       '}'
     ),
 
@@ -2934,9 +2932,7 @@ module.exports = grammar({
       $.sub_page_view_property,
       $.update_propagation_property,
       $.visible_property,
-      $.provider_property,
-      $.about_title_property,
-      $.about_text_property
+      $.provider_property
     )),
 
     caption_property: $ => seq(
@@ -5340,6 +5336,12 @@ enum_type: $ => prec(1, seq(
       $.promoted_only_property,
       $.promoted_is_big_property,
       $.promoted_action_categories_property,
+      
+      // Page part properties
+      $.provider_property,
+      $.sub_page_link_property,
+      $.sub_page_view_property,
+      $.update_propagation_property,
       
       // Query and filter properties
       $.query_category_property,

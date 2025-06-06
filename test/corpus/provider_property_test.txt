@@ -29,17 +29,14 @@ page 123 TestPage
         (part_section
           name: (identifier)
           page_name: (quoted_identifier)
-          (property
-            (application_area_property
-              value: (identifier)))
-          (property
-            (provider_property
-              value: (identifier)))
-          (property
-            (sub_page_link_property
-              value: (run_page_link_value
-                field: (quoted_identifier)
-                field_value: (quoted_identifier)))))))))
+          (application_area_property
+            value: (identifier))
+          (provider_property
+            value: (identifier))
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              field_value: (quoted_identifier))))))))
 
 ================================================================================
 Page part with quoted Provider property value
@@ -71,9 +68,7 @@ page 456 "Test Page"
         (part_section
           name: (identifier)
           page_name: (quoted_identifier)
-          (property
-            (application_area_property
-              value: (identifier)))
-          (property
-            (provider_property
-              value: (quoted_identifier))))))))
+          (application_area_property
+            value: (identifier))
+          (provider_property
+            value: (quoted_identifier)))))))

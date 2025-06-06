@@ -34,23 +34,18 @@ page 123 "Test Page"
         (part_section
           name: (quoted_identifier)
           page_name: (quoted_identifier)
-          (property
-            (application_area_property
-              value: (identifier)))
-          (property
-            (show_filter_property
-              value: (boolean)))
-          (property
-            (sub_page_link_property
-              value: (run_page_link_value
-                field: (quoted_identifier)
-                field_value: (quoted_identifier)))))
+          (application_area_property
+            value: (identifier))
+          (show_filter_property
+            value: (boolean))
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              field_value: (quoted_identifier))))
         (part_section
           name: (quoted_identifier)
           page_name: (quoted_identifier)
-          (property
-            (show_filter_property
-              value: (boolean)))
-          (property
-            (application_area_property
-              value: (identifier))))))))
+          (show_filter_property
+            value: (boolean))
+          (application_area_property
+            value: (identifier)))))))
