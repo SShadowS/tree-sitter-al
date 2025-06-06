@@ -163,6 +163,10 @@
           "named": true
         },
         {
+          "type": "grid_layout_property",
+          "named": true
+        },
+        {
           "type": "hide_value_property",
           "named": true
         },
@@ -429,6 +433,10 @@
           "named": true
         },
         {
+          "type": "grid_layout_property",
+          "named": true
+        },
+        {
           "type": "hide_value_property",
           "named": true
         },
@@ -690,6 +698,10 @@
         },
         {
           "type": "gesture_property",
+          "named": true
+        },
+        {
+          "type": "grid_layout_property",
           "named": true
         },
         {
@@ -13921,6 +13933,10 @@
           "named": true
         },
         {
+          "type": "grid_layout_property",
+          "named": true
+        },
+        {
           "type": "hide_value_property",
           "named": true
         },
@@ -16449,6 +16465,27 @@
         ]
       }
     }
+  },
+  {
+    "type": "grid_layout_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "grid_layout_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "grid_layout_value",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "grid_section",
@@ -21749,6 +21786,10 @@
           "named": true
         },
         {
+          "type": "grid_layout_property",
+          "named": true
+        },
+        {
           "type": "hide_value_property",
           "named": true
         },
@@ -22995,6 +23036,10 @@
           "named": true
         },
         {
+          "type": "grid_layout_property",
+          "named": true
+        },
+        {
           "type": "help_link_property",
           "named": true
         },
@@ -23624,6 +23669,10 @@
         },
         {
           "type": "freeze_column_property",
+          "named": true
+        },
+        {
+          "type": "grid_layout_property",
           "named": true
         },
         {
@@ -24984,6 +25033,10 @@
           "named": true
         },
         {
+          "type": "grid_layout_property",
+          "named": true
+        },
+        {
           "type": "hide_value_property",
           "named": true
         },
@@ -25341,6 +25394,10 @@
         },
         {
           "type": "freeze_column_property",
+          "named": true
+        },
+        {
+          "type": "grid_layout_property",
           "named": true
         },
         {
@@ -28377,6 +28434,10 @@
           "named": true
         },
         {
+          "type": "grid_layout_property",
+          "named": true
+        },
+        {
           "type": "hide_value_property",
           "named": true
         },
@@ -29845,6 +29906,10 @@
         },
         {
           "type": "gesture_property",
+          "named": true
+        },
+        {
+          "type": "grid_layout_property",
           "named": true
         },
         {
@@ -35811,6 +35876,10 @@
     "named": false
   },
   {
+    "type": "Columns",
+    "named": false
+  },
+  {
     "type": "Comment",
     "named": false
   },
@@ -37123,6 +37192,10 @@
     "named": false
   },
   {
+    "type": "Rows",
+    "named": false
+  },
+  {
     "type": "RunObject",
     "named": false
   },
@@ -37665,11 +37738,11 @@
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "controladdin",
@@ -37813,11 +37886,11 @@
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "interface",

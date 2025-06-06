@@ -9409,6 +9409,31 @@
         }
       ]
     },
+    "grid_layout_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[gG][rR][iI][dD][lL][aA][yY][oO][uU][tT]"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "grid_layout_value"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "show_mandatory_property": {
       "type": "SEQ",
       "members": [
@@ -12347,6 +12372,10 @@
           {
             "type": "SYMBOL",
             "name": "freeze_column_property"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "grid_layout_property"
           },
           {
             "type": "SYMBOL",
@@ -17904,6 +17933,19 @@
         }
       ]
     },
+    "grid_layout_value": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "Rows"
+        },
+        {
+          "type": "STRING",
+          "value": "Columns"
+        }
+      ]
+    },
     "temporary": {
       "type": "CHOICE",
       "members": [
@@ -23292,6 +23334,10 @@
         {
           "type": "SYMBOL",
           "name": "freeze_column_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "grid_layout_property"
         },
         {
           "type": "SYMBOL",

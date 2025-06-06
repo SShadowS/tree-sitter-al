@@ -2131,6 +2131,13 @@ module.exports = grammar({
       ';'
     ),
 
+    grid_layout_property: $ => seq(
+      /[gG][rR][iI][dD][lL][aA][yY][oO][uU][tT]/,
+      '=',
+      field('value', $.grid_layout_value),
+      ';'
+    ),
+
     show_mandatory_property: $ => seq(
       'ShowMandatory',
       '=',
@@ -2889,6 +2896,7 @@ module.exports = grammar({
       $.assist_edit_property,
       $.column_span_property,
       $.freeze_column_property,
+      $.grid_layout_property,
       $.drill_down_property,
       $.lookup_property,
       $.hide_value_property,
@@ -3958,6 +3966,11 @@ enum_type: $ => prec(1, seq(
     boolean: $ => choice(
       token(prec(1, choice('true', 'TRUE', 'True'))),
       token(prec(1, choice('false', 'FALSE', 'False')))
+    ),
+
+    grid_layout_value: $ => choice(
+      'Rows',
+      'Columns'
     ),
 
     temporary: $ => choice('temporary', 'TEMPORARY', 'Temporary'),
@@ -5083,6 +5096,7 @@ enum_type: $ => prec(1, seq(
       $.row_span_property,           // Grid row spanning
       $.column_span_property,        // Grid column spanning
       $.freeze_column_property,      // Column freezing in repeaters
+      $.grid_layout_property,        // Grid layout direction (Rows/Columns)
       $.importance_property,         // Priority/emphasis level
       $.show_caption_property,       // Caption visibility
       $.show_mandatory_property,     // Mandatory field indication
