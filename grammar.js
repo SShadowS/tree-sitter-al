@@ -3321,7 +3321,7 @@ enum_type: $ => prec(1, seq(
 
     dotnet_type: $ => seq(
       prec(1, choice('DotNet', 'DOTNET', 'dotnet')),
-      field('reference', choice($.identifier, $.string_literal, $._quoted_identifier))
+      field('reference', choice($.dotnet_type_name, $.identifier, $.string_literal, $._quoted_identifier))
     ),
 
     array_type: $ => seq(

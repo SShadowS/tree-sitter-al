@@ -1,0 +1,94 @@
+================================================================================
+DotNet types with namespaces
+================================================================================
+
+table 123 TestTable 
+{
+    var
+        ServerFileHelper: DotNet System.File;
+        SearchOption: DotNet SearchOption;
+        DirectoryInfo: DotNet System.IO.DirectoryInfo;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (dotnet_type
+            reference: (dotnet_type_name))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (dotnet_type
+            reference: (dotnet_type_name))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (dotnet_type
+            reference: (dotnet_type_name)))))))
+
+================================================================================
+DotNet types in field declarations
+================================================================================
+
+table 456 TestTable2 
+{
+    fields
+    {
+        field(1; HelperRef; DotNet System.Web.HttpContext)
+        {
+            Caption = 'Helper Reference';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (dotnet_type
+            reference: (dotnet_type_name)))
+        (caption_property
+          (string_literal))))))
+
+================================================================================
+Multiple DotNet namespace levels
+================================================================================
+
+codeunit 789 TestCodeunit
+{
+    var
+        DeepNamespace: DotNet Microsoft.Win32.Registry;
+        VeryDeep: DotNet System.Collections.Generic.List;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (dotnet_type
+            reference: (dotnet_type_name))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (dotnet_type
+            reference: (dotnet_type_name)))))))
