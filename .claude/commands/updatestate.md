@@ -1,1 +1,0 @@
-Run this and update the README.md with current state: ./parse-al.sh ./DC/ .
