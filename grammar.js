@@ -4073,13 +4073,11 @@ enum_type: $ => prec(1, seq(
         // Empty string
         seq("'", "'"),
         
-        // Non-empty string
+        // Non-empty string - simplified to handle single backslash
         seq(
           "'",
           repeat1(choice(
-            /[^'\\\n]+/,   // One or more chars except quote, backslash, or newline
-            /\\./,         // Match any escaped character (e.g., \\, \', \", \#, etc.)
-            /\\/,          // Single backslash (for character literals like '\')
+            /[^'\n]+/,     // One or more chars except quote or newline (allows backslash)
             "''"           // Two consecutive single quotes as an escape
           )),
           "'"
