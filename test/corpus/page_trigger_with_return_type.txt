@@ -21,7 +21,7 @@ page 50000 "Test Page"
     (integer)
     (quoted_identifier)
     (trigger_declaration
-      (trigger_type)
+      (trigger_name)
       (parameter_list
         (parameter
           (name)
@@ -31,11 +31,12 @@ page 50000 "Test Page"
         (basic_type))
       (code_block
         (if_statement
-          (identifier)
-          (comparison_operator)
-          (qualified_enum_value
+          (comparison_expression
             (identifier)
-            (identifier))
+            (comparison_operator)
+            (qualified_enum_value
+              (identifier)
+              (identifier)))
           (if_statement
             (unary_expression
               (call_expression

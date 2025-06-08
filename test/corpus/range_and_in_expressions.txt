@@ -37,8 +37,9 @@ codeunit 50000 "Range Test"
           operator: (in_operator)
           right: (list_literal
             (expression_list
-              left: (string_literal)
-              right: (string_literal))))))))
+              (range_expression
+                left: (string_literal)
+                right: (string_literal)))))))))
 
 ================================================================================
 IN expression with multiple ranges
@@ -79,12 +80,15 @@ codeunit 50001 "Multiple Range Test"
           operator: (in_operator)
           right: (list_literal
             (expression_list
-              left: (string_literal)
-              right: (string_literal)
-              left: (string_literal)
-              right: (string_literal)
-              left: (string_literal)
-              right: (string_literal))))))))
+              (range_expression
+                left: (string_literal)
+                right: (string_literal))
+              (range_expression
+                left: (string_literal)
+                right: (string_literal))
+              (range_expression
+                left: (string_literal)
+                right: (string_literal)))))))))
 
 ================================================================================
 IN expression with individual values
@@ -182,8 +186,9 @@ codeunit 50003 "Range Context Test"
           end: (integer)
           body: (assignment_statement
             left: (identifier)
-            left: (identifier)
-            right: (identifier)))))
+            right: (additive_expression
+              left: (identifier)
+              right: (identifier))))))
     (procedure
       name: (name)
       (var_section
@@ -238,6 +243,7 @@ codeunit 50004 "Field Access Test"
           operator: (in_operator)
           right: (list_literal
             (expression_list
-              left: (string_literal)
-              right: (string_literal)
+              (range_expression
+                left: (string_literal)
+                right: (string_literal))
               (string_literal))))))))

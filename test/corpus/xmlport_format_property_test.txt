@@ -1,0 +1,67 @@
+================================================================================
+XMLPort Format property with VariableText
+================================================================================
+
+xmlport 123 "Test XMLPort"
+{
+    Format = VariableText;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (format_property)))
+
+================================================================================
+XMLPort Format property with FixedText
+================================================================================
+
+xmlport 124 "Fixed XMLPort"
+{
+    Format = FixedText;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (format_property)))
+
+================================================================================
+XMLPort Format property with original values
+================================================================================
+
+xmlport 125 "Original XMLPort"
+{
+    Format = Variable;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (format_property)))
+
+================================================================================
+XMLPort Format property case variations
+================================================================================
+
+xmlport 126 "Case Test XMLPort"
+{
+    Format = VARIABLETEXT;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (format_property)))

@@ -30,8 +30,7 @@ page 50000 "Test Page"
 
 (source_file
   (page_declaration
-    object_id:
-      (integer)
+    object_id: (integer)
     object_name: (quoted_identifier)
     (actions_section
       (area_action_section
@@ -44,7 +43,7 @@ page 50000 "Test Page"
           (image_property
             value: (quoted_identifier))
           (trigger_declaration
-            type: (trigger_type)
+            name: (trigger_name)
             (var_section
               (variable_declaration
                 name: (identifier)
@@ -58,13 +57,14 @@ page 50000 "Test Page"
                   property: (identifier))
                 right: (boolean))
               (if_statement
-                left: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                operator: (comparison_operator)
-                right: (qualified_enum_value
-                  enum_type: (identifier)
-                  value: (identifier))
+                condition: (comparison_expression
+                  left: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  operator: (comparison_operator)
+                  right: (qualified_enum_value
+                    enum_type: (identifier)
+                    value: (identifier)))
                 then_branch: (call_expression
                   function: (member_expression
                     object: (identifier)

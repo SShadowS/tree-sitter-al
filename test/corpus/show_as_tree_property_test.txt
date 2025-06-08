@@ -1,0 +1,67 @@
+================================================================================
+ShowAsTree property in repeater sections
+================================================================================
+
+page 50000 "Test Tree Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            repeater(TreeList)
+            {
+                ShowAsTree = true;
+                IndentationColumn = Depth;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (repeater_section
+          name: (identifier)
+          (show_as_tree_property
+            value: (boolean))
+          (indentation_column_property
+            value: (identifier)))))))
+
+================================================================================
+ShowAsTree property with false value
+================================================================================
+
+page 50001 "Test List Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            repeater(FlatList)
+            {
+                ShowAsTree = false;
+                ShowCaption = true;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (repeater_section
+          name: (identifier)
+          (show_as_tree_property
+            value: (boolean))
+          (show_caption_property
+            value: (boolean)))))))

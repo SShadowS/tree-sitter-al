@@ -38,10 +38,11 @@ codeunit 50100 "My Test Codeunit"
           (name)
           (type_specification
             (basic_type))))
-      (return_type 
+      (return_type
         (type_specification
           (basic_type)))
       (code_block
         (exit_statement
-          (identifier)
-          (identifier))))))
+          (additive_expression
+            (identifier)
+            (identifier)))))))

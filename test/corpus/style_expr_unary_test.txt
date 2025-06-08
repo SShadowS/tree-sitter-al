@@ -1,0 +1,175 @@
+================================================================================
+StyleExpr with NOT unary expression
+================================================================================
+
+page 12345 TestPage
+{
+    layout
+    {
+        area(content)
+        {
+            field(HashCheckName; HashCheckStatus)
+            {
+                ApplicationArea = All;
+                Caption = 'File Hash Check';
+                Style = Unfavorable;
+                StyleExpr = NOT HashCheck;
+                ToolTip = 'Hash check status';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (application_area_property
+            value: (identifier))
+          (caption_property
+            (string_literal))
+          (style_property
+            value: (style_value))
+          (style_expr_property
+            value: (unary_expression
+              (identifier)))
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal))))))))
+
+================================================================================
+StyleExpr with 'not' lowercase unary expression
+================================================================================
+
+page 23456 LowerCasePage
+{
+    layout
+    {
+        area(content)
+        {
+            field(Status; StatusValue)
+            {
+                StyleExpr = not IsActive;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (style_expr_property
+            value: (unary_expression
+              (identifier))))))))
+
+================================================================================
+StyleExpr with minus unary expression
+================================================================================
+
+page 34567 MinusPage
+{
+    layout
+    {
+        area(content)
+        {
+            field(Amount; AmountValue)
+            {
+                StyleExpr = -NetAmount;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (style_expr_property
+            value: (unary_expression
+              (identifier))))))))
+
+================================================================================
+StyleExpr with boolean literal (existing functionality)
+================================================================================
+
+page 45678 BooleanPage
+{
+    layout
+    {
+        area(content)
+        {
+            field(Status; StatusValue)
+            {
+                StyleExpr = TRUE;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (style_expr_property
+            value: (boolean)))))))
+
+================================================================================
+StyleExpr with identifier (existing functionality)
+================================================================================
+
+page 56789 IdentifierPage
+{
+    layout
+    {
+        area(content)
+        {
+            field(Status; StatusValue)
+            {
+                StyleExpr = IsVisible;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (style_expr_property
+            value: (identifier)))))))

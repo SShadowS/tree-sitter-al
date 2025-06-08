@@ -1,0 +1,146 @@
+================================================================================
+Table extension with modify field triggers
+================================================================================
+
+tableextension 50000 "Customer Extension" extends Customer
+{
+    modify("No.")
+    {
+        trigger OnValidate()
+        begin
+            if "No." = '' then
+                Error('Customer number cannot be blank');
+        end;
+        
+        trigger OnLookup()
+        var
+            CustomerList: Page "Customer List";
+        begin
+            CustomerList.LookupMode(true);
+            if CustomerList.RunModal = ACTION::LookupOK then
+                "No." := CustomerList.GetRecord."No.";
+        end;
+    }
+    
+    modify(Name)
+    {
+        Caption = 'Customer Name';
+        
+        trigger OnAfterValidate()
+        begin
+            "Search Name" := Name;
+        end;
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (identifier)
+    (modify_field_declaration
+      name: (quoted_identifier)
+      (field_trigger_declaration
+        type: (trigger_type)
+        (code_block
+          (if_statement
+            condition: (comparison_expression
+              left: (quoted_identifier)
+              operator: (comparison_operator)
+              right: (string_literal))
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))))
+      (field_trigger_declaration
+        type: (trigger_type)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (page_type
+                reference: (quoted_identifier)))))
+        (code_block
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (boolean)))
+          (if_statement
+            condition: (comparison_expression
+              left: (member_expression
+                object: (identifier)
+                property: (identifier))
+              operator: (comparison_operator)
+              right: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier)))
+            then_branch: (assignment_statement
+              left: (quoted_identifier)
+              right: (field_access
+                record: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                field: (quoted_identifier)))))))
+    (modify_field_declaration
+      name: (identifier)
+      (caption_property
+        (string_literal))
+      (field_trigger_declaration
+        type: (trigger_type)
+        (code_block
+          (assignment_statement
+            left: (quoted_identifier)
+            right: (identifier)))))))
+
+================================================================================
+Table extension with generic triggers in field modify
+================================================================================
+
+tableextension 50001 "Item Extension" extends Item
+{
+    modify("Item Category Code")
+    {
+        trigger OnCustomValidation()
+        var
+            ItemCategory: Record "Item Category";
+        begin
+            if ItemCategory.Get("Item Category Code") then
+                "Item Category Description" := ItemCategory.Description;
+        end;
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (identifier)
+    (modify_field_declaration
+      name: (quoted_identifier)
+      (trigger_declaration
+        name: (trigger_name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (code_block
+          (if_statement
+            condition: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)))
+            then_branch: (assignment_statement
+              left: (quoted_identifier)
+              right: (member_expression
+                object: (identifier)
+                property: (identifier)))))))))

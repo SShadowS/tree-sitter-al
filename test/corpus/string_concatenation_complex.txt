@@ -1,0 +1,45 @@
+================================================================================
+String concatenation with multiple terms
+================================================================================
+
+codeunit 50000 "Test Codeunit"
+{
+    procedure TestStringConcat()
+    var
+        Result: Text;
+        Path: Text;
+        FileName: Text;
+    begin
+        Result := Path + '\' + FileName;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (assignment_statement
+          left: (identifier)
+          right: (additive_expression
+            left: (additive_expression
+              left: (identifier)
+              right: (string_literal))
+            right: (identifier)))))))

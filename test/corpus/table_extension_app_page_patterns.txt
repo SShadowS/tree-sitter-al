@@ -113,9 +113,10 @@ table 6175314 "CDO Extension App Page"
               arguments: (argument_list
                 (quoted_identifier)))
             (if_statement
-              left: (quoted_identifier)
-              operator: (comparison_operator)
-              right: (integer)
+              condition: (comparison_expression
+                left: (quoted_identifier)
+                operator: (comparison_operator)
+                right: (integer))
               then_branch: (assignment_statement
                 left: (quoted_identifier)
                 right: (call_expression
@@ -124,21 +125,23 @@ table 6175314 "CDO Extension App Page"
                     property: (identifier))
                   arguments: (argument_list))))
             (if_statement
-              left: (quoted_identifier)
-              operator: (comparison_operator)
-              right: (string_literal)
+              condition: (comparison_expression
+                left: (quoted_identifier)
+                operator: (comparison_operator)
+                right: (string_literal))
               then_branch: (assignment_statement
                 left: (quoted_identifier)
                 right: (call_expression
                   function: (identifier)
                   arguments: (argument_list
-                    left: (call_expression
-                      function: (identifier)
-                      arguments: (argument_list
-                        (quoted_identifier)
-                        (string_literal)
-                        (string_literal)))
-                    right: (string_literal)
+                    (additive_expression
+                      left: (call_expression
+                        function: (identifier)
+                        arguments: (argument_list
+                          (quoted_identifier)
+                          (string_literal)
+                          (string_literal)))
+                      right: (string_literal))
                     (integer)
                     (call_expression
                       function: (identifier)

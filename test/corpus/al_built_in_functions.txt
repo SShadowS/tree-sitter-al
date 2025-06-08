@@ -124,11 +124,12 @@ codeunit 50000 "AL Built-in Functions Test"
             property: (identifier))
           then_branch: (repeat_statement
             (comment)
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            operator: (comparison_operator)
-            right: (integer)))
+            condition: (comparison_expression
+              left: (member_expression
+                object: (identifier)
+                property: (identifier))
+              operator: (comparison_operator)
+              right: (integer))))
         (comment)
         (if_statement
           condition: (unary_expression
@@ -203,19 +204,20 @@ codeunit 50000 "AL Built-in Functions Test"
               (string_literal))))
         (comment)
         (if_statement
-          left: (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list
-              (qualified_enum_value
-                enum_type: (identifier)
-                value: (quoted_identifier))
-              (identifier)))
-          operator: (comparison_operator)
-          right: (qualified_enum_value
-            enum_type: (identifier)
-            value: (identifier))
+          condition: (comparison_expression
+            left: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (qualified_enum_value
+                  enum_type: (identifier)
+                  value: (quoted_identifier))
+                (identifier)))
+            operator: (comparison_operator)
+            right: (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier)))
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list

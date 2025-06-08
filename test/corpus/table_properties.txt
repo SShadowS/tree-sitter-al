@@ -42,57 +42,57 @@ table 50000 "Test Table"
   (table_declaration
     (integer)
     (quoted_identifier)
-        (data_caption_fields_property
-          (data_caption_fields_value
-            (quoted_identifier)
-            (identifier)))
-        (extensible_property
-          (extensible_value
-            (boolean)))
-        (data_per_company_property
-          (data_per_company_value
-            (boolean)))
-        (replicate_data_property
-          (replicate_data_value
-            (boolean)))
-        (column_store_index_property
-          (column_store_index_value
-            (identifier)))
-        (compression_type_property
-          (compression_type_value))
-        (inherent_permissions_property
-          (inherent_permissions_value
-            (permission_type)))
-        (inherent_entitlements_property
-          (inherent_entitlements_value
-            (permission_type)))
-        (fields
-          (field_declaration
-            (integer)
-            (quoted_identifier)
-            (type_specification
-              (code_type
-                (integer)))
-            (caption_property
-              (string_literal))
-            (not_blank_property
-              (not_blank_value
-                (boolean))))
-          (field_declaration
-            (integer)
-            (identifier)
-            (type_specification
-              (text_type
-                (integer)))
-            (caption_property
-              (string_literal))))
-        (keys
-          (key_declaration
-            (name)
-            (key_field_list
-              (quoted_identifier))
-            (clustered_property
-              (boolean))))))
+    (data_caption_fields_property
+      (data_caption_fields_value
+        (quoted_identifier)
+        (identifier)))
+    (extensible_property
+      (extensible_value
+        (boolean)))
+    (data_per_company_property
+      (data_per_company_value
+        (boolean)))
+    (replicate_data_property
+      (replicate_data_value
+        (boolean)))
+    (column_store_index_property
+      (column_store_index_value
+        (identifier)))
+    (compression_type_property
+      (compression_type_value))
+    (inherent_permissions_property
+      (inherent_permissions_value
+        (permission_type)))
+    (inherent_entitlements_property
+      (inherent_entitlements_value
+        (permission_type)))
+    (fields
+      (field_declaration
+        (integer)
+        (quoted_identifier)
+        (type_specification
+          (code_type
+            (integer)))
+        (caption_property
+          (string_literal))
+        (not_blank_property
+          (not_blank_value
+            (boolean))))
+      (field_declaration
+        (integer)
+        (identifier)
+        (type_specification
+          (text_type
+            (integer)))
+        (caption_property
+          (string_literal))))
+    (keys
+      (key_declaration
+        (name)
+        (key_field_list
+          (quoted_identifier))
+        (clustered_property
+          (boolean))))))
 
 ==================
 Medium/Low Priority Properties
@@ -125,25 +125,50 @@ table 50001 "Test Table Low Priority"
 ---
 
 (source_file
-      (table_declaration
+  (table_declaration
+    (integer)
+    (quoted_identifier)
+    (description_property
+      (string_literal))
+    (external_schema_property
+      (string_literal))
+    (paste_is_valid_property
+      (paste_is_valid_value
+        (boolean)))
+    (obsolete_state_property
+      (obsolete_state_value))
+    (obsolete_reason_property
+      (obsolete_reason_value
+        (string_literal)))
+    (obsolete_tag_property
+      (obsolete_tag_value
+        (string_literal)))
+    (caption_ml_property
+      (ml_value_list
+        (ml_value_pair
+          (identifier)
+          (string_literal))
+        (ml_value_pair
+          (identifier)
+          (string_literal))))
+    (external_name_property
+      (external_name_value
+        (string_literal)))
+    (moved_from_property
+      (string_literal))
+    (moved_to_property
+      (string_literal))
+    (linked_in_transaction_property
+      (boolean))
+    (linked_object_property
+      (string_literal))
+    (fields
+      (field_declaration
         (integer)
         (quoted_identifier)
-        (description_property
-          (description_value
-            (string_literal)))
-        (external_schema_property
-          (string_literal))
-        (paste_is_valid_property
-          (paste_is_valid_value
-            (boolean)))
-        (obsolete_state_property
-          (obsolete_state_value))
-        (obsolete_reason_property
-          (obsolete_reason_value
-            (string_literal)))
-        (obsolete_tag_property
-          (obsolete_tag_value
-            (string_literal)))
+        (type_specification
+          (code_type
+            (integer)))
         (caption_ml_property
           (ml_value_list
             (ml_value_pair
@@ -151,37 +176,10 @@ table 50001 "Test Table Low Priority"
               (string_literal))
             (ml_value_pair
               (identifier)
-              (string_literal))))
-        (external_name_property
-          (external_name_value
-            (string_literal)))
-        (moved_from_property
-          (string_literal))
-        (moved_to_property
-          (string_literal))
-        (linked_in_transaction_property
-          (boolean))
-        (linked_object_property
-          (string_literal))
-        (fields
-          (field_declaration
-            (integer)
-            (quoted_identifier)
-            (type_specification
-              (code_type
-                (integer)))
-            (caption_ml_property
-              (ml_value_list
-                (ml_value_pair
-                  (identifier)
-                  (string_literal))
-                (ml_value_pair
-                  (identifier)
-                  (string_literal))))))))
-
+              (string_literal))))))))
 
 ==================
-Field Properties 
+Field Properties
 ==================
 
 table 50002 "Test Field Properties"

@@ -231,7 +231,8 @@ page 50004 "Test Page 5"
                   arguments: (argument_list))))
             (max_value_property
               value: (max_value_value
-                left: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list))
-                right: (identifier)))))))))
+                (multiplicative_expression
+                  left: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))
+                  right: (identifier))))))))))

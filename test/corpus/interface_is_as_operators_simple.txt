@@ -79,14 +79,15 @@ codeunit 50102 Test3
       name: (name)
       (code_block
         (if_statement
-          left: (parenthesized_expression
-            left: (identifier)
-            right: (type_specification
-              (identifier)))
-          right: (parenthesized_expression
-            left: (identifier)
-            right: (type_specification
-              (identifier)))
+          condition: (logical_expression
+            left: (parenthesized_expression
+              left: (identifier)
+              right: (type_specification
+                (identifier)))
+            right: (parenthesized_expression
+              left: (identifier)
+              right: (type_specification
+                (identifier))))
           then_branch: (assignment_statement
             left: (identifier)
             left: (identifier)

@@ -9730,6 +9730,10 @@
               {
                 "type": "SYMBOL",
                 "name": "boolean"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "unary_expression"
               }
             ]
           }
@@ -10022,8 +10026,21 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "string_literal"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "identifier"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_quoted_identifier"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "string_literal"
+            }
+          ]
         },
         {
           "type": "REPEAT",
@@ -10035,8 +10052,21 @@
                 "value": ","
               },
               {
-                "type": "SYMBOL",
-                "name": "string_literal"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_quoted_identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "string_literal"
+                  }
+                ]
               }
             ]
           }
@@ -11201,8 +11231,12 @@
           "value": "="
         },
         {
-          "type": "SYMBOL",
-          "name": "values_allowed_value"
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "values_allowed_value"
+          }
         },
         {
           "type": "STRING",

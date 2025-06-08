@@ -29179,6 +29179,10 @@
           {
             "type": "string_literal",
             "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
           }
         ]
       }
@@ -32626,16 +32630,17 @@
   {
     "type": "values_allowed_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "values_allowed_value",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "values_allowed_value",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -32646,6 +32651,14 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        },
         {
           "type": "string_literal",
           "named": true

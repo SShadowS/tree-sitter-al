@@ -2224,7 +2224,8 @@ module.exports = grammar({
         $.identifier,
         $._quoted_identifier,
         $.call_expression,
-        $.boolean
+        $.boolean,
+        $.unary_expression
       )),
       ';'
     ),

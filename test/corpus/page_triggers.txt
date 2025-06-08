@@ -109,27 +109,27 @@ page 50000 "Test Page Triggers"
               value: (identifier))))))
     (comment)
     (trigger_declaration
-      type: (trigger_type)
+      name: (trigger_name)
       (code_block
         (assignment_statement
           left: (identifier)
           right: (boolean))))
     (trigger_declaration
-      type: (trigger_type)
+      name: (trigger_name)
       (code_block
         (call_expression
           function: (identifier)
           arguments: (argument_list
             (string_literal)))))
     (trigger_declaration
-      type: (trigger_type)
+      name: (trigger_name)
       (code_block
         (call_expression
           function: (identifier)
           arguments: (argument_list
             (string_literal)))))
     (trigger_declaration
-      type: (trigger_type)
+      name: (trigger_name)
       (code_block
         (call_expression
           function: (identifier)
@@ -137,7 +137,7 @@ page 50000 "Test Page Triggers"
             (quoted_identifier)))))
     (comment)
     (trigger_declaration
-      type: (trigger_type)
+      name: (trigger_name)
       (code_block
         (assignment_statement
           left: (identifier)
@@ -145,7 +145,7 @@ page 50000 "Test Page Triggers"
             object: (identifier)
             property: (identifier)))))
     (trigger_declaration
-      type: (trigger_type)
+      name: (trigger_name)
       (code_block
         (assignment_statement
           left: (member_expression
@@ -157,7 +157,7 @@ page 50000 "Test Page Triggers"
               property: (identifier))
             value: (identifier)))))
     (trigger_declaration
-      type: (trigger_type)
+      name: (trigger_name)
       (code_block
         (assignment_statement
           left: (identifier)
@@ -165,7 +165,7 @@ page 50000 "Test Page Triggers"
         (exit_statement
           return_value: (boolean))))
     (trigger_declaration
-      type: (trigger_type)
+      name: (trigger_name)
       (code_block
         (assignment_statement
           left: (identifier)
@@ -173,7 +173,7 @@ page 50000 "Test Page Triggers"
         (exit_statement
           return_value: (boolean))))
     (trigger_declaration
-      type: (trigger_type)
+      name: (trigger_name)
       (code_block
         (if_statement
           condition: (unary_expression
@@ -183,7 +183,7 @@ page 50000 "Test Page Triggers"
         (exit_statement
           return_value: (boolean))))
     (trigger_declaration
-      type: (trigger_type)
+      name: (trigger_name)
       (code_block
         (if_statement
           condition: (member_expression

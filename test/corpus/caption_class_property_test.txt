@@ -1,0 +1,75 @@
+================================================================================
+Field with CaptionClass property using method call
+================================================================================
+
+table 50000 "Test Table" 
+{
+    fields
+    {
+        field(220; "Custom Search Field Date 1"; Date)
+        {
+            Caption = 'Custom Search Field Date 1';
+            CaptionClass = CustomColumnMgt.GetDocumentFieldCaption(220);
+            DataClassification = CustomerContent;
+            Editable = false;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (caption_property
+          (string_literal))
+        (caption_class_property
+          value: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (integer))))
+        (data_classification_property
+          (data_classification_value))
+        (editable_property
+          (editable_value
+            (boolean)))))))
+
+================================================================================
+Field with CaptionClass property using string literal
+================================================================================
+
+table 50001 "Test Table 2"
+{
+    fields
+    {
+        field(1; TestField; Text[50])
+        {
+            CaptionClass = '1,2,3';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (caption_class_property
+          value: (string_literal))))))

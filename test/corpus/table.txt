@@ -100,7 +100,7 @@ table 50100 "My Test Table"
       (variable_declaration
         (identifier)
         (type_specification
-              (basic_type))))
+          (basic_type))))
     (oninsert_trigger
       (code_block
         (call_expression
@@ -119,9 +119,10 @@ table 50100 "My Test Table"
           (basic_type)))
       (code_block
         (if_statement
-          (identifier)
-          (comparison_operator)
-          (string_literal)
+          (comparison_expression
+            (identifier)
+            (comparison_operator)
+            (string_literal))
           (exit_statement
             (boolean))
           (exit_statement

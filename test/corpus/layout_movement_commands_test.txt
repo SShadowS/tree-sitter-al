@@ -1,0 +1,95 @@
+================================================================================
+Layout movement commands in page extensions - movelast
+================================================================================
+
+pageextension 123 "Test Extension" extends "Test Page"
+{
+    layout
+    {
+        movelast(General; Status)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (layout_section
+      (movelast_layout_modification
+        target: (identifier)
+        element: (identifier)))))
+
+================================================================================
+Layout movement commands - movefirst
+================================================================================
+
+pageextension 124 "Test Extension" extends "Test Page"
+{
+    layout
+    {
+        movefirst(Content; "Document Info")
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (layout_section
+      (movefirst_layout_modification
+        target: (identifier)
+        element: (quoted_identifier)))))
+
+================================================================================
+Layout movement commands - moveafter
+================================================================================
+
+pageextension 125 "Test Extension" extends "Test Page"
+{
+    layout
+    {
+        moveafter(CustomerInfo; VendorInfo)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (layout_section
+      (moveafter_layout_modification
+        target: (identifier)
+        element: (identifier)))))
+
+================================================================================
+Layout movement commands - movebefore with quoted identifiers
+================================================================================
+
+pageextension 126 "Test Extension" extends "Test Page"
+{
+    layout
+    {
+        movebefore("Sales Info"; "Purchase Info")
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (layout_section
+      (movebefore_layout_modification
+        target: (quoted_identifier)
+        element: (quoted_identifier)))))

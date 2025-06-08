@@ -115,21 +115,23 @@ codeunit 50112 "Enum Comparison Test"
             (quoted_identifier)
             (identifier)))
         (if_statement
-          (identifier)
-          (comparison_operator)
-          (qualified_enum_value
-            (quoted_identifier)
-            (identifier))
+          (comparison_expression
+            (identifier)
+            (comparison_operator)
+            (qualified_enum_value
+              (quoted_identifier)
+              (identifier)))
           (call_expression
             (identifier)
             (argument_list
               (string_literal))))
         (if_statement
-          (identifier)
-          (comparison_operator)
-          (qualified_enum_value
-            (quoted_identifier)
-            (identifier))
+          (comparison_expression
+            (identifier)
+            (comparison_operator)
+            (qualified_enum_value
+              (quoted_identifier)
+              (identifier)))
           (call_expression
             (identifier)
             (argument_list
@@ -252,11 +254,12 @@ codeunit 50114 "Quoted Enum Values Test"
             (quoted_identifier)
             (quoted_identifier)))
         (if_statement
-          (identifier)
-          (comparison_operator)
-          (qualified_enum_value
-            (quoted_identifier)
-            (quoted_identifier))
+          (comparison_expression
+            (identifier)
+            (comparison_operator)
+            (qualified_enum_value
+              (quoted_identifier)
+              (quoted_identifier)))
           (call_expression
             (identifier)
             (argument_list

@@ -1,0 +1,94 @@
+================================================================================
+Trigger with semicolon termination after parameters
+================================================================================
+
+codeunit 50000 "Install Codeunit"
+{
+    Subtype = Install;
+
+    trigger OnInstallAppPerCompany();
+    var
+        UpgradeTagDefinitions: Codeunit "CDC Upgrade Tag Definitions";
+    begin
+        UpgradeTagDefinitions.SetDCUpgradeTagsCompany();
+    end;
+
+    trigger OnInstallAppPerDatabase();
+    var
+        TelemetryManagement: Codeunit "CTS-SYS Telemetry";
+    begin
+        TelemetryManagement.LogMessage('Install', 'Database install completed');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property_list
+      (property
+        (subtype_property
+          value: (value))))
+    (trigger_declaration
+      name: (trigger_name)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (codeunit_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list))))
+    (trigger_declaration
+      name: (trigger_name)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (codeunit_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (string_literal)
+            (string_literal)))))))
+
+================================================================================
+Trigger without semicolon (backward compatibility)
+================================================================================
+
+codeunit 50001 "Normal Codeunit"
+{
+    trigger OnRun()
+    var
+        Message: Text;
+    begin
+        Message := 'Hello World';
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (onrun_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (assignment_statement
+          left: (identifier)
+          right: (string_literal))))))

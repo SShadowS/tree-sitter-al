@@ -1,0 +1,81 @@
+================================================================================
+XMLPort fieldelement with table.field syntax
+================================================================================
+
+xmlport 50000 "Test XMLPort"
+{
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement("Code Coverage"; "Code Coverage")
+            {
+                fieldelement(ObjectType; "Code Coverage"."Object Type")
+                {
+                }
+                fieldelement(ObjectID; "Code Coverage"."Object ID")
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (quoted_identifier)
+          source_table: (quoted_identifier)
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (field_access
+              record: (quoted_identifier)
+              field: (quoted_identifier)))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (field_access
+              record: (quoted_identifier)
+              field: (quoted_identifier))))))))
+
+================================================================================
+XMLPort fieldelement with simple table reference
+================================================================================
+
+xmlport 50001 "Simple XMLPort"
+{
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement("Item"; Item)
+            {
+                fieldelement(No; "No.")
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (quoted_identifier)
+          source_table: (identifier)
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (quoted_identifier)))))))

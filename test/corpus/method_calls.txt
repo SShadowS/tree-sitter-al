@@ -11,6 +11,7 @@ codeunit 50100 MyCodeunit
     end;
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
@@ -46,6 +47,7 @@ codeunit 50100 MyCodeunit
     end;
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
@@ -54,7 +56,8 @@ codeunit 50100 MyCodeunit
       (variable_declaration
         (identifier)
         (type_specification
-          (record_type (identifier)))))
+          (record_type
+            (identifier)))))
     (onrun_trigger
       (code_block
         (call_expression
@@ -104,6 +107,7 @@ codeunit 50100 MyCodeunit
     end;
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
@@ -112,7 +116,8 @@ codeunit 50100 MyCodeunit
       (variable_declaration
         (identifier)
         (type_specification
-          (record_type (identifier)))))
+          (record_type
+            (identifier)))))
     (onrun_trigger
       (code_block
         (if_statement
@@ -144,11 +149,12 @@ codeunit 50100 MyCodeunit
                   (identifier)
                   (argument_list
                     (string_literal))))
-              (field_access
-                (identifier)
-                (quoted_identifier))
-              (comparison_operator)
-              (string_literal))))))))
+              (comparison_expression
+                (field_access
+                  (identifier)
+                  (quoted_identifier))
+                (comparison_operator)
+                (string_literal)))))))))
 
 ==================
 Mixed Method Calls With Parameters
@@ -169,6 +175,7 @@ codeunit 50100 MyCodeunit
     end;
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
@@ -177,10 +184,12 @@ codeunit 50100 MyCodeunit
       (variable_declaration
         (identifier)
         (type_specification
-          (record_type (identifier))))
+          (record_type
+            (identifier))))
       (variable_declaration
         (identifier)
-        (type_specification (basic_type))))
+        (type_specification
+          (basic_type))))
     (onrun_trigger
       (code_block
         (if_statement

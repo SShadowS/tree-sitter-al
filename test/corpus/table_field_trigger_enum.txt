@@ -34,16 +34,19 @@ table 50000 "Test Table"
           type: (trigger_type)
           (code_block
             (if_statement
-              left: (parenthesized_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (string_literal))
-              right: (parenthesized_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (qualified_enum_value
-                  enum_type: (quoted_identifier)
-                  value: (quoted_identifier)))
+              condition: (logical_expression
+                left: (parenthesized_expression
+                  (comparison_expression
+                    left: (quoted_identifier)
+                    operator: (comparison_operator)
+                    right: (string_literal)))
+                right: (parenthesized_expression
+                  (comparison_expression
+                    left: (quoted_identifier)
+                    operator: (comparison_operator)
+                    right: (qualified_enum_value
+                      enum_type: (quoted_identifier)
+                      value: (quoted_identifier)))))
               then_branch: (call_expression
                 function: (identifier)
                 arguments: (argument_list

@@ -60,11 +60,12 @@ codeunit 50000 "AL Built-in Functions Test"
             property: (identifier))
           then_branch: (repeat_statement
             (comment)
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            operator: (comparison_operator)
-            right: (integer)))))
+            condition: (comparison_expression
+              left: (member_expression
+                object: (identifier)
+                property: (identifier))
+              operator: (comparison_operator)
+              right: (integer))))))
     (var_section
       (variable_declaration
         name: (identifier)

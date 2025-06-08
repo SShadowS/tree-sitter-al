@@ -73,18 +73,20 @@ codeunit 50117 "Array Indexing Test"
             (identifier)
             (expression_list
               (integer)))
-          (subscript_expression
-            (identifier)
-            (expression_list
-              (integer)))
-          (integer))
+          (additive_expression
+            (subscript_expression
+              (identifier)
+              (expression_list
+                (integer)))
+            (integer)))
         (assignment_statement
           (subscript_expression
             (identifier)
             (expression_list
               (integer)))
-          (subscript_expression
-            (identifier)
-            (expression_list
-              (integer)))
-          (integer))))))
+          (multiplicative_expression
+            (subscript_expression
+              (identifier)
+              (expression_list
+                (integer)))
+            (integer)))))))

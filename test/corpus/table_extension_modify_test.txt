@@ -1,0 +1,84 @@
+================================================================================
+Table extension with modify field statements
+================================================================================
+
+tableextension 50000 "Test Extension" extends "Base Table"
+{
+    fields
+    {
+        modify("Electronic Document")
+        {
+            trigger OnAfterValidate()
+            begin
+                // Validation logic
+            end;
+        }
+        modify("Document Type")
+        {
+            Caption = 'Modified Caption';
+            ToolTip = 'Modified tooltip';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (fields
+      (modify_field_declaration
+        name: (quoted_identifier)
+        (field_trigger_declaration
+          type: (trigger_type)
+          (code_block
+            (comment))))
+      (modify_field_declaration
+        name: (quoted_identifier)
+        (caption_property
+          (string_literal))
+        (tool_tip_property
+          (tool_tip_value
+            (string_literal)))))))
+
+================================================================================
+Table extension with field and modify statements combined
+================================================================================
+
+tableextension 50001 "Mixed Extension" extends "Base Table"
+{
+    fields
+    {
+        field(50000; "New Field"; Text[50])
+        {
+            Caption = 'New Field';
+        }
+        modify("Existing Field")
+        {
+            Caption = 'Updated Caption';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (caption_property
+          (string_literal)))
+      (modify_field_declaration
+        name: (quoted_identifier)
+        (caption_property
+          (string_literal))))))

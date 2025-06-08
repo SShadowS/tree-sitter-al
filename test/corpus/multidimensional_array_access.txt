@@ -48,8 +48,9 @@ table 50020 "Test Table"
       (code_block
         (assignment_statement
           left: (identifier)
-          left: (identifier)
-          right: (integer))
+          right: (additive_expression
+            left: (identifier)
+            right: (integer)))
         (assignment_statement
           left: (subscript_expression
             array: (identifier)
@@ -105,24 +106,26 @@ table 50021 "Test Table"
       (code_block
         (assignment_statement
           left: (identifier)
-          left: (subscript_expression
-            array: (identifier)
-            indices: (expression_list
-              (integer)
-              (integer)))
-          right: (subscript_expression
-            array: (identifier)
-            indices: (expression_list
-              (integer)
-              (integer))))
+          right: (additive_expression
+            left: (subscript_expression
+              array: (identifier)
+              indices: (expression_list
+                (integer)
+                (integer)))
+            right: (subscript_expression
+              array: (identifier)
+              indices: (expression_list
+                (integer)
+                (integer)))))
         (if_statement
-          left: (subscript_expression
-            array: (identifier)
-            indices: (expression_list
-              (integer)
-              (integer)))
-          operator: (comparison_operator)
-          right: (integer)
+          condition: (comparison_expression
+            left: (subscript_expression
+              array: (identifier)
+              indices: (expression_list
+                (integer)
+                (integer)))
+            operator: (comparison_operator)
+            right: (integer))
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
@@ -218,10 +221,12 @@ table 50023 "Test Table"
           left: (subscript_expression
             array: (identifier)
             indices: (expression_list
-              left: (identifier)
-              right: (integer)
-              left: (identifier)
-              right: (integer)))
+              (additive_expression
+                left: (identifier)
+                right: (integer))
+              (additive_expression
+                left: (identifier)
+                right: (integer))))
           right: (subscript_expression
             array: (identifier)
             indices: (expression_list

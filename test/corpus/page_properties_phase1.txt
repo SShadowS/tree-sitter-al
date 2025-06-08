@@ -29,13 +29,12 @@ page 50002 "Test Page Phase 1"
 
 (source_file
   (page_declaration
-    object_id:
-      (integer)
+    object_id: (integer)
     object_name: (quoted_identifier)
     (page_type_property)
     (source_table_property
       value: (identifier))
-    (page_about_text_property
+    (about_text_property
       value: (string_literal))
     (page_about_text_ml_property
       value: (ml_value_list
@@ -45,7 +44,7 @@ page 50002 "Test Page Phase 1"
         (ml_value_pair
           language: (identifier)
           value: (string_literal))))
-    (page_about_title_property
+    (about_title_property
       value: (string_literal))
     (page_about_title_ml_property
       value: (ml_value_list

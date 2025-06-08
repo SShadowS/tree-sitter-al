@@ -29,11 +29,15 @@ page 123 "Test Page"
     (caption_property
       (string_literal))
     (data_caption_expression_property
-      left: (identifier)
-      right: (string_literal)
-      right: (identifier)
-      right: (string_literal)
-      right: (identifier))
+      value: (additive_expression
+        left: (additive_expression
+          left: (additive_expression
+            left: (additive_expression
+              left: (identifier)
+              right: (string_literal))
+            right: (identifier))
+          right: (string_literal))
+        right: (identifier)))
     (page_type_property)
     (layout_section
       (area_section

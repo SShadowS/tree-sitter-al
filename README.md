@@ -8,16 +8,16 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,167 files (87.7%) parse successfully**.
+Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,250 files (93.9%) parse successfully**.
 
 Recent improvements include:
+- **ValuesAllowed mixed types** - Enhanced ValuesAllowed property to support both string literals and identifiers in comma-separated lists
+- **String literal backslash support** - Fixed parsing of string literals containing backslash characters in function arguments
+- **SubPageView table view syntax** - Enhanced SubPageView property to support full `sorting(...) where(...)` syntax
+- **Report dataitem properties** - Added comprehensive support for DataItemTableView, RequestFilterFields, and RequestFilterHeading properties
 - **StyleExpr boolean support** - Added boolean literal support to StyleExpr properties enabling `StyleExpr = TRUE;` syntax
 - **AttentionAccent style value** - Enhanced style_value grammar to support AttentionAccent case-insensitive pattern
-- **Repeater enabled properties** - Added enabled property support to repeater sections for field configuration
-- **Boolean literal support** - Enhanced support for uppercase boolean literals (TRUE, FALSE) alongside lowercase variants
-- **Case pattern matching** - Added support for unary expressions (NOT) in case statement patterns
 - **Complex property syntax** - Support for Caption and ToolTip properties with Comment parameters for multilingual applications
-- **Expression support** - DataCaptionExpression now supports complex string concatenations and expressions
 - **Page customization objects** - Full support for `pagecustomization` declarations with view modifications
 - **Complete built-in function coverage** - All AL built-in functions across database, math, string, date/time categories
 - **Advanced language constructs** - Interface operators, multi-dimensional arrays, range expressions
