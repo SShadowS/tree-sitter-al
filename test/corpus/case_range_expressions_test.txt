@@ -1,0 +1,59 @@
+================================================================================
+Case statement with range expressions
+================================================================================
+
+codeunit 123 "Test Range Case"
+{
+    procedure TestRangeCase()
+    var
+        Code: array[10] of Code[20];
+        i: Integer;
+    begin
+        case Code[i] of
+            'A'..'Z', '0'..'9':
+                exit;
+            'Æ':
+                exit;
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (array_type
+              sizes: (integer)
+              (type_specification
+                (code_type
+                  length: (integer)))))
+        )
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (case_statement
+          expression: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              (identifier)))
+          (case_branch
+            pattern: (range_expression
+              left: (string_literal)
+              right: (string_literal))
+            pattern: (range_expression
+              left: (string_literal)
+              right: (string_literal))
+            statements: (exit_statement))
+          (case_branch
+            pattern: (string_literal)
+            statements: (exit_statement)))))))

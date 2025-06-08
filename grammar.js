@@ -4485,6 +4485,7 @@ enum_type: $ => prec(1, seq(
         field('operator', choice('or', 'OR', 'Or')),
         field('right', $._expression)
       )),
+      $.range_expression, // Allow range expressions like 'A'..'Z'
       $.identifier, // Keep for simple identifiers
       $._quoted_identifier // Keep for quoted identifiers
     ),
