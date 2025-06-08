@@ -1296,7 +1296,7 @@ module.exports = grammar({
     ),
 
     subtype_property: $ => seq(
-      'Subtype',
+      choice('Subtype', 'SubType', 'subtype', 'SUBTYPE'),
       '=', 
       field('value', alias($.subtype_value, $.value)),
       ';'
@@ -2035,7 +2035,8 @@ module.exports = grammar({
     subtype_value: $ => choice(
       /[iI][nN][sS][tT][aA][lL][lL]/,
       /[uU][pP][gG][rR][aA][dD][eE]/,
-      /[tT][eE][sS][tT]/
+      /[tT][eE][sS][tT]/,
+      /[uU][sS][eE][rR][dD][eE][fF][iI][nN][eE][dD]/
     ),
 
     single_instance_value: $ => $.boolean,
@@ -5226,6 +5227,7 @@ enum_type: $ => prec(1, seq(
       $.obsolete_state_property,
       $.obsolete_tag_property,
       $.usage_category_property,
+      $.subtype_property,
     ),
 
     // Display/UI control properties
@@ -5309,7 +5311,6 @@ enum_type: $ => prec(1, seq(
       // Codeunit-specific
       $.table_no_property,           // Associated table
       $.single_instance_property,    // Singleton pattern
-      $.subtype_property,           // Codeunit subtype
       $.event_subscriber_instance_property, // Event handling
       
       // Table-specific
