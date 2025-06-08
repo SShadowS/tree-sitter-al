@@ -1771,6 +1771,7 @@ module.exports = grammar({
       $.addlast_layout_modification,
       $.addafter_layout_modification,
       $.addbefore_layout_modification,
+      $.modify_layout_modification,
       $.movefirst_layout_modification,
       $.movelast_layout_modification,
       $.moveafter_layout_modification,
@@ -1796,6 +1797,19 @@ module.exports = grammar({
     addbefore_layout_modification: $ => seq(
       /[aA][dD][dD][bB][eE][fF][oO][rR][eE]/,
       $._layout_modification_template
+    ),
+
+    modify_layout_modification: $ => seq(
+      /[mM][oO][dD][iI][fF][yY]/,
+      '(',
+      field('target', $._identifier_choice),
+      ')',
+      '{',
+      repeat(choice(
+        $._page_properties,
+        seq(optional($.attribute_list), $.trigger_declaration)
+      )),
+      '}'
     ),
 
     movefirst_layout_modification: $ => seq(
