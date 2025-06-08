@@ -4283,6 +4283,7 @@ enum_type: $ => prec(1, seq(
       // Method chains (put this first among non-binary expressions for higher precedence)
       $.call_expression, // (prec 12)
       $.enum_keyword_qualified_value, // (prec 9)
+      $.enum_type_reference, // (prec 8)
       $.qualified_enum_value, // (prec 20)
       $.database_reference, // (prec 9)
       $.field_access,  // (prec 12)
@@ -4527,6 +4528,16 @@ enum_type: $ => prec(1, seq(
       )),
       field('operator2', $._double__colon),
       field('value', choice(
+        $._quoted_identifier,
+        $.identifier
+      ))
+    )),
+
+    // Rule for enum type references (Enum::"Type") used for static method calls
+    enum_type_reference: $ => prec.left(8, seq(
+      choice('Enum', 'ENUM', 'enum'),
+      field('operator', $._double__colon),
+      field('enum_type', choice(
         $._quoted_identifier,
         $.identifier
       ))
