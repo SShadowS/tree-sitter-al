@@ -29230,39 +29230,19 @@
     "named": true,
     "fields": {
       "value": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
-          {
-            "type": ",",
-            "named": false
-          },
           {
             "type": "identifier",
             "named": true
           },
           {
-            "type": "order_clause",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
+            "type": "source_table_view_value",
             "named": true
           },
           {
             "type": "string_literal",
-            "named": true
-          },
-          {
-            "type": "where_clause",
             "named": true
           }
         ]

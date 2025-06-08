@@ -1987,28 +1987,7 @@ module.exports = grammar({
       field('value', choice(
         $.string_literal,
         $.identifier, // Simple identifier like 'Ascending'
-        seq( // sorting(...) pattern
-          $.identifier, // e.g., 'sorting'
-          '(',
-          // Comma-separated list of one or more quoted identifiers
-          seq(
-            $._quoted_identifier,
-            repeat(seq(',', $._quoted_identifier))
-          ),
-          ')'
-        ),
-        seq( // sorting(...) ORDER(...) pattern
-          $.identifier, // e.g., 'sorting'
-          '(',
-          // Comma-separated list of one or more quoted identifiers
-          seq(
-            $._quoted_identifier,
-            repeat(seq(',', $._quoted_identifier))
-          ),
-          ')',
-          $.order_clause
-        ),
-        $.where_clause // Support WHERE clause syntax
+        $.source_table_view_value // Support full table view syntax including sorting(...) where(...)
       )),
       ';'
     ),
