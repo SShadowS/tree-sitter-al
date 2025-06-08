@@ -1,0 +1,179 @@
+================================================================================
+ValuesAllowed property with mixed string literals and identifiers
+================================================================================
+
+table 123 TestTable
+{
+    fields
+    {
+        field(1; "Test Field"; Option)
+        {
+            ValuesAllowed = " ", "G/L Account", Item, Resource, "Fixed Asset", "Charge (Item)", "Amount Distribution Code", "Allocation Account";
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (option_type))
+        (values_allowed_property
+          value: (values_allowed_value
+            (quoted_identifier)
+            (quoted_identifier)
+            (identifier)
+            (identifier)
+            (quoted_identifier)
+            (quoted_identifier)
+            (quoted_identifier)
+            (quoted_identifier)))))))
+
+================================================================================
+ValuesAllowed property with only string literals
+================================================================================
+
+table 456 StringOnlyTable
+{
+    fields
+    {
+        field(1; "Status Field"; Option)
+        {
+            ValuesAllowed = "Open", "Pending", "Closed", "Cancelled";
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (option_type))
+        (values_allowed_property
+          value: (values_allowed_value
+            (quoted_identifier)
+            (quoted_identifier)
+            (quoted_identifier)
+            (quoted_identifier)))))))
+
+================================================================================
+ValuesAllowed property with only identifiers
+================================================================================
+
+table 789 IdentifierOnlyTable
+{
+    fields
+    {
+        field(1; "Type Field"; Option)
+        {
+            ValuesAllowed = Item, Resource, Service, FixedAsset;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (option_type))
+        (values_allowed_property
+          value: (values_allowed_value
+            (identifier)
+            (identifier)
+            (identifier)
+            (identifier)))))))
+
+================================================================================
+ValuesAllowed property in page field
+================================================================================
+
+page 101 TestPage
+{
+    layout
+    {
+        area(content)
+        {
+            field("Type Field"; "Type Field")
+            {
+                ApplicationArea = All;
+                ValuesAllowed = "Customer", "Vendor", Item, "G/L Account";
+                ToolTip = 'Select the type of entity.';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (quoted_identifier)
+          source_or_field_name: (quoted_identifier)
+          (application_area_property
+            value: (identifier))
+          (values_allowed_property
+            value: (values_allowed_value
+              (quoted_identifier)
+              (quoted_identifier)
+              (identifier)
+              (quoted_identifier)))
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal))))))))
+
+================================================================================
+ValuesAllowed property with single value
+================================================================================
+
+table 999 SingleValueTable
+{
+    fields
+    {
+        field(1; "Single Value"; Option)
+        {
+            ValuesAllowed = "DefaultValue";
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (option_type))
+        (values_allowed_property
+          value: (values_allowed_value
+            (quoted_identifier)))))))

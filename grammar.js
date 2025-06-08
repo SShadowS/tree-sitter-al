@@ -2300,8 +2300,8 @@ module.exports = grammar({
     unique_value: $ => $.boolean,
     validate_table_relation_value: $ => $.boolean,
     values_allowed_value: $ => seq(
-      $.string_literal,
-      repeat(seq(',', $.string_literal))
+      choice($.identifier, $._quoted_identifier, $.string_literal),
+      repeat(seq(',', choice($.identifier, $._quoted_identifier, $.string_literal)))
     ),
 
     // NEW HIGH PRIORITY PROPERTIES - Value Rules
@@ -2614,7 +2614,7 @@ module.exports = grammar({
     values_allowed_property: $ => seq(
       'ValuesAllowed',
       '=',
-      $.values_allowed_value,
+      field('value', $.values_allowed_value),
       ';'
     ),
 
