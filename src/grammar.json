@@ -9270,6 +9270,39 @@
               ]
             }
           ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "\""
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "PATTERN",
+              "value": "[sS][uU][bB][oO][rR][dD][iI][nN][aA][tT][eE]"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "\""
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -12681,6 +12714,10 @@
           {
             "type": "SYMBOL",
             "name": "indentation_column_property"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "indentation_controls_property"
           },
           {
             "type": "SYMBOL",
@@ -21344,6 +21381,40 @@
         }
       ]
     },
+    "indentation_controls_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "IndentationControls"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_quoted_identifier"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "custom_action_type_property": {
       "type": "SEQ",
       "members": [
@@ -24083,6 +24154,10 @@
         {
           "type": "SYMBOL",
           "name": "indentation_column_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "indentation_controls_property"
         },
         {
           "type": "SYMBOL",

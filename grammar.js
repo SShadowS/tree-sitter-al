@@ -2092,7 +2092,8 @@ module.exports = grammar({
       seq(optional('"'), /[aA][tT][tT][eE][nN][tT][iI][oO][nN]/, optional('"')),
       seq(optional('"'), /[aA][tT][tT][eE][nN][tT][iI][oO][nN][aA][cC][cC][eE][nN][tT]/, optional('"')),
       seq(optional('"'), /[fF][aA][vV][oO][rR][aA][bB][lL][eE]/, optional('"')),
-      seq(optional('"'), /[uU][nN][fF][aA][vV][oO][rR][aA][bB][lL][eE]/, optional('"'))
+      seq(optional('"'), /[uU][nN][fF][aA][vV][oO][rR][aA][bB][lL][eE]/, optional('"')),
+      seq(optional('"'), /[sS][uU][bB][oO][rR][dD][iI][nN][aA][tT][eE]/, optional('"'))
     ),
 
     run_page_mode_value: $ => choice(
