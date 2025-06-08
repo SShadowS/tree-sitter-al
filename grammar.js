@@ -2966,6 +2966,7 @@ module.exports = grammar({
       $.column_span_property,
       $.freeze_column_property,
       $.indentation_column_property,
+      $.indentation_controls_property,
       $.grid_layout_property,
       $.drill_down_property,
       $.lookup_property,
@@ -4651,6 +4652,13 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
+    indentation_controls_property: $ => seq(
+      'IndentationControls',
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier)),
+      ';'
+    ),
+
     custom_action_type_property: $ => seq(
       'CustomActionType',
       '=',
@@ -5255,6 +5263,7 @@ enum_type: $ => prec(1, seq(
       $.column_span_property,        // Grid column spanning
       $.freeze_column_property,      // Column freezing in repeaters
       $.indentation_column_property, // Column indentation in repeaters
+      $.indentation_controls_property, // Controls to indent in repeaters
       $.grid_layout_property,        // Grid layout direction (Rows/Columns)
       $.importance_property,         // Priority/emphasis level
       $.show_caption_property,       // Caption visibility
