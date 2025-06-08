@@ -173,17 +173,17 @@ module.exports = grammar({
     request_filter_fields_value: $ => $._identifier_choice_list,
     
     request_filter_fields_property: $ => seq(
-      'RequestFilterFields',
+      choice('RequestFilterFields', 'requestfilterfields'),
       '=',
-      $.request_filter_fields_value,
+      field('value', $.request_filter_fields_value),
       ';'
     ),
     
     // 18. RequestFilterHeading Property
     request_filter_heading_property: $ => seq(
-      'RequestFilterHeading',
+      choice('RequestFilterHeading', 'requestfilterheading'),
       '=',
-      $.string_literal,
+      field('value', $.string_literal),
       ';'
     ),
     
@@ -1534,7 +1534,7 @@ module.exports = grammar({
       repeat(choice(
         $.report_column_section, 
         $.report_dataitem_section,
-        $._universal_properties,
+        $._dataitem_properties,
         seq(optional($.attribute_list), $.trigger_declaration)
       )),
       '}'
@@ -5592,6 +5592,14 @@ enum_type: $ => prec(1, seq(
       $.data_item_link_reference_property,
       
       // Note: processing_only_property and use_request_page_property are in _object_specific_properties
+    ),
+
+    // Report dataitem-specific properties
+    _dataitem_properties: $ => choice(
+      $._universal_properties,
+      $.data_item_table_view_property,
+      $.request_filter_fields_property,
+      $.request_filter_heading_property,
     ),
 
     // =============================================================================

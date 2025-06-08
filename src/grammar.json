@@ -595,16 +595,29 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "RequestFilterFields"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "RequestFilterFields"
+            },
+            {
+              "type": "STRING",
+              "value": "requestfilterfields"
+            }
+          ]
         },
         {
           "type": "STRING",
           "value": "="
         },
         {
-          "type": "SYMBOL",
-          "name": "request_filter_fields_value"
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "request_filter_fields_value"
+          }
         },
         {
           "type": "STRING",
@@ -616,16 +629,29 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "RequestFilterHeading"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "RequestFilterHeading"
+            },
+            {
+              "type": "STRING",
+              "value": "requestfilterheading"
+            }
+          ]
         },
         {
           "type": "STRING",
           "value": "="
         },
         {
-          "type": "SYMBOL",
-          "name": "string_literal"
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          }
         },
         {
           "type": "STRING",
@@ -6586,7 +6612,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "_universal_properties"
+                "name": "_dataitem_properties"
               },
               {
                 "type": "SEQ",
@@ -24933,6 +24959,27 @@
         {
           "type": "SYMBOL",
           "name": "data_item_link_reference_property"
+        }
+      ]
+    },
+    "_dataitem_properties": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_universal_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "data_item_table_view_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "request_filter_fields_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "request_filter_heading_property"
         }
       ]
     },

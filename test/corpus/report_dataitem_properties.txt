@@ -1,0 +1,184 @@
+================================================================================
+Report dataitem with DataItemTableView property
+================================================================================
+
+report 123 TestReport
+{
+    dataset
+    {
+        dataitem(DataItem1; "Vendor Ledger Entry")
+        {
+            DataItemTableView = SORTING("Document Type", "Vendor No.")
+                                WHERE("Document Type" = FILTER(Invoice | "Credit Memo"));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (quoted_identifier)
+        (data_item_table_view_property
+          value: (source_table_view_value
+            (sorting_clause
+              fields: (field_reference_list
+                (field_reference
+                  (quoted_identifier))
+                (field_reference
+                  (quoted_identifier))))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (filter_or_expression
+                        (identifier)
+                        (quoted_identifier)))))))))))))
+
+================================================================================
+Report dataitem with RequestFilterFields property
+================================================================================
+
+report 123 TestReport
+{
+    dataset
+    {
+        dataitem(DataItem1; "Customer Ledger Entry")
+        {
+            RequestFilterFields = "Posting Date", "Customer No.", "Document Type";
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (quoted_identifier)
+        (request_filter_fields_property
+          value: (request_filter_fields_value
+            (quoted_identifier)
+            (quoted_identifier)
+            (quoted_identifier)))))))
+
+================================================================================
+Report dataitem with RequestFilterHeading property
+================================================================================
+
+report 123 TestReport
+{
+    dataset
+    {
+        dataitem(DataItem1; "Sales Header")
+        {
+            RequestFilterHeading = 'Select the sales documents to include in the report';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (quoted_identifier)
+        (request_filter_heading_property
+          value: (string_literal))))))
+
+================================================================================
+Report dataitem with all three properties combined
+================================================================================
+
+report 123 TestReport
+{
+    dataset
+    {
+        dataitem(DataItem1; "G/L Entry")
+        {
+            DataItemTableView = SORTING("Entry No.") WHERE("G/L Account No." = FILTER('1000..9999'));
+            RequestFilterFields = "Posting Date", "G/L Account No.";
+            RequestFilterHeading = 'Filter the G/L entries to analyze';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (quoted_identifier)
+        (data_item_table_view_property
+          value: (source_table_view_value
+            (sorting_clause
+              fields: (field_reference_list
+                (field_reference
+                  (quoted_identifier))))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (string_literal))))))))
+        (request_filter_fields_property
+          value: (request_filter_fields_value
+            (quoted_identifier)
+            (quoted_identifier)))
+        (request_filter_heading_property
+          value: (string_literal))))))
+
+================================================================================
+Report dataitem with case variations
+================================================================================
+
+report 123 TestReport
+{
+    dataset
+    {
+        dataitem(DataItem1; "Item")
+        {
+            requestfilterfields = "No.", "Item Category Code";
+            requestfilterheading = 'Select items to include';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (quoted_identifier)
+        (request_filter_fields_property
+          value: (request_filter_fields_value
+            (quoted_identifier)
+            (quoted_identifier)))
+        (request_filter_heading_property
+          value: (string_literal))))))

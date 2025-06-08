@@ -27193,6 +27193,10 @@
           "named": true
         },
         {
+          "type": "data_item_table_view_property",
+          "named": true
+        },
+        {
           "type": "description_property",
           "named": true
         },
@@ -27222,6 +27226,14 @@
         },
         {
           "type": "report_dataitem_section",
+          "named": true
+        },
+        {
+          "type": "request_filter_fields_property",
+          "named": true
+        },
+        {
+          "type": "request_filter_heading_property",
           "named": true
         },
         {
@@ -27581,16 +27593,17 @@
   {
     "type": "request_filter_fields_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "request_filter_fields_value",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "request_filter_fields_value",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -27630,16 +27643,17 @@
   {
     "type": "request_filter_heading_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "string_literal",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -37337,11 +37351,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
@@ -37445,11 +37459,11 @@
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "interface",
@@ -37583,6 +37597,14 @@
   },
   {
     "type": "report",
+    "named": false
+  },
+  {
+    "type": "requestfilterfields",
+    "named": false
+  },
+  {
+    "type": "requestfilterheading",
     "named": false
   },
   {

@@ -43,8 +43,7 @@ xmlport 50000 "Test XMLPort"
 
 (source_file
   (xmlport_declaration
-    object_id:
-      (integer)
+    object_id: (integer)
     object_name: (quoted_identifier)
     (caption_property
       (string_literal))
@@ -65,8 +64,7 @@ xmlport 50000 "Test XMLPort"
           language: (identifier)
           value: (string_literal))))
     (description_property
-      value: (description_value
-        (string_literal)))
+      value: (string_literal))
     (xmlport_schema_element
       (xmlport_table_element
         name: (identifier)
@@ -114,12 +112,12 @@ xmlport 50000 "Test XMLPort"
               value: (boolean)))
           (xmlport_table_property
             (request_filter_fields_property
-              (request_filter_fields_value
+              value: (request_filter_fields_value
                 (quoted_identifier)
                 (identifier))))
           (xmlport_table_property
             (request_filter_heading_property
-              (string_literal)))
+              value: (string_literal)))
           (xmlport_table_property
             (request_filter_heading_ml_property
               (ml_value_list
