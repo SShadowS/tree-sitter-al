@@ -1,0 +1,148 @@
+================================================================================
+DataItemLink property with FIELD function syntax
+================================================================================
+
+report 123 "Test Report"
+{
+    dataset
+    {
+        dataitem("Purchase Header"; "Purchase Header")
+        {
+            dataitem("Purchase Line"; "Purchase Line")
+            {
+                DataItemLink = "Document No." = FIELD("No.");
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (quoted_identifier)
+        (quoted_identifier)
+        (report_dataitem_section
+          name: (quoted_identifier)
+          (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field_name: (quoted_identifier))))))))
+
+================================================================================
+DataItemLink property with traditional dot syntax
+================================================================================
+
+report 124 "Test Report 2"
+{
+    dataset
+    {
+        dataitem("Purchase Header"; "Purchase Header")
+        {
+            dataitem("Purchase Line"; "Purchase Line")
+            {
+                DataItemLink = "Document No." = "Purchase Header"."No.";
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (quoted_identifier)
+        (quoted_identifier)
+        (report_dataitem_section
+          name: (quoted_identifier)
+          (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field: (quoted_identifier)
+              linked_field_name: (quoted_identifier))))))))
+
+================================================================================
+DataItemLink property with multiple fields and mixed syntax
+================================================================================
+
+report 125 "Test Report 3"
+{
+    dataset
+    {
+        dataitem("Purchase Header"; "Purchase Header")
+        {
+            dataitem("Purchase Line"; "Purchase Line")
+            {
+                DataItemLink = "Document No." = FIELD("No."),
+                               "Document Type" = Header."Document Type";
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (quoted_identifier)
+        (quoted_identifier)
+        (report_dataitem_section
+          name: (quoted_identifier)
+          (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field_name: (quoted_identifier)
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier))))))))
+
+================================================================================
+DataItemLink property with case variations
+================================================================================
+
+report 126 "Test Report 4"
+{
+    dataset
+    {
+        dataitem("Purchase Header"; "Purchase Header")
+        {
+            dataitem("Purchase Line"; "Purchase Line")
+            {
+                DataItemLink = "Document No." = field("No.");
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (quoted_identifier)
+        (quoted_identifier)
+        (report_dataitem_section
+          name: (quoted_identifier)
+          (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field_name: (quoted_identifier))))))))

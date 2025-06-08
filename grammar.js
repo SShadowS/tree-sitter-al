@@ -804,16 +804,40 @@ module.exports = grammar({
     data_item_link_value: $ => seq(
       field('field', choice($.identifier, $._quoted_identifier)),
       '=',
-      field('linked_field', choice($.identifier, $._quoted_identifier)),
-      '.',
-      field('linked_field_name', choice($.identifier, $._quoted_identifier)),
+      choice(
+        // Traditional dot syntax: RecordRef."Field Name"
+        seq(
+          field('linked_field', choice($.identifier, $._quoted_identifier)),
+          '.',
+          field('linked_field_name', choice($.identifier, $._quoted_identifier))
+        ),
+        // FIELD() function syntax: FIELD("Field Name")
+        seq(
+          $._field_keyword,
+          '(',
+          field('linked_field_name', choice($.identifier, $._quoted_identifier)),
+          ')'
+        )
+      ),
       repeat(seq(
         ',',
         field('field', choice($.identifier, $._quoted_identifier)),
         '=',
-        field('linked_field', choice($.identifier, $._quoted_identifier)),
-        '.',
-        field('linked_field_name', choice($.identifier, $._quoted_identifier))
+        choice(
+          // Traditional dot syntax: RecordRef."Field Name"
+          seq(
+            field('linked_field', choice($.identifier, $._quoted_identifier)),
+            '.',
+            field('linked_field_name', choice($.identifier, $._quoted_identifier))
+          ),
+          // FIELD() function syntax: FIELD("Field Name")
+          seq(
+            $._field_keyword,
+            '(',
+            field('linked_field_name', choice($.identifier, $._quoted_identifier)),
+            ')'
+          )
+        )
       ))
     ),
 
@@ -5600,6 +5624,7 @@ enum_type: $ => prec(1, seq(
     _dataitem_properties: $ => choice(
       $._universal_properties,
       $.data_item_table_view_property,
+      $.data_item_link_property,
       $.request_filter_fields_property,
       $.request_filter_heading_property,
     ),
