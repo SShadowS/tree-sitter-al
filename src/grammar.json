@@ -16766,6 +16766,40 @@
         {
           "type": "SYMBOL",
           "name": "exist_formula"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "-"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "sum_formula"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "average_formula"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "min_formula"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "max_formula"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "count_formula"
+                }
+              ]
+            }
+          ]
         }
       ]
     },

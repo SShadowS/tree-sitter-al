@@ -3723,7 +3723,15 @@ enum_type: $ => prec(1, seq(
       $.average_formula,
       $.min_formula,
       $.max_formula,
-      $.exist_formula
+      $.exist_formula,
+      // Support for negated formulas
+      seq('-', choice(
+        $.sum_formula,
+        $.average_formula,
+        $.min_formula,
+        $.max_formula,
+        $.count_formula
+      ))
     ),
 
     lookup_formula: $ => prec(10, seq(

@@ -1,0 +1,146 @@
+================================================================================
+Negated CalcFormula expressions for FlowFields
+================================================================================
+
+table 123 "Test Table"
+{
+    fields
+    {
+        field(1; "Vendor Balance"; Decimal)
+        {
+            CalcFormula = - sum("Vendor Ledger Entry"."Amount" where("Vendor No." = field("No.")));
+            FieldClass = FlowField;
+        }
+        field(2; "Customer Balance"; Decimal)
+        {
+            CalcFormula = - average("Customer Ledger Entry"."Amount" where("Customer No." = field("No.")));
+            FieldClass = FlowField;
+        }
+        field(3; "Item Count"; Integer)
+        {
+            CalcFormula = - count("Item Ledger Entry" where("Item No." = field("Item No.")));
+            FieldClass = FlowField;
+        }
+        field(4; "Min Amount"; Decimal)
+        {
+            CalcFormula = - min("Transaction"."Amount" where("Account No." = field("Account No.")));
+            FieldClass = FlowField;
+        }
+        field(5; "Max Amount"; Decimal)
+        {
+            CalcFormula = - max("Transaction"."Amount" where("Account No." = field("Account No.")));
+            FieldClass = FlowField;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (sum_formula
+            target: (calc_field_ref
+              (field_reference
+                record: (quoted_identifier)
+                field: (quoted_identifier)))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (field_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (field_ref
+                      (quoted_identifier))))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (average_formula
+            target: (calc_field_ref
+              (field_reference
+                record: (quoted_identifier)
+                field: (quoted_identifier)))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (field_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (field_ref
+                      (quoted_identifier))))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (field_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (field_ref
+                      (quoted_identifier))))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (min_formula
+            target: (calc_field_ref
+              (field_reference
+                record: (quoted_identifier)
+                field: (quoted_identifier)))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (field_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (field_ref
+                      (quoted_identifier))))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (max_formula
+            target: (calc_field_ref
+              (field_reference
+                record: (quoted_identifier)
+                field: (quoted_identifier)))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (field_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (field_ref
+                      (quoted_identifier))))))))
+        (field_class_property
+          value: (field_class_value))))))
