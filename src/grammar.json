@@ -2546,6 +2546,10 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "filter_equal_expression"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "range_expression"
               },
               {
@@ -2642,6 +2646,40 @@
         {
           "type": "STRING",
           "value": "<>"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "string_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "integer"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_quoted_identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "filter_equal_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "="
         },
         {
           "type": "FIELD",
@@ -3621,6 +3659,10 @@
               {
                 "type": "PATTERN",
                 "value": "[sS][yY][sS][tT][eE][mM][aA][cC][tT][iI][oO][nN][sS]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[sS][eE][cC][tT][iI][oO][nN][sS]"
               }
             ]
           }
@@ -4576,8 +4618,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "SourceTable"
+          "type": "PATTERN",
+          "value": "[sS][oO][uU][rR][cC][eE][tT][aA][bB][lL][eE]"
         },
         {
           "type": "STRING",
@@ -13433,6 +13475,15 @@
           "content": {
             "type": "PATTERN",
             "value": "[iI][mM][pP][oO][rR][tT][aA][nN][cC][eE]"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[sS][oO][uU][rR][cC][eE][tT][aA][bB][lL][eE]"
           },
           "named": true,
           "value": "identifier"

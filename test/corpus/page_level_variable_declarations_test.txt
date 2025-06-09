@@ -1,0 +1,63 @@
+================================================================================
+Page-level variable declarations with keyword-named variables
+================================================================================
+
+page 123 "Test Page"
+{
+    layout
+    {
+        area(content)
+        {
+            field(TestField; TestValue)
+            {
+                ApplicationArea = all;
+            }
+        }
+    }
+    
+    var
+        SourceTable: Text[250];
+        AllObjWithCaption: Record AllObjWithCaption;
+        RecIDMgt: Codeunit "CDC Record ID Mgt.";
+        Description: Text[100];
+        Importance: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (application_area_property
+            value: (identifier)))))
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (text_type
+            length: (integer))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (record_type
+            reference: (identifier))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (codeunit_type
+            reference: (quoted_identifier))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (text_type
+            length: (integer))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))))

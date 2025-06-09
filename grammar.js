@@ -1129,7 +1129,7 @@ module.exports = grammar({
     ),
 
     source_table_property: $ => seq(
-      'SourceTable',
+      /[sS][oO][uU][rR][cC][eE][tT][aA][bB][lL][eE]/,
       '=',
       field('value', choice($.integer, $.identifier, $._quoted_identifier)),
       ';'
@@ -3148,7 +3148,9 @@ module.exports = grammar({
       // Allow the keyword 'Description' to be treated as an identifier in variable contexts
       alias(/[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]/, $.identifier),
       // Allow the keyword 'Importance' to be treated as an identifier in variable contexts
-      alias(/[iI][mM][pP][oO][rR][tT][aA][nN][cC][eE]/, $.identifier)
+      alias(/[iI][mM][pP][oO][rR][tT][aA][nN][cC][eE]/, $.identifier),
+      // Allow the keyword 'SourceTable' to be treated as an identifier in variable contexts
+      alias(/[sS][oO][uU][rR][cC][eE][tT][aA][bB][lL][eE]/, $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
