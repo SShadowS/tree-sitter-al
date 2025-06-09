@@ -3160,7 +3160,12 @@ module.exports = grammar({
       // Allow the keyword 'IncludeCaption' to be treated as an identifier in variable contexts
       alias(/[iI][nN][cC][lL][uU][dD][eE][cC][aA][pP][tT][iI][oO][nN]/, $.identifier),
       // Allow the keyword 'ExcludeCaption' to be treated as an identifier in variable contexts
-      alias(/[eE][xX][cC][lL][uU][dD][eE][cC][aA][pP][tT][iI][oO][nN]/, $.identifier)
+      alias(/[eE][xX][cC][lL][uU][dD][eE][cC][aA][pP][tT][iI][oO][nN]/, $.identifier),
+      // Allow the keyword 'SubType' to be treated as an identifier in variable contexts
+      alias('Subtype', $.identifier),
+      alias('SubType', $.identifier), 
+      alias('subtype', $.identifier),
+      alias('SUBTYPE', $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
