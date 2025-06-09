@@ -1,0 +1,128 @@
+================================================================================
+Page actions with area(sections) for RoleCenter pages
+================================================================================
+
+page 123 "Test RoleCenter"
+{
+    PageType = RoleCenter;
+    
+    actions
+    {
+        area(sections)
+        {
+            group(Document)
+            {
+                Caption = 'Document Management';
+                action("DocumentJournal")
+                {
+                    ApplicationArea = all;
+                    Caption = 'Document Journal';
+                    RunObject = page "Document List";
+                }
+                action("Document Search")
+                {
+                    ApplicationArea = all;
+                    Caption = 'Document Search';
+                    RunObject = page "Document Search";
+                }
+            }
+            group(Purchase)
+            {
+                Caption = 'Purchase';
+                action("Purchase Orders")
+                {
+                    ApplicationArea = all;
+                    Caption = 'Purchase Orders';
+                    RunObject = page "Purchase Order List";
+                }
+                action(Vendors)
+                {
+                    ApplicationArea = all;
+                    Caption = 'Vendors';
+                    RunObject = page "Vendor List";
+                }
+            }
+        }
+        area(processing)
+        {
+            group("Data Export")
+            {
+                Caption = 'Data Export';
+                action("Export Data")
+                {
+                    ApplicationArea = all;
+                    Caption = 'Export Data';
+                    RunObject = report "Export Report";
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (actions_section
+      (area_action_section
+        (action_group_section
+          name: (identifier)
+          (caption_property
+            (string_literal))
+          (action_declaration
+            name: (quoted_identifier)
+            (application_area_property
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (run_object_property
+              value: (run_object_value
+                object_ref: (quoted_identifier))))
+          (action_declaration
+            name: (quoted_identifier)
+            (application_area_property
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (run_object_property
+              value: (run_object_value
+                object_ref: (quoted_identifier)))))
+        (action_group_section
+          name: (identifier)
+          (caption_property
+            (string_literal))
+          (action_declaration
+            name: (quoted_identifier)
+            (application_area_property
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (run_object_property
+              value: (run_object_value
+                object_ref: (quoted_identifier))))
+          (action_declaration
+            name: (identifier)
+            (application_area_property
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (run_object_property
+              value: (run_object_value
+                object_ref: (quoted_identifier))))))
+      (area_action_section
+        (action_group_section
+          name: (quoted_identifier)
+          (caption_property
+            (string_literal))
+          (action_declaration
+            name: (quoted_identifier)
+            (application_area_property
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (run_object_property
+              value: (run_object_value
+                object_ref: (quoted_identifier)))))))))

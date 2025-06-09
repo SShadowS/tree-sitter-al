@@ -927,7 +927,8 @@ module.exports = grammar({
         /[nN][aA][vV][iI][gG][aA][tT][iI][oO][nN]/,
         /[cC][rR][eE][aA][tT][iI][oO][nN]/,
         /[pP][rR][oO][mM][oO][tT][eE][dD]/,
-        /[sS][yY][sS][tT][eE][mM][aA][cC][tT][iI][oO][nN][sS]/
+        /[sS][yY][sS][tT][eE][mM][aA][cC][tT][iI][oO][nN][sS]/,
+        /[sS][eE][cC][tT][iI][oO][nN][sS]/
       )),
       ')',
       '{',
