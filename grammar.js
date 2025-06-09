@@ -3156,7 +3156,11 @@ module.exports = grammar({
       // Allow the keyword 'Importance' to be treated as an identifier in variable contexts
       alias(/[iI][mM][pP][oO][rR][tT][aA][nN][cC][eE]/, $.identifier),
       // Allow the keyword 'SourceTable' to be treated as an identifier in variable contexts
-      alias(/[sS][oO][uU][rR][cC][eE][tT][aA][bB][lL][eE]/, $.identifier)
+      alias(/[sS][oO][uU][rR][cC][eE][tT][aA][bB][lL][eE]/, $.identifier),
+      // Allow the keyword 'IncludeCaption' to be treated as an identifier in variable contexts
+      alias(/[iI][nN][cC][lL][uU][dD][eE][cC][aA][pP][tT][iI][oO][nN]/, $.identifier),
+      // Allow the keyword 'ExcludeCaption' to be treated as an identifier in variable contexts
+      alias(/[eE][xX][cC][lL][uU][dD][eE][cC][aA][pP][tT][iI][oO][nN]/, $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
