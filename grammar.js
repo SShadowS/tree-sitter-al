@@ -3171,20 +3171,20 @@ module.exports = grammar({
 
     variable_declaration: $ => choice(
       // Variable with value assignment (using :=)
-      seq(
+      prec(3, seq(
         field('names', $._variable_name_list),
         ':',
         optional(field('type', $.type_specification)),
         ':=',
         field('value', $._expression),
         ';'
-      ),
-      // Regular variable declaration with optional value (for Label types)
-      seq(
+      )),
+      // Label variable declaration with string literal value
+      prec(2, seq(
         field('names', $._variable_name_list),
         ':',
-        field('type', $.type_specification),
-        optional(field('value', $.string_literal)), // For Label types
+        field('type', alias(choice('Label', 'LABEL', 'label'), $.basic_type)),
+        field('value', $.string_literal),
         optional(seq(
           ',',
           field('attributes', seq(
@@ -3192,9 +3192,16 @@ module.exports = grammar({
             repeat(seq(',', $.label_attribute))
           ))
         )),
+        ';'
+      )),
+      // Regular variable declaration without value
+      prec(1, seq(
+        field('names', $._variable_name_list),
+        ':',
+        field('type', $.type_specification),
         optional(field('temporary', $.temporary)),
         ';'
-      )
+      ))
     ),
 
     // Simplified parameter rule using the main type_specification
