@@ -686,6 +686,7 @@ module.exports = grammar({
       field('value', choice(
         $.filter_or_expression,
         $.filter_not_equal_expression,
+        $.filter_equal_expression,
         $.range_expression,
         $.integer,
         $.string_literal,
@@ -705,6 +706,16 @@ module.exports = grammar({
 
     filter_not_equal_expression: $ => seq(
       '<>',
+      field('value', choice(
+        $.string_literal,
+        $.integer,
+        $._quoted_identifier,
+        $.identifier
+      ))
+    ),
+
+    filter_equal_expression: $ => seq(
+      '=',
       field('value', choice(
         $.string_literal,
         $.integer,

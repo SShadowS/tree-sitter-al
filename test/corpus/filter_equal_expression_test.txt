@@ -1,0 +1,143 @@
+================================================================================
+FILTER expressions with equals prefix for field filters
+================================================================================
+
+table 123 "Test Table"
+{
+    fields
+    {
+        field(1; "Status Filter"; Integer)
+        {
+            CalcFormula = Count("Record Table" WHERE(Status = FILTER(= Approved)));
+            FieldClass = FlowField;
+        }
+        field(2; "Type Filter"; Integer)
+        {
+            CalcFormula = Count("Document" WHERE(Type = FILTER(= Invoice)));
+            FieldClass = FlowField;
+        }
+        field(3; "Boolean Filter"; Integer)
+        {
+            CalcFormula = Count("Entry" WHERE(Status = FILTER(= true)));
+            FieldClass = FlowField;
+        }
+        field(4; "Integer Filter"; Integer)
+        {
+            CalcFormula = Count("Entry" WHERE(Status = FILTER(= 5)));
+            FieldClass = FlowField;
+        }
+        field(5; "String Value"; Integer)
+        {
+            CalcFormula = Count("Text Entry" WHERE(Status = FILTER(= "Active")));
+            FieldClass = FlowField;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (identifier))
+                    filter: (filter_expression_function
+                      value: (filter_equal_expression
+                        value: (identifier)))))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (identifier))
+                    filter: (filter_expression_function
+                      value: (filter_equal_expression
+                        value: (identifier)))))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (identifier))
+                    filter: (filter_expression_function
+                      value: (filter_equal_expression
+                        value: (identifier)))))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (identifier))
+                    filter: (filter_expression_function
+                      value: (filter_equal_expression
+                        value: (integer)))))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (identifier))
+                    filter: (filter_expression_function
+                      value: (filter_equal_expression
+                        value: (quoted_identifier)))))))))
+        (field_class_property
+          value: (field_class_value))))))
