@@ -11414,8 +11414,25 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "ToolTip"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "ToolTip"
+            },
+            {
+              "type": "STRING",
+              "value": "Tooltip"
+            },
+            {
+              "type": "STRING",
+              "value": "tooltip"
+            },
+            {
+              "type": "STRING",
+              "value": "TOOLTIP"
+            }
+          ]
         },
         {
           "type": "STRING",

@@ -1,0 +1,62 @@
+================================================================================
+ToolTip property with case variations
+================================================================================
+
+page 123 "Test Page"
+{
+    layout
+    {
+        area(content)
+        {
+            field(TestField1; TestValue1)
+            {
+                ToolTip = 'Standard ToolTip with correct casing';
+            }
+            field(TestField2; TestValue2)
+            {
+                Tooltip = 'Tooltip with lowercase t';
+            }
+            field(TestField3; TestValue3)
+            {
+                tooltip = 'All lowercase tooltip';
+            }
+            field(TestField4; TestValue4)
+            {
+                TOOLTIP = 'All uppercase TOOLTIP';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal))))))))
