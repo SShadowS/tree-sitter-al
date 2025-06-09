@@ -1,0 +1,97 @@
+================================================================================
+SubPageLink property with FILTER function support
+================================================================================
+
+page 12345 "Test Page"
+{
+    layout
+    {
+        area(content)
+        {
+            part("Document Comments"; "CDC Document Delegate Comments")
+            {
+                ApplicationArea = All;
+                Caption = 'Document Comments';
+                SubPageLink = "Table ID" = FILTER(6085590),
+                              "No." = FIELD("No.");
+            }
+            part(SimpleFilter; "Simple Part")
+            {
+                ApplicationArea = All;
+                SubPageLink = "ID" = FILTER(123);
+            }
+            part(MixedCases; "Mixed Cases Part")
+            {
+                ApplicationArea = All;
+                SubPageLink = "Field1" = filter(456),
+                              "Field2" = FIELD("Related Field"),
+                              "Field3" = CONST('FixedValue');
+            }
+            part(StringFilter; "String Filter Part")
+            {
+                ApplicationArea = All;
+                SubPageLink = "Type" = FILTER('Document'),
+                              "Status" = filter("Active");
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (part_section
+          name: (quoted_identifier)
+          page_name: (quoted_identifier)
+          (application_area_property
+            value: (identifier))
+          (caption_property
+            (string_literal))
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              filter_value: (integer))
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              field_value: (quoted_identifier))))
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (application_area_property
+            value: (identifier))
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              filter_value: (integer))))
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (application_area_property
+            value: (identifier))
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              filter_value: (integer))
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              field_value: (quoted_identifier))
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              const_value: (string_literal))))
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (application_area_property
+            value: (identifier))
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              filter_value: (string_literal))
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              filter_value: (quoted_identifier))))))))

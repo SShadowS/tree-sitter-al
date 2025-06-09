@@ -1239,6 +1239,12 @@ module.exports = grammar({
           '(',
           field('field_value', choice($.identifier, $._quoted_identifier)),
           ')'
+        ),
+        seq(
+          /[fF][iI][lL][tT][eE][rR]/,
+          '(',
+          field('filter_value', choice($.identifier, $._quoted_identifier, $.integer, $.string_literal)),
+          ')'
         )
       ))
     ),
