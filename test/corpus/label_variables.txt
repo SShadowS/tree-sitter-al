@@ -79,6 +79,8 @@ codeunit 456 "Test Codeunit"
     (var_section
       (variable_declaration
         name: (identifier)
+        type: (type_specification
+          (basic_type))
         value: (string_literal)
         attributes: (label_attribute
           name: (identifier)
@@ -88,6 +90,8 @@ codeunit 456 "Test Codeunit"
           value: (boolean)))
       (variable_declaration
         name: (identifier)
+        type: (type_specification
+          (basic_type))
         value: (string_literal)))))
 
 ================================================================================

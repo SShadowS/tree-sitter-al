@@ -3166,41 +3166,31 @@ module.exports = grammar({
     ),
 
     variable_declaration: $ => choice(
-      // Special case for Label with string literal and optional attributes
-      // Note: Labels typically don't support multiple declarations on one line in standard AL,
-      // but we keep the structure consistent for now. If issues arise, this might need adjustment.
-      prec(10, seq(
-        field('names', $._variable_name_list), // Use list rule
+      // Variable with value assignment (using :=)
+      seq(
+        field('names', $._variable_name_list),
         ':',
-        field('type', choice('Label', 'LABEL', 'label')),
-        field('value', $.string_literal),
+        optional(field('type', $.type_specification)),
+        ':=',
+        field('value', $._expression),
+        ';'
+      ),
+      // Regular variable declaration with optional value (for Label types)
+      seq(
+        field('names', $._variable_name_list),
+        ':',
+        field('type', $.type_specification),
+        optional(field('value', $.string_literal)), // For Label types
         optional(seq(
-          ',',  // Comma separator
+          ',',
           field('attributes', seq(
             $.label_attribute,
             repeat(seq(',', $.label_attribute))
           ))
         )),
-        ';'
-      )),
-      // Variable with value assignment (Multiple assignment on one line is not standard AL)
-      // This part might need review if complex initializations are common.
-      seq(
-        field('names', $._variable_name_list), // Use list rule
-        ':',
-        optional(field('type', $.type_specification)),
-        ':=',
-        field('value', $._expression), // Assigns the same value to all variables in the list
-        ';'
-      ),
-      // Regular variable declaration (supporting multiple names) with optional attributes
-      prec(1, seq(
-        field('names', $._variable_name_list), // Use list rule
-        ':',
-        field('type', $.type_specification),
         optional(field('temporary', $.temporary)),
         ';'
-      ))
+      )
     ),
 
     // Simplified parameter rule using the main type_specification
@@ -3360,6 +3350,7 @@ enum_type: $ => prec(1, seq(
       prec(1, choice('Guid', 'GUID', 'Guid')),
       prec(1, choice('RecordId', 'RECORDID', 'Recordid')),
       prec(1, choice('Variant', 'VARIANT', 'Variant')),
+      prec(1, choice('Label', 'LABEL', 'label')),
       prec(1, choice('Dialog', 'DIALOG', 'Dialog')),
       prec(1, choice('Action', 'ACTION', 'Action')),
       prec(1, choice('BLOB', 'Blob', 'blob')),
