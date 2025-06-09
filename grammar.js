@@ -4375,6 +4375,12 @@ enum_type: $ => prec(1, seq(
         field('left', $._expression),
         field('operator', choice('or', 'OR', 'Or')),
         field('right', $._expression)
+      )),
+      // Logical XOR expression (prec 2)
+      prec.left(2, seq(
+        field('left', $._expression),
+        field('operator', choice('xor', 'XOR', 'Xor')),
+        field('right', $._expression)
       ))
     ),
 
