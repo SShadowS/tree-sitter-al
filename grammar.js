@@ -3958,6 +3958,16 @@ enum_type: $ => prec(1, seq(
       'OptionCaption',
       '=',
       $.option_caption_value,
+      repeat(seq(
+        ',',
+        choice(
+          seq(
+            choice('Comment', 'comment', 'COMMENT'),
+            '=',
+            $.string_literal
+          )
+        )
+      )),
       ';'
     ),
 
