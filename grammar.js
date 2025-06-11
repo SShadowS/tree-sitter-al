@@ -2283,7 +2283,9 @@ module.exports = grammar({
         $._quoted_identifier,
         $.call_expression,
         $.boolean,
-        $.unary_expression
+        $.unary_expression,
+        $.comparison_expression,
+        $.qualified_enum_value
       )),
       ';'
     ),
@@ -3163,6 +3165,8 @@ module.exports = grammar({
       alias(/[eE][xX][cC][lL][uU][dD][eE][cC][aA][pP][tT][iI][oO][nN]/, $.identifier),
       // Allow the keyword 'SubType' to be treated as an identifier in variable contexts
       alias('Subtype', $.identifier),
+      // Allow the keyword 'Caption' to be treated as an identifier in variable contexts
+      alias(/[cC][aA][pP][tT][iI][oO][nN]/, $.identifier),
       alias('SubType', $.identifier), 
       alias('subtype', $.identifier),
       alias('SUBTYPE', $.identifier)
@@ -4252,7 +4256,10 @@ enum_type: $ => prec(1, seq(
       field('variable', $.identifier),
       ':=',
       field('start', $._expression),
-      choice('to', 'TO', 'To'),
+      field('direction', choice(
+        choice('to', 'TO', 'To'),
+        choice('downto', 'DOWNTO', 'Downto')
+      )),
       field('end', $._expression),
       choice('do', 'DO', 'Do'),
       field('body', choice(
@@ -4338,7 +4345,7 @@ enum_type: $ => prec(1, seq(
     )),
 
     unary_expression: $ => prec.right(7, seq( // Keep at 7 but verify context
-      choice('-', 'not', 'Not', 'NOT'),
+      choice('+', '-', 'not', 'Not', 'NOT'),
       $._expression
     )),
 
@@ -5601,6 +5608,9 @@ enum_type: $ => prec(1, seq(
       $.order_by_property,
       $.shared_layout_property,
       $.data_item_table_view_property,
+      
+      // Field-specific properties needed in page modify blocks
+      $.quick_entry_property,
       
       // Note: access_by_permission_property is now in _access_properties for universal use
     ),

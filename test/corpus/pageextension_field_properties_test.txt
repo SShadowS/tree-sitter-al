@@ -1,0 +1,45 @@
+================================================================================
+PageExtension modify field with QuickEntry and Importance properties
+================================================================================
+
+pageextension 60855778 "CDC Purchase Credit Memo" extends "Purchase Credit Memo"
+{
+    layout
+    {
+        modify(Status)
+        {
+            QuickEntry = false;
+            Importance = Standard;
+        }
+        
+        modify(Control15)
+        {
+            Visible = true;
+            QuickEntry = true;
+            Importance = Additional;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (layout_section
+      (modify_layout_modification
+        target: (identifier)
+        (quick_entry_property
+          value: (boolean))
+        (importance_property
+          value: (importance_value)))
+      (modify_layout_modification
+        target: (identifier)
+        (visible_property
+          value: (boolean))
+        (quick_entry_property
+          value: (boolean))
+        (importance_property
+          value: (importance_value))))))
