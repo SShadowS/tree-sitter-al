@@ -3997,6 +3997,7 @@ enum_type: $ => prec(1, seq(
         seq('(', optional($.parameter_list), ')'),
         seq()
       ),
+      optional(';'),  // Allow optional semicolon after parameter list
       optional(seq(':', $.type_specification)),
       optional($.var_section),
       $.code_block
