@@ -5,6 +5,7 @@ codeunit 50100 MyCodeunit
 {
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
@@ -20,6 +21,7 @@ codeunit 50100 MyCodeunit
     SingleInstance = true;
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
@@ -50,22 +52,37 @@ codeunit 50100 MyCodeunit
         MyArr: array[10] of Text;
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
     (identifier)
     (var_section
       (variable_declaration
-        (identifier) (type_specification (basic_type)))
+        (identifier)
+        (type_specification
+          (basic_type)))
       (variable_declaration
-        (identifier) (type_specification (text_type (integer))))
+        (identifier)
+        (type_specification
+          (text_type
+            (integer))))
       (variable_declaration
-        (identifier) (type_specification (basic_type)))
+        (identifier)
+        (type_specification
+          (basic_type)))
       (variable_declaration
-        (identifier) (type_specification (record_type (identifier))))
+        (identifier)
+        (type_specification
+          (record_type
+            (identifier))))
       (variable_declaration
-        (identifier) (type_specification 
-          (array_type (integer) (type_specification (text_type))))))))
+        (identifier)
+        (type_specification
+          (array_type
+            (integer)
+            (type_specification
+              (text_type))))))))
 
 ==================
 Basic Procedure
@@ -78,6 +95,7 @@ codeunit 50100 MyCodeunit
     end;
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
@@ -95,7 +113,7 @@ codeunit 50100 MyCodeunit
           (name)
           (type_specification
             (text_type))))
-      (return_type 
+      (return_type
         (type_specification
           (basic_type)))
       (code_block
@@ -113,6 +131,7 @@ codeunit 50100 MyCodeunit
     end;
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
@@ -139,6 +158,7 @@ codeunit 50100 MyCodeunit
     end;
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
@@ -154,9 +174,14 @@ codeunit 50100 MyCodeunit
               (integer)))))
       (var_section
         (variable_declaration
-          (identifier) (type_specification (record_type (identifier))))
+          (identifier)
+          (type_specification
+            (record_type
+              (identifier))))
         (variable_declaration
-          (identifier) (type_specification (basic_type))))
+          (identifier)
+          (type_specification
+            (basic_type))))
       (code_block
         (call_expression
           (member_expression

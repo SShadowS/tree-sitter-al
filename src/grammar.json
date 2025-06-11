@@ -18186,6 +18186,18 @@
           "type": "CHOICE",
           "members": [
             {
+              "type": "STRING",
+              "value": ";"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
               "type": "SEQ",
               "members": [
                 {
@@ -24714,6 +24726,10 @@
         {
           "type": "SYMBOL",
           "name": "validate_table_relation_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "char_allowed_property"
         }
       ]
     },

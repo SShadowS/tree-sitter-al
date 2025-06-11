@@ -19,6 +19,7 @@ codeunit 50100 MyCodeunit
     end;
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
@@ -26,10 +27,13 @@ codeunit 50100 MyCodeunit
     (var_section
       (variable_declaration
         (identifier)
-        (type_specification (record_type (identifier))))
+        (type_specification
+          (record_type
+            (identifier))))
       (variable_declaration
         (identifier)
-        (type_specification (basic_type))))
+        (type_specification
+          (basic_type))))
     (onrun_trigger
       (code_block
         (call_expression
@@ -88,6 +92,7 @@ codeunit 50100 MyCodeunit
     end;
 }
 ---
+
 (source_file
   (codeunit_declaration
     (integer)
@@ -95,7 +100,9 @@ codeunit 50100 MyCodeunit
     (var_section
       (variable_declaration
         (identifier)
-        (type_specification (record_type (identifier)))))
+        (type_specification
+          (record_type
+            (identifier)))))
     (onrun_trigger
       (code_block
         (call_expression

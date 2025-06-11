@@ -32,12 +32,12 @@ table 50006 "Test Table"
             statements: (assignment_statement
               left: (quoted_identifier)
               right: (string_literal)))
-            (case_branch
-              pattern: (qualified_enum_value
-                enum_type: (quoted_identifier)
-                value: (quoted_identifier))
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (quoted_identifier)
-                  (string_literal)))))))))
+          (case_branch
+            pattern: (qualified_enum_value
+              enum_type: (quoted_identifier)
+              value: (quoted_identifier))
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (quoted_identifier)
+                (string_literal)))))))))
