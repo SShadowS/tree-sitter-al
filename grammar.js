@@ -5376,6 +5376,7 @@ enum_type: $ => prec(1, seq(
       $.unique_property,             // Uniqueness constraint
       $.values_allowed_property,     // Enumerated valid values
       $.validate_table_relation_property, // FK validation
+      $.char_allowed_property,       // Character input restrictions
     ),
 
     // Data source/relationship properties

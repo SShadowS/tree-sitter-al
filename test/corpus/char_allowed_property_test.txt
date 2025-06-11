@@ -1,0 +1,42 @@
+================================================================================
+Page field with CharAllowed property
+================================================================================
+
+page 50001 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(CompanyCode; CompanyCode)
+            {
+                ApplicationArea = All;
+                Caption = 'Company Code';
+                CharAllowed = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+-';
+                ToolTip = 'Company code field with character restrictions';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          (identifier)
+          (identifier)
+          (application_area_property
+            (identifier))
+          (caption_property
+            (string_literal))
+          (char_allowed_property
+            (value
+              (string_literal)))
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal))))))))
