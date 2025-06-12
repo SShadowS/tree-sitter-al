@@ -4236,7 +4236,8 @@ enum_type: $ => prec(1, seq(
 
     _statement_or_preprocessor: $ => choice(
       $._statement,
-      $.preproc_conditional_statements
+      $.preproc_conditional_statements,
+      $.pragma
     ),
 
     preproc_conditional_statements: $ => seq(

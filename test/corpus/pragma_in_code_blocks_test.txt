@@ -1,0 +1,47 @@
+================================================================================
+Pragma directives within code blocks
+================================================================================
+
+codeunit 50100 TestUnit
+{
+    procedure TestMethod()
+    var
+        AccessToken: Text;
+    begin
+        if UseCloudOCR then
+        begin
+#pragma warning disable AL0432
+            AccessToken := Core.RequestAccessToken(false);
+#pragma warning restore AL0432
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (procedure
+      name: (name)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (if_statement
+          condition: (identifier)
+          then_branch: (code_block
+            (pragma)
+            (assignment_statement
+              left: (identifier)
+              operator: (:=)
+              right: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (boolean))))
+            (pragma)))))))
