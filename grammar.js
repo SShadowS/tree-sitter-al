@@ -2042,7 +2042,9 @@ module.exports = grammar({
         $._page_properties,
         $.trigger_declaration,
         $.var_section,
-        $.code_block
+        $.code_block,
+        $.preproc_conditional_properties,
+        $.pragma
       )),
       '}'
     ),
@@ -5199,6 +5201,17 @@ enum_type: $ => prec(1, seq(
       optional(seq(
         $.preproc_else,
         repeat($._layout_element)
+      )),
+      $.preproc_endif
+    ),
+
+    // Preprocessor conditional rules for properties
+    preproc_conditional_properties: $ => seq(
+      $.preproc_if,
+      repeat($._page_properties),
+      optional(seq(
+        $.preproc_else,
+        repeat($._page_properties)
       )),
       $.preproc_endif
     ),

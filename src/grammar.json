@@ -8955,6 +8955,14 @@
               {
                 "type": "SYMBOL",
                 "name": "code_block"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_properties"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "pragma"
               }
             ]
           }
@@ -23934,6 +23942,50 @@
                   "content": {
                     "type": "SYMBOL",
                     "name": "_layout_element"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_page_properties"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_page_properties"
                   }
                 }
               ]
