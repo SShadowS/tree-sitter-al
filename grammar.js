@@ -882,7 +882,10 @@ module.exports = grammar({
       $._page_properties,     // Centralized page properties
       $.var_section,
       $.trigger_declaration,
-      seq(optional($.attribute_list), $.procedure)
+      seq(optional($.attribute_list), $.procedure),
+      $.preproc_region,
+      $.preproc_endregion,
+      $.pragma
     ),
 
     tableextension_declaration: $ => seq(
@@ -5266,6 +5269,13 @@ enum_type: $ => prec(1, seq(
     preproc_else: $ => '#else',
 
     preproc_endif: $ => '#endif',
+
+    preproc_region: $ => seq(
+      '#region',
+      optional(field('name', /[^\n]*/))
+    ),
+
+    preproc_endregion: $ => '#endregion',
 
     pragma: $ => /#pragma[^\n]*/, // Match lines starting with #pragma specifically
 

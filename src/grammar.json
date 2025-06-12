@@ -3507,6 +3507,18 @@
               "name": "procedure"
             }
           ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_region"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endregion"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "pragma"
         }
       ]
     },
@@ -24172,6 +24184,35 @@
     "preproc_endif": {
       "type": "STRING",
       "value": "#endif"
+    },
+    "preproc_region": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#region"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "name",
+              "content": {
+                "type": "PATTERN",
+                "value": "[^\\n]*"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "preproc_endregion": {
+      "type": "STRING",
+      "value": "#endregion"
     },
     "pragma": {
       "type": "PATTERN",

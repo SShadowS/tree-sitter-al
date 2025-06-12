@@ -1,0 +1,88 @@
+================================================================================
+Region directives in page extensions
+================================================================================
+
+pageextension 50100 "Test Page Extension" extends "Customer Card"
+{
+    layout
+    {
+        addlast(content)
+        {
+            group("Test Group")
+            {
+                field("Test Field"; Rec."No.")
+                {
+                    ApplicationArea = All;
+                }
+            }
+        }
+    }
+
+    var
+        TestVar: Text;
+
+    #region Test Methods
+    local procedure TestMethod()
+    begin
+        TestVar := 'Test';
+    end;
+
+    local procedure AnotherMethod()
+    begin
+        Message('Hello');
+    end;
+    #endregion
+
+    trigger OnOpenPage()
+    begin
+        TestVar := 'Initialized';
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (layout_section
+      (addlast_layout_modification
+        target: (identifier)
+        (group_section
+          name: (quoted_identifier)
+          (field_section
+            control_id: (quoted_identifier)
+            source_or_field_name: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            (application_area_property
+              value: (identifier))))))
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (text_type))))
+    (preproc_region)
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name)
+      (code_block
+        (assignment_statement
+          left: (identifier)
+          right: (string_literal))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name)
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))
+    (preproc_endregion)
+    (trigger_declaration
+      name: (trigger_name)
+      (code_block
+        (assignment_statement
+          left: (identifier)
+          right: (string_literal))))))

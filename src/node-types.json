@@ -23510,6 +23510,18 @@
           "named": true
         },
         {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_endregion",
+          "named": true
+        },
+        {
+          "type": "preproc_region",
+          "named": true
+        },
+        {
           "type": "procedure",
           "named": true
         },
@@ -25969,6 +25981,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "preproc_region",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "preview_mode_property",
@@ -37834,6 +37851,10 @@
     "named": false
   },
   {
+    "type": "#region",
+    "named": false
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -40171,21 +40192,21 @@
   },
   {
     "type": "comment",
-    "named": true,
-    "extra": true
-  },
-  {
-    "type": "comment",
     "named": false,
     "extra": true
   },
   {
-    "type": "const",
-    "named": false
+    "type": "comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "const",
     "named": true
+  },
+  {
+    "type": "const",
+    "named": false
   },
   {
     "type": "controladdin",
@@ -40434,6 +40455,10 @@
   },
   {
     "type": "preproc_endif",
+    "named": true
+  },
+  {
+    "type": "preproc_endregion",
     "named": true
   },
   {
