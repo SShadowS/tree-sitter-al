@@ -8,9 +8,13 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,250 files (93.9%) parse successfully**.
+Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,304 files (98.0%) parse successfully**.
 
 Recent improvements include:
+- **Namespace-qualified record types** - Added support for namespace-qualified table references in record variable declarations (e.g., `Record Microsoft.Foundation.UOM."Unit of Measure"`)
+- **Unary plus operator** - Added support for unary `+` operator in expressions (e.g., `SignFactor := +1;`)
+- **FOR...DOWNTO loops** - Added support for `DOWNTO` keyword in FOR statements (e.g., `FOR i := 10 DOWNTO 1 DO`)
+- **StyleExpr comparison expressions** - Enhanced StyleExpr property to support comparison expressions with enum values (e.g., `StyleExpr = "Field" = "Field"::EnumValue;`)
 - **ValuesAllowed mixed types** - Enhanced ValuesAllowed property to support both string literals and identifiers in comma-separated lists
 - **String literal backslash support** - Fixed parsing of string literals containing backslash characters in function arguments
 - **SubPageView table view syntax** - Enhanced SubPageView property to support full `sorting(...) where(...)` syntax

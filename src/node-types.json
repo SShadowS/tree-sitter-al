@@ -26279,6 +26279,40 @@
     }
   },
   {
+    "type": "qualified_table_reference",
+    "named": true,
+    "fields": {
+      "namespace": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "part": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "query_category_property",
     "named": true,
     "fields": {
@@ -26828,6 +26862,10 @@
           },
           {
             "type": "integer",
+            "named": true
+          },
+          {
+            "type": "qualified_table_reference",
             "named": true
           },
           {
@@ -38562,12 +38600,12 @@
   },
   {
     "type": "comment",
-    "named": true,
+    "named": false,
     "extra": true
   },
   {
     "type": "comment",
-    "named": false,
+    "named": true,
     "extra": true
   },
   {

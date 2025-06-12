@@ -3418,8 +3418,17 @@ enum_type: $ => prec(1, seq(
 
     record_type: $ => prec.right(seq(
       prec(1, choice('Record', 'RECORD', 'record')),
-      field('reference', $._table_reference),
+      field('reference', choice(
+        prec(2, $.qualified_table_reference),
+        prec(1, $._table_reference)
+      )),
       optional(choice('Temporary', 'TEMPORARY', 'temporary'))
+    )),
+
+    // Dedicated rule for namespace-qualified table references (requires at least one dot)
+    qualified_table_reference: $ => prec.right(10, seq(
+      field('namespace', choice($.identifier, $._quoted_identifier)),
+      repeat1(seq('.', field('part', choice($.identifier, $._quoted_identifier))))
     )),
     recordref_type: $ => /[rR][eE][cC][oO][rR][dD][rR][eE][fF]/,
     fieldref_type: $ => /[fF][iI][eE][lL][dD][rR][eE][fF]/,
