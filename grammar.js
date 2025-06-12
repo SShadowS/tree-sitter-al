@@ -4513,10 +4513,15 @@ enum_type: $ => prec(1, seq(
       choice('case', 'CASE', 'Case'),
       field('expression', $._case_expression),
       choice('of', 'OF', 'Of'),
-      repeat1($.case_branch),
+      repeat1($._case_item),
       optional($.else_branch),
       choice('end', 'END', 'End')
     )),
+
+    _case_item: $ => choice(
+      $.case_branch,
+      $.preproc_conditional_case
+    ),
 
     case_branch: $ => seq(
       field('pattern', $._case_pattern),
@@ -4525,6 +4530,16 @@ enum_type: $ => prec(1, seq(
         $.code_block,
         $._statement
       ))
+    ),
+
+    preproc_conditional_case: $ => seq(
+      $.preproc_if,
+      repeat1($.case_branch),
+      optional(seq(
+        $.preproc_else,
+        repeat1($.case_branch)
+      )),
+      $.preproc_endif
     ),
 
     // _case_pattern now directly handles single or multiple patterns

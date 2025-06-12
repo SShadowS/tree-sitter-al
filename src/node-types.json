@@ -4970,6 +4970,10 @@
         {
           "type": "else_branch",
           "named": true
+        },
+        {
+          "type": "preproc_conditional_case",
+          "named": true
         }
       ]
     }
@@ -24746,6 +24750,33 @@
     }
   },
   {
+    "type": "preproc_conditional_case",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "case_branch",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_layout",
     "named": true,
     "fields": {},
@@ -39053,12 +39084,12 @@
   },
   {
     "type": "comment",
-    "named": true,
+    "named": false,
     "extra": true
   },
   {
     "type": "comment",
-    "named": false,
+    "named": true,
     "extra": true
   },
   {
@@ -39103,11 +39134,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",

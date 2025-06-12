@@ -20889,7 +20889,7 @@
             "type": "REPEAT1",
             "content": {
               "type": "SYMBOL",
-              "name": "case_branch"
+              "name": "_case_item"
             }
           },
           {
@@ -20924,6 +20924,19 @@
         ]
       }
     },
+    "_case_item": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "case_branch"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_case"
+        }
+      ]
+    },
     "case_branch": {
       "type": "SEQ",
       "members": [
@@ -20955,6 +20968,50 @@
               }
             ]
           }
+        }
+      ]
+    },
+    "preproc_conditional_case": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "case_branch"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "case_branch"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
         }
       ]
     },
