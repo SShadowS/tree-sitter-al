@@ -1,0 +1,47 @@
+================================================================================
+Standalone semicolons in property lists
+================================================================================
+
+pageextension 50100 "Test Extension" extends "Customer Card"
+{
+    layout
+    {
+        addlast(content)
+        {
+            field(TestField; "Test Field")
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Test Field', comment = 'Test comment';
+                ;
+                ToolTip = 'Test tooltip';
+                Visible = true;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (layout_section
+      (addlast_layout_modification
+        target: (identifier)
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (quoted_identifier)
+          (application_area_property
+            value: (identifier)
+            value: (identifier))
+          (caption_property
+            (string_literal)
+            (string_literal))
+          (empty_statement)
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal)))
+          (visible_property
+            value: (boolean)))))))

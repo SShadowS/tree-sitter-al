@@ -5604,6 +5604,7 @@ enum_type: $ => prec(1, seq(
       $.odata_edm_type_property,
       $.drill_down_property,
       $.access_by_permission_property,
+      $.empty_statement,  // Allow standalone semicolons in field property lists
     ),
 
     // Composed property group for page-level properties
