@@ -1,0 +1,57 @@
+================================================================================
+Case statement with arithmetic expressions in patterns
+================================================================================
+
+codeunit 123 "Test Codeunit"
+{
+    procedure TestArithmeticCasePatterns()
+    begin
+        case RecordType of
+            DATABASE::"Customer" + 1:
+                Message('Customer Plus One');
+            DATABASE::"Vendor" - 5:
+                Message('Vendor Minus Five');
+            DATABASE::"Item" * 2:
+                Message('Item Times Two');
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name)
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (additive_expression
+              left: (database_reference
+                table_name: (quoted_identifier))
+              right: (integer))
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (case_branch
+            pattern: (additive_expression
+              left: (database_reference
+                table_name: (quoted_identifier))
+              right: (integer))
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (case_branch
+            pattern: (multiplicative_expression
+              left: (database_reference
+                table_name: (quoted_identifier))
+              right: (integer))
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))))

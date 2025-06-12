@@ -4537,6 +4537,9 @@ enum_type: $ => prec(1, seq(
       $._literal_value,
       $.enum_value_expression, // Match the full Record.Field::Value pattern
       $.qualified_enum_value,   // Match EnumType::EnumValue pattern
+      // Arithmetic expressions (high precedence for DATABASE::"Table" + 1 patterns)
+      prec(11, $.additive_expression),
+      prec(11, $.multiplicative_expression),
       $.database_reference, // Allow DATABASE::"Table Name" patterns
       $._chained_expression, // Allow member expressions like Value.IsInteger
       $.unary_expression, // Allow NOT expressions in case patterns

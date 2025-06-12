@@ -10030,6 +10030,14 @@
               {
                 "type": "SYMBOL",
                 "name": "unary_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "comparison_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "qualified_enum_value"
               }
             ]
           }
@@ -13570,6 +13578,15 @@
           "content": {
             "type": "STRING",
             "value": "Subtype"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[cC][aA][pP][tT][iI][oO][nN]"
           },
           "named": true,
           "value": "identifier"
@@ -19429,21 +19446,47 @@
             }
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "to"
-              },
-              {
-                "type": "STRING",
-                "value": "TO"
-              },
-              {
-                "type": "STRING",
-                "value": "To"
-              }
-            ]
+            "type": "FIELD",
+            "name": "direction",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "to"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "TO"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "To"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "downto"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "DOWNTO"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "Downto"
+                    }
+                  ]
+                }
+              ]
+            }
           },
           {
             "type": "FIELD",
@@ -19884,6 +19927,10 @@
           {
             "type": "CHOICE",
             "members": [
+              {
+                "type": "STRING",
+                "value": "+"
+              },
               {
                 "type": "STRING",
                 "value": "-"
@@ -20884,6 +20931,22 @@
         {
           "type": "SYMBOL",
           "name": "qualified_enum_value"
+        },
+        {
+          "type": "PREC",
+          "value": 11,
+          "content": {
+            "type": "SYMBOL",
+            "name": "additive_expression"
+          }
+        },
+        {
+          "type": "PREC",
+          "value": 11,
+          "content": {
+            "type": "SYMBOL",
+            "name": "multiplicative_expression"
+          }
         },
         {
           "type": "SYMBOL",
@@ -25357,6 +25420,10 @@
         {
           "type": "SYMBOL",
           "name": "data_item_table_view_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "quick_entry_property"
         }
       ]
     },

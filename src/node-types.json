@@ -6778,6 +6778,10 @@
           "named": true
         },
         {
+          "type": "quick_entry_property",
+          "named": true
+        },
+        {
           "type": "refresh_on_activate_property",
           "named": true
         },
@@ -13170,6 +13174,10 @@
           "named": true
         },
         {
+          "type": "quick_entry_property",
+          "named": true
+        },
+        {
           "type": "refresh_on_activate_property",
           "named": true
         },
@@ -13499,6 +13507,36 @@
           {
             "type": "with_statement",
             "named": true
+          }
+        ]
+      },
+      "direction": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "DOWNTO",
+            "named": false
+          },
+          {
+            "type": "Downto",
+            "named": false
+          },
+          {
+            "type": "TO",
+            "named": false
+          },
+          {
+            "type": "To",
+            "named": false
+          },
+          {
+            "type": "downto",
+            "named": false
+          },
+          {
+            "type": "to",
+            "named": false
           }
         ]
       },
@@ -15020,6 +15058,10 @@
           "named": true
         },
         {
+          "type": "quick_entry_property",
+          "named": true
+        },
+        {
           "type": "refresh_on_activate_property",
           "named": true
         },
@@ -15579,6 +15621,10 @@
         },
         {
           "type": "query_category_property",
+          "named": true
+        },
+        {
+          "type": "quick_entry_property",
           "named": true
         },
         {
@@ -20847,6 +20893,10 @@
           "named": true
         },
         {
+          "type": "quick_entry_property",
+          "named": true
+        },
+        {
           "type": "refresh_on_activate_property",
           "named": true
         },
@@ -22655,6 +22705,10 @@
           "named": true
         },
         {
+          "type": "quick_entry_property",
+          "named": true
+        },
+        {
           "type": "refresh_on_activate_property",
           "named": true
         },
@@ -23320,6 +23374,10 @@
         },
         {
           "type": "query_category_property",
+          "named": true
+        },
+        {
+          "type": "quick_entry_property",
           "named": true
         },
         {
@@ -24255,6 +24313,10 @@
         },
         {
           "type": "query_category_property",
+          "named": true
+        },
+        {
+          "type": "quick_entry_property",
           "named": true
         },
         {
@@ -27684,6 +27746,10 @@
           "named": true
         },
         {
+          "type": "quick_entry_property",
+          "named": true
+        },
+        {
           "type": "refresh_on_activate_property",
           "named": true
         },
@@ -29041,6 +29107,10 @@
           "named": true
         },
         {
+          "type": "quick_entry_property",
+          "named": true
+        },
+        {
           "type": "refresh_on_activate_property",
           "named": true
         },
@@ -30247,7 +30317,15 @@
             "named": true
           },
           {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
             "named": true
           },
           {
@@ -31408,6 +31486,10 @@
         },
         {
           "type": "query_category_property",
+          "named": true
+        },
+        {
+          "type": "quick_entry_property",
           "named": true
         },
         {
@@ -33490,6 +33572,10 @@
         },
         {
           "type": "query_category_property",
+          "named": true
+        },
+        {
+          "type": "quick_entry_property",
           "named": true
         },
         {
@@ -36671,6 +36757,10 @@
     "named": false
   },
   {
+    "type": "DOWNTO",
+    "named": false
+  },
+  {
     "type": "DURATION",
     "named": false
   },
@@ -36780,6 +36870,10 @@
   },
   {
     "type": "DotNet",
+    "named": false
+  },
+  {
+    "type": "Downto",
     "named": false
   },
   {
@@ -38541,6 +38635,10 @@
     "named": true
   },
   {
+    "type": "downto",
+    "named": false
+  },
+  {
     "type": "duration_literal",
     "named": true
   },
@@ -38626,11 +38724,11 @@
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "interface",
