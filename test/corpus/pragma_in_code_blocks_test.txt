@@ -23,24 +23,25 @@ codeunit 50100 TestUnit
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      name: (name)
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      (code_block
-        (if_statement
-          condition: (identifier)
-          then_branch: (code_block
-            (pragma)
-            (assignment_statement
-              left: (identifier)
-              right: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list
-                  (boolean))))
-            (pragma)))))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (code_block
+          (if_statement
+            condition: (identifier)
+            then_branch: (code_block
+              (pragma)
+              (assignment_statement
+                left: (identifier)
+                right: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list
+                    (boolean))))
+              (pragma))))))))

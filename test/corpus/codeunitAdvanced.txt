@@ -100,25 +100,26 @@ codeunit 50100 MyCodeunit
   (codeunit_declaration
     (integer)
     (identifier)
-    (procedure
-      (procedure_modifier)
-      (name)
-      (parameter_list
-        (parameter
-          (name)
+    (attributed_procedure
+      (procedure
+        (procedure_modifier)
+        (name)
+        (parameter_list
+          (parameter
+            (name)
+            (type_specification
+              (basic_type)))
+          (parameter
+            (modifier)
+            (name)
+            (type_specification
+              (text_type))))
+        (return_type
           (type_specification
             (basic_type)))
-        (parameter
-          (modifier)
-          (name)
-          (type_specification
-            (text_type))))
-      (return_type
-        (type_specification
-          (basic_type)))
-      (code_block
-        (exit_statement
-          (boolean))))))
+        (code_block
+          (exit_statement
+            (boolean)))))))
 
 ==================
 Basic Trigger
@@ -136,12 +137,13 @@ codeunit 50100 MyCodeunit
   (codeunit_declaration
     (integer)
     (identifier)
-    (onrun_trigger
-      (code_block
-        (call_expression
-          (identifier)
-          (argument_list
-            (string_literal)))))))
+    (attributed_onrun_trigger
+      (onrun_trigger
+        (code_block
+          (call_expression
+            (identifier)
+            (argument_list
+              (string_literal))))))))
 
 ==================
 Procedure With Var Section
@@ -163,34 +165,35 @@ codeunit 50100 MyCodeunit
   (codeunit_declaration
     (integer)
     (identifier)
-    (procedure
-      (procedure_modifier)
-      (name)
-      (parameter_list
-        (parameter
-          (name)
-          (type_specification
-            (code_type
-              (integer)))))
-      (var_section
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (record_type
-              (identifier))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
-      (code_block
-        (call_expression
-          (member_expression
+    (attributed_procedure
+      (procedure
+        (procedure_modifier)
+        (name)
+        (parameter_list
+          (parameter
+            (name)
+            (type_specification
+              (code_type
+                (integer)))))
+        (var_section
+          (variable_declaration
             (identifier)
-            (identifier))
-          (argument_list
-            (identifier)))
-        (assignment_statement
-          (identifier)
-          (field_access
+            (type_specification
+              (record_type
+                (identifier))))
+          (variable_declaration
             (identifier)
-            (quoted_identifier)))))))
+            (type_specification
+              (basic_type))))
+        (code_block
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (argument_list
+              (identifier)))
+          (assignment_statement
+            (identifier)
+            (field_access
+              (identifier)
+              (quoted_identifier))))))))

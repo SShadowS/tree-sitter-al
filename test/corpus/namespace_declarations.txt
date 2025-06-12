@@ -20,9 +20,10 @@ codeunit 50000 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      name: (name)
-      (code_block))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (code_block)))))
 
 ================================================================================
 Namespace with dotted path and page extension

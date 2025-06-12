@@ -2132,10 +2132,16 @@ module.exports = grammar({
     ),
 
     subtype_value: $ => choice(
+      // Codeunit SubType values
       /[iI][nN][sS][tT][aA][lL][lL]/,
       /[uU][pP][gG][rR][aA][dD][eE]/,
       /[tT][eE][sS][tT]/,
-      /[uU][sS][eE][rR][dD][eE][fF][iI][nN][eE][dD]/
+      // BLOB SubType values
+      /[uU][sS][eE][rR][dD][eE][fF][iI][nN][eE][dD]/,
+      /[bB][iI][tT][mM][aA][pP]/,
+      /[jJ][sS][oO][nN]/,
+      // Other potential values (like PurchaseHeader)
+      $.identifier  // Allow any identifier to be future-proof
     ),
 
     single_instance_value: $ => $.boolean,
@@ -3677,7 +3683,24 @@ enum_type: $ => prec(1, seq(
 
     table_relation_expression: $ => choice(
       $._simple_table_relation,
-      $.if_table_relation
+      $.if_table_relation,
+      $.preproc_conditional_table_relation
+    ),
+
+    preproc_conditional_table_relation: $ => seq(
+      $.preproc_if,
+      choice(
+        $.table_relation_expression,
+        seq($.table_relation_expression, ';')
+      ),
+      optional(seq(
+        $.preproc_else,
+        choice(
+          $.table_relation_expression,
+          seq($.table_relation_expression, ';')
+        )
+      )),
+      $.preproc_endif
     ),
 
     // Unified where clause implementation

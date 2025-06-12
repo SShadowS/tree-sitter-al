@@ -23,35 +23,36 @@ codeunit 123 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      name: (name)
-      (code_block
-        (case_statement
-          expression: (identifier)
-          (case_branch
-            pattern: (additive_expression
-              left: (database_reference
-                table_name: (quoted_identifier))
-              right: (integer))
-            statements: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (case_branch
-            pattern: (additive_expression
-              left: (database_reference
-                table_name: (quoted_identifier))
-              right: (integer))
-            statements: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (case_branch
-            pattern: (multiplicative_expression
-              left: (database_reference
-                table_name: (quoted_identifier))
-              right: (integer))
-            statements: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))))))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (code_block
+          (case_statement
+            expression: (identifier)
+            (case_branch
+              pattern: (additive_expression
+                left: (database_reference
+                  table_name: (quoted_identifier))
+                right: (integer))
+              statements: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (case_branch
+              pattern: (additive_expression
+                left: (database_reference
+                  table_name: (quoted_identifier))
+                right: (integer))
+              statements: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (case_branch
+              pattern: (multiplicative_expression
+                left: (database_reference
+                  table_name: (quoted_identifier))
+                right: (integer))
+              statements: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))))))))

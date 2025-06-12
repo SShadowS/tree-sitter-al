@@ -70,176 +70,178 @@ codeunit 50000 "AL Built-in Functions Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      name: (name)
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier)))))
-      (code_block
-        (comment)
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            property: (identifier))
-          arguments: (argument_list
-            (quoted_identifier)
-            (identifier)))
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            property: (identifier))
-          arguments: (argument_list
-            (identifier)))
-        (comment)
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            property: (identifier))
-          arguments: (argument_list
-            (quoted_identifier)
-            (string_literal)
-            (string_literal)))
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            property: (identifier))
-          arguments: (argument_list
-            (identifier)
-            (string_literal)))
-        (comment)
-        (if_statement
-          condition: (member_expression
-            object: (identifier)
-            property: (identifier))
-          then_branch: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))
-        (if_statement
-          condition: (member_expression
-            object: (identifier)
-            property: (identifier))
-          then_branch: (repeat_statement
-            (comment)
-            condition: (comparison_expression
-              left: (member_expression
-                object: (identifier)
-                property: (identifier))
-              operator: (comparison_operator)
-              right: (integer))))
-        (comment)
-        (if_statement
-          condition: (unary_expression
-            (member_expression
-              object: (identifier)
-              property: (identifier)))
-          then_branch: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))
-        (comment)
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            property: (identifier))
-          arguments: (argument_list
-            (quoted_identifier)
-            (string_literal)
-            (string_literal)
-            (string_literal)))
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            property: (identifier))
-          arguments: (argument_list
-            (identifier)
-            (string_literal)))
-        (comment)
-        (member_expression
-          object: (identifier)
-          property: (identifier))
-        (comment)
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (identifier)
-            property: (identifier)))
-        (comment)
-        (member_expression
-          object: (call_expression
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        (code_block
+          (comment)
+          (call_expression
             function: (member_expression
-              object: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list
-                  (identifier)))
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (quoted_identifier)
+              (identifier)))
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (identifier)))
+          (comment)
+          (call_expression
+            function: (member_expression
+              object: (identifier)
               property: (identifier))
             arguments: (argument_list
               (quoted_identifier)
               (string_literal)
               (string_literal)))
-          property: (identifier))))
-    (procedure
-      name: (name)
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier)))))
-      (code_block
-        (comment)
-        (if_statement
-          condition: (call_expression
-            function: (identifier)
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
             arguments: (argument_list
+              (identifier)
               (string_literal)))
-          then_branch: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))
-        (comment)
-        (if_statement
-          condition: (comparison_expression
-            left: (call_expression
-              function: (member_expression
+          (comment)
+          (if_statement
+            condition: (member_expression
+              object: (identifier)
+              property: (identifier))
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (if_statement
+            condition: (member_expression
+              object: (identifier)
+              property: (identifier))
+            then_branch: (repeat_statement
+              (comment)
+              condition: (comparison_expression
+                left: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                operator: (comparison_operator)
+                right: (integer))))
+          (comment)
+          (if_statement
+            condition: (unary_expression
+              (member_expression
                 object: (identifier)
+                property: (identifier)))
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (comment)
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (quoted_identifier)
+              (string_literal)
+              (string_literal)
+              (string_literal)))
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (identifier)
+              (string_literal)))
+          (comment)
+          (member_expression
+            object: (identifier)
+            property: (identifier))
+          (comment)
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (identifier)
+              property: (identifier)))
+          (comment)
+          (member_expression
+            object: (call_expression
+              function: (member_expression
+                object: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list
+                    (identifier)))
                 property: (identifier))
               arguments: (argument_list
-                (qualified_enum_value
-                  enum_type: (identifier)
-                  value: (quoted_identifier))
-                (identifier)))
-            operator: (comparison_operator)
-            right: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier)))
-          then_branch: (call_expression
-            function: (identifier)
+                (quoted_identifier)
+                (string_literal)
+                (string_literal)))
+            property: (identifier)))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        (code_block
+          (comment)
+          (if_statement
+            condition: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (comment)
+          (if_statement
+            condition: (comparison_expression
+              left: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (qualified_enum_value
+                    enum_type: (identifier)
+                    value: (quoted_identifier))
+                  (identifier)))
+              operator: (comparison_operator)
+              right: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier)))
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (comment)
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
             arguments: (argument_list
-              (string_literal))))
-        (comment)
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            property: (identifier))
-          arguments: (argument_list
-            (quoted_identifier)
-            (string_literal)
-            (string_literal)))
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            property: (identifier))
-          arguments: (argument_list
-            (qualified_enum_value
-              enum_type: (identifier)
-              value: (quoted_identifier))
-            (identifier)))))
+              (quoted_identifier)
+              (string_literal)
+              (string_literal)))
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (quoted_identifier))
+              (identifier))))))
     (var_section
       (variable_declaration
         name: (identifier)

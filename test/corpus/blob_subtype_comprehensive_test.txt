@@ -1,0 +1,163 @@
+================================================================================
+BLOB field with various SubType values
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; Icon; BLOB)
+        {
+            Caption = 'Icon';
+            DataClassification = CustomerContent;
+            SubType = Bitmap;
+        }
+        field(2; Data; BLOB)
+        {
+            SubType = Json;
+        }
+        field(3; Template; BLOB)
+        {
+            SubType = UserDefined;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (caption_property
+          (string_literal))
+        (data_classification_property
+          (data_classification_value))
+        (subtype_property
+          value: (value)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (subtype_property
+          value: (value)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (subtype_property
+          value: (value))))))
+
+================================================================================
+BLOB SubType case variations
+================================================================================
+
+table 50101 "Case Test"
+{
+    fields
+    {
+        field(1; "Image 1"; BLOB)
+        {
+            SubType = bitmap;
+        }
+        field(2; "Image 2"; BLOB)
+        {
+            SubType = BITMAP;
+        }
+        field(3; "Json Data"; BLOB)
+        {
+            SubType = json;
+        }
+        field(4; "Json Data 2"; BLOB)
+        {
+            SubType = JSON;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (subtype_property
+          value: (value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (subtype_property
+          value: (value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (subtype_property
+          value: (value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (subtype_property
+          value: (value))))))
+
+================================================================================
+SubType with custom identifier values
+================================================================================
+
+table 50102 "Custom SubType"
+{
+    fields
+    {
+        field(1; "Custom Type"; BLOB)
+        {
+            SubType = PurchaseHeader;
+        }
+        field(2; "Another Type"; BLOB)
+        {
+            SubType = SomeCustomType;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (subtype_property
+          value: (value
+            (identifier))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (subtype_property
+          value: (value
+            (identifier)))))))

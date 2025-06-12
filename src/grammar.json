@@ -9347,6 +9347,18 @@
         {
           "type": "PATTERN",
           "value": "[uU][sS][eE][rR][dD][eE][fF][iI][nN][eE][dD]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[bB][iI][tT][mM][aA][pP]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[jJ][sS][oO][nN]"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
         }
       ]
     },
@@ -16717,6 +16729,84 @@
         {
           "type": "SYMBOL",
           "name": "if_table_relation"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_table_relation"
+        }
+      ]
+    },
+    "preproc_conditional_table_relation": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "table_relation_expression"
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "table_relation_expression"
+                },
+                {
+                  "type": "STRING",
+                  "value": ";"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "table_relation_expression"
+                    },
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "table_relation_expression"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": ";"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
         }
       ]
     },

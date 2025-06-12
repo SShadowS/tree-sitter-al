@@ -18,12 +18,12 @@ codeunit 50000 "Pragma Test"
 (source_file
   (pragma)
   (codeunit_declaration
-    object_id:
-      (integer)
+    object_id: (integer)
     object_name: (quoted_identifier)
     (pragma)
-    (procedure
-      name: (name)
-      (pragma)
-      (code_block
-        (comment)))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (pragma)
+        (code_block
+          (comment))))))

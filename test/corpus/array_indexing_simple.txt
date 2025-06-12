@@ -18,20 +18,21 @@ codeunit 50118 "Simple Array Indexing Test"
   (codeunit_declaration
     (integer)
     (quoted_identifier)
-    (procedure
-      (name)
-      (var_section
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (array_type
-              (integer)
-              (type_specification
-                (basic_type))))))
-      (code_block
-        (assignment_statement
-          (subscript_expression
+    (attributed_procedure
+      (procedure
+        (name)
+        (var_section
+          (variable_declaration
             (identifier)
-            (expression_list
-              (integer)))
-          (integer))))))
+            (type_specification
+              (array_type
+                (integer)
+                (type_specification
+                  (basic_type))))))
+        (code_block
+          (assignment_statement
+            (subscript_expression
+              (identifier)
+              (expression_list
+                (integer)))
+            (integer)))))))

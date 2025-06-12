@@ -40,10 +40,11 @@ codeunit 50000 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      name: (name)
-      (code_block
-        (comment)))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (code_block
+          (comment))))))
 
 ================================================================================
 Using statement without namespace declaration

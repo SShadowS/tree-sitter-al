@@ -18,23 +18,24 @@ codeunit 12345 TestCodeunit
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (onrun_trigger
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
-              function: (member_expression
-                object: (enum_type_reference
-                  enum_type: (quoted_identifier))
-                property: (identifier))
-              arguments: (argument_list))
-            property: (identifier)))))))
+    (attributed_onrun_trigger
+      (onrun_trigger
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (enum_type_reference
+                    enum_type: (quoted_identifier))
+                  property: (identifier))
+                arguments: (argument_list))
+              property: (identifier))))))))
 
 ================================================================================
 Enum type reference with Names method call
@@ -56,23 +57,24 @@ codeunit 23456 NamesTestCodeunit
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (onrun_trigger
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (list_type
-              (type_specification
-                (text_type))))))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          right: (call_expression
-            function: (member_expression
-              object: (enum_type_reference
-                enum_type: (quoted_identifier))
-              property: (identifier))
-            arguments: (argument_list)))))))
+    (attributed_onrun_trigger
+      (onrun_trigger
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (list_type
+                (type_specification
+                  (text_type))))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            right: (call_expression
+              function: (member_expression
+                object: (enum_type_reference
+                  enum_type: (quoted_identifier))
+                property: (identifier))
+              arguments: (argument_list))))))))
 
 ================================================================================
 Multiple enum type references with different methods
@@ -98,49 +100,50 @@ codeunit 34567 MultiEnumCodeunit
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (onrun_trigger
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (list_type
-              (type_specification
-                (text_type))))))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
+    (attributed_onrun_trigger
+      (onrun_trigger
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (list_type
+                (type_specification
+                  (text_type))))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (enum_type_reference
+                    enum_type: (quoted_identifier))
+                  property: (identifier))
+                arguments: (argument_list))
+              property: (identifier)))
+          (assignment_statement
+            left: (identifier)
+            right: (call_expression
               function: (member_expression
                 object: (enum_type_reference
                   enum_type: (quoted_identifier))
                 property: (identifier))
-              arguments: (argument_list))
-            property: (identifier)))
-        (assignment_statement
-          left: (identifier)
-          right: (call_expression
-            function: (member_expression
-              object: (enum_type_reference
-                enum_type: (quoted_identifier))
-              property: (identifier))
-            arguments: (argument_list)))
-        (assignment_statement
-          left: (identifier)
-          right: (call_expression
-            function: (member_expression
-              object: (enum_type_reference
-                enum_type: (quoted_identifier))
-              property: (identifier))
-            arguments: (argument_list)))))))
+              arguments: (argument_list)))
+          (assignment_statement
+            left: (identifier)
+            right: (call_expression
+              function: (member_expression
+                object: (enum_type_reference
+                  enum_type: (quoted_identifier))
+                property: (identifier))
+              arguments: (argument_list))))))))
 
 ================================================================================
 Enum type reference with case variations
@@ -164,43 +167,44 @@ codeunit 45678 CaseVariationCodeunit
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (onrun_trigger
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
-              function: (member_expression
-                object: (enum_type_reference
-                  enum_type: (quoted_identifier))
-                property: (identifier))
-              arguments: (argument_list))
-            property: (identifier)))
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
-              function: (member_expression
-                object: (enum_type_reference
-                  enum_type: (quoted_identifier))
-                property: (identifier))
-              arguments: (argument_list))
-            property: (identifier)))
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
-              function: (member_expression
-                object: (enum_type_reference
-                  enum_type: (quoted_identifier))
-                property: (identifier))
-              arguments: (argument_list))
-            property: (identifier)))))))
+    (attributed_onrun_trigger
+      (onrun_trigger
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (enum_type_reference
+                    enum_type: (quoted_identifier))
+                  property: (identifier))
+                arguments: (argument_list))
+              property: (identifier)))
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (enum_type_reference
+                    enum_type: (quoted_identifier))
+                  property: (identifier))
+                arguments: (argument_list))
+              property: (identifier)))
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (enum_type_reference
+                    enum_type: (quoted_identifier))
+                  property: (identifier))
+                arguments: (argument_list))
+              property: (identifier))))))))
 
 ================================================================================
 Enum type reference with unquoted identifier
@@ -222,20 +226,21 @@ codeunit 56789 UnquotedEnumCodeunit
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (onrun_trigger
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
-              function: (member_expression
-                object: (enum_type_reference
-                  enum_type: (identifier))
-                property: (identifier))
-              arguments: (argument_list))
-            property: (identifier)))))))
+    (attributed_onrun_trigger
+      (onrun_trigger
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (enum_type_reference
+                    enum_type: (identifier))
+                  property: (identifier))
+                arguments: (argument_list))
+              property: (identifier))))))))

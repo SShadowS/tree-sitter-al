@@ -19,19 +19,20 @@ codeunit 123 "Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (onrun_trigger
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (for_statement
-          variable: (identifier)
-          start: (integer)
-          end: (integer)
-          body: (assignment_statement
-            left: (identifier)
-            right: (additive_expression
+    (attributed_onrun_trigger
+      (onrun_trigger
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (for_statement
+            variable: (identifier)
+            start: (integer)
+            end: (integer)
+            body: (assignment_statement
               left: (identifier)
-              right: (integer))))))))
+              right: (additive_expression
+                left: (identifier)
+                right: (integer)))))))))

@@ -19,27 +19,28 @@ codeunit 50000 "Range Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      name: (name)
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          left: (identifier)
-          operator: (in_operator)
-          right: (list_literal
-            (expression_list
-              (range_expression
-                left: (string_literal)
-                right: (string_literal)))))))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            left: (identifier)
+            operator: (in_operator)
+            right: (list_literal
+              (expression_list
+                (range_expression
+                  left: (string_literal)
+                  right: (string_literal))))))))))
 
 ================================================================================
 IN expression with multiple ranges
@@ -62,33 +63,34 @@ codeunit 50001 "Multiple Range Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      name: (name)
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          left: (identifier)
-          operator: (in_operator)
-          right: (list_literal
-            (expression_list
-              (range_expression
-                left: (string_literal)
-                right: (string_literal))
-              (range_expression
-                left: (string_literal)
-                right: (string_literal))
-              (range_expression
-                left: (string_literal)
-                right: (string_literal)))))))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            left: (identifier)
+            operator: (in_operator)
+            right: (list_literal
+              (expression_list
+                (range_expression
+                  left: (string_literal)
+                  right: (string_literal))
+                (range_expression
+                  left: (string_literal)
+                  right: (string_literal))
+                (range_expression
+                  left: (string_literal)
+                  right: (string_literal))))))))))
 
 ================================================================================
 IN expression with individual values
@@ -111,29 +113,30 @@ codeunit 50002 "Value List Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      name: (name)
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          left: (identifier)
-          operator: (in_operator)
-          right: (list_literal
-            (expression_list
-              (integer)
-              (integer)
-              (integer)
-              (integer)
-              (integer))))))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            left: (identifier)
+            operator: (in_operator)
+            right: (list_literal
+              (expression_list
+                (integer)
+                (integer)
+                (integer)
+                (integer)
+                (integer)))))))))
 
 ================================================================================
 Range operator in other contexts
@@ -165,41 +168,43 @@ codeunit 50003 "Range Context Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      name: (name)
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          right: (integer))
-        (for_statement
-          variable: (identifier)
-          start: (integer)
-          end: (integer)
-          body: (assignment_statement
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_statement
             left: (identifier)
-            right: (additive_expression
+            right: (integer))
+          (for_statement
+            variable: (identifier)
+            start: (integer)
+            end: (integer)
+            body: (assignment_statement
               left: (identifier)
-              right: (identifier))))))
-    (procedure
-      name: (name)
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          right: (string_literal))))))
+              right: (additive_expression
+                left: (identifier)
+                right: (identifier)))))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            right: (string_literal)))))))
 
 ================================================================================
 Complex IN expression with field access
@@ -222,28 +227,29 @@ codeunit 50004 "Field Access Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      name: (name)
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          left: (member_expression
-            object: (identifier)
-            property: (identifier))
-          operator: (in_operator)
-          right: (list_literal
-            (expression_list
-              (range_expression
-                left: (string_literal)
-                right: (string_literal))
-              (string_literal))))))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            left: (member_expression
+              object: (identifier)
+              property: (identifier))
+            operator: (in_operator)
+            right: (list_literal
+              (expression_list
+                (range_expression
+                  left: (string_literal)
+                  right: (string_literal))
+                (string_literal)))))))))

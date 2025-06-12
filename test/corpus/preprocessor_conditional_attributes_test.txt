@@ -33,58 +33,61 @@ codeunit 50100 TestUnit
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (onrun_trigger
-      (code_block))
-    (preproc_conditional_attributes
-      (preproc_if
-        condition: (identifier))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (qualified_enum_value
-                enum_type: (identifier))
-              (database_reference
-                table_name: (quoted_identifier))
-              (string_literal)
-              (string_literal)
-              (boolean)
-              (boolean)))))
-      (preproc_endif))
-    (procedure
-      modifier: (procedure_modifier)
-      name: (name)
-      (parameter_list
-        (parameter
-          parameter_name: (name)
-          parameter_type: (type_specification
-            (record_type
-              reference: (quoted_identifier))))
-        (parameter
-          modifier: (modifier)
-          parameter_name: (name)
-          parameter_type: (type_specification
-            (basic_type))))
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (comment)))
-    (preproc_conditional_attributes
-      (preproc_if
-        condition: (identifier))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (boolean)
-              (boolean)))))
-      (preproc_endif))
-    (procedure
-      name: (name)
-      (code_block
-        (comment)))))
+    (attributed_onrun_trigger
+      (onrun_trigger
+        (code_block)))
+    (attributed_procedure
+      (preproc_conditional_attributes
+        (preproc_if
+          condition: (identifier))
+        (attribute_list
+          (attribute
+            attribute_name: (identifier)
+            (attribute_arguments
+              arguments: (expression_list
+                (qualified_enum_value
+                  enum_type: (identifier))
+                (database_reference
+                  table_name: (quoted_identifier))
+                (string_literal)
+                (string_literal)
+                (boolean)
+                (boolean)))))
+        (preproc_endif))
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name)
+        (parameter_list
+          (parameter
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (basic_type))))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (comment))))
+    (attributed_procedure
+      (preproc_conditional_attributes
+        (preproc_if
+          condition: (identifier))
+        (attribute_list
+          (attribute
+            attribute_name: (identifier)
+            (attribute_arguments
+              arguments: (expression_list
+                (boolean)
+                (boolean)))))
+        (preproc_endif))
+      (procedure
+        name: (name)
+        (code_block
+          (comment))))))

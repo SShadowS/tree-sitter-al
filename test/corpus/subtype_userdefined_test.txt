@@ -57,9 +57,10 @@ codeunit 23456 TestCodeunit
       (property
         (subtype_property
           value: (value))))
-    (procedure
-      name: (name)
-      (code_block))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (code_block)))))
 
 ================================================================================
 SubType property case variations with UserDefined
