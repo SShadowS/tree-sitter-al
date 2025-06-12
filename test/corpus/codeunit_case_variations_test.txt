@@ -1,0 +1,73 @@
+================================================================================
+Codeunit type case variations
+================================================================================
+
+pageextension 608558 "Test Extension" extends "Purchase Invoice"
+{
+    actions
+    {
+        addafter(DocAttach)
+        {
+            action(TestAction)
+            {
+                ApplicationArea = Basic;
+                Caption = 'Test Action';
+                PromotedCategory = Category5;
+                Visible = true;
+                trigger OnAction();
+                var
+                    NetworkDocMgt: Codeunit "Test Codeunit 1";
+                    eDocRespMgt: COdeunit "Test Codeunit 2";
+                    reportMgt: CODEUNIT "Test Codeunit 3";
+                    dataHandler: codeunit "Test Codeunit 4";
+                begin
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (actions_section
+      (addafter_action_group
+        target: (identifier)
+        (action_declaration
+          name: (identifier)
+          (application_area_property
+            value: (identifier))
+          (caption_property
+            (string_literal))
+          (promoted_category_property
+            value: (identifier))
+          (visible_property
+            value: (boolean))
+          (trigger_declaration
+            name: (trigger_name)
+            (var_section
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (codeunit_type
+                    reference: (quoted_identifier))))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (codeunit_type
+                    reference: (quoted_identifier))))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (codeunit_type
+                    reference: (quoted_identifier))))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (codeunit_type
+                    reference: (quoted_identifier)))))
+            (code_block)))))))

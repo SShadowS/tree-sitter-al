@@ -3438,7 +3438,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     codeunit_type: $ => prec.right(20, seq(
-      choice('Codeunit', 'codeunit'),
+      choice('Codeunit', 'codeunit', 'CODEUNIT', 'COdeunit'),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
