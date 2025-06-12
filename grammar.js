@@ -4568,6 +4568,12 @@ enum_type: $ => prec(1, seq(
         field('operator', choice('or', 'OR', 'Or')),
         field('right', $._expression)
       )),
+      // IN expressions for CASE TRUE OF patterns like Text[i] IN ['A' .. 'Z']
+      prec(10, seq(
+        field('left', $._expression),
+        field('operator', $.in_operator),
+        field('right', $.list_literal)
+      )),
       $.range_expression, // Allow range expressions like 'A'..'Z'
       $.identifier, // Keep for simple identifiers
       $._quoted_identifier // Keep for quoted identifiers
