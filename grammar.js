@@ -3143,6 +3143,7 @@ module.exports = grammar({
         $.comment,
         $.multiline_comment,
         $.attribute_list,
+        $.pragma,
         $.variable_declaration
       ))
     )),
