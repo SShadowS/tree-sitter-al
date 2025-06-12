@@ -1,0 +1,93 @@
+================================================================================
+Table relation with preprocessor conditionals in IF...ELSE chain
+================================================================================
+
+table 123 "Test Table"
+{
+    fields
+    {
+        field(1; "Test Field"; Code[20])
+        {
+            TableRelation = IF ("Type" = CONST("Option1")) "Table 1"
+            ELSE
+            IF ("Type" = CONST("Option2")) "Table 2"
+            ELSE
+#if BC24
+            IF ("Type" = CONST("Option3")) "Table 3"
+#else
+            IF ("Type" = CONST("Option3")) "Fallback Table"
+#endif
+            ;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (table_relation_property
+          relation: (table_relation_expression
+            (if_table_relation
+              condition: (unified_where_conditions
+                (unified_where_condition
+                  (filter_expression_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    operator: (filter_operator)
+                    value: (filter_value
+                      (const_expression
+                        (quoted_identifier))))))
+              table: (quoted_identifier)
+              else_relation: (table_relation_expression
+                (if_table_relation
+                  condition: (unified_where_conditions
+                    (unified_where_condition
+                      (filter_expression_condition
+                        field: (field_ref
+                          (quoted_identifier))
+                        operator: (filter_operator)
+                        value: (filter_value
+                          (const_expression
+                            (quoted_identifier))))))
+                  table: (quoted_identifier)
+                  else_relation: (table_relation_expression
+                    (preproc_conditional_table_relation
+                      (preproc_if
+                        condition: (identifier))
+                      (table_relation_expression
+                        (if_table_relation
+                          condition: (unified_where_conditions
+                            (unified_where_condition
+                              (filter_expression_condition
+                                field: (field_ref
+                                  (quoted_identifier))
+                                operator: (filter_operator)
+                                value: (filter_value
+                                  (const_expression
+                                    (quoted_identifier))))))
+                          table: (quoted_identifier)))
+                      (preproc_else)
+                      (table_relation_expression
+                        (if_table_relation
+                          condition: (unified_where_conditions
+                            (unified_where_condition
+                              (filter_expression_condition
+                                field: (field_ref
+                                  (quoted_identifier))
+                                operator: (filter_operator)
+                                value: (filter_value
+                                  (const_expression
+                                    (quoted_identifier))))))
+                          table: (quoted_identifier)))
+                      (preproc_endif))))))))))))
+
