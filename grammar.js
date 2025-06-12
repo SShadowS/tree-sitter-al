@@ -12,13 +12,13 @@ module.exports = grammar({
 
 
   word: $ => $.identifier,
-  extras: $ => [/\s/, $.comment, $.multiline_comment, $.pragma],
+  extras: $ => [/\s/, $.comment, $.multiline_comment],
 
   rules: {
     source_file: $ => seq(
       optional($.namespace_declaration),
       repeat($.using_statement),
-      repeat($._object)
+      repeat(choice($._object, $.pragma))
     ),
 
     _object: $ => choice(
@@ -1411,7 +1411,8 @@ module.exports = grammar({
         $.var_section,
         seq(optional($.attribute_list), $.procedure),
         seq(optional($.attribute_list), $.onrun_trigger),
-        seq(optional($.attribute_list), $.trigger_declaration) 
+        seq(optional($.attribute_list), $.trigger_declaration),
+        $.pragma
       )),
       '}'
     ),
@@ -1793,7 +1794,8 @@ module.exports = grammar({
       $.movefirst_layout_modification,
       $.movelast_layout_modification,
       $.moveafter_layout_modification,
-      $.movebefore_layout_modification
+      $.movebefore_layout_modification,
+      $.preproc_conditional_layout
     ),
 
     // Layout modification rules for pageextensions
@@ -4144,6 +4146,7 @@ enum_type: $ => prec(1, seq(
       )),
       // Optional semicolon even when there's no return type (for test procedures)
       optional(';'),
+      repeat($.pragma),
       optional($.var_section),
       $.code_block
     ),
@@ -5137,6 +5140,26 @@ enum_type: $ => prec(1, seq(
       choice($.identifier, $._quoted_identifier),
       repeat(seq(',', choice($.identifier, $._quoted_identifier)))
     ),
+
+    // Preprocessor conditional rules for layout sections
+    preproc_conditional_layout: $ => seq(
+      $.preproc_if,
+      repeat($._layout_element),
+      optional(seq(
+        $.preproc_else,
+        repeat($._layout_element)
+      )),
+      $.preproc_endif
+    ),
+
+    preproc_if: $ => seq(
+      '#if',
+      field('condition', $.identifier)
+    ),
+
+    preproc_else: $ => '#else',
+
+    preproc_endif: $ => '#endif',
 
     pragma: $ => /#[^\n]*/, // Match any line starting with #
 

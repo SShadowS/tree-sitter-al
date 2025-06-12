@@ -1192,6 +1192,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_layout",
+          "named": true
+        },
+        {
           "type": "repeater_section",
           "named": true
         },
@@ -1378,6 +1382,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_layout",
+          "named": true
+        },
+        {
           "type": "repeater_section",
           "named": true
         },
@@ -1561,6 +1569,10 @@
         },
         {
           "type": "part_section",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_layout",
           "named": true
         },
         {
@@ -2091,6 +2103,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_layout",
+          "named": true
+        },
+        {
           "type": "repeater_section",
           "named": true
         },
@@ -2345,6 +2361,10 @@
         },
         {
           "type": "part_section",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_layout",
           "named": true
         },
         {
@@ -5474,6 +5494,10 @@
         },
         {
           "type": "onrun_trigger",
+          "named": true
+        },
+        {
+          "type": "pragma",
           "named": true
         },
         {
@@ -13138,6 +13162,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_layout",
+          "named": true
+        },
+        {
           "type": "processing_only_property",
           "named": true
         },
@@ -15022,6 +15050,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_layout",
+          "named": true
+        },
+        {
           "type": "processing_only_property",
           "named": true
         },
@@ -15585,6 +15617,10 @@
         },
         {
           "type": "populate_all_fields_property",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_layout",
           "named": true
         },
         {
@@ -18119,6 +18155,10 @@
         },
         {
           "type": "part_section",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_layout",
           "named": true
         },
         {
@@ -24706,6 +24746,133 @@
     }
   },
   {
+    "type": "preproc_conditional_layout",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "addafter_layout_modification",
+          "named": true
+        },
+        {
+          "type": "addbefore_layout_modification",
+          "named": true
+        },
+        {
+          "type": "addfirst_layout_modification",
+          "named": true
+        },
+        {
+          "type": "addlast_layout_modification",
+          "named": true
+        },
+        {
+          "type": "area_section",
+          "named": true
+        },
+        {
+          "type": "cuegroup_section",
+          "named": true
+        },
+        {
+          "type": "field_section",
+          "named": true
+        },
+        {
+          "type": "fixed_section",
+          "named": true
+        },
+        {
+          "type": "grid_section",
+          "named": true
+        },
+        {
+          "type": "group_section",
+          "named": true
+        },
+        {
+          "type": "label_section",
+          "named": true
+        },
+        {
+          "type": "modify_layout_modification",
+          "named": true
+        },
+        {
+          "type": "moveafter_layout_modification",
+          "named": true
+        },
+        {
+          "type": "movebefore_layout_modification",
+          "named": true
+        },
+        {
+          "type": "movefirst_layout_modification",
+          "named": true
+        },
+        {
+          "type": "movelast_layout_modification",
+          "named": true
+        },
+        {
+          "type": "part_section",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_layout",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "repeater_section",
+          "named": true
+        },
+        {
+          "type": "systempart_section",
+          "named": true
+        },
+        {
+          "type": "usercontrol_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_if",
+    "named": true,
+    "fields": {
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "preview_mode_property",
     "named": true,
     "fields": {}
@@ -24771,6 +24938,10 @@
         },
         {
           "type": "parameter_list",
+          "named": true
+        },
+        {
+          "type": "pragma",
           "named": true
         },
         {
@@ -27748,6 +27919,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_layout",
+          "named": true
+        },
+        {
           "type": "processing_only_property",
           "named": true
         },
@@ -30151,6 +30326,10 @@
         },
         {
           "type": "permissionset_declaration",
+          "named": true
+        },
+        {
+          "type": "pragma",
           "named": true
         },
         {
@@ -36267,6 +36446,10 @@
     "named": false
   },
   {
+    "type": "#if",
+    "named": false
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -38650,11 +38833,11 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "div",
@@ -38762,11 +38945,11 @@
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "interface",
@@ -38855,8 +39038,15 @@
   },
   {
     "type": "pragma",
-    "named": true,
-    "extra": true
+    "named": true
+  },
+  {
+    "type": "preproc_else",
+    "named": true
+  },
+  {
+    "type": "preproc_endif",
+    "named": true
   },
   {
     "type": "procedure",
