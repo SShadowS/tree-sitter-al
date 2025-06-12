@@ -1,0 +1,60 @@
+================================================================================
+Unary operators - plus, minus, and not
+================================================================================
+
+codeunit 123 "Test"
+{
+    trigger OnRun()
+    var
+        SignFactor: Integer;
+        NegValue: Integer;
+        BoolResult: Boolean;
+    begin
+        SignFactor := +1;
+        NegValue := -5;
+        BoolResult := NOT TRUE;
+        BoolResult := not FALSE;
+        BoolResult := Not FALSE;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (onrun_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_statement
+          left: (identifier)
+          right: (unary_expression
+            (integer)))
+        (assignment_statement
+          left: (identifier)
+          right: (integer))
+        (assignment_statement
+          left: (identifier)
+          right: (unary_expression
+            (boolean)))
+        (assignment_statement
+          left: (identifier)
+          right: (unary_expression
+            (boolean)))
+        (assignment_statement
+          left: (identifier)
+          right: (unary_expression
+            (boolean)))))))

@@ -10580,21 +10580,8 @@
       ]
     },
     "auto_format_expression_value": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "string_literal"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "identifier"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_quoted_identifier"
-        }
-      ]
+      "type": "SYMBOL",
+      "name": "_expression"
     },
     "auto_format_type_value": {
       "type": "CHOICE",

@@ -1,0 +1,43 @@
+================================================================================
+Preprocessor directives in layout
+================================================================================
+
+pageextension 123 "Test Extension" extends "Base Page"
+{
+    layout
+    {
+#if BC25
+        modify("Field1")
+        {
+            Visible = true;
+        }
+#else
+        modify("Field2")
+        {
+            Visible = false;
+        }
+#endif
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (layout_section
+      (preproc_conditional_layout
+        (preproc_if
+          condition: (identifier))
+        (modify_layout_modification
+          target: (quoted_identifier)
+          (visible_property
+            value: (boolean)))
+        (preproc_else)
+        (modify_layout_modification
+          target: (quoted_identifier)
+          (visible_property
+            value: (boolean)))
+        (preproc_endif)))))

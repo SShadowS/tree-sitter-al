@@ -1,0 +1,37 @@
+================================================================================
+FOR statement with DOWNTO keyword
+================================================================================
+
+codeunit 123 "Test"
+{
+    trigger OnRun()
+    var
+        i: Integer;
+    begin
+        FOR i := 10 DOWNTO 1 DO
+            i := i + 1;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (onrun_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (for_statement
+          variable: (identifier)
+          start: (integer)
+          end: (integer)
+          body: (assignment_statement
+            left: (identifier)
+            right: (additive_expression
+              left: (identifier)
+              right: (integer))))))))

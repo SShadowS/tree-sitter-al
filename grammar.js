@@ -2410,12 +2410,7 @@ module.exports = grammar({
       field('permission', $.permission_type)
     ),
 
-    auto_format_expression_value: $ => choice(
-      $.string_literal,
-      // Also allow unquoted format expressions like <precision, 2:2><standard format,0>
-      $.identifier,
-      $._quoted_identifier
-    ),
+    auto_format_expression_value: $ => $._expression,
 
     auto_format_type_value: $ => choice(
       '0', // None
