@@ -1663,7 +1663,10 @@ module.exports = grammar({
 
     permission_list: $ => seq(
       $.permission_entry,
-      repeat(seq(',', $.permission_entry))
+      repeat(choice(
+        seq(',', optional($.pragma), $.permission_entry),
+        $.pragma
+      ))
     ),
 
     permission_entry: $ => choice(

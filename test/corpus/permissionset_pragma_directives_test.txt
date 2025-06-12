@@ -1,0 +1,59 @@
+================================================================================
+PermissionSet with pragma directives in permissions
+================================================================================
+
+permissionset 50100 "Test Permission Set"
+{
+    Access = Internal;
+    Assignable = true;
+    Caption = 'Test Permission Set';
+    
+    Permissions = 
+        tabledata "CDC Business ID Fields" = Rimd,
+        tabledata "CDC Continia Company Setup" = R,
+#pragma warning disable AL0432
+        tabledata "CTS-CBF Continia User" = R,
+#pragma warning restore AL0432
+        tabledata "CDC Continia User Permission" = R,
+        tabledata "CDC Continia User Property" = Rim;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property_list
+      (property
+        (access_property
+          value: (value))))
+    (assignable_property)
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))
+    (permissionset_permissions
+      (permission_list
+        (permission_entry
+          (tabledata_permission_entry
+            (quoted_identifier)
+            (permission_type)))
+        (permission_entry
+          (tabledata_permission_entry
+            (quoted_identifier)
+            (permission_type)))
+        (pragma)
+        (permission_entry
+          (tabledata_permission_entry
+            (quoted_identifier)
+            (permission_type)))
+        (pragma)
+        (permission_entry
+          (tabledata_permission_entry
+            (quoted_identifier)
+            (permission_type)))
+        (permission_entry
+          (tabledata_permission_entry
+            (quoted_identifier)
+            (permission_type)))))))
