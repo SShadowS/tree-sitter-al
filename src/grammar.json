@@ -19240,7 +19240,7 @@
                 "type": "REPEAT",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_statement"
+                  "name": "_statement_or_preprocessor"
                 }
               },
               {
@@ -19282,6 +19282,63 @@
           }
         ]
       }
+    },
+    "_statement_or_preprocessor": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_statements"
+        }
+      ]
+    },
+    "preproc_conditional_statements": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_statement"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_statement"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
     },
     "_expression_statement": {
       "type": "SYMBOL",

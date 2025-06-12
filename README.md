@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,304 files (98.0%) parse successfully**.
+Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,283 files (96.4%) parse successfully**.
 
 Recent improvements include:
 - **Namespace-qualified record types** - Added support for namespace-qualified table references in record variable declarations (e.g., `Record Microsoft.Foundation.UOM."Unit of Measure"`)

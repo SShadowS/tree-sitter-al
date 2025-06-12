@@ -4211,10 +4211,25 @@ enum_type: $ => prec(1, seq(
     // Define code blocks with explicit keyword handling
     code_block: $ => prec.right(1, seq(
       choice('begin', 'BEGIN', 'Begin'),
-      optional(repeat($._statement)),
+      optional(repeat($._statement_or_preprocessor)),
       choice('end', 'END', 'End'),
       optional(token(';')) // Explicit token
     )),
+
+    _statement_or_preprocessor: $ => choice(
+      $._statement,
+      $.preproc_conditional_statements
+    ),
+
+    preproc_conditional_statements: $ => seq(
+      $.preproc_if,
+      repeat($._statement),
+      optional(seq(
+        $.preproc_else,
+        repeat($._statement)
+      )),
+      $.preproc_endif
+    ),
 
     _expression_statement: $ => $._expression, // New rule
 
