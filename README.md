@@ -8,9 +8,10 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,290 files (96.9%) parse successfully**.
+Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,308 files (98.3%) parse successfully**.
 
 Recent improvements include:
+- **Preprocessor conditionals in table relations** - Enhanced table relations to support preprocessor conditionals with semicolons in conditional branches (e.g., `#if BC24 IF (...) Table1; #else IF (...) Table2; #endif`)
 - **Pragma directive support in code blocks** - Added support for `#pragma warning disable/restore` directives within procedure code blocks
 - **Standalone semicolon support** - Enhanced field property lists to handle standalone semicolons for improved AL code compatibility
 - **Namespace-qualified record types** - Added support for namespace-qualified table references in record variable declarations (e.g., `Record Microsoft.Foundation.UOM."Unit of Measure"`)
