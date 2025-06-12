@@ -931,7 +931,8 @@ module.exports = grammar({
         /[cC][rR][eE][aA][tT][iI][oO][nN]/,
         /[pP][rR][oO][mM][oO][tT][eE][dD]/,
         /[sS][yY][sS][tT][eE][mM][aA][cC][tT][iI][oO][nN][sS]/,
-        /[sS][eE][cC][tT][iI][oO][nN][sS]/
+        /[sS][eE][cC][tT][iI][oO][nN][sS]/,
+        /[eE][mM][bB][eE][dD][dD][iI][nN][gG]/
       )),
       ')',
       '{',
@@ -5582,6 +5583,7 @@ enum_type: $ => prec(1, seq(
       $.navigation_page_id_property, // Navigation target
       $.run_object_property,         // Action target object
       $.run_page_link_property,      // Page link parameters
+      $.run_page_view_property,      // Page view/filter to apply
       $.shortcut_key_property,       // Keyboard shortcut
       $.card_page_id_property,       // Associated card page
     ),
@@ -5931,7 +5933,6 @@ enum_type: $ => prec(1, seq(
       $.promoted_only_property,
       $.run_page_mode_property,
       $.run_page_on_rec_property,
-      $.run_page_view_property,
       $.scope_property,
     ),
 
