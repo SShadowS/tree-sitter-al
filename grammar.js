@@ -1812,7 +1812,8 @@ module.exports = grammar({
       $.movelast_layout_modification,
       $.moveafter_layout_modification,
       $.movebefore_layout_modification,
-      $.preproc_conditional_layout
+      $.preproc_conditional_layout,
+      $.pragma
     ),
 
     // Layout modification rules for pageextensions
