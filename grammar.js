@@ -1409,9 +1409,9 @@ module.exports = grammar({
       prec(4, optional($.property_list)), // Prioritize properties over procedures starting with same keywords
       repeat(choice(
         $.var_section,
-        seq(optional(choice($.attribute_list, $.preproc_conditional_attributes)), $.procedure),
-        seq(optional(choice($.attribute_list, $.preproc_conditional_attributes)), $.onrun_trigger),
-        seq(optional(choice($.attribute_list, $.preproc_conditional_attributes)), $.trigger_declaration),
+        $.attributed_procedure,
+        $.attributed_onrun_trigger, 
+        $.attributed_trigger,
         $.preproc_conditional_procedures,
         $.pragma
       )),
@@ -1422,6 +1422,21 @@ module.exports = grammar({
       $.preproc_if,
       $.attribute_list,
       $.preproc_endif
+    ),
+
+    attributed_procedure: $ => choice(
+      seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.procedure),
+      $.procedure
+    ),
+
+    attributed_trigger: $ => choice(
+      seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.trigger_declaration),
+      $.trigger_declaration
+    ),
+
+    attributed_onrun_trigger: $ => choice(
+      seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.onrun_trigger),
+      $.onrun_trigger
     ),
 
     preproc_conditional_procedures: $ => seq(

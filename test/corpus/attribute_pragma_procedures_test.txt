@@ -1,0 +1,114 @@
+================================================================================
+EventSubscriber attribute with pragma directives before procedure
+================================================================================
+
+codeunit 50100 "Test Codeunit"
+{
+    EventSubscriberInstance = Manual;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"CSC Core Session Manager", 'OnGetAccessToken', '', true, true)]
+#pragma warning disable AL0432
+    local procedure OnGetAccessToken(var AccessTokenValue: Text[1024]; var IsHandled: Boolean)
+    begin
+        AccessTokenValue := AccessToken;
+        IsHandled := (AccessToken <> '');
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"CSC License Management", 'OnIsAppActivated', '', true, true)]
+#pragma warning restore AL0432
+    local procedure OnIsAppActivated(var IsActivated: Boolean; var IsHandled: Boolean)
+    begin
+        IsActivated := ActivationState;
+        IsHandled := true;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property_list
+      (property
+        (event_subscriber_instance_property
+          value: (value))))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (qualified_enum_value
+                enum_type: (identifier))
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (quoted_identifier))
+              (string_literal)
+              (string_literal)
+              (boolean)
+              (boolean)))))
+      (pragma)
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name)
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (text_type
+                length: (integer))))
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            right: (identifier))
+          (assignment_statement
+            left: (identifier)
+            right: (parenthesized_expression
+              (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (string_literal)))))))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (qualified_enum_value
+                enum_type: (identifier))
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (quoted_identifier))
+              (string_literal)
+              (string_literal)
+              (boolean)
+              (boolean)))))
+      (pragma)
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name)
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (basic_type)))
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            right: (identifier))
+          (assignment_statement
+            left: (identifier)
+            right: (boolean)))))))

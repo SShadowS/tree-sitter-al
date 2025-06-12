@@ -6004,94 +6004,16 @@
                 "name": "var_section"
               },
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "attribute_list"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "preproc_conditional_attributes"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "procedure"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "attributed_procedure"
               },
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "attribute_list"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "preproc_conditional_attributes"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "onrun_trigger"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "attributed_onrun_trigger"
               },
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "attribute_list"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "preproc_conditional_attributes"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "trigger_declaration"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "attributed_trigger"
               },
               {
                 "type": "SYMBOL",
@@ -6124,6 +6046,120 @@
         {
           "type": "SYMBOL",
           "name": "preproc_endif"
+        }
+      ]
+    },
+    "attributed_procedure": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "attribute_list"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_conditional_attributes"
+                }
+              ]
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "pragma"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "procedure"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "procedure"
+        }
+      ]
+    },
+    "attributed_trigger": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "attribute_list"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_conditional_attributes"
+                }
+              ]
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "pragma"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "trigger_declaration"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "trigger_declaration"
+        }
+      ]
+    },
+    "attributed_onrun_trigger": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "attribute_list"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_conditional_attributes"
+                }
+              ]
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "pragma"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "onrun_trigger"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "onrun_trigger"
         }
       ]
     },

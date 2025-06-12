@@ -3206,6 +3206,87 @@
     }
   },
   {
+    "type": "attributed_onrun_trigger",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "onrun_trigger",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_attributes",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "attributed_procedure",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_attributes",
+          "named": true
+        },
+        {
+          "type": "procedure",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "attributed_trigger",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_attributes",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "auto_format_expression_property",
     "named": true,
     "fields": {
@@ -5517,7 +5598,15 @@
       "required": false,
       "types": [
         {
-          "type": "attribute_list",
+          "type": "attributed_onrun_trigger",
+          "named": true
+        },
+        {
+          "type": "attributed_procedure",
+          "named": true
+        },
+        {
+          "type": "attributed_trigger",
           "named": true
         },
         {
@@ -5525,15 +5614,7 @@
           "named": true
         },
         {
-          "type": "onrun_trigger",
-          "named": true
-        },
-        {
           "type": "pragma",
-          "named": true
-        },
-        {
-          "type": "preproc_conditional_attributes",
           "named": true
         },
         {
@@ -5541,15 +5622,7 @@
           "named": true
         },
         {
-          "type": "procedure",
-          "named": true
-        },
-        {
           "type": "property_list",
-          "named": true
-        },
-        {
-          "type": "trigger_declaration",
           "named": true
         },
         {
@@ -40148,11 +40221,11 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "div",
