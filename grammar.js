@@ -1409,12 +1409,29 @@ module.exports = grammar({
       prec(4, optional($.property_list)), // Prioritize properties over procedures starting with same keywords
       repeat(choice(
         $.var_section,
-        seq(optional($.attribute_list), $.procedure),
-        seq(optional($.attribute_list), $.onrun_trigger),
-        seq(optional($.attribute_list), $.trigger_declaration),
+        seq(optional(choice($.attribute_list, $.preproc_conditional_attributes)), $.procedure),
+        seq(optional(choice($.attribute_list, $.preproc_conditional_attributes)), $.onrun_trigger),
+        seq(optional(choice($.attribute_list, $.preproc_conditional_attributes)), $.trigger_declaration),
+        $.preproc_conditional_procedures,
         $.pragma
       )),
       '}'
+    ),
+
+    preproc_conditional_attributes: $ => seq(
+      $.preproc_if,
+      $.attribute_list,
+      $.preproc_endif
+    ),
+
+    preproc_conditional_procedures: $ => seq(
+      $.preproc_if,
+      repeat1(seq(optional($.attribute_list), choice($.procedure, $.onrun_trigger, $.trigger_declaration))),
+      optional(seq(
+        $.preproc_else,
+        repeat1(seq(optional($.attribute_list), choice($.procedure, $.onrun_trigger, $.trigger_declaration)))
+      )),
+      $.preproc_endif
     ),
 
     implements_clause: $ => seq(
@@ -5193,7 +5210,7 @@ enum_type: $ => prec(1, seq(
 
     preproc_endif: $ => '#endif',
 
-    pragma: $ => /#[^\n]*/, // Match any line starting with #
+    pragma: $ => /#pragma[^\n]*/, // Match lines starting with #pragma specifically
 
     comment: $ => token(seq('//', /.*/)),
 

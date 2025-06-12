@@ -5509,6 +5509,14 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_attributes",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_procedures",
+          "named": true
+        },
+        {
           "type": "procedure",
           "named": true
         },
@@ -24754,6 +24762,29 @@
     }
   },
   {
+    "type": "preproc_conditional_attributes",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_case",
     "named": true,
     "fields": {},
@@ -24886,6 +24917,45 @@
         },
         {
           "type": "usercontrol_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_procedures",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "onrun_trigger",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "procedure",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
           "named": true
         }
       ]
@@ -39434,12 +39504,12 @@
   },
   {
     "type": "comment",
-    "named": false,
+    "named": true,
     "extra": true
   },
   {
     "type": "comment",
-    "named": true,
+    "named": false,
     "extra": true
   },
   {
@@ -39484,11 +39554,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
