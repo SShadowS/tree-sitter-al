@@ -25839,6 +25839,49 @@
     }
   },
   {
+    "type": "preproc_conditional_variables",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "multiline_comment",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "variable_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_if",
     "named": true,
     "fields": {
@@ -35364,6 +35407,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_variables",
+          "named": true
+        },
+        {
           "type": "variable_declaration",
           "named": true
         }
@@ -40101,11 +40148,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",

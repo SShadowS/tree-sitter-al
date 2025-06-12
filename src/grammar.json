@@ -13707,6 +13707,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "variable_declaration"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_conditional_variables"
                 }
               ]
             }
@@ -24007,6 +24011,92 @@
                   "content": {
                     "type": "SYMBOL",
                     "name": "_page_properties"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_variables": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "variable_declaration"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "comment"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "multiline_comment"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "attribute_list"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "pragma"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "variable_declaration"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "comment"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "multiline_comment"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "attribute_list"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "pragma"
+                      }
+                    ]
                   }
                 }
               ]

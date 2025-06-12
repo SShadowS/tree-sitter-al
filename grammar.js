@@ -3167,7 +3167,8 @@ module.exports = grammar({
         $.multiline_comment,
         $.attribute_list,
         $.pragma,
-        $.variable_declaration
+        $.variable_declaration,
+        $.preproc_conditional_variables
       ))
     )),
 
@@ -5215,6 +5216,29 @@ enum_type: $ => prec(1, seq(
       optional(seq(
         $.preproc_else,
         repeat($._page_properties)
+      )),
+      $.preproc_endif
+    ),
+
+    // Preprocessor conditional rules for variable declarations
+    preproc_conditional_variables: $ => seq(
+      $.preproc_if,
+      repeat(choice(
+        $.variable_declaration,
+        $.comment,
+        $.multiline_comment,
+        $.attribute_list,
+        $.pragma
+      )),
+      optional(seq(
+        $.preproc_else,
+        repeat(choice(
+          $.variable_declaration,
+          $.comment,
+          $.multiline_comment,
+          $.attribute_list,
+          $.pragma
+        ))
       )),
       $.preproc_endif
     ),

@@ -8,9 +8,11 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,283 files (96.4%) parse successfully**.
+Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,290 files (96.9%) parse successfully**.
 
 Recent improvements include:
+- **Pragma directive support in code blocks** - Added support for `#pragma warning disable/restore` directives within procedure code blocks
+- **Standalone semicolon support** - Enhanced field property lists to handle standalone semicolons for improved AL code compatibility
 - **Namespace-qualified record types** - Added support for namespace-qualified table references in record variable declarations (e.g., `Record Microsoft.Foundation.UOM."Unit of Measure"`)
 - **Unary plus operator** - Added support for unary `+` operator in expressions (e.g., `SignFactor := +1;`)
 - **FOR...DOWNTO loops** - Added support for `DOWNTO` keyword in FOR statements (e.g., `FOR i := 10 DOWNTO 1 DO`)
