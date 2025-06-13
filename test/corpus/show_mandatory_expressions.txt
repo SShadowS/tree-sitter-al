@@ -1,0 +1,57 @@
+================================================================================
+ShowMandatory property with expressions
+================================================================================
+
+page 50100 "Test ShowMandatory"
+{
+    layout
+    {
+        area(content)
+        {
+            field("Test Field"; "Test Field")
+            {
+                ShowMandatory = TRUE;
+            }
+            field("Dynamic Field"; "Dynamic Field")
+            {
+                ShowMandatory = NOT IsSaaSProd;
+            }
+            field("Complex Field"; "Complex Field")
+            {
+                ShowMandatory = Rec.Required AND NOT Rec.Optional;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          (quoted_identifier)
+          (quoted_identifier)
+          (show_mandatory_property
+            (boolean)))
+        (field_section
+          (quoted_identifier)
+          (quoted_identifier)
+          (show_mandatory_property
+            (unary_expression
+              (identifier))))
+        (field_section
+          (quoted_identifier)
+          (quoted_identifier)
+          (show_mandatory_property
+            (logical_expression
+              (member_expression
+                (identifier)
+                (identifier))
+              (unary_expression
+                (member_expression
+                  (identifier)
+                  (identifier))))))))))

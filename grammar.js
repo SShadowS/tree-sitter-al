@@ -2313,7 +2313,7 @@ module.exports = grammar({
     show_mandatory_property: $ => seq(
       'ShowMandatory',
       '=',
-      field('value', $.boolean),
+      field('value', $._expression),
       ';'
     ),
 
