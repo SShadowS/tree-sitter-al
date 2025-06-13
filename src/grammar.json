@@ -24185,6 +24185,50 @@
         }
       ]
     },
+    "preproc_conditional_field_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_field_properties"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_field_properties"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
     "preproc_if": {
       "type": "SEQ",
       "members": [
@@ -25930,6 +25974,10 @@
         {
           "type": "SYMBOL",
           "name": "drill_down_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_field_properties"
         },
         {
           "type": "SYMBOL",

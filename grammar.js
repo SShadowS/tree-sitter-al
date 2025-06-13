@@ -5271,6 +5271,16 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     ),
 
+    preproc_conditional_field_properties: $ => seq(
+      $.preproc_if,
+      repeat($._field_properties),
+      optional(seq(
+        $.preproc_else,
+        repeat($._field_properties)
+      )),
+      $.preproc_endif
+    ),
+
     preproc_if: $ => seq(
       choice('#if', '#IF', '#If'),
       field('condition', $.identifier)
@@ -5679,6 +5689,7 @@ enum_type: $ => prec(1, seq(
       $.page_about_text_ml_property,
       $.odata_edm_type_property,
       $.drill_down_property,
+      $.preproc_conditional_field_properties,
       $.access_by_permission_property,
       $.empty_statement,  // Allow standalone semicolons in field property lists
     ),
