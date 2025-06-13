@@ -3415,7 +3415,7 @@ enum_type: $ => prec(1, seq(
       prec(1, choice('Boolean', 'BOOLEAN', 'Boolean')),
       // Option removed, handled by option_type
       prec(1, choice('Guid', 'GUID', 'Guid')),
-      prec(1, choice('RecordId', 'RECORDID', 'Recordid')),
+      prec(1, choice('RecordId', 'RECORDID', 'Recordid', 'RecordID')),
       prec(1, choice('Variant', 'VARIANT', 'Variant')),
       prec(1, choice('Label', 'LABEL', 'label')),
       prec(1, choice('Dialog', 'DIALOG', 'Dialog')),

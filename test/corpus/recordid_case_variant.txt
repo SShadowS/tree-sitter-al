@@ -1,0 +1,36 @@
+================================================================================
+RecordID type with mixed case
+================================================================================
+
+page 50100 "Test RecordID"
+{
+    var
+        RecID: RecordID;
+        RecordIdVar: RecordId;
+        AllCapsVar: RECORDID;
+        LowerVar: Recordid;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (quoted_identifier)
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (basic_type)))
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (basic_type)))
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (basic_type)))
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (basic_type))))))

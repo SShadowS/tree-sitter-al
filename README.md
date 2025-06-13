@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,308 files (98.3%) parse successfully**.
+Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,310 files (98.4%) parse successfully**.
 
 Recent improvements include:
 - **Preprocessor conditionals in table relations** - Enhanced table relations to support preprocessor conditionals with semicolons in conditional branches (e.g., `#if BC24 IF (...) Table1; #else IF (...) Table2; #endif`)
