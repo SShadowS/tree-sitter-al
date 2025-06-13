@@ -26034,6 +26034,16 @@
     }
   },
   {
+    "type": "preproc_else",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "preproc_endif",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "preproc_if",
     "named": true,
     "fields": {
@@ -37946,6 +37956,38 @@
     "named": false
   },
   {
+    "type": "#ELSE",
+    "named": false
+  },
+  {
+    "type": "#ENDIF",
+    "named": false
+  },
+  {
+    "type": "#Else",
+    "named": false
+  },
+  {
+    "type": "#Endif",
+    "named": false
+  },
+  {
+    "type": "#IF",
+    "named": false
+  },
+  {
+    "type": "#If",
+    "named": false
+  },
+  {
+    "type": "#else",
+    "named": false
+  },
+  {
+    "type": "#endif",
+    "named": false
+  },
+  {
     "type": "#if",
     "named": false
   },
@@ -40291,12 +40333,12 @@
   },
   {
     "type": "comment",
-    "named": true,
+    "named": false,
     "extra": true
   },
   {
     "type": "comment",
-    "named": false,
+    "named": true,
     "extra": true
   },
   {
@@ -40546,14 +40588,6 @@
   },
   {
     "type": "pragma",
-    "named": true
-  },
-  {
-    "type": "preproc_else",
-    "named": true
-  },
-  {
-    "type": "preproc_endif",
     "named": true
   },
   {

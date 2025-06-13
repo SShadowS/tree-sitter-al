@@ -41,3 +41,148 @@ pageextension 123 "Test Extension" extends "Base Page"
           (visible_property
             value: (boolean)))
         (preproc_endif)))))
+
+================================================================================
+Uppercase preprocessor directives in code blocks
+================================================================================
+
+codeunit 123 "Test Codeunit"
+{
+    procedure TestProcedure()
+    var
+        Test: Boolean;
+    begin
+#IF BC24
+        Test := true;
+#ELSE
+        Test := false;
+#ENDIF
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure_declaration
+      procedure_name: (identifier)
+      parameters: (parameters)
+      (variable_declarations
+        (variable_declaration
+          variable_name: (identifier)
+          type: (type_specification
+            (boolean_type))))
+      body: (statement_list
+        (preproc_if
+          condition: (identifier))
+        (assignment_statement
+          left: (identifier)
+          right: (boolean))
+        (preproc_else)
+        (assignment_statement
+          left: (identifier)
+          right: (boolean))
+        (preproc_endif)))))
+
+================================================================================
+Mixed case preprocessor directives in code blocks
+================================================================================
+
+codeunit 124 "Test Codeunit Mixed"
+{
+    procedure TestMixedCase()
+    var
+        Value: Integer;
+    begin
+#If BC25
+        Value := 100;
+#Else
+        Value := 50;
+#Endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure_declaration
+      procedure_name: (identifier)
+      parameters: (parameters)
+      (variable_declarations
+        (variable_declaration
+          variable_name: (identifier)
+          type: (type_specification
+            (integer_type))))
+      body: (statement_list
+        (preproc_if
+          condition: (identifier))
+        (assignment_statement
+          left: (identifier)
+          right: (integer))
+        (preproc_else)
+        (assignment_statement
+          left: (identifier)
+          right: (integer))
+        (preproc_endif)))))
+
+================================================================================
+Uppercase preprocessor directives with complex conditions
+================================================================================
+
+codeunit 125 "Test Complex Preprocessor"
+{
+    procedure ComplexPreproc()
+    var
+        Feature: Boolean;
+        Version: Integer;
+    begin
+#IF BC24
+        Feature := true;
+        Version := 24;
+#ELSE
+        Feature := false;
+        Version := 23;
+#ENDIF
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure_declaration
+      procedure_name: (identifier)
+      parameters: (parameters)
+      (variable_declarations
+        (variable_declaration
+          variable_name: (identifier)
+          type: (type_specification
+            (boolean_type)))
+        (variable_declaration
+          variable_name: (identifier)
+          type: (type_specification
+            (integer_type))))
+      body: (statement_list
+        (preproc_if
+          condition: (identifier))
+        (assignment_statement
+          left: (identifier)
+          right: (boolean))
+        (assignment_statement
+          left: (identifier)
+          right: (integer))
+        (preproc_else)
+        (assignment_statement
+          left: (identifier)
+          right: (boolean))
+        (assignment_statement
+          left: (identifier)
+          right: (integer))
+        (preproc_endif)))))

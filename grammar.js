@@ -5286,13 +5286,13 @@ enum_type: $ => prec(1, seq(
     ),
 
     preproc_if: $ => seq(
-      '#if',
+      choice('#if', '#IF', '#If'),
       field('condition', $.identifier)
     ),
 
-    preproc_else: $ => '#else',
+    preproc_else: $ => choice('#else', '#ELSE', '#Else'),
 
-    preproc_endif: $ => '#endif',
+    preproc_endif: $ => choice('#endif', '#ENDIF', '#Endif'),
 
     preproc_region: $ => seq(
       '#region',

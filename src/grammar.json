@@ -24258,8 +24258,21 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "#if"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "#if"
+            },
+            {
+              "type": "STRING",
+              "value": "#IF"
+            },
+            {
+              "type": "STRING",
+              "value": "#If"
+            }
+          ]
         },
         {
           "type": "FIELD",
@@ -24272,12 +24285,38 @@
       ]
     },
     "preproc_else": {
-      "type": "STRING",
-      "value": "#else"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#else"
+        },
+        {
+          "type": "STRING",
+          "value": "#ELSE"
+        },
+        {
+          "type": "STRING",
+          "value": "#Else"
+        }
+      ]
     },
     "preproc_endif": {
-      "type": "STRING",
-      "value": "#endif"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#endif"
+        },
+        {
+          "type": "STRING",
+          "value": "#ENDIF"
+        },
+        {
+          "type": "STRING",
+          "value": "#Endif"
+        }
+      ]
     },
     "preproc_region": {
       "type": "SEQ",
