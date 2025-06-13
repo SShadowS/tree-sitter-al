@@ -1210,21 +1210,7 @@ module.exports = grammar({
     run_page_view_property: $ => seq(
       'RunPageView',
       '=',
-      field('value', choice(
-        $.string_literal,
-        $.identifier, // Simple identifier like 'Ascending'
-        seq( // sorting(...) pattern
-          $.identifier, // e.g., 'sorting'
-          '(',
-          // Comma-separated list of one or more identifiers (quoted or unquoted)
-          seq(
-            choice($.identifier, $._quoted_identifier),
-            repeat(seq(',', choice($.identifier, $._quoted_identifier)))
-          ),
-          ')'
-        ),
-        $.where_clause // Support WHERE clause syntax
-      )),
+      field('value', $.source_table_view_value),
       ';'
     ),
 
