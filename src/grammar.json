@@ -229,6 +229,10 @@
         {
           "type": "SYMBOL",
           "name": "_xmlport_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_xmlport_properties"
         }
       ]
     },
@@ -1088,6 +1092,10 @@
               {
                 "type": "SYMBOL",
                 "name": "enum_value_declaration"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_enum_properties"
               }
             ]
           }
@@ -1249,6 +1257,10 @@
         {
           "type": "SYMBOL",
           "name": "property_list"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_query_properties"
         }
       ]
     },
@@ -6403,6 +6415,10 @@
         {
           "type": "SYMBOL",
           "name": "property_list"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_controladdin_properties"
         }
       ]
     },
@@ -6792,6 +6808,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "preproc_conditional_report_properties"
+        },
+        {
+          "type": "SYMBOL",
           "name": "_report_properties"
         }
       ]
@@ -7117,6 +7137,10 @@
         {
           "type": "SYMBOL",
           "name": "property_list"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_permissionset_properties"
         }
       ]
     },
@@ -7814,6 +7838,10 @@
         {
           "type": "SYMBOL",
           "name": "_page_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_page_properties"
         },
         {
           "type": "SYMBOL",
@@ -24239,6 +24267,438 @@
         }
       ]
     },
+    "preproc_conditional_page_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_page_properties"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_page_properties"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_report_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_report_properties"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_report_properties"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_xmlport_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_xmlport_properties"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_xmlport_properties"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_query_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_universal_properties"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_query_properties"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "property_list"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_universal_properties"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_query_properties"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "property_list"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_enum_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_enum_properties"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_enum_properties"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_permissionset_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_permissionset_properties"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "property_list"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_permissionset_properties"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "property_list"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_controladdin_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_controladdin_properties"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "property_list"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_controladdin_properties"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "property_list"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_profile_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_profile_properties"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "property_list"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_profile_properties"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "property_list"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
     "preproc_conditional_variables": {
       "type": "SEQ",
       "members": [
@@ -25465,6 +25925,10 @@
         {
           "type": "SYMBOL",
           "name": "property_list"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_profile_properties"
         }
       ]
     },

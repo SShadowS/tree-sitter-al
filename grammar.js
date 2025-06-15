@@ -70,7 +70,8 @@ module.exports = grammar({
       $.var_section,
       $.procedure,
       $.trigger_declaration,
-      $._xmlport_properties
+      $._xmlport_properties,
+      $.preproc_conditional_xmlport_properties
     ),
     
     // XMLPort specific properties
@@ -312,7 +313,11 @@ module.exports = grammar({
         field('interface', $._identifier_choice)
       )),
       '{',
-      repeat(choice($._enum_properties, $.enum_value_declaration)),
+      repeat(choice(
+        $._enum_properties, 
+        $.enum_value_declaration,
+        $.preproc_conditional_enum_properties
+      )),
       '}'
     ),
 
@@ -350,7 +355,8 @@ module.exports = grammar({
       $._universal_properties,       // caption, description, application_area, etc.
       $._query_properties,           // query-specific properties
       $.elements_section,            // dataitem and column definitions
-      $.property_list               // generic property container
+      $.property_list,               // generic property container
+      $.preproc_conditional_query_properties
     ),
 
     about_title_property: $ => seq(
@@ -1485,7 +1491,8 @@ module.exports = grammar({
       $._controladdin_properties,    // Centralized properties
       $.controladdin_event,          // ControlAddIn structural elements
       $.controladdin_procedure,      // ControlAddIn structural elements
-      $.property_list               // Generic fallback
+      $.property_list,               // Generic fallback
+      $.preproc_conditional_controladdin_properties
     ),
 
     controladdin_property: $ => seq(
@@ -1559,6 +1566,9 @@ module.exports = grammar({
       // Report procedures and triggers
       seq(optional($.attribute_list), $.procedure),
       seq(optional($.attribute_list), $.trigger_declaration),
+      
+      // Preprocessor conditional report properties
+      $.preproc_conditional_report_properties,
       
       // All report properties now centralized
       $._report_properties,
@@ -1641,7 +1651,8 @@ module.exports = grammar({
     _permissionset_element: $ => choice(
       $._permissionset_properties,   // Centralized properties
       $.permissionset_permissions,   // PermissionSet structural elements
-      $.property_list                // Generic fallback
+      $.property_list,               // Generic fallback
+      $.preproc_conditional_permissionset_properties
     ),
 
     assignable_property: $ => seq(
@@ -1787,6 +1798,9 @@ module.exports = grammar({
       
       // All page properties now centralized
       $._page_properties,
+      
+      // Preprocessor conditional page properties
+      $.preproc_conditional_page_properties,
       
       // Special case: source_table_view_property at the top for higher precedence  
       $.source_table_view_property,
@@ -5287,6 +5301,94 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     ),
 
+    // Preprocessor conditional rules for page properties
+    preproc_conditional_page_properties: $ => seq(
+      $.preproc_if,
+      repeat($._page_properties),
+      optional(seq(
+        $.preproc_else,
+        repeat($._page_properties)
+      )),
+      $.preproc_endif
+    ),
+
+    // Preprocessor conditional rules for report properties
+    preproc_conditional_report_properties: $ => seq(
+      $.preproc_if,
+      repeat($._report_properties),
+      optional(seq(
+        $.preproc_else,
+        repeat($._report_properties)
+      )),
+      $.preproc_endif
+    ),
+
+    // Preprocessor conditional rules for xmlport properties
+    preproc_conditional_xmlport_properties: $ => seq(
+      $.preproc_if,
+      repeat($._xmlport_properties),
+      optional(seq(
+        $.preproc_else,
+        repeat($._xmlport_properties)
+      )),
+      $.preproc_endif
+    ),
+
+    // Preprocessor conditional rules for query properties
+    preproc_conditional_query_properties: $ => seq(
+      $.preproc_if,
+      repeat(choice($._universal_properties, $._query_properties, $.property_list)),
+      optional(seq(
+        $.preproc_else,
+        repeat(choice($._universal_properties, $._query_properties, $.property_list))
+      )),
+      $.preproc_endif
+    ),
+
+    // Preprocessor conditional rules for enum properties
+    preproc_conditional_enum_properties: $ => seq(
+      $.preproc_if,
+      repeat($._enum_properties),
+      optional(seq(
+        $.preproc_else,
+        repeat($._enum_properties)
+      )),
+      $.preproc_endif
+    ),
+
+    // Preprocessor conditional rules for permissionset properties
+    preproc_conditional_permissionset_properties: $ => seq(
+      $.preproc_if,
+      repeat(choice($._permissionset_properties, $.property_list)),
+      optional(seq(
+        $.preproc_else,
+        repeat(choice($._permissionset_properties, $.property_list))
+      )),
+      $.preproc_endif
+    ),
+
+    // Preprocessor conditional rules for controladdin properties
+    preproc_conditional_controladdin_properties: $ => seq(
+      $.preproc_if,
+      repeat(choice($._controladdin_properties, $.property_list)),
+      optional(seq(
+        $.preproc_else,
+        repeat(choice($._controladdin_properties, $.property_list))
+      )),
+      $.preproc_endif
+    ),
+
+    // Preprocessor conditional rules for profile properties
+    preproc_conditional_profile_properties: $ => seq(
+      $.preproc_if,
+      repeat(choice($._profile_properties, $.property_list)),
+      optional(seq(
+        $.preproc_else,
+        repeat(choice($._profile_properties, $.property_list))
+      )),
+      $.preproc_endif
+    ),
+
     // Preprocessor conditional rules for variable declarations
     preproc_conditional_variables: $ => seq(
       $.preproc_if,
@@ -5502,7 +5604,8 @@ enum_type: $ => prec(1, seq(
     // Profile elements
     _profile_element: $ => choice(
       $._profile_properties,         // Centralized properties
-      $.property_list               // Generic fallback
+      $.property_list,               // Generic fallback
+      $.preproc_conditional_profile_properties
     ),
 
     // CONSOLIDATED: profile_description_property → description_property
