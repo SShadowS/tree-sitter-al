@@ -41,13 +41,14 @@ page 123 "Test Page"
             value: (run_object_value
               object_ref: (quoted_identifier)))
           (run_page_view_property
-            value: (where_clause
-              conditions: (where_conditions
-                (where_condition
-                  (const_filter
-                    field: (field_ref
-                      (identifier))
-                    value: (identifier))))))
+            value: (source_table_view_value
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (identifier))
+                      value: (identifier)))))))
           (visible_property
             value: (identifier))
           (obsolete_state_property
@@ -177,13 +178,14 @@ page 789 "Test Page"
             value: (run_object_value
               object_ref: (quoted_identifier)))
           (run_page_view_property
-            value: (where_clause
-              conditions: (where_conditions
-                (where_condition
-                  (const_filter
-                    field: (field_ref
-                      (identifier))
-                    value: (quoted_identifier)))))))))))
+            value: (source_table_view_value
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (identifier))
+                      value: (quoted_identifier))))))))))))
 
 ================================================================================
 Action obsolete properties

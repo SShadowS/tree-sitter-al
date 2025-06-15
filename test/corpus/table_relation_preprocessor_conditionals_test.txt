@@ -47,7 +47,8 @@ table 123 "Test Table"
                     value: (filter_value
                       (const_expression
                         (quoted_identifier))))))
-              table: (quoted_identifier)
+              then_relation: (simple_table_relation
+                table: (quoted_identifier))
               else_relation: (table_relation_expression
                 (if_table_relation
                   condition: (unified_where_conditions
@@ -59,7 +60,8 @@ table 123 "Test Table"
                         value: (filter_value
                           (const_expression
                             (quoted_identifier))))))
-                  table: (quoted_identifier)
+                  then_relation: (simple_table_relation
+                    table: (quoted_identifier))
                   else_relation: (table_relation_expression
                     (preproc_conditional_table_relation
                       (preproc_if
@@ -75,7 +77,8 @@ table 123 "Test Table"
                                 value: (filter_value
                                   (const_expression
                                     (quoted_identifier))))))
-                          table: (quoted_identifier)))
+                          then_relation: (simple_table_relation
+                            table: (quoted_identifier))))
                       (preproc_else)
                       (table_relation_expression
                         (if_table_relation
@@ -88,6 +91,6 @@ table 123 "Test Table"
                                 value: (filter_value
                                   (const_expression
                                     (quoted_identifier))))))
-                          table: (quoted_identifier)))
+                          then_relation: (simple_table_relation
+                            table: (quoted_identifier))))
                       (preproc_endif))))))))))))
-

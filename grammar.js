@@ -3671,7 +3671,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     table_relation_expression: $ => choice(
-      $._simple_table_relation,
+      $.simple_table_relation,
       $.if_table_relation,
       $.preproc_conditional_table_relation
     ),
@@ -3700,19 +3700,19 @@ enum_type: $ => prec(1, seq(
       ')'
     ),
 
-    if_table_relation: $ => prec.right(seq(
+    if_table_relation: $ => prec.right(1, seq(
       choice('IF', 'if', 'If'),
       '(',
       field('condition', $.unified_where_conditions),
       ')',
-      field('then_relation', $._simple_table_relation),
+      field('then_relation', $.simple_table_relation),
       optional(seq(
         choice('ELSE', 'else', 'Else'),
         field('else_relation', $.table_relation_expression)
       ))
     )),
 
-    _simple_table_relation: $ => seq(
+    simple_table_relation: $ => seq(
       field('table', $._table_reference),
       optional(seq('.', field('field', $.field_ref))),
       optional($.where_clause)

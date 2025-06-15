@@ -16667,7 +16667,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_simple_table_relation"
+          "name": "simple_table_relation"
         },
         {
           "type": "SYMBOL",
@@ -16780,7 +16780,7 @@
     },
     "if_table_relation": {
       "type": "PREC_RIGHT",
-      "value": 0,
+      "value": 1,
       "content": {
         "type": "SEQ",
         "members": [
@@ -16822,7 +16822,7 @@
             "name": "then_relation",
             "content": {
               "type": "SYMBOL",
-              "name": "_simple_table_relation"
+              "name": "simple_table_relation"
             }
           },
           {
@@ -16866,53 +16866,103 @@
         ]
       }
     },
-    "_simple_table_relation": {
-      "type": "SEQ",
+    "simple_table_relation": {
+      "type": "CHOICE",
       "members": [
         {
-          "type": "FIELD",
-          "name": "table",
+          "type": "PREC",
+          "value": 4,
           "content": {
-            "type": "SYMBOL",
-            "name": "_table_reference"
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "table",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_table_reference"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "."
+              },
+              {
+                "type": "FIELD",
+                "name": "field",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "field_ref"
+                }
+              },
+              {
+                "type": "SYMBOL",
+                "name": "where_clause"
+              }
+            ]
           }
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "."
-                },
-                {
-                  "type": "FIELD",
-                  "name": "field",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "field_ref"
-                  }
+          "type": "PREC",
+          "value": 3,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "table",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_table_reference"
                 }
-              ]
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "where_clause"
+              }
+            ]
+          }
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
+          "type": "PREC",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "table",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_table_reference"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "."
+              },
+              {
+                "type": "FIELD",
+                "name": "field",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "field_ref"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "FIELD",
+            "name": "table",
+            "content": {
               "type": "SYMBOL",
-              "name": "where_clause"
-            },
-            {
-              "type": "BLANK"
+              "name": "_table_reference"
             }
-          ]
+          }
         }
       ]
     },
