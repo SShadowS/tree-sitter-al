@@ -12,7 +12,7 @@ module.exports = grammar({
 
 
   word: $ => $.identifier,
-  extras: $ => [/\s/, $.comment, $.multiline_comment],
+  extras: $ => [/\s/, $.comment, $.multiline_comment, $.pragma],
 
   rules: {
     source_file: $ => seq(
