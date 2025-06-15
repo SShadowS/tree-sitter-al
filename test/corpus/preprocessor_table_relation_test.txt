@@ -20,7 +20,7 @@ table 123 "Test Table"
             IF (Type = CONST("Allocation Account")) "Allocation Account" WHERE("Account Type" = CONST(Fixed));
             #else
             IF (Type = CONST("Allocation Account")) "G/L Account";
-            #endif
+            #endif;
         }
     }
 }
@@ -31,99 +31,89 @@ table 123 "Test Table"
   (table_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (table_body
-      (fields
-        (field_declaration
-          id: (integer)
-          name: (quoted_identifier)
-          type: (type_specification
-            (option_type))
-          (option_members_property
-            values: (option_values
-              (option_value
-                (string_literal))
-              (option_value
-                (string_literal))
-              (option_value
-                (identifier))
-              (option_value
-                (string_literal)))))
-        (field_declaration
-          id: (integer)
-          name: (quoted_identifier)
-          type: (type_specification
-            (code_type
-              length: (integer)))
-          (table_relation_property
-            relation: (table_relation_expression
-              (if_table_relation
-                condition: (unified_where_conditions
-                  (unified_where_condition
-                    (filter_expression_condition
-                      field: (field_ref
-                        (identifier))
-                      operator: (filter_operator)
-                      value: (filter_value
-                        (const_expression
-                          (string_literal))))))
-                then_relation: (_simple_table_relation
-                  table: (_table_reference
-                    (quoted_identifier)))
-                else_relation: (table_relation_expression
-                  (if_table_relation
-                    condition: (unified_where_conditions
-                      (unified_where_condition
-                        (filter_expression_condition
-                          field: (field_ref
-                            (identifier))
-                          operator: (filter_operator)
-                          value: (filter_value
-                            (const_expression
-                              (identifier))))))
-                    then_relation: (_simple_table_relation
-                      table: (_table_reference
-                        (identifier)))
-                    else_relation: (table_relation_expression
-                      (preproc_conditional_table_relation
-                        (preproc_if
-                          condition: (identifier))
-                        (table_relation_expression
-                          (if_table_relation
-                            condition: (unified_where_conditions
-                              (unified_where_condition
-                                (filter_expression_condition
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (option_type))
+        (option_members_property
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (identifier))
+          (option_member
+            (quoted_identifier))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (table_relation_property
+          relation: (table_relation_expression
+            (if_table_relation
+              condition: (unified_where_conditions
+                (unified_where_condition
+                  (filter_expression_condition
+                    field: (field_ref
+                      (identifier))
+                    operator: (filter_operator)
+                    value: (filter_value
+                      (const_expression
+                        (quoted_identifier))))))
+              table: (quoted_identifier)
+              else_relation: (table_relation_expression
+                (if_table_relation
+                  condition: (unified_where_conditions
+                    (unified_where_condition
+                      (filter_expression_condition
+                        field: (field_ref
+                          (identifier))
+                        operator: (filter_operator)
+                        value: (filter_value
+                          (const_expression
+                            (identifier))))))
+                  table: (identifier)
+                  else_relation: (table_relation_expression
+                    (preproc_conditional_table_relation
+                      (preproc_if
+                        condition: (identifier))
+                      (table_relation_expression
+                        (if_table_relation
+                          condition: (unified_where_conditions
+                            (unified_where_condition
+                              (filter_expression_condition
+                                field: (field_ref
+                                  (identifier))
+                                operator: (filter_operator)
+                                value: (filter_value
+                                  (const_expression
+                                    (quoted_identifier))))))
+                          table: (quoted_identifier)
+                          then_relation: (where_clause
+                            conditions: (where_conditions
+                              (where_condition
+                                (const_filter
                                   field: (field_ref
-                                    (identifier))
-                                  operator: (filter_operator)
-                                  value: (filter_value
-                                    (const_expression
-                                      (string_literal))))))
-                            then_relation: (_simple_table_relation
-                              table: (_table_reference
-                                (quoted_identifier))
-                              (where_clause
-                                conditions: (where_conditions
-                                  (where_condition
-                                    (const_filter
-                                      field: (field_ref
-                                        (quoted_identifier))
-                                      value: (identifier))))))))
-                        (preproc_else)
-                        (table_relation_expression
-                          (if_table_relation
-                            condition: (unified_where_conditions
-                              (unified_where_condition
-                                (filter_expression_condition
-                                  field: (field_ref
-                                    (identifier))
-                                  operator: (filter_operator)
-                                  value: (filter_value
-                                    (const_expression
-                                      (string_literal))))))
-                            then_relation: (_simple_table_relation
-                              table: (_table_reference
-                                (quoted_identifier)))))
-                        (preproc_endif)))))))))))))
+                                    (quoted_identifier))
+                                  value: (identifier)))))))
+                      (preproc_else)
+                      (table_relation_expression
+                        (if_table_relation
+                          condition: (unified_where_conditions
+                            (unified_where_condition
+                              (filter_expression_condition
+                                field: (field_ref
+                                  (identifier))
+                                operator: (filter_operator)
+                                value: (filter_value
+                                  (const_expression
+                                    (quoted_identifier))))))
+                          table: (quoted_identifier)))
+                      (preproc_endif))))))))))))
 
 ================================================================================
 Simple TableRelation with preprocessor
@@ -150,29 +140,24 @@ table 124 "Simple Test"
   (table_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (table_body
-      (fields
-        (field_declaration
-          id: (integer)
-          name: (quoted_identifier)
-          type: (type_specification
-            (code_type
-              length: (integer)))
-          (preproc_conditional_field_properties
-            (preproc_if
-              condition: (identifier))
-            (table_relation_property
-              relation: (table_relation_expression
-                (_simple_table_relation
-                  table: (_table_reference
-                    (quoted_identifier)))))
-            (preproc_else)
-            (table_relation_property
-              relation: (table_relation_expression
-                (_simple_table_relation
-                  table: (_table_reference
-                    (quoted_identifier)))))
-            (preproc_endif)))))))
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (preproc_conditional_field_properties
+          (preproc_if
+            condition: (identifier))
+          (table_relation_property
+            relation: (table_relation_expression
+              table: (quoted_identifier)))
+          (preproc_else)
+          (table_relation_property
+            relation: (table_relation_expression
+              table: (quoted_identifier)))
+          (preproc_endif))))))
 
 ================================================================================
 TableRelation with multiple nested IFs and preprocessor
@@ -194,7 +179,7 @@ table 125 "Complex Test"
             IF (Type = CONST(4)) Table4 WHERE(Field = CONST(Value));
             #else
             IF (Type = CONST(4)) Table5;
-            #endif
+            #endif;
 
             trigger OnValidate()
             begin
@@ -210,8 +195,7 @@ table 125 "Complex Test"
   (table_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (table_body
-      (fields
+    (fields
         (field_declaration
           id: (integer)
           name: (quoted_identifier)
@@ -308,4 +292,4 @@ table 125 "Complex Test"
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))))))
+                  (string_literal)))))))))

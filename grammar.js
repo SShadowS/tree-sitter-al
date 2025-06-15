@@ -3592,7 +3592,8 @@ enum_type: $ => prec(1, seq(
           $.extended_datatype_property,
           $.caption_ml_property,
           $.option_caption_ml_property,
-          $.tool_tip_ml_property
+          $.tool_tip_ml_property,
+          $.preproc_conditional_field_properties
         )),
         '}'
       ))
@@ -3656,7 +3657,8 @@ enum_type: $ => prec(1, seq(
         $.extended_datatype_property,
         $.caption_ml_property,
         $.option_caption_ml_property,
-        $.tool_tip_ml_property
+        $.tool_tip_ml_property,
+        $.preproc_conditional_field_properties
       )),
       '}'
     ),
