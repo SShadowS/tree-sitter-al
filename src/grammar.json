@@ -21097,11 +21097,11 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_statement"
+                  "name": "code_block"
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "code_block"
+                  "name": "_if_then_body"
                 }
               ]
             }
@@ -21137,11 +21137,19 @@
                       "members": [
                         {
                           "type": "SYMBOL",
-                          "name": "_statement"
+                          "name": "code_block"
+                        },
+                        {
+                          "type": "PREC",
+                          "value": 1,
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "if_statement"
+                          }
                         },
                         {
                           "type": "SYMBOL",
-                          "name": "code_block"
+                          "name": "_if_then_body"
                         }
                       ]
                     }
@@ -21152,6 +21160,33 @@
                 "type": "BLANK"
               }
             ]
+          }
+        ]
+      }
+    },
+    "_if_then_body": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "pragma"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_statement"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "pragma"
+            }
           }
         ]
       }

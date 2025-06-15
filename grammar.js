@@ -4562,16 +4562,24 @@ enum_type: $ => prec(1, seq(
       field('condition', $._expression),
       choice('then', 'THEN', 'Then'),
       field('then_branch', choice(
-        $._statement,
-        $.code_block
+        $.code_block,
+        $._if_then_body
       )),
       optional(seq(
         choice('else', 'ELSE', 'Else'),
         field('else_branch', choice(
-          $._statement,
-          $.code_block
+          $.code_block,
+          prec(1, $.if_statement),
+          $._if_then_body
         ))
       ))
+    )),
+
+    // Helper rule for if statement bodies
+    _if_then_body: $ => prec.right(seq(
+      repeat($.pragma),
+      $._statement,
+      repeat($.pragma)
     )),
 
     // Case expression uses the general _expression rule
