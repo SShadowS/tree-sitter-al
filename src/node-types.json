@@ -5618,6 +5618,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_object_properties",
+          "named": true
+        },
+        {
           "type": "preproc_conditional_procedures",
           "named": true
         },
@@ -25395,6 +25399,33 @@
     }
   },
   {
+    "type": "preproc_conditional_object_properties",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_procedures",
     "named": true,
     "fields": {},
@@ -26257,6 +26288,225 @@
         },
         {
           "type": "with_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_table_properties",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "access_by_permission_property",
+          "named": true
+        },
+        {
+          "type": "access_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "card_page_id_property",
+          "named": true
+        },
+        {
+          "type": "column_store_index_property",
+          "named": true
+        },
+        {
+          "type": "compression_type_property",
+          "named": true
+        },
+        {
+          "type": "data_caption_fields_property",
+          "named": true
+        },
+        {
+          "type": "data_classification_property",
+          "named": true
+        },
+        {
+          "type": "data_per_company_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "drilldown_pageid_property",
+          "named": true
+        },
+        {
+          "type": "event_subscriber_instance_property",
+          "named": true
+        },
+        {
+          "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "external_name_property",
+          "named": true
+        },
+        {
+          "type": "external_schema_property",
+          "named": true
+        },
+        {
+          "type": "inherent_entitlements_property",
+          "named": true
+        },
+        {
+          "type": "inherent_permissions_property",
+          "named": true
+        },
+        {
+          "type": "linked_in_transaction_property",
+          "named": true
+        },
+        {
+          "type": "linked_object_property",
+          "named": true
+        },
+        {
+          "type": "lookup_pageid_property",
+          "named": true
+        },
+        {
+          "type": "moved_from_property",
+          "named": true
+        },
+        {
+          "type": "moved_to_property",
+          "named": true
+        },
+        {
+          "type": "navigation_page_id_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "optimize_for_text_search_property",
+          "named": true
+        },
+        {
+          "type": "page_type_property",
+          "named": true
+        },
+        {
+          "type": "paste_is_valid_property",
+          "named": true
+        },
+        {
+          "type": "permissions_property",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "processing_only_property",
+          "named": true
+        },
+        {
+          "type": "replicate_data_property",
+          "named": true
+        },
+        {
+          "type": "run_object_property",
+          "named": true
+        },
+        {
+          "type": "run_page_link_property",
+          "named": true
+        },
+        {
+          "type": "run_page_view_property",
+          "named": true
+        },
+        {
+          "type": "shortcut_key_property",
+          "named": true
+        },
+        {
+          "type": "single_instance_property",
+          "named": true
+        },
+        {
+          "type": "source_table_property",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "table_no_property",
+          "named": true
+        },
+        {
+          "type": "table_type_property",
+          "named": true
+        },
+        {
+          "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
+          "named": true
+        },
+        {
+          "type": "use_request_page_property",
           "named": true
         }
       ]
@@ -33923,6 +34173,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_table_properties",
+          "named": true
+        },
+        {
           "type": "procedure",
           "named": true
         },
@@ -40955,11 +41209,11 @@
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "controladdin",
@@ -40995,11 +41249,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
@@ -41107,11 +41361,11 @@
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "interface",

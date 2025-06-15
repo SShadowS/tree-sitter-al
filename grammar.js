@@ -1396,8 +1396,9 @@ module.exports = grammar({
       $._object_header_base,
       optional($.implements_clause),
       '{',
-      prec(4, optional($.property_list)), // Prioritize properties over procedures starting with same keywords
       repeat(choice(
+        prec(4, $.property_list), // Prioritize properties over procedures starting with same keywords
+        $.preproc_conditional_object_properties,
         $.var_section,
         $.attributed_procedure,
         $.attributed_onrun_trigger, 
@@ -2859,6 +2860,9 @@ module.exports = grammar({
       
       // All table properties now centralized
       $._table_properties,
+      
+      // Preprocessor conditional table properties
+      $.preproc_conditional_table_properties,
     )),
 
     // For single table permission property
@@ -2877,7 +2881,10 @@ module.exports = grammar({
     ),
 
     permission_type: $ => token(
-      prec(-1, /[rRiImMdDxX]+/)
+      prec(-1, choice(
+        /[rRiImMdDxX]+/,
+        'RCMDXI'  // Allow specific full permission string
+      ))
     ),
 
 
@@ -5254,6 +5261,28 @@ enum_type: $ => prec(1, seq(
       optional(seq(
         $.preproc_else,
         repeat($._page_properties)
+      )),
+      $.preproc_endif
+    ),
+
+    // Preprocessor conditional rules for object-level properties
+    preproc_conditional_object_properties: $ => seq(
+      $.preproc_if,
+      repeat($.property),
+      optional(seq(
+        $.preproc_else,
+        repeat($.property)
+      )),
+      $.preproc_endif
+    ),
+
+    // Preprocessor conditional rules for table properties
+    preproc_conditional_table_properties: $ => seq(
+      $.preproc_if,
+      repeat($._table_properties),
+      optional(seq(
+        $.preproc_else,
+        repeat($._table_properties)
       )),
       $.preproc_endif
     ),

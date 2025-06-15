@@ -1,0 +1,142 @@
+================================================================================
+Codeunit with preprocessor conditional properties
+================================================================================
+
+codeunit 6086078 "Test Codeunit"
+{
+#if BC22
+    InherentEntitlements = X;
+    InherentPermissions = X;
+#endif
+
+    var
+        TestVariable: Integer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (preproc_conditional_object_properties
+      (preproc_if
+        condition: (identifier))
+      (property
+        (inherent_entitlements_property
+          value: (inherent_entitlements_value
+            (permission_type))))
+      (property
+        (inherent_permissions_property
+          value: (inherent_permissions_value
+            (permission_type))))
+      (preproc_endif))
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))))
+
+================================================================================
+Codeunit with mixed properties and preprocessor conditionals
+================================================================================
+
+codeunit 50000 "Mixed Properties"
+{
+    Subtype = Test;
+#if BC23
+    InherentEntitlements = X;
+    InherentPermissions = X;
+#else
+    InherentEntitlements = RCMDXI;
+    InherentPermissions = RCMDXI;
+#endif
+    TestIsolation = Codeunit;
+
+    trigger OnRun()
+    begin
+        Message('Test');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property_list
+      (property
+        (subtype_property
+          value: (value))))
+    (preproc_conditional_object_properties
+      (preproc_if
+        condition: (identifier))
+      (property
+        (inherent_entitlements_property
+          value: (inherent_entitlements_value
+            (permission_type))))
+      (property
+        (inherent_permissions_property
+          value: (inherent_permissions_value
+            (permission_type))))
+      (preproc_else)
+      (property
+        (inherent_entitlements_property
+          value: (inherent_entitlements_value
+            (permission_type))
+          (ERROR
+            (identifier))))
+      (property
+        (inherent_permissions_property
+          value: (inherent_permissions_value
+            (permission_type))
+          (ERROR
+            (identifier))))
+      (preproc_endif))
+    (ERROR
+      (identifier))
+    (attributed_onrun_trigger
+      (onrun_trigger
+        (code_block
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))))))
+
+================================================================================
+Table with preprocessor conditional properties
+================================================================================
+
+table 50000 "Test Table"
+{
+#if CLOUD
+    DataPerCompany = false;
+    ReplicateData = false;
+#endif
+
+    fields
+    {
+        field(1; Code; Code[20])
+        {
+            Caption = 'Code';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (table_declaration
+      object_id: (integer)
+      object_name: (quoted_identifier))
+    (fields_section
+      (field_declaration
+        field_number: (integer)
+        field_name: (identifier)
+        type: (type_specification
+          (code_type
+            (integer)))
+        (caption_property
+          (string_literal))))))
