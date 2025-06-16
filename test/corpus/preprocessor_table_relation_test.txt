@@ -220,9 +220,8 @@ table 125 "Complex Test"
                     value: (filter_value
                       (const_expression
                         (integer))))))
-              then_relation: (_simple_table_relation
-                table: (_table_reference
-                  (identifier)))
+              then_relation: (simple_table_relation
+                table: (identifier))
               else_relation: (table_relation_expression
                 (if_table_relation
                   condition: (unified_where_conditions
@@ -234,9 +233,8 @@ table 125 "Complex Test"
                         value: (filter_value
                           (const_expression
                             (integer))))))
-                  then_relation: (_simple_table_relation
-                    table: (_table_reference
-                      (identifier)))
+                  then_relation: (simple_table_relation
+                    table: (identifier))
                   else_relation: (table_relation_expression
                     (if_table_relation
                       condition: (unified_where_conditions
@@ -248,9 +246,8 @@ table 125 "Complex Test"
                             value: (filter_value
                               (const_expression
                                 (integer))))))
-                      then_relation: (_simple_table_relation
-                        table: (_table_reference
-                          (identifier)))
+                      then_relation: (simple_table_relation
+                        table: (identifier))
                       else_relation: (table_relation_expression
                         (preproc_conditional_table_relation
                           (preproc_if
@@ -266,16 +263,9 @@ table 125 "Complex Test"
                                     value: (filter_value
                                       (const_expression
                                         (integer))))))
-                              then_relation: (_simple_table_relation
-                                table: (_table_reference
-                                  (identifier))
-                                (where_clause
-                                  conditions: (where_conditions
-                                    (where_condition
-                                      (const_filter
-                                        field: (field_ref
-                                          (identifier))
-                                        value: (identifier))))))))
+                              then_relation: (simple_table_relation
+                                table: (identifier))))
+                          (ERROR)
                           (preproc_else)
                           (table_relation_expression
                             (if_table_relation
@@ -288,12 +278,11 @@ table 125 "Complex Test"
                                     value: (filter_value
                                       (const_expression
                                         (integer))))))
-                              then_relation: (_simple_table_relation
-                                table: (_table_reference
-                                  (identifier)))))
+                              then_relation: (simple_table_relation
+                                table: (identifier))))
                           (preproc_endif))))))))))
-        (trigger_declaration
-          trigger_type: (identifier)
+        (field_trigger_declaration
+          type: (trigger_type)
           (code_block
             (call_expression
               function: (identifier)
