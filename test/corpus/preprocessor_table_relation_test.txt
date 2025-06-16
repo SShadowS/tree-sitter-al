@@ -38,14 +38,15 @@ table 123 "Test Table"
         type: (type_specification
           (option_type))
         (option_members_property
-          (option_member
-            (quoted_identifier))
-          (option_member
-            (quoted_identifier))
-          (option_member
-            (identifier))
-          (option_member
-            (quoted_identifier))))
+          value: (option_member_list
+            (option_member
+              (quoted_identifier))
+            (option_member
+              (quoted_identifier))
+            (option_member
+              (identifier))
+            (option_member
+              (quoted_identifier)))))
       (field_declaration
         id: (integer)
         name: (quoted_identifier)

@@ -91,12 +91,13 @@ table 50000 TestTable
         (type_specification
           (option_type))
         (option_members_property
-          (option_member
-            (identifier))
-          (option_member
-            (identifier))
-          (option_member
-            (identifier)))))
+          (option_member_list
+            (option_member
+              (identifier))
+            (option_member
+              (identifier))
+            (option_member
+              (identifier))))))
     (keys
       (key_declaration
         (name)

@@ -17,11 +17,9 @@ codeunit 50000 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property_list
-      (property
-        (table_no_property
-          value: (value
-            (quoted_identifier)))))
+    (table_no_property
+      value: (value
+        (quoted_identifier)))
     (attributed_onrun_trigger
       (onrun_trigger
         (code_block)))))
@@ -45,11 +43,9 @@ codeunit 50001 "Test Codeunit 2"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property_list
-      (property
-        (table_no_property
-          value: (value
-            (identifier)))))
+    (table_no_property
+      value: (value
+        (identifier)))
     (attributed_onrun_trigger
       (onrun_trigger
         (code_block)))))
@@ -73,11 +69,9 @@ codeunit 50002 "Test Codeunit 3"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property_list
-      (property
-        (table_no_property
-          value: (value
-            (integer)))))
+    (table_no_property
+      value: (value
+        (integer)))
     (attributed_onrun_trigger
       (onrun_trigger
         (code_block)))))
@@ -105,15 +99,12 @@ codeunit 50003 "Multi Property Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property_list
-      (property
-        (table_no_property
-          value: (value
-            (quoted_identifier))))
-      (property
-        (single_instance_property
-          value: (value
-            (boolean)))))
+    (table_no_property
+      value: (value
+        (quoted_identifier)))
+    (single_instance_property
+      value: (value
+        (boolean)))
     (var_section
       (variable_declaration
         name: (identifier)

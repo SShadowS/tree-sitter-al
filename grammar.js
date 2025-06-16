@@ -1348,9 +1348,16 @@ module.exports = grammar({
     ),
 
     event_subscriber_instance_property: $ => seq(
-      'EventSubscriberInstance',
+      choice('EventSubscriberInstance', 'eventsubscriberinstance', 'EVENTSUBSCRIBERINSTANCE'),
       '=',
       field('value', alias($.event_subscriber_instance_value, $.value)),
+      ';'
+    ),
+
+    test_isolation_property: $ => seq(
+      choice('TestIsolation', 'testisolation', 'TESTISOLATION'),
+      '=',
+      field('value', alias($.test_isolation_value, $.value)),
       ';'
     ),
 
@@ -1403,7 +1410,7 @@ module.exports = grammar({
       optional($.implements_clause),
       '{',
       repeat(choice(
-        prec(4, $.property_list), // Prioritize properties over procedures starting with same keywords
+        prec(4, $._codeunit_properties), // Use individual properties
         $.preproc_conditional_object_properties,
         $.var_section,
         $.attributed_procedure,
@@ -2152,6 +2159,13 @@ module.exports = grammar({
       /[mM][aA][nN][uU][aA][lL]/,
       /[sS][tT][aA][tT][iI][cC]/,
       /[sS][tT][aA][tT][iI][cC][aA][uU][tT][oO][mM][aA][tT][iI][cC]/
+    ),
+
+    test_isolation_value: $ => choice(
+      /[cC][oO][dD][eE][uU][nN][iI][tT]/,
+      /[fF][uU][nN][cC][tT][iI][oO][nN]/,
+      /[pP][aA][gG][eE]/,
+      /[dD][iI][sS][aA][bB][lL][eE][dD]/
     ),
 
     implementation_value: $ => seq(
@@ -3013,6 +3027,7 @@ module.exports = grammar({
       $.subtype_property,
       $.single_instance_property,
       $.event_subscriber_instance_property,
+      $.test_isolation_property,
       $.drilldown_pageid_property,
       $.lookup_pageid_property,
       $.card_page_id_property,
@@ -3337,15 +3352,14 @@ option_type: $ => prec.right(1, seq(
 
 // Helper for comma-separated list of option members  
 option_member_list: $ => prec.left(1, choice(
-  // Standard case: member followed by optional members
+  // List with at least one member
   seq(
     $.option_member,
-    repeat(seq(',', $.option_member))
+    repeat(seq(',', optional($.option_member)))
   ),
-  // Edge case: starts with empty but has content
+  // List starting with comma (empty first member)
   seq(
-    optional($.option_member),
-    repeat1(seq(',', $.option_member))
+    repeat1(seq(',', optional($.option_member)))
   )
 )),
 
@@ -4043,10 +4057,7 @@ enum_type: $ => prec(1, seq(
       '=',
       choice(
         $.string_literal,  // Single string literal case
-        seq(               // Multiple identifiers case
-          optional($.option_member),
-          repeat(seq(',', optional($.option_member)))
-        )
+        field('value', $.option_member_list)  // Multiple members case
       ),
       ';'
     )),
@@ -5968,6 +5979,17 @@ enum_type: $ => prec(1, seq(
       
       // Table external/integration properties
       $.optimize_for_text_search_property,
+    ),
+
+    // Composed property group for codeunit-level properties
+    _codeunit_properties: $ => choice(
+      $._universal_properties,
+      $._access_properties,
+      $._navigation_properties,
+      $._object_specific_properties,
+      
+      // Additional codeunit-specific properties not in other groups
+      $.test_isolation_property
     ),
 
     // Composed property group for report-level properties

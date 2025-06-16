@@ -65,10 +65,8 @@ codeunit 50000 "Mixed Properties"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property_list
-      (property
-        (subtype_property
-          value: (value))))
+    (subtype_property
+      value: (value))
     (preproc_conditional_object_properties
       (preproc_if
         condition: (identifier))
@@ -84,25 +82,21 @@ codeunit 50000 "Mixed Properties"
       (property
         (inherent_entitlements_property
           value: (inherent_entitlements_value
-            (permission_type))
-          (ERROR
-            (identifier))))
+            (permission_type))))
       (property
         (inherent_permissions_property
           value: (inherent_permissions_value
-            (permission_type))
-          (ERROR
-            (identifier))))
+            (permission_type))))
       (preproc_endif))
-    (ERROR
-      (identifier))
+    (test_isolation_property
+      value: (value))
     (attributed_onrun_trigger
       (onrun_trigger
         (code_block
           (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)))))))
+              (string_literal))))))))
 
 ================================================================================
 Table with preprocessor conditional properties

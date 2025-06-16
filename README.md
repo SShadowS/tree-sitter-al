@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,312 files (98.6%) parse successfully**.
+Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,308 files (98.3%) parse successfully**.
 
 Recent improvements include:
 - **ShowMandatory property expressions** - Enhanced ShowMandatory property to accept complex expressions like `NOT IsSaaSProd` instead of just boolean literals

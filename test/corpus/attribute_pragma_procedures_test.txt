@@ -29,10 +29,8 @@ codeunit 50100 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property_list
-      (property
-        (event_subscriber_instance_property
-          value: (value))))
+    (event_subscriber_instance_property
+      value: (value))
     (attributed_procedure
       (attribute_list
         (attribute

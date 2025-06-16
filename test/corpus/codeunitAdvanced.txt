@@ -26,18 +26,14 @@ codeunit 50100 MyCodeunit
   (codeunit_declaration
     (integer)
     (identifier)
-    (property_list
-      (property
-        (table_no_property
-          (value
-            (identifier))))
-      (property
-        (subtype_property
-          (value)))
-      (property
-        (single_instance_property
-          (value
-            (boolean)))))))
+    (table_no_property
+      (value
+        (identifier)))
+    (subtype_property
+      (value))
+    (single_instance_property
+      (value
+        (boolean)))))
 
 ==================
 Variable Declarations

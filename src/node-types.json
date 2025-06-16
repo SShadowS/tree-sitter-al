@@ -5598,6 +5598,18 @@
       "required": false,
       "types": [
         {
+          "type": "access_by_permission_property",
+          "named": true
+        },
+        {
+          "type": "access_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
           "type": "attributed_onrun_trigger",
           "named": true
         },
@@ -5610,7 +5622,75 @@
           "named": true
         },
         {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "card_page_id_property",
+          "named": true
+        },
+        {
+          "type": "data_per_company_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "drilldown_pageid_property",
+          "named": true
+        },
+        {
+          "type": "event_subscriber_instance_property",
+          "named": true
+        },
+        {
           "type": "implements_clause",
+          "named": true
+        },
+        {
+          "type": "inherent_entitlements_property",
+          "named": true
+        },
+        {
+          "type": "inherent_permissions_property",
+          "named": true
+        },
+        {
+          "type": "lookup_pageid_property",
+          "named": true
+        },
+        {
+          "type": "navigation_page_id_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "page_type_property",
+          "named": true
+        },
+        {
+          "type": "permissions_property",
           "named": true
         },
         {
@@ -5626,7 +5706,71 @@
           "named": true
         },
         {
-          "type": "property_list",
+          "type": "processing_only_property",
+          "named": true
+        },
+        {
+          "type": "replicate_data_property",
+          "named": true
+        },
+        {
+          "type": "run_object_property",
+          "named": true
+        },
+        {
+          "type": "run_page_link_property",
+          "named": true
+        },
+        {
+          "type": "run_page_view_property",
+          "named": true
+        },
+        {
+          "type": "shortcut_key_property",
+          "named": true
+        },
+        {
+          "type": "single_instance_property",
+          "named": true
+        },
+        {
+          "type": "source_table_property",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "table_no_property",
+          "named": true
+        },
+        {
+          "type": "table_type_property",
+          "named": true
+        },
+        {
+          "type": "test_isolation_property",
+          "named": true
+        },
+        {
+          "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
+          "named": true
+        },
+        {
+          "type": "use_request_page_property",
           "named": true
         },
         {
@@ -22358,7 +22502,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "option_member",
@@ -22370,15 +22514,22 @@
   {
     "type": "option_members_property",
     "named": true,
-    "fields": {},
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "option_member_list",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
-        {
-          "type": "option_member",
-          "named": true
-        },
         {
           "type": "string_literal",
           "named": true
@@ -28807,6 +28958,10 @@
         },
         {
           "type": "table_relation_property",
+          "named": true
+        },
+        {
+          "type": "test_isolation_property",
           "named": true
         },
         {
@@ -36164,6 +36319,22 @@
     "fields": {}
   },
   {
+    "type": "test_isolation_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "test_permissions_property",
     "named": true,
     "fields": {}
@@ -40982,6 +41153,10 @@
     "named": false
   },
   {
+    "type": "EVENTSUBSCRIBERINSTANCE",
+    "named": false
+  },
+  {
     "type": "EXIST",
     "named": false
   },
@@ -42258,6 +42433,10 @@
     "named": false
   },
   {
+    "type": "TESTISOLATION",
+    "named": false
+  },
+  {
     "type": "TEXT",
     "named": false
   },
@@ -42311,6 +42490,10 @@
   },
   {
     "type": "Temporary",
+    "named": false
+  },
+  {
+    "type": "TestIsolation",
     "named": false
   },
   {
@@ -42649,11 +42832,11 @@
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "controladdin",
@@ -42737,6 +42920,10 @@
   },
   {
     "type": "event",
+    "named": false
+  },
+  {
+    "type": "eventsubscriberinstance",
     "named": false
   },
   {
@@ -42991,6 +43178,10 @@
   },
   {
     "type": "temporary",
+    "named": false
+  },
+  {
+    "type": "testisolation",
     "named": false
   },
   {

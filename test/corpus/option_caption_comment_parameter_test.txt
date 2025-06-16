@@ -51,14 +51,15 @@ table 123 "Test Table"
           (option_caption_value
             (string_literal)))
         (option_members_property
-          (option_member
-            (quoted_identifier))
-          (option_member
-            (identifier))
-          (option_member
-            (identifier))
-          (option_member
-            (identifier))))
+          value: (option_member_list
+            (option_member
+              (quoted_identifier))
+            (option_member
+              (identifier))
+            (option_member
+              (identifier))
+            (option_member
+              (identifier)))))
       (field_declaration
         id: (integer)
         name: (quoted_identifier)
@@ -71,16 +72,17 @@ table 123 "Test Table"
             (string_literal))
           (string_literal))
         (option_members_property
-          (option_member
-            (quoted_identifier))
-          (option_member
-            (identifier))
-          (option_member
-            (quoted_identifier))
-          (option_member
-            (quoted_identifier))
-          (option_member
-            (quoted_identifier))))
+          value: (option_member_list
+            (option_member
+              (quoted_identifier))
+            (option_member
+              (identifier))
+            (option_member
+              (quoted_identifier))
+            (option_member
+              (quoted_identifier))
+            (option_member
+              (quoted_identifier)))))
       (field_declaration
         id: (integer)
         name: (quoted_identifier)
@@ -93,10 +95,11 @@ table 123 "Test Table"
             (string_literal))
           (string_literal))
         (option_members_property
-          (option_member
-            (identifier))
-          (option_member
-            (identifier))))
+          value: (option_member_list
+            (option_member
+              (identifier))
+            (option_member
+              (identifier)))))
       (field_declaration
         id: (integer)
         name: (quoted_identifier)
@@ -109,7 +112,8 @@ table 123 "Test Table"
             (string_literal))
           (string_literal))
         (option_members_property
-          (option_member
-            (identifier))
-          (option_member
-            (identifier)))))))
+          value: (option_member_list
+            (option_member
+              (identifier))
+            (option_member
+              (identifier))))))))
