@@ -961,7 +961,8 @@ module.exports = grammar({
         $.actionref_declaration,
         $.action_group_section,
         $._action_property,
-        $.separator_action
+        $.separator_action,
+        $.empty_statement
       )),
       '}'
     ),
@@ -1064,7 +1065,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._action_property,
-        seq(optional($.attribute_list), $.trigger_declaration)
+        seq(optional($.attribute_list), $.trigger_declaration),
+        ';'
       )),
       '}'
     )),
@@ -1081,11 +1083,12 @@ module.exports = grammar({
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat(seq(optional(';'), choice(
+      repeat(choice(
         $._action_property,
         $.trigger_declaration,
-        $.var_section
-      ))),
+        $.var_section,
+        ';'
+      )),
       '}'
     ),
 
@@ -1097,11 +1100,12 @@ module.exports = grammar({
       field('action_name', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat(seq(optional(';'), choice(
+      repeat(choice(
         $._action_property,
         $.trigger_declaration,
-        $.var_section
-      ))),
+        $.var_section,
+        ';'
+      )),
       '}'
     ),
 
@@ -1111,11 +1115,12 @@ module.exports = grammar({
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat(seq(optional(';'), choice(
+      repeat(choice(
         $._action_property,
         $.trigger_declaration,
-        $.var_section
-      ))),
+        $.var_section,
+        ';'
+      )),
       '}'
     ),
 
@@ -2044,7 +2049,10 @@ module.exports = grammar({
       field('page_name', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat($._page_properties),
+      repeat(choice(
+        $._page_properties,
+        $.empty_statement
+      )),
       '}'
     ),
 
@@ -2056,7 +2064,10 @@ module.exports = grammar({
       field('systempart_type', choice($.identifier, $._quoted_identifier)),
       ')',
       '{',
-      repeat($._page_properties),
+      repeat(choice(
+        $._page_properties,
+        $.empty_statement
+      )),
       '}'
     ),
 
