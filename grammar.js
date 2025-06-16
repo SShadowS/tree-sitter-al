@@ -1327,7 +1327,7 @@ module.exports = grammar({
     _colon: $ => ':',
 
     table_no_property: $ => seq(
-      'TableNo',
+      alias(/[tT][aA][bB][lL][eE][nN][oO]/, 'TableNo'),
       '=',
       field('value', alias($._table_no_value, $.value)),
       ';'
@@ -3223,7 +3223,9 @@ module.exports = grammar({
       alias(/[cC][aA][pP][tT][iI][oO][nN]/, $.identifier),
       alias('SubType', $.identifier), 
       alias('subtype', $.identifier),
-      alias('SUBTYPE', $.identifier)
+      alias('SUBTYPE', $.identifier),
+      // Allow the keyword 'TableNo' to be treated as an identifier in variable contexts
+      alias(/[tT][aA][bB][lL][eE][nN][oO]/, $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
@@ -3328,8 +3330,8 @@ type_specification: $ => choice(
 ),
 
 // Handles 'Option' type keyword followed by optional members
-option_type: $ => prec.left(10, seq( // Increased precedence, left associative
-  choice('Option', 'OPTION', 'Option'),
+option_type: $ => prec.right(1, seq(
+  choice('Option', 'OPTION', 'option'),
   optional($.option_member_list) // Members are part of the type
 )),
 
@@ -3338,10 +3340,13 @@ option_member_list: $ => prec.left(1, choice(
   // Standard case: member followed by optional members
   seq(
     $.option_member,
-    repeat(seq(',', optional($.option_member)))
+    repeat(seq(',', $.option_member))
   ),
   // Edge case: starts with empty but has content
-  repeat1(seq(',', optional($.option_member)))
+  seq(
+    optional($.option_member),
+    repeat1(seq(',', $.option_member))
+  )
 )),
 
 interface_type: $ => seq(

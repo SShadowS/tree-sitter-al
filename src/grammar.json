@@ -5579,7 +5579,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[tT][aA][bB][lL][eE][nN][oO]"
+          },
+          "named": false,
           "value": "TableNo"
         },
         {
@@ -13842,6 +13847,15 @@
           },
           "named": true,
           "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[tT][aA][bB][lL][eE][nN][oO]"
+          },
+          "named": true,
+          "value": "identifier"
         }
       ]
     },
@@ -14392,8 +14406,8 @@
       ]
     },
     "option_type": {
-      "type": "PREC_LEFT",
-      "value": 10,
+      "type": "PREC_RIGHT",
+      "value": 1,
       "content": {
         "type": "SEQ",
         "members": [
@@ -14410,7 +14424,7 @@
               },
               {
                 "type": "STRING",
-                "value": "Option"
+                "value": "option"
               }
             ]
           },
@@ -14452,16 +14466,8 @@
                       "value": ","
                     },
                     {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "option_member"
-                        },
-                        {
-                          "type": "BLANK"
-                        }
-                      ]
+                      "type": "SYMBOL",
+                      "name": "option_member"
                     }
                   ]
                 }
@@ -14469,28 +14475,37 @@
             ]
           },
           {
-            "type": "REPEAT1",
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": ","
-                },
-                {
-                  "type": "CHOICE",
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "option_member"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "REPEAT1",
+                "content": {
+                  "type": "SEQ",
                   "members": [
+                    {
+                      "type": "STRING",
+                      "value": ","
+                    },
                     {
                       "type": "SYMBOL",
                       "name": "option_member"
-                    },
-                    {
-                      "type": "BLANK"
                     }
                   ]
                 }
-              ]
-            }
+              }
+            ]
           }
         ]
       }
