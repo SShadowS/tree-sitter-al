@@ -9261,6 +9261,132 @@
     }
   },
   {
+    "type": "entitlement_declaration",
+    "named": true,
+    "fields": {
+      "object_name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "entitlement_id_property",
+          "named": true
+        },
+        {
+          "type": "entitlement_type_property",
+          "named": true
+        },
+        {
+          "type": "object_entitlements_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_entitlement_properties",
+          "named": true
+        },
+        {
+          "type": "property_list",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "entitlement_id_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "entitlement_type_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "entity_caption_ml_property",
     "named": true,
     "fields": {
@@ -22083,6 +22209,30 @@
     }
   },
   {
+    "type": "object_entitlements_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "obsolete_reason_property",
     "named": true,
     "fields": {
@@ -25270,6 +25420,93 @@
     }
   },
   {
+    "type": "preproc_conditional_entitlement_properties",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "entitlement_id_property",
+          "named": true
+        },
+        {
+          "type": "entitlement_type_property",
+          "named": true
+        },
+        {
+          "type": "object_entitlements_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "property_list",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_enum_properties",
     "named": true,
     "fields": {},
@@ -28304,6 +28541,10 @@
             "named": true
           },
           {
+            "type": "entitlement_declaration",
+            "named": true
+          },
+          {
             "type": "enum_declaration",
             "named": true
           },
@@ -28397,6 +28638,10 @@
           },
           {
             "type": "dotnet_declaration",
+            "named": true
+          },
+          {
+            "type": "entitlement_declaration",
             "named": true
           },
           {
@@ -34317,6 +34562,10 @@
         },
         {
           "type": "dotnet_declaration",
+          "named": true
+        },
+        {
+          "type": "entitlement_declaration",
           "named": true
         },
         {
@@ -43085,12 +43334,12 @@
   },
   {
     "type": "comment",
-    "named": false,
+    "named": true,
     "extra": true
   },
   {
     "type": "comment",
-    "named": true,
+    "named": false,
     "extra": true
   },
   {
@@ -43251,11 +43500,11 @@
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "interface",

@@ -208,6 +208,10 @@
         {
           "type": "SYMBOL",
           "name": "controladdin_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "entitlement_declaration"
         }
       ]
     },
@@ -6639,6 +6643,177 @@
         {
           "type": "SYMBOL",
           "name": "preproc_conditional_controladdin_properties"
+        }
+      ]
+    },
+    "entitlement_declaration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[eE][nN][tT][iI][tT][lL][eE][mM][eE][nN][tT]"
+        },
+        {
+          "type": "FIELD",
+          "name": "object_name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_identifier_choice"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_entitlement_element"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "_entitlement_element": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_entitlement_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "property_list"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_entitlement_properties"
+        }
+      ]
+    },
+    "entitlement_type_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[tT][yY][pP][eE]"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[aA][pP][pP][lL][iI][cC][aA][tT][iI][oO][nN][sS][cC][oO][pP][eE]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[pP][eE][rR][uU][sS][eE][rR][sS][eE][rR][vV][iI][cC][eE][pP][lL][aA][nN]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[rR][oO][lL][eE]"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "entitlement_id_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[iI][dD]"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "object_entitlements_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[oO][bB][jJ][eE][cC][tT][eE][nN][tT][iI][tT][lL][eE][mM][eE][nN][tT][sS]"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_identifier_choice"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_identifier_choice"
+                  },
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": ","
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_identifier_choice"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
         }
       ]
     },
@@ -24893,6 +25068,68 @@
         }
       ]
     },
+    "preproc_conditional_entitlement_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_entitlement_properties"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "property_list"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_entitlement_properties"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "property_list"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
     "preproc_conditional_profile_properties": {
       "type": "SEQ",
       "members": [
@@ -26728,6 +26965,27 @@
         {
           "type": "SYMBOL",
           "name": "controladdin_property"
+        }
+      ]
+    },
+    "_entitlement_properties": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_universal_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "entitlement_type_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "entitlement_id_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "object_entitlements_property"
         }
       ]
     },

@@ -58,7 +58,8 @@ module.exports = grammar({
       $.dotnet_declaration,
       $.report_declaration,
       $.permissionset_declaration,
-      $.controladdin_declaration
+      $.controladdin_declaration,
+      $.entitlement_declaration
     ),
 
     namespace_declaration: $ => seq(
@@ -1556,6 +1557,52 @@ module.exports = grammar({
       $.controladdin_procedure,      // ControlAddIn structural elements
       $.property_list,               // Generic fallback
       $.preproc_conditional_controladdin_properties
+    ),
+
+    entitlement_declaration: $ => seq(
+      /[eE][nN][tT][iI][tT][lL][eE][mM][eE][nN][tT]/,
+      field('object_name', $._identifier_choice),
+      '{',
+      repeat($._entitlement_element),
+      '}'
+    ),
+
+    _entitlement_element: $ => choice(
+      $._entitlement_properties,      // Entitlement-specific properties
+      $.property_list,                // Generic property container
+      $.preproc_conditional_entitlement_properties
+    ),
+
+    entitlement_type_property: $ => seq(
+      /[tT][yY][pP][eE]/,
+      '=',
+      field('value', choice(
+        /[aA][pP][pP][lL][iI][cC][aA][tT][iI][oO][nN][sS][cC][oO][pP][eE]/,                    // ApplicationScope
+        /[pP][eE][rR][uU][sS][eE][rR][sS][eE][rR][vV][iI][cC][eE][pP][lL][aA][nN]/,            // PerUserServicePlan
+        /[rR][oO][lL][eE]/,                                                                      // Role
+        $.identifier                                                                              // Allow other identifiers
+      )),
+      ';'
+    ),
+
+    entitlement_id_property: $ => seq(
+      /[iI][dD]/,
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    object_entitlements_property: $ => seq(
+      /[oO][bB][jJ][eE][cC][tT][eE][nN][tT][iI][tT][lL][eE][mM][eE][nN][tT][sS]/,
+      '=',
+      field('value', choice(
+        $._identifier_choice,
+        seq(
+          $._identifier_choice,
+          repeat(seq(',', $._identifier_choice))
+        )
+      )),
+      ';'
     ),
 
     controladdin_property: $ => seq(
@@ -5461,6 +5508,16 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     ),
 
+    preproc_conditional_entitlement_properties: $ => seq(
+      $.preproc_if,
+      repeat(choice($._entitlement_properties, $.property_list)),
+      optional(seq(
+        $.preproc_else,
+        repeat(choice($._entitlement_properties, $.property_list))
+      )),
+      $.preproc_endif
+    ),
+
     // Preprocessor conditional rules for profile properties
     preproc_conditional_profile_properties: $ => seq(
       $.preproc_if,
@@ -5874,6 +5931,15 @@ enum_type: $ => prec(1, seq(
       $._universal_properties,       // caption, description, obsolete_*, application_area
       // ControlAddIn-specific
       $.controladdin_property,
+    ),
+
+    // Entitlement-specific properties that are unique to entitlement objects
+    _entitlement_properties: $ => choice(
+      $._universal_properties,       // caption, description, obsolete_*
+      // Entitlement-specific
+      $.entitlement_type_property,
+      $.entitlement_id_property,
+      $.object_entitlements_property,
     ),
 
     // Profile-specific properties that are unique to profile objects
