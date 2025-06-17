@@ -42,16 +42,14 @@ if [ ! -d "$GRAMMAR_DIR" ]; then
 fi
 
 # --- 1. (Re)generate the parser ---------------------------------------------
-echo "Generating parser in \"$GRAMMAR_DIR\" ..."
 cd "$GRAMMAR_DIR"
-if ! tree-sitter generate; then
+if ! tree-sitter generate >/dev/null 2>&1; then
     echo "Error: tree-sitter generate failed"
     exit 1
 fi
 cd - > /dev/null
 
 # --- 2. Gather *.al files -----------------------------------------------------
-echo "Finding .al files under \"$ROOT_DIR\" ..."
 al_files=$(find "$ROOT_DIR" -name "*.al" -type f)
 
 if [ -z "$al_files" ]; then
@@ -60,7 +58,7 @@ if [ -z "$al_files" ]; then
 fi
 
 file_count=$(echo "$al_files" | wc -l)
-echo "Found $file_count .al files"
+echo "Processing $file_count .al files..."
 
 # --- 3. Parse each file -------------------------------------------------------
 parsed_count=0
@@ -74,7 +72,6 @@ error_path="$ROOT_DIR/errors.txt"
 
 echo "$al_files" | while read -r file; do
     if [ -n "$file" ]; then
-        echo "Parsing $file ..."
         if tree-sitter parse -q "$file" >/dev/null 2>&1; then
             echo "$file" >> "$parsed_path"
             parsed_count=$((parsed_count + 1))

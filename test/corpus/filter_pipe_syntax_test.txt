@@ -1,0 +1,132 @@
+================================================================================
+FILTER pipe syntax in SubPageLink
+================================================================================
+
+page 50100 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            part(AttachedFiles; "Document Files")
+            {
+                ApplicationArea = All;
+                SubPageLink = "Created Doc. Table No." = CONST(38),
+                              "Created Doc. Subtype" = FILTER(2 | 3),
+                              "Created Doc. No." = FIELD("No.");
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (application_area_property
+            value: (identifier))
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              const_value: (integer))
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              filter_value: (filter_or_expression
+                (integer)
+                (integer)))
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              field_value: (quoted_identifier))))))))
+
+================================================================================
+FILTER with multiple OR conditions
+================================================================================
+
+pageextension 50100 "Test Extension" extends "Customer List"
+{
+    layout
+    {
+        addafter(General)
+        {
+            part(TestPart; "Test Page")
+            {
+                SubPageLink = "Type" = FILTER(1 | 2 | 3 | 4),
+                              "Status" = FILTER(Open | Released);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (layout_section
+      (addafter_layout_modification
+        target: (identifier)
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              filter_value: (filter_or_expression
+                (integer)
+                (integer)
+                (integer)
+                (integer)))
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              filter_value: (filter_or_expression
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+FILTER with comparison operators
+================================================================================
+
+page 50100 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            part(RelatedFiles; "Document Files")
+            {
+                SubPageLink = "Related Document No." = FILTER(<> ''),
+                              "Status" = FILTER(= 'Active');
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              filter_value: (filter_not_equal_expression
+                value: (string_literal)))
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              filter_value: (filter_equal_expression
+                value: (string_literal)))))))))

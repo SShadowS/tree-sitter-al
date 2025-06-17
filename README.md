@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 1,331 AL files from a comprehensive Business Central production codebase, **1,321 files (99.2%) parse successfully**.
+Based on analysis of 3,920 AL files from the comprehensive Business Central production codebase, **2,812 files (71.7%) parse successfully**.
 
 Recent improvements include:
 - **Standalone semicolons in property contexts** - Added support for standalone semicolons in part sections, action blocks, and modify actions, significantly improving parsing compatibility

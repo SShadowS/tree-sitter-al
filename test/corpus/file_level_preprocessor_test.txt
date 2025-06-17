@@ -1,0 +1,107 @@
+================================================================================
+File-level preprocessor conditional
+================================================================================
+
+#if CLOUD
+codeunit 50100 "Test Codeunit"
+{
+    trigger OnRun()
+    begin
+    end;
+}
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preprocessor_file_conditional
+    condition: (preproc_if
+      condition: (identifier))
+    consequence: (codeunit_declaration
+      object_id: (integer)
+      object_name: (quoted_identifier)
+      (attributed_onrun_trigger
+        (onrun_trigger
+          (code_block))))
+    (preproc_endif)))
+
+================================================================================
+File-level preprocessor with else branch
+================================================================================
+
+#if CLOUD
+page 50100 "Cloud Page"
+{
+    PageType = Card;
+}
+#else
+page 50100 "On-Prem Page"
+{
+    PageType = List;
+}
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preprocessor_file_conditional
+    condition: (preproc_if
+      condition: (identifier))
+    consequence: (page_declaration
+      object_id: (integer)
+      object_name: (quoted_identifier)
+      (page_type_property))
+    alternative: (preproc_else)
+    alternative: (page_declaration
+      object_id: (integer)
+      object_name: (quoted_identifier)
+      (page_type_property))
+    (preproc_endif)))
+
+================================================================================
+File-level preprocessor with namespace
+================================================================================
+
+#if CLOUD
+namespace Microsoft.Sales.Document;
+
+using Microsoft.Foundation.UOM;
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; "No."; Code[20])
+        {
+        }
+    }
+}
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preprocessor_file_conditional
+    condition: (preproc_if
+      condition: (identifier))
+    consequence: (namespace_declaration
+      name: (namespace_name
+        (identifier)
+        (identifier)
+        (identifier)))
+    consequence: (using_statement
+      namespace: (namespace_name
+        (identifier)
+        (identifier)
+        (identifier)))
+    consequence: (table_declaration
+      object_id: (integer)
+      object_name: (quoted_identifier)
+      (fields
+        (field_declaration
+          id: (integer)
+          name: (quoted_identifier)
+          type: (type_specification
+            (code_type
+              length: (integer))))))
+    (preproc_endif)))

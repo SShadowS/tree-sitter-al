@@ -1,0 +1,89 @@
+================================================================================
+TestPage case variations
+================================================================================
+
+codeunit 50100 "Test Codeunit"
+{
+    [PageHandler]
+    procedure PageHandler1(var Page: TestPage 138)
+    begin
+    end;
+
+    [PageHandler]
+    procedure PageHandler2(var Page: Testpage 138)
+    begin
+    end;
+
+    [PageHandler]
+    procedure PageHandler3(var Page: TESTPAGE 138)
+    begin
+    end;
+
+    [PageHandler]
+    procedure PageHandler4(var Page: testpage 138)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)))
+      (procedure
+        name: (name)
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (testpage_type
+                reference: (integer)))))
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)))
+      (procedure
+        name: (name)
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (testpage_type
+                reference: (integer)))))
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)))
+      (procedure
+        name: (name)
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (testpage_type
+                reference: (integer)))))
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)))
+      (procedure
+        name: (name)
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (testpage_type
+                reference: (integer)))))
+        (code_block)))))

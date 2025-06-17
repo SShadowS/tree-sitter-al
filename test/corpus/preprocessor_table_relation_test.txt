@@ -159,11 +159,13 @@ table 124 "Simple Test"
             relation: (table_relation_expression
               (simple_table_relation
                 table: (quoted_identifier))))
+          (empty_statement)
           (preproc_else)
           (table_relation_property
             relation: (table_relation_expression
               (simple_table_relation
                 table: (quoted_identifier))))
+          (empty_statement)
           (preproc_endif))))))
 
 ================================================================================

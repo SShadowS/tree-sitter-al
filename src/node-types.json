@@ -489,6 +489,10 @@
           "named": true
         },
         {
+          "type": "empty_statement",
+          "named": true
+        },
+        {
           "type": "enabled_property",
           "named": true
         },
@@ -2241,6 +2245,54 @@
     }
   },
   {
+    "type": "api_group_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "api_publisher_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "api_version_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "application_area_property",
     "named": true,
     "fields": {
@@ -3963,7 +4015,18 @@
   {
     "type": "caption_property",
     "named": true,
-    "fields": {},
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "Caption",
+            "named": false
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
@@ -24468,6 +24531,10 @@
           "named": true
         },
         {
+          "type": "empty_statement",
+          "named": true
+        },
+        {
           "type": "enabled_property",
           "named": true
         },
@@ -27070,6 +27137,18 @@
           "named": true
         },
         {
+          "type": "api_group_property",
+          "named": true
+        },
+        {
+          "type": "api_publisher_property",
+          "named": true
+        },
+        {
+          "type": "api_version_property",
+          "named": true
+        },
+        {
           "type": "application_area_property",
           "named": true
         },
@@ -27095,6 +27174,22 @@
         },
         {
           "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "entity_caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "entity_caption_property",
+          "named": true
+        },
+        {
+          "type": "entity_name_property",
+          "named": true
+        },
+        {
+          "type": "entity_set_name_property",
           "named": true
         },
         {
@@ -28187,6 +28282,200 @@
     "type": "preproc_region",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "preprocessor_file_conditional",
+    "named": true,
+    "fields": {
+      "alternative": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "codeunit_declaration",
+            "named": true
+          },
+          {
+            "type": "controladdin_declaration",
+            "named": true
+          },
+          {
+            "type": "dotnet_declaration",
+            "named": true
+          },
+          {
+            "type": "enum_declaration",
+            "named": true
+          },
+          {
+            "type": "enumextension_declaration",
+            "named": true
+          },
+          {
+            "type": "interface_declaration",
+            "named": true
+          },
+          {
+            "type": "namespace_declaration",
+            "named": true
+          },
+          {
+            "type": "page_declaration",
+            "named": true
+          },
+          {
+            "type": "pagecustomization_declaration",
+            "named": true
+          },
+          {
+            "type": "pageextension_declaration",
+            "named": true
+          },
+          {
+            "type": "permissionset_declaration",
+            "named": true
+          },
+          {
+            "type": "pragma",
+            "named": true
+          },
+          {
+            "type": "preproc_else",
+            "named": true
+          },
+          {
+            "type": "profile_declaration",
+            "named": true
+          },
+          {
+            "type": "query_declaration",
+            "named": true
+          },
+          {
+            "type": "report_declaration",
+            "named": true
+          },
+          {
+            "type": "table_declaration",
+            "named": true
+          },
+          {
+            "type": "tableextension_declaration",
+            "named": true
+          },
+          {
+            "type": "using_statement",
+            "named": true
+          },
+          {
+            "type": "xmlport_declaration",
+            "named": true
+          }
+        ]
+      },
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "preproc_if",
+            "named": true
+          }
+        ]
+      },
+      "consequence": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "codeunit_declaration",
+            "named": true
+          },
+          {
+            "type": "controladdin_declaration",
+            "named": true
+          },
+          {
+            "type": "dotnet_declaration",
+            "named": true
+          },
+          {
+            "type": "enum_declaration",
+            "named": true
+          },
+          {
+            "type": "enumextension_declaration",
+            "named": true
+          },
+          {
+            "type": "interface_declaration",
+            "named": true
+          },
+          {
+            "type": "namespace_declaration",
+            "named": true
+          },
+          {
+            "type": "page_declaration",
+            "named": true
+          },
+          {
+            "type": "pagecustomization_declaration",
+            "named": true
+          },
+          {
+            "type": "pageextension_declaration",
+            "named": true
+          },
+          {
+            "type": "permissionset_declaration",
+            "named": true
+          },
+          {
+            "type": "pragma",
+            "named": true
+          },
+          {
+            "type": "profile_declaration",
+            "named": true
+          },
+          {
+            "type": "query_declaration",
+            "named": true
+          },
+          {
+            "type": "report_declaration",
+            "named": true
+          },
+          {
+            "type": "table_declaration",
+            "named": true
+          },
+          {
+            "type": "tableextension_declaration",
+            "named": true
+          },
+          {
+            "type": "using_statement",
+            "named": true
+          },
+          {
+            "type": "xmlport_declaration",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_endif",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "preview_mode_property",
@@ -29865,6 +30154,18 @@
           "named": true
         },
         {
+          "type": "api_group_property",
+          "named": true
+        },
+        {
+          "type": "api_publisher_property",
+          "named": true
+        },
+        {
+          "type": "api_version_property",
+          "named": true
+        },
+        {
           "type": "application_area_property",
           "named": true
         },
@@ -29894,6 +30195,22 @@
         },
         {
           "type": "elements_section",
+          "named": true
+        },
+        {
+          "type": "entity_caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "entity_caption_property",
+          "named": true
+        },
+        {
+          "type": "entity_name_property",
+          "named": true
+        },
+        {
+          "type": "entity_set_name_property",
           "named": true
         },
         {
@@ -32998,6 +33315,18 @@
         "required": false,
         "types": [
           {
+            "type": "filter_equal_expression",
+            "named": true
+          },
+          {
+            "type": "filter_not_equal_expression",
+            "named": true
+          },
+          {
+            "type": "filter_or_expression",
+            "named": true
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -33007,6 +33336,10 @@
           },
           {
             "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
             "named": true
           },
           {
@@ -34020,6 +34353,10 @@
         },
         {
           "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preprocessor_file_conditional",
           "named": true
         },
         {
@@ -35189,6 +35526,10 @@
         },
         {
           "type": "editable_property",
+          "named": true
+        },
+        {
+          "type": "empty_statement",
           "named": true
         },
         {
@@ -38489,6 +38830,16 @@
     "type": "view_caption_property",
     "named": true,
     "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "Caption",
+            "named": false
+          }
+        ]
+      },
       "value": {
         "multiple": false,
         "required": true,
@@ -40785,14 +41136,6 @@
     "named": false
   },
   {
-    "type": "CAPTION",
-    "named": false
-  },
-  {
-    "type": "CAPTIONCLASS",
-    "named": false
-  },
-  {
     "type": "CARDPART",
     "named": false
   },
@@ -40842,14 +41185,6 @@
   },
   {
     "type": "Caption",
-    "named": false
-  },
-  {
-    "type": "CaptionClass",
-    "named": false
-  },
-  {
-    "type": "CaptionML",
     "named": false
   },
   {
@@ -40933,10 +41268,6 @@
     "named": false
   },
   {
-    "type": "ContextSensitiveHelpPage",
-    "named": false
-  },
-  {
     "type": "ControlAddIn",
     "named": false
   },
@@ -41006,18 +41337,6 @@
   },
   {
     "type": "DURATION",
-    "named": false
-  },
-  {
-    "type": "DataAccessIntent",
-    "named": false
-  },
-  {
-    "type": "DataCaptionExpression",
-    "named": false
-  },
-  {
-    "type": "DataCaptionFields",
     "named": false
   },
   {
@@ -41194,30 +41513,6 @@
   },
   {
     "type": "End",
-    "named": false
-  },
-  {
-    "type": "EntityCaption",
-    "named": false
-  },
-  {
-    "type": "EntityCaptionML",
-    "named": false
-  },
-  {
-    "type": "EntityName",
-    "named": false
-  },
-  {
-    "type": "EntitySetCaption",
-    "named": false
-  },
-  {
-    "type": "EntitySetCaptionML",
-    "named": false
-  },
-  {
-    "type": "EntitySetName",
     "named": false
   },
   {
@@ -41437,14 +41732,6 @@
     "named": false
   },
   {
-    "type": "Importance",
-    "named": false
-  },
-  {
-    "type": "ImportanceAdditional",
-    "named": false
-  },
-  {
     "type": "In",
     "named": false
   },
@@ -41454,10 +41741,6 @@
   },
   {
     "type": "InStream",
-    "named": false
-  },
-  {
-    "type": "IncludeCaption",
     "named": false
   },
   {
@@ -42001,14 +42284,6 @@
     "named": false
   },
   {
-    "type": "OptionCaption",
-    "named": false
-  },
-  {
-    "type": "OptionCaptionML",
-    "named": false
-  },
-  {
     "type": "OptionMembers",
     "named": false
   },
@@ -42162,14 +42437,6 @@
   },
   {
     "type": "Query",
-    "named": false
-  },
-  {
-    "type": "QueryCategory",
-    "named": false
-  },
-  {
-    "type": "QueryType",
     "named": false
   },
   {
@@ -42337,10 +42604,6 @@
     "named": false
   },
   {
-    "type": "ShowCaption",
-    "named": false
-  },
-  {
     "type": "ShowFilter",
     "named": false
   },
@@ -42437,6 +42700,10 @@
     "named": false
   },
   {
+    "type": "TESTPAGE",
+    "named": false
+  },
+  {
     "type": "TEXT",
     "named": false
   },
@@ -42506,6 +42773,10 @@
   },
   {
     "type": "TestTableRelation",
+    "named": false
+  },
+  {
+    "type": "Testpage",
     "named": false
   },
   {
@@ -42797,14 +43068,6 @@
     "named": false
   },
   {
-    "type": "caption",
-    "named": false
-  },
-  {
-    "type": "captionclass",
-    "named": false
-  },
-  {
     "type": "case",
     "named": false
   },
@@ -42822,21 +43085,21 @@
   },
   {
     "type": "comment",
-    "named": true,
-    "extra": true
-  },
-  {
-    "type": "comment",
     "named": false,
     "extra": true
   },
   {
-    "type": "const",
-    "named": true
+    "type": "comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "const",
     "named": false
+  },
+  {
+    "type": "const",
+    "named": true
   },
   {
     "type": "controladdin",
@@ -43182,6 +43445,10 @@
   },
   {
     "type": "testisolation",
+    "named": false
+  },
+  {
+    "type": "testpage",
     "named": false
   },
   {

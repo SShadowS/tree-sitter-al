@@ -1,0 +1,225 @@
+================================================================================
+Query with API properties
+================================================================================
+
+query 123 "Test API Query"
+{
+    QueryType = API;
+    EntityCaption = 'Test Entity';
+    EntityName = 'testEntity';
+    EntitySetName = 'testEntities';
+    APIGroup = 'testGroup';
+    APIPublisher = 'microsoft';
+    APIVersion = 'v1.0';
+    DataAccessIntent = ReadOnly;
+
+    elements
+    {
+        dataitem(TestData; "Test Table")
+        {
+            column(id; SystemId)
+            {
+                Caption = 'Id';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (query_type_property)
+    (entity_caption_property
+      value: (string_literal))
+    (entity_name_property
+      value: (string_literal))
+    (entity_set_name_property
+      value: (string_literal))
+    (api_group_property
+      value: (string_literal))
+    (api_publisher_property
+      value: (string_literal))
+    (api_version_property
+      value: (string_literal))
+    (data_access_intent_property)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (column_section
+          name: (identifier)
+          field_name: (identifier)
+          (property_list
+            (property
+              (caption_property
+                (string_literal)))))))))
+
+================================================================================
+Query with mixed case API properties
+================================================================================
+
+query 456 "Mixed Case API Query"
+{
+    querytype = api;
+    entitycaption = 'Lower Case Entity';
+    ENTITYNAME = 'UPPER_CASE_ENTITY';
+    entitySetName = 'mixedCaseEntities';
+    apigroup = 'finance';
+    APIPUBLISHER = 'CONTOSO';
+    ApiVersion = 'beta';
+    
+    elements
+    {
+        dataitem(Item; Item)
+        {
+            column(no; "No.")
+            {
+                Caption = 'Number';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (query_type_property)
+    (entity_caption_property
+      value: (string_literal))
+    (entity_name_property
+      value: (string_literal))
+    (entity_set_name_property
+      value: (string_literal))
+    (api_group_property
+      value: (string_literal))
+    (api_publisher_property
+      value: (string_literal))
+    (api_version_property
+      value: (string_literal))
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier)
+          (property_list
+            (property
+              (caption_property
+                (string_literal)))))))))
+
+================================================================================
+Query with all supported properties
+================================================================================
+
+namespace Microsoft.Test;
+
+using System.AI;
+
+query 30305 "Complete API Query"
+{
+    QueryType = API;
+    EntityCaption = 'General Budget Entry';
+    EntityName = 'generalLedgerBudgetEntry';
+    EntitySetName = 'generalLedgerBudgetEntries';
+    APIGroup = 'reportsFinance';
+    APIPublisher = 'microsoft';
+    APIVersion = 'beta';
+    DataAccessIntent = ReadOnly;
+    Caption = 'Budget Query';
+    QueryCategory = 'Finance';
+    AboutTitle = 'About Budget Query';
+    AboutText = 'This query provides budget information';
+    ContextSensitiveHelpPage = 'query-budget';
+
+    elements
+    {
+        dataitem(GLBudgetEntry; "G/L Budget Entry")
+        {
+            column(id; SystemId)
+            {
+                Caption = 'Id';
+            }
+            column(number; "Entry No.")
+            {
+                Caption = 'Number';
+            }
+            column(amount; Amount)
+            {
+                Caption = 'Amount';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (namespace_declaration
+    name: (namespace_name
+      (identifier)
+      (identifier)))
+  (using_statement
+    namespace: (namespace_name
+      (identifier)
+      (identifier)))
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (query_type_property)
+    (entity_caption_property
+      value: (string_literal))
+    (entity_name_property
+      value: (string_literal))
+    (entity_set_name_property
+      value: (string_literal))
+    (api_group_property
+      value: (string_literal))
+    (api_publisher_property
+      value: (string_literal))
+    (api_version_property
+      value: (string_literal))
+    (data_access_intent_property)
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))
+    (query_category_property
+      value: (string_literal))
+    (about_title_property
+      value: (string_literal))
+    (about_text_property
+      value: (string_literal))
+    (context_sensitive_help_page_property
+      value: (string_literal))
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (column_section
+          name: (identifier)
+          field_name: (identifier)
+          (property_list
+            (property
+              (caption_property
+                (string_literal)))))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier)
+          (property_list
+            (property
+              (caption_property
+                (string_literal)))))
+        (column_section
+          name: (identifier)
+          field_name: (identifier)
+          (property_list
+            (property
+              (caption_property
+                (string_literal)))))))))

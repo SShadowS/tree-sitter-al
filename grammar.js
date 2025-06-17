@@ -15,10 +15,31 @@ module.exports = grammar({
   extras: $ => [/\s/, $.comment, $.multiline_comment, $.pragma],
 
   rules: {
-    source_file: $ => seq(
+    source_file: $ => choice(
+      // Standard source file structure
+      seq(
+        optional($.namespace_declaration),
+        repeat($.using_statement),
+        repeat(choice($._object, $.pragma))
+      ),
+      // Preprocessor-wrapped source file
+      $.preprocessor_file_conditional
+    ),
+
+    preprocessor_file_conditional: $ => seq(
+      field('condition', $.preproc_if),
+      field('consequence', $._source_content),
+      optional(field('alternative', seq(
+        $.preproc_else,
+        $._source_content
+      ))),
+      $.preproc_endif
+    ),
+
+    _source_content: $ => seq(
       optional($.namespace_declaration),
       repeat($.using_statement),
-      repeat(choice($._object, $.pragma))
+      repeat1(choice($._object, $.pragma))  // At least one object or pragma required
     ),
 
     _object: $ => choice(
@@ -462,7 +483,7 @@ module.exports = grammar({
 
     // Phase 2B - Medium Priority Complex Page Properties
     data_caption_expression_property: $ => seq(
-      'DataCaptionExpression',
+      /[dD][aA][tT][aA][cC][aA][pP][tT][iI][oO][nN][eE][xX][pP][rR][eE][sS][sS][iI][oO][nN]/,
       '=',
       field('value', $._expression),
       ';'
@@ -547,49 +568,70 @@ module.exports = grammar({
     ),
 
     entity_caption_property: $ => seq(
-      'EntityCaption',
+      /[eE][nN][tT][iI][tT][yY][cC][aA][pP][tT][iI][oO][nN]/,
       '=',
       field('value', $.string_literal),
       ';'
     ),
 
     entity_caption_ml_property: $ => seq(
-      'EntityCaptionML',
+      /[eE][nN][tT][iI][tT][yY][cC][aA][pP][tT][iI][oO][nN][mM][lL]/,
       '=',
       field('value', $.ml_value_list),
       ';'
     ),
 
     entity_name_property: $ => seq(
-      'EntityName',
+      /[eE][nN][tT][iI][tT][yY][nN][aA][mM][eE]/,
       '=',
       field('value', $.string_literal),
       ';'
     ),
 
     entity_set_caption_property: $ => seq(
-      'EntitySetCaption',
+      /[eE][nN][tT][iI][tT][yY][sS][eE][tT][cC][aA][pP][tT][iI][oO][nN]/,
       '=',
       field('value', $.string_literal),
       ';'
     ),
 
     entity_set_caption_ml_property: $ => seq(
-      'EntitySetCaptionML',
+      /[eE][nN][tT][iI][tT][yY][sS][eE][tT][cC][aA][pP][tT][iI][oO][nN][mM][lL]/,
       '=',
       field('value', $.ml_value_list),
       ';'
     ),
 
     entity_set_name_property: $ => seq(
-      'EntitySetName',
+      /[eE][nN][tT][iI][tT][yY][sS][eE][tT][nN][aA][mM][eE]/,
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    api_group_property: $ => seq(
+      /[aA][pP][iI][gG][rR][oO][uU][pP]/,
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    api_publisher_property: $ => seq(
+      /[aA][pP][iI][pP][uU][bB][lL][iI][sS][hH][eE][rR]/,
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    api_version_property: $ => seq(
+      /[aA][pP][iI][vV][eE][rR][sS][iI][oO][nN]/,
       '=',
       field('value', $.string_literal),
       ';'
     ),
 
     context_sensitive_help_page_property: $ => seq(
-      'ContextSensitiveHelpPage',
+      /[cC][oO][nN][tT][eE][xX][tT][sS][eE][nN][sS][iI][tT][iI][vV][eE][hH][eE][lL][pP][pP][aA][gG][eE]/,
       '=',
       field('value', $.string_literal),
       ';'
@@ -619,14 +661,14 @@ module.exports = grammar({
     ),
 
     query_category_property: $ => seq(
-      'QueryCategory',
+      /[qQ][uU][eE][rR][yY][cC][aA][tT][eE][gG][oO][rR][yY]/,
       '=',
       field('value', $.string_literal),
       ';'
     ),
 
     data_access_intent_property: $ => seq(
-      'DataAccessIntent',
+      /[dD][aA][tT][aA][aA][cC][cC][eE][sS][sS][iI][nN][tT][eE][nN][tT]/,
       '=',
       field('value', choice(
         /[rR][eE][aA][dD][oO][nN][lL][yY]/,
@@ -636,7 +678,7 @@ module.exports = grammar({
     ),
 
     query_type_property: $ => seq(
-      'QueryType',
+      /[qQ][uU][eE][rR][yY][tT][yY][pP][eE]/,
       '=',
       field('value', choice(
         /[nN][oO][rR][mM][aA][lL]/,
@@ -1244,7 +1286,16 @@ module.exports = grammar({
         seq(
           /[fF][iI][lL][tT][eE][rR]/,
           '(',
-          field('filter_value', choice($.identifier, $._quoted_identifier, $.integer, $.string_literal)),
+          field('filter_value', choice(
+            $.filter_or_expression,
+            $.filter_not_equal_expression,
+            $.filter_equal_expression,
+            $.range_expression,
+            $.identifier, 
+            $._quoted_identifier, 
+            $.integer, 
+            $.string_literal
+          )),
           ')'
         )
       ))
@@ -2281,7 +2332,7 @@ module.exports = grammar({
     ),
     
     importance_property: $ => seq(
-      'Importance',
+      /[iI][mM][pP][oO][rR][tT][aA][nN][cC][eE]/,
       '=',
       field('value', $.importance_value),
       ';'
@@ -2316,7 +2367,7 @@ module.exports = grammar({
     ),
 
     show_caption_property: $ => seq(
-      'ShowCaption',
+      /[sS][hH][oO][wW][cC][aA][pP][tT][iI][oO][nN]/,
       '=',
       field('value', $.boolean),
       ';'
@@ -2759,7 +2810,7 @@ module.exports = grammar({
 
     // NEW HIGH PRIORITY PROPERTIES - Property Rules
     data_caption_fields_property: $ => seq(
-      'DataCaptionFields',
+      /[dD][aA][tT][aA][cC][aA][pP][tT][iI][oO][nN][fF][iI][eE][lL][dD][sS]/,
       '=',
       field('value', $.data_caption_fields_value),
       ';'
@@ -2822,14 +2873,14 @@ module.exports = grammar({
     ),
 
     caption_ml_property: $ => seq(
-      'CaptionML',
+      /[cC][aA][pP][tT][iI][oO][nN][mM][lL]/,
       '=',
       $.ml_value_list,
       ';'
     ),
 
     option_caption_ml_property: $ => seq(
-      'OptionCaptionML',
+      /[oO][pP][tT][iI][oO][nN][cC][aA][pP][tT][iI][oO][nN][mM][lL]/,
       '=',
       $.ml_value_list,
       ';'
@@ -3136,7 +3187,7 @@ module.exports = grammar({
     )),
 
     caption_property: $ => seq(
-      choice('Caption', 'CAPTION', 'caption'),
+      field('name', alias(/[cC][aA][pP][tT][iI][oO][nN]/, 'Caption')),
       '=',
       $.string_literal,
       repeat(seq(
@@ -3158,7 +3209,7 @@ module.exports = grammar({
     ),
 
     caption_class_property: $ => seq(
-      choice('CaptionClass', 'CAPTIONCLASS', 'captionclass'),
+      /[cC][aA][pP][tT][iI][oO][nN][cC][lL][aA][sS][sS]/,
       '=',
       field('value', $._expression),
       ';'
@@ -3540,7 +3591,12 @@ enum_type: $ => prec(1, seq(
     ),
 
     testpage_type: $ => seq(
-      prec(1, 'TestPage'),
+      prec(1, choice(
+        'TestPage',
+        'Testpage',
+        'TESTPAGE',
+        'testpage'
+      )),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
@@ -3714,12 +3770,12 @@ enum_type: $ => prec(1, seq(
       '}'
     ),
 
-    table_relation_property: $ => seq(
+    table_relation_property: $ => prec.left(seq(
       'TableRelation',
       '=',
       field('relation', $.table_relation_expression),
-      ';'
-    ),
+      optional(';')
+    )),
 
     table_relation_expression: $ => choice(
       $.simple_table_relation,
@@ -4081,7 +4137,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     option_caption_property: $ => seq(
-      'OptionCaption',
+      /[oO][pP][tT][iI][oO][nN][cC][aA][pP][tT][iI][oO][nN]/,
       '=',
       $.option_caption_value,
       repeat(seq(
@@ -4994,14 +5050,14 @@ enum_type: $ => prec(1, seq(
 
     // Low priority properties
     importance_additional_property: $ => seq(
-      'ImportanceAdditional',
+      /[iI][mM][pP][oO][rR][tT][aA][nN][cC][eE][aA][dD][dD][iI][tT][iI][oO][nN][aA][lL]/,
       '=',
       field('value', $.boolean),
       ';'
     ),
 
     include_caption_property: $ => seq(
-      'IncludeCaption',
+      /[iI][nN][cC][lL][uU][dD][eE][cC][aA][pP][tT][iI][oO][nN]/,
       '=',
       field('value', $.boolean),
       ';'
@@ -5615,7 +5671,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     view_caption_property: $ => seq(
-      'Caption',
+      field('name', alias(/[cC][aA][pP][tT][iI][oO][nN]/, 'Caption')),
       '=',
       field('value', $.string_literal),
       ';'
@@ -5794,6 +5850,14 @@ enum_type: $ => prec(1, seq(
       $.context_sensitive_help_page_property, // Help page reference
       $.data_access_intent_property, // Database replica access
       $.query_category_property,     // Query categorization
+      // API-specific properties
+      $.entity_caption_property,     // API entity caption
+      $.entity_caption_ml_property,  // API entity caption (multi-language)
+      $.entity_name_property,        // API entity name
+      $.entity_set_name_property,    // API entity set name
+      $.api_group_property,          // API group
+      $.api_publisher_property,      // API publisher
+      $.api_version_property,        // API version
     ),
 
     // PermissionSet-specific properties that are unique to permissionset objects
