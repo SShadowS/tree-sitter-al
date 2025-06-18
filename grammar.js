@@ -611,6 +611,26 @@ module.exports = grammar({
       ';'
     ),
 
+    api_version_property: $ => seq(
+      choice('APIVersion', 'apiversion', 'APIVERSION'),
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    multiplicity_property: $ => seq(
+      choice('Multiplicity', 'multiplicity', 'MULTIPLICITY'),
+      '=',
+      field('value', choice(
+        /[zZ][eE][rR][oO][oO][rR][oO][nN][eE]/,  // ZeroOrOne
+        /[zZ][eE][rR][oO][oO][rR][mM][aA][nN][yY]/,  // ZeroOrMany
+        /[oO][nN][eE]/,  // One
+        /[mM][aA][nN][yY]/,  // Many
+        $.identifier
+      )),
+      ';'
+    ),
+
     api_group_property: $ => seq(
       /[aA][pP][iI][gG][rR][oO][uU][pP]/,
       '=',
@@ -6089,6 +6109,8 @@ enum_type: $ => prec(1, seq(
       $.entity_set_caption_ml_property,
       $.entity_set_name_property,
       $.odata_key_fields_property,
+      $.api_version_property,
+      $.multiplicity_property,
       
       // Help and documentation properties
       $.context_sensitive_help_page_property,

@@ -2283,6 +2283,90 @@
         }
       ]
     },
+    "api_version_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[aA][pP][iI][vV][eE][rR][sS][iI][oO][nN]"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "multiplicity_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "Multiplicity"
+            },
+            {
+              "type": "STRING",
+              "value": "multiplicity"
+            },
+            {
+              "type": "STRING",
+              "value": "MULTIPLICITY"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[zZ][eE][rR][oO][oO][rR][oO][nN][eE]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[zZ][eE][rR][oO][oO][rR][mM][aA][nN][yY]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[oO][nN][eE]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[mM][aA][nN][yY]"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "api_group_property": {
       "type": "SEQ",
       "members": [
@@ -2314,31 +2398,6 @@
         {
           "type": "PATTERN",
           "value": "[aA][pP][iI][pP][uU][bB][lL][iI][sS][hH][eE][rR]"
-        },
-        {
-          "type": "STRING",
-          "value": "="
-        },
-        {
-          "type": "FIELD",
-          "name": "value",
-          "content": {
-            "type": "SYMBOL",
-            "name": "string_literal"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": ";"
-        }
-      ]
-    },
-    "api_version_property": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "PATTERN",
-          "value": "[aA][pP][iI][vV][eE][rR][sS][iI][oO][nN]"
         },
         {
           "type": "STRING",
@@ -27482,6 +27541,14 @@
         {
           "type": "SYMBOL",
           "name": "odata_key_fields_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "api_version_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "multiplicity_property"
         },
         {
           "type": "SYMBOL",

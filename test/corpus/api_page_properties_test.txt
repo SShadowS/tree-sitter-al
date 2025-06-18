@@ -1,0 +1,211 @@
+================================================================================
+API page with APIVersion property
+================================================================================
+
+page 30047 "APIV2 - Purchase Invoice Lines"
+{
+    PageType = API;
+    APIVersion = 'v2.0';
+    EntityCaption = 'Purchase Invoice Line';
+    EntitySetCaption = 'Purchase Invoice Lines';
+    EntityName = 'purchaseInvoiceLine';
+    EntitySetName = 'purchaseInvoiceLines';
+    SourceTable = "Purch. Inv. Line";
+    ODataKeyFields = SystemId;
+    DelayedInsert = true;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (api_version_property
+      value: (string_literal))
+    (entity_caption_property
+      value: (string_literal))
+    (entity_set_caption_property
+      value: (string_literal))
+    (entity_name_property
+      value: (string_literal))
+    (entity_set_name_property
+      value: (string_literal))
+    (source_table_property
+      value: (quoted_identifier))
+    (odata_key_fields_property
+      value: (odata_key_fields_value
+        (identifier)))
+    (delayed_insert_property
+      value: (boolean))))
+
+================================================================================
+API page with beta APIVersion
+================================================================================
+
+page 50000 "API Page"
+{
+    PageType = API;
+    APIVersion = 'beta';
+    EntityName = 'customer';
+    EntitySetName = 'customers';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (api_version_property
+      value: (string_literal))
+    (entity_name_property
+      value: (string_literal))
+    (entity_set_name_property
+      value: (string_literal))))
+
+================================================================================
+Part with Multiplicity property
+================================================================================
+
+page 50001 "Test Page"
+{
+    PageType = Document;
+    
+    layout
+    {
+        area(factboxes)
+        {
+            part(LocationPart; "Location Factbox")
+            {
+                Caption = 'Location';
+                EntityName = 'location';
+                EntitySetName = 'locations';
+                Multiplicity = ZeroOrOne;
+                SubPageLink = SystemId = field("Location Id");
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (layout_section
+      (area_section
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (caption_property
+            (string_literal))
+          (entity_name_property
+            value: (string_literal))
+          (entity_set_name_property
+            value: (string_literal))
+          (multiplicity_property)
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (identifier)
+              field_value: (quoted_identifier))))))))
+
+================================================================================
+Multiplicity property case variations
+================================================================================
+
+page 50002 "Test Page"
+{
+    layout
+    {
+        area(content)
+        {
+            part(Part1; "My Page")
+            {
+                Multiplicity = zeroorone;
+            }
+            part(Part2; "My Page")
+            {
+                MULTIPLICITY = MANY;
+            }
+            part(Part3; "My Page")
+            {
+                multiplicity = One;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (multiplicity_property))
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (multiplicity_property))
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (multiplicity_property))))))
+
+================================================================================
+Complete API page with all properties
+================================================================================
+
+page 30100 "APIV2 - Items"
+{
+    APIVersion = 'v2.0';
+    EntityCaption = 'Item';
+    EntitySetCaption = 'Items';
+    ChangeTrackingAllowed = true;
+    DelayedInsert = true;
+    EntityName = 'item';
+    EntitySetName = 'items';
+    ODataKeyFields = SystemId;
+    PageType = API;
+    SourceTable = Item;
+    Extensible = false;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (api_version_property
+      value: (string_literal))
+    (entity_caption_property
+      value: (string_literal))
+    (entity_set_caption_property
+      value: (string_literal))
+    (change_tracking_allowed_property
+      value: (boolean))
+    (delayed_insert_property
+      value: (boolean))
+    (entity_name_property
+      value: (string_literal))
+    (entity_set_name_property
+      value: (string_literal))
+    (odata_key_fields_property
+      value: (odata_key_fields_value
+        (identifier)))
+    (page_type_property)
+    (source_table_property
+      value: (identifier))
+    (extensible_property
+      value: (extensible_value
+        (boolean)))))
