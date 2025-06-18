@@ -1,0 +1,117 @@
+================================================================================
+Report dataitem with PrintOnlyIfDetail property
+================================================================================
+
+report 50000 "Test Report"
+{
+    dataset
+    {
+        dataitem(Customer; Customer)
+        {
+            PrintOnlyIfDetail = true;
+            
+            column(CustomerNo; "No.")
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (integer)
+    (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        (identifier)
+        (identifier)
+        (print_only_if_detail_property
+          (boolean))
+        (report_column_section
+          (identifier)
+          (quoted_identifier))))))
+
+================================================================================
+Report dataitem with PrintOnlyIfDetail false
+================================================================================
+
+report 50001 "Test Report 2"
+{
+    dataset
+    {
+        dataitem(SalesHeader; "Sales Header")
+        {
+            PrintOnlyIfDetail = false;
+            RequestFilterFields = "No.", "Document Date";
+            
+            column(DocumentNo; "No.")
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (integer)
+    (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        (identifier)
+        (quoted_identifier)
+        (print_only_if_detail_property
+          (boolean))
+        (request_filter_fields_property
+          (request_filter_fields_value
+            (quoted_identifier)
+            (quoted_identifier)))
+        (report_column_section
+          (identifier)
+          (quoted_identifier))))))
+
+================================================================================
+Report dataitem with PrintOnlyIfDetail case variations
+================================================================================
+
+report 50002 "Test Report 3"
+{
+    dataset
+    {
+        dataitem(Item; Item)
+        {
+            printonlyifdetail = true;
+            
+            dataitem(ItemLedgerEntry; "Item Ledger Entry")
+            {
+                PRINTONLYIFDETAIL = FALSE;
+                DataItemLink = "Item No." = FIELD("No.");
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (integer)
+    (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        (identifier)
+        (identifier)
+        (print_only_if_detail_property
+          (boolean))
+        (report_dataitem_section
+          (identifier)
+          (quoted_identifier)
+          (print_only_if_detail_property
+            (boolean))
+          (data_item_link_property
+            (data_item_link_value
+              (quoted_identifier)
+              (quoted_identifier))))))))

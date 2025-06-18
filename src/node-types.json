@@ -32663,6 +32663,10 @@
           "named": true
         },
         {
+          "type": "print_only_if_detail_property",
+          "named": true
+        },
+        {
           "type": "quoted_identifier",
           "named": true
         },
@@ -42786,6 +42790,10 @@
     "named": false
   },
   {
+    "type": "PRINTONLYIFDETAIL",
+    "named": false
+  },
+  {
     "type": "PROCEDURE",
     "named": false
   },
@@ -43721,11 +43729,11 @@
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "interface",
@@ -43820,6 +43828,10 @@
   {
     "type": "preproc_endregion",
     "named": true
+  },
+  {
+    "type": "printonlyifdetail",
+    "named": false
   },
   {
     "type": "procedure",

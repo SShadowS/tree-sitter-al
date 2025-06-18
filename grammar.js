@@ -5317,7 +5317,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     print_only_if_detail_property: $ => seq(
-      'PrintOnlyIfDetail',
+      choice('PrintOnlyIfDetail', 'printonlyifdetail', 'PRINTONLYIFDETAIL'),
       '=',
       field('value', $.boolean),
       ';'
@@ -6226,6 +6226,7 @@ enum_type: $ => prec(1, seq(
       $.data_item_link_property,
       $.request_filter_fields_property,
       $.request_filter_heading_property,
+      $.print_only_if_detail_property,
     ),
 
     // =============================================================================

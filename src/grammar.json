@@ -24198,8 +24198,21 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "PrintOnlyIfDetail"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "PrintOnlyIfDetail"
+            },
+            {
+              "type": "STRING",
+              "value": "printonlyifdetail"
+            },
+            {
+              "type": "STRING",
+              "value": "PRINTONLYIFDETAIL"
+            }
+          ]
         },
         {
           "type": "STRING",
@@ -27797,6 +27810,10 @@
         {
           "type": "SYMBOL",
           "name": "request_filter_heading_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "print_only_if_detail_property"
         }
       ]
     },
