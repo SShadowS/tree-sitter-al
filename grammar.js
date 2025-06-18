@@ -355,7 +355,7 @@ module.exports = grammar({
     ),
 
     enum_value_declaration: $ => seq(
-      /[vV][aA][lL][uU][eE]/,
+      new RustRegex('(?i)value'),
       '(',
       field('value_id', $.integer),
       ';',
@@ -383,19 +383,19 @@ module.exports = grammar({
     ),
 
     about_title_property: $ => seq(
-      choice('AboutTitle', 'ABOUTTITLE', 'abouttitle'),
+      new RustRegex('(?i)abouttitle'),
       '=',
       field('value', $.string_literal),
       repeat(seq(
         ',',
         choice(
           seq(
-            choice('Locked', 'locked', 'LOCKED'),
+            new RustRegex('(?i)locked'),
             '=',
             $.boolean
           ),
           seq(
-            choice('Comment', 'comment', 'COMMENT'),
+            new RustRegex('(?i)comment'),
             '=',
             $.string_literal
           )
@@ -405,19 +405,19 @@ module.exports = grammar({
     ),
 
     about_text_property: $ => seq(
-      choice('AboutText', 'ABOUTTEXT', 'abouttext'),
+      new RustRegex('(?i)abouttext'),
       '=',
       field('value', $.string_literal),
       repeat(seq(
         ',',
         choice(
           seq(
-            choice('Locked', 'locked', 'LOCKED'),
+            new RustRegex('(?i)locked'),
             '=',
             $.boolean
           ),
           seq(
-            choice('Comment', 'comment', 'COMMENT'),
+            new RustRegex('(?i)comment'),
             '=',
             $.string_literal
           )
@@ -499,12 +499,12 @@ module.exports = grammar({
         ',',
         choice(
           seq(
-            choice('Locked', 'locked', 'LOCKED'),
+            new RustRegex('(?i)locked'),
             '=',
             $.boolean
           ),
           seq(
-            choice('Comment', 'comment', 'COMMENT'),
+            new RustRegex('(?i)comment'),
             '=',
             $.string_literal
           )
@@ -1353,7 +1353,7 @@ module.exports = grammar({
           ')'
         ),
         seq(
-          /[fF][iI][eE][lL][dD]/,
+          new RustRegex('(?i)field'),
           '(',
           field('field_value', choice($.identifier, $._quoted_identifier)),
           ')'
@@ -1377,7 +1377,7 @@ module.exports = grammar({
     ),
 
     enabled_property: $ => seq(
-      choice('Enabled', 'ENABLED', 'enabled'),
+      new RustRegex('(?i)enabled'),
       '=',
       field('value', $._expression),
       ';'
@@ -1398,7 +1398,7 @@ module.exports = grammar({
     ),
 
     promoted_property: $ => seq(
-      choice('Promoted', 'PROMOTED', 'promoted'),
+      new RustRegex('(?i)promoted'),
       '=',
       field('value', $.boolean),
       ';'
@@ -1426,7 +1426,7 @@ module.exports = grammar({
     ),
 
     shortcut_key_property: $ => prec(10, seq(
-      choice('ShortcutKey', 'ShortCutKey', 'SHORTCUTKEY', 'shortcutkey'),
+      new RustRegex('(?i)shortcutkey'),
       '=',
       field('value', choice($.string_literal, $._quoted_identifier)),
       ';'
@@ -1733,7 +1733,7 @@ module.exports = grammar({
     ),
 
     interface_procedure: $ => seq(
-      /[pP][rR][oO][cC][eE][dD][uU][rR][eE]/,
+      new RustRegex('(?i)procedure'),
       field('name', $.identifier),
       '(',
       optional($.parameter_list),
@@ -2214,7 +2214,7 @@ module.exports = grammar({
     field_section: $ => choice(
       // Standard field: field(Name) { ... }
       seq(
-        /[fF][iI][eE][lL][dD]/,
+        new RustRegex('(?i)field'),
         '(',
         field('name', choice($.identifier, $._quoted_identifier)),
         ')',
@@ -2224,7 +2224,7 @@ module.exports = grammar({
       ),
       // Field with control name: field(Name)(ControlName) { ... }
       seq(
-        /[fF][iI][eE][lL][dD]/,
+        new RustRegex('(?i)field'),
         '(',
         field('name', choice($.identifier, $._quoted_identifier)),
         ')',
@@ -2237,7 +2237,7 @@ module.exports = grammar({
       ),
       // Combined field: field(ControlId; SourceOrFieldName) { ... }
       seq(
-        /[fF][iI][eE][lL][dD]/,
+        new RustRegex('(?i)field'),
         '(',
         // ControlId can be string, quoted identifier, integer, or identifier
         field('control_id', choice($.string_literal, $._quoted_identifier, $.integer, $.identifier)),
@@ -2933,7 +2933,7 @@ module.exports = grammar({
     ),
 
     tool_tip_property: $ => seq(
-      choice('ToolTip', 'Tooltip', 'tooltip', 'TOOLTIP'),
+      new RustRegex('(?i)tooltip'),
       '=',
       $.tool_tip_value,
       ';'
@@ -3346,19 +3346,19 @@ module.exports = grammar({
     )),
 
     caption_property: $ => seq(
-      field('name', alias(/[cC][aA][pP][tT][iI][oO][nN]/, 'Caption')),
+      field('name', alias(new RustRegex('(?i)caption'), 'Caption')),
       '=',
       $.string_literal,
       repeat(seq(
         ',',
         choice(
           seq(
-            choice('Locked', 'locked', 'LOCKED'),
+            new RustRegex('(?i)locked'),
             '=',
             $.boolean
           ),
           seq(
-            choice('Comment', 'comment', 'COMMENT'),
+            new RustRegex('(?i)comment'),
             '=',
             $.string_literal
           )
@@ -3456,7 +3456,7 @@ module.exports = grammar({
       // Allow the keyword 'SubType' to be treated as an identifier in variable contexts
       alias('Subtype', $.identifier),
       // Allow the keyword 'Caption' to be treated as an identifier in variable contexts
-      alias(/[cC][aA][pP][tT][iI][oO][nN]/, $.identifier),
+      alias(new RustRegex('(?i)caption'), $.identifier),
       alias('SubType', $.identifier), 
       alias('subtype', $.identifier),
       alias('SUBTYPE', $.identifier),
@@ -4303,7 +4303,7 @@ enum_type: $ => prec(1, seq(
         ',',
         choice(
           seq(
-            choice('Comment', 'comment', 'COMMENT'),
+            new RustRegex('(?i)comment'),
             '=',
             $.string_literal
           )
@@ -5885,7 +5885,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     view_caption_property: $ => seq(
-      field('name', alias(/[cC][aA][pP][tT][iI][oO][nN]/, 'Caption')),
+      field('name', alias(new RustRegex('(?i)caption'), 'Caption')),
       '=',
       field('value', $.string_literal),
       ';'
