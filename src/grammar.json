@@ -7419,17 +7419,8 @@
           "type": "FIELD",
           "name": "source",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_quoted_identifier"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_expression"
           }
         },
         {
@@ -24274,8 +24265,21 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "DataItemLinkReference"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "DataItemLinkReference"
+            },
+            {
+              "type": "STRING",
+              "value": "dataitemlinkreference"
+            },
+            {
+              "type": "STRING",
+              "value": "DATAITEMLINKREFERENCE"
+            }
+          ]
         },
         {
           "type": "STRING",
@@ -27802,6 +27806,10 @@
         {
           "type": "SYMBOL",
           "name": "data_item_link_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "data_item_link_reference_property"
         },
         {
           "type": "SYMBOL",

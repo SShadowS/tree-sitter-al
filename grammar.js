@@ -1732,7 +1732,7 @@ module.exports = grammar({
       '(',
       field('name', $.identifier),
       ';',
-      field('source', choice($.identifier, $._quoted_identifier)),
+      field('source', $._expression),
       ')',
       '{',
       repeat($._field_properties),
@@ -5331,7 +5331,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     data_item_link_reference_property: $ => seq(
-      'DataItemLinkReference',
+      choice('DataItemLinkReference', 'dataitemlinkreference', 'DATAITEMLINKREFERENCE'),
       '=',
       field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
       ';'
@@ -6224,6 +6224,7 @@ enum_type: $ => prec(1, seq(
       $._universal_properties,
       $.data_item_table_view_property,
       $.data_item_link_property,
+      $.data_item_link_reference_property,
       $.request_filter_fields_property,
       $.request_filter_heading_property,
       $.print_only_if_detail_property,

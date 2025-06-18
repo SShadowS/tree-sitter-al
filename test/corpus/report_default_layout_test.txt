@@ -166,6 +166,8 @@ report 1004 "Close Inventory Period - Test"
             (quoted_identifier)))
         (report_column_section
           name: (identifier)
-          source: (identifier)
-          (ERROR
-            (identifier)))))))
+          source: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list)))))))

@@ -1,0 +1,122 @@
+================================================================================
+Comprehensive report with dataitem properties and column expressions
+================================================================================
+
+report 30 "Check Value Posting"
+{
+    DefaultLayout = RDLC;
+    RDLCLayout = './Finance/Dimension/CheckValuePosting.rdlc';
+    Caption = 'Dimension Check Value Posting';
+    
+    dataset
+    {
+        dataitem("Integer"; "Integer")
+        {
+            DataItemTableView = sorting(Number) where(Number = const(1));
+            PrintOnlyIfDetail = true;
+            
+            column(CompanyName; COMPANYPROPERTY.DisplayName())
+            {
+            }
+            column(TodayFormatted; Format(Today, 0, 4))
+            {
+            }
+            
+            dataitem(DefaultDim1; "Default Dimension")
+            {
+                DataItemLink = "Table ID" = field("Table ID"), "Dimension Code" = field("Dimension Code");
+                DataItemLinkReference = DefaultDim1;
+                DataItemTableView = sorting("Table ID", "No.", "Dimension Code") where("No." = filter(<> ''));
+                
+                column(ValuePosting_DefaultDim1Caption; DefaultDim1.FieldCaption("Value Posting"))
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (default_layout_property
+      value: (identifier))
+    (rdlc_layout_property
+      value: (string_literal))
+    (caption_property
+      (string_literal))
+    (dataset_section
+      (report_dataitem_section
+        name: (quoted_identifier)
+        (quoted_identifier)
+        (data_item_table_view_property
+          value: (source_table_view_value
+            (sorting_clause
+              fields: (field_reference_list
+                (field_reference
+                  (identifier))))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (identifier))
+                    value: (integer)))))))
+        (print_only_if_detail_property
+          value: (boolean))
+        (report_column_section
+          name: (identifier)
+          source: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list)))
+        (report_column_section
+          name: (identifier)
+          source: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)
+              (integer)
+              (integer))))
+        (report_dataitem_section
+          name: (identifier)
+          (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field_name: (quoted_identifier)
+              field: (quoted_identifier)
+              linked_field_name: (quoted_identifier)))
+          (data_item_link_reference_property
+            value: (identifier))
+          (data_item_table_view_property
+            value: (source_table_view_value
+              (sorting_clause
+                fields: (field_reference_list
+                  (field_reference
+                    (quoted_identifier))
+                  (field_reference
+                    (quoted_identifier))
+                  (field_reference
+                    (quoted_identifier))))
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (filter_condition
+                      field: (field_ref
+                        (quoted_identifier))
+                      filter: (filter_expression_function
+                        value: (filter_not_equal_expression
+                          value: (string_literal)))))))))
+          (report_column_section
+            name: (identifier)
+            source: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)))))))))
