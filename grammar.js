@@ -1967,7 +1967,7 @@ module.exports = grammar({
     ),
 
     assembly_declaration: $ => seq(
-      /[aA][sS][sS][eE][mM][bB][lL][yY]/,
+      new RustRegex('(?i)assembly'),
       '(',
       field('name', choice($.string_literal, $._quoted_identifier)),
       ')',
