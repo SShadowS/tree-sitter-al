@@ -1,0 +1,321 @@
+================================================================================
+Basic fileuploadaction declaration
+================================================================================
+
+page 50006 TestPage
+{
+    actions
+    {
+        area(Processing)
+        {
+            fileuploadaction(UploadFile)
+            {
+                Caption = 'Upload File';
+                ApplicationArea = Basic, Suite;
+                
+                trigger OnAction(files: List of [FileUpload])
+                begin
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (actions_section
+      (area_action_section
+        (fileuploadaction_declaration
+          name: (identifier)
+          (caption_property
+            (string_literal))
+          (application_area_property
+            value: (identifier)
+            value: (identifier))
+          (fileuploadaction_trigger
+            parameter: (identifier)
+            (code_block)))))))
+
+================================================================================
+FileUploadAction with all properties
+================================================================================
+
+page 50007 TestPage
+{
+    actions
+    {
+        area(Processing)
+        {
+            fileuploadaction(AttachmentUpload)
+            {
+                Caption = 'Upload Attachments';
+                ToolTip = 'Upload one or more files as attachments';
+                ApplicationArea = Basic, Suite;
+                AllowedFileExtensions = '.pdf,.docx,.xlsx';
+                AllowMultipleFiles = true;
+                Image = Import;
+                Visible = true;
+                Enabled = true;
+                
+                trigger OnAction(files: List of [FileUpload])
+                var
+                    FileUpload: FileUpload;
+                    InStr: InStream;
+                begin
+                    foreach FileUpload in files do begin
+                        FileUpload.CreateInStream(InStr);
+                    end;
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (actions_section
+      (area_action_section
+        (fileuploadaction_declaration
+          name: (identifier)
+          (caption_property
+            (string_literal))
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal)))
+          (application_area_property
+            value: (identifier)
+            value: (identifier))
+          (allowed_file_extensions_property
+            value: (string_literal))
+          (allow_multiple_files_property
+            value: (boolean))
+          (image_property
+            value: (identifier))
+          (visible_property
+            value: (boolean))
+          (enabled_property
+            value: (boolean))
+          (fileuploadaction_trigger
+            parameter: (identifier)
+            (var_section
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (identifier)))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type))))
+            (code_block
+              (foreach_statement
+                variable: (identifier)
+                iterable: (identifier)
+                body: (code_block
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      property: (identifier))
+                    arguments: (argument_list
+                      (identifier))))))))))))
+
+================================================================================
+FileUploadAction case variations
+================================================================================
+
+page 50008 TestPage
+{
+    actions
+    {
+        area(Processing)
+        {
+            FILEUPLOADACTION(TEST1)
+            {
+                trigger onaction(files: List of [FileUpload])
+                begin
+                end;
+            }
+            fileuploadaction(test2)
+            {
+                trigger ONACTION(data: List of [FileUpload])
+                begin
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (actions_section
+      (area_action_section
+        (fileuploadaction_declaration
+          name: (identifier)
+          (fileuploadaction_trigger
+            parameter: (identifier)
+            (code_block)))
+        (fileuploadaction_declaration
+          name: (identifier)
+          (fileuploadaction_trigger
+            parameter: (identifier)
+            (code_block)))))))
+
+================================================================================
+FileUploadAction with complex trigger
+================================================================================
+
+page 50009 TestPage
+{
+    actions
+    {
+        area(Processing)
+        {
+            fileuploadaction(ComplexUpload)
+            {
+                Caption = 'Upload Files';
+                AllowedFileExtensions = '.pdf,.docx';
+                AllowMultipleFiles = true;
+                
+                trigger OnAction(files: List of [FileUpload])
+                var
+                    FileUpload: FileUpload;
+                    InStr: InStream;
+                    Handler: Codeunit "File Handler";
+                    FileName: Text;
+                begin
+                    foreach FileUpload in files do begin
+                        FileName := FileUpload.FileName();
+                        FileUpload.CreateInStream(InStr);
+                        Handler.ProcessFile(InStr, FileName);
+                    end;
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (actions_section
+      (area_action_section
+        (fileuploadaction_declaration
+          name: (identifier)
+          (caption_property
+            (string_literal))
+          (allowed_file_extensions_property
+            value: (string_literal))
+          (allow_multiple_files_property
+            value: (boolean))
+          (fileuploadaction_trigger
+            parameter: (identifier)
+            (var_section
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (identifier)))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (codeunit_type
+                    reference: (quoted_identifier))))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (text_type))))
+            (code_block
+              (foreach_statement
+                variable: (identifier)
+                iterable: (identifier)
+                body: (code_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (call_expression
+                      function: (member_expression
+                        object: (identifier)
+                        property: (identifier))
+                      arguments: (argument_list)))
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      property: (identifier))
+                    arguments: (argument_list
+                      (identifier)))
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      property: (identifier))
+                    arguments: (argument_list
+                      (identifier)
+                      (identifier))))))))))))
+
+================================================================================
+FileUploadAction with obsolete properties
+================================================================================
+
+page 50010 TestPage
+{
+    actions
+    {
+        area(Processing)
+        {
+            fileuploadaction(ObsoleteUpload)
+            {
+                Caption = 'Upload File';
+                ApplicationArea = Basic, Suite;
+                ObsoleteState = Pending;
+                ObsoleteReason = 'Use new upload mechanism';
+                ObsoleteTag = '25.0';
+                
+                trigger OnAction(uploads: List of [FileUpload])
+                begin
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (actions_section
+      (area_action_section
+        (fileuploadaction_declaration
+          name: (identifier)
+          (caption_property
+            (string_literal))
+          (application_area_property
+            value: (identifier)
+            value: (identifier))
+          (obsolete_state_property
+            value: (obsolete_state_value))
+          (obsolete_reason_property
+            value: (obsolete_reason_value
+              (string_literal)))
+          (obsolete_tag_property
+            value: (obsolete_tag_value
+              (string_literal)))
+          (fileuploadaction_trigger
+            parameter: (identifier)
+            (code_block)))))))

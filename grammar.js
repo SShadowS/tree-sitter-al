@@ -1153,7 +1153,8 @@ module.exports = grammar({
     _action_element: $ => choice(
       $.action_declaration,
       $.actionref_declaration,
-      $.systemaction_declaration
+      $.systemaction_declaration,
+      $.fileuploadaction_declaration
     ),
 
     action_declaration: $ => seq(
@@ -1201,6 +1202,43 @@ module.exports = grammar({
         ';'
       )),
       '}'
+    ),
+
+    fileuploadaction_declaration: $ => seq(
+      /[fF][iI][lL][eE][uU][pP][lL][oO][aA][dD][aA][cC][tT][iI][oO][nN]/,
+      '(',
+      field('name', choice($.identifier, $._quoted_identifier)),
+      ')',
+      '{',
+      repeat(choice(
+        $._action_property,
+        $.fileuploadaction_trigger,
+        $.var_section,
+        ';'
+      )),
+      '}'
+    ),
+
+    fileuploadaction_trigger: $ => seq(
+      'trigger',
+      field('name', choice(
+        'OnAction',
+        'onaction',
+        'ONACTION'
+      )),
+      '(',
+      field('parameter', seq(
+        $.identifier,
+        ':',
+        'List',
+        'of',
+        '[',
+        'FileUpload',
+        ']'
+      )),
+      ')',
+      optional($.var_section),
+      $.code_block
     ),
 
     _action_property: $ => $._action_properties,
