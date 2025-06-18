@@ -8,9 +8,13 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 3,920 AL files from the comprehensive Business Central production codebase, **2,812 files (71.7%) parse successfully**.
+Based on analysis of 3,687 AL files from the comprehensive Business Central production codebase, **2,754 files (74.7%) parse successfully**.
 
 Recent improvements include:
+- **DefaultLayout property** - Added support for report DefaultLayout property with values like RDLC, Word, Excel
+- **PermissionSetExtension objects** - Added support for permissionsetextension declarations with extends syntax
+- **Entitlement objects** - Added support for entitlement declarations with ApplicationScope, PerUserServicePlan, and Role types
+- **Query API properties** - Added support for EntityCaption, EntityName, EntitySetName, APIGroup, APIPublisher, APIVersion properties
 - **Standalone semicolons in property contexts** - Added support for standalone semicolons in part sections, action blocks, and modify actions, significantly improving parsing compatibility
 - **Empty option members** - Enhanced option types to support consecutive commas for empty members (e.g., `Option = 'Value1,,Value3';`)
 - **ShowMandatory property expressions** - Enhanced ShowMandatory property to accept complex expressions like `NOT IsSaaSProd` instead of just boolean literals
