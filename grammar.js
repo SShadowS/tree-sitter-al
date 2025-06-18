@@ -6148,6 +6148,8 @@ enum_type: $ => prec(1, seq(
       $.entity_set_name_property,
       $.odata_key_fields_property,
       $.api_version_property,
+      $.api_group_property,
+      $.api_publisher_property,
       $.multiplicity_property,
       
       // Help and documentation properties
