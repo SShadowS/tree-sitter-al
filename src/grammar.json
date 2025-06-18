@@ -207,6 +207,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "permissionsetextension_declaration"
+        },
+        {
+          "type": "SYMBOL",
           "name": "controladdin_declaration"
         },
         {
@@ -7539,6 +7543,79 @@
         }
       ]
     },
+    "permissionsetextension_declaration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT][eE][xX][tT][eE][nN][sS][iI][oO][nN]"
+        },
+        {
+          "type": "FIELD",
+          "name": "object_id",
+          "content": {
+            "type": "SYMBOL",
+            "name": "integer"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "object_name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_identifier_choice"
+          }
+        },
+        {
+          "type": "PATTERN",
+          "value": "[eE][xX][tT][eE][nN][dD][sS]"
+        },
+        {
+          "type": "FIELD",
+          "name": "extends_target",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_identifier_choice"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_permissionsetextension_element"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "_permissionsetextension_element": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_permissionset_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "permissionset_permissions"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "property_list"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_permissionset_properties"
+        }
+      ]
+    },
     "assignable_property": {
       "type": "SEQ",
       "members": [
@@ -7573,8 +7650,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "IncludedPermissionSets"
+          "type": "PATTERN",
+          "value": "[iI][nN][cC][lL][uU][dD][eE][dD][pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT][sS]"
         },
         {
           "type": "STRING",
@@ -7594,7 +7671,36 @@
         }
       ]
     },
+    "excluded_permission_sets_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[eE][xX][cC][lL][uU][dD][eE][dD][pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT][sS]"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "excluded_permission_sets_list"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "included_permission_sets_list": {
+      "type": "SYMBOL",
+      "name": "_identifier_choice_list"
+    },
+    "excluded_permission_sets_list": {
       "type": "SYMBOL",
       "name": "_identifier_choice_list"
     },
@@ -23370,6 +23476,31 @@
         }
       ]
     },
+    "default_layout_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[dD][eE][fF][aA][uU][lL][tT][lL][aA][yY][oO][uU][tT]"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "default_rendering_layout_property": {
       "type": "SEQ",
       "members": [
@@ -26952,6 +27083,10 @@
         {
           "type": "SYMBOL",
           "name": "included_permission_sets_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "excluded_permission_sets_property"
         }
       ]
     },
@@ -27537,6 +27672,10 @@
         {
           "type": "SYMBOL",
           "name": "additional_search_terms_ml_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "default_layout_property"
         },
         {
           "type": "SYMBOL",

@@ -58,6 +58,7 @@ module.exports = grammar({
       $.dotnet_declaration,
       $.report_declaration,
       $.permissionset_declaration,
+      $.permissionsetextension_declaration,
       $.controladdin_declaration,
       $.entitlement_declaration
     ),
@@ -1765,6 +1766,24 @@ module.exports = grammar({
       $.preproc_conditional_permissionset_properties
     ),
 
+    permissionsetextension_declaration: $ => seq(
+      /[pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
+      field('object_id', $.integer),
+      field('object_name', $._identifier_choice),
+      /[eE][xX][tT][eE][nN][dD][sS]/,
+      field('extends_target', $._identifier_choice),
+      '{',
+      repeat($._permissionsetextension_element),
+      '}'
+    ),
+
+    _permissionsetextension_element: $ => choice(
+      $._permissionset_properties,   // Reuse permissionset properties
+      $.permissionset_permissions,   // PermissionSet structural elements
+      $.property_list,               // Generic fallback
+      $.preproc_conditional_permissionset_properties
+    ),
+
     assignable_property: $ => seq(
       'Assignable',
       '=',
@@ -1773,13 +1792,22 @@ module.exports = grammar({
     ),
 
     included_permission_sets_property: $ => seq(
-      'IncludedPermissionSets',
+      /[iI][nN][cC][lL][uU][dD][eE][dD][pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT][sS]/,
       '=',
       field('value', $.included_permission_sets_list),
       ';'
     ),
 
+    excluded_permission_sets_property: $ => seq(
+      /[eE][xX][cC][lL][uU][dD][eE][dD][pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT][sS]/,
+      '=',
+      field('value', $.excluded_permission_sets_list),
+      ';'
+    ),
+
     included_permission_sets_list: $ => $._identifier_choice_list,
+
+    excluded_permission_sets_list: $ => $._identifier_choice_list,
 
     permissionset_permissions: $ => seq(
       'Permissions',
@@ -5111,6 +5139,13 @@ enum_type: $ => prec(1, seq(
     ),
 
     // Critical report layout properties
+    default_layout_property: $ => seq(
+      /[dD][eE][fF][aA][uU][lL][tT][lL][aA][yY][oO][uU][tT]/,
+      '=',
+      field('value', $.identifier),  // Values like RDLC, Word, Excel
+      ';'
+    ),
+
     default_rendering_layout_property: $ => seq(
       'DefaultRenderingLayout',
       '=',
@@ -5924,6 +5959,7 @@ enum_type: $ => prec(1, seq(
       // PermissionSet-specific
       $.assignable_property,
       $.included_permission_sets_property,
+      $.excluded_permission_sets_property,
     ),
 
     // ControlAddIn-specific properties that are unique to controladdin objects
@@ -6146,6 +6182,7 @@ enum_type: $ => prec(1, seq(
       $.additional_search_terms_ml_property,
       
       // Report layout properties (critical)
+      $.default_layout_property,
       $.default_rendering_layout_property,
       $.excel_layout_property,
       $.rdlc_layout_property,

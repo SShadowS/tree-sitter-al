@@ -1,0 +1,171 @@
+================================================================================
+Basic report with DefaultLayout
+================================================================================
+
+report 1004 "Close Inventory Period - Test"
+{
+    DefaultLayout = RDLC;
+    Caption = 'Close Inventory Period - Test';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (default_layout_property
+      value: (identifier))
+    (caption_property
+      (string_literal))))
+
+================================================================================
+Report with mixed layout properties
+================================================================================
+
+report 50100 "Sales Report"
+{
+    DefaultLayout = Word;
+    WordLayout = './Layouts/SalesReport.docx';
+    RDLCLayout = './Layouts/SalesReport.rdlc';
+    Caption = 'Sales Report';
+    
+    dataset
+    {
+        dataitem(Customer; Customer)
+        {
+            column(Name; Name) { }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (default_layout_property
+      value: (identifier))
+    (word_layout_property
+      value: (string_literal))
+    (rdlc_layout_property
+      value: (string_literal))
+    (caption_property
+      (string_literal))
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (report_column_section
+          name: (identifier)
+          source: (identifier))))))
+
+================================================================================
+Report with DefaultLayout and RDLCLayout
+================================================================================
+
+report 1001 "Inventory Valuation"
+{
+    DefaultLayout = RDLC;
+    RDLCLayout = './Inventory/Reports/InventoryValuation.rdlc';
+    Caption = 'Inventory Valuation';
+    EnableHyperlinks = true;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (default_layout_property
+      value: (identifier))
+    (rdlc_layout_property
+      value: (string_literal))
+    (caption_property
+      (string_literal))
+    (enable_hyperlinks_property
+      value: (boolean))))
+
+================================================================================
+Report with DefaultLayout case variations
+================================================================================
+
+report 50101 "Test Report"
+{
+    defaultlayout = RDLC;
+    DEFAULTLAYOUT = Word;
+    DefaultLayout = Excel;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (default_layout_property
+      value: (identifier))
+    (default_layout_property
+      value: (identifier))
+    (default_layout_property
+      value: (identifier))))
+
+================================================================================
+Report from error file with all properties
+================================================================================
+
+report 1004 "Close Inventory Period - Test"
+{
+    DefaultLayout = RDLC;
+    RDLCLayout = './Inventory/Reports/CloseInventoryPeriodTest.rdlc';
+    Caption = 'Close Inventory Period - Test';
+    EnableHyperlinks = true;
+    
+    dataset
+    {
+        dataitem("Accounting Period"; "Accounting Period")
+        {
+            DataItemTableView = sorting("Starting Date");
+            RequestFilterFields = "Starting Date";
+            
+            column(CompanyName; CompanyProperty.DisplayName())
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (default_layout_property
+      value: (identifier))
+    (rdlc_layout_property
+      value: (string_literal))
+    (caption_property
+      (string_literal))
+    (enable_hyperlinks_property
+      value: (boolean))
+    (dataset_section
+      (report_dataitem_section
+        name: (quoted_identifier)
+        (quoted_identifier)
+        (data_item_table_view_property
+          value: (source_table_view_value
+            (sorting_clause
+              fields: (field_reference_list
+                (field_reference
+                  (quoted_identifier))))))
+        (request_filter_fields_property
+          value: (request_filter_fields_value
+            (quoted_identifier)))
+        (report_column_section
+          name: (identifier)
+          source: (identifier)
+          (ERROR
+            (identifier)))))))

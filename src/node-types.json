@@ -7993,6 +7993,22 @@
     }
   },
   {
+    "type": "default_layout_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "default_rendering_layout_property",
     "named": true,
     "fields": {
@@ -9998,6 +10014,41 @@
           },
           {
             "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "excluded_permission_sets_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "excluded_permission_sets_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "excluded_permission_sets_list",
             "named": true
           }
         ]
@@ -25197,6 +25248,10 @@
           "named": true
         },
         {
+          "type": "excluded_permission_sets_property",
+          "named": true
+        },
+        {
           "type": "included_permission_sets_property",
           "named": true
         },
@@ -25269,6 +25324,152 @@
       "types": [
         {
           "type": "permission_list",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "permissionsetextension_declaration",
+    "named": true,
+    "fields": {
+      "extends_target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "object_id": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "object_name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "access_by_permission_property",
+          "named": true
+        },
+        {
+          "type": "access_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "assignable_property",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "excluded_permission_sets_property",
+          "named": true
+        },
+        {
+          "type": "included_permission_sets_property",
+          "named": true
+        },
+        {
+          "type": "inherent_entitlements_property",
+          "named": true
+        },
+        {
+          "type": "inherent_permissions_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "permissions_property",
+          "named": true
+        },
+        {
+          "type": "permissionset_permissions",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_permissionset_properties",
+          "named": true
+        },
+        {
+          "type": "property_list",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
           "named": true
         }
       ]
@@ -26606,6 +26807,10 @@
           "named": true
         },
         {
+          "type": "excluded_permission_sets_property",
+          "named": true
+        },
+        {
           "type": "included_permission_sets_property",
           "named": true
         },
@@ -27534,6 +27739,10 @@
         },
         {
           "type": "data_per_company_property",
+          "named": true
+        },
+        {
+          "type": "default_layout_property",
           "named": true
         },
         {
@@ -28577,6 +28786,10 @@
             "named": true
           },
           {
+            "type": "permissionsetextension_declaration",
+            "named": true
+          },
+          {
             "type": "pragma",
             "named": true
           },
@@ -28674,6 +28887,10 @@
           },
           {
             "type": "permissionset_declaration",
+            "named": true
+          },
+          {
+            "type": "permissionsetextension_declaration",
             "named": true
           },
           {
@@ -32578,6 +32795,10 @@
           "named": true
         },
         {
+          "type": "default_layout_property",
+          "named": true
+        },
+        {
           "type": "default_rendering_layout_property",
           "named": true
         },
@@ -34598,6 +34819,10 @@
         },
         {
           "type": "permissionset_declaration",
+          "named": true
+        },
+        {
+          "type": "permissionsetextension_declaration",
           "named": true
         },
         {
@@ -41997,10 +42222,6 @@
     "named": false
   },
   {
-    "type": "IncludedPermissionSets",
-    "named": false
-  },
-  {
     "type": "IndentationColumn",
     "named": false
   },
@@ -43334,12 +43555,12 @@
   },
   {
     "type": "comment",
-    "named": true,
+    "named": false,
     "extra": true
   },
   {
     "type": "comment",
-    "named": false,
+    "named": true,
     "extra": true
   },
   {
@@ -43384,11 +43605,11 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "div",
