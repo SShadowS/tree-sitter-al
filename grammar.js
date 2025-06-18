@@ -3428,7 +3428,7 @@ module.exports = grammar({
     ),
 
     var_section: $ => prec.right(seq(
-      optional(choice('protected', 'PROTECTED', 'Protected')),
+      optional(new RustRegex('(?i)protected')),
       new RustRegex('(?i)var'),
       repeat(choice(
         $.comment,
@@ -4438,7 +4438,7 @@ enum_type: $ => prec(1, seq(
 
     _procedure_name: $ => alias(choice($.identifier, $._quoted_identifier), $.name),
 
-    procedure_modifier: $ => choice('local', 'LOCAL', 'Local', 'internal', 'INTERNAL', 'Internal', 'protected', 'PROTECTED', 'Protected'),
+    procedure_modifier: $ => choice(new RustRegex('(?i)local'), new RustRegex('(?i)internal'), new RustRegex('(?i)protected')),
 
     procedure: $ => seq(
       optional(field('modifier', $.procedure_modifier)), 
@@ -6481,7 +6481,7 @@ enum_type: $ => prec(1, seq(
     _table_permission_keyword: $ => choice('table', 'Table', 'TABLE'),
 
     // Missing alias target rules
-    const: $ => choice('const', 'CONST', 'Const'),
+    const: $ => new RustRegex('(?i)const'),
     name: $ => choice($.identifier, $._quoted_identifier),
     quoted_identifier: $ => $._quoted_identifier,
     table_reference: $ => $._table_reference,
