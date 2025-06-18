@@ -1276,7 +1276,7 @@ module.exports = grammar({
         seq(
           /[cC][oO][nN][sS][tT]/,
           '(',
-          field('const_value', choice($.identifier, $._quoted_identifier, $.integer, $.string_literal)),
+          field('const_value', choice($.identifier, $._quoted_identifier, $.integer, $.string_literal, $.database_reference)),
           ')'
         ),
         seq(
@@ -6280,6 +6280,7 @@ enum_type: $ => prec(1, seq(
       $.run_page_mode_property,
       $.run_page_on_rec_property,
       $.scope_property,
+      $.show_as_property,
     ),
 
     // Centralized trigger components for DRY principle

@@ -1,0 +1,131 @@
+================================================================================
+SubPageLink with Database reference in const
+================================================================================
+
+page 50000 TestPage
+{
+    layout
+    {
+        area(factboxes)
+        {
+            part(DocumentAttachments; "Document Attachment Factbox")
+            {
+                ApplicationArea = All;
+                Caption = 'Documents';
+                UpdatePropagation = Both;
+                SubPageLink = "Table ID" = const(Database::Opportunity),
+                              "No." = field("No.");
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (layout_section
+      (area_section
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (application_area_property
+            value: (identifier))
+          (caption_property
+            (string_literal))
+          (update_propagation_property
+            value: (update_propagation_value))
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              const_value: (database_reference
+                table_name: (identifier)))
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              field_value: (quoted_identifier))))))))
+
+================================================================================
+Action group with ShowAs property
+================================================================================
+
+page 50001 TestPage
+{
+    actions
+    {
+        area(processing)
+        {
+            group(Category_Coupling)
+            {
+                Caption = 'Coupling';
+                ShowAs = SplitButton;
+                
+                actionref(PromotedAction; MyAction)
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (actions_section
+      (area_action_section
+        (action_group_section
+          name: (identifier)
+          (caption_property
+            (string_literal))
+          (show_as_property)
+          (actionref_declaration
+            promoted_name: (identifier)
+            action_name: (identifier)))))))
+
+================================================================================
+SubPageLink with multiple Database references
+================================================================================
+
+page 50002 TestPage
+{
+    layout
+    {
+        area(content)
+        {
+            part(Lines; "My Subpage")
+            {
+                SubPageLink = "Table ID" = const(Database::"Sales Header"),
+                              "Document Type" = field("Document Type"),
+                              "Related Table ID" = const(Database::Customer);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (layout_section
+      (area_section
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (sub_page_link_property
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              const_value: (database_reference
+                table_name: (quoted_identifier)))
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              field_value: (quoted_identifier))
+            value: (run_page_link_value
+              field: (quoted_identifier)
+              const_value: (database_reference
+                table_name: (identifier)))))))))
