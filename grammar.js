@@ -332,7 +332,7 @@ module.exports = grammar({
       new RustRegex('(?i)enum'),
       $._object_header_base,
       optional(seq(
-        /[iI][mM][pP][lL][eE][mM][eE][nN][tT][sS]/,
+        new RustRegex('(?i)implements'),
         field('interface', $._identifier_choice)
       )),
       '{',
@@ -347,7 +347,7 @@ module.exports = grammar({
     enumextension_declaration: $ => seq(
       new RustRegex('(?i)enumextension'),
       $._object_header_base,
-      /[eE][xX][tT][eE][nN][dD][sS]/,
+      new RustRegex('(?i)extends'),
       field('base_object', $._identifier_choice),
       '{',
       repeat($.enum_value_declaration),
