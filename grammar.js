@@ -3429,7 +3429,7 @@ module.exports = grammar({
 
     var_section: $ => prec.right(seq(
       optional(choice('protected', 'PROTECTED', 'Protected')),
-      choice('var', 'VAR', 'Var'),
+      new RustRegex('(?i)var'),
       repeat(choice(
         $.comment,
         $.multiline_comment,
@@ -4478,7 +4478,7 @@ enum_type: $ => prec(1, seq(
       repeat(seq(';', $.parameter))
     ),
 
-    modifier: $ => choice('var', 'VAR', 'Var'),
+    modifier: $ => new RustRegex('(?i)var'),
 
     identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
 
