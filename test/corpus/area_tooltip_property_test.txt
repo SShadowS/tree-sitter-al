@@ -1,0 +1,187 @@
+================================================================================
+Area section with ToolTip property - embedding
+================================================================================
+
+page 9027 "Bookkeeper Role Center"
+{
+    PageType = RoleCenter;
+    
+    actions
+    {
+        area(embedding)
+        {
+            ToolTip = 'Collect and make payments, prepare statements, and manage reminders.';
+            action("Chart of Accounts")
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Chart of Accounts';
+                RunObject = Page "Chart of Accounts";
+                ToolTip = 'View the chart of accounts.';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (actions_section
+      (area_action_section
+        (tool_tip_property
+          (tool_tip_value
+            (string_literal)))
+        (action_declaration
+          name: (quoted_identifier)
+          (application_area_property
+            value: (identifier)
+            value: (identifier))
+          (caption_property
+            (string_literal))
+          (run_object_property
+            value: (run_object_value
+              object_ref: (quoted_identifier)))
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal))))))))
+
+================================================================================
+Area section with ToolTip property - processing
+================================================================================
+
+page 50000 "Test Role Center"
+{
+    PageType = RoleCenter;
+    
+    actions
+    {
+        area(processing)
+        {
+            ToolTip = 'Run reports and batch jobs.';
+            action("Run Report")
+            {
+                Caption = 'Run Report';
+                ApplicationArea = All;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (actions_section
+      (area_action_section
+        (tool_tip_property
+          (tool_tip_value
+            (string_literal)))
+        (action_declaration
+          name: (quoted_identifier)
+          (caption_property
+            (string_literal))
+          (application_area_property
+            value: (identifier)))))))
+
+================================================================================
+Area section with ToolTip and multiple actions
+================================================================================
+
+page 50001 "Test Page"
+{
+    actions
+    {
+        area(navigation)
+        {
+            ToolTip = 'Navigate to related pages.';
+            action(Action1)
+            {
+                Caption = 'Action 1';
+            }
+            action(Action2)
+            {
+                Caption = 'Action 2';
+            }
+            separator(Sep)
+            {
+                Caption = '-';
+            }
+            action(Action3)
+            {
+                Caption = 'Action 3';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (actions_section
+      (area_action_section
+        (tool_tip_property
+          (tool_tip_value
+            (string_literal)))
+        (action_declaration
+          name: (identifier)
+          (caption_property
+            (string_literal)))
+        (action_declaration
+          name: (identifier)
+          (caption_property
+            (string_literal)))
+        (separator_action
+          name: (identifier)
+          (caption_property
+            (string_literal)))
+        (action_declaration
+          name: (identifier)
+          (caption_property
+            (string_literal)))))))
+
+================================================================================
+Area section without ToolTip property (backward compatibility)
+================================================================================
+
+page 50002 "Legacy Page"
+{
+    actions
+    {
+        area(creation)
+        {
+            action(NewAction)
+            {
+                Caption = 'New';
+                ApplicationArea = All;
+                ToolTip = 'Create a new record.';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (actions_section
+      (area_action_section
+        (action_declaration
+          name: (identifier)
+          (caption_property
+            (string_literal))
+          (application_area_property
+            value: (identifier))
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal))))))))

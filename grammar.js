@@ -1020,6 +1020,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
+        $.tool_tip_property,  // Allow ToolTip property directly in area sections
         $._action_element,
         $.action_group_section,
         $.separator_action,
