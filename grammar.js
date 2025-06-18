@@ -1664,7 +1664,7 @@ module.exports = grammar({
       '=',
       field('value', choice(
         /[dD][eE][lL][eE][gG][aA][tT][eE][dD]/,                  // Delegated
-        /[lL][oO][cC][aA][lL]/,                                    // Local
+        new RustRegex('(?i)local'),                                    // Local
         $.identifier                                                // Allow other identifiers
       )),
       ';'
@@ -2618,8 +2618,8 @@ module.exports = grammar({
     ),
     external_access_value: $ => choice(
       /[eE][xX][tT][eE][rR][nN][aA][lL]/,
-      /[iI][nN][tT][eE][rR][nN][aA][lL]/,
-      /[lL][oO][cC][aA][lL]/
+      new RustRegex('(?i)internal'),
+      new RustRegex('(?i)local')
     ),
     external_name_value: $ => $.string_literal,
     external_type_value: $ => $.string_literal,
@@ -2683,7 +2683,7 @@ module.exports = grammar({
 
     access_value: $ => choice(
       /[pP][uU][bB][lL][iI][cC]/,
-      /[iI][nN][tT][eE][rR][nN][aA][lL]/,
+      new RustRegex('(?i)internal'),
       /[pP][rR][iI][vV][aA][tT][eE]/
     ),
 
@@ -4442,7 +4442,7 @@ enum_type: $ => prec(1, seq(
 
     procedure: $ => seq(
       optional(field('modifier', $.procedure_modifier)), 
-      choice('procedure', 'PROCEDURE', 'Procedure'),
+      new RustRegex('(?i)procedure'),
       field('name', $._procedure_name),
       '(',
       optional($.parameter_list),
@@ -4748,7 +4748,7 @@ enum_type: $ => prec(1, seq(
 
     multiplicative_expression: $ => prec.left(7, seq(
       field('left', $._expression),
-      field('operator', choice('*', '/', /[dD][iI][vV]/, /[mM][oO][dD]/)),
+      field('operator', choice('*', '/', 'div', 'DIV', 'Div', 'mod', 'MOD', 'Mod')),
       field('right', $._expression)
     )),
 
@@ -4930,6 +4930,11 @@ enum_type: $ => prec(1, seq(
       prec(10, seq(
         field('left', $._expression),
         field('operator', choice('or', 'OR', 'Or')),
+        field('right', $._expression)
+      )),
+      prec(10, seq(
+        field('left', $._expression),
+        field('operator', choice('xor', 'XOR', 'Xor')),
         field('right', $._expression)
       )),
       // IN expressions for CASE TRUE OF patterns like Text[i] IN ['A' .. 'Z']
@@ -5801,6 +5806,7 @@ enum_type: $ => prec(1, seq(
       // Operators
       'And', 'and', 'AND',
       'Or', 'or', 'OR',
+      'Xor', 'xor', 'XOR',
       'Not', 'not', 'NOT',
       'Div', 'div', 'DIV',
       'Mod', 'mod', 'MOD',
