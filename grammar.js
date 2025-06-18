@@ -4445,7 +4445,14 @@ enum_type: $ => prec(1, seq(
     identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
 
     _quoted_identifier: $ => alias(
-      token(prec(10, seq('"', /[^"\n]+/, '"'))),
+      token(prec(10, seq(
+        '"',
+        repeat1(choice(
+          /[^"\n]+/,
+          '""'  // Escaped double quote
+        )),
+        '"'
+      ))),
       $.quoted_identifier
     ),
 

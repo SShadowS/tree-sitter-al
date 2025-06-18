@@ -20041,8 +20041,20 @@
                 "value": "\""
               },
               {
-                "type": "PATTERN",
-                "value": "[^\"\\n]+"
+                "type": "REPEAT1",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[^\"\\n]+"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "\"\""
+                    }
+                  ]
+                }
               },
               {
                 "type": "STRING",
