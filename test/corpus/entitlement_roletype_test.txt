@@ -1,0 +1,127 @@
+================================================================================
+Entitlement with RoleType property - Delegated
+================================================================================
+
+namespace Microsoft.API.V2;
+
+entitlement "Delegated BC Admin agent - Partner APIV2"
+{
+    Type = Role;
+    RoleType = Delegated;
+    Id = '00000000-0000-0000-0000-000000000010';
+    ObjectEntitlements = "D365 APIV2";
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (namespace_declaration
+    name: (namespace_name
+      (identifier)
+      (identifier)
+      (identifier)))
+  (entitlement_declaration
+    object_name: (quoted_identifier)
+    (entitlement_type_property)
+    (entitlement_role_type_property)
+    (entitlement_id_property
+      value: (string_literal))
+    (object_entitlements_property
+      value: (quoted_identifier))))
+
+================================================================================
+Entitlement with RoleType property - case variations
+================================================================================
+
+entitlement TestEntitlement
+{
+    Type = ApplicationScope;
+    roletype = local;
+    Id = '12345678-1234-1234-1234-123456789012';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (entitlement_declaration
+    object_name: (identifier)
+    (entitlement_type_property)
+    (entitlement_role_type_property)
+    (entitlement_id_property
+      value: (string_literal))))
+
+================================================================================
+Complete entitlement with all properties
+================================================================================
+
+entitlement CompleteEntitlement
+{
+    Caption = 'Complete Entitlement';
+    Description = 'A complete entitlement example';
+    ObsoleteReason = 'Use the new entitlement instead';
+    ObsoleteState = Pending;
+    ObsoleteTag = '1.0';
+    
+    Type = PerUserServicePlan;
+    RoleType = Delegated;
+    Id = 'abcdefgh-ijkl-mnop-qrst-uvwxyz012345';
+    ObjectEntitlements = "Permission Set 1", "Permission Set 2", "Permission Set 3";
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (entitlement_declaration
+    object_name: (identifier)
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))
+    (property_list
+      (property
+        (description_property
+          value: (string_literal))))
+    (property_list
+      (property
+        (obsolete_reason_property
+          value: (obsolete_reason_value
+            (string_literal)))))
+    (property_list
+      (property
+        (obsolete_state_property
+          value: (obsolete_state_value))))
+    (property_list
+      (property
+        (obsolete_tag_property
+          value: (obsolete_tag_value
+            (string_literal)))))
+    (entitlement_type_property)
+    (entitlement_role_type_property)
+    (entitlement_id_property
+      value: (string_literal))
+    (object_entitlements_property
+      value: (quoted_identifier)
+      value: (quoted_identifier)
+      value: (quoted_identifier))))
+
+================================================================================
+Entitlement with custom RoleType identifier
+================================================================================
+
+entitlement CustomRoleType
+{
+    Type = Role;
+    RoleType = CustomRole;
+    Id = 'custom-role-id';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (entitlement_declaration
+    object_name: (identifier)
+    (entitlement_type_property)
+    (entitlement_role_type_property
+      value: (identifier))
+    (entitlement_id_property
+      value: (string_literal))))

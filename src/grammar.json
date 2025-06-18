@@ -6804,6 +6804,44 @@
         }
       ]
     },
+    "entitlement_role_type_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "[rR][oO][lL][eE][tT][yY][pP][eE]"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[dD][eE][lL][eE][gG][aA][tT][eE][dD]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[lL][oO][cC][aA][lL]"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "entitlement_id_property": {
       "type": "SEQ",
       "members": [
@@ -27193,6 +27231,10 @@
         {
           "type": "SYMBOL",
           "name": "entitlement_type_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "entitlement_role_type_property"
         },
         {
           "type": "SYMBOL",

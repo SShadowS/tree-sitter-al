@@ -1606,6 +1606,17 @@ module.exports = grammar({
       ';'
     ),
 
+    entitlement_role_type_property: $ => seq(
+      /[rR][oO][lL][eE][tT][yY][pP][eE]/,
+      '=',
+      field('value', choice(
+        /[dD][eE][lL][eE][gG][aA][tT][eE][dD]/,                  // Delegated
+        /[lL][oO][cC][aA][lL]/,                                    // Local
+        $.identifier                                                // Allow other identifiers
+      )),
+      ';'
+    ),
+
     entitlement_id_property: $ => seq(
       /[iI][dD]/,
       '=',
@@ -5994,6 +6005,7 @@ enum_type: $ => prec(1, seq(
       $._universal_properties,       // caption, description, obsolete_*
       // Entitlement-specific
       $.entitlement_type_property,
+      $.entitlement_role_type_property,
       $.entitlement_id_property,
       $.object_entitlements_property,
     ),

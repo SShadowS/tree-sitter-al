@@ -9344,6 +9344,10 @@
           "named": true
         },
         {
+          "type": "entitlement_role_type_property",
+          "named": true
+        },
+        {
           "type": "entitlement_type_property",
           "named": true
         },
@@ -9400,6 +9404,22 @@
         "types": [
           {
             "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "entitlement_role_type_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -25746,6 +25766,10 @@
         },
         {
           "type": "entitlement_id_property",
+          "named": true
+        },
+        {
+          "type": "entitlement_role_type_property",
           "named": true
         },
         {
@@ -44045,21 +44069,21 @@
   },
   {
     "type": "comment",
-    "named": true,
-    "extra": true
-  },
-  {
-    "type": "comment",
     "named": false,
     "extra": true
   },
   {
-    "type": "const",
-    "named": false
+    "type": "comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "const",
     "named": true
+  },
+  {
+    "type": "const",
+    "named": false
   },
   {
     "type": "controladdin",
@@ -44099,11 +44123,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
@@ -44215,11 +44239,11 @@
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "interface",
