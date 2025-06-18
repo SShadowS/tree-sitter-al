@@ -986,7 +986,8 @@ module.exports = grammar({
         $._action_element,
         $._action_group,
         $.action_group_section,
-        $.area_action_section
+        $.area_action_section,
+        $.preproc_conditional_actions
       )),
       '}'
     ),
@@ -1009,7 +1010,8 @@ module.exports = grammar({
       repeat(choice(
         $._action_element,
         $.action_group_section,
-        $.separator_action
+        $.separator_action,
+        $.preproc_conditional_actions
       )),
       '}'
     ),
@@ -5595,6 +5597,27 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     ),
 
+    // Preprocessor conditional rules for actions
+    preproc_conditional_actions: $ => seq(
+      $.preproc_if,
+      repeat(choice(
+        $._action_element,
+        $._action_group,
+        $.action_group_section,
+        $.area_action_section
+      )),
+      optional(seq(
+        $.preproc_else,
+        repeat(choice(
+          $._action_element,
+          $._action_group,
+          $.action_group_section,
+          $.area_action_section
+        ))
+      )),
+      $.preproc_endif
+    ),
+
     // Preprocessor conditional rules for variable declarations
     preproc_conditional_variables: $ => seq(
       $.preproc_if,
@@ -5630,7 +5653,10 @@ enum_type: $ => prec(1, seq(
 
     preproc_if: $ => seq(
       choice('#if', '#IF', '#If'),
-      field('condition', $.identifier)
+      field('condition', choice(
+        $.identifier,
+        seq(choice('not', 'NOT', 'Not'), $.identifier)
+      ))
     ),
 
     preproc_else: $ => choice('#else', '#ELSE', '#Else'),

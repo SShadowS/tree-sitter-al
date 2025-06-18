@@ -1060,6 +1060,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_actions",
+          "named": true
+        },
+        {
           "type": "systemaction_declaration",
           "named": true
         }
@@ -2350,6 +2354,10 @@
         },
         {
           "type": "actionref_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_actions",
           "named": true
         },
         {
@@ -25608,6 +25616,73 @@
     }
   },
   {
+    "type": "preproc_conditional_actions",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "action_declaration",
+          "named": true
+        },
+        {
+          "type": "action_group_section",
+          "named": true
+        },
+        {
+          "type": "actionref_declaration",
+          "named": true
+        },
+        {
+          "type": "addafter_action_group",
+          "named": true
+        },
+        {
+          "type": "addbefore_action_group",
+          "named": true
+        },
+        {
+          "type": "addfirst_action_group",
+          "named": true
+        },
+        {
+          "type": "addlast_action_group",
+          "named": true
+        },
+        {
+          "type": "area_action_section",
+          "named": true
+        },
+        {
+          "type": "modify_action",
+          "named": true
+        },
+        {
+          "type": "modify_action_group",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "systemaction_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_attributes",
     "named": true,
     "fields": {},
@@ -28849,12 +28924,24 @@
     "named": true,
     "fields": {
       "condition": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
+            "type": "NOT",
+            "named": false
+          },
+          {
+            "type": "Not",
+            "named": false
+          },
+          {
             "type": "identifier",
             "named": true
+          },
+          {
+            "type": "not",
+            "named": false
           }
         ]
       }
@@ -44069,21 +44156,21 @@
   },
   {
     "type": "comment",
-    "named": false,
-    "extra": true
-  },
-  {
-    "type": "comment",
     "named": true,
     "extra": true
   },
   {
-    "type": "const",
-    "named": true
+    "type": "comment",
+    "named": false,
+    "extra": true
   },
   {
     "type": "const",
     "named": false
+  },
+  {
+    "type": "const",
+    "named": true
   },
   {
     "type": "controladdin",
@@ -44123,11 +44210,11 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "div",
