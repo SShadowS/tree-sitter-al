@@ -81,7 +81,7 @@ module.exports = grammar({
     ),
     
     xmlport_declaration: $ => seq(
-      /[xX][mM][lL][pP][oO][rR][tT]/,
+      new RustRegex('(?i)xmlport'),
       $._object_header_base,
       '{',
       repeat($._xmlport_element),
@@ -329,7 +329,7 @@ module.exports = grammar({
     ),
 
     enum_declaration: $ => seq(
-      /[eE][nN][uU][mM]/,
+      new RustRegex('(?i)enum'),
       $._object_header_base,
       optional(seq(
         /[iI][mM][pP][lL][eE][mM][eE][nN][tT][sS]/,
@@ -345,7 +345,7 @@ module.exports = grammar({
     ),
 
     enumextension_declaration: $ => seq(
-      /[eE][nN][uU][mM][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
+      new RustRegex('(?i)enumextension'),
       $._object_header_base,
       /[eE][xX][tT][eE][nN][dD][sS]/,
       field('base_object', $._identifier_choice),
@@ -367,7 +367,7 @@ module.exports = grammar({
     ),
 
     query_declaration: $ => seq(
-      /[qQ][uU][eE][rR][yY]/,
+      new RustRegex('(?i)query'),
       $._object_header_base,
       '{',
       repeat($._query_element),
@@ -949,7 +949,7 @@ module.exports = grammar({
     ),
 
     pageextension_declaration: $ => seq(
-      /[pP][aA][gG][eE][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
+      new RustRegex('(?i)pageextension'),
       $._object_header_base,
       /[eE][xX][tT][eE][nN][dD][sS]/,
       field('base_object', $._identifier_choice),
@@ -971,7 +971,7 @@ module.exports = grammar({
     ),
 
     tableextension_declaration: $ => seq(
-      /[tT][aA][bB][lL][eE][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
+      new RustRegex('(?i)tableextension'),
       $._object_header_base,
       /[eE][xX][tT][eE][nN][dD][sS]/,
       field('base_object', $._identifier_choice),
@@ -1528,7 +1528,7 @@ module.exports = grammar({
     ),
 
     table_declaration: $ => seq(
-      /[tT][aA][bB][lL][eE]/,
+      new RustRegex('(?i)table'),
       $._object_header_base,
       '{',
       repeat($._table_element),
@@ -1536,7 +1536,7 @@ module.exports = grammar({
     ),
 
     codeunit_declaration: $ => seq(
-      /[cC][oO][dD][eE][uU][nN][iI][tT]/,
+      new RustRegex('(?i)codeunit'),
       $._object_header_base,
       optional($.implements_clause),
       '{',
@@ -1592,7 +1592,7 @@ module.exports = grammar({
     // Generic trigger rule for codeunits etc.
 
     page_declaration: $ => seq(
-      /[pP][aA][gG][eE]/,
+      new RustRegex('(?i)page'),
       $._object_header_base,
       '{',
       repeat(seq(optional(';'), $._page_element)),
@@ -1600,7 +1600,7 @@ module.exports = grammar({
     ),
 
     pagecustomization_declaration: $ => seq(
-      /[pP][aA][gG][eE][cC][uU][sS][tT][oO][mM][iI][zZ][aA][tT][iI][oO][nN]/,
+      new RustRegex('(?i)pagecustomization'),
       field('object_name', $._identifier_choice),
       /[cC][uU][sS][tT][oO][mM][iI][zZ][eE][sS]/,
       field('target_page', $._identifier_choice),
@@ -1610,7 +1610,7 @@ module.exports = grammar({
     ),
 
     profile_declaration: $ => seq(
-      /[pP][rR][oO][fF][iI][lL][eE]/,
+      new RustRegex('(?i)profile'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($._profile_element),
@@ -1618,7 +1618,7 @@ module.exports = grammar({
     ),
 
     controladdin_declaration: $ => seq(
-      /[cC][oO][nN][tT][rR][oO][lL][aA][dD][dD][iI][nN]/,
+      new RustRegex('(?i)controladdin'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($._controladdin_element),
@@ -1634,7 +1634,7 @@ module.exports = grammar({
     ),
 
     entitlement_declaration: $ => seq(
-      /[eE][nN][tT][iI][tT][lL][eE][mM][eE][nN][tT]/,
+      new RustRegex('(?i)entitlement'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($._entitlement_element),
@@ -1725,7 +1725,7 @@ module.exports = grammar({
     ),
 
     interface_declaration: $ => seq(
-      /[iI][nN][tT][eE][rR][fF][aA][cC][eE]/,
+      new RustRegex('(?i)interface'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($.interface_procedure),
@@ -1743,7 +1743,7 @@ module.exports = grammar({
     ),
 
     report_declaration: $ => seq(
-      /[rR][eE][pP][oO][rR][tT]/,
+      new RustRegex('(?i)report'),
       $._object_header_base,
       '{',
       repeat($._report_element),
@@ -1836,7 +1836,7 @@ module.exports = grammar({
     ),
 
     permissionset_declaration: $ => seq(
-      /[pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT]/,
+      new RustRegex('(?i)permissionset'),
       $._object_header_base,
       '{',
       repeat($._permissionset_element),
@@ -1851,7 +1851,7 @@ module.exports = grammar({
     ),
 
     permissionsetextension_declaration: $ => seq(
-      /[pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT][eE][xX][tT][eE][nN][sS][iI][oO][nN]/,
+      new RustRegex('(?i)permissionsetextension'),
       field('object_id', $.integer),
       field('object_name', $._identifier_choice),
       /[eE][xX][tT][eE][nN][dD][sS]/,
@@ -1960,7 +1960,7 @@ module.exports = grammar({
     ),
 
     dotnet_declaration: $ => seq(
-      /[dD][oO][tT][nN][eE][tT]/,
+      new RustRegex('(?i)dotnet'),
       '{',
       repeat($.assembly_declaration),
       '}'
