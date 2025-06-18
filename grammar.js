@@ -123,7 +123,7 @@ module.exports = grammar({
     ),
     
     xmlport_schema_element: $ => seq(
-      /[sS][cC][hH][eE][mM][aA]/,
+      new RustRegex('(?i)schema'),
       '{',
       repeat($.xmlport_table_element),
       '}'
@@ -131,9 +131,9 @@ module.exports = grammar({
     
     xmlport_table_element: $ => seq(
       choice(
-        /[tT][aA][bB][lL][eE][eE][lL][eE][mM][eE][nN][tT]/,
-        /[fF][iI][eE][lL][dD][eE][lL][eE][mM][eE][nN][tT]/,
-        /[tT][eE][xX][tT][eE][lL][eE][mM][eE][nN][tT]/
+        new RustRegex('(?i)tableelement'),
+        new RustRegex('(?i)fieldelement'),
+        new RustRegex('(?i)textelement')
       ),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
@@ -2252,7 +2252,7 @@ module.exports = grammar({
     ),
 
     part_section: $ => seq(
-      /[pP][aA][rR][tT]/,
+      new RustRegex('(?i)part'),
       '(',
       field('name', choice($.string_literal, $.identifier, $._quoted_identifier)),
       ';',
@@ -2267,7 +2267,7 @@ module.exports = grammar({
     ),
 
     systempart_section: $ => seq(
-      /[sS][yY][sS][tT][eE][mM][pP][aA][rR][tT]/,
+      new RustRegex('(?i)systempart'),
       '(',
       field('control_id', choice($.string_literal, $.identifier, $._quoted_identifier)),
       ';',
@@ -2282,7 +2282,7 @@ module.exports = grammar({
     ),
 
     usercontrol_section: $ => seq(
-      /[uU][sS][eE][rR][cC][oO][nN][tT][rR][oO][lL]/,
+      new RustRegex('(?i)usercontrol'),
       '(',
       field('control_id', choice($.identifier, $._quoted_identifier)),
       ';',
@@ -3032,14 +3032,14 @@ module.exports = grammar({
     ),
 
     caption_ml_property: $ => seq(
-      /[cC][aA][pP][tT][iI][oO][nN][mM][lL]/,
+      new RustRegex('(?i)captionml'),
       '=',
       $.ml_value_list,
       ';'
     ),
 
     option_caption_ml_property: $ => seq(
-      /[oO][pP][tT][iI][oO][nN][cC][aA][pP][tT][iI][oO][nN][mM][lL]/,
+      new RustRegex('(?i)optioncaptionml'),
       '=',
       $.ml_value_list,
       ';'
@@ -3724,8 +3724,8 @@ enum_type: $ => prec(1, seq(
       field('namespace', choice($.identifier, $._quoted_identifier)),
       repeat1(seq('.', field('part', choice($.identifier, $._quoted_identifier))))
     )),
-    recordref_type: $ => /[rR][eE][cC][oO][rR][dD][rR][eE][fF]/,
-    fieldref_type: $ => /[fF][iI][eE][lL][dD][rR][eE][fF]/,
+    recordref_type: $ => new RustRegex('(?i)recordref'),
+    fieldref_type: $ => new RustRegex('(?i)fieldref'),
 
     // Use existing _table_reference rule that already handles both plain and quoted identifiers 
     _table_reference: $ => choice(
@@ -6476,9 +6476,9 @@ enum_type: $ => prec(1, seq(
     // Centralized case-insensitive keyword patterns for DRY principle
     _field_keyword: $ => choice('FIELD', 'Field', 'field'),
     _filter_keyword: $ => choice('FILTER', 'filter', 'Filter'),
-    _cardpart_keyword: $ => choice('CardPart', 'CARDPART', 'Cardpart'),
-    _tabledata_keyword: $ => choice('tabledata', 'TableData', 'Tabledata', 'TABLEDATA'),
-    _table_permission_keyword: $ => choice('table', 'Table', 'TABLE'),
+    _cardpart_keyword: $ => new RustRegex('(?i)cardpart'),
+    _tabledata_keyword: $ => new RustRegex('(?i)tabledata'),
+    _table_permission_keyword: $ => new RustRegex('(?i)table'),
 
     // Missing alias target rules
     const: $ => new RustRegex('(?i)const'),
