@@ -233,7 +233,7 @@ module.exports = grammar({
     // 8. MaxOccurs Property
     max_occurs_value: $ => choice(
       $.integer,
-      /[uU][nN][bB][oO][uU][nN][dD][eE][dD]/
+      new RustRegex('(?i)unbounded')
     ),
     
     max_occurs_property: $ => seq(
@@ -246,8 +246,8 @@ module.exports = grammar({
     // 9. MinOccurs Property
     min_occurs_value: $ => choice(
       $.integer,
-      /[oO][nN][cC][eE]/,
-      /[zZ][eE][rR][oO]/
+      new RustRegex('(?i)once'),
+      new RustRegex('(?i)zero')
     ),
     
     min_occurs_property: $ => seq(
@@ -4529,7 +4529,7 @@ enum_type: $ => prec(1, seq(
       new RustRegex('(?i)columns')
     ),
 
-    temporary: $ => choice('temporary', 'TEMPORARY', 'Temporary'),
+    temporary: $ => new RustRegex('(?i)temporary'),
 
 
     // Define code blocks with explicit keyword handling
