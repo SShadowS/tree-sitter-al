@@ -1776,7 +1776,7 @@ module.exports = grammar({
     report_column_section: $ => seq(
       'column',
       '(',
-      field('name', $.identifier),
+      field('name', choice($.identifier, $._quoted_identifier)),
       ';',
       field('source', $._expression),
       ')',
@@ -5463,6 +5463,13 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
+    max_iteration_property: $ => seq(
+      choice('MaxIteration', 'maxiteration', 'MAXITERATION'),
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
     sorting_expression: $ => seq(
       choice('SORTING', 'Sorting', 'sorting'),
       '(',
@@ -6305,6 +6312,7 @@ enum_type: $ => prec(1, seq(
     _dataitem_properties: $ => choice(
       $._universal_properties,
       $.data_item_table_view_property,
+      $.max_iteration_property,
       $.data_item_link_property,
       $.data_item_link_reference_property,
       $.request_filter_fields_property,

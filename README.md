@@ -8,9 +8,15 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 3,687 AL files from the comprehensive Business Central production codebase, **2,754 files (74.7%) parse successfully**.
+Based on analysis of 3,666 AL files from the comprehensive Business Central production codebase, **3,119 files (85.0%) parse successfully**.
 
 Recent improvements include:
+- **Escaped double quotes in identifiers** - Added support for escaped double quotes (`""`) within quoted identifiers, enabling complex field names like `"BankAccReconLine.""Statement Amount"""`
+- **ToolTip in area sections** - Added support for ToolTip property directly in action area sections for role center pages
+- **SqlJoinType property** - Added support for SqlJoinType property in query and report dataitems with values InnerJoin, LeftOuterJoin, and CrossJoin
+- **APIGroup and APIPublisher properties** - Extended APIGroup and APIPublisher properties from queries to page objects
+- **RoleType property** - Added RoleType property support for entitlement objects with values Delegated and Local
+- **Preprocessor in actions** - Added support for preprocessor directives (#if, #else, #endif) with 'not' operator in action sections
 - **DefaultLayout property** - Added support for report DefaultLayout property with values like RDLC, Word, Excel
 - **PermissionSetExtension objects** - Added support for permissionsetextension declarations with extends syntax
 - **Entitlement objects** - Added support for entitlement declarations with ApplicationScope, PerUserServicePlan, and Role types

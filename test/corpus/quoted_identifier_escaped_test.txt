@@ -126,9 +126,9 @@ report 50002 TestReport
         (identifier)
         (report_column_section
           name: (quoted_identifier)
-          source: (field_access
-            record: (identifier)
-            field: (identifier))
+          source: (member_expression
+            object: (identifier)
+            property: (identifier))
           (caption_property
             (string_literal)))))))
 
@@ -157,20 +157,20 @@ table 50004 TestTable
   (table_declaration
     object_id: (integer)
     object_name: (identifier)
-    (table_fields_section
+    (fields
       (field_declaration
-        field_number: (integer)
-        field_name: (quoted_identifier)
-        field_type: (type_specification
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
           (text_type
-            size: (integer)))
+            length: (integer)))
         (caption_property
           (string_literal)))
       (field_declaration
-        field_number: (integer)
-        field_name: (quoted_identifier)
-        field_type: (type_specification
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
           (code_type
-            size: (integer)))
+            length: (integer)))
         (caption_property
           (string_literal))))))

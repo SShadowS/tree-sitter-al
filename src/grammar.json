@@ -7575,8 +7575,17 @@
           "type": "FIELD",
           "name": "name",
           "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_quoted_identifier"
+              }
+            ]
           }
         },
         {
@@ -24773,6 +24782,44 @@
         }
       ]
     },
+    "max_iteration_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "MaxIteration"
+            },
+            {
+              "type": "STRING",
+              "value": "maxiteration"
+            },
+            {
+              "type": "STRING",
+              "value": "MAXITERATION"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "integer"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "sorting_expression": {
       "type": "SEQ",
       "members": [
@@ -28111,6 +28158,10 @@
         {
           "type": "SYMBOL",
           "name": "data_item_table_view_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "max_iteration_property"
         },
         {
           "type": "SYMBOL",

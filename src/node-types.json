@@ -19499,6 +19499,22 @@
     }
   },
   {
+    "type": "max_iteration_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "max_occurs_property",
     "named": true,
     "fields": {
@@ -32727,6 +32743,10 @@
           {
             "type": "identifier",
             "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
           }
         ]
       },
@@ -33289,6 +33309,10 @@
         },
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "max_iteration_property",
           "named": true
         },
         {
@@ -43140,6 +43164,10 @@
     "named": false
   },
   {
+    "type": "MAXITERATION",
+    "named": false
+  },
+  {
     "type": "MEDIA",
     "named": false
   },
@@ -43173,6 +43201,10 @@
   },
   {
     "type": "Max",
+    "named": false
+  },
+  {
+    "type": "MaxIteration",
     "named": false
   },
   {
@@ -44293,21 +44325,21 @@
   },
   {
     "type": "comment",
-    "named": true,
-    "extra": true
-  },
-  {
-    "type": "comment",
     "named": false,
     "extra": true
   },
   {
-    "type": "const",
-    "named": false
+    "type": "comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "const",
     "named": true
+  },
+  {
+    "type": "const",
+    "named": false
   },
   {
     "type": "controladdin",
@@ -44347,11 +44379,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
@@ -44507,6 +44539,10 @@
   },
   {
     "type": "max",
+    "named": false
+  },
+  {
+    "type": "maxiteration",
     "named": false
   },
   {
