@@ -102,9 +102,9 @@ module.exports = grammar({
       'Direction',
       '=',
       field('value', choice(
-        /[eE][xX][pP][oO][rR][tT]/,
-        /[iI][mM][pP][oO][rR][tT]/,
-        /[bB][oO][tT][hH]/
+        new RustRegex('(?i)export'),
+        new RustRegex('(?i)import'),
+        new RustRegex('(?i)both')
       )),
       ';'
     ),
@@ -113,11 +113,11 @@ module.exports = grammar({
       'Format',
       '=',
       field('value', choice(
-        /[xX][mM][lL]/,
-        /[vV][aA][rR][iI][aA][bB][lL][eE]/,
-        /[vV][aA][rR][iI][aA][bB][lL][eE][tT][eE][xX][tT]/,
-        /[fF][iI][xX][eE][dD]/,
-        /[fF][iI][xX][eE][dD][tT][eE][xX][tT]/
+        new RustRegex('(?i)xml'),
+        new RustRegex('(?i)variable'),
+        new RustRegex('(?i)variabletext'),
+        new RustRegex('(?i)fixed'),
+        new RustRegex('(?i)fixedtext')
       )),
       ';'
     ),
@@ -1871,7 +1871,7 @@ module.exports = grammar({
     assignable_property: $ => seq(
       'Assignable',
       '=',
-      choice('true', 'false'),
+      new RustRegex('(?i)true|false'),
       ';'
     ),
 
@@ -4520,13 +4520,13 @@ enum_type: $ => prec(1, seq(
 
     // Define boolean literals as tokens with precedence
     boolean: $ => choice(
-      token(prec(1, choice('true', 'TRUE', 'True'))),
-      token(prec(1, choice('false', 'FALSE', 'False')))
+      token(prec(1, new RustRegex('(?i)true'))),
+      token(prec(1, new RustRegex('(?i)false')))
     ),
 
     grid_layout_value: $ => choice(
-      'Rows',
-      'Columns'
+      new RustRegex('(?i)rows'),
+      new RustRegex('(?i)columns')
     ),
 
     temporary: $ => choice('temporary', 'TEMPORARY', 'Temporary'),
