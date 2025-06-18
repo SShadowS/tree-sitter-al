@@ -870,7 +870,8 @@ module.exports = grammar({
       repeat(choice(
         $.column_section,
         $.dataitem_section,
-        $.data_item_link_property
+        $.data_item_link_property,
+        $.sql_join_type_property
       )),
       '}'
     ),
@@ -920,6 +921,17 @@ module.exports = grammar({
           )
         )
       ))
+    ),
+
+    sql_join_type_property: $ => seq(
+      choice('SqlJoinType', 'sqljointype', 'SQLJOINTYPE'),
+      '=',
+      field('value', choice(
+        /[iI][nN][nN][eE][rR][jJ][oO][iI][nN]/,               // InnerJoin
+        /[lL][eE][fF][tT][oO][uU][tT][eE][rR][jJ][oO][iI][nN]/, // LeftOuterJoin
+        /[cC][rR][oO][sS][sS][jJ][oO][iI][nN]/                // CrossJoin
+      )),
+      ';'
     ),
 
     column_section: $ => seq(
@@ -6290,6 +6302,7 @@ enum_type: $ => prec(1, seq(
       $.request_filter_fields_property,
       $.request_filter_heading_property,
       $.print_only_if_detail_property,
+      $.sql_join_type_property,
     ),
 
     // =============================================================================

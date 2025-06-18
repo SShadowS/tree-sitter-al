@@ -3344,6 +3344,10 @@
               {
                 "type": "SYMBOL",
                 "name": "data_item_link_property"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "sql_join_type_property"
               }
             ]
           }
@@ -3599,6 +3603,57 @@
               }
             ]
           }
+        }
+      ]
+    },
+    "sql_join_type_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "SqlJoinType"
+            },
+            {
+              "type": "STRING",
+              "value": "sqljointype"
+            },
+            {
+              "type": "STRING",
+              "value": "SQLJOINTYPE"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[iI][nN][nN][eE][rR][jJ][oO][iI][nN]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[lL][eE][fF][tT][oO][uU][tT][eE][rR][jJ][oO][iI][nN]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[cC][rR][oO][sS][sS][jJ][oO][iI][nN]"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
         }
       ]
     },
@@ -28060,6 +28115,10 @@
         {
           "type": "SYMBOL",
           "name": "print_only_if_detail_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "sql_join_type_property"
         }
       ]
     },

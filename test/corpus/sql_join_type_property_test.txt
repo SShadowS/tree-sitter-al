@@ -1,0 +1,257 @@
+================================================================================
+Query with SqlJoinType InnerJoin
+================================================================================
+
+query 134 "OCR Vendor Bank Accounts"
+{
+    Caption = 'OCR Vendor Bank Accounts';
+
+    elements
+    {
+        dataitem(Vendor_Bank_Account; "Vendor Bank Account")
+        {
+            column(Code; Code)
+            {
+            }
+            dataitem(Vendor; Vendor)
+            {
+                DataItemLink = "No." = Vendor_Bank_Account."Vendor No.";
+                SqlJoinType = InnerJoin;
+                column(Id; SystemId)
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (column_section
+          name: (identifier)
+          field_name: (identifier))
+        (dataitem_section
+          name: (identifier)
+          table_name: (identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)))
+          (sql_join_type_property)
+          (column_section
+            name: (identifier)
+            field_name: (identifier)))))))
+
+================================================================================
+Query with SqlJoinType LeftOuterJoin
+================================================================================
+
+query 50001 "Customer Query"
+{
+    QueryType = Normal;
+    
+    elements
+    {
+        dataitem(Customer; Customer)
+        {
+            column(No; "No.")
+            {
+            }
+            dataitem(Customer_Ledger_Entry; "Customer Ledger Entry")
+            {
+                DataItemLink = "Customer No." = Customer."No.";
+                SqlJoinType = LeftOuterJoin;
+                
+                column(Amount; Amount)
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (query_type_property)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (dataitem_section
+          name: (identifier)
+          table_name: (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)))
+          (sql_join_type_property)
+          (column_section
+            name: (identifier)
+            field_name: (identifier)))))))
+
+================================================================================
+Query with SqlJoinType CrossJoin
+================================================================================
+
+query 50002 "Dimension Cross Join"
+{
+    elements
+    {
+        dataitem(DimensionSet; "Dimension Set")
+        {
+            column(DimSetID; ID)
+            {
+            }
+            dataitem(DimensionValue; "Dimension Value")
+            {
+                SqlJoinType = CrossJoin;
+                column(DimCode; "Dimension Code")
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (column_section
+          name: (identifier)
+          field_name: (identifier))
+        (dataitem_section
+          name: (identifier)
+          table_name: (quoted_identifier)
+          (sql_join_type_property)
+          (column_section
+            name: (identifier)
+            field_name: (quoted_identifier)))))))
+
+================================================================================
+Report dataitem with SqlJoinType
+================================================================================
+
+report 50003 "Sales Report"
+{
+    dataset
+    {
+        dataitem(Customer; Customer)
+        {
+            column(CustomerNo; "No.")
+            {
+            }
+            dataitem(SalesHeader; "Sales Header")
+            {
+                DataItemLink = "Sell-to Customer No." = Customer."No.";
+                SqlJoinType = InnerJoin;
+                
+                column(DocumentNo; "No.")
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (report_column_section
+          name: (identifier)
+          source: (quoted_identifier))
+        (report_dataitem_section
+          name: (identifier)
+          (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)))
+          (sql_join_type_property)
+          (report_column_section
+            name: (identifier)
+            source: (quoted_identifier)))))))
+
+================================================================================
+Mixed case SqlJoinType property
+================================================================================
+
+query 50004 "Test Query"
+{
+    elements
+    {
+        dataitem(Table1; Table1)
+        {
+            dataitem(Table2; Table2)
+            {
+                sqljointype = innerjoin;
+            }
+            dataitem(Table3; Table3)
+            {
+                SQLJOINTYPE = LEFTOUTERJOIN;
+            }
+            dataitem(Table4; Table4)
+            {
+                SqlJoinType = CrossJoin;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (dataitem_section
+          name: (identifier)
+          table_name: (identifier)
+          (sql_join_type_property))
+        (dataitem_section
+          name: (identifier)
+          table_name: (identifier)
+          (sql_join_type_property))
+        (dataitem_section
+          name: (identifier)
+          table_name: (identifier)
+          (sql_join_type_property))))))
