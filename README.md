@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 3,666 AL files from the comprehensive Business Central production codebase, **3,119 files (85.0%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **12,721 files (82.8%) parse successfully**.
 
 Recent improvements include:
 - **Escaped double quotes in identifiers** - Added support for escaped double quotes (`""`) within quoted identifiers, enabling complex field names like `"BankAccReconLine.""Statement Amount"""`

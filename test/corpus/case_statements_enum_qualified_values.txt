@@ -1,0 +1,103 @@
+================================================================================
+Case statements with enum qualified values using Enum:: pattern
+================================================================================
+
+codeunit 123 TestCodeunit
+{
+    procedure TestCaseWithEnumQualifiedValues()
+    var
+        PostingPolicy: Enum "Invoice Posting Policy";
+    begin
+        case PostingPolicy of
+            Enum::"Invoice Posting Policy"::Prohibited:
+                begin
+                    Message('Prohibited');
+                end;
+            Enum::"Invoice Posting Policy"::Mandatory:
+                begin
+                    Message('Mandatory');
+                end;
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (enum_type
+                enum_name: (quoted_identifier)))))
+        (code_block
+          (case_statement
+            expression: (identifier)
+            (case_branch
+              pattern: (enum_keyword_qualified_value
+                enum_type: (quoted_identifier)
+                value: (identifier))
+              statements: (code_block
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))))
+            (case_branch
+              pattern: (enum_keyword_qualified_value
+                enum_type: (quoted_identifier)
+                value: (identifier))
+              statements: (code_block
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))))))))))
+
+================================================================================
+Simple enum case pattern test
+================================================================================
+
+codeunit 124 SimpleTest
+{
+    procedure Test()
+    var
+        Policy: Enum "Invoice Posting Policy";
+    begin
+        case Policy of
+            Enum::"Invoice Posting Policy"::Prohibited:
+                Message('Test');
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (enum_type
+                enum_name: (quoted_identifier)))))
+        (code_block
+          (case_statement
+            expression: (identifier)
+            (case_branch
+              pattern: (enum_keyword_qualified_value
+                enum_type: (quoted_identifier)
+                value: (identifier))
+              statements: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))))))))

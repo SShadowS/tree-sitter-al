@@ -4933,6 +4933,7 @@ enum_type: $ => prec(1, seq(
       $._literal_value,
       $.enum_value_expression, // Match the full Record.Field::Value pattern
       $.qualified_enum_value,   // Match EnumType::EnumValue pattern
+      $.enum_keyword_qualified_value, // Match Enum::"EnumType"::Value pattern
       // Arithmetic expressions (high precedence for DATABASE::"Table" + 1 patterns)
       prec(11, $.additive_expression),
       prec(11, $.multiplicative_expression),
