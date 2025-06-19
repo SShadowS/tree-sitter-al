@@ -2671,7 +2671,8 @@ module.exports = grammar({
     obsolete_reason_value: $ => $.string_literal,
     obsolete_state_value: $ => choice(
       /[pP][eE][nN][dD][iI][nN][gG]/,
-      /[rR][eE][mM][oO][vV][eE][dD]/
+      /[rR][eE][mM][oO][vV][eE][dD]/,
+      /[mM][oO][vV][eE][dD]/
     ),
     obsolete_tag_value: $ => $.string_literal,
     option_ordinal_values_value: $ => $.string_literal,
