@@ -24,8 +24,17 @@
             {
               "type": "REPEAT",
               "content": {
-                "type": "SYMBOL",
-                "name": "using_statement"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "using_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_conditional_using"
+                  }
+                ]
               }
             },
             {
@@ -120,8 +129,17 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "SYMBOL",
-            "name": "using_statement"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "using_statement"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_using"
+              }
+            ]
           }
         },
         {
@@ -25998,6 +26016,54 @@
         }
       ]
     },
+    "preproc_conditional_using": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "preproc_if"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "using_statement"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_else"
+                  },
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "using_statement"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_endif"
+          }
+        ]
+      }
+    },
     "preproc_region": {
       "type": "PATTERN",
       "value": "#region[^\\n\\r]*"
@@ -28792,7 +28858,12 @@
       "name": "pragma"
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    [
+      "_source_content",
+      "preproc_conditional_using"
+    ]
+  ],
   "precedences": [],
   "externals": [],
   "inline": [],

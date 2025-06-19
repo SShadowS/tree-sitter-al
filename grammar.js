@@ -10,6 +10,9 @@
 module.exports = grammar({
   name: "al",
 
+  conflicts: $ => [
+    [$._source_content, $.preproc_conditional_using]
+  ],
 
   word: $ => $.identifier,
   extras: $ => [/\s/, $.comment, $.multiline_comment, $.pragma],
@@ -19,7 +22,7 @@ module.exports = grammar({
       // Standard source file structure
       seq(
         optional($.namespace_declaration),
-        repeat($.using_statement),
+        repeat(choice($.using_statement, $.preproc_conditional_using)),
         repeat(choice($._object, $.pragma))
       ),
       // Preprocessor-wrapped source file
@@ -38,7 +41,7 @@ module.exports = grammar({
 
     _source_content: $ => seq(
       optional($.namespace_declaration),
-      repeat($.using_statement),
+      repeat(choice($.using_statement, $.preproc_conditional_using)),
       repeat1(choice($._object, $.pragma))  // At least one object or pragma required
     ),
 
@@ -5783,6 +5786,16 @@ enum_type: $ => prec(1, seq(
     preproc_else: $ => choice('#else', '#ELSE', '#Else'),
 
     preproc_endif: $ => choice('#endif', '#ENDIF', '#Endif'),
+
+    preproc_conditional_using: $ => prec(1, seq(
+      $.preproc_if,
+      repeat($.using_statement),
+      optional(seq(
+        $.preproc_else,
+        repeat($.using_statement)
+      )),
+      $.preproc_endif
+    )),
 
     preproc_region: $ => /#region[^\n\r]*/,
 
