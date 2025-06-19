@@ -1836,7 +1836,7 @@ module.exports = grammar({
       field('source', $._expression),
       ')',
       '{',
-      repeat($._field_properties),
+      repeat($._report_column_properties),
       '}'
     ),
 
@@ -6426,6 +6426,21 @@ enum_type: $ => prec(1, seq(
       $.request_filter_heading_property,
       $.print_only_if_detail_property,
       $.sql_join_type_property,
+    ),
+
+    // Report column-specific properties
+    _report_column_properties: $ => choice(
+      // Column appearance properties
+      $.include_caption_property,
+      $.caption_property,
+      
+      // Column formatting properties
+      $.auto_format_expression_property,
+      $.auto_format_type_property,
+      $.decimal_places_property,
+      
+      // Option-specific properties
+      $.option_caption_property,
     ),
 
     // =============================================================================

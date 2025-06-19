@@ -7701,7 +7701,7 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_field_properties"
+            "name": "_report_column_properties"
           }
         },
         {
@@ -28379,6 +28379,35 @@
         {
           "type": "SYMBOL",
           "name": "sql_join_type_property"
+        }
+      ]
+    },
+    "_report_column_properties": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "include_caption_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "caption_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "auto_format_expression_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "auto_format_type_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "decimal_places_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "option_caption_property"
         }
       ]
     },

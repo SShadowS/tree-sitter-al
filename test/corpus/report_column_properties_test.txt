@@ -1,0 +1,75 @@
+==========================================
+Report column properties test
+==========================================
+
+report 50000 "Test Report"
+{
+    dataset
+    {
+        dataitem(Item; Item)
+        {
+            column(ItemNo; "No.")
+            {
+                IncludeCaption = true;
+                Caption = 'Item Number';
+            }
+            column(Description; Description)
+            {
+                IncludeCaption = false;
+            }
+            column(UnitPrice; "Unit Price")
+            {
+                IncludeCaption = true;
+                AutoFormatExpression = "Currency Code";
+                AutoFormatType = 2;
+                DecimalPlaces = 2:5;
+            }
+            column(Status; Status)
+            {
+                OptionCaption = 'Open,Released,Closed';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (report_column_section
+          name: (identifier)
+          source: (quoted_identifier)
+          (include_caption_property
+            value: (boolean))
+          (caption_property
+            (string_literal)))
+        (report_column_section
+          name: (identifier)
+          source: (identifier)
+          (include_caption_property
+            value: (boolean)))
+        (report_column_section
+          name: (identifier)
+          source: (quoted_identifier)
+          (include_caption_property
+            value: (boolean))
+          (auto_format_expression_property
+            value: (value
+              (quoted_identifier)))
+          (auto_format_type_property
+            value: (value))
+          (decimal_places_property
+            precision: (integer)
+            scale: (integer)))
+        (report_column_section
+          name: (identifier)
+          source: (identifier)
+          (option_caption_property
+            (option_caption_value
+              (string_literal))))))))
