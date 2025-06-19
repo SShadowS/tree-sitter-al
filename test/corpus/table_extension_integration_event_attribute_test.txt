@@ -1,0 +1,89 @@
+================================================================================
+Table extension with IntegrationEvent attributes test
+================================================================================
+
+tableextension 50001 "Test Extension" extends "Test Table"
+{
+    [IntegrationEvent(false, false)]
+    local procedure OnAfterTransferFromAsmHeader(var ReqLine: Record "Requisition Line"; AsmHeader: Record "Assembly Header")
+    begin
+    end;
+
+    [IntegrationEvent(true, true)]
+    local procedure OnAfterSetReplenishmentSystem(var RequisitionLine: Record "Requisition Line"; Item: Record Item)
+    begin
+    end;
+
+    [IntegrationEvent(false, true, true)]
+    procedure OnGlobalEvent()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)))))
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name)
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (parameter
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)))))
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name)
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (parameter
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)
+              (boolean)))))
+      (procedure
+        name: (name)
+        (code_block)))))

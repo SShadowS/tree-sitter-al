@@ -993,9 +993,9 @@ module.exports = grammar({
       $.modify_field_declaration,  // Add direct modify field support
       $.keys,
       $.fieldgroups_section,
-      $.procedure,
+      $.attributed_procedure,  // Support attributed procedures like [IntegrationEvent(false, false)]
       $.var_section,
-      $.trigger_declaration,
+      $.attributed_trigger,    // Support attributed triggers as well
       $._table_properties     // Centralized table properties
     ),
 

@@ -1,0 +1,71 @@
+================================================================================
+Table extension with attributed triggers test
+================================================================================
+
+tableextension 50003 "Attributed Triggers Extension" extends Item
+{
+    fields
+    {
+        field(50000; "Custom Field"; Text[50])
+        {
+            Caption = 'Custom Field';
+        }
+    }
+
+    [IntegrationEvent(true, false)]
+    trigger OnAfterValidate()
+    begin
+    end;
+
+    [Obsolete('Use new validation logic', '19.0')]
+    local procedure OnBeforeProcess(var Item: Record Item)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (caption_property
+          (string_literal))))
+    (attributed_trigger
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)))))
+      (trigger_declaration
+        name: (trigger_name)
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (string_literal)
+              (string_literal)))))
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name)
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        (code_block)))))
