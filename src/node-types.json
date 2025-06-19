@@ -4084,6 +4084,10 @@
           "named": true
         },
         {
+          "type": "integer",
+          "named": true
+        },
+        {
           "type": "string_literal",
           "named": true
         }
@@ -4313,6 +4317,14 @@
             "named": false
           },
           {
+            "type": "XOR",
+            "named": false
+          },
+          {
+            "type": "Xor",
+            "named": false
+          },
+          {
             "type": "and",
             "named": false
           },
@@ -4334,6 +4346,10 @@
           },
           {
             "type": "or",
+            "named": false
+          },
+          {
+            "type": "xor",
             "named": false
           }
         ]
@@ -4376,6 +4392,14 @@
           },
           {
             "type": "Or",
+            "named": false
+          },
+          {
+            "type": "XOR",
+            "named": false
+          },
+          {
+            "type": "Xor",
             "named": false
           },
           {
@@ -4513,6 +4537,10 @@
           {
             "type": "unary_expression",
             "named": true
+          },
+          {
+            "type": "xor",
+            "named": false
           }
         ]
       },
@@ -12765,6 +12793,10 @@
           "named": true
         },
         {
+          "type": "image_property",
+          "named": true
+        },
+        {
           "type": "importance_property",
           "named": true
         },
@@ -19729,10 +19761,6 @@
         {
           "type": "lookup_where_conditions",
           "named": true
-        },
-        {
-          "type": "where_clause",
-          "named": true
         }
       ]
     }
@@ -22505,6 +22533,14 @@
             "named": false
           },
           {
+            "type": "DIV",
+            "named": false
+          },
+          {
+            "type": "Div",
+            "named": false
+          },
+          {
             "type": "IS",
             "named": false
           },
@@ -22513,7 +22549,19 @@
             "named": false
           },
           {
+            "type": "MOD",
+            "named": false
+          },
+          {
+            "type": "Mod",
+            "named": false
+          },
+          {
             "type": "as",
+            "named": false
+          },
+          {
+            "type": "div",
             "named": false
           },
           {
@@ -22522,6 +22570,10 @@
           },
           {
             "type": "is",
+            "named": false
+          },
+          {
+            "type": "mod",
             "named": false
           }
         ]
@@ -23840,6 +23892,14 @@
         },
         {
           "type": "preproc_conditional_page_properties",
+          "named": true
+        },
+        {
+          "type": "preproc_endregion",
+          "named": true
+        },
+        {
+          "type": "preproc_region",
           "named": true
         },
         {
@@ -25773,6 +25833,10 @@
         {
           "type": "pragma",
           "named": true
+        },
+        {
+          "type": "preproc_conditional_permissions",
+          "named": true
         }
       ]
     }
@@ -26632,6 +26696,10 @@
           "named": true
         },
         {
+          "type": "image_property",
+          "named": true
+        },
+        {
           "type": "importance_property",
           "named": true
         },
@@ -27462,6 +27530,33 @@
         },
         {
           "type": "width_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_permissions",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "permission_entry",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
           "named": true
         }
       ]
@@ -30991,6 +31086,14 @@
             "named": false
           },
           {
+            "type": "XOR",
+            "named": false
+          },
+          {
+            "type": "Xor",
+            "named": false
+          },
+          {
             "type": "and",
             "named": false
           },
@@ -31228,6 +31331,10 @@
           },
           {
             "type": "xmlport",
+            "named": false
+          },
+          {
+            "type": "xor",
             "named": false
           }
         ]
@@ -33465,6 +33572,10 @@
         },
         {
           "type": "hide_value_property",
+          "named": true
+        },
+        {
+          "type": "image_property",
           "named": true
         },
         {
@@ -38253,11 +38364,6 @@
     }
   },
   {
-    "type": "temporary",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "test_isolation_property",
     "named": true,
     "fields": {
@@ -42558,14 +42664,6 @@
     "named": false
   },
   {
-    "type": "ABOUTTEXT",
-    "named": false
-  },
-  {
-    "type": "ABOUTTITLE",
-    "named": false
-  },
-  {
     "type": "ACTION",
     "named": false
   },
@@ -42582,15 +42680,7 @@
     "named": false
   },
   {
-    "type": "AboutText",
-    "named": false
-  },
-  {
     "type": "AboutTextML",
-    "named": false
-  },
-  {
-    "type": "AboutTitle",
     "named": false
   },
   {
@@ -42750,10 +42840,6 @@
     "named": false
   },
   {
-    "type": "CARDPART",
-    "named": false
-  },
-  {
     "type": "CASE",
     "named": false
   },
@@ -42799,14 +42885,6 @@
   },
   {
     "type": "Caption",
-    "named": false
-  },
-  {
-    "type": "CardPart",
-    "named": false
-  },
-  {
-    "type": "Cardpart",
     "named": false
   },
   {
@@ -42859,10 +42937,6 @@
   },
   {
     "type": "ColumnStoreIndex",
-    "named": false
-  },
-  {
-    "type": "Columns",
     "named": false
   },
   {
@@ -43078,10 +43152,6 @@
     "named": false
   },
   {
-    "type": "ENABLED",
-    "named": false
-  },
-  {
     "type": "END",
     "named": false
   },
@@ -43123,10 +43193,6 @@
   },
   {
     "type": "EnableHyperlinks",
-    "named": false
-  },
-  {
-    "type": "Enabled",
     "named": false
   },
   {
@@ -43506,10 +43572,6 @@
     "named": false
   },
   {
-    "type": "LOCKED",
-    "named": false
-  },
-  {
     "type": "LOOKUP",
     "named": false
   },
@@ -43547,10 +43609,6 @@
   },
   {
     "type": "Local",
-    "named": false
-  },
-  {
-    "type": "Locked",
     "named": false
   },
   {
@@ -43966,10 +44024,6 @@
     "named": false
   },
   {
-    "type": "PROMOTED",
-    "named": false
-  },
-  {
     "type": "PROMOTEDACTIONCATEGORIES",
     "named": false
   },
@@ -44035,10 +44089,6 @@
   },
   {
     "type": "ProfileDescription",
-    "named": false
-  },
-  {
-    "type": "Promoted",
     "named": false
   },
   {
@@ -44166,10 +44216,6 @@
     "named": false
   },
   {
-    "type": "Rows",
-    "named": false
-  },
-  {
     "type": "RunObject",
     "named": false
   },
@@ -44191,10 +44237,6 @@
   },
   {
     "type": "SECRETTEXT",
-    "named": false
-  },
-  {
-    "type": "SHORTCUTKEY",
     "named": false
   },
   {
@@ -44235,14 +44277,6 @@
   },
   {
     "type": "SharedLayout",
-    "named": false
-  },
-  {
-    "type": "ShortCutKey",
-    "named": false
-  },
-  {
-    "type": "ShortcutKey",
     "named": false
   },
   {
@@ -44342,10 +44376,6 @@
     "named": false
   },
   {
-    "type": "TABLEDATA",
-    "named": false
-  },
-  {
     "type": "TEMPORARY",
     "named": false
   },
@@ -44374,10 +44404,6 @@
     "named": false
   },
   {
-    "type": "TOOLTIP",
-    "named": false
-  },
-  {
     "type": "TRIGGER",
     "named": false
   },
@@ -44390,10 +44416,6 @@
     "named": false
   },
   {
-    "type": "TableData",
-    "named": false
-  },
-  {
     "type": "TableNo",
     "named": false
   },
@@ -44403,10 +44425,6 @@
   },
   {
     "type": "TableType",
-    "named": false
-  },
-  {
-    "type": "Tabledata",
     "named": false
   },
   {
@@ -44454,15 +44472,7 @@
     "named": false
   },
   {
-    "type": "ToolTip",
-    "named": false
-  },
-  {
     "type": "ToolTipML",
-    "named": false
-  },
-  {
-    "type": "Tooltip",
     "named": false
   },
   {
@@ -44678,14 +44688,6 @@
     "named": false
   },
   {
-    "type": "abouttext",
-    "named": false
-  },
-  {
-    "type": "abouttitle",
-    "named": false
-  },
-  {
     "type": "and",
     "named": false
   },
@@ -44749,11 +44751,11 @@
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "controladdin",
@@ -44793,11 +44795,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
@@ -44825,10 +44827,6 @@
   },
   {
     "type": "else",
-    "named": false
-  },
-  {
-    "type": "enabled",
     "named": false
   },
   {
@@ -44909,11 +44907,11 @@
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "interface",
@@ -44941,10 +44939,6 @@
   },
   {
     "type": "local",
-    "named": false
-  },
-  {
-    "type": "locked",
     "named": false
   },
   {
@@ -44978,10 +44972,6 @@
   },
   {
     "type": "multiplicity",
-    "named": false
-  },
-  {
-    "type": "namespace",
     "named": false
   },
   {
@@ -45027,10 +45017,6 @@
   },
   {
     "type": "procedure",
-    "named": false
-  },
-  {
-    "type": "promoted",
     "named": false
   },
   {
@@ -45082,10 +45068,6 @@
     "named": false
   },
   {
-    "type": "shortcutkey",
-    "named": false
-  },
-  {
     "type": "sourcetableview",
     "named": false
   },
@@ -45114,8 +45096,8 @@
     "named": false
   },
   {
-    "type": "tabledata",
-    "named": false
+    "type": "temporary",
+    "named": true
   },
   {
     "type": "temporary",
@@ -45147,10 +45129,6 @@
   },
   {
     "type": "to",
-    "named": false
-  },
-  {
-    "type": "tooltip",
     "named": false
   },
   {

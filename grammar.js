@@ -1903,9 +1903,27 @@ module.exports = grammar({
     permission_list: $ => seq(
       $.permission_entry,
       repeat(choice(
-        seq(',', optional($.pragma), $.permission_entry),
+        seq(',', $.permission_entry),
+        seq(',', $.preproc_conditional_permissions),
+        $.preproc_conditional_permissions,
         $.pragma
       ))
+    ),
+
+    preproc_conditional_permissions: $ => seq(
+      $.preproc_if,
+      repeat(choice(
+        $.permission_entry,
+        seq(',', $.permission_entry)
+      )),
+      optional(seq(
+        $.preproc_else,
+        repeat(choice(
+          $.permission_entry,
+          seq(',', $.permission_entry)
+        ))
+      )),
+      $.preproc_endif
     ),
 
     permission_entry: $ => choice(
@@ -3365,6 +3383,11 @@ module.exports = grammar({
             new RustRegex('(?i)comment'),
             '=',
             $.string_literal
+          ),
+          seq(
+            new RustRegex('(?i)maxlength'),
+            '=',
+            $.integer
           )
         )
       )),
