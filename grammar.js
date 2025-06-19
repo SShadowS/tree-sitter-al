@@ -2018,6 +2018,10 @@ module.exports = grammar({
       $.var_section,
       $.trigger_declaration,
       
+      // Region directives for code organization
+      $.preproc_region,
+      $.preproc_endregion,
+      
       // All page properties now centralized
       $._page_properties,
       
