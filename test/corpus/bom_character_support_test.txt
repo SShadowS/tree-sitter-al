@@ -1,0 +1,39 @@
+================================================================================
+Byte Order Mark (BOM) character support test
+================================================================================
+
+﻿namespace Microsoft.Test;
+
+codeunit 50000 "BOM Test"
+{
+    trigger OnRun()
+    begin
+    end;
+
+    procedure TestProcedure(param: Option)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (namespace_declaration
+    name: (namespace_name
+      (identifier)
+      (identifier)))
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_onrun_trigger
+      (onrun_trigger
+        (code_block)))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (parameter_list
+          (parameter
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (option_type))))
+        (code_block)))))
