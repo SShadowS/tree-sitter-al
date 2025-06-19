@@ -64,7 +64,7 @@ module.exports = grammar({
     ),
 
     namespace_declaration: $ => seq(
-      'namespace',
+      new RustRegex('(?i)namespace'),
       field('name', $.namespace_name),
       ';'
     ),
