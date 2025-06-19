@@ -3631,8 +3631,19 @@ controladdin_type: $ => seq(
 
 enum_type: $ => prec(1, seq(
   choice('Enum', 'ENUM', 'enum'),
-  field('enum_name', choice($.identifier, $._quoted_identifier))
+  field('enum_name', choice(
+    $.identifier,
+    $._quoted_identifier,
+    $.namespace_qualified_enum_name
+  ))
 )),
+
+    namespace_qualified_enum_name: $ => prec(2, seq(
+      $.identifier,
+      repeat1(seq('.', $.identifier)),
+      '.',
+      choice($.identifier, $._quoted_identifier)
+    )),
 
     page_type: $ => seq(
       prec(1, choice('Page', 'PAGE', 'page')),

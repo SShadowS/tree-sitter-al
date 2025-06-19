@@ -9823,6 +9823,10 @@
             "named": true
           },
           {
+            "type": "namespace_qualified_enum_name",
+            "named": true
+          },
+          {
             "type": "quoted_identifier",
             "named": true
           }
@@ -22790,6 +22794,25 @@
       "types": [
         {
           "type": "string_literal",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "namespace_qualified_enum_name",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
           "named": true
         }
       ]
@@ -44741,21 +44764,21 @@
   },
   {
     "type": "comment",
-    "named": false,
-    "extra": true
-  },
-  {
-    "type": "comment",
     "named": true,
     "extra": true
   },
   {
-    "type": "const",
-    "named": true
+    "type": "comment",
+    "named": false,
+    "extra": true
   },
   {
     "type": "const",
     "named": false
+  },
+  {
+    "type": "const",
+    "named": true
   },
   {
     "type": "controladdin",

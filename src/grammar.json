@@ -15376,9 +15376,59 @@
                 {
                   "type": "SYMBOL",
                   "name": "_quoted_identifier"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "namespace_qualified_enum_name"
                 }
               ]
             }
+          }
+        ]
+      }
+    },
+    "namespace_qualified_enum_name": {
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "."
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                }
+              ]
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "."
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_quoted_identifier"
+              }
+            ]
           }
         ]
       }

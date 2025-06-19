@@ -1,0 +1,201 @@
+================================================================================
+Namespace-qualified enum type in field declaration
+================================================================================
+
+table 123 TestTable
+{
+    fields
+    {
+        field(1; Status; Enum Microsoft.Manufacturing.Document."Production Order Status")
+        {
+            Caption = 'Status';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (enum_type
+            enum_name: (namespace_qualified_enum_name
+              (identifier)
+              (identifier)
+              (identifier)
+              (quoted_identifier))))
+        (caption_property
+          (string_literal))))))
+
+================================================================================
+Multiple namespace-qualified enum fields
+================================================================================
+
+table 124 MultiEnumTable
+{
+    fields
+    {
+        field(1; Status1; Enum Microsoft.Manufacturing.Document."Production Order Status")
+        {
+        }
+        field(2; Status2; Enum Microsoft.Inventory.Planning."Requisition Status")
+        {
+        }
+        field(3; Type; Enum Microsoft.Sales.Customer."Customer Type")
+        {
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (enum_type
+            enum_name: (namespace_qualified_enum_name
+              (identifier)
+              (identifier)
+              (identifier)
+              (quoted_identifier)))))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (enum_type
+            enum_name: (namespace_qualified_enum_name
+              (identifier)
+              (identifier)
+              (identifier)
+              (quoted_identifier)))))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (enum_type
+            enum_name: (namespace_qualified_enum_name
+              (identifier)
+              (identifier)
+              (identifier)
+              (quoted_identifier))))))))
+
+================================================================================
+Namespace-qualified enum with unquoted identifier
+================================================================================
+
+table 125 UnquotedEnum
+{
+    fields
+    {
+        field(1; OrderType; Enum Microsoft.Sales.Document.OrderType)
+        {
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (enum_type
+            enum_name: (namespace_qualified_enum_name
+              (identifier)
+              (identifier)
+              (identifier)
+              (identifier))))))))
+
+================================================================================
+Namespace-qualified enum in variable declaration
+================================================================================
+
+codeunit 126 TestCodeunit
+{
+    var
+        MyStatus: Enum Microsoft.Manufacturing.Document."Production Order Status";
+        MyType: Enum Microsoft.Sales.Customer."Customer Type";
+
+    procedure TestProcedure()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (enum_type
+            enum_name: (namespace_qualified_enum_name
+              (identifier)
+              (identifier)
+              (identifier)
+              (quoted_identifier)))))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (enum_type
+            enum_name: (namespace_qualified_enum_name
+              (identifier)
+              (identifier)
+              (identifier)
+              (quoted_identifier))))))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (code_block)))))
+
+================================================================================
+Namespace-qualified enum in procedure parameter
+================================================================================
+
+codeunit 127 ParamTest
+{
+    procedure TestWithEnumParam(Status: Enum Microsoft.Manufacturing.Document."Production Order Status")
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (parameter_list
+          (parameter
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (enum_type
+                enum_name: (namespace_qualified_enum_name
+                  (identifier)
+                  (identifier)
+                  (identifier)
+                  (quoted_identifier))))))
+        (code_block)))))
