@@ -11636,31 +11636,445 @@
       ]
     },
     "access_by_permission_value": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "PATTERN",
-          "value": "[tT][aA][bB][lL][eE][dD][aA][tT][aA]"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[tT][aA][bB][lL][eE][dD][aA][tT][aA]"
+            },
+            {
+              "type": "FIELD",
+              "name": "table_name",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_table_reference"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "="
+            },
+            {
+              "type": "FIELD",
+              "name": "permission",
+              "content": {
+                "type": "SYMBOL",
+                "name": "permission_type"
+              }
+            }
+          ]
         },
         {
-          "type": "FIELD",
-          "name": "table_name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_table_reference"
-          }
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[sS][yY][sS][tT][eE][mM]"
+                },
+                {
+                  "type": "STRING",
+                  "value": "System"
+                },
+                {
+                  "type": "STRING",
+                  "value": "SYSTEM"
+                },
+                {
+                  "type": "STRING",
+                  "value": "system"
+                }
+              ]
+            },
+            {
+              "type": "FIELD",
+              "name": "object_name",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "string_literal"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_quoted_identifier"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "="
+            },
+            {
+              "type": "FIELD",
+              "name": "permission",
+              "content": {
+                "type": "SYMBOL",
+                "name": "permission_type"
+              }
+            }
+          ]
         },
         {
-          "type": "STRING",
-          "value": "="
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[tT][aA][bB][lL][eE]"
+                },
+                {
+                  "type": "STRING",
+                  "value": "Table"
+                },
+                {
+                  "type": "STRING",
+                  "value": "TABLE"
+                },
+                {
+                  "type": "STRING",
+                  "value": "table"
+                }
+              ]
+            },
+            {
+              "type": "FIELD",
+              "name": "object_name",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "string_literal"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_quoted_identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "="
+            },
+            {
+              "type": "FIELD",
+              "name": "permission",
+              "content": {
+                "type": "SYMBOL",
+                "name": "permission_type"
+              }
+            }
+          ]
         },
         {
-          "type": "FIELD",
-          "name": "permission",
-          "content": {
-            "type": "SYMBOL",
-            "name": "permission_type"
-          }
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[pP][aA][gG][eE]"
+                },
+                {
+                  "type": "STRING",
+                  "value": "Page"
+                },
+                {
+                  "type": "STRING",
+                  "value": "PAGE"
+                },
+                {
+                  "type": "STRING",
+                  "value": "page"
+                }
+              ]
+            },
+            {
+              "type": "FIELD",
+              "name": "object_name",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "string_literal"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_quoted_identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "="
+            },
+            {
+              "type": "FIELD",
+              "name": "permission",
+              "content": {
+                "type": "SYMBOL",
+                "name": "permission_type"
+              }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[rR][eE][pP][oO][rR][tT]"
+                },
+                {
+                  "type": "STRING",
+                  "value": "Report"
+                },
+                {
+                  "type": "STRING",
+                  "value": "REPORT"
+                },
+                {
+                  "type": "STRING",
+                  "value": "report"
+                }
+              ]
+            },
+            {
+              "type": "FIELD",
+              "name": "object_name",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "string_literal"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_quoted_identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "="
+            },
+            {
+              "type": "FIELD",
+              "name": "permission",
+              "content": {
+                "type": "SYMBOL",
+                "name": "permission_type"
+              }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[cC][oO][dD][eE][uU][nN][iI][tT]"
+                },
+                {
+                  "type": "STRING",
+                  "value": "Codeunit"
+                },
+                {
+                  "type": "STRING",
+                  "value": "CODEUNIT"
+                },
+                {
+                  "type": "STRING",
+                  "value": "codeunit"
+                }
+              ]
+            },
+            {
+              "type": "FIELD",
+              "name": "object_name",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "string_literal"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_quoted_identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "="
+            },
+            {
+              "type": "FIELD",
+              "name": "permission",
+              "content": {
+                "type": "SYMBOL",
+                "name": "permission_type"
+              }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[xX][mM][lL][pP][oO][rR][tT]"
+                },
+                {
+                  "type": "STRING",
+                  "value": "XMLport"
+                },
+                {
+                  "type": "STRING",
+                  "value": "XMLPORT"
+                },
+                {
+                  "type": "STRING",
+                  "value": "xmlport"
+                }
+              ]
+            },
+            {
+              "type": "FIELD",
+              "name": "object_name",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "string_literal"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_quoted_identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "="
+            },
+            {
+              "type": "FIELD",
+              "name": "permission",
+              "content": {
+                "type": "SYMBOL",
+                "name": "permission_type"
+              }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[qQ][uU][eE][rR][yY]"
+                },
+                {
+                  "type": "STRING",
+                  "value": "Query"
+                },
+                {
+                  "type": "STRING",
+                  "value": "QUERY"
+                },
+                {
+                  "type": "STRING",
+                  "value": "query"
+                }
+              ]
+            },
+            {
+              "type": "FIELD",
+              "name": "object_name",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "string_literal"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_quoted_identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "="
+            },
+            {
+              "type": "FIELD",
+              "name": "permission",
+              "content": {
+                "type": "SYMBOL",
+                "name": "permission_type"
+              }
+            }
+          ]
         }
       ]
     },

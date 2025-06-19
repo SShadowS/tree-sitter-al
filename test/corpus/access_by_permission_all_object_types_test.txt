@@ -1,0 +1,126 @@
+================================================================================
+AccessByPermission property with all object types test
+================================================================================
+
+page 50002 "All Permission Types Test"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(TestTableData; Rec."Test Field")
+            {
+                AccessByPermission = TableData "Customer" = R;
+            }
+            field(TestTable; Rec."Test Field 2")
+            {
+                AccessByPermission = Table "Customer" = X;
+            }
+            field(TestPage; Rec."Test Field 3")
+            {
+                AccessByPermission = Page "Customer Card" = X;
+            }
+            field(TestReport; Rec."Test Field 4")
+            {
+                AccessByPermission = Report "Customer List" = X;
+            }
+            field(TestCodeunit; Rec."Test Field 5")
+            {
+                AccessByPermission = Codeunit "Sales-Post" = X;
+            }
+            field(TestXMLPort; Rec."Test Field 6")
+            {
+                AccessByPermission = XMLport "Export Customer" = X;
+            }
+            field(TestQuery; Rec."Test Field 7")
+            {
+                AccessByPermission = Query "Customer Sales" = X;
+            }
+            field(TestSystemQuoted; Rec."Test Field 8")
+            {
+                AccessByPermission = System "Allow Action Export To Excel" = X;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (access_by_permission_property
+            value: (value
+              table_name: (quoted_identifier)
+              permission: (permission_type))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (access_by_permission_property
+            value: (value
+              object_name: (quoted_identifier)
+              permission: (permission_type))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (access_by_permission_property
+            value: (value
+              object_name: (quoted_identifier)
+              permission: (permission_type))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (access_by_permission_property
+            value: (value
+              object_name: (quoted_identifier)
+              permission: (permission_type))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (access_by_permission_property
+            value: (value
+              object_name: (quoted_identifier)
+              permission: (permission_type))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (access_by_permission_property
+            value: (value
+              object_name: (quoted_identifier)
+              permission: (permission_type))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (access_by_permission_property
+            value: (value
+              object_name: (quoted_identifier)
+              permission: (permission_type))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (access_by_permission_property
+            value: (value
+              object_name: (quoted_identifier)
+              permission: (permission_type))))))))

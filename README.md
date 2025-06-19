@@ -8,9 +8,12 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **12,721 files (82.8%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **13,018 files (84.7%) parse successfully**.
 
 Recent improvements include:
+- **OptimizeForTextSearch field property** - Added support for OptimizeForTextSearch property in table field declarations, enabling text search optimization at the field level
+- **Preprocessor conditionals in using statements** - Added support for `#if not`, `#else`, and `#endif` directives within using statement sections for conditional compilation
+- **Report column properties** - Created specialized property group for report columns with IncludeCaption, AutoFormatExpression, AutoFormatType, DecimalPlaces, and OptionCaption properties
 - **Escaped double quotes in identifiers** - Added support for escaped double quotes (`""`) within quoted identifiers, enabling complex field names like `"BankAccReconLine.""Statement Amount"""`
 - **ToolTip in area sections** - Added support for ToolTip property directly in action area sections for role center pages
 - **SqlJoinType property** - Added support for SqlJoinType property in query and report dataitems with values InnerJoin, LeftOuterJoin, and CrossJoin

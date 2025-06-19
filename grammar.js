@@ -2727,11 +2727,63 @@ module.exports = grammar({
       /[pP][rR][iI][vV][aA][tT][eE]/
     ),
 
-    access_by_permission_value: $ => seq(
-      /[tT][aA][bB][lL][eE][dD][aA][tT][aA]/,
-      field('table_name', $._table_reference),
-      '=',
-      field('permission', $.permission_type)
+    access_by_permission_value: $ => choice(
+      // TableData object permissions
+      seq(
+        /[tT][aA][bB][lL][eE][dD][aA][tT][aA]/,
+        field('table_name', $._table_reference),
+        '=',
+        field('permission', $.permission_type)
+      ),
+      // System object permissions
+      seq(
+        choice(/[sS][yY][sS][tT][eE][mM]/, 'System', 'SYSTEM', 'system'),
+        field('object_name', choice($.string_literal, $._quoted_identifier)),
+        '=',
+        field('permission', $.permission_type)
+      ),
+      // Table object permissions
+      seq(
+        choice(/[tT][aA][bB][lL][eE]/, 'Table', 'TABLE', 'table'),
+        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
+        '=',
+        field('permission', $.permission_type)
+      ),
+      // Page object permissions
+      seq(
+        choice(/[pP][aA][gG][eE]/, 'Page', 'PAGE', 'page'),
+        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
+        '=',
+        field('permission', $.permission_type)
+      ),
+      // Report object permissions
+      seq(
+        choice(/[rR][eE][pP][oO][rR][tT]/, 'Report', 'REPORT', 'report'),
+        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
+        '=',
+        field('permission', $.permission_type)
+      ),
+      // Codeunit object permissions
+      seq(
+        choice(/[cC][oO][dD][eE][uU][nN][iI][tT]/, 'Codeunit', 'CODEUNIT', 'codeunit'),
+        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
+        '=',
+        field('permission', $.permission_type)
+      ),
+      // XMLport object permissions
+      seq(
+        choice(/[xX][mM][lL][pP][oO][rR][tT]/, 'XMLport', 'XMLPORT', 'xmlport'),
+        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
+        '=',
+        field('permission', $.permission_type)
+      ),
+      // Query object permissions
+      seq(
+        choice(/[qQ][uU][eE][rR][yY]/, 'Query', 'QUERY', 'query'),
+        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
+        '=',
+        field('permission', $.permission_type)
+      )
     ),
 
     auto_format_expression_value: $ => $._expression,
