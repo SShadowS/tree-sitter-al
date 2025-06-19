@@ -28,7 +28,8 @@ report 50000 "Test Report"
     (caption_property
       (string_literal))
     (processing_only_property)
-    (use_request_page_property)
+    (use_request_page_property
+      value: (boolean))
     (dataset_section
       (report_dataitem_section
         name: (identifier)
@@ -63,7 +64,8 @@ report 50001 "No Request Page Report"
   (report_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (use_request_page_property)
+    (use_request_page_property
+      value: (boolean))
     (processing_only_property)
     (dataset_section
       (report_dataitem_section
@@ -98,7 +100,8 @@ report 50002 "Simple Report"
   (report_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (use_request_page_property)
+    (use_request_page_property
+      value: (boolean))
     (dataset_section
       (report_dataitem_section
         name: (identifier)
@@ -158,7 +161,8 @@ report 50003 "Complex Report"
     (application_area_property
       value: (identifier))
     (processing_only_property)
-    (use_request_page_property)
+    (use_request_page_property
+      value: (boolean))
     (description_property
       value: (string_literal))
     (dataset_section
@@ -201,7 +205,8 @@ report 50004 "Case Test"
   (report_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (use_request_page_property)
+    (use_request_page_property
+      value: (boolean))
     (processing_only_property)
     (dataset_section
       (report_dataitem_section

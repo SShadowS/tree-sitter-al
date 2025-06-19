@@ -234,7 +234,8 @@ report 50002 "Test Report"
       (preproc_if
         condition: (identifier))
       (processing_only_property)
-      (use_request_page_property)
+      (use_request_page_property
+        value: (boolean))
       (preproc_endif))
     (dataset_section
       (report_dataitem_section

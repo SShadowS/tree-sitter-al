@@ -4308,10 +4308,7 @@ enum_type: $ => prec(1, seq(
     use_request_page_property: $ => seq(
       'UseRequestPage',
       '=',
-      choice(
-        /[tT][rR][uU][eE]/,
-        /[fF][aA][lL][sS][eE]/
-      ),
+      field('value', $.boolean),
       ';'
     ),
 
@@ -6423,6 +6420,7 @@ enum_type: $ => prec(1, seq(
       $.linked_in_transaction_property,
       $.linked_object_property,
       $.external_schema_property,
+      $.use_request_page_property,
     ),
 
     // Action property group - leverages centralized categories  

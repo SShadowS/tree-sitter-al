@@ -7,6 +7,7 @@ xmlport 50000 "Test XMLPort"
     Caption = 'Test XMLPort';
     Direction = Export;
     Format = Xml;
+    UseRequestPage = false;
     InherentPermissions = X;
     InherentEntitlements = X;
     CaptionML = ENU = 'Test XMLPort', DAN = 'Test XMLPort';
@@ -49,6 +50,8 @@ xmlport 50000 "Test XMLPort"
       (string_literal))
     (direction_property)
     (format_property)
+    (use_request_page_property
+      value: (boolean))
     (inherent_permissions_property
       value: (inherent_permissions_value
         (permission_type)))
