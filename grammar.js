@@ -5388,7 +5388,7 @@ enum_type: $ => prec(1, seq(
 
     // Table external/integration properties
     optimize_for_text_search_property: $ => seq(
-      'OptimizeForTextSearch',
+      choice('OptimizeForTextSearch', 'optimizefortextsearch', 'OPTIMIZEFORTEXTSEARCH'),
       '=',
       field('value', $.boolean),
       ';'
@@ -6202,6 +6202,7 @@ enum_type: $ => prec(1, seq(
       $.odata_edm_type_property,
       $.drill_down_property,
       $.image_property,              // Image property for field icons
+      $.optimize_for_text_search_property,  // Field-level text search optimization
       $.preproc_conditional_field_properties,
       $.access_by_permission_property,
       $.empty_statement,  // Allow standalone semicolons in field property lists

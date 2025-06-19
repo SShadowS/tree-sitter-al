@@ -5845,6 +5845,14 @@
           "named": true
         },
         {
+          "type": "preproc_endregion",
+          "named": true
+        },
+        {
+          "type": "preproc_region",
+          "named": true
+        },
+        {
           "type": "processing_only_property",
           "named": true
         },
@@ -12866,6 +12874,10 @@
         },
         {
           "type": "odata_edm_type_property",
+          "named": true
+        },
+        {
+          "type": "optimize_for_text_search_property",
           "named": true
         },
         {
@@ -26791,6 +26803,10 @@
           "named": true
         },
         {
+          "type": "optimize_for_text_search_property",
+          "named": true
+        },
+        {
           "type": "option_caption_property",
           "named": true
         },
@@ -29529,6 +29545,10 @@
         {
           "type": "usage_category_property",
           "named": true
+        },
+        {
+          "type": "use_request_page_property",
+          "named": true
         }
       ]
     }
@@ -29570,11 +29590,6 @@
         ]
       }
     }
-  },
-  {
-    "type": "preproc_region",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "preprocessor_file_conditional",
@@ -31548,6 +31563,14 @@
         },
         {
           "type": "preproc_conditional_query_properties",
+          "named": true
+        },
+        {
+          "type": "preproc_endregion",
+          "named": true
+        },
+        {
+          "type": "preproc_region",
           "named": true
         },
         {
@@ -33670,6 +33693,10 @@
           "named": true
         },
         {
+          "type": "optimize_for_text_search_property",
+          "named": true
+        },
+        {
           "type": "option_caption_property",
           "named": true
         },
@@ -34105,6 +34132,14 @@
         },
         {
           "type": "preproc_conditional_report_properties",
+          "named": true
+        },
+        {
+          "type": "preproc_endregion",
+          "named": true
+        },
+        {
+          "type": "preproc_region",
           "named": true
         },
         {
@@ -37841,6 +37876,14 @@
           "named": true
         },
         {
+          "type": "preproc_endregion",
+          "named": true
+        },
+        {
+          "type": "preproc_region",
+          "named": true
+        },
+        {
           "type": "procedure",
           "named": true
         },
@@ -39173,7 +39216,18 @@
   {
     "type": "use_request_page_property",
     "named": true,
-    "fields": {}
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "use_system_printer_property",
@@ -42322,6 +42376,10 @@
           "named": true
         },
         {
+          "type": "use_request_page_property",
+          "named": true
+        },
+        {
           "type": "var_section",
           "named": true
         },
@@ -42556,10 +42614,6 @@
   },
   {
     "type": "#if",
-    "named": false
-  },
-  {
-    "type": "#region",
     "named": false
   },
   {
@@ -43859,6 +43913,10 @@
     "named": false
   },
   {
+    "type": "OPTIMIZEFORTEXTSEARCH",
+    "named": false
+  },
+  {
     "type": "OPTION",
     "named": false
   },
@@ -44774,11 +44832,11 @@
   },
   {
     "type": "const",
-    "named": false
+    "named": true
   },
   {
     "type": "const",
-    "named": true
+    "named": false
   },
   {
     "type": "controladdin",
@@ -44818,11 +44876,11 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "div",
@@ -45010,6 +45068,10 @@
     "named": false
   },
   {
+    "type": "optimizefortextsearch",
+    "named": false
+  },
+  {
     "type": "option",
     "named": false
   },
@@ -45032,6 +45094,10 @@
   },
   {
     "type": "preproc_endregion",
+    "named": true
+  },
+  {
+    "type": "preproc_region",
     "named": true
   },
   {
@@ -45120,11 +45186,11 @@
   },
   {
     "type": "temporary",
-    "named": true
+    "named": false
   },
   {
     "type": "temporary",
-    "named": false
+    "named": true
   },
   {
     "type": "testisolation",

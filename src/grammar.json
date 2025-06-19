@@ -1368,6 +1368,14 @@
         {
           "type": "SYMBOL",
           "name": "preproc_conditional_query_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_region"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endregion"
         }
       ]
     },
@@ -6349,6 +6357,14 @@
               {
                 "type": "SYMBOL",
                 "name": "pragma"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_region"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_endregion"
               }
             ]
           }
@@ -7427,6 +7443,14 @@
         {
           "type": "SYMBOL",
           "name": "_report_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_region"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endregion"
         }
       ]
     },
@@ -13135,6 +13159,14 @@
           {
             "type": "SYMBOL",
             "name": "preproc_conditional_table_properties"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_region"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_endregion"
           }
         ]
       }
@@ -19142,17 +19174,12 @@
           "value": "="
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "PATTERN",
-              "value": "[tT][rR][uU][eE]"
-            },
-            {
-              "type": "PATTERN",
-              "value": "[fF][aA][lL][sS][eE]"
-            }
-          ]
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "boolean"
+          }
         },
         {
           "type": "STRING",
@@ -24164,8 +24191,21 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "OptimizeForTextSearch"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "OptimizeForTextSearch"
+            },
+            {
+              "type": "STRING",
+              "value": "optimizefortextsearch"
+            },
+            {
+              "type": "STRING",
+              "value": "OPTIMIZEFORTEXTSEARCH"
+            }
+          ]
         },
         {
           "type": "STRING",
@@ -25959,29 +25999,8 @@
       ]
     },
     "preproc_region": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "#region"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "name",
-              "content": {
-                "type": "PATTERN",
-                "value": "[^\\n]*"
-              }
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        }
-      ]
+      "type": "PATTERN",
+      "value": "#region[^\\n\\r]*"
     },
     "preproc_endregion": {
       "type": "STRING",
@@ -27728,6 +27747,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "optimize_for_text_search_property"
+        },
+        {
+          "type": "SYMBOL",
           "name": "preproc_conditional_field_properties"
         },
         {
@@ -28335,6 +28358,10 @@
         {
           "type": "SYMBOL",
           "name": "external_schema_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "use_request_page_property"
         }
       ]
     },

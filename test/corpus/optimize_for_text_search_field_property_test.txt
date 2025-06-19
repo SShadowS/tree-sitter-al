@@ -1,0 +1,73 @@
+==========================================
+OptimizeForTextSearch property in table field declarations
+==========================================
+
+table 50000 "Service Item Test"
+{
+    Caption = 'Service Item Test';
+    DataClassification = CustomerContent;
+
+    fields
+    {
+        field(1; "No."; Code[20])
+        {
+            Caption = 'No.';
+            OptimizeForTextSearch = true;
+        }
+        field(2; "Serial No."; Code[50])
+        {
+            Caption = 'Serial No.';
+            OptimizeForTextSearch = false;
+        }
+        field(3; Description; Text[100])
+        {
+            Caption = 'Description';
+            OptimizeForTextSearch = true;
+            DataClassification = CustomerContent;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (integer)
+    (quoted_identifier)
+    (caption_property
+      value: (string_literal))
+    (data_classification_property
+      value: (data_classification_value))
+    (fields
+      (field_declaration
+        (integer)
+        (quoted_identifier)
+        (type_specification
+          (code_type
+            (integer)))
+        (caption_property
+          value: (string_literal))
+        (optimize_for_text_search_property
+          value: (boolean)))
+      (field_declaration
+        (integer)
+        (quoted_identifier)
+        (type_specification
+          (code_type
+            (integer)))
+        (caption_property
+          value: (string_literal))
+        (optimize_for_text_search_property
+          value: (boolean)))
+      (field_declaration
+        (integer)
+        (identifier)
+        (type_specification
+          (text_type
+            (integer)))
+        (caption_property
+          value: (string_literal))
+        (optimize_for_text_search_property
+          value: (boolean))
+        (data_classification_property
+          value: (data_classification_value))))))
