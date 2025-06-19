@@ -529,7 +529,8 @@ module.exports = grammar({
       field('value', choice(
         /[aA][uU][tT][oO]/,
         /[aA][lL][wW][aA][yY][sS]/,
-        /[nN][eE][vV][eE][rR]/
+        /[nN][eE][vV][eE][rR]/,
+        /[gG][eE][nN][eE][rR][aA][tT][eE]/
       )),
       ';'
     ),
@@ -2146,6 +2147,7 @@ module.exports = grammar({
         /[fF][iI][lL][tT][eE][rR]/,
         /[rR][oO][lL][eE][cC][eE][nN][tT][eE][rR]/,
         /[pP][rR][oO][mM][pP][tT][oO][pP][tT][iI][oO][nN][sS]/,
+        /[pP][rR][oO][mM][pP][tT]/,
         /[sS][yY][sS][tT][eE][mM][aA][cC][tT][iI][oO][nN][sS]/
       )),
       ')',

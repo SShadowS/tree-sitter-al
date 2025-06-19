@@ -1,0 +1,69 @@
+================================================================================
+Prompt dialog with PromptMode Generate and new area types
+================================================================================
+
+page 7410 "Item Subst. Suggestion"
+{
+    PageType = PromptDialog;
+    PromptMode = Generate;
+    
+    layout
+    {
+        area(Prompt)
+        {
+            field(SearchQuery; SearchQueryTxt)
+            {
+                ApplicationArea = All;
+                MultiLine = true;
+            }
+        }
+        area(Content)
+        {
+            part(ItemSubstLines; "Item Subst. Suggestion Sub")
+            {
+                ApplicationArea = All;
+            }
+        }
+        area(PromptOptions)
+        {
+            field(MatchingStyle; SearchStyle)
+            {
+                Caption = 'Matching';
+                ApplicationArea = All;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property
+      value: (identifier))
+    (prompt_mode_property)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (application_area_property
+            value: (identifier))
+          (multi_line_property
+            value: (boolean))))
+      (area_section
+        (part_section
+          name: (identifier)
+          page_name: (quoted_identifier)
+          (application_area_property
+            value: (identifier))))
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (caption_property
+            (string_literal))
+          (application_area_property
+            value: (identifier)))))))
