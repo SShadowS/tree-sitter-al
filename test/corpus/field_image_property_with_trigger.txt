@@ -1,0 +1,81 @@
+================================================================================
+Field with Image property and trigger in cuegroup
+================================================================================
+
+page 123 "Test Page"
+{
+    layout
+    {
+        area(content)
+        {
+            cuegroup("My User Tasks")
+            {
+                Caption = 'My User Tasks';
+                field("UserTaskManagement.GetMyPendingUserTasksCount"; UserTaskManagement.GetMyPendingUserTasksCount())
+                {
+                    ApplicationArea = Basic, Suite;
+                    Caption = 'Pending User Tasks';
+                    Image = Checklist;
+                    ToolTip = 'Specifies the number of pending tasks that are assigned to you or to a group that you are a member of.';
+
+                    trigger OnDrillDown()
+                    var
+                        UserTaskList: Page "User Task List";
+                    begin
+                        UserTaskList.SetPageToShowMyPendingUserTasks();
+                        UserTaskList.Run();
+                    end;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (cuegroup_section
+          name: (quoted_identifier)
+          (caption_property
+            (string_literal))
+          (field_section
+            control_id: (quoted_identifier)
+            source_or_field_name: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))
+            (application_area_property
+              value: (identifier)
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (image_property
+              value: (identifier))
+            (tool_tip_property
+              (tool_tip_value
+                (string_literal)))
+            (field_trigger_declaration
+              type: (trigger_type)
+              (var_section
+                (variable_declaration
+                  name: (identifier)
+                  type: (type_specification
+                    (page_type
+                      reference: (quoted_identifier)))))
+              (code_block
+                (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list))
+                (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list))))))))))
