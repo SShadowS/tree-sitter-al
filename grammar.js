@@ -379,7 +379,11 @@ module.exports = grammar({
       $._query_properties,           // query-specific properties
       $.elements_section,            // dataitem and column definitions
       $.property_list,               // generic property container
-      $.preproc_conditional_query_properties
+      $.preproc_conditional_query_properties,
+      
+      // Region directives for code organization
+      $.preproc_region,
+      $.preproc_endregion
     ),
 
     about_title_property: $ => seq(
@@ -1549,7 +1553,11 @@ module.exports = grammar({
         $.attributed_onrun_trigger, 
         $.attributed_trigger,
         $.preproc_conditional_procedures,
-        $.pragma
+        $.pragma,
+        
+        // Region directives for code organization
+        $.preproc_region,
+        $.preproc_endregion
       )),
       '}'
     ),
@@ -1769,6 +1777,10 @@ module.exports = grammar({
       
       // All report properties now centralized
       $._report_properties,
+      
+      // Region directives for code organization
+      $.preproc_region,
+      $.preproc_endregion
     ),
 
     labels_section: $ => seq(
@@ -3137,6 +3149,10 @@ module.exports = grammar({
       
       // Preprocessor conditional table properties
       $.preproc_conditional_table_properties,
+      
+      // Region directives for code organization
+      $.preproc_region,
+      $.preproc_endregion
     )),
 
     // For single table permission property
@@ -5768,10 +5784,7 @@ enum_type: $ => prec(1, seq(
 
     preproc_endif: $ => choice('#endif', '#ENDIF', '#Endif'),
 
-    preproc_region: $ => seq(
-      '#region',
-      optional(field('name', /[^\n]*/))
-    ),
+    preproc_region: $ => /#region[^\n\r]*/,
 
     preproc_endregion: $ => '#endregion',
 
