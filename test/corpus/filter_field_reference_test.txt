@@ -1,0 +1,123 @@
+================================================================================
+FILTER function in field references test
+================================================================================
+
+table 2632 "Test Table"
+{
+    fields
+    {
+        field(31; "Balance"; Decimal)
+        {
+            CalcFormula = sum("Ledger Entry".Amount where("Account No." = field("No."),
+                                                        "Date" = field(filter("Date Filter"))));
+            FieldClass = FlowField;
+        }
+        field(32; "Net Change"; Decimal)
+        {
+            CalcFormula = Sum("Ledger Entry".Amount where("Account No." = field("No."),
+                                                        "Date" = field(FILTER("Date Filter"))));
+            FieldClass = FlowField;
+        }
+        field(33; "Other Balance"; Decimal)
+        {
+            CalcFormula = sum("Ledger Entry".Amount where("Account No." = field("No."),
+                                                        "Date" = field(Filter("Date Filter"))));
+            FieldClass = FlowField;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (sum_formula
+            target: (calc_field_ref
+              (field_reference
+                object: (quoted_identifier)
+                property: (identifier)))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (field_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (field_ref
+                      (quoted_identifier))))
+                (where_condition
+                  (field_reference_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    reference: (field_reference_expression
+                      (filter_expression
+                        (field_ref
+                          (quoted_identifier))))))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (sum_formula
+            target: (calc_field_ref
+              (field_reference
+                object: (quoted_identifier)
+                property: (identifier)))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (field_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (field_ref
+                      (quoted_identifier))))
+                (where_condition
+                  (field_reference_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    reference: (field_reference_expression
+                      (filter_expression
+                        (field_ref
+                          (quoted_identifier))))))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (sum_formula
+            target: (calc_field_ref
+              (field_reference
+                object: (quoted_identifier)
+                property: (identifier)))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (field_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (field_ref
+                      (quoted_identifier))))
+                (where_condition
+                  (field_reference_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    reference: (field_reference_expression
+                      (filter_expression
+                        (field_ref
+                          (quoted_identifier))))))))))
+        (field_class_property
+          value: (field_class_value))))))

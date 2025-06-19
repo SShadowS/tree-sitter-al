@@ -2990,40 +2990,30 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "where_clause"
+              "type": "STRING",
+              "value": "filter"
             },
             {
-              "type": "SYMBOL",
-              "name": "sorting_clause"
+              "type": "STRING",
+              "value": "FILTER"
             },
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "where_clause"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "sorting_clause"
-                }
-              ]
-            },
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "sorting_clause"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "where_clause"
-                }
-              ]
+              "type": "STRING",
+              "value": "Filter"
             }
           ]
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "field_ref"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
         }
       ]
     },
@@ -18471,6 +18461,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "field_reference_condition"
+        },
+        {
+          "type": "SYMBOL",
           "name": "field_filter"
         },
         {
@@ -19091,7 +19085,7 @@
             "name": "reference",
             "content": {
               "type": "SYMBOL",
-              "name": "field_ref"
+              "name": "field_reference_expression"
             }
           },
           {
@@ -19100,6 +19094,95 @@
           }
         ]
       }
+    },
+    "field_reference_expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "field_ref"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "upperlimit_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "filter_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "upperlimit_filter_expression"
+        }
+      ]
+    },
+    "upperlimit_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "upperlimit"
+            },
+            {
+              "type": "STRING",
+              "value": "UPPERLIMIT"
+            },
+            {
+              "type": "STRING",
+              "value": "Upperlimit"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "field_ref"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "upperlimit_filter_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "upperlimit"
+            },
+            {
+              "type": "STRING",
+              "value": "UPPERLIMIT"
+            },
+            {
+              "type": "STRING",
+              "value": "Upperlimit"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "filter_expression"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
     },
     "const_value_condition": {
       "type": "PREC",

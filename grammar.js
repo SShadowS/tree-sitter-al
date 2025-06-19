@@ -4130,7 +4130,8 @@ enum_type: $ => prec(1, seq(
     where_condition: $ => choice(
       $.filter_expression,  // Add filter_expression for SourceTableView
       $.const_filter,
-      $.field_filter,
+      $.field_reference_condition,  // Use updated field reference condition that supports upperlimit
+      $.field_filter,               // Keep for backward compatibility
       $.filter_condition
     ),
 
@@ -4264,9 +4265,38 @@ enum_type: $ => prec(1, seq(
       '=',
       choice('field', 'FIELD', 'Field'),
       '(',
-      field('reference', $.field_ref),
+      field('reference', $.field_reference_expression),
       ')'
     )),
+    
+    // Field reference expression supports: field_ref, upperlimit(field_ref), filter(field_ref), upperlimit(filter(field_ref))
+    field_reference_expression: $ => choice(
+      $.field_ref,
+      $.upperlimit_expression,
+      $.filter_expression,
+      $.upperlimit_filter_expression
+    ),
+    
+    upperlimit_expression: $ => seq(
+      choice('upperlimit', 'UPPERLIMIT', 'Upperlimit'),
+      '(',
+      $.field_ref,
+      ')'
+    ),
+    
+    filter_expression: $ => seq(
+      choice('filter', 'FILTER', 'Filter'),
+      '(',
+      $.field_ref,
+      ')'
+    ),
+    
+    upperlimit_filter_expression: $ => seq(
+      choice('upperlimit', 'UPPERLIMIT', 'Upperlimit'),
+      '(',
+      $.filter_expression,
+      ')'
+    ),
     
     // CONST(...) value condition for formulas
     const_value_condition: $ => prec(16, seq(

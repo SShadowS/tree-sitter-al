@@ -12275,11 +12275,38 @@
         "required": true,
         "types": [
           {
-            "type": "field_ref",
+            "type": "field_reference_expression",
             "named": true
           }
         ]
       }
+    }
+  },
+  {
+    "type": "field_reference_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "field_ref",
+          "named": true
+        },
+        {
+          "type": "filter_expression",
+          "named": true
+        },
+        {
+          "type": "upperlimit_expression",
+          "named": true
+        },
+        {
+          "type": "upperlimit_filter_expression",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -13604,15 +13631,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "sorting_clause",
-          "named": true
-        },
-        {
-          "type": "where_clause",
+          "type": "field_ref",
           "named": true
         }
       ]
@@ -38930,6 +38953,36 @@
     }
   },
   {
+    "type": "upperlimit_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "field_ref",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "upperlimit_filter_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "filter_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "usage_category_property",
     "named": true,
     "fields": {
@@ -40855,6 +40908,10 @@
         },
         {
           "type": "field_filter",
+          "named": true
+        },
+        {
+          "type": "field_reference_condition",
           "named": true
         },
         {
@@ -44342,6 +44399,10 @@
     "named": false
   },
   {
+    "type": "UPPERLIMIT",
+    "named": false
+  },
+  {
     "type": "Unbound",
     "named": false
   },
@@ -44355,6 +44416,10 @@
   },
   {
     "type": "UpdatePropagation",
+    "named": false
+  },
+  {
+    "type": "Upperlimit",
     "named": false
   },
   {
@@ -44757,11 +44822,11 @@
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "interface",
@@ -44955,11 +45020,11 @@
   },
   {
     "type": "temporary",
-    "named": false
+    "named": true
   },
   {
     "type": "temporary",
-    "named": true
+    "named": false
   },
   {
     "type": "testisolation",
@@ -45007,6 +45072,10 @@
   },
   {
     "type": "until",
+    "named": false
+  },
+  {
+    "type": "upperlimit",
     "named": false
   },
   {
