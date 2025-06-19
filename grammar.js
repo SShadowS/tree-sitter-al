@@ -4101,16 +4101,11 @@ enum_type: $ => prec(1, seq(
         prec(10, $._quoted_identifier),
         prec(5, $.identifier)
       )),
-      optional(choice(
-        // Original lookup where clause format
-        seq(
-          choice('where', 'WHERE', 'Where'),
-          '(',
-          $.lookup_where_conditions,
-          ')'
-        ),
-        // New unified where clause format
-        $.where_clause
+      optional(seq(
+        choice('where', 'WHERE', 'Where'),
+        '(',
+        $.lookup_where_conditions,
+        ')'
       )),
       ')'
     )),
@@ -4125,6 +4120,7 @@ enum_type: $ => prec(1, seq(
       field('field', $.field_ref),
       '=',
       choice(
+        // field("No.") - extract just the field_ref part
         seq(
           choice('field', 'FIELD', 'Field'),
           '(',
@@ -5107,9 +5103,9 @@ enum_type: $ => prec(1, seq(
     ),
 
     update_propagation_value: $ => choice(
-      /[nN][oO]/,
-      /[uU][pP][dD][aA][tT][eE][dD]/,
-      /[bB][oO][tT][hH]/,
+      new RustRegex('(?i)no'),
+      new RustRegex('(?i)updated'),
+      new RustRegex('(?i)both'),
       $.string_literal,
       $.identifier,
       $._quoted_identifier
