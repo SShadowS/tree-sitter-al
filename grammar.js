@@ -1587,7 +1587,8 @@ module.exports = grammar({
 
     implements_clause: $ => seq(
       /[iI][mM][pP][lL][eE][mM][eE][nN][tT][sS]/,
-      field('interface', choice($._quoted_identifier, $.identifier))
+      field('interface', choice($._quoted_identifier, $.identifier)),
+      repeat(seq(',', field('interface', choice($._quoted_identifier, $.identifier))))
     ),
 
     // Generic trigger rule for codeunits etc.

@@ -1,0 +1,113 @@
+================================================================================
+Codeunit with multiple interface implementations
+================================================================================
+
+codeunit 123 "Multi Interface Provider" implements IInterface1, IInterface2, IInterface3
+{
+    Access = Internal;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      interface: (identifier)
+      interface: (identifier)
+      interface: (identifier))
+    (access_property
+      value: (value))))
+
+================================================================================
+Codeunit with single interface implementation
+================================================================================
+
+codeunit 124 "Single Interface Provider" implements ISingleInterface
+{
+    Access = Public;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      interface: (identifier))
+    (access_property
+      value: (value))))
+
+================================================================================
+Codeunit with quoted interface names
+================================================================================
+
+codeunit 125 "Quoted Interface Provider" implements "IQuoted Interface", IRegular, "Another Quoted"
+{
+    Access = Internal;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      interface: (quoted_identifier)
+      interface: (identifier)
+      interface: (quoted_identifier))
+    (access_property
+      value: (value))))
+
+================================================================================
+Codeunit with many interfaces (5 interfaces)
+================================================================================
+
+codeunit 126 TestProvider implements IPurchaseLineProvider, IUnitOfMeasureProvider, IVendorProvider, IPurchaseOrderProvider, IDocumentProvider
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      interface: (identifier)
+      interface: (identifier)
+      interface: (identifier)
+      interface: (identifier)
+      interface: (identifier))))
+
+================================================================================
+Codeunit with interfaces and procedures
+================================================================================
+
+codeunit 127 "Full Provider" implements IInterface1, IInterface2
+{
+    Access = Internal;
+
+    procedure TestProcedure()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      interface: (identifier)
+      interface: (identifier))
+    (access_property
+      value: (value))
+    (attributed_procedure
+      (procedure
+        name: (name)
+        (code_block)))))
