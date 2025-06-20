@@ -5845,6 +5845,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
           "type": "preproc_endregion",
           "named": true
         },
@@ -23995,6 +23999,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
           "type": "preproc_endregion",
           "named": true
         },
@@ -24696,6 +24704,10 @@
         },
         {
           "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_var_sections",
           "named": true
         },
         {
@@ -29476,6 +29488,33 @@
     }
   },
   {
+    "type": "preproc_conditional_var_sections",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_variables",
     "named": true,
     "fields": {},
@@ -33955,6 +33994,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
           "type": "preproc_endregion",
           "named": true
         },
@@ -37697,6 +37740,10 @@
         },
         {
           "type": "preproc_conditional_table_properties",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_var_sections",
           "named": true
         },
         {
@@ -42248,6 +42295,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
           "type": "preproc_conditional_xmlport_properties",
           "named": true
         },
@@ -44786,12 +44837,12 @@
   },
   {
     "type": "comment",
-    "named": false,
+    "named": true,
     "extra": true
   },
   {
     "type": "comment",
-    "named": true,
+    "named": false,
     "extra": true
   },
   {
@@ -44840,11 +44891,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
@@ -44960,11 +45011,11 @@
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "interface",
@@ -45158,11 +45209,11 @@
   },
   {
     "type": "temporary",
-    "named": false
+    "named": true
   },
   {
     "type": "temporary",
-    "named": true
+    "named": false
   },
   {
     "type": "testisolation",

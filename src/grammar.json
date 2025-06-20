@@ -345,6 +345,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "preproc_conditional_var_sections"
+        },
+        {
+          "type": "SYMBOL",
           "name": "procedure"
         },
         {
@@ -3727,6 +3731,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "preproc_conditional_var_sections"
+        },
+        {
+          "type": "SYMBOL",
           "name": "trigger_declaration"
         },
         {
@@ -6379,6 +6387,10 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "preproc_conditional_var_sections"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "attributed_procedure"
               },
               {
@@ -6634,6 +6646,50 @@
                         ]
                       }
                     ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_var_sections": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "var_section"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "var_section"
                   }
                 }
               ]
@@ -7432,6 +7488,10 @@
         {
           "type": "SYMBOL",
           "name": "var_section"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_var_sections"
         },
         {
           "type": "SEQ",
@@ -8685,6 +8745,10 @@
         {
           "type": "SYMBOL",
           "name": "var_section"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_var_sections"
         },
         {
           "type": "SYMBOL",
@@ -13609,6 +13673,10 @@
           {
             "type": "SYMBOL",
             "name": "var_section"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_conditional_var_sections"
           },
           {
             "type": "SYMBOL",

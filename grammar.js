@@ -94,6 +94,7 @@ module.exports = grammar({
     _xmlport_element: $ => choice(
       $.xmlport_schema_element,
       $.var_section,
+      $.preproc_conditional_var_sections,
       $.procedure,
       $.trigger_declaration,
       $._xmlport_properties,
@@ -973,6 +974,7 @@ module.exports = grammar({
       $.actions_section,
       $._page_properties,     // Centralized page properties
       $.var_section,
+      $.preproc_conditional_var_sections,
       $.trigger_declaration,
       seq(optional($.attribute_list), $.procedure),
       $.preproc_region,
@@ -1554,6 +1556,7 @@ module.exports = grammar({
         prec(4, $._codeunit_properties), // Use individual properties
         $.preproc_conditional_object_properties,
         $.var_section,
+        $.preproc_conditional_var_sections,
         $.attributed_procedure,
         $.attributed_onrun_trigger, 
         $.attributed_trigger,
@@ -1594,6 +1597,16 @@ module.exports = grammar({
       optional(seq(
         $.preproc_else,
         repeat1(seq(optional($.attribute_list), choice($.procedure, $.onrun_trigger, $.trigger_declaration)))
+      )),
+      $.preproc_endif
+    ),
+
+    preproc_conditional_var_sections: $ => seq(
+      $.preproc_if,
+      repeat1($.var_section),
+      optional(seq(
+        $.preproc_else,
+        repeat1($.var_section)
       )),
       $.preproc_endif
     ),
@@ -1772,6 +1785,7 @@ module.exports = grammar({
       $.requestpage_section,
       $.actions_section,
       $.var_section,
+      $.preproc_conditional_var_sections,
       
       // Report procedures and triggers
       seq(optional($.attribute_list), $.procedure),
@@ -2053,6 +2067,7 @@ module.exports = grammar({
       $.actions_section,
       seq(optional($.attribute_list), $.procedure),  // Support attributed procedures in pages
       $.var_section,
+      $.preproc_conditional_var_sections, // Support preprocessor conditional var sections
       $.trigger_declaration,
       $.preproc_conditional_procedures,  // Support preprocessor conditional procedures
       
@@ -3200,6 +3215,7 @@ module.exports = grammar({
       $.keys,
       $.fieldgroups_section,
       $.var_section,
+      $.preproc_conditional_var_sections,
       
       // Table triggers
       $.oninsert_trigger,
