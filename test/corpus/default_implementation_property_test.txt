@@ -1,0 +1,157 @@
+================================================================================
+DefaultImplementation property in enum with interface
+================================================================================
+
+enum 204 "Alt. Cust. VAT Reg. Consist." implements "Alt. Cust. VAT Reg. Consist."
+{
+    Extensible = true;
+    DefaultImplementation = "Alt. Cust. VAT Reg. Consist." = "Alt. Cust. VAT Reg. Cons.Impl.";
+
+    value(0; Default)
+    {
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    interface: (quoted_identifier)
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
+    (default_implementation_property
+      value: (implementation_value
+        interface: (quoted_identifier)
+        implementation: (quoted_identifier)))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier))))
+
+================================================================================
+DefaultImplementation property with case variations
+================================================================================
+
+enum 100 "Test Enum" implements "ITestInterface"
+{
+    defaultimplementation = "ITestInterface" = "TestImplementation";
+    DEFAULTIMPLEMENTATION = "ITestInterface" = "AnotherImplementation";
+    Extensible = false;
+
+    value(1; TestValue)
+    {
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    interface: (quoted_identifier)
+    (default_implementation_property
+      value: (implementation_value
+        interface: (quoted_identifier)
+        implementation: (quoted_identifier)))
+    (default_implementation_property
+      value: (implementation_value
+        interface: (quoted_identifier)
+        implementation: (quoted_identifier)))
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier))))
+
+================================================================================
+DefaultImplementation property with unquoted identifiers
+================================================================================
+
+enum 150 "Simple Enum" implements SimpleInterface
+{
+    Extensible = true;
+    DefaultImplementation = SimpleInterface = SimpleImplementation;
+
+    value(0; Empty)
+    {
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    interface: (identifier)
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
+    (default_implementation_property
+      value: (implementation_value
+        interface: (identifier)
+        implementation: (identifier)))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier))))
+
+================================================================================
+Enum with multiple properties including DefaultImplementation
+================================================================================
+
+namespace Test.DefaultImplementation;
+
+enum 200 "Complex Enum" implements "IComplexInterface"
+{
+    Caption = 'Complex Enum Test';
+    Extensible = true;
+    DefaultImplementation = "IComplexInterface" = "ComplexImplementation";
+    Access = Public;
+    
+    value(0; None)
+    {
+        Caption = 'None';
+    }
+
+    value(1; Active)
+    {
+        Caption = 'Active State';
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (namespace_declaration
+    name: (namespace_name
+      (identifier)
+      (identifier)))
+  (enum_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    interface: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
+    (default_implementation_property
+      value: (implementation_value
+        interface: (quoted_identifier)
+        implementation: (quoted_identifier)))
+    (access_property
+      value: (value))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)
+      (caption_property
+        (string_literal)))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)
+      (caption_property
+        (string_literal)))))

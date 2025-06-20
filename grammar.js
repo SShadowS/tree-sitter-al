@@ -1450,6 +1450,13 @@ module.exports = grammar({
       ';'
     ),
 
+    default_implementation_property: $ => seq(
+      new RustRegex('(?i)defaultimplementation'),
+      '=',
+      field('value', $.implementation_value),
+      ';'
+    ),
+
     table_declaration: $ => seq(
       new RustRegex('(?i)table'),
       $._object_header_base,
@@ -6113,6 +6120,7 @@ enum_type: $ => prec(1, seq(
       $.extensible_property,
       $.assignment_compatibility_property,
       $.implementation_property,    // Interface implementations
+      $.default_implementation_property, // Default interface implementation
     ),
 
     // Composed property groups for different object contexts

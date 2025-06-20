@@ -8119,6 +8119,22 @@
     }
   },
   {
+    "type": "default_implementation_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "implementation_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "default_layout_property",
     "named": true,
     "fields": {
@@ -9736,6 +9752,10 @@
           "named": true
         },
         {
+          "type": "default_implementation_property",
+          "named": true
+        },
+        {
           "type": "description_property",
           "named": true
         },
@@ -9973,6 +9993,10 @@
         },
         {
           "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "default_implementation_property",
           "named": true
         },
         {
@@ -26647,6 +26671,10 @@
         },
         {
           "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "default_implementation_property",
           "named": true
         },
         {
@@ -45022,21 +45050,21 @@
   },
   {
     "type": "comment",
-    "named": true,
-    "extra": true
-  },
-  {
-    "type": "comment",
     "named": false,
     "extra": true
   },
   {
-    "type": "const",
-    "named": true
+    "type": "comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "const",
     "named": false
+  },
+  {
+    "type": "const",
+    "named": true
   },
   {
     "type": "controladdin",
@@ -45076,11 +45104,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
@@ -45196,11 +45224,11 @@
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "interface",

@@ -5801,6 +5801,31 @@
         }
       ]
     },
+    "default_implementation_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "(?i)defaultimplementation"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "implementation_value"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "table_declaration": {
       "type": "SEQ",
       "members": [
@@ -27093,6 +27118,10 @@
         {
           "type": "SYMBOL",
           "name": "implementation_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "default_implementation_property"
         }
       ]
     },
