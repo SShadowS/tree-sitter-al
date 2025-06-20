@@ -654,7 +654,7 @@ module.exports = grammar({
     sorting_clause: $ => choice(
       // Standard table sorting syntax: SORTING(field1, field2)
       seq(
-        /[sS][oO][rR][tT][iI][nN][gG]/,
+        new RustRegex('(?i)sorting'),
         '(',
         field('fields', $.field_reference_list),
         ')'
@@ -671,12 +671,12 @@ module.exports = grammar({
     )),
     
     order_direction: $ => choice(
-      /[aA][sS][cC][eE][nN][dD][iI][nN][gG]/,
-      /[dD][eE][sS][cC][eE][nN][dD][iI][nN][gG]/
+      new RustRegex('(?i)ascending'),
+      new RustRegex('(?i)descending')
     ),
     
     order_clause: $ => seq(
-      /[oO][rR][dD][eE][rR]/,
+      new RustRegex('(?i)order'),
       '(',
       field('direction', $.order_direction),
       ')'
@@ -742,7 +742,7 @@ module.exports = grammar({
     ),
 
     const_expression: $ => seq(
-      /[cC][oO][nN][sS][tT]/,
+      new RustRegex('(?i)const'),
       '(',
       optional(choice(
         $.string_literal,
@@ -794,14 +794,14 @@ module.exports = grammar({
     )),
 
     elements_section: $ => seq(
-      /[eE][lL][eE][mM][eE][nN][tT][sS]/,
+      new RustRegex('(?i)elements'),
       '{',
       repeat($.dataitem_section),
       '}'
     ),
 
     dataitem_section: $ => seq(
-      /[dD][aA][tT][aA][iI][tT][eE][mM]/,
+      new RustRegex('(?i)dataitem'),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ';',
@@ -868,15 +868,15 @@ module.exports = grammar({
       choice('SqlJoinType', 'sqljointype', 'SQLJOINTYPE'),
       '=',
       field('value', choice(
-        /[iI][nN][nN][eE][rR][jJ][oO][iI][nN]/,               // InnerJoin
-        /[lL][eE][fF][tT][oO][uU][tT][eE][rR][jJ][oO][iI][nN]/, // LeftOuterJoin
-        /[cC][rR][oO][sS][sS][jJ][oO][iI][nN]/                // CrossJoin
+        new RustRegex('(?i)innerjoin'),               // InnerJoin
+        new RustRegex('(?i)leftouterjoin'), // LeftOuterJoin
+        new RustRegex('(?i)crossjoin')                // CrossJoin
       )),
       ';'
     ),
 
     column_section: $ => seq(
-      /[cC][oO][lL][uU][mM][nN]/,
+      new RustRegex('(?i)column'),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ';',
@@ -892,7 +892,7 @@ module.exports = grammar({
     pageextension_declaration: $ => seq(
       new RustRegex('(?i)pageextension'),
       $._object_header_base,
-      /[eE][xX][tT][eE][nN][dD][sS]/,
+      new RustRegex('(?i)extends'),
       field('base_object', $._identifier_choice),
       '{',
       repeat($._pageextension_element),
@@ -916,7 +916,7 @@ module.exports = grammar({
     tableextension_declaration: $ => seq(
       new RustRegex('(?i)tableextension'),
       $._object_header_base,
-      /[eE][xX][tT][eE][nN][dD][sS]/,
+      new RustRegex('(?i)extends'),
       field('base_object', $._identifier_choice),
       '{',
       repeat($._tableextension_element),
@@ -935,7 +935,7 @@ module.exports = grammar({
     ),
 
     actions_section: $ => seq(
-      /[aA][cC][tT][iI][oO][nN][sS]/,
+      new RustRegex('(?i)actions'),
       '{',
       repeat(choice(
         $._action_element,
@@ -948,17 +948,17 @@ module.exports = grammar({
     ),
 
     area_action_section: $ => seq(
-      /[aA][rR][eE][aA]/,
+      new RustRegex('(?i)area'),
       '(',
       field('type', choice(
-        /[pP][rR][oO][cC][eE][sS][sS][iI][nN][gG]/,
-        /[rR][eE][pP][oO][rR][tT][iI][nN][gG]/,
-        /[nN][aA][vV][iI][gG][aA][tT][iI][oO][nN]/,
-        /[cC][rR][eE][aA][tT][iI][oO][nN]/,
-        /[pP][rR][oO][mM][oO][tT][eE][dD]/,
-        /[sS][yY][sS][tT][eE][mM][aA][cC][tT][iI][oO][nN][sS]/,
-        /[sS][eE][cC][tT][iI][oO][nN][sS]/,
-        /[eE][mM][bB][eE][dD][dD][iI][nN][gG]/
+        new RustRegex('(?i)processing'),
+        new RustRegex('(?i)reporting'),
+        new RustRegex('(?i)navigation'),
+        new RustRegex('(?i)creation'),
+        new RustRegex('(?i)promoted'),
+        new RustRegex('(?i)systemactions'),
+        new RustRegex('(?i)sections'),
+        new RustRegex('(?i)embedding')
       )),
       ')',
       '{',
@@ -973,7 +973,7 @@ module.exports = grammar({
     ),
 
     action_group_section: $ => seq(
-      /[gG][rR][oO][uU][pP]/,
+      new RustRegex('(?i)group'),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -1010,7 +1010,7 @@ module.exports = grammar({
     ),
 
     addfirst_action_group: $ => seq(
-      /[aA][dD][dD][fF][iI][rR][sS][tT]/,
+      new RustRegex('(?i)addfirst'),
       '(',
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -1024,7 +1024,7 @@ module.exports = grammar({
     ),
 
     addlast_action_group: $ => seq(
-      /[aA][dD][dD][lL][aA][sS][tT]/,
+      new RustRegex('(?i)addlast'),
       '(',
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -1038,7 +1038,7 @@ module.exports = grammar({
     ),
 
     addafter_action_group: $ => seq(
-      /[aA][dD][dD][aA][fF][tT][eE][rR]/,
+      new RustRegex('(?i)addafter'),
       '(',
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -1052,7 +1052,7 @@ module.exports = grammar({
     ),
 
     addbefore_action_group: $ => seq(
-      /[aA][dD][dD][bB][eE][fF][oO][rR][eE]/,
+      new RustRegex('(?i)addbefore'),
       '(',
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -1066,7 +1066,7 @@ module.exports = grammar({
     ),
 
     modify_action_group: $ => seq(
-      /[mM][oO][dD][iI][fF][yY]/,
+      new RustRegex('(?i)modify'),
       '(',
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -1080,7 +1080,7 @@ module.exports = grammar({
     ),
 
     modify_action: $ => prec(2, seq(
-      /[mM][oO][dD][iI][fF][yY]/,
+      new RustRegex('(?i)modify'),
       '(',
       field('target', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -1101,7 +1101,7 @@ module.exports = grammar({
     ),
 
     action_declaration: $ => seq(
-      /[aA][cC][tT][iI][oO][nN]/,
+      new RustRegex('(?i)action'),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -1116,7 +1116,7 @@ module.exports = grammar({
     ),
 
     actionref_declaration: $ => seq(
-      /[aA][cC][tT][iI][oO][nN][rR][eE][fF]/,
+      new RustRegex('(?i)actionref'),
       '(',
       field('promoted_name', choice($.identifier, $._quoted_identifier)),
       ';',
@@ -1133,7 +1133,7 @@ module.exports = grammar({
     ),
 
     systemaction_declaration: $ => seq(
-      /[sS][yY][sS][tT][eE][mM][aA][cC][tT][iI][oO][nN]/,
+      new RustRegex('(?i)systemaction'),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -1214,17 +1214,17 @@ module.exports = grammar({
       'PageType',
       '=',
       field('value', choice(
-        /[cC][aA][rR][dD]/,
-        /[lL][iI][sS][tT]/,
-        /[rR][oO][lL][eE][cC][eE][nN][tT][eE][rR]/,
+        new RustRegex('(?i)card'),
+        new RustRegex('(?i)list'),
+        new RustRegex('(?i)rolecenter'),
         new RustRegex('(?i)worksheet'),
         new RustRegex('(?i)standarddialog'),
         new RustRegex('(?i)confirmdialog'),
-        /[nN][aA][vV][iI][gG][aA][tT][iI][oO][nN][pP][aA][nN][eE]/,
-        /[hH][eE][aA][dD][lL][iI][nN][eE][sS]/,
-        /[dD][oO][cC][uU][mM][eE][nN][tT]/,
-        /[aA][pP][iI]/,
-        /[cC][aA][rR][dD][pP][aA][rR][tT]/,
+        new RustRegex('(?i)navigationpane'),
+        new RustRegex('(?i)headlines'),
+        new RustRegex('(?i)document'),
+        new RustRegex('(?i)api'),
+        new RustRegex('(?i)cardpart'),
         $.string_literal,
         $.identifier,
         $._quoted_identifier
@@ -1288,7 +1288,7 @@ module.exports = grammar({
       '=',
       field('filter_type', choice(
         seq(
-          /[cC][oO][nN][sS][tT]/,
+          new RustRegex('(?i)const'),
           '(',
           field('const_value', choice($.identifier, $._quoted_identifier, $.integer, $.string_literal, $.database_reference)),
           ')'
@@ -1300,7 +1300,7 @@ module.exports = grammar({
           ')'
         ),
         seq(
-          /[fF][iI][lL][tT][eE][rR]/,
+          new RustRegex('(?i)filter'),
           '(',
           field('filter_value', choice(
             $.filter_or_expression,
@@ -1432,7 +1432,7 @@ module.exports = grammar({
     ),
 
     card_page_id_property: $ => seq(
-      /[cC][aA][rR][dD][pP][aA][gG][eE][iI][dD]/,
+      new RustRegex('(?i)cardpageid'),
       '=',
       field('value', $.page_id_value),
       ';'
@@ -1523,7 +1523,7 @@ module.exports = grammar({
     ),
 
     implements_clause: $ => seq(
-      /[iI][mM][pP][lL][eE][mM][eE][nN][tT][sS]/,
+      new RustRegex('(?i)implements'),
       field('interface', choice($._quoted_identifier, $.identifier)),
       repeat(seq(',', field('interface', choice($._quoted_identifier, $.identifier))))
     ),
@@ -1541,7 +1541,7 @@ module.exports = grammar({
     pagecustomization_declaration: $ => seq(
       new RustRegex('(?i)pagecustomization'),
       field('object_name', $._identifier_choice),
-      /[cC][uU][sS][tT][oO][mM][iI][zZ][eE][sS]/,
+      new RustRegex('(?i)customizes'),
       field('target_page', $._identifier_choice),
       '{',
       repeat($._pagecustomization_element),
@@ -1587,22 +1587,22 @@ module.exports = grammar({
     ),
 
     entitlement_type_property: $ => seq(
-      /[tT][yY][pP][eE]/,
+      new RustRegex('(?i)type'),
       '=',
       field('value', choice(
-        /[aA][pP][pP][lL][iI][cC][aA][tT][iI][oO][nN][sS][cC][oO][pP][eE]/,                    // ApplicationScope
-        /[pP][eE][rR][uU][sS][eE][rR][sS][eE][rR][vV][iI][cC][eE][pP][lL][aA][nN]/,            // PerUserServicePlan
-        /[rR][oO][lL][eE]/,                                                                      // Role
+        new RustRegex('(?i)applicationscope'),                    // ApplicationScope
+        new RustRegex('(?i)peruserserviceplan'),            // PerUserServicePlan
+        new RustRegex('(?i)role'),                                                                      // Role
         $.identifier                                                                              // Allow other identifiers
       )),
       ';'
     ),
 
     entitlement_role_type_property: $ => seq(
-      /[rR][oO][lL][eE][tT][yY][pP][eE]/,
+      new RustRegex('(?i)roletype'),
       '=',
       field('value', choice(
-        /[dD][eE][lL][eE][gG][aA][tT][eE][dD]/,                  // Delegated
+        new RustRegex('(?i)delegated'),                  // Delegated
         new RustRegex('(?i)local'),                                    // Local
         $.identifier                                                // Allow other identifiers
       )),
@@ -1610,12 +1610,12 @@ module.exports = grammar({
     ),
 
     entitlement_id_property: $ => seq(
-      /[iI][dD]/,
+      new RustRegex('(?i)id'),
       $._string_property_template
     ),
 
     object_entitlements_property: $ => seq(
-      /[oO][bB][jJ][eE][cC][tT][eE][nN][tT][iI][tT][lL][eE][mM][eE][nN][tT][sS]/,
+      new RustRegex('(?i)objectentitlements'),
       '=',
       field('value', choice(
         $._identifier_choice,
@@ -1712,7 +1712,7 @@ module.exports = grammar({
     ),
 
     labels_section: $ => seq(
-      /[lL][aA][bB][eE][lL][sS]/,
+      new RustRegex('(?i)labels'),
       '{',
       repeat($._label_element),
       '}'
@@ -1796,7 +1796,7 @@ module.exports = grammar({
       new RustRegex('(?i)permissionsetextension'),
       field('object_id', $.integer),
       field('object_name', $._identifier_choice),
-      /[eE][xX][tT][eE][nN][dD][sS]/,
+      new RustRegex('(?i)extends'),
       field('extends_target', $._identifier_choice),
       '{',
       repeat($._permissionsetextension_element),
@@ -1818,14 +1818,14 @@ module.exports = grammar({
     ),
 
     included_permission_sets_property: $ => seq(
-      /[iI][nN][cC][lL][uU][dD][eE][dD][pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT][sS]/,
+      new RustRegex('(?i)includedpermissionsets'),
       '=',
       field('value', $.included_permission_sets_list),
       ';'
     ),
 
     excluded_permission_sets_property: $ => seq(
-      /[eE][xX][cC][lL][uU][dD][eE][dD][pP][eE][rR][mM][iI][sS][sS][iI][oO][nN][sS][eE][tT][sS]/,
+      new RustRegex('(?i)excludedpermissionsets'),
       '=',
       field('value', $.excluded_permission_sets_list),
       ';'
@@ -1928,7 +1928,7 @@ module.exports = grammar({
     ),
 
     type_declaration: $ => seq(
-      /[tT][yY][pP][eE]/,
+      new RustRegex('(?i)type'),
       '(',
       field('dotnet_type', choice(
         $.string_literal, 
@@ -1948,8 +1948,8 @@ module.exports = grammar({
     ),
 
     dotnet_type_name: $ => token(seq(
-      /[A-Za-z_][A-Za-z0-9_]*/,
-      repeat(seq('.', /[A-Za-z_][A-Za-z0-9_]*/))
+      new RustRegex('[A-Za-z_][A-Za-z0-9_]*'),
+      repeat(seq('.', new RustRegex('[A-Za-z_][A-Za-z0-9_]*')))
     )),
 
     _page_element: $ => choice(
@@ -1985,7 +1985,7 @@ module.exports = grammar({
     ),
 
     views_section: $ => seq(
-      /[vV][iI][eE][wW][sS]/,
+      new RustRegex('(?i)views'),
       '{',
       repeat($.view_declaration),
       '}'
@@ -2071,22 +2071,22 @@ module.exports = grammar({
     ),
 
     addlast_layout_modification: $ => seq(
-      /[aA][dD][dD][lL][aA][sS][tT]/,
+      new RustRegex('(?i)addlast'),
       $._layout_modification_template
     ),
 
     addafter_layout_modification: $ => seq(
-      /[aA][dD][dD][aA][fF][tT][eE][rR]/,
+      new RustRegex('(?i)addafter'),
       $._layout_modification_template
     ),
 
     addbefore_layout_modification: $ => seq(
-      /[aA][dD][dD][bB][eE][fF][oO][rR][eE]/,
+      new RustRegex('(?i)addbefore'),
       $._layout_modification_template
     ),
 
     modify_layout_modification: $ => seq(
-      /[mM][oO][dD][iI][fF][yY]/,
+      new RustRegex('(?i)modify'),
       '(',
       field('target', $._identifier_choice),
       ')',
@@ -2119,16 +2119,16 @@ module.exports = grammar({
     ),
 
     area_section: $ => seq(
-      /[aA][rR][eE][aA]/,
+      new RustRegex('(?i)area'),
       '(',
       field('type', choice(
         new RustRegex('(?i)content'),
         new RustRegex('(?i)factboxes'),
-        /[fF][iI][lL][tT][eE][rR]/,
-        /[rR][oO][lL][eE][cC][eE][nN][tT][eE][rR]/,
+        new RustRegex('(?i)filter'),
+        new RustRegex('(?i)rolecenter'),
         new RustRegex('(?i)promptoptions'),
         new RustRegex('(?i)prompt'),
-        /[sS][yY][sS][tT][eE][mM][aA][cC][tT][iI][oO][nN][sS]/
+        new RustRegex('(?i)systemactions')
       )),
       ')',
       '{',
@@ -2137,7 +2137,7 @@ module.exports = grammar({
     ),
 
     group_section: $ => seq(
-      /[gG][rR][oO][uU][pP]/,
+      new RustRegex('(?i)group'),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -2150,7 +2150,7 @@ module.exports = grammar({
     ),
 
     cuegroup_section: $ => seq(
-      /[cC][uU][eE][gG][rR][oO][uU][pP]/,
+      new RustRegex('(?i)cuegroup'),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -2164,7 +2164,7 @@ module.exports = grammar({
     ),
 
     grid_section: $ => seq(
-      /[gG][rR][iI][dD]/,
+      new RustRegex('(?i)grid'),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -2177,7 +2177,7 @@ module.exports = grammar({
     ),
 
     fixed_section: $ => seq(
-      /[fF][iI][xX][eE][dD]/,
+      new RustRegex('(?i)fixed'),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -2190,7 +2190,7 @@ module.exports = grammar({
     ),
 
     label_section: $ => seq(
-      /[lL][aA][bB][eE][lL]/,
+      new RustRegex('(?i)label'),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -2203,7 +2203,7 @@ module.exports = grammar({
     ),
 
     repeater_section: $ => seq(
-      /[rR][eE][pP][eE][aA][tT][eE][rR]/,
+      new RustRegex('(?i)repeater'),
       '(',
       field('name', choice($.identifier, $._quoted_identifier)),
       ')',
@@ -2367,9 +2367,9 @@ module.exports = grammar({
 
     subtype_value: $ => choice(
       // Codeunit SubType values
-      /[iI][nN][sS][tT][aA][lL][lL]/,
-      /[uU][pP][gG][rR][aA][dD][eE]/,
-      /[tT][eE][sS][tT]/,
+      new RustRegex('(?i)install'),
+      new RustRegex('(?i)upgrade'),
+      new RustRegex('(?i)test'),
       // BLOB SubType values
       new RustRegex('(?i)userdefined'),
       new RustRegex('(?i)bitmap'),
@@ -2382,14 +2382,14 @@ module.exports = grammar({
 
     event_subscriber_instance_value: $ => choice(
       new RustRegex('(?i)manual'),
-      /[sS][tT][aA][tT][iI][cC]/,
+      new RustRegex('(?i)static'),
       new RustRegex('(?i)staticautomatic')
     ),
 
     test_isolation_value: $ => choice(
       new RustRegex('(?i)codeunit'),
       new RustRegex('(?i)function'),
-      /[pP][aA][gG][eE]/,
+      new RustRegex('(?i)page'),
       new RustRegex('(?i)disabled')
     ),
 
@@ -2400,9 +2400,9 @@ module.exports = grammar({
     ),
 
     field_class_value: $ => choice(
-      /[fF][lL][oO][wW][fF][iI][eE][lL][dD]/,
-      /[fF][lL][oO][wW][fF][iI][lL][tT][eE][rR]/,
-      /[nN][oO][rR][mM][aA][lL]/
+      new RustRegex('(?i)flowfield'),
+      new RustRegex('(?i)flowfilter'),
+      new RustRegex('(?i)normal')
     ),
 
     editable_value: $ => choice(
@@ -2418,34 +2418,34 @@ module.exports = grammar({
       new RustRegex('(?i)duration'),
       new RustRegex('(?i)masked'),
       new RustRegex('(?i)richcontent'),
-      /[bB][aA][rR][cC][oO][dD][eE]/
+      new RustRegex('(?i)barcode')
     ),
 
     // Values for the first 5 missing Page Field Properties
     column_span_value: $ => $.integer,
     
     importance_value: $ => choice(
-      /[sS][tT][aA][nN][dD][aA][rR][dD]/,
-      /[aA][dD][dD][iI][tT][iI][oO][nN][aA][lL]/,
-      /[pP][rR][oO][mM][oO][tT][eE][dD]/,
+      new RustRegex('(?i)standard'),
+      new RustRegex('(?i)additional'),
+      new RustRegex('(?i)promoted'),
       prec(10, $._quoted_identifier)  // Higher precedence for quoted values
     ),
 
     style_value: $ => choice(
-      seq(optional('"'), /[sS][tT][aA][nN][dD][aA][rR][dD]/, optional('"')),
-      seq(optional('"'), /[sS][tT][aA][nN][dD][aA][rR][dD][aA][cC][cC][eE][nN][tT]/, optional('"')),
-      seq(optional('"'), /[sS][tT][rR][oO][nN][gG]/, optional('"')),
-      seq(optional('"'), /[sS][tT][rR][oO][nN][gG][aA][cC][cC][eE][nN][tT]/, optional('"')),
-      seq(optional('"'), /[aA][tT][tT][eE][nN][tT][iI][oO][nN]/, optional('"')),
-      seq(optional('"'), /[aA][tT][tT][eE][nN][tT][iI][oO][nN][aA][cC][cC][eE][nN][tT]/, optional('"')),
-      seq(optional('"'), /[fF][aA][vV][oO][rR][aA][bB][lL][eE]/, optional('"')),
-      seq(optional('"'), /[uU][nN][fF][aA][vV][oO][rR][aA][bB][lL][eE]/, optional('"')),
-      seq(optional('"'), /[sS][uU][bB][oO][rR][dD][iI][nN][aA][tT][eE]/, optional('"'))
+      seq(optional('"'), new RustRegex('(?i)standard'), optional('"')),
+      seq(optional('"'), new RustRegex('(?i)standardaccent'), optional('"')),
+      seq(optional('"'), new RustRegex('(?i)strong'), optional('"')),
+      seq(optional('"'), new RustRegex('(?i)strongaccent'), optional('"')),
+      seq(optional('"'), new RustRegex('(?i)attention'), optional('"')),
+      seq(optional('"'), new RustRegex('(?i)attentionaccent'), optional('"')),
+      seq(optional('"'), new RustRegex('(?i)favorable'), optional('"')),
+      seq(optional('"'), new RustRegex('(?i)unfavorable'), optional('"')),
+      seq(optional('"'), new RustRegex('(?i)subordinate'), optional('"'))
     ),
 
     run_page_mode_value: $ => choice(
-      /[eE][dD][iI][tT]/,
-      /[vV][iI][eE][wW]/,
+      new RustRegex('(?i)edit'),
+      new RustRegex('(?i)view'),
       new RustRegex('(?i)create')
     ),
 
@@ -2602,7 +2602,7 @@ module.exports = grammar({
       $._quoted_identifier
     ),
     external_access_value: $ => choice(
-      /[eE][xX][tT][eE][rR][nN][aA][lL]/,
+      new RustRegex('(?i)external'),
       new RustRegex('(?i)internal'),
       new RustRegex('(?i)local')
     ),
@@ -2672,7 +2672,7 @@ module.exports = grammar({
 
     compression_type_value: $ => choice(
       new RustRegex('(?i)none'),
-      /[pP][aA][gG][eE]/,
+      new RustRegex('(?i)page'),
       new RustRegex('(?i)row'),
       new RustRegex('(?i)unspecified')
     ),
@@ -3156,7 +3156,7 @@ module.exports = grammar({
 
     permission_type: $ => token(
       prec(-1, choice(
-        /[rRiImMdDxX]+/,
+        new RustRegex('[rRiImMdDxX]+'),
         'RCMDXI'  // Allow specific full permission string
       ))
     ),
@@ -4992,30 +4992,30 @@ enum_type: $ => prec(1, seq(
 
     decimal: $ => token(seq(
       optional('-'),  // Only allow negative sign
-      seq(/\d+/, '.', /\d+/)
+      seq(new RustRegex('\\d+'), '.', new RustRegex('\\d+'))
     )),
 
     integer: $ => token(seq(
       optional('-'),  // Only allow negative sign
-      /\d+/
+      new RustRegex('\\d+')
     )),
 
     time_literal: $ => token(seq(
       optional('-'),
-      /\d+(\.\d+)?/,  // Allow decimal time values like 235959.999T
-      /[tT]/
+      new RustRegex('\\d+(\\.\\d+)?'),  // Allow decimal time values like 235959.999T
+      new RustRegex('[tT]')
     )),
 
     datetime_literal: $ => token(seq(
       optional('-'),
-      /\d+/,
+      new RustRegex('\\d+'),
       new RustRegex('(?i)dt')
     )),
 
     duration_literal: $ => token(seq(
       optional('-'),
-      /\d+/,
-      /[dD]/
+      new RustRegex('\\d+'),
+      new RustRegex('[dD]')
     )),
 
     _literal_value: $ => choice(
@@ -5309,9 +5309,9 @@ enum_type: $ => prec(1, seq(
       'PreviewMode',
       '=',
       field('value', choice(
-        /[nN][oO][rR][mM][aA][lL]/,        // Normal
+        new RustRegex('(?i)normal'),        // Normal
         new RustRegex('(?i)printlayout'),  // PrintLayout
-        /[nN][oO][nN][eE]/                 // None
+        new RustRegex('(?i)none')                 // None
       )),
       ';'
     ),
@@ -5827,7 +5827,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     views_customization_section: $ => seq(
-      /[vV][iI][eE][wW][sS]/,
+      new RustRegex('(?i)views'),
       '{',
       repeat($._views_modification),
       '}'
