@@ -1,0 +1,305 @@
+================================================================================
+List page with simple view using Filters property
+================================================================================
+
+page 9800 "Users List"
+{
+    PageType = List;
+    SourceTable = User;
+    
+    views
+    {
+        view(OnlyEnabled)
+        {
+            Caption = 'Enabled Users';
+            Filters = where(State = const(Enabled));
+        }
+    }
+    
+    layout
+    {
+        area(content)
+        {
+            field("User Name"; Rec."User Name")
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property
+      value: (page_type_value))
+    (source_table_property
+      value: (identifier))
+    (views_section
+      (view_declaration
+        name: (identifier)
+        (caption_property
+          value: (string_literal))
+        (view_view_filters_property
+          value: (where_clause
+            conditions: (where_conditions
+              (where_condition
+                field: (identifier)
+                (comparison_operator)
+                value: (where_value
+                  (const_expression
+                    value: (identifier)))))))))
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (quoted_identifier)
+          source_or_field_name: (identifier))))))
+
+================================================================================
+List page with multiple views and different properties
+================================================================================
+
+page 123 "Test List"
+{
+    PageType = List;
+    SourceTable = Customer;
+    
+    views
+    {
+        view(ActiveCustomers)
+        {
+            Caption = 'Active Customers';
+            Filters = where(Blocked = const(" "));
+            OrderBy = ascending(Name);
+        }
+        
+        view(BlockedCustomers)
+        {
+            Caption = 'Blocked Customers';
+            Filters = where(Blocked = filter(<>" "));
+            SharedLayout = false;
+            Visible = true;
+        }
+    }
+    
+    layout
+    {
+        area(content)
+        {
+            field(Name; Rec.Name)
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property
+      value: (page_type_value))
+    (source_table_property
+      value: (identifier))
+    (views_section
+      (view_declaration
+        name: (identifier)
+        (caption_property
+          value: (string_literal))
+        (view_filters_property
+          value: (where_clause
+            conditions: (where_conditions
+              (where_condition
+                field: (identifier)
+                (comparison_operator)
+                value: (where_value
+                  (const_expression
+                    value: (string_literal)))))))
+        (view_order_by_property
+          value: (sorting_clause
+            (sorting_element
+              sort_order: (sort_order)
+              field: (identifier)))))
+      (view_declaration
+        name: (identifier)
+        (caption_property
+          value: (string_literal))
+        (view_filters_property
+          value: (where_clause
+            conditions: (where_conditions
+              (where_condition
+                field: (identifier)
+                (comparison_operator)
+                value: (where_value
+                  (filter_expression
+                    (filter_condition
+                      (filter_operator)
+                      value: (string_literal))))))))
+        (shared_layout_property
+          value: (boolean))
+        (visible_property
+          value: (boolean))))
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier))))))
+
+================================================================================
+Page extension with additional view
+================================================================================
+
+pageextension 50001 "Customer List Ext" extends "Customer List"
+{
+    views
+    {
+        view(RecentCustomers)
+        {
+            Caption = 'Recent Customers';
+            Filters = where("Date Filter" = filter('>30D'));
+            OrderBy = descending("Last Date Modified");
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    target: (quoted_identifier)
+    (views_section
+      (view_declaration
+        name: (identifier)
+        (caption_property
+          value: (string_literal))
+        (view_filters_property
+          value: (where_clause
+            conditions: (where_conditions
+              (where_condition
+                field: (quoted_identifier)
+                (comparison_operator)
+                value: (where_value
+                  (filter_expression
+                    (filter_condition
+                      (filter_operator)
+                      value: (string_literal))))))))
+        (view_order_by_property
+          value: (sorting_clause
+            (sorting_element
+              sort_order: (sort_order)
+              field: (quoted_identifier))))))))
+
+================================================================================
+Views with CaptionML property
+================================================================================
+
+page 456 "Multilingual List"
+{
+    PageType = List;
+    SourceTable = Item;
+    
+    views
+    {
+        view(InStock)
+        {
+            CaptionML = ENU='In Stock', ESP='En Stock';
+            Filters = where(Inventory = filter('>0'));
+        }
+    }
+    
+    layout
+    {
+        area(content)
+        {
+            field("No."; Rec."No.")
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property
+      value: (page_type_value))
+    (source_table_property
+      value: (identifier))
+    (views_section
+      (view_declaration
+        name: (identifier)
+        (caption_ml_property
+          values: (multi_language_value_list
+            (multi_language_value
+              language: (identifier)
+              value: (string_literal))
+            (multi_language_value
+              language: (identifier)
+              value: (string_literal))))
+        (view_filters_property
+          value: (where_clause
+            conditions: (where_conditions
+              (where_condition
+                field: (identifier)
+                (comparison_operator)
+                value: (where_value
+                  (filter_expression
+                    (filter_condition
+                      (filter_operator)
+                      value: (string_literal))))))))))
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (quoted_identifier)
+          source_or_field_name: (identifier))))))
+
+================================================================================
+Empty views section
+================================================================================
+
+page 789 "Empty Views List"
+{
+    PageType = List;
+    SourceTable = Vendor;
+    
+    views
+    {
+    }
+    
+    layout
+    {
+        area(content)
+        {
+            field(Name; Rec.Name)
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (source_table_property
+      value: (identifier))
+    (views_section)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier)))))))

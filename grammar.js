@@ -972,6 +972,7 @@ module.exports = grammar({
     _pageextension_element: $ => choice(
       $.layout_section,
       $.actions_section,
+      $.views_section,  // Support views section in page extensions
       $._page_properties,     // Centralized page properties
       $.var_section,
       $.preproc_conditional_var_sections,
@@ -2065,6 +2066,7 @@ module.exports = grammar({
       // Structural page elements (not properties)
       $.layout_section,
       $.actions_section,
+      $.views_section,  // Support page views section
       seq(optional($.attribute_list), $.procedure),  // Support attributed procedures in pages
       $.var_section,
       $.preproc_conditional_var_sections, // Support preprocessor conditional var sections
@@ -2090,6 +2092,54 @@ module.exports = grammar({
       '{',
       repeat($._layout_element),
       '}'
+    ),
+
+    views_section: $ => seq(
+      /[vV][iI][eE][wW][sS]/,
+      '{',
+      repeat($.view_declaration),
+      '}'
+    ),
+
+    view_declaration: $ => seq(
+      choice('view', 'View', 'VIEW'),
+      '(',
+      field('name', $.identifier),
+      ')',
+      '{',
+      repeat($._view_properties),
+      '}'
+    ),
+
+    _view_properties: $ => choice(
+      $.caption_property,
+      $.caption_ml_property,
+      $.view_filters_property,
+      $.view_order_by_property,
+      $.shared_layout_property,
+      $.visible_property,
+      // Add other view-specific properties as needed
+    ),
+
+    view_filters_property: $ => seq(
+      choice('Filters', 'filters', 'FILTERS'),
+      '=',
+      field('value', $.where_clause)
+    ),
+
+    view_order_by_property: $ => prec(2, seq(
+      choice('OrderBy', 'orderby', 'ORDERBY'),
+      '=',
+      field('value', choice(
+        $.sorting_clause,
+        $.source_table_view_value
+      ))
+    )),
+
+    shared_layout_property: $ => seq(
+      choice('SharedLayout', 'sharedlayout', 'SHAREDLAYOUT'),
+      '=',
+      field('value', $.boolean)
     ),
 
     _layout_element: $ => choice(
@@ -6018,10 +6068,10 @@ enum_type: $ => prec(1, seq(
 
     // Page customization elements
     _pagecustomization_element: $ => choice(
-      $.views_section
+      $.views_customization_section
     ),
 
-    views_section: $ => seq(
+    views_customization_section: $ => seq(
       /[vV][iI][eE][wW][sS]/,
       '{',
       repeat($._views_modification),
@@ -6081,7 +6131,7 @@ enum_type: $ => prec(1, seq(
 
     _view_property: $ => choice(
       $.view_caption_property,
-      $.view_filters_property
+      $.view_customization_filters_property
     ),
 
     view_caption_property: $ => seq(
@@ -6091,7 +6141,7 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    view_filters_property: $ => seq(
+    view_customization_filters_property: $ => seq(
       choice('Filters', 'filters', 'FILTERS'),
       '=',
       field('value', $.filter_expression),

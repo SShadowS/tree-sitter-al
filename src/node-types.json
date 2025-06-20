@@ -24191,6 +24191,10 @@
           "named": true
         },
         {
+          "type": "views_section",
+          "named": true
+        },
+        {
           "type": "visible_property",
           "named": true
         },
@@ -24333,7 +24337,7 @@
       "required": false,
       "types": [
         {
-          "type": "views_section",
+          "type": "views_customization_section",
           "named": true
         }
       ]
@@ -24892,6 +24896,10 @@
         },
         {
           "type": "var_section",
+          "named": true
+        },
+        {
+          "type": "views_section",
           "named": true
         },
         {
@@ -40597,6 +40605,68 @@
     }
   },
   {
+    "type": "view_customization_filters_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "filter_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "view_declaration",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "shared_layout_property",
+          "named": true
+        },
+        {
+          "type": "view_filters_property",
+          "named": true
+        },
+        {
+          "type": "view_order_by_property",
+          "named": true
+        },
+        {
+          "type": "visible_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "view_definition",
     "named": true,
     "fields": {
@@ -40624,7 +40694,7 @@
           "named": true
         },
         {
-          "type": "view_filters_property",
+          "type": "view_customization_filters_property",
           "named": true
         }
       ]
@@ -40639,7 +40709,7 @@
         "required": true,
         "types": [
           {
-            "type": "filter_expression",
+            "type": "where_clause",
             "named": true
           }
         ]
@@ -40647,7 +40717,27 @@
     }
   },
   {
-    "type": "views_section",
+    "type": "view_order_by_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "sorting_clause",
+            "named": true
+          },
+          {
+            "type": "source_table_view_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "views_customization_section",
     "named": true,
     "fields": {},
     "children": {
@@ -40668,6 +40758,21 @@
         },
         {
           "type": "addlast_views",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "views_section",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "view_declaration",
           "named": true
         }
       ]
@@ -43892,6 +43997,10 @@
     "named": false
   },
   {
+    "type": "ORDERBY",
+    "named": false
+  },
+  {
     "type": "OSTREAM",
     "named": false
   },
@@ -44620,6 +44729,10 @@
     "named": false
   },
   {
+    "type": "VIEW",
+    "named": false
+  },
+  {
     "type": "VISIBLE",
     "named": false
   },
@@ -44641,6 +44754,10 @@
   },
   {
     "type": "Version",
+    "named": false
+  },
+  {
+    "type": "View",
     "named": false
   },
   {
@@ -44837,21 +44954,21 @@
   },
   {
     "type": "comment",
-    "named": true,
-    "extra": true
-  },
-  {
-    "type": "comment",
     "named": false,
     "extra": true
   },
   {
-    "type": "const",
-    "named": true
+    "type": "comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "const",
     "named": false
+  },
+  {
+    "type": "const",
+    "named": true
   },
   {
     "type": "controladdin",
@@ -45103,6 +45220,10 @@
     "named": false
   },
   {
+    "type": "orderby",
+    "named": false
+  },
+  {
     "type": "page",
     "named": false
   },
@@ -45209,11 +45330,11 @@
   },
   {
     "type": "temporary",
-    "named": true
+    "named": false
   },
   {
     "type": "temporary",
-    "named": false
+    "named": true
   },
   {
     "type": "testisolation",
