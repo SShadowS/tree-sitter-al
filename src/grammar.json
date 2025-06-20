@@ -462,47 +462,47 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[cC][aA][rR][dD]"
+          "value": "(?i)card"
         },
         {
           "type": "PATTERN",
-          "value": "[lL][iI][sS][tT]"
+          "value": "(?i)list"
         },
         {
           "type": "PATTERN",
-          "value": "[rR][oO][lL][eE][cC][eE][nN][tT][eE][rR]"
+          "value": "(?i)rolecenter"
         },
         {
           "type": "PATTERN",
-          "value": "[wW][oO][rR][kK][sS][hH][eE][eE][tT]"
+          "value": "(?i)worksheet"
         },
         {
           "type": "PATTERN",
-          "value": "[sS][tT][aA][nN][dD][aA][rR][dD][dD][iI][aA][lL][oO][gG]"
+          "value": "(?i)standarddialog"
         },
         {
           "type": "PATTERN",
-          "value": "[cC][oO][nN][fF][iI][rR][mM][dD][iI][aA][lL][oO][gG]"
+          "value": "(?i)confirmdialog"
         },
         {
           "type": "PATTERN",
-          "value": "[nN][aA][vV][iI][gG][aA][tT][iI][oO][nN][pP][aA][nN][eE]"
+          "value": "(?i)navigationpane"
         },
         {
           "type": "PATTERN",
-          "value": "[hH][eE][aA][dD][lL][iI][nN][eE][sS]"
+          "value": "(?i)headlines"
         },
         {
           "type": "PATTERN",
-          "value": "[dD][oO][cC][uU][mM][eE][nN][tT]"
+          "value": "(?i)document"
         },
         {
           "type": "PATTERN",
-          "value": "[aA][pP][iI]"
+          "value": "(?i)api"
         },
         {
           "type": "PATTERN",
-          "value": "[cC][aA][rR][dD][pP][aA][rR][tT]"
+          "value": "(?i)cardpart"
         },
         {
           "type": "SYMBOL",
@@ -1589,7 +1589,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[dD][aA][tT][aA][cC][aA][pP][tT][iI][oO][nN][eE][xX][pP][rR][eE][sS][sS][iI][oO][nN]"
+          "value": "(?i)datacaptionexpression"
         },
         {
           "type": "SYMBOL",
@@ -1705,19 +1705,19 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "[aA][uU][tT][oO]"
+                "value": "(?i)auto"
               },
               {
                 "type": "PATTERN",
-                "value": "[aA][lL][wW][aA][yY][sS]"
+                "value": "(?i)always"
               },
               {
                 "type": "PATTERN",
-                "value": "[nN][eE][vV][eE][rR]"
+                "value": "(?i)never"
               },
               {
                 "type": "PATTERN",
-                "value": "[gG][eE][nN][eE][rR][aA][tT][eE]"
+                "value": "(?i)generate"
               }
             ]
           }
@@ -1798,7 +1798,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[eE][nN][tT][iI][tT][yY][cC][aA][pP][tT][iI][oO][nN]"
+          "value": "(?i)entitycaption"
         },
         {
           "type": "SYMBOL",
@@ -1811,7 +1811,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[eE][nN][tT][iI][tT][yY][cC][aA][pP][tT][iI][oO][nN][mM][lL]"
+          "value": "(?i)entitycaptionml"
         },
         {
           "type": "SYMBOL",
@@ -1824,7 +1824,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[eE][nN][tT][iI][tT][yY][nN][aA][mM][eE]"
+          "value": "(?i)entityname"
         },
         {
           "type": "SYMBOL",
@@ -1837,7 +1837,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[eE][nN][tT][iI][tT][yY][sS][eE][tT][cC][aA][pP][tT][iI][oO][nN]"
+          "value": "(?i)entitysetcaption"
         },
         {
           "type": "SYMBOL",
@@ -1850,7 +1850,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[eE][nN][tT][iI][tT][yY][sS][eE][tT][cC][aA][pP][tT][iI][oO][nN][mM][lL]"
+          "value": "(?i)entitysetcaptionml"
         },
         {
           "type": "SYMBOL",
@@ -1863,7 +1863,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[eE][nN][tT][iI][tT][yY][sS][eE][tT][nN][aA][mM][eE]"
+          "value": "(?i)entitysetname"
         },
         {
           "type": "SYMBOL",
@@ -1876,7 +1876,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[aA][pP][iI][vV][eE][rR][sS][iI][oO][nN]"
+          "value": "(?i)apiversion"
         },
         {
           "type": "SYMBOL",
@@ -1916,19 +1916,19 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "[zZ][eE][rR][oO][oO][rR][oO][nN][eE]"
+                "value": "(?i)zeroorone"
               },
               {
                 "type": "PATTERN",
-                "value": "[zZ][eE][rR][oO][oO][rR][mM][aA][nN][yY]"
+                "value": "(?i)zeroormany"
               },
               {
                 "type": "PATTERN",
-                "value": "[oO][nN][eE]"
+                "value": "(?i)one"
               },
               {
                 "type": "PATTERN",
-                "value": "[mM][aA][nN][yY]"
+                "value": "(?i)many"
               },
               {
                 "type": "SYMBOL",
@@ -1948,7 +1948,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[aA][pP][iI][gG][rR][oO][uU][pP]"
+          "value": "(?i)apigroup"
         },
         {
           "type": "SYMBOL",
@@ -1961,7 +1961,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[aA][pP][iI][pP][uU][bB][lL][iI][sS][hH][eE][rR]"
+          "value": "(?i)apipublisher"
         },
         {
           "type": "SYMBOL",
@@ -1974,7 +1974,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[cC][oO][nN][tT][eE][xX][tT][sS][eE][nN][sS][iI][tT][iI][vV][eE][hH][eE][lL][pP][pP][aA][gG][eE]"
+          "value": "(?i)contextsensitivehelppage"
         },
         {
           "type": "SYMBOL",
@@ -2042,7 +2042,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[qQ][uU][eE][rR][yY][cC][aA][tT][eE][gG][oO][rR][yY]"
+          "value": "(?i)querycategory"
         },
         {
           "type": "SYMBOL",
@@ -2055,7 +2055,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[dD][aA][tT][aA][aA][cC][cC][eE][sS][sS][iI][nN][tT][eE][nN][tT]"
+          "value": "(?i)dataaccessintent"
         },
         {
           "type": "STRING",
@@ -2069,11 +2069,11 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "[rR][eE][aA][dD][oO][nN][lL][yY]"
+                "value": "(?i)readonly"
               },
               {
                 "type": "PATTERN",
-                "value": "[rR][eE][aA][dD][wW][rR][iI][tT][eE]"
+                "value": "(?i)readwrite"
               },
               {
                 "type": "SYMBOL",
@@ -2097,7 +2097,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[qQ][uU][eE][rR][yY][tT][yY][pP][eE]"
+          "value": "(?i)querytype"
         },
         {
           "type": "STRING",
@@ -2111,15 +2111,15 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "[nN][oO][rR][mM][aA][lL]"
+                "value": "(?i)normal"
               },
               {
                 "type": "PATTERN",
-                "value": "[aA][pP][iI]"
+                "value": "(?i)api"
               },
               {
                 "type": "PATTERN",
-                "value": "[fF][iI][lL][tT][eE][rR]"
+                "value": "(?i)filter"
               }
             ]
           }
@@ -3701,7 +3701,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[sS][eE][pP][aA][rR][aA][tT][oO][rR]"
+          "value": "(?i)separator"
         },
         {
           "type": "STRING",
@@ -4412,7 +4412,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[fF][iI][lL][eE][uU][pP][lL][oO][aA][dD][aA][cC][tT][iI][oO][nN]"
+          "value": "(?i)fileuploadaction"
         },
         {
           "type": "STRING",
@@ -4670,7 +4670,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[sS][oO][uU][rR][cC][eE][tT][aA][bB][lL][eE]"
+          "value": "(?i)sourcetable"
         },
         {
           "type": "STRING",
@@ -4734,15 +4734,15 @@
               },
               {
                 "type": "PATTERN",
-                "value": "[wW][oO][rR][kK][sS][hH][eE][eE][tT]"
+                "value": "(?i)worksheet"
               },
               {
                 "type": "PATTERN",
-                "value": "[sS][tT][aA][nN][dD][aA][rR][dD][dD][iI][aA][lL][oO][gG]"
+                "value": "(?i)standarddialog"
               },
               {
                 "type": "PATTERN",
-                "value": "[cC][oO][nN][fF][iI][rR][mM][dD][iI][aA][lL][oO][gG]"
+                "value": "(?i)confirmdialog"
               },
               {
                 "type": "PATTERN",
@@ -5456,7 +5456,7 @@
           "type": "ALIAS",
           "content": {
             "type": "PATTERN",
-            "value": "[tT][aA][bB][lL][eE][nN][oO]"
+            "value": "(?i)tableno"
           },
           "named": false,
           "value": "TableNo"
@@ -8173,7 +8173,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[lL][aA][yY][oO][uU][tT]"
+          "value": "(?i)layout"
         },
         {
           "type": "STRING",
@@ -8541,7 +8541,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[aA][dD][dD][fF][iI][rR][sS][tT]"
+          "value": "(?i)addfirst"
         },
         {
           "type": "SYMBOL",
@@ -8659,7 +8659,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[mM][oO][vV][eE][fF][iI][rR][sS][tT]"
+          "value": "(?i)movefirst"
         },
         {
           "type": "SYMBOL",
@@ -8672,7 +8672,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[mM][oO][vV][eE][lL][aA][sS][tT]"
+          "value": "(?i)movelast"
         },
         {
           "type": "SYMBOL",
@@ -8685,7 +8685,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[mM][oO][vV][eE][aA][fF][tT][eE][rR]"
+          "value": "(?i)moveafter"
         },
         {
           "type": "SYMBOL",
@@ -8698,7 +8698,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[mM][oO][vV][eE][bB][eE][fF][oO][rR][eE]"
+          "value": "(?i)movebefore"
         },
         {
           "type": "SYMBOL",
@@ -8725,11 +8725,11 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "[cC][oO][nN][tT][eE][nN][tT]"
+                "value": "(?i)content"
               },
               {
                 "type": "PATTERN",
-                "value": "[fF][aA][cC][tT][bB][oO][xX][eE][sS]"
+                "value": "(?i)factboxes"
               },
               {
                 "type": "PATTERN",
@@ -8741,11 +8741,11 @@
               },
               {
                 "type": "PATTERN",
-                "value": "[pP][rR][oO][mM][pP][tT][oO][pP][tT][iI][oO][nN][sS]"
+                "value": "(?i)promptoptions"
               },
               {
                 "type": "PATTERN",
-                "value": "[pP][rR][oO][mM][pP][tT]"
+                "value": "(?i)prompt"
               },
               {
                 "type": "PATTERN",
@@ -9889,15 +9889,15 @@
         },
         {
           "type": "PATTERN",
-          "value": "[uU][sS][eE][rR][dD][eE][fF][iI][nN][eE][dD]"
+          "value": "(?i)userdefined"
         },
         {
           "type": "PATTERN",
-          "value": "[bB][iI][tT][mM][aA][pP]"
+          "value": "(?i)bitmap"
         },
         {
           "type": "PATTERN",
-          "value": "[jJ][sS][oO][nN]"
+          "value": "(?i)json"
         },
         {
           "type": "SYMBOL",
@@ -9914,7 +9914,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[mM][aA][nN][uU][aA][lL]"
+          "value": "(?i)manual"
         },
         {
           "type": "PATTERN",
@@ -9922,7 +9922,7 @@
         },
         {
           "type": "PATTERN",
-          "value": "[sS][tT][aA][tT][iI][cC][aA][uU][tT][oO][mM][aA][tT][iI][cC]"
+          "value": "(?i)staticautomatic"
         }
       ]
     },
@@ -9931,11 +9931,11 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[cC][oO][dD][eE][uU][nN][iI][tT]"
+          "value": "(?i)codeunit"
         },
         {
           "type": "PATTERN",
-          "value": "[fF][uU][nN][cC][tT][iI][oO][nN]"
+          "value": "(?i)function"
         },
         {
           "type": "PATTERN",
@@ -9943,7 +9943,7 @@
         },
         {
           "type": "PATTERN",
-          "value": "[dD][iI][sS][aA][bB][lL][eE][dD]"
+          "value": "(?i)disabled"
         }
       ]
     },
@@ -10015,31 +10015,31 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[pP][hH][oO][nN][eE][nN][oO]"
+          "value": "(?i)phoneno"
         },
         {
           "type": "PATTERN",
-          "value": "[uU][rR][lL]"
+          "value": "(?i)url"
         },
         {
           "type": "PATTERN",
-          "value": "[eE][mM][aA][iI][lL]"
+          "value": "(?i)email"
         },
         {
           "type": "PATTERN",
-          "value": "[rR][aA][tT][iI][oO]"
+          "value": "(?i)ratio"
         },
         {
           "type": "PATTERN",
-          "value": "[dD][uU][rR][aA][tT][iI][oO][nN]"
+          "value": "(?i)duration"
         },
         {
           "type": "PATTERN",
-          "value": "[mM][aA][sS][kK][eE][dD]"
+          "value": "(?i)masked"
         },
         {
           "type": "PATTERN",
-          "value": "[rR][iI][cC][hH][cC][oO][nN][tT][eE][nN][tT]"
+          "value": "(?i)richcontent"
         },
         {
           "type": "PATTERN",
@@ -10391,7 +10391,7 @@
         },
         {
           "type": "PATTERN",
-          "value": "[cC][rR][eE][aA][tT][eE]"
+          "value": "(?i)create"
         }
       ]
     },
@@ -10527,7 +10527,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[iI][mM][pP][oO][rR][tT][aA][nN][cC][eE]"
+          "value": "(?i)importance"
         },
         {
           "type": "STRING",
@@ -10616,7 +10616,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[sS][hH][oO][wW][cC][aA][pP][tT][iI][oO][nN]"
+          "value": "(?i)showcaption"
         },
         {
           "type": "SYMBOL",
@@ -10642,7 +10642,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[gG][rR][iI][dD][lL][aA][yY][oO][uU][tT]"
+          "value": "(?i)gridlayout"
         },
         {
           "type": "STRING",
@@ -10792,19 +10792,19 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[nN][oO][rR][mM][aA][lL]"
+          "value": "(?i)normal"
         },
         {
           "type": "PATTERN",
-          "value": "[tT][eE][mM][pP][oO][rR][aA][rR][yY]"
+          "value": "(?i)temporary"
         },
         {
           "type": "PATTERN",
-          "value": "[eE][xX][tT][eE][rR][nN][aA][lL]"
+          "value": "(?i)external"
         },
         {
           "type": "PATTERN",
-          "value": "[sS][yY][sS][tT][eE][mM]"
+          "value": "(?i)system"
         }
       ]
     },
@@ -10855,27 +10855,27 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[aA][dD][mM][iI][nN][iI][sS][tT][rR][aA][tT][iI][oO][nN]"
+          "value": "(?i)administration"
         },
         {
           "type": "PATTERN",
-          "value": "[dD][oO][cC][uU][mM][eE][nN][tT][sS]"
+          "value": "(?i)documents"
         },
         {
           "type": "PATTERN",
-          "value": "[lL][iI][sS][tT][sS]"
+          "value": "(?i)lists"
         },
         {
           "type": "PATTERN",
-          "value": "[rR][eE][pP][oO][rR][tT][sS]"
+          "value": "(?i)reports"
         },
         {
           "type": "PATTERN",
-          "value": "[tT][aA][sS][kK][sS]"
+          "value": "(?i)tasks"
         },
         {
           "type": "PATTERN",
-          "value": "[rR][eE][pP][oO][rR][tT][sS][aA][nN][dD][aA][nN][aA][lL][yY][sS][iI][sS]"
+          "value": "(?i)reportsandanalysis"
         },
         {
           "type": "SYMBOL",
@@ -10990,15 +10990,15 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[pP][eE][nN][dD][iI][nN][gG]"
+          "value": "(?i)pending"
         },
         {
           "type": "PATTERN",
-          "value": "[rR][eE][mM][oO][vV][eE][dD]"
+          "value": "(?i)removed"
         },
         {
           "type": "PATTERN",
-          "value": "[mM][oO][vV][eE][dD]"
+          "value": "(?i)moved"
         }
       ]
     },
@@ -11255,7 +11255,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[nN][oO][nN][eE]"
+          "value": "(?i)none"
         },
         {
           "type": "PATTERN",
@@ -11263,11 +11263,11 @@
         },
         {
           "type": "PATTERN",
-          "value": "[rR][oO][wW]"
+          "value": "(?i)row"
         },
         {
           "type": "PATTERN",
-          "value": "[uU][nN][sS][pP][eE][cC][iI][fF][iI][eE][dD]"
+          "value": "(?i)unspecified"
         }
       ]
     },
@@ -11284,7 +11284,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[pP][uU][bB][lL][iI][cC]"
+          "value": "(?i)public"
         },
         {
           "type": "PATTERN",
@@ -11292,7 +11292,7 @@
         },
         {
           "type": "PATTERN",
-          "value": "[pP][rR][iI][vV][aA][tT][eE]"
+          "value": "(?i)private"
         }
       ]
     },
@@ -11311,25 +11311,8 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "PATTERN",
-                  "value": "[tT][aA][bB][lL][eE]"
-                },
-                {
-                  "type": "STRING",
-                  "value": "Table"
-                },
-                {
-                  "type": "STRING",
-                  "value": "TABLE"
-                },
-                {
-                  "type": "STRING",
-                  "value": "table"
-                }
-              ]
+              "type": "PATTERN",
+              "value": "(?i)table"
             },
             {
               "type": "SYMBOL",
@@ -11341,25 +11324,8 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "PATTERN",
-                  "value": "[pP][aA][gG][eE]"
-                },
-                {
-                  "type": "STRING",
-                  "value": "Page"
-                },
-                {
-                  "type": "STRING",
-                  "value": "PAGE"
-                },
-                {
-                  "type": "STRING",
-                  "value": "page"
-                }
-              ]
+              "type": "PATTERN",
+              "value": "(?i)page"
             },
             {
               "type": "SYMBOL",
@@ -11371,25 +11337,8 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "PATTERN",
-                  "value": "[rR][eE][pP][oO][rR][tT]"
-                },
-                {
-                  "type": "STRING",
-                  "value": "Report"
-                },
-                {
-                  "type": "STRING",
-                  "value": "REPORT"
-                },
-                {
-                  "type": "STRING",
-                  "value": "report"
-                }
-              ]
+              "type": "PATTERN",
+              "value": "(?i)report"
             },
             {
               "type": "SYMBOL",
@@ -11401,25 +11350,8 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "PATTERN",
-                  "value": "[cC][oO][dD][eE][uU][nN][iI][tT]"
-                },
-                {
-                  "type": "STRING",
-                  "value": "Codeunit"
-                },
-                {
-                  "type": "STRING",
-                  "value": "CODEUNIT"
-                },
-                {
-                  "type": "STRING",
-                  "value": "codeunit"
-                }
-              ]
+              "type": "PATTERN",
+              "value": "(?i)codeunit"
             },
             {
               "type": "SYMBOL",
@@ -11431,25 +11363,8 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "PATTERN",
-                  "value": "[xX][mM][lL][pP][oO][rR][tT]"
-                },
-                {
-                  "type": "STRING",
-                  "value": "XMLport"
-                },
-                {
-                  "type": "STRING",
-                  "value": "XMLPORT"
-                },
-                {
-                  "type": "STRING",
-                  "value": "xmlport"
-                }
-              ]
+              "type": "PATTERN",
+              "value": "(?i)xmlport"
             },
             {
               "type": "SYMBOL",
@@ -11461,25 +11376,8 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "PATTERN",
-                  "value": "[qQ][uU][eE][rR][yY]"
-                },
-                {
-                  "type": "STRING",
-                  "value": "Query"
-                },
-                {
-                  "type": "STRING",
-                  "value": "QUERY"
-                },
-                {
-                  "type": "STRING",
-                  "value": "query"
-                }
-              ]
+              "type": "PATTERN",
+              "value": "(?i)query"
             },
             {
               "type": "SYMBOL",
@@ -11950,7 +11848,7 @@
           "type": "ALIAS",
           "content": {
             "type": "PATTERN",
-            "value": "[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]"
+            "value": "(?i)description"
           },
           "named": false,
           "value": "Description"
@@ -12485,7 +12383,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[dD][aA][tT][aA][cC][aA][pP][tT][iI][oO][nN][fF][iI][eE][lL][dD][sS]"
+          "value": "(?i)datacaptionfields"
         },
         {
           "type": "STRING",
@@ -12799,31 +12697,31 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[cC][uU][sS][tT][oO][mM][eE][rR][cC][oO][nN][tT][eE][nN][tT]"
+          "value": "(?i)customercontent"
         },
         {
           "type": "PATTERN",
-          "value": "[eE][nN][dD][uU][sS][eE][rR][iI][dD][eE][nN][tT][iI][fF][iI][aA][bB][lL][eE][iI][nN][fF][oO][rR][mM][aA][tT][iI][oO][nN]"
+          "value": "(?i)enduseridentifiableinformation"
         },
         {
           "type": "PATTERN",
-          "value": "[aA][cC][cC][oO][uU][nN][tT][dD][aA][tT][aA]"
+          "value": "(?i)accountdata"
         },
         {
           "type": "PATTERN",
-          "value": "[eE][nN][dD][uU][sS][eE][rR][pP][sS][eE][uU][dD][oO][nN][yY][mM][oO][uU][sS][iI][dD][eE][nN][tT][iI][fF][iI][eE][rR][sS]"
+          "value": "(?i)enduserpseudonymousidentifiers"
         },
         {
           "type": "PATTERN",
-          "value": "[oO][rR][gG][aA][nN][iI][zZ][aA][tT][iI][oO][nN][iI][dD][eE][nN][tT][iI][fF][iI][aA][bB][lL][eE][iI][nN][fF][oO][rR][mM][aA][tT][iI][oO][nN]"
+          "value": "(?i)organizationidentifiableinformation"
         },
         {
           "type": "PATTERN",
-          "value": "[sS][yY][sS][tT][eE][mM][mM][eE][tT][aA][dD][aA][tT][aA]"
+          "value": "(?i)systemmetadata"
         },
         {
           "type": "PATTERN",
-          "value": "[tT][oO][bB][eE][cC][lL][aA][sS][sS][iI][fF][iI][eE][dD]"
+          "value": "(?i)tobeclassified"
         }
       ]
     },
@@ -14027,7 +13925,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[cC][aA][pP][tT][iI][oO][nN][cC][lL][aA][sS][sS]"
+          "value": "(?i)captionclass"
         },
         {
           "type": "SYMBOL",
@@ -14295,7 +14193,7 @@
           "type": "ALIAS",
           "content": {
             "type": "PATTERN",
-            "value": "[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]"
+            "value": "(?i)description"
           },
           "named": true,
           "value": "identifier"
@@ -14304,7 +14202,7 @@
           "type": "ALIAS",
           "content": {
             "type": "PATTERN",
-            "value": "[iI][mM][pP][oO][rR][tT][aA][nN][cC][eE]"
+            "value": "(?i)importance"
           },
           "named": true,
           "value": "identifier"
@@ -14313,7 +14211,7 @@
           "type": "ALIAS",
           "content": {
             "type": "PATTERN",
-            "value": "[sS][oO][uU][rR][cC][eE][tT][aA][bB][lL][eE]"
+            "value": "(?i)sourcetable"
           },
           "named": true,
           "value": "identifier"
@@ -14322,7 +14220,7 @@
           "type": "ALIAS",
           "content": {
             "type": "PATTERN",
-            "value": "[iI][nN][cC][lL][uU][dD][eE][cC][aA][pP][tT][iI][oO][nN]"
+            "value": "(?i)includecaption"
           },
           "named": true,
           "value": "identifier"
@@ -14331,7 +14229,7 @@
           "type": "ALIAS",
           "content": {
             "type": "PATTERN",
-            "value": "[eE][xX][cC][lL][uU][dD][eE][cC][aA][pP][tT][iI][oO][nN]"
+            "value": "(?i)excludecaption"
           },
           "named": true,
           "value": "identifier"
@@ -14385,7 +14283,7 @@
           "type": "ALIAS",
           "content": {
             "type": "PATTERN",
-            "value": "[tT][aA][bB][lL][eE][nN][oO]"
+            "value": "(?i)tableno"
           },
           "named": true,
           "value": "identifier"
@@ -17485,7 +17383,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[wW][hH][eE][rR][eE]"
+          "value": "(?i)where"
         },
         {
           "type": "STRING",
@@ -18699,7 +18597,7 @@
                     "members": [
                       {
                         "type": "PATTERN",
-                        "value": "[aA][nN][dD]"
+                        "value": "(?i)and"
                       },
                       {
                         "type": "BLANK"
@@ -19062,11 +18960,11 @@
           "members": [
             {
               "type": "PATTERN",
-              "value": "[tT][rR][uU][eE]"
+              "value": "(?i)true"
             },
             {
               "type": "PATTERN",
-              "value": "[fF][aA][lL][sS][eE]"
+              "value": "(?i)false"
             }
           ]
         },
@@ -19149,7 +19047,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[oO][pP][tT][iI][oO][nN][cC][aA][pP][tT][iI][oO][nN]"
+          "value": "(?i)optioncaption"
         },
         {
           "type": "SYMBOL",
@@ -22487,7 +22385,7 @@
           },
           {
             "type": "PATTERN",
-            "value": "[dD][tT]"
+            "value": "(?i)dt"
           }
         ]
       }
@@ -22917,7 +22815,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[fF][iI][eE][lL][dD][gG][rR][oO][uU][pP]"
+          "value": "(?i)fieldgroup"
         },
         {
           "type": "STRING",
@@ -22981,7 +22879,7 @@
         "members": [
           {
             "type": "PATTERN",
-            "value": "[fF][iI][eE][lL][dD][gG][rR][oO][uU][pP][sS]"
+            "value": "(?i)fieldgroups"
           },
           {
             "type": "STRING",
@@ -23502,15 +23400,15 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "[sS][pP][lL][iI][tT][bB][uU][tT][tT][oO][nN]"
+                "value": "(?i)splitbutton"
               },
               {
                 "type": "PATTERN",
-                "value": "[mM][eE][nN][uU]"
+                "value": "(?i)menu"
               },
               {
                 "type": "PATTERN",
-                "value": "[bB][uU][tT][tT][oO][nN]"
+                "value": "(?i)button"
               }
             ]
           }
@@ -23526,7 +23424,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[iI][mM][pP][oO][rR][tT][aA][nN][cC][eE][aA][dD][dD][iI][tT][iI][oO][nN][aA][lL]"
+          "value": "(?i)importanceadditional"
         },
         {
           "type": "SYMBOL",
@@ -23539,7 +23437,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[iI][nN][cC][lL][uU][dD][eE][cC][aA][pP][tT][iI][oO][nN]"
+          "value": "(?i)includecaption"
         },
         {
           "type": "SYMBOL",
@@ -23552,7 +23450,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[dD][eE][fF][aA][uU][lL][tT][lL][aA][yY][oO][uU][tT]"
+          "value": "(?i)defaultlayout"
         },
         {
           "type": "STRING",
@@ -23760,7 +23658,7 @@
               },
               {
                 "type": "PATTERN",
-                "value": "[pP][rR][iI][nN][tT][lL][aA][yY][oO][uU][tT]"
+                "value": "(?i)printlayout"
               },
               {
                 "type": "PATTERN",
@@ -23807,15 +23705,15 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "[uU][pP][dD][aA][tT][eE]"
+                "value": "(?i)update"
               },
               {
                 "type": "PATTERN",
-                "value": "[sS][nN][aA][pP][sS][hH][oO][tT]"
+                "value": "(?i)snapshot"
               },
               {
                 "type": "PATTERN",
-                "value": "[bB][rR][oO][wW][sS][eE]"
+                "value": "(?i)browse"
               }
             ]
           }
@@ -24127,15 +24025,15 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "[yY][eE][sS]"
+                "value": "(?i)yes"
               },
               {
                 "type": "PATTERN",
-                "value": "[nN][oO]"
+                "value": "(?i)no"
               },
               {
                 "type": "PATTERN",
-                "value": "[nN][oO][nN][sS][tT][aA][nN][dD][aA][rR][dD]"
+                "value": "(?i)nonstandard"
               }
             ]
           }
@@ -26365,7 +26263,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[aA][dD][dD][fF][iI][rR][sS][tT]"
+          "value": "(?i)addfirst"
         },
         {
           "type": "STRING",
@@ -26389,7 +26287,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[aA][dD][dD][lL][aA][sS][tT]"
+          "value": "(?i)addlast"
         },
         {
           "type": "STRING",
@@ -26413,7 +26311,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[aA][dD][dD][aA][fF][tT][eE][rR]"
+          "value": "(?i)addafter"
         },
         {
           "type": "STRING",
@@ -26462,7 +26360,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[aA][dD][dD][bB][eE][fF][oO][rR][eE]"
+          "value": "(?i)addbefore"
         },
         {
           "type": "STRING",
@@ -28631,25 +28529,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "PATTERN",
-              "value": "[sS][yY][sS][tT][eE][mM]"
-            },
-            {
-              "type": "STRING",
-              "value": "System"
-            },
-            {
-              "type": "STRING",
-              "value": "SYSTEM"
-            },
-            {
-              "type": "STRING",
-              "value": "system"
-            }
-          ]
+          "type": "PATTERN",
+          "value": "(?i)system"
         },
         {
           "type": "FIELD",
@@ -28687,7 +28568,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "[tT][aA][bB][lL][eE][dD][aA][tT][aA]"
+          "value": "(?i)tabledata"
         },
         {
           "type": "FIELD",
