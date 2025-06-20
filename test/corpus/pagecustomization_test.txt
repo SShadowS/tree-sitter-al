@@ -23,7 +23,7 @@ pagecustomization "Test Page Customization" customizes "Target Page"
   (pagecustomization_declaration
     object_name: (quoted_identifier)
     target_page: (quoted_identifier)
-    (views_section
+    (views_customization_section
       (addfirst_views
         (view_definition
           name: (identifier)
@@ -64,7 +64,7 @@ pagecustomization "Test Customization" customizes "Base Page"
   (pagecustomization_declaration
     object_name: (quoted_identifier)
     target_page: (quoted_identifier)
-    (views_section
+    (views_customization_section
       (addlast_views
         (view_definition
           name: (identifier)
@@ -105,7 +105,7 @@ pagecustomization "Enhanced Page" customizes "Original Page"
   (pagecustomization_declaration
     object_name: (quoted_identifier)
     target_page: (quoted_identifier)
-    (views_section
+    (views_customization_section
       (addafter_views
         target: (identifier)
         (view_definition
@@ -152,7 +152,7 @@ pagecustomization "Multi View Page" customizes "Base Page"
   (pagecustomization_declaration
     object_name: (quoted_identifier)
     target_page: (quoted_identifier)
-    (views_section
+    (views_customization_section
       (addfirst_views
         (view_definition
           name: (identifier)

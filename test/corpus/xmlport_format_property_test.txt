@@ -13,7 +13,8 @@ xmlport 123 "Test XMLPort"
   (xmlport_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (format_property)))
+    (format_property
+      value: (format_value))))
 
 ================================================================================
 XMLPort Format property with FixedText
@@ -30,7 +31,8 @@ xmlport 124 "Fixed XMLPort"
   (xmlport_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (format_property)))
+    (format_property
+      value: (format_value))))
 
 ================================================================================
 XMLPort Format property with original values
@@ -47,7 +49,8 @@ xmlport 125 "Original XMLPort"
   (xmlport_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (format_property)))
+    (format_property
+      value: (format_value))))
 
 ================================================================================
 XMLPort Format property case variations
@@ -64,4 +67,5 @@ xmlport 126 "Case Test XMLPort"
   (xmlport_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (format_property)))
+    (format_property
+      value: (format_value))))

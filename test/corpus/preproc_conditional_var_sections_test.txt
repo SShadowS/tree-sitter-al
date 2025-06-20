@@ -247,7 +247,8 @@ xmlport 50001 "Test XMLPort"
   (xmlport_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (direction_property)
+    (direction_property
+      value: (direction_value))
     (preproc_conditional_var_sections
       (preproc_if
         condition: (identifier))

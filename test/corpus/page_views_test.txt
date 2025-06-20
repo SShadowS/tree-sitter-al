@@ -33,29 +33,30 @@ page 9800 "Users List"
   (page_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (page_type_property
-      value: (page_type_value))
+    (page_type_property)
     (source_table_property
       value: (identifier))
     (views_section
       (view_declaration
         name: (identifier)
-        (caption_property
+        (view_caption_property
           value: (string_literal))
-        (view_view_filters_property
-          value: (where_clause
-            conditions: (where_conditions
-              (where_condition
-                field: (identifier)
-                (comparison_operator)
-                value: (where_value
-                  (const_expression
+        (view_filters_property
+          value: (filter_expression
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (identifier))
                     value: (identifier)))))))))
     (layout_section
       (area_section
         (field_section
           control_id: (quoted_identifier)
-          source_or_field_name: (identifier))))))
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier)))))))
 
 ================================================================================
 List page with multiple views and different properties
@@ -101,24 +102,23 @@ page 123 "Test List"
   (page_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (page_type_property
-      value: (page_type_value))
+    (page_type_property)
     (source_table_property
       value: (identifier))
     (views_section
       (view_declaration
         name: (identifier)
-        (caption_property
+        (view_caption_property
           value: (string_literal))
         (view_filters_property
-          value: (where_clause
-            conditions: (where_conditions
-              (where_condition
-                field: (identifier)
-                (comparison_operator)
-                value: (where_value
-                  (const_expression
-                    value: (string_literal)))))))
+          value: (filter_expression
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (identifier))
+                    value: (quoted_identifier)))))))
         (view_order_by_property
           value: (sorting_clause
             (sorting_element
@@ -126,19 +126,19 @@ page 123 "Test List"
               field: (identifier)))))
       (view_declaration
         name: (identifier)
-        (caption_property
+        (view_caption_property
           value: (string_literal))
         (view_filters_property
-          value: (where_clause
-            conditions: (where_conditions
-              (where_condition
-                field: (identifier)
-                (comparison_operator)
-                value: (where_value
-                  (filter_expression
-                    (filter_condition
-                      (filter_operator)
-                      value: (string_literal))))))))
+          value: (filter_expression
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (identifier))
+                    filter: (filter_expression_function
+                      value: (filter_not_equal_expression
+                        value: (quoted_identifier)))))))))
         (shared_layout_property
           value: (boolean))
         (visible_property
@@ -147,7 +147,9 @@ page 123 "Test List"
       (area_section
         (field_section
           control_id: (identifier)
-          source_or_field_name: (identifier))))))
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier)))))))
 
 ================================================================================
 Page extension with additional view
@@ -172,22 +174,21 @@ pageextension 50001 "Customer List Ext" extends "Customer List"
   (pageextension_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    target: (quoted_identifier)
+    base_object: (quoted_identifier)
     (views_section
       (view_declaration
         name: (identifier)
-        (caption_property
+        (view_caption_property
           value: (string_literal))
         (view_filters_property
-          value: (where_clause
-            conditions: (where_conditions
-              (where_condition
-                field: (quoted_identifier)
-                (comparison_operator)
-                value: (where_value
-                  (filter_expression
-                    (filter_condition
-                      (filter_operator)
+          value: (filter_expression
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
                       value: (string_literal))))))))
         (view_order_by_property
           value: (sorting_clause
@@ -230,37 +231,37 @@ page 456 "Multilingual List"
   (page_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (page_type_property
-      value: (page_type_value))
+    (page_type_property)
     (source_table_property
       value: (identifier))
     (views_section
       (view_declaration
         name: (identifier)
         (caption_ml_property
-          values: (multi_language_value_list
-            (multi_language_value
+          (ml_value_list
+            (ml_value_pair
               language: (identifier)
               value: (string_literal))
-            (multi_language_value
+            (ml_value_pair
               language: (identifier)
               value: (string_literal))))
         (view_filters_property
-          value: (where_clause
-            conditions: (where_conditions
-              (where_condition
-                field: (identifier)
-                (comparison_operator)
-                value: (where_value
-                  (filter_expression
-                    (filter_condition
-                      (filter_operator)
+          value: (filter_expression
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (identifier))
+                    filter: (filter_expression_function
                       value: (string_literal))))))))))
     (layout_section
       (area_section
         (field_section
           control_id: (quoted_identifier)
-          source_or_field_name: (identifier))))))
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier)))))))
 
 ================================================================================
 Empty views section

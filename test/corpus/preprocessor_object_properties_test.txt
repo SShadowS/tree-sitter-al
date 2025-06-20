@@ -277,8 +277,10 @@ xmlport 50003 "Test XMLPort"
     (preproc_conditional_xmlport_properties
       (preproc_if
         condition: (identifier))
-      (direction_property)
-      (format_property)
+      (direction_property
+        value: (direction_value))
+      (format_property
+        value: (format_value))
       (preproc_endif))
     (xmlport_schema_element
       (xmlport_table_element

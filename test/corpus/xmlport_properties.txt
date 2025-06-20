@@ -48,8 +48,10 @@ xmlport 50000 "Test XMLPort"
     object_name: (quoted_identifier)
     (caption_property
       (string_literal))
-    (direction_property)
-    (format_property)
+    (direction_property
+      value: (direction_value))
+    (format_property
+      value: (format_value))
     (use_request_page_property
       value: (boolean))
     (inherent_permissions_property
@@ -82,7 +84,7 @@ xmlport 50000 "Test XMLPort"
             value: (max_occurs_value)))
         (xmlport_table_property
           (namespace_prefix_property
-            (string_literal)))
+            value: (string_literal)))
         (xmlport_table_element
           name: (identifier)
           source_table: (identifier)
@@ -91,13 +93,13 @@ xmlport 50000 "Test XMLPort"
               value: (string_literal)))
           (xmlport_table_property
             (auto_replace_property
-              (boolean)))
+              value: (boolean)))
           (xmlport_table_property
             (auto_save_property
-              (boolean)))
+              value: (boolean)))
           (xmlport_table_property
             (auto_update_property
-              (boolean)))
+              value: (boolean)))
           (xmlport_table_property
             (link_fields_property
               (link_fields_value

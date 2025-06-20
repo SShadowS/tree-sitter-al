@@ -3437,31 +3437,33 @@
   {
     "type": "auto_replace_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "boolean",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
     "type": "auto_save_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "boolean",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3483,16 +3485,17 @@
   {
     "type": "auto_update_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "boolean",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -8221,6 +8224,22 @@
   {
     "type": "direction_property",
     "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "direction_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "direction_value",
+    "named": true,
     "fields": {}
   },
   {
@@ -11007,16 +11026,17 @@
   {
     "type": "external_schema_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "string_literal",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -15680,7 +15700,18 @@
   {
     "type": "format_property",
     "named": true,
-    "fields": {}
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "format_value",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "format_region_property",
@@ -15705,6 +15736,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "format_value",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "formula_filter_expression",
@@ -22864,16 +22900,17 @@
   {
     "type": "namespace_prefix_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "string_literal",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -35861,10 +35898,50 @@
     "fields": {
       "fields": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "field_reference_list",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "sorting_element",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "sorting_element",
+    "named": true,
+    "fields": {
+      "field": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "sort_order": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "sort_order",
             "named": true
           }
         ]
@@ -40582,38 +40659,12 @@
     "type": "view_caption_property",
     "named": true,
     "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "Caption",
-            "named": false
-          }
-        ]
-      },
       "value": {
         "multiple": false,
         "required": true,
         "types": [
           {
             "type": "string_literal",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "view_customization_filters_property",
-    "named": true,
-    "fields": {
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "filter_expression",
             "named": true
           }
         ]
@@ -40644,11 +40695,11 @@
           "named": true
         },
         {
-          "type": "caption_property",
+          "type": "shared_layout_property",
           "named": true
         },
         {
-          "type": "shared_layout_property",
+          "type": "view_caption_property",
           "named": true
         },
         {
@@ -40694,7 +40745,7 @@
           "named": true
         },
         {
-          "type": "view_customization_filters_property",
+          "type": "view_filters_property",
           "named": true
         }
       ]
@@ -40709,7 +40760,7 @@
         "required": true,
         "types": [
           {
-            "type": "where_clause",
+            "type": "filter_expression",
             "named": true
           }
         ]
@@ -42981,6 +43032,10 @@
     "named": false
   },
   {
+    "type": "CAPTION",
+    "named": false
+  },
+  {
     "type": "CASE",
     "named": false
   },
@@ -44405,6 +44460,10 @@
     "named": false
   },
   {
+    "type": "SHAREDLAYOUT",
+    "named": false
+  },
+  {
     "type": "SOURCETABLEVIEW",
     "named": false
   },
@@ -44937,6 +44996,10 @@
     "named": false
   },
   {
+    "type": "caption",
+    "named": false
+  },
+  {
     "type": "case",
     "named": false
   },
@@ -44954,12 +45017,12 @@
   },
   {
     "type": "comment",
-    "named": false,
+    "named": true,
     "extra": true
   },
   {
     "type": "comment",
-    "named": true,
+    "named": false,
     "extra": true
   },
   {
@@ -45008,11 +45071,11 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "div",
@@ -45128,11 +45191,11 @@
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "interface",
@@ -45299,6 +45362,14 @@
   {
     "type": "requestpage",
     "named": false
+  },
+  {
+    "type": "sharedlayout",
+    "named": false
+  },
+  {
+    "type": "sort_order",
+    "named": true
   },
   {
     "type": "sourcetableview",

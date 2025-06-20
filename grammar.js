@@ -102,28 +102,49 @@ module.exports = grammar({
     ),
     
     // XMLPort specific properties
+    direction_value: $ => choice(
+      new RustRegex('(?i)export'),
+      new RustRegex('(?i)import'),
+      new RustRegex('(?i)both')
+    ),
+
     direction_property: $ => seq(
       'Direction',
       '=',
-      field('value', choice(
-        new RustRegex('(?i)export'),
-        new RustRegex('(?i)import'),
-        new RustRegex('(?i)both')
-      )),
+      field('value', $.direction_value),
       ';'
     ),
     
+    format_value: $ => choice(
+      new RustRegex('(?i)xml'),
+      new RustRegex('(?i)variable'),
+      new RustRegex('(?i)variabletext'),
+      new RustRegex('(?i)fixed'),
+      new RustRegex('(?i)fixedtext')
+    ),
+
     format_property: $ => seq(
       'Format',
       '=',
-      field('value', choice(
-        new RustRegex('(?i)xml'),
-        new RustRegex('(?i)variable'),
-        new RustRegex('(?i)variabletext'),
-        new RustRegex('(?i)fixed'),
-        new RustRegex('(?i)fixedtext')
-      )),
+      field('value', $.format_value),
       ';'
+    ),
+
+    page_type_value: $ => choice(
+      /[cC][aA][rR][dD]/,
+      /[lL][iI][sS][tT]/,
+      /[rR][oO][lL][eE][cC][eE][nN][tT][eE][rR]/,
+      /[wW][oO][rR][kK][sS][hH][eE][eE][tT]/,
+      /[sS][tT][aA][nN][dD][aA][rR][dD][dD][iI][aA][lL][oO][gG]/,
+      /[cC][oO][nN][fF][iI][rR][mM][dD][iI][aA][lL][oO][gG]/,
+      /[nN][aA][vV][iI][gG][aA][tT][iI][oO][nN][pP][aA][nN][eE]/,
+      /[hH][eE][aA][dD][lL][iI][nN][eE][sS]/,
+      /[dD][oO][cC][uU][mM][eE][nN][tT]/,
+      /[aA][pP][iI]/,
+      /[cC][aA][rR][dD][pP][aA][rR][tT]/,
+      $.string_literal,
+      $.identifier,
+      $._quoted_identifier
     ),
     
     xmlport_schema_element: $ => seq(
@@ -210,25 +231,19 @@ module.exports = grammar({
     // 18. RequestFilterHeading Property
     request_filter_heading_property: $ => seq(
       choice('RequestFilterHeading', 'requestfilterheading'),
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._string_property_template
     ),
     
     // 19. RequestFilterHeadingML Property
     request_filter_heading_ml_property: $ => seq(
       'RequestFilterHeadingML',
-      '=',
-      $.ml_value_list,
-      ';'
+      $._ml_simple_template
     ),
     
     // 6. LinkTable Property
     link_table_property: $ => seq(
       'LinkTable',
-      '=',
-      field('value', choice($.identifier, $._quoted_identifier)),
-      ';'
+      $._identifier_property_template
     ),
     
     // 7. LinkTableForceInsert Property
@@ -264,17 +279,13 @@ module.exports = grammar({
     // 10. NamespacePrefix Property
     namespace_prefix_property: $ => seq(
       'NamespacePrefix',
-      '=',
-      $.string_literal,
-      ';'
+      $._string_property_template
     ),
     
     // 5. ExternalSchema
     external_schema_property: $ => seq(
       'ExternalSchema',
-      '=',
-      $.string_literal,
-      ';'
+      $._string_property_template
     ),
     
     // First 5 LOW PRIORITY properties
@@ -282,25 +293,19 @@ module.exports = grammar({
     // 1. AutoReplace
     auto_replace_property: $ => seq(
       'AutoReplace',
-      '=',
-      $.boolean,
-      ';'
+      $._boolean_property_template
     ),
     
     // 2. AutoSave
     auto_save_property: $ => seq(
       'AutoSave',
-      '=',
-      $.boolean,
-      ';'
+      $._boolean_property_template
     ),
     
     // 3. AutoUpdate
     auto_update_property: $ => seq(
       'AutoUpdate',
-      '=',
-      $.boolean,
-      ';'
+      $._boolean_property_template
     ),
     
     // 4. LinkFields
@@ -392,46 +397,12 @@ module.exports = grammar({
 
     about_title_property: $ => seq(
       new RustRegex('(?i)abouttitle'),
-      '=',
-      field('value', $.string_literal),
-      repeat(seq(
-        ',',
-        choice(
-          seq(
-            new RustRegex('(?i)locked'),
-            '=',
-            $.boolean
-          ),
-          seq(
-            new RustRegex('(?i)comment'),
-            '=',
-            $.string_literal
-          )
-        )
-      )),
-      ';'
+      $._about_template
     ),
 
     about_text_property: $ => seq(
       new RustRegex('(?i)abouttext'),
-      '=',
-      field('value', $.string_literal),
-      repeat(seq(
-        ',',
-        choice(
-          seq(
-            new RustRegex('(?i)locked'),
-            '=',
-            $.boolean
-          ),
-          seq(
-            new RustRegex('(?i)comment'),
-            '=',
-            $.string_literal
-          )
-        )
-      )),
-      ';'
+      $._about_template
     ),
 
     // CONSOLIDATED: page_about_text_property → about_text_property
@@ -439,9 +410,7 @@ module.exports = grammar({
     // Page-specific version of AboutTextML
     page_about_text_ml_property: $ => seq(
       'AboutTextML',
-      '=',
-      field('value', $.ml_value_list),
-      ';'
+      $._about_ml_template
     ),
 
     // CONSOLIDATED: page_about_title_property → about_title_property
@@ -449,9 +418,7 @@ module.exports = grammar({
     // Page-specific version of AboutTitleML
     page_about_title_ml_property: $ => seq(
       'AboutTitleML',
-      '=',
-      field('value', $.ml_value_list),
-      ';'
+      $._about_ml_template
     ),
 
     // Delete Allowed Property
@@ -479,24 +446,18 @@ module.exports = grammar({
 
     multiple_new_lines_property: $ => seq(
       'MultipleNewLines',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     populate_all_fields_property: $ => seq(
       'PopulateAllFields',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     // Phase 2B - Medium Priority Complex Page Properties
     data_caption_expression_property: $ => seq(
       /[dD][aA][tT][aA][cC][aA][pP][tT][iI][oO][nN][eE][xX][pP][rR][eE][sS][sS][iI][oO][nN]/,
-      '=',
-      field('value', $._expression),
-      ';'
+      $._expression_property_template
     ),
 
     instructional_text_property: $ => seq(
@@ -523,9 +484,7 @@ module.exports = grammar({
 
     instructional_text_ml_property: $ => seq(
       'InstructionalTextML',
-      '=',
-      field('value', $.ml_value_list),
-      ';'
+      $._ml_property_template
     ),
 
     // Phase 4A - High + Medium Priority Page Properties
@@ -545,86 +504,62 @@ module.exports = grammar({
 
     refresh_on_activate_property: $ => seq(
       'RefreshOnActivate',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     save_values_property: $ => seq(
       'SaveValues',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     show_filter_property: $ => seq(
       'ShowFilter',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     additional_search_terms_property: $ => seq(
       'AdditionalSearchTerms',
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._string_property_template
     ),
 
     additional_search_terms_ml_property: $ => seq(
       'AdditionalSearchTermsML',
-      '=',
-      field('value', $.ml_value_list),
-      ';'
+      $._ml_property_template
     ),
 
     entity_caption_property: $ => seq(
       /[eE][nN][tT][iI][tT][yY][cC][aA][pP][tT][iI][oO][nN]/,
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._caption_string_template
     ),
 
     entity_caption_ml_property: $ => seq(
       /[eE][nN][tT][iI][tT][yY][cC][aA][pP][tT][iI][oO][nN][mM][lL]/,
-      '=',
-      field('value', $.ml_value_list),
-      ';'
+      $._ml_property_template
     ),
 
     entity_name_property: $ => seq(
       /[eE][nN][tT][iI][tT][yY][nN][aA][mM][eE]/,
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._name_property_template
     ),
 
     entity_set_caption_property: $ => seq(
       /[eE][nN][tT][iI][tT][yY][sS][eE][tT][cC][aA][pP][tT][iI][oO][nN]/,
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._caption_string_template
     ),
 
     entity_set_caption_ml_property: $ => seq(
       /[eE][nN][tT][iI][tT][yY][sS][eE][tT][cC][aA][pP][tT][iI][oO][nN][mM][lL]/,
-      '=',
-      field('value', $.ml_value_list),
-      ';'
+      $._ml_property_template
     ),
 
     entity_set_name_property: $ => seq(
       /[eE][nN][tT][iI][tT][yY][sS][eE][tT][nN][aA][mM][eE]/,
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._name_property_template
     ),
 
     api_version_property: $ => seq(
-      choice('APIVersion', 'apiversion', 'APIVERSION'),
-      '=',
-      field('value', $.string_literal),
-      ';'
+      /[aA][pP][iI][vV][eE][rR][sS][iI][oO][nN]/,
+      $._string_property_template
     ),
 
     multiplicity_property: $ => seq(
@@ -642,44 +577,29 @@ module.exports = grammar({
 
     api_group_property: $ => seq(
       /[aA][pP][iI][gG][rR][oO][uU][pP]/,
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._string_property_template
     ),
 
     api_publisher_property: $ => seq(
       /[aA][pP][iI][pP][uU][bB][lL][iI][sS][hH][eE][rR]/,
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._string_property_template
     ),
 
-    api_version_property: $ => seq(
-      /[aA][pP][iI][vV][eE][rR][sS][iI][oO][nN]/,
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    // api_version_property: duplicate definition removed - using the case-insensitive version above
 
     context_sensitive_help_page_property: $ => seq(
       /[cC][oO][nN][tT][eE][xX][tT][sS][eE][nN][sS][iI][tT][iI][vV][eE][hH][eE][lL][pP][pP][aA][gG][eE]/,
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._string_property_template
     ),
 
     help_link_property: $ => seq(
       'HelpLink',
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._string_property_template
     ),
 
     is_preview_property: $ => seq(
       'IsPreview',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
     
     odata_key_fields_value: $ => $._identifier_choice_list,
@@ -693,9 +613,7 @@ module.exports = grammar({
 
     query_category_property: $ => seq(
       /[qQ][uU][eE][rR][yY][cC][aA][tT][eE][gG][oO][rR][yY]/,
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._string_property_template
     ),
 
     data_access_intent_property: $ => seq(
@@ -733,12 +651,24 @@ module.exports = grammar({
       repeat(seq(',', $.field_reference))
     ),
     
-    sorting_clause: $ => seq(
-      /[sS][oO][rR][tT][iI][nN][gG]/,
-      '(',
-      field('fields', $.field_reference_list),
-      ')'
+    sorting_clause: $ => choice(
+      // Standard table sorting syntax: SORTING(field1, field2)
+      seq(
+        /[sS][oO][rR][tT][iI][nN][gG]/,
+        '(',
+        field('fields', $.field_reference_list),
+        ')'
+      ),
+      // View OrderBy syntax: ascending(field) or descending(field)
+      $.sorting_element
     ),
+
+    sorting_element: $ => prec(3, seq(
+      field('sort_order', alias($.identifier, $.sort_order)),
+      '(',
+      field('field', choice($.identifier, $._quoted_identifier)),
+      ')'
+    )),
     
     order_direction: $ => choice(
       /[aA][sS][cC][eE][nN][dD][iI][nN][gG]/,
@@ -1316,9 +1246,7 @@ module.exports = grammar({
 
     image_property: $ => seq(
       'Image',
-      '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
-      ';'
+      $._mixed_identifier_string_property_template
     ),
 
     run_object_property: $ => seq(
@@ -1391,30 +1319,22 @@ module.exports = grammar({
 
     enabled_property: $ => seq(
       new RustRegex('(?i)enabled'),
-      '=',
-      field('value', $._expression),
-      ';'
+      $._expression_property_template
     ),
 
     visible_property: $ => seq(
       choice('Visible', 'visible', 'VISIBLE'),
-      '=',
-      field('value', $._expression),
-      ';'
+      $._expression_property_template
     ),
 
     scope_property: $ => seq(
       'Scope',
-      '=',
-      field('value', choice($.identifier, $._quoted_identifier)),
-      ';'
+      $._identifier_property_template
     ),
 
     promoted_property: $ => seq(
       new RustRegex('(?i)promoted'),
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     promoted_category_property: $ => seq(
@@ -1426,16 +1346,12 @@ module.exports = grammar({
 
     promoted_only_property: $ => seq(
       'PromotedOnly',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     promoted_is_big_property: $ => seq(
       'PromotedIsBig',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     shortcut_key_property: $ => prec(10, seq(
@@ -1447,9 +1363,7 @@ module.exports = grammar({
 
     in_footer_bar_property: $ => seq(
       'InFooterBar',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     run_page_mode_property: $ => seq(
@@ -1461,9 +1375,7 @@ module.exports = grammar({
 
     run_page_on_rec_property: $ => seq(
       'RunPageOnRec',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     _assignment_operator: $ => token(choice(':=', '+=', '-=', '*=', '/=')),
@@ -1528,9 +1440,7 @@ module.exports = grammar({
 
     promoted_action_categories_property: $ => seq(
       choice('PromotedActionCategories', 'promotedactioncategories', 'PROMOTEDACTIONCATEGORIES'),
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._string_property_template
     ),
 
     implementation_property: $ => seq(
@@ -1701,9 +1611,7 @@ module.exports = grammar({
 
     entitlement_id_property: $ => seq(
       /[iI][dD]/,
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._string_property_template
     ),
 
     object_entitlements_property: $ => seq(
@@ -1969,46 +1877,28 @@ module.exports = grammar({
       $.system_permission_entry
     ),
 
-    tabledata_permission_entry: $ => prec(1, seq(
-      $._tabledata_keyword,
-      choice($._quoted_identifier, $.identifier, $.integer),
-      '=',
-      $.permission_type
-    )),
+    tabledata_permission_entry: $ => $._tabledata_permission_entry_template,
 
-    table_permission_entry: $ => seq(
-      $._table_permission_keyword,
-      choice($._quoted_identifier, $.identifier, $.integer),
-      '=',
-      $.permission_type
-    ),
+    table_permission_entry: $ => $._table_permission_entry_template,
 
     page_permission_entry: $ => seq(
       choice('page', 'Page', 'PAGE'),
-      $._identifier_choice,
-      '=',
-      $.permission_type
+      $._standard_permission_entry_template
     ),
 
     report_permission_entry: $ => seq(
       choice('report', 'Report', 'REPORT'),
-      $._identifier_choice,
-      '=',
-      $.permission_type
+      $._standard_permission_entry_template
     ),
 
     codeunit_permission_entry: $ => seq(
       choice('codeunit', 'Codeunit', 'CODEUNIT'),
-      $._identifier_choice,
-      '=',
-      $.permission_type
+      $._standard_permission_entry_template
     ),
 
     system_permission_entry: $ => seq(
       choice('system', 'System', 'SYSTEM'),
-      $._identifier_choice,
-      '=',
-      $.permission_type
+      $._standard_permission_entry_template
     ),
 
     dotnet_declaration: $ => seq(
@@ -2112,7 +2002,7 @@ module.exports = grammar({
     ),
 
     _view_properties: $ => choice(
-      $.caption_property,
+      $.view_caption_property,
       $.caption_ml_property,
       $.view_filters_property,
       $.view_order_by_property,
@@ -2121,10 +2011,16 @@ module.exports = grammar({
       // Add other view-specific properties as needed
     ),
 
+    view_caption_property: $ => seq(
+      choice('Caption', 'caption', 'CAPTION'),
+      $._caption_string_template
+    ),
+
     view_filters_property: $ => seq(
       choice('Filters', 'filters', 'FILTERS'),
       '=',
-      field('value', $.where_clause)
+      field('value', $.filter_expression),
+      ';'
     ),
 
     view_order_by_property: $ => prec(2, seq(
@@ -2133,13 +2029,13 @@ module.exports = grammar({
       field('value', choice(
         $.sorting_clause,
         $.source_table_view_value
-      ))
+      )),
+      ';'
     )),
 
     shared_layout_property: $ => seq(
       choice('SharedLayout', 'sharedlayout', 'SHAREDLAYOUT'),
-      '=',
-      field('value', $.boolean)
+      $._boolean_property_template
     ),
 
     _layout_element: $ => choice(
@@ -2556,9 +2452,7 @@ module.exports = grammar({
     // First 5 missing Page Field Properties
     assist_edit_property: $ => seq(
       'AssistEdit',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
     
     column_span_property: $ => seq(
@@ -2570,16 +2464,12 @@ module.exports = grammar({
     
     drill_down_property: $ => seq(
       'DrillDown',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     lookup_property: $ => prec(1, seq(
       'Lookup',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     )),
     
     hide_value_property: $ => prec(12, seq(
@@ -2594,9 +2484,7 @@ module.exports = grammar({
     
     multi_line_property: $ => seq(
       'MultiLine',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
     
     importance_property: $ => seq(
@@ -2615,37 +2503,27 @@ module.exports = grammar({
 
     quick_entry_property: $ => seq(
       'QuickEntry',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     row_span_property: $ => seq(
       'RowSpan',
-      '=',
-      field('value', $.integer),
-      ';'
+      $._integer_property_template
     ),
 
     width_property: $ => seq(
       'Width',
-      '=',
-      field('value', $.integer),
-      ';'
+      $._integer_property_template
     ),
 
     show_caption_property: $ => seq(
       /[sS][hH][oO][wW][cC][aA][pP][tT][iI][oO][nN]/,
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._caption_boolean_template
     ),
 
     show_as_tree_property: $ => seq(
       'ShowAsTree',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     grid_layout_property: $ => seq(
@@ -2657,9 +2535,7 @@ module.exports = grammar({
 
     show_mandatory_property: $ => seq(
       'ShowMandatory',
-      '=',
-      field('value', $._expression),
-      ';'
+      $._expression_property_template
     ),
 
     style_property: $ => seq(
@@ -2813,60 +2689,38 @@ module.exports = grammar({
 
     access_by_permission_value: $ => choice(
       // TableData object permissions
-      seq(
-        /[tT][aA][bB][lL][eE][dD][aA][tT][aA]/,
-        field('table_name', $._table_reference),
-        '=',
-        field('permission', $.permission_type)
-      ),
-      // System object permissions
-      seq(
-        choice(/[sS][yY][sS][tT][eE][mM]/, 'System', 'SYSTEM', 'system'),
-        field('object_name', choice($.string_literal, $._quoted_identifier)),
-        '=',
-        field('permission', $.permission_type)
-      ),
+      $._tabledata_permission_template,
+      // System object permissions  
+      $._system_permission_template,
       // Table object permissions
       seq(
         choice(/[tT][aA][bB][lL][eE]/, 'Table', 'TABLE', 'table'),
-        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
-        '=',
-        field('permission', $.permission_type)
+        $._standard_permission_template
       ),
       // Page object permissions
       seq(
         choice(/[pP][aA][gG][eE]/, 'Page', 'PAGE', 'page'),
-        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
-        '=',
-        field('permission', $.permission_type)
+        $._standard_permission_template
       ),
       // Report object permissions
       seq(
         choice(/[rR][eE][pP][oO][rR][tT]/, 'Report', 'REPORT', 'report'),
-        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
-        '=',
-        field('permission', $.permission_type)
+        $._standard_permission_template
       ),
       // Codeunit object permissions
       seq(
         choice(/[cC][oO][dD][eE][uU][nN][iI][tT]/, 'Codeunit', 'CODEUNIT', 'codeunit'),
-        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
-        '=',
-        field('permission', $.permission_type)
+        $._standard_permission_template
       ),
       // XMLport object permissions
       seq(
         choice(/[xX][mM][lL][pP][oO][rR][tT]/, 'XMLport', 'XMLPORT', 'xmlport'),
-        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
-        '=',
-        field('permission', $.permission_type)
+        $._standard_permission_template
       ),
       // Query object permissions
       seq(
         choice(/[qQ][uU][eE][rR][yY]/, 'Query', 'QUERY', 'query'),
-        field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
-        '=',
-        field('permission', $.permission_type)
+        $._standard_permission_template
       )
     ),
 
@@ -2984,9 +2838,7 @@ module.exports = grammar({
 
     description_property: $ => seq(
       alias(/[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]/, 'Description'),
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._string_property_template
     ),
 
     external_access_property: $ => seq(
@@ -3110,9 +2962,7 @@ module.exports = grammar({
 
     tool_tip_property: $ => seq(
       new RustRegex('(?i)tooltip'),
-      '=',
-      $.tool_tip_value,
-      ';'
+      $._tooltip_template
     ),
 
     unique_property: $ => seq(
@@ -3209,23 +3059,17 @@ module.exports = grammar({
 
     caption_ml_property: $ => seq(
       new RustRegex('(?i)captionml'),
-      '=',
-      $.ml_value_list,
-      ';'
+      $._ml_simple_template
     ),
 
     option_caption_ml_property: $ => seq(
       new RustRegex('(?i)optioncaptionml'),
-      '=',
-      $.ml_value_list,
-      ';'
+      $._ml_simple_template
     ),
 
     tool_tip_ml_property: $ => seq(
       'ToolTipML',
-      '=',
-      $.ml_value_list,
-      ';'
+      $._tooltip_ml_template
     ),
 
     ml_value_list: $ => seq(
@@ -3528,36 +3372,12 @@ module.exports = grammar({
 
     caption_property: $ => seq(
       field('name', alias(new RustRegex('(?i)caption'), 'Caption')),
-      '=',
-      $.string_literal,
-      repeat(seq(
-        ',',
-        choice(
-          seq(
-            new RustRegex('(?i)locked'),
-            '=',
-            $.boolean
-          ),
-          seq(
-            new RustRegex('(?i)comment'),
-            '=',
-            $.string_literal
-          ),
-          seq(
-            new RustRegex('(?i)maxlength'),
-            '=',
-            $.integer
-          )
-        )
-      )),
-      ';'
+      $._caption_full_template
     ),
 
     caption_class_property: $ => seq(
       /[cC][aA][pP][tT][iI][oO][nN][cC][lL][aA][sS][sS]/,
-      '=',
-      field('value', $._expression),
-      ';'
+      $._expression_property_template
     ),
 
     calc_fields_property: $ => seq(
@@ -4509,9 +4329,7 @@ enum_type: $ => prec(1, seq(
 
     use_request_page_property: $ => seq(
       'UseRequestPage',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     option_members_property: $ => prec(1, seq(
@@ -4533,19 +4351,7 @@ enum_type: $ => prec(1, seq(
 
     option_caption_property: $ => seq(
       /[oO][pP][tT][iI][oO][nN][cC][aA][pP][tT][iI][oO][nN]/,
-      '=',
-      $.option_caption_value,
-      repeat(seq(
-        ',',
-        choice(
-          seq(
-            new RustRegex('(?i)comment'),
-            '=',
-            $.string_literal
-          )
-        )
-      )),
-      ';'
+      $._option_caption_template
     ),
 
     field_trigger_declaration: $ => seq(
@@ -4749,9 +4555,7 @@ enum_type: $ => prec(1, seq(
 
     clustered_property: $ => seq(
       'Clustered',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     // Define boolean literals as tokens with precedence
@@ -5396,9 +5200,7 @@ enum_type: $ => prec(1, seq(
 
     allow_multiple_files_property: $ => seq(
       'AllowMultipleFiles',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     file_upload_action_property: $ => seq(
@@ -5425,23 +5227,17 @@ enum_type: $ => prec(1, seq(
     // Missing page properties - Clear operations
     clear_actions_property: $ => seq(
       'ClearActions',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     clear_layout_property: $ => seq(
       'ClearLayout',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     clear_views_property: $ => seq(
       'ClearViews',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     // ShowAs property (different from ShowAsTree)
@@ -5459,16 +5255,12 @@ enum_type: $ => prec(1, seq(
     // Low priority properties
     importance_additional_property: $ => seq(
       /[iI][mM][pP][oO][rR][tT][aA][nN][cC][eE][aA][dD][dD][iI][tT][iI][oO][nN][aA][lL]/,
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     include_caption_property: $ => seq(
       /[iI][nN][cC][lL][uU][dD][eE][cC][aA][pP][tT][iI][oO][nN]/,
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._caption_boolean_template
     ),
 
     // Critical report layout properties
@@ -5510,9 +5302,7 @@ enum_type: $ => prec(1, seq(
     // High priority report properties
     allow_scheduling_property: $ => seq(
       'AllowScheduling',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     preview_mode_property: $ => seq(
@@ -5528,9 +5318,7 @@ enum_type: $ => prec(1, seq(
 
     show_print_status_property: $ => seq(
       'ShowPrintStatus',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     transaction_type_property: $ => seq(
@@ -5546,9 +5334,7 @@ enum_type: $ => prec(1, seq(
 
     execution_timeout_property: $ => seq(
       'ExecutionTimeout',
-      '=',
-      field('value', $.integer),
-      ';'
+      $._integer_property_template
     ),
 
     format_region_property: $ => seq(
@@ -5560,60 +5346,44 @@ enum_type: $ => prec(1, seq(
 
     use_system_printer_property: $ => seq(
       'UseSystemPrinter',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     maximum_dataset_size_property: $ => seq(
       'MaximumDatasetSize',
-      '=',
-      field('value', $.integer),
-      ';'
+      $._integer_property_template
     ),
 
     // Table external/integration properties
     optimize_for_text_search_property: $ => seq(
       choice('OptimizeForTextSearch', 'optimizefortextsearch', 'OPTIMIZEFORTEXTSEARCH'),
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     // Medium priority report properties
     enable_external_assemblies_property: $ => seq(
       'EnableExternalAssemblies',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     enable_external_images_property: $ => seq(
       'EnableExternalImages',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     enable_hyperlinks_property: $ => seq(
       'EnableHyperlinks',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     excel_layout_multiple_data_sheets_property: $ => seq(
       'ExcelLayoutMultipleDataSheets',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     maximum_document_count_property: $ => seq(
       'MaximumDocumentCount',
-      '=',
-      field('value', $.integer),
-      ';'
+      $._integer_property_template
     ),
 
     paper_source_default_page_property: $ => seq(
@@ -5651,9 +5421,7 @@ enum_type: $ => prec(1, seq(
 
     print_only_if_detail_property: $ => seq(
       choice('PrintOnlyIfDetail', 'printonlyifdetail', 'PRINTONLYIFDETAIL'),
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     word_merge_data_item_property: $ => seq(
@@ -5672,9 +5440,7 @@ enum_type: $ => prec(1, seq(
 
     title_property: $ => seq(
       'Title',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     filters_property: $ => seq(
@@ -5702,9 +5468,7 @@ enum_type: $ => prec(1, seq(
 
     ellipsis_property: $ => seq(
       'Ellipsis',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     gesture_property: $ => seq(
@@ -5716,9 +5480,7 @@ enum_type: $ => prec(1, seq(
 
     is_header_property: $ => seq(
       'IsHeader',
-      '=',
-      field('value', $.boolean),
-      ';'
+      $._boolean_property_template
     ),
 
     provider_property: $ => seq(
@@ -5729,12 +5491,7 @@ enum_type: $ => prec(1, seq(
     ),
 
 
-    shared_layout_property: $ => seq(
-      'SharedLayout',
-      '=',
-      field('value', $.boolean),
-      ';'
-    ),
+    // shared_layout_property: duplicate definition removed - using the case-insensitive version above
 
     data_item_table_view_property: $ => seq(
       'DataItemTableView',
@@ -5745,9 +5502,7 @@ enum_type: $ => prec(1, seq(
 
     max_iteration_property: $ => seq(
       choice('MaxIteration', 'maxiteration', 'MAXITERATION'),
-      '=',
-      field('value', $.integer),
-      ';'
+      $._integer_property_template
     ),
 
     sorting_expression: $ => seq(
@@ -6131,22 +5886,9 @@ enum_type: $ => prec(1, seq(
 
     _view_property: $ => choice(
       $.view_caption_property,
-      $.view_customization_filters_property
+      $.view_filters_property
     ),
 
-    view_caption_property: $ => seq(
-      field('name', alias(new RustRegex('(?i)caption'), 'Caption')),
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
-
-    view_customization_filters_property: $ => seq(
-      choice('Filters', 'filters', 'FILTERS'),
-      '=',
-      field('value', $.filter_expression),
-      ';'
-    ),
 
     // Profile elements
     _profile_element: $ => choice(
@@ -6182,9 +5924,7 @@ enum_type: $ => prec(1, seq(
 
     profile_description_property2: $ => seq(
       'ProfileDescription',
-      '=',
-      field('value', $.string_literal),
-      ';'
+      $._string_property_template
     ),
 
     // CONSOLIDATED: profile_promoted_property → promoted_property
@@ -6701,6 +6441,191 @@ enum_type: $ => prec(1, seq(
       '=',
       field('value', $.string_literal),
       ';'
+    ),
+
+    _identifier_property_template: $ => seq(
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier)),
+      ';'
+    ),
+
+    _mixed_identifier_string_property_template: $ => seq(
+      '=',
+      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      ';'
+    ),
+
+    // Caption property templates for consolidation
+    _caption_string_template: $ => seq(
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    _caption_full_template: $ => seq(
+      '=',
+      $.string_literal,
+      repeat(seq(
+        ',',
+        choice(
+          seq(
+            new RustRegex('(?i)locked'),
+            '=',
+            $.boolean
+          ),
+          seq(
+            new RustRegex('(?i)comment'),
+            '=',
+            $.string_literal
+          ),
+          seq(
+            new RustRegex('(?i)maxlength'),
+            '=',
+            $.integer
+          )
+        )
+      )),
+      ';'
+    ),
+
+    _caption_boolean_template: $ => seq(
+      '=',
+      field('value', $.boolean),
+      ';'
+    ),
+
+    _option_caption_template: $ => seq(
+      '=',
+      $.option_caption_value,
+      repeat(seq(
+        ',',
+        choice(
+          seq(
+            new RustRegex('(?i)comment'),
+            '=',
+            $.string_literal
+          )
+        )
+      )),
+      ';'
+    ),
+
+    // ToolTip property templates for consolidation
+    _tooltip_template: $ => seq(
+      '=',
+      $.tool_tip_value,
+      ';'
+    ),
+
+    _tooltip_ml_template: $ => seq(
+      '=',
+      $.ml_value_list,
+      ';'
+    ),
+
+    // About property templates (same as caption_full_template)
+    _about_template: $ => seq(
+      '=',
+      field('value', $.string_literal),
+      repeat(seq(
+        ',',
+        choice(
+          seq(
+            new RustRegex('(?i)locked'),
+            '=',
+            $.boolean
+          ),
+          seq(
+            new RustRegex('(?i)comment'),
+            '=',
+            $.string_literal
+          )
+        )
+      )),
+      ';'
+    ),
+
+    _about_ml_template: $ => seq(
+      '=',
+      field('value', $.ml_value_list),
+      ';'
+    ),
+
+    // Unified ML property template for all multilanguage properties
+    _ml_property_template: $ => seq(
+      '=',
+      field('value', $.ml_value_list),
+      ';'
+    ),
+
+    // Alternative ML template without field wrapper (for some properties)
+    _ml_simple_template: $ => seq(
+      '=',
+      $.ml_value_list,
+      ';'
+    ),
+
+    // Unified name property template for entity names
+    _name_property_template: $ => seq(
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    // Unified integer property template for integer-only properties
+    _integer_property_template: $ => seq(
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
+
+    // Unified expression property template for expression-based properties
+    _expression_property_template: $ => seq(
+      '=',
+      field('value', $._expression),
+      ';'
+    ),
+
+    // Unified permission object templates for access by permission patterns
+    _standard_permission_template: $ => seq(
+      field('object_name', choice($.string_literal, $._quoted_identifier, $.identifier)),
+      '=',
+      field('permission', $.permission_type)
+    ),
+
+    _system_permission_template: $ => seq(
+      choice(/[sS][yY][sS][tT][eE][mM]/, 'System', 'SYSTEM', 'system'),
+      field('object_name', choice($.string_literal, $._quoted_identifier)),
+      '=',
+      field('permission', $.permission_type)
+    ),
+
+    _tabledata_permission_template: $ => seq(
+      /[tT][aA][bB][lL][eE][dD][aA][tT][aA]/,
+      field('table_name', $._table_reference),
+      '=',
+      field('permission', $.permission_type)
+    ),
+
+    // Permission entry templates for consolidating permission entry patterns
+    _standard_permission_entry_template: $ => seq(
+      $._identifier_choice,
+      '=',
+      $.permission_type
+    ),
+
+    _tabledata_permission_entry_template: $ => prec(1, seq(
+      $._tabledata_keyword,
+      choice($._quoted_identifier, $.identifier, $.integer),
+      '=',
+      $.permission_type
+    )),
+
+    _table_permission_entry_template: $ => seq(
+      $._table_permission_keyword,
+      choice($._quoted_identifier, $.identifier, $.integer),
+      '=',
+      $.permission_type
     ),
 
     // Centralized extension object pattern for DRY principle
