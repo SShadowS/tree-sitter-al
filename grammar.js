@@ -698,7 +698,7 @@ module.exports = grammar({
         $.filter_or_expression,
         $.filter_not_equal_expression,
         $.filter_equal_expression,
-        $.range_expression,
+        $.filter_range_expression,
         $.integer,
         $.string_literal,
         $._quoted_identifier,
@@ -735,7 +735,7 @@ module.exports = grammar({
       ))
     ),
 
-    range_expression: $ => seq(
+    filter_range_expression: $ => seq(
       optional(field('start', choice($.integer, $.identifier, $._quoted_identifier, $.string_literal))),
       '..',
       optional(field('end', choice($.integer, $.identifier, $._quoted_identifier, $.string_literal)))
@@ -1306,7 +1306,7 @@ module.exports = grammar({
             $.filter_or_expression,
             $.filter_not_equal_expression,
             $.filter_equal_expression,
-            $.range_expression,
+            $.filter_range_expression,
             $.identifier, 
             $._quoted_identifier, 
             $.integer, 

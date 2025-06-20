@@ -1,0 +1,165 @@
+================================================================================
+Filter range expression with open-ended range
+================================================================================
+
+report 50100 "Test Range Filter Report"
+{
+    dataset
+    {
+        dataitem(DimensionLoop1; "Integer")
+        {
+            DataItemTableView = sorting(Number) where(Number = filter(1 ..));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (quoted_identifier)
+        (data_item_table_view_property
+          value: (source_table_view_value
+            (sorting_clause
+              fields: (field_reference_list
+                (field_reference
+                  (identifier))))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (identifier))
+                    filter: (filter_expression_function
+                      value: (filter_range_expression
+                        start: (integer)))))))))))))
+
+================================================================================
+Filter range expression with both start and end values
+================================================================================
+
+report 50200 "Test Full Range Filter Report"
+{
+    dataset
+    {
+        dataitem(TestItem; "Integer")
+        {
+            DataItemTableView = sorting(Number) where(Number = filter(1 .. 100));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (quoted_identifier)
+        (data_item_table_view_property
+          value: (source_table_view_value
+            (sorting_clause
+              fields: (field_reference_list
+                (field_reference
+                  (identifier))))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (identifier))
+                    filter: (filter_expression_function
+                      value: (filter_range_expression
+                        start: (integer)
+                        end: (integer)))))))))))))
+
+================================================================================
+Filter range expression with string values
+================================================================================
+
+report 50300 "Test String Range Filter Report"
+{
+    dataset
+    {
+        dataitem(TestData; "Item")
+        {
+            DataItemTableView = sorting("No.") where("No." = filter('A' .. 'Z'));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (quoted_identifier)
+        (data_item_table_view_property
+          value: (source_table_view_value
+            (sorting_clause
+              fields: (field_reference_list
+                (field_reference
+                  (quoted_identifier))))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (filter_range_expression
+                        start: (string_literal)
+                        end: (string_literal)))))))))))))
+
+================================================================================
+Open-ended range with string start value
+================================================================================
+
+report 50400 "Test Open String Range Filter Report"
+{
+    dataset
+    {
+        dataitem(TestMultiple; "Customer")
+        {
+            DataItemTableView = sorting("No.") where("No." = filter('C' ..));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (quoted_identifier)
+        (data_item_table_view_property
+          value: (source_table_view_value
+            (sorting_clause
+              fields: (field_reference_list
+                (field_reference
+                  (quoted_identifier))))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (filter_range_expression
+                        start: (string_literal)))))))))))))

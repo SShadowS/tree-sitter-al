@@ -13769,6 +13769,10 @@
             "named": true
           },
           {
+            "type": "filter_range_expression",
+            "named": true
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -13778,10 +13782,6 @@
           },
           {
             "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "range_expression",
             "named": true
           },
           {
@@ -13850,6 +13850,56 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "filter_range_expression",
+    "named": true,
+    "fields": {
+      "end": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      },
+      "start": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -34993,6 +35043,10 @@
             "named": true
           },
           {
+            "type": "filter_range_expression",
+            "named": true
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -35002,10 +35056,6 @@
           },
           {
             "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "range_expression",
             "named": true
           },
           {
@@ -45050,21 +45100,21 @@
   },
   {
     "type": "comment",
-    "named": false,
-    "extra": true
-  },
-  {
-    "type": "comment",
     "named": true,
     "extra": true
   },
   {
-    "type": "const",
-    "named": false
+    "type": "comment",
+    "named": false,
+    "extra": true
   },
   {
     "type": "const",
     "named": true
+  },
+  {
+    "type": "const",
+    "named": false
   },
   {
     "type": "controladdin",
@@ -45224,11 +45274,11 @@
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "interface",
