@@ -15,7 +15,7 @@ module.exports = grammar({
   ],
 
   word: $ => $.identifier,
-  extras: $ => [/\s/, /\uFEFF/, $.comment, $.multiline_comment, $.pragma],
+  extras: $ => [new RustRegex('\\s'), new RustRegex('\\uFEFF'), $.comment, $.multiline_comment, $.pragma],
 
   rules: {
     source_file: $ => choice(
@@ -4522,13 +4522,13 @@ enum_type: $ => prec(1, seq(
 
     modifier: $ => new RustRegex('(?i)var'),
 
-    identifier: $ => /[A-Za-z_][A-Za-z0-9_]*/,
+    identifier: $ => new RustRegex('[A-Za-z_][A-Za-z0-9_]*'),
 
     _quoted_identifier: $ => alias(
       token(prec(10, seq(
         '"',
         repeat1(choice(
-          /[^"\n]+/,
+          new RustRegex('[^"\\n]+'),
           '""'  // Escaped double quote
         )),
         '"'
@@ -4545,7 +4545,7 @@ enum_type: $ => prec(1, seq(
         seq(
           "'",
           repeat1(choice(
-            /[^'\n]+/,     // One or more chars except quote or newline (allows backslash)
+            new RustRegex('[^\'\\n]+'),     // One or more chars except quote or newline (allows backslash)
             "''"           // Two consecutive single quotes as an escape
           )),
           "'"
@@ -5735,17 +5735,17 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     )),
 
-    preproc_region: $ => /#region[^\n\r]*/,
+    preproc_region: $ => new RustRegex('#region[^\\n\\r]*'),
 
     preproc_endregion: $ => '#endregion',
 
-    pragma: $ => /#pragma[^\n]*/, // Match lines starting with #pragma specifically
+    pragma: $ => new RustRegex('#pragma[^\\n]*'), // Match lines starting with #pragma specifically
 
-    comment: $ => token(seq('//', /.*/)),
+    comment: $ => token(seq('//', new RustRegex('.*'))),
 
     multiline_comment: $ => token(seq(
       '/*',
-      /[^*]*\*+([^/*][^*]*\*+)*/,
+      new RustRegex('[^*]*\\*+([^/*][^*]*\\*+)*'),
       '/'
     )),
 
