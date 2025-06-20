@@ -7414,7 +7414,22 @@
   {
     "type": "data_access_intent_property",
     "named": true,
-    "fields": {}
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "data_caption_expression_property",
@@ -28635,6 +28650,10 @@
           "named": true
         },
         {
+          "type": "data_access_intent_property",
+          "named": true
+        },
+        {
           "type": "data_item_link_reference_property",
           "named": true
         },
@@ -33813,6 +33832,10 @@
         },
         {
           "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "data_access_intent_property",
           "named": true
         },
         {

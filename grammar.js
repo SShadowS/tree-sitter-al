@@ -702,7 +702,9 @@ module.exports = grammar({
       '=',
       field('value', choice(
         /[rR][eE][aA][dD][oO][nN][lL][yY]/,
-        /[rR][eE][aA][dD][wW][rR][iI][tT][eE]/
+        /[rR][eE][aA][dD][wW][rR][iI][tT][eE]/,
+        $.identifier,
+        $._quoted_identifier
       )),
       ';'
     ),
@@ -6501,6 +6503,7 @@ enum_type: $ => prec(1, seq(
       
       // Report execution properties
       $.allow_scheduling_property,
+      $.data_access_intent_property,
       $.preview_mode_property,
       $.show_print_status_property,
       $.transaction_type_property,
