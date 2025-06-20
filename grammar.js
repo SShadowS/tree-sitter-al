@@ -1392,7 +1392,7 @@ module.exports = grammar({
     ),
 
     visible_property: $ => seq(
-      'Visible',
+      choice('Visible', 'visible', 'VISIBLE'),
       '=',
       field('value', $._expression),
       ';'
@@ -2052,6 +2052,7 @@ module.exports = grammar({
       seq(optional($.attribute_list), $.procedure),  // Support attributed procedures in pages
       $.var_section,
       $.trigger_declaration,
+      $.preproc_conditional_procedures,  // Support preprocessor conditional procedures
       
       // Region directives for code organization
       $.preproc_region,
@@ -2453,7 +2454,8 @@ module.exports = grammar({
       /[rR][aA][tT][iI][oO]/,
       /[dD][uU][rR][aA][tT][iI][oO][nN]/,
       /[mM][aA][sS][kK][eE][dD]/,
-      /[rR][iI][cC][hH][cC][oO][nN][tT][eE][nN][tT]/
+      /[rR][iI][cC][hH][cC][oO][nN][tT][eE][nN][tT]/,
+      /[bB][aA][rR][cC][oO][dD][eE]/
     ),
 
     // Values for the first 5 missing Page Field Properties
@@ -3054,7 +3056,7 @@ module.exports = grammar({
     ),
 
     extended_datatype_property: $ => seq(
-      'ExtendedDatatype',
+      choice('ExtendedDatatype', 'extendeddatatype', 'EXTENDEDDATATYPE'),
       '=',
       field('value', $.extended_datatype_value),
       ';'
@@ -3972,6 +3974,7 @@ enum_type: $ => prec(1, seq(
           $.caption_ml_property,
           $.option_caption_ml_property,
           $.tool_tip_ml_property,
+          $.optimize_for_text_search_property,
           $.preproc_conditional_field_properties
         )),
         '}'
@@ -4274,7 +4277,7 @@ enum_type: $ => prec(1, seq(
     field_reference_expression: $ => choice(
       $.field_ref,
       $.upperlimit_expression,
-      $.filter_expression,
+      $.formula_filter_expression,
       $.upperlimit_filter_expression
     ),
     
@@ -4285,7 +4288,7 @@ enum_type: $ => prec(1, seq(
       ')'
     ),
     
-    filter_expression: $ => seq(
+    formula_filter_expression: $ => seq(
       choice('filter', 'FILTER', 'Filter'),
       '(',
       $.field_ref,
@@ -4295,7 +4298,7 @@ enum_type: $ => prec(1, seq(
     upperlimit_filter_expression: $ => seq(
       choice('upperlimit', 'UPPERLIMIT', 'Upperlimit'),
       '(',
-      $.filter_expression,
+      $.formula_filter_expression,
       ')'
     ),
     
@@ -6042,7 +6045,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     view_filters_property: $ => seq(
-      'Filters',
+      choice('Filters', 'filters', 'FILTERS'),
       '=',
       field('value', $.filter_expression),
       ';'

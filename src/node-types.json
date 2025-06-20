@@ -11576,6 +11576,10 @@
           "named": true
         },
         {
+          "type": "optimize_for_text_search_property",
+          "named": true
+        },
+        {
           "type": "option_caption_ml_property",
           "named": true
         },
@@ -12295,7 +12299,7 @@
           "named": true
         },
         {
-          "type": "filter_expression",
+          "type": "formula_filter_expression",
           "named": true
         },
         {
@@ -13631,11 +13635,15 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "field_ref",
+          "type": "sorting_clause",
+          "named": true
+        },
+        {
+          "type": "where_clause",
           "named": true
         }
       ]
@@ -15677,6 +15685,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "formula_filter_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "field_ref",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -23950,6 +23973,10 @@
         },
         {
           "type": "preproc_conditional_page_properties",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_procedures",
           "named": true
         },
         {
@@ -38976,7 +39003,7 @@
       "required": true,
       "types": [
         {
-          "type": "filter_expression",
+          "type": "formula_filter_expression",
           "named": true
         }
       ]
@@ -43075,6 +43102,10 @@
     "named": false
   },
   {
+    "type": "EXTENDEDDATATYPE",
+    "named": false
+  },
+  {
     "type": "Editable",
     "named": false
   },
@@ -43172,6 +43203,10 @@
   },
   {
     "type": "FILTERPAGEBUILDER",
+    "named": false
+  },
+  {
+    "type": "FILTERS",
     "named": false
   },
   {
@@ -44443,6 +44478,10 @@
     "named": false
   },
   {
+    "type": "VISIBLE",
+    "named": false
+  },
+  {
     "type": "ValidateTableRelation",
     "named": false
   },
@@ -44656,21 +44695,21 @@
   },
   {
     "type": "comment",
-    "named": true,
-    "extra": true
-  },
-  {
-    "type": "comment",
     "named": false,
     "extra": true
   },
   {
-    "type": "const",
-    "named": true
+    "type": "comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "const",
     "named": false
+  },
+  {
+    "type": "const",
+    "named": true
   },
   {
     "type": "controladdin",
@@ -44710,11 +44749,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "div",
@@ -44769,6 +44808,10 @@
     "named": false
   },
   {
+    "type": "extendeddatatype",
+    "named": false
+  },
+  {
     "type": "false",
     "named": false
   },
@@ -44786,6 +44829,10 @@
   },
   {
     "type": "filter",
+    "named": false
+  },
+  {
+    "type": "filters",
     "named": false
   },
   {
@@ -45088,6 +45135,10 @@
   },
   {
     "type": "view",
+    "named": false
+  },
+  {
+    "type": "visible",
     "named": false
   },
   {

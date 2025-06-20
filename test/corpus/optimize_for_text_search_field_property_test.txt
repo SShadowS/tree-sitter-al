@@ -32,42 +32,42 @@ table 50000 "Service Item Test"
 
 (source_file
   (table_declaration
-    (integer)
-    (quoted_identifier)
+    object_id: (integer)
+    object_name: (quoted_identifier)
     (caption_property
-      value: (string_literal))
+      (string_literal))
     (data_classification_property
-      value: (data_classification_value))
+      (data_classification_value))
     (fields
       (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
           (code_type
-            (integer)))
+            length: (integer)))
         (caption_property
-          value: (string_literal))
+          (string_literal))
         (optimize_for_text_search_property
           value: (boolean)))
       (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
           (code_type
-            (integer)))
+            length: (integer)))
         (caption_property
-          value: (string_literal))
+          (string_literal))
         (optimize_for_text_search_property
           value: (boolean)))
       (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
           (text_type
-            (integer)))
+            length: (integer)))
         (caption_property
-          value: (string_literal))
+          (string_literal))
         (optimize_for_text_search_property
           value: (boolean))
         (data_classification_property
-          value: (data_classification_value))))))
+          (data_classification_value))))))

@@ -2990,30 +2990,40 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "filter"
+              "type": "SYMBOL",
+              "name": "where_clause"
             },
             {
-              "type": "STRING",
-              "value": "FILTER"
+              "type": "SYMBOL",
+              "name": "sorting_clause"
             },
             {
-              "type": "STRING",
-              "value": "Filter"
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "where_clause"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "sorting_clause"
+                }
+              ]
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "sorting_clause"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "where_clause"
+                }
+              ]
             }
           ]
-        },
-        {
-          "type": "STRING",
-          "value": "("
-        },
-        {
-          "type": "SYMBOL",
-          "name": "field_ref"
-        },
-        {
-          "type": "STRING",
-          "value": ")"
         }
       ]
     },
@@ -5582,8 +5592,21 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Visible"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "Visible"
+            },
+            {
+              "type": "STRING",
+              "value": "visible"
+            },
+            {
+              "type": "STRING",
+              "value": "VISIBLE"
+            }
+          ]
         },
         {
           "type": "STRING",
@@ -8661,6 +8684,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "preproc_conditional_procedures"
+        },
+        {
+          "type": "SYMBOL",
           "name": "preproc_region"
         },
         {
@@ -10306,6 +10333,10 @@
         {
           "type": "PATTERN",
           "value": "[rR][iI][cC][hH][cC][oO][nN][tT][eE][nN][tT]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[bB][aA][rR][cC][oO][dD][eE]"
         }
       ]
     },
@@ -13049,8 +13080,21 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "ExtendedDatatype"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "ExtendedDatatype"
+            },
+            {
+              "type": "STRING",
+              "value": "extendeddatatype"
+            },
+            {
+              "type": "STRING",
+              "value": "EXTENDEDDATATYPE"
+            }
+          ]
         },
         {
           "type": "STRING",
@@ -17706,6 +17750,10 @@
                       },
                       {
                         "type": "SYMBOL",
+                        "name": "optimize_for_text_search_property"
+                      },
+                      {
+                        "type": "SYMBOL",
                         "name": "preproc_conditional_field_properties"
                       }
                     ]
@@ -19112,7 +19160,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "filter_expression"
+          "name": "formula_filter_expression"
         },
         {
           "type": "SYMBOL",
@@ -19137,6 +19185,40 @@
             {
               "type": "STRING",
               "value": "Upperlimit"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "field_ref"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "formula_filter_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "filter"
+            },
+            {
+              "type": "STRING",
+              "value": "FILTER"
+            },
+            {
+              "type": "STRING",
+              "value": "Filter"
             }
           ]
         },
@@ -19180,7 +19262,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "filter_expression"
+          "name": "formula_filter_expression"
         },
         {
           "type": "STRING",
@@ -27566,8 +27648,21 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Filters"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "Filters"
+            },
+            {
+              "type": "STRING",
+              "value": "filters"
+            },
+            {
+              "type": "STRING",
+              "value": "FILTERS"
+            }
+          ]
         },
         {
           "type": "STRING",
