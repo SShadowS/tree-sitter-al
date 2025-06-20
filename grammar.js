@@ -2664,7 +2664,21 @@ module.exports = grammar({
       new RustRegex('(?i)local')
     ),
     external_name_value: $ => $.string_literal,
-    external_type_value: $ => $.string_literal,
+    external_type_value: $ => choice(
+      $.string_literal,
+      // Also support bare identifiers for compatibility
+      'Uniqueidentifier',
+      'DateTime', 
+      'Lookup',
+      'Owner',
+      'State',
+      'Status',
+      'BigInt',
+      'Integer',
+      'String',
+      'Boolean',
+      'Picklist'
+    ),
     init_value_value: $ => $._expression,
     max_value_value: $ => $._expression, 
     min_value_value: $ => $._expression,

@@ -11322,8 +11322,57 @@
       "name": "string_literal"
     },
     "external_type_value": {
-      "type": "SYMBOL",
-      "name": "string_literal"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "string_literal"
+        },
+        {
+          "type": "STRING",
+          "value": "Uniqueidentifier"
+        },
+        {
+          "type": "STRING",
+          "value": "DateTime"
+        },
+        {
+          "type": "STRING",
+          "value": "Lookup"
+        },
+        {
+          "type": "STRING",
+          "value": "Owner"
+        },
+        {
+          "type": "STRING",
+          "value": "State"
+        },
+        {
+          "type": "STRING",
+          "value": "Status"
+        },
+        {
+          "type": "STRING",
+          "value": "BigInt"
+        },
+        {
+          "type": "STRING",
+          "value": "Integer"
+        },
+        {
+          "type": "STRING",
+          "value": "String"
+        },
+        {
+          "type": "STRING",
+          "value": "Boolean"
+        },
+        {
+          "type": "STRING",
+          "value": "Picklist"
+        }
+      ]
     },
     "init_value_value": {
       "type": "SYMBOL",
