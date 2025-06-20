@@ -15685,6 +15685,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "testrequestpage_type"
+        },
+        {
+          "type": "SYMBOL",
           "name": "report_type"
         },
         {
@@ -17321,6 +17325,57 @@
               {
                 "type": "STRING",
                 "value": "testpage"
+              }
+            ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "reference",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "integer"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_quoted_identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "testrequestpage_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "TestRequestPage"
+              },
+              {
+                "type": "STRING",
+                "value": "Testrequestpage"
+              },
+              {
+                "type": "STRING",
+                "value": "TESTREQUESTPAGE"
+              },
+              {
+                "type": "STRING",
+                "value": "testrequestpage"
               }
             ]
           }

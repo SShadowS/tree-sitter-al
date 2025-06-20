@@ -38306,6 +38306,30 @@
     }
   },
   {
+    "type": "testrequestpage_type",
+    "named": true,
+    "fields": {
+      "reference": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "text_type",
     "named": true,
     "fields": {
@@ -38553,6 +38577,10 @@
         },
         {
           "type": "testpage_type",
+          "named": true
+        },
+        {
+          "type": "testrequestpage_type",
           "named": true
         },
         {
@@ -44354,6 +44382,10 @@
     "named": false
   },
   {
+    "type": "TESTREQUESTPAGE",
+    "named": false
+  },
+  {
     "type": "TEXT",
     "named": false
   },
@@ -44410,11 +44442,19 @@
     "named": false
   },
   {
+    "type": "TestRequestPage",
+    "named": false
+  },
+  {
     "type": "TestTableRelation",
     "named": false
   },
   {
     "type": "Testpage",
+    "named": false
+  },
+  {
+    "type": "Testrequestpage",
     "named": false
   },
   {
@@ -44723,21 +44763,21 @@
   },
   {
     "type": "comment",
-    "named": true,
-    "extra": true
-  },
-  {
-    "type": "comment",
     "named": false,
     "extra": true
   },
   {
-    "type": "const",
-    "named": false
+    "type": "comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "const",
     "named": true
+  },
+  {
+    "type": "const",
+    "named": false
   },
   {
     "type": "controladdin",
@@ -45095,11 +45135,11 @@
   },
   {
     "type": "temporary",
-    "named": true
+    "named": false
   },
   {
     "type": "temporary",
-    "named": false
+    "named": true
   },
   {
     "type": "testisolation",
@@ -45107,6 +45147,10 @@
   },
   {
     "type": "testpage",
+    "named": false
+  },
+  {
+    "type": "testrequestpage",
     "named": false
   },
   {

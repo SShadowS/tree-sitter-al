@@ -1,0 +1,131 @@
+================================================================================
+TestRequestPage data type with various reference formats
+================================================================================
+
+codeunit 50000 "TestRequestPage Test"
+{
+    [Test]
+    procedure TestRequestPageWithQuotedReference()
+    var
+        TestReq: TestRequestPage "My Report";
+    begin
+    end;
+
+    [Test] 
+    procedure TestRequestPageWithIdentifier()
+    var
+        TestReq: TestRequestPage MyReport;
+    begin
+    end;
+
+    [Test]
+    procedure TestRequestPageWithInteger()
+    var
+        TestReq: TestRequestPage 50000;
+    begin
+    end;
+
+    [RequestPageHandler]
+    procedure TestRequestPageHandler(var PhysInvtTest: TestRequestPage "Phys. Invt. Order - Test")
+    var
+        HeaderNo: Variant;
+    begin
+        LibraryVariableStorage.Dequeue(HeaderNo);
+    end;
+
+    [RequestPageHandler]
+    [Scope('OnPrem')]
+    procedure TestRequestPageHandlerWithScope(var ReportTest: TESTREQUESTPAGE "Some Report")
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)))
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (testrequestpage_type
+                reference: (quoted_identifier)))))
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)))
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (testrequestpage_type
+                reference: (identifier)))))
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)))
+      (procedure
+        name: (name)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (testrequestpage_type
+                reference: (integer)))))
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)))
+      (procedure
+        name: (name)
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (testrequestpage_type
+                reference: (quoted_identifier)))))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (identifier))))))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier))
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (string_literal)))))
+      (procedure
+        name: (name)
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name)
+            parameter_type: (type_specification
+              (testrequestpage_type
+                reference: (quoted_identifier)))))
+        (code_block)))))

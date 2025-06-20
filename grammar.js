@@ -3670,6 +3670,7 @@ type_specification: $ => choice(
   $.codeunit_type, 
   $.query_type,
   $.testpage_type,
+  $.testrequestpage_type,
   $.report_type,
   $.dotnet_type,
   $.list_type,
@@ -3884,6 +3885,20 @@ enum_type: $ => prec(1, seq(
         'Testpage',
         'TESTPAGE',
         'testpage'
+      )),
+      field('reference', choice(
+        $.integer,
+        $._quoted_identifier,
+        $.identifier
+      ))
+    ),
+
+    testrequestpage_type: $ => seq(
+      prec(1, choice(
+        'TestRequestPage',
+        'Testrequestpage',
+        'TESTREQUESTPAGE',
+        'testrequestpage'
       )),
       field('reference', choice(
         $.integer,
