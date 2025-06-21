@@ -4413,6 +4413,7 @@ enum_type: $ => prec(1, seq(
         $.foreach_statement,
         $.while_statement,
         $.with_statement,
+        $.asserterror_statement,
         $._expression_statement
       ),
       optional(';')
@@ -4484,6 +4485,11 @@ enum_type: $ => prec(1, seq(
         ')'
       )))
     ),
+
+    asserterror_statement: $ => prec(14, seq(
+      kw('asserterror', 10),
+      field('expression', $._expression)
+    )),
 
     assignment_statement: $ => seq(
       field('left', $._assignable_expression),
