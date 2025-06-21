@@ -640,6 +640,10 @@
               {
                 "type": "SYMBOL",
                 "name": "xmlport_table_element"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "xmlport_field_attribute"
               }
             ]
           }
@@ -720,6 +724,70 @@
         {
           "type": "SYMBOL",
           "name": "use_temporary_property"
+        }
+      ]
+    },
+    "xmlport_field_attribute": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)fieldattribute"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "attribute_name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_identifier_choice"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        },
+        {
+          "type": "FIELD",
+          "name": "source_field",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "field_access"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "xmlport_table_property"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
         }
       ]
     },

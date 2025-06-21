@@ -206,7 +206,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $.xmlport_table_property,
-        $.xmlport_table_element  // Allow nesting of elements
+        $.xmlport_table_element,  // Allow nesting of elements
+        $.xmlport_field_attribute
       )),
       '}'
     ),
@@ -231,6 +232,21 @@ module.exports = grammar({
       $.request_filter_heading_property,
       $.request_filter_heading_ml_property,
       $.use_temporary_property,
+    ),
+    
+    xmlport_field_attribute: $ => seq(
+      kw('fieldattribute'),
+      '(',
+      field('attribute_name', $._identifier_choice),
+      ';',
+      field('source_field', choice(
+        $.identifier,
+        $.field_access  // Support Table.Field syntax
+      )),
+      ')',
+      '{',
+      repeat($.xmlport_table_property),
+      '}'
     ),
     
     // 11. Unbound Property
