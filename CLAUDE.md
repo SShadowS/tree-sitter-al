@@ -173,7 +173,8 @@ Dont put comments in the parse tree, as they are not supported by tree-sitter.
 - **`kw(word, precedence = null)`**: Creates case-insensitive keywords using RustRegex
   - Example: `kw('table')` matches 'table', 'Table', 'TABLE', etc.
   - Optional precedence: `kw('dotnet', 100)` for high-precedence keywords
-  - Use for all AL keywords to ensure case-insensitive parsing
+  - Use for most AL keywords to ensure case-insensitive parsing
+  - **EXCEPTIONS**: Do NOT use kw() for logical operators (not, and, or, xor) as they conflict with expression parsing
 
 ### Template Functions
 - **`_modification_with_target_template(keyword, content_repeater)`**: For patterns like `addafter(target) { content }`
@@ -263,6 +264,8 @@ Search up-to-date documentation for a library or package. Examples:
 - {library: "tree-sitter", query: "grammar syntax"} -> matches latest Tree-sitter documentation
 - {library: "tree-sitter", version: "0.20.x", query: "choice function"} -> any Tree-sitter 0.20.x version
 
+NOTE: Keep number of search words low. Use very specific keywords to narrow results, like max 3 words.
+
 Parameters:
   • library (required): string - Library name.
   • version: string - Library version (exact or X-Range, optional).
@@ -280,3 +283,22 @@ Use these resources to:
 - At the end always run this before saying a change is complete: `tree-sitter generate && tree-sitter test`
 - A common fix is adding properties to the $._universal_properties list
 - When doing changes to grammar, lookup the property, type, field and so on in the documentation so you know what the given item is defined and supports
+
+## Contextual Keywords Pattern
+When AL keywords can be used as both properties and variable names (contextual keywords), they must be handled consistently:
+
+1. **In property definitions**: Use `kw('keyword')` for case-insensitive matching
+2. **In _unquoted_variable_name**: Also use `alias(kw('keyword'), $.identifier)` 
+3. **Never use case-sensitive patterns** like `alias('Keyword', $.identifier)`
+
+Example of correct pattern:
+```javascript
+// In property definition
+subtype_property: $ => _value_property_template(kw('subtype'), $.value),
+
+// In _unquoted_variable_name
+alias(kw('subtype'), $.identifier),  // Correct - case-insensitive
+// NOT: alias('SubType', $.identifier), alias('subtype', $.identifier), etc.
+```
+
+This ensures keywords work correctly in both property and identifier contexts with any case variation.

@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **13,018 files (84.7%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **13,371 files (87.0%) parse successfully**.
 
 Recent improvements include:
 - **OptimizeForTextSearch field property** - Added support for OptimizeForTextSearch property in table field declarations, enabling text search optimization at the field level

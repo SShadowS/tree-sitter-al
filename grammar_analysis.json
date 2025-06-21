@@ -1,0 +1,2332 @@
+{
+  "summary": {
+    "total_definitions": 701,
+    "total_references": 719,
+    "unused_count": 2,
+    "low_usage_count": 291,
+    "missing_count": 27,
+    "excluded_rules": [
+      "ERROR",
+      "IMMEDIATE_TOKEN",
+      "MISSING",
+      "PREC_DYNAMIC",
+      "_dedent",
+      "_end",
+      "_identifier_choice_list",
+      "_indent",
+      "_layout_modification_template",
+      "_newline",
+      "_start",
+      "_string_value_template",
+      "application_object_declaration",
+      "conflicts",
+      "externals",
+      "extras",
+      "inline",
+      "module",
+      "precedences",
+      "program",
+      "source_file",
+      "supertypes",
+      "word"
+    ]
+  },
+  "unused_rules": [
+    {
+      "name": "field_list",
+      "line": 5303,
+      "grammar_refs": 0,
+      "test_refs": 0
+    },
+    {
+      "name": "_action_properties",
+      "line": 6029,
+      "grammar_refs": 0,
+      "test_refs": 0
+    }
+  ],
+  "low_usage_rules": [
+    {
+      "name": "_xmlport_element",
+      "line": 152,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "enumextension_declaration",
+      "line": 378,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_query_element",
+      "line": 408,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_pageextension_element",
+      "line": 894,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_tableextension_element",
+      "line": 918,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "addlast_action_group",
+      "line": 1013,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "modify_action_group",
+      "line": 1040,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "systemaction_declaration",
+      "line": 1107,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "cardpart_property",
+      "line": 1207,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "in_footer_bar_property",
+      "line": 1327,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "run_page_mode_property",
+      "line": 1332,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "run_page_on_rec_property",
+      "line": 1339,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_assignment_operator",
+      "line": 1344,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_colon",
+      "line": 1346,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_controladdin_element",
+      "line": 1537,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_entitlement_element",
+      "line": 1553,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_report_element",
+      "line": 1660,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_label_element",
+      "line": 1691,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "label_declaration",
+      "line": 1695,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_permissionset_element",
+      "line": 1758,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_permissionsetextension_element",
+      "line": 1776,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "dotnet_declaration",
+      "line": 1859,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "assembly_declaration",
+      "line": 1866,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "assembly_property",
+      "line": 1879,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "type_declaration",
+      "line": 1885,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_page_element",
+      "line": 1910,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_view_properties",
+      "line": 1959,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "addbefore_layout_modification",
+      "line": 2038,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "fixed_section",
+      "line": 2134,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "source_expr_property",
+      "line": 2283,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_table_no_value",
+      "line": 2317,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "subtype_value",
+      "line": 2323,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "single_instance_value",
+      "line": 2336,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "event_subscriber_instance_value",
+      "line": 2338,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "test_isolation_value",
+      "line": 2344,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "run_page_mode_value",
+      "line": 2397,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "table_type_value",
+      "line": 2501,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "char_allowed_value",
+      "line": 2509,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "external_access_value",
+      "line": 2530,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "numeric_value",
+      "line": 2552,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "option_ordinal_values_value",
+      "line": 2560,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "sign_displacement_value",
+      "line": 2562,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "sql_data_type_value",
+      "line": 2563,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "sql_timestamp_value",
+      "line": 2564,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "test_table_relation_value",
+      "line": 2565,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "unique_value",
+      "line": 2570,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "validate_table_relation_value",
+      "line": 2571,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "access_value",
+      "line": 2607,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "access_by_permission_value",
+      "line": 2613,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "auto_format_type_value",
+      "line": 2651,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "auto_increment_value",
+      "line": 2665,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "blank_numbers_value",
+      "line": 2667,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "table_type_property",
+      "line": 2674,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_table_element",
+      "line": 3020,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "calc_fields_list",
+      "line": 3218,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "tabledata_permission_list",
+      "line": 3236,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_table_identifier",
+      "line": 3248,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_parameter_option",
+      "line": 3351,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "interface_type",
+      "line": 3422,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "controladdin_type",
+      "line": 3430,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "report_type",
+      "line": 3463,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "dictionary_type",
+      "line": 3480,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "fieldref_type",
+      "line": 3574,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_non_call_chained_expression",
+      "line": 3895,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_calc_formula_expression",
+      "line": 3928,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "exist_formula",
+      "line": 4108,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_procedure_named_return",
+      "line": 4282,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_procedure_name",
+      "line": 4290,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_statement_or_preprocessor",
+      "line": 4393,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_expression_statement",
+      "line": 4401,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "while_statement",
+      "line": 4424,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_assignable_expression",
+      "line": 4497,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "enum_value_expression",
+      "line": 4660,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_case_expression",
+      "line": 4700,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_case_item",
+      "line": 4711,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_case_pattern",
+      "line": 4729,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "time_literal",
+      "line": 4797,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "datetime_literal",
+      "line": 4803,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "duration_literal",
+      "line": 4809,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_enum_type_reference",
+      "line": 4886,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_enum_value_reference",
+      "line": 4892,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_branch_statements",
+      "line": 4900,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "fieldgroup_declaration",
+      "line": 4905,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "fieldgroup_list",
+      "line": 4926,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "cuegroup_layout_property",
+      "line": 4953,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "custom_action_type_property",
+      "line": 4981,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "file_upload_action_property",
+      "line": 5000,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "file_upload_row_action_property",
+      "line": 5007,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "odata_edm_type_property",
+      "line": 5014,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "clear_actions_property",
+      "line": 5022,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "clear_layout_property",
+      "line": 5027,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "clear_views_property",
+      "line": 5032,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "importance_additional_property",
+      "line": 5050,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "default_rendering_layout_property",
+      "line": 5068,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "excel_layout_property",
+      "line": 5075,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "allow_scheduling_property",
+      "line": 5097,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "preview_mode_property",
+      "line": 5102,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "show_print_status_property",
+      "line": 5113,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "transaction_type_property",
+      "line": 5118,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "execution_timeout_property",
+      "line": 5129,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "format_region_property",
+      "line": 5134,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "use_system_printer_property",
+      "line": 5141,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "maximum_dataset_size_property",
+      "line": 5146,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "enable_external_assemblies_property",
+      "line": 5158,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "enable_external_images_property",
+      "line": 5163,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "excel_layout_multiple_data_sheets_property",
+      "line": 5173,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "maximum_document_count_property",
+      "line": 5178,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "paper_source_default_page_property",
+      "line": 5183,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "paper_source_first_page_property",
+      "line": 5190,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "paper_source_last_page_property",
+      "line": 5197,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "pdf_font_embedding_property",
+      "line": 5205,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "word_merge_data_item_property",
+      "line": 5221,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "title_property",
+      "line": 5235,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "order_by_property",
+      "line": 5252,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "ellipsis_property",
+      "line": 5263,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "gesture_property",
+      "line": 5268,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "is_header_property",
+      "line": 5275,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_enum_keyword",
+      "line": 5403,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_pagecustomization_element",
+      "line": 5474,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_views_modification",
+      "line": 5485,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "addbefore_views",
+      "line": 5507,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_view_property",
+      "line": 5522,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_profile_element",
+      "line": 5529,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_validation_properties",
+      "line": 5611,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_data_properties",
+      "line": 5626,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_codeunit_properties",
+      "line": 5917,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_dataitem_properties",
+      "line": 5979,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_report_column_properties",
+      "line": 5992,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_mixed_identifier_string_property_template",
+      "line": 6094,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_access_level_enum_template",
+      "line": 6101,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_auto_always_never_enum_template",
+      "line": 6112,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "zeroormany_keyword",
+      "line": 6125,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_multiplicity_enum_template",
+      "line": 6129,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_query_type_enum_template",
+      "line": 6141,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_sql_join_type_enum_template",
+      "line": 6152,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_caption_full_template",
+      "line": 6174,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_option_caption_template",
+      "line": 6206,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_tooltip_template",
+      "line": 6223,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_system_permission_template",
+      "line": 6285,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_tabledata_permission_template",
+      "line": 6292,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_filter_keyword",
+      "line": 6335,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_cardpart_keyword",
+      "line": 6336,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_table_permission_keyword",
+      "line": 6338,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_object",
+      "line": 106,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "direction_value",
+      "line": 163,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "format_value",
+      "line": 171,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "xmlport_schema_element",
+      "line": 182,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "request_filter_fields_value",
+      "line": 254,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "max_occurs_value",
+      "line": 285,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "min_occurs_value",
+      "line": 293,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "link_fields_value",
+      "line": 341,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "enum_declaration",
+      "line": 362,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "delete_allowed_property",
+      "line": 447,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "insert_allowed_property",
+      "line": 450,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "modify_allowed_property",
+      "line": 453,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "source_table_temporary_property",
+      "line": 456,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "analysis_mode_enabled_property",
+      "line": 459,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "auto_split_key_property",
+      "line": 461,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "change_tracking_allowed_property",
+      "line": 463,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "delayed_insert_property",
+      "line": 465,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "links_allowed_property",
+      "line": 467,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "multiple_new_lines_property",
+      "line": 469,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "populate_all_fields_property",
+      "line": 474,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "data_caption_expression_property",
+      "line": 480,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "refresh_on_activate_property",
+      "line": 520,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "entity_set_caption_property",
+      "line": 560,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "entity_set_caption_ml_property",
+      "line": 565,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "help_link_property",
+      "line": 602,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "is_preview_property",
+      "line": 607,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "odata_key_fields_value",
+      "line": 612,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "odata_key_fields_property",
+      "line": 614,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "query_type_property",
+      "line": 631,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "order_direction",
+      "line": 667,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "filter_not_equal_expression",
+      "line": 703,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "filter_equal_expression",
+      "line": 713,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "_filter_value",
+      "line": 730,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "tableextension_declaration",
+      "line": 908,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "_action_group",
+      "line": 995,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "addfirst_action_group",
+      "line": 1004,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "addafter_action_group",
+      "line": 1022,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "addbefore_action_group",
+      "line": 1031,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "modify_action",
+      "line": 1054,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "promoted_is_big_property",
+      "line": 1315,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "drilldown_pageid_property",
+      "line": 1383,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "promoted_action_categories_property",
+      "line": 1404,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "codeunit_declaration",
+      "line": 1431,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "attributed_onrun_trigger",
+      "line": 1470,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "controladdin_declaration",
+      "line": 1529,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "interface_declaration",
+      "line": 1634,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "labels_section",
+      "line": 1684,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "requestpage_section",
+      "line": 1738,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "permissionset_declaration",
+      "line": 1750,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "assignable_property",
+      "line": 1783,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "excluded_permission_sets_property",
+      "line": 1797,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "excluded_permission_sets_list",
+      "line": 1806,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "permission_list",
+      "line": 1815,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "preproc_conditional_permissions",
+      "line": 1825,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "addfirst_layout_modification",
+      "line": 2023,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "addafter_layout_modification",
+      "line": 2033,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "movefirst_layout_modification",
+      "line": 2056,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "movelast_layout_modification",
+      "line": 2061,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "moveafter_layout_modification",
+      "line": 2066,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "movebefore_layout_modification",
+      "line": 2071,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "group_section",
+      "line": 2094,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "cuegroup_section",
+      "line": 2107,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "label_section",
+      "line": 2147,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "repeater_section",
+      "line": 2160,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "usercontrol_section",
+      "line": 2243,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "extended_datatype_value",
+      "line": 2364,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "style_value",
+      "line": 2385,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "lookup_property",
+      "line": 2416,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "blank_zero_value",
+      "line": 2497,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "option_caption_value",
+      "line": 2499,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "closing_dates_value",
+      "line": 2508,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "compressed_value",
+      "line": 2514,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "date_formula_value",
+      "line": 2515,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "usage_category_value",
+      "line": 2520,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "external_name_value",
+      "line": 2535,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "external_type_value",
+      "line": 2536,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "obsolete_reason_value",
+      "line": 2553,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "obsolete_state_value",
+      "line": 2554,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "obsolete_tag_value",
+      "line": 2559,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "paste_is_valid_value",
+      "line": 2561,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "tool_tip_value",
+      "line": 2566,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "data_caption_fields_value",
+      "line": 2578,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "extensible_value",
+      "line": 2583,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "data_per_company_value",
+      "line": 2585,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "replicate_data_value",
+      "line": 2587,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "column_store_index_value",
+      "line": 2591,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "compression_type_value",
+      "line": 2596,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "inherent_permissions_value",
+      "line": 2603,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "inherent_entitlements_value",
+      "line": 2605,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "external_access_property",
+      "line": 2764,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "option_ordinal_values_property",
+      "line": 2835,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "sql_data_type_property",
+      "line": 2856,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "sql_timestamp_property",
+      "line": 2863,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "test_table_relation_property",
+      "line": 2870,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "data_classification_value",
+      "line": 3000,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "permissions_property",
+      "line": 3046,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "test_permissions_property",
+      "line": 3053,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "named_trigger",
+      "line": 3068,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "calc_fields_property",
+      "line": 3211,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "calc_field",
+      "line": 3223,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "tabledata_permission",
+      "line": 3241,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_unquoted_variable_name",
+      "line": 3278,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "page_type",
+      "line": 3454,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "text_type",
+      "line": 3542,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "recordref_type",
+      "line": 3573,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "codeunit_type",
+      "line": 3582,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "query_type",
+      "line": 3592,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "query_type_value",
+      "line": 3615,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "const_filter",
+      "line": 3837,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "explicit_field_ref",
+      "line": 3882,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "lookup_formula",
+      "line": 3946,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "lookup_where_conditions",
+      "line": 3965,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "key_declaration",
+      "line": 4192,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "maintain_sql_index_property",
+      "line": 4229,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "attribute_arguments",
+      "line": 4264,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "_procedure_return_specification",
+      "line": 4277,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "clustered_property",
+      "line": 4366,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "for_statement",
+      "line": 4444,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "repeat_statement",
+      "line": 4475,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "exit_statement",
+      "line": 4482,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "qualified_enum_value_tail",
+      "line": 4532,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_if_then_body",
+      "line": 4693,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "case_statement",
+      "line": 4702,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "decimal",
+      "line": 4787,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "_literal_value",
+      "line": 4815,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "else_branch",
+      "line": 4831,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "fieldgroups_section",
+      "line": 4919,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "fieldgroup_field",
+      "line": 4931,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "word_layout_property",
+      "line": 5089,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "multiline_comment",
+      "line": 5395,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "addlast_views",
+      "line": 5497,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "addafter_views",
+      "line": 5502,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "_query_properties",
+      "line": 5685,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_controladdin_properties",
+      "line": 5713,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_entitlement_properties",
+      "line": 5720,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_profile_properties",
+      "line": 5730,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_report_properties",
+      "line": 5929,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_xmlport_properties",
+      "line": 6012,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_trigger_parameters",
+      "line": 6064,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_identifier_property_template",
+      "line": 6088,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "one_keyword",
+      "line": 6126,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "many_keyword",
+      "line": 6127,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "_caption_boolean_template",
+      "line": 6200,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_about_template",
+      "line": 6231,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_name_property_template",
+      "line": 6262,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "_tabledata_keyword",
+      "line": 6337,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "trigger_name",
+      "line": 6345,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "trigger_type",
+      "line": 6346,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    }
+  ],
+  "missing_definitions": [
+    {
+      "name": "column_span_property",
+      "reference_count": 2,
+      "first_reference": {
+        "line": 3166,
+        "context": "$.column_span_property,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "direction_property",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 6017,
+        "context": "$.direction_property,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "format_property",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 6018,
+        "context": "$.format_property,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "importance_property",
+      "reference_count": 2,
+      "first_reference": {
+        "line": 3175,
+        "context": "$.importance_property,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "max_occurs_property",
+      "reference_count": 2,
+      "first_reference": {
+        "line": 225,
+        "context": "$.max_occurs_property,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "min_occurs_property",
+      "reference_count": 2,
+      "first_reference": {
+        "line": 226,
+        "context": "$.min_occurs_property,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_actions",
+      "reference_count": 2,
+      "first_reference": {
+        "line": 937,
+        "context": "$.preproc_conditional_actions",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_case",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 4713,
+        "context": "$.preproc_conditional_case",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_controladdin_properties",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 1542,
+        "context": "$.preproc_conditional_controladdin_properties",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_entitlement_properties",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 1556,
+        "context": "$.preproc_conditional_entitlement_properties",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_enum_properties",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 373,
+        "context": "$.preproc_conditional_enum_properties",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_field_properties",
+      "reference_count": 3,
+      "first_reference": {
+        "line": 3712,
+        "context": "$.preproc_conditional_field_properties",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_layout",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 2018,
+        "context": "$.preproc_conditional_layout,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_object_properties",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 1438,
+        "context": "$.preproc_conditional_object_properties,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_page_properties",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 1929,
+        "context": "$.preproc_conditional_page_properties,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_permissionset_properties",
+      "reference_count": 2,
+      "first_reference": {
+        "line": 1762,
+        "context": "$.preproc_conditional_permissionset_properties",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_profile_properties",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 5532,
+        "context": "$.preproc_conditional_profile_properties",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_properties",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 2256,
+        "context": "$.preproc_conditional_properties,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_query_properties",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 413,
+        "context": "$.preproc_conditional_query_properties,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_report_properties",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 1674,
+        "context": "$.preproc_conditional_report_properties,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_statements",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 4395,
+        "context": "$.preproc_conditional_statements,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_table_properties",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 3038,
+        "context": "$.preproc_conditional_table_properties,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_variables",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 3273,
+        "context": "$.preproc_conditional_variables",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_xmlport_properties",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 159,
+        "context": "$.preproc_conditional_xmlport_properties",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "sort_order",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 661,
+        "context": "field('sort_order', alias($.identifier, $.sort_order)),",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "style_expr_property",
+      "reference_count": 2,
+      "first_reference": {
+        "line": 3184,
+        "context": "$.style_expr_property,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "style_property",
+      "reference_count": 2,
+      "first_reference": {
+        "line": 3183,
+        "context": "$.style_property,",
+        "type": "direct_reference"
+      }
+    }
+  ]
+}

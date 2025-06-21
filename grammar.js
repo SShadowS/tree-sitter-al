@@ -1493,7 +1493,7 @@ module.exports = grammar({
     ),
 
     implements_clause: $ => seq(
-      choice('implements', 'Implements', 'IMPLEMENTS'),
+      kw('implements'),
       field('interface', $._identifier_choice),
       repeat(seq(',', field('interface', $._identifier_choice)))
     ),
@@ -1864,7 +1864,7 @@ module.exports = grammar({
     ),
 
     assembly_declaration: $ => seq(
-      choice('assembly', 'Assembly', 'ASSEMBLY'),
+      kw('assembly'),
       '(',
       field('name', choice($.string_literal, $._quoted_identifier)),
       ')',
@@ -1883,7 +1883,7 @@ module.exports = grammar({
     ),
 
     type_declaration: $ => seq(
-      choice('type', 'Type', 'TYPE'),
+      kw('type'),
       '(',
       field('dotnet_type', choice(
         $.string_literal, 
@@ -1947,7 +1947,7 @@ module.exports = grammar({
     ),
 
     view_declaration: $ => seq(
-      choice('view', 'View', 'VIEW'),
+      kw('view'),
       '(',
       field('name', $.identifier),
       ')',
@@ -2294,7 +2294,7 @@ module.exports = grammar({
     ),
 
     trigger_declaration: $ => seq(
-      choice('trigger', 'Trigger', 'TRIGGER'),
+      kw('trigger'),
       field('name', alias($.identifier, $.trigger_name)), // Unified to use 'name' like generic_trigger
       choice(
         seq('(', optional($.parameter_list), ')'),
@@ -2428,7 +2428,7 @@ module.exports = grammar({
       $._boolean_property_template
     ),
     
-    importance_property: _value_property_template($ => choice('importance', 'Importance', 'IMPORTANCE'), $ => $.importance_value),
+    importance_property: _value_property_template($ => kw('importance'), $ => $.importance_value),
 
     navigation_page_id_property: $ => seq(
       'NavigationPageId',
@@ -2453,7 +2453,7 @@ module.exports = grammar({
     ),
 
     show_caption_property: $ => seq(
-      choice('showcaption', 'ShowCaption', 'SHOWCAPTION'),
+      kw('showcaption'),
       $._caption_boolean_template
     ),
 
@@ -2565,7 +2565,7 @@ module.exports = grammar({
     test_table_relation_value: $ => $.boolean,
     tool_tip_value: $ => seq(
       $.string_literal,
-      optional(seq(',', choice('comment', 'Comment', 'COMMENT'), '=', $.string_literal))
+      optional(seq(',', kw('comment'), '=', $.string_literal))
     ),
     unique_value: $ => $.boolean,
     validate_table_relation_value: $ => $.boolean,
@@ -2690,7 +2690,7 @@ module.exports = grammar({
       '=',
       field('value', choice(
         alias($.boolean, $.value),
-        alias(choice('never', 'Never', 'NEVER'), $.value)
+        alias(kw('never'), $.value)
       )),
       ';'
     )),
@@ -2757,7 +2757,7 @@ module.exports = grammar({
     ),
 
     description_property: $ => seq(
-      alias(choice('description', 'Description', 'DESCRIPTION'), 'Description'),
+      alias(kw('description'), 'Description'),
       $._string_property_template
     ),
 
@@ -2909,80 +2909,80 @@ module.exports = grammar({
 
     // NEW HIGH PRIORITY PROPERTIES - Property Rules
     data_caption_fields_property: $ => seq(
-      choice('datacaptionfields', 'DataCaptionFields', 'DATACAPTIONFIELDS'),
+      kw('datacaptionfields'),
       '=',
       field('value', $.data_caption_fields_value),
       ';'
     ),
 
     extensible_property: $ => seq(
-      choice('extensible', 'Extensible', 'EXTENSIBLE'),
+      kw('extensible'),
       '=',
       field('value', $.extensible_value),
       ';'
     ),
 
     data_per_company_property: $ => seq(
-      choice('datapercompany', 'DataPerCompany', 'DATAPERCOMPANY'),
+      kw('datapercompany'),
       '=',
       field('value', $.data_per_company_value),
       ';'
     ),
 
     replicate_data_property: $ => seq(
-      choice('replicatedata', 'ReplicateData', 'REPLICATEDATA'),
+      kw('replicatedata'),
       '=',
       field('value', $.replicate_data_value),
       ';'
     ),
 
     assignment_compatibility_property: $ => seq(
-      choice('assignmentcompatibility', 'AssignmentCompatibility', 'ASSIGNMENTCOMPATIBILITY'),
+      kw('assignmentcompatibility'),
       '=',
       field('value', $.assignment_compatibility_value),
       ';'
     ),
 
     column_store_index_property: $ => seq(
-      choice('columnstoreindex', 'ColumnStoreIndex', 'COLUMNSTOREINDEX'),
+      kw('columnstoreindex'),
       '=',
       field('value', $.column_store_index_value),
       ';'
     ),
 
     compression_type_property: $ => seq(
-      choice('compressiontype', 'CompressionType', 'COMPRESSIONTYPE'),
+      kw('compressiontype'),
       '=',
       field('value', $.compression_type_value),
       ';'
     ),
 
     inherent_permissions_property: $ => seq(
-      choice('inherentpermissions', 'InherentPermissions', 'INHERENTPERMISSIONS'),
+      kw('inherentpermissions'),
       '=',
       field('value', $.inherent_permissions_value),
       ';'
     ),
 
     inherent_entitlements_property: $ => seq(
-      choice('inherententitlements', 'InherentEntitlements', 'INHERENTENTITLEMENTS'),
+      kw('inherententitlements'),
       '=',
       field('value', $.inherent_entitlements_value),
       ';'
     ),
 
     caption_ml_property: $ => seq(
-      choice('captionml', 'CaptionML', 'CAPTIONML'),
+      kw('captionml'),
       $._ml_property_template
     ),
 
     option_caption_ml_property: $ => seq(
-      choice('optioncaptionml', 'OptionCaptionML', 'OPTIONCAPTIONML'),
+      kw('optioncaptionml'),
       $._ml_property_template
     ),
 
     tool_tip_ml_property: $ => seq(
-      choice('tooltipml', 'ToolTipML', 'TOOLTIPML'),
+      kw('tooltipml'),
       $._ml_property_template
     ),
 
@@ -3010,7 +3010,7 @@ module.exports = grammar({
 
     onrun_trigger: $ => seq(
       $._trigger_keyword,
-      choice('onrun', 'OnRun', 'ONRUN'),
+      kw('onrun'),
       $._trigger_parameters,
       optional($.var_section),
       $.code_block
@@ -3053,7 +3053,7 @@ module.exports = grammar({
     test_permissions_property: $ => seq(
       'TestPermissions',
       '=',
-      choice(choice('disabled', 'Disabled', 'DISABLED'), choice('nonrestrictive', 'NonRestrictive', 'NONRESTRICTIVE'), choice('restrictive', 'Restrictive', 'RESTRICTIVE'), choice('inherentpermissions', 'InherentPermissions', 'INHERENTPERMISSIONS')),
+      choice(kw('disabled'), kw('nonrestrictive'), kw('restrictive'), kw('inherentpermissions')),
       ';'
     ),
 
@@ -3199,12 +3199,12 @@ module.exports = grammar({
     )),
 
     caption_property: $ => seq(
-      field('name', alias(choice('caption', 'Caption', 'CAPTION'), 'Caption')),
+      field('name', alias(kw('caption'), 'Caption')),
       $._caption_full_template
     ),
 
     caption_class_property: $ => seq(
-      choice('captionclass', 'CaptionClass', 'CAPTIONCLASS'),
+      kw('captionclass'),
       $._expression_property_template
     ),
 
@@ -3278,7 +3278,7 @@ module.exports = grammar({
     _unquoted_variable_name: $ => choice(
       $.identifier,
       // Allow the keyword 'Description' to be treated as an identifier in variable contexts
-      alias(choice('description', 'Description', 'DESCRIPTION'), $.identifier),
+      alias(kw('description'), $.identifier),
       // Allow the keyword 'Importance' to be treated as an identifier in variable contexts
       alias(kw('importance'), $.identifier),
       // Allow the keyword 'SourceTable' to be treated as an identifier in variable contexts
@@ -3286,14 +3286,11 @@ module.exports = grammar({
       // Allow the keyword 'IncludeCaption' to be treated as an identifier in variable contexts
       alias(kw('includecaption'), $.identifier),
       // Allow the keyword 'ExcludeCaption' to be treated as an identifier in variable contexts
-      alias(choice('excludecaption', 'ExcludeCaption', 'EXCLUDECAPTION'), $.identifier),
+      alias(kw('excludecaption'), $.identifier),
       // Allow the keyword 'SubType' to be treated as an identifier in variable contexts
-      alias('Subtype', $.identifier),
+      alias(kw('subtype'), $.identifier),
       // Allow the keyword 'Caption' to be treated as an identifier in variable contexts
-      alias(choice('caption', 'Caption', 'CAPTION'), $.identifier),
-      alias('SubType', $.identifier), 
-      alias('subtype', $.identifier),
-      alias('SUBTYPE', $.identifier),
+      alias(kw('caption'), $.identifier),
       // Allow the keyword 'TableNo' to be treated as an identifier in variable contexts
       alias(kw('tableno'), $.identifier)
     ),
@@ -3837,7 +3834,7 @@ enum_type: $ => prec(1, seq(
     const_filter: $ => prec(8, seq(
       field('field', $.field_ref),
       '=',
-      choice('const', 'CONST', 'Const'),
+      kw('const'),
       '(',
       optional(field('value', choice(
         $.string_literal,
@@ -3853,7 +3850,7 @@ enum_type: $ => prec(1, seq(
     field_filter: $ => prec(8, seq(
       field('field', $.field_ref),
       '=', 
-      choice('field', 'FIELD', 'Field'),
+      kw('field'),
       '(',
       field('value', $.field_ref),
       ')'
@@ -3880,7 +3877,7 @@ enum_type: $ => prec(1, seq(
 
 
     explicit_field_ref: $ => prec(12, seq(
-      choice('field', 'FIELD', 'Field'),
+      kw('field'),
       '(',
       field('field', $._chained_expression),
       ')'
@@ -3944,7 +3941,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     lookup_formula: $ => prec(8, seq(
-      choice('lookup', 'LOOKUP', 'Lookup'),
+      kw('lookup'),
       '(',
       field('target', choice(
         prec(12, $.member_expression),
@@ -3953,7 +3950,7 @@ enum_type: $ => prec(1, seq(
         prec(5, $.identifier)
       )),
       optional(seq(
-        choice('where', 'WHERE', 'Where'),
+        kw('where'),
         '(',
         $.lookup_where_conditions,
         ')'
@@ -3973,13 +3970,13 @@ enum_type: $ => prec(1, seq(
       choice(
         // field("No.") - extract just the field_ref part
         seq(
-          choice('field', 'FIELD', 'Field'),
+          kw('field'),
           '(',
           field('value', $.field_ref),
           ')'
         ),
         seq(
-          field('keyword', alias(choice('const', 'CONST', 'Const'), $.const)),
+          field('keyword', alias(kw('const'), $.const)),
           '(',
           optional(field('value', choice($.string_literal, $.identifier, $._quoted_identifier, $.integer))),
           ')'
@@ -4002,7 +3999,7 @@ enum_type: $ => prec(1, seq(
     field_reference_condition: $ => prec(14, seq(
       field('field', $.field_ref),
       '=',
-      choice('field', 'FIELD', 'Field'),
+      kw('field'),
       '(',
       field('reference', $.field_reference_expression),
       ')'
@@ -4017,21 +4014,21 @@ enum_type: $ => prec(1, seq(
     ),
     
     upperlimit_expression: $ => seq(
-      choice('upperlimit', 'UPPERLIMIT', 'Upperlimit'),
+      kw('upperlimit'),
       '(',
       $.field_ref,
       ')'
     ),
     
     formula_filter_expression: $ => seq(
-      choice('filter', 'FILTER', 'Filter'),
+      kw('filter'),
       '(',
       $.field_ref,
       ')'
     ),
     
     upperlimit_filter_expression: $ => seq(
-      choice('upperlimit', 'UPPERLIMIT', 'Upperlimit'),
+      kw('upperlimit'),
       '(',
       $.formula_filter_expression,
       ')'
@@ -4066,7 +4063,7 @@ enum_type: $ => prec(1, seq(
     
     // Keep the original calc-related rules for backward compatibility during migration
     count_formula: $ => seq(
-      choice('count', 'COUNT', 'Count'),
+      kw('count'),
       '(',
       field('table', alias($._table_reference, $.table_reference)),
       $.where_clause,
@@ -4074,7 +4071,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     sum_formula: $ => seq(
-      choice('sum', 'SUM', 'Sum'),
+      kw('sum'),
       '(',
       field('target', $.calc_field_ref),
       $.where_clause,
@@ -4082,7 +4079,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     average_formula: $ => seq(
-      choice('average', 'AVERAGE', 'Average'),
+      kw('average'),
       '(',
       field('target', $.calc_field_ref),
       $.where_clause,
@@ -4090,7 +4087,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     min_formula: $ => seq(
-      choice('min', 'MIN', 'Min'),
+      kw('min'),
       '(',
       field('target', $.calc_field_ref),
       $.where_clause,
@@ -4098,7 +4095,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     max_formula: $ => seq(
-      choice('max', 'MAX', 'Max'),
+      kw('max'),
       '(',
       field('target', $.calc_field_ref),
       $.where_clause,
@@ -4106,7 +4103,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     exist_formula: $ => seq(
-      choice('exist', 'EXIST', 'Exist'),
+      kw('exist'),
       '(',
       field('table', alias($._table_reference, $.table_reference)),
       $.where_clause,
@@ -4166,11 +4163,11 @@ enum_type: $ => prec(1, seq(
     field_trigger_declaration: $ => seq(
       $._trigger_keyword,
       field('type', alias(choice(
-        choice('onvalidate', 'OnValidate', 'ONVALIDATE'),
-        choice('onaftervalidate', 'OnAfterValidate', 'ONAFTERVALIDATE'),
-        choice('onlookup', 'OnLookup', 'ONLOOKUP'),
-        choice('onassistedit', 'OnAssistEdit', 'ONASSISTEDIT'),
-        choice('ondrilldown', 'OnDrillDown', 'ONDRILLDOWN')
+        kw('onvalidate'),
+        kw('onaftervalidate'),
+        kw('onlookup'),
+        kw('onassistedit'),
+        kw('ondrilldown')
       ), $.trigger_type)),
       choice(
         seq('(', optional($.parameter_list), ')'),
@@ -4379,7 +4376,7 @@ enum_type: $ => prec(1, seq(
       kw('columns')
     ),
 
-    temporary: $ => choice('temporary', 'Temporary', 'TEMPORARY'),
+    temporary: $ => kw('temporary'),
 
 
     // Define code blocks with explicit keyword handling
@@ -4535,6 +4532,7 @@ enum_type: $ => prec(1, seq(
     )),
 
     unary_expression: $ => prec.right(7, seq( // Keep at 7 but verify context
+      // WARNING: 'not' must use choice() instead of kw() to avoid precedence conflicts
       choice('+', '-', choice('not', 'NOT', 'Not')),
       $._expression
     )),
@@ -4590,7 +4588,7 @@ enum_type: $ => prec(1, seq(
 
     multiplicative_expression: $ => prec.left(7, seq(
       field('left', $._expression),
-      field('operator', choice('*', '/', 'div', 'DIV', 'Div', 'mod', 'MOD', 'Mod')),
+      field('operator', choice('*', '/', kw('div'), kw('mod'))),
       field('right', $._expression)
     )),
 
@@ -4608,6 +4606,7 @@ enum_type: $ => prec(1, seq(
 
     logical_expression: $ => choice(
       // Logical AND expression (prec 3)
+      // WARNING: logical operators must use choice() instead of kw() to avoid expression conflicts
       prec.left(3, seq(
         field('left', $._expression),
         field('operator', choice('and', 'AND', 'And')),
@@ -5226,7 +5225,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     data_item_link_reference_property: $ => seq(
-      choice('DataItemLinkReference', 'dataitemlinkreference', 'DATAITEMLINKREFERENCE'),
+      kw('DataItemLinkReference'),
       '=',
       field('value', $._flexible_identifier_choice),
       ';'
@@ -5583,6 +5582,8 @@ enum_type: $ => prec(1, seq(
       $.obsolete_tag_property,
       $.usage_category_property,
       $.subtype_property,
+      $.about_title_property,
+      $.about_text_property,
     ),
 
     // Display/UI control properties
@@ -5684,8 +5685,6 @@ enum_type: $ => prec(1, seq(
     // Query-specific properties that are unique to query objects
     _query_properties: $ => choice(
       $.query_type_property,         // Query type (Normal, API, Filter)
-      $.about_title_property,        // Teaching tip title
-      $.about_text_property,         // Teaching tip text  
       $.context_sensitive_help_page_property, // Help page reference
       $.data_access_intent_property, // Database replica access
       $.query_category_property,     // Query categorization
@@ -5766,8 +5765,6 @@ enum_type: $ => prec(1, seq(
       $.sign_displacement_property,
       $.title_property,
       $.extended_datatype_property,
-      $.about_title_property,
-      $.about_text_property,
       $.instructional_text_property,
       $.page_about_title_ml_property,
       $.page_about_text_ml_property,
@@ -5788,6 +5785,11 @@ enum_type: $ => prec(1, seq(
       $._access_properties,
       $._navigation_properties,
       $._object_specific_properties,
+      
+      // API properties needed in parts
+      $.multiplicity_property,
+      $.entity_name_property,
+      $.entity_set_name_property,
       
       // Page-specific data management properties
       $.data_caption_expression_property,
@@ -5812,9 +5814,7 @@ enum_type: $ => prec(1, seq(
       $.instructional_text_property,
       $.instructional_text_ml_property,
       $.image_property,
-      $.about_text_property,
       $.page_about_text_ml_property,
-      $.about_title_property,
       $.page_about_title_ml_property,
       
       // Page workflow properties
@@ -6033,8 +6033,6 @@ enum_type: $ => prec(1, seq(
       $._access_properties,       // access_by_permission
       
       // Action-specific properties only
-      $.about_title_property,
-      $.about_text_property,
       $.page_about_title_ml_property,
       $.page_about_text_ml_property,
       $.allowed_file_extensions_property,
@@ -6058,7 +6056,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     // Centralized trigger components for DRY principle
-    _trigger_keyword: $ => choice('trigger', 'Trigger', 'TRIGGER'),
+    _trigger_keyword: $ => kw('trigger'),
 
     // Trigger parameter patterns (simplified from '()' duplication)
     _trigger_parameters: $ => '()',
@@ -6332,7 +6330,7 @@ enum_type: $ => prec(1, seq(
 
     // Centralized case-insensitive keyword patterns for DRY principle
     _field_keyword: $ => kw('field'),
-    _filter_keyword: $ => choice('filter', 'FILTER', 'Filter'),
+    _filter_keyword: $ => kw('filter'),
     _cardpart_keyword: $ => kw('cardpart'),
     _tabledata_keyword: $ => kw('tabledata'),
     _table_permission_keyword: $ => kw('table'),
