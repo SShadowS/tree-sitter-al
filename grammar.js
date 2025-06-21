@@ -5570,6 +5570,7 @@ enum_type: $ => prec(1, seq(
 
     // Universal properties - apply to most AL object types
     _universal_properties: $ => choice(
+      // Core metadata properties
       $.caption_property,
       $.caption_ml_property,
       $.caption_class_property,
@@ -5582,8 +5583,25 @@ enum_type: $ => prec(1, seq(
       $.obsolete_tag_property,
       $.usage_category_property,
       $.subtype_property,
+      
+      // Help and documentation properties
       $.about_title_property,
       $.about_text_property,
+      $.context_sensitive_help_page_property,
+      $.additional_search_terms_property,
+      $.additional_search_terms_ml_property,
+      $.help_link_property,
+      
+      // User interface text properties
+      $.instructional_text_property,
+      $.instructional_text_ml_property,
+      
+      // Data access properties
+      $.data_access_intent_property,
+      
+      // Scope and extensibility properties
+      $.scope_property,
+      $.extensible_property,
     ),
 
     // Display/UI control properties
@@ -5685,8 +5703,6 @@ enum_type: $ => prec(1, seq(
     // Query-specific properties that are unique to query objects
     _query_properties: $ => choice(
       $.query_type_property,         // Query type (Normal, API, Filter)
-      $.context_sensitive_help_page_property, // Help page reference
-      $.data_access_intent_property, // Database replica access
       $.query_category_property,     // Query categorization
       // API-specific properties
       $.entity_caption_property,     // API entity caption
@@ -5744,7 +5760,6 @@ enum_type: $ => prec(1, seq(
       $._universal_properties,       // caption, description, obsolete_*, application_area
       $._access_properties,         // access, permissions, inherent_*
       // Enum-specific
-      $.extensible_property,
       $.assignment_compatibility_property,
       $.implementation_property,    // Interface implementations
       $.default_implementation_property, // Default interface implementation
@@ -5765,7 +5780,6 @@ enum_type: $ => prec(1, seq(
       $.sign_displacement_property,
       $.title_property,
       $.extended_datatype_property,
-      $.instructional_text_property,
       $.page_about_title_ml_property,
       $.page_about_text_ml_property,
       $.odata_edm_type_property,
@@ -5793,9 +5807,7 @@ enum_type: $ => prec(1, seq(
       
       // Page-specific data management properties
       $.data_caption_expression_property,
-      $.data_access_intent_property,
       $.data_caption_fields_property,
-      $.extensible_property,
       
       // Page behavior properties
       $.delete_allowed_property,
@@ -5811,8 +5823,6 @@ enum_type: $ => prec(1, seq(
       $.populate_all_fields_property,
       
       // Page UI properties
-      $.instructional_text_property,
-      $.instructional_text_ml_property,
       $.image_property,
       $.page_about_text_ml_property,
       $.page_about_title_ml_property,
@@ -5846,14 +5856,9 @@ enum_type: $ => prec(1, seq(
       $.multiplicity_property,
       
       // Help and documentation properties
-      $.context_sensitive_help_page_property,
-      $.help_link_property,
       $.is_preview_property,
-      $.additional_search_terms_property,
-      $.additional_search_terms_ml_property,
       
       // Page action properties
-      $.scope_property,
       $.promoted_property,
       $.promoted_category_property,
       $.promoted_only_property,
@@ -5889,7 +5894,6 @@ enum_type: $ => prec(1, seq(
       
       // Table-specific data management properties
       $.data_caption_fields_property,
-      $.extensible_property,
       $.column_store_index_property,
       $.compression_type_property,
       // Note: data_per_company_property and replicate_data_property are in _object_specific_properties
@@ -5932,9 +5936,6 @@ enum_type: $ => prec(1, seq(
       $._object_specific_properties,
       
       // Report-specific properties
-      $.scope_property,
-      $.additional_search_terms_property,
-      $.additional_search_terms_ml_property,
       
       // Report layout properties (critical)
       $.default_layout_property,
@@ -5945,7 +5946,6 @@ enum_type: $ => prec(1, seq(
       
       // Report execution properties
       $.allow_scheduling_property,
-      $.data_access_intent_property,
       $.preview_mode_property,
       $.show_print_status_property,
       $.transaction_type_property,
@@ -6051,7 +6051,6 @@ enum_type: $ => prec(1, seq(
       $.promoted_only_property,
       $.run_page_mode_property,
       $.run_page_on_rec_property,
-      $.scope_property,
       $.show_as_property,
     ),
 
