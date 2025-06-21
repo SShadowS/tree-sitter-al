@@ -1830,13 +1830,15 @@ module.exports = grammar({
       $.preproc_if,
       repeat(choice(
         $.permission_entry,
-        seq(',', $.permission_entry)
+        seq(',', $.permission_entry),
+        $.pragma
       )),
       optional(seq(
         $.preproc_else,
         repeat(choice(
           $.permission_entry,
-          seq(',', $.permission_entry)
+          seq(',', $.permission_entry),
+          $.pragma
         ))
       )),
       $.preproc_endif
