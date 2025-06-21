@@ -3037,6 +3037,7 @@ module.exports = grammar({
       
       // Procedures
       seq(optional($.attribute_list), $.procedure),
+      $.preproc_conditional_procedures,
       
       // All table properties now centralized
       $._table_properties,
