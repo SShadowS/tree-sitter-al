@@ -40,6 +40,30 @@ function _modification_without_target_template(keyword, content_repeater) {
   );
 }
 
+// Generic template for property definitions (PropertyName = Value;)
+function _value_property_template(name_rule, value_rule) {
+  return $ => seq(
+    typeof name_rule === 'string' ? name_rule : name_rule($),
+    '=',
+    field('value', value_rule($)),
+    ';'
+  );
+}
+
+// Generic template for preprocessor conditional blocks
+function _preproc_conditional_block_template(content_rule, use_repeat1 = false) {
+  const repeater = use_repeat1 ? repeat1 : repeat;
+  return $ => seq(
+    $.preproc_if,
+    repeater(content_rule($)),
+    optional(seq(
+      $.preproc_else,
+      repeater(content_rule($))
+    )),
+    $.preproc_endif
+  );
+}
+
 module.exports = grammar({
   name: "al",
 
@@ -142,27 +166,17 @@ module.exports = grammar({
       kw('both')
     ),
 
-    direction_property: $ => seq(
-      'Direction',
-      '=',
-      field('value', $.direction_value),
-      ';'
-    ),
+    direction_property: _value_property_template('Direction', $ => $.direction_value),
     
     format_value: $ => choice(
-      kw('xml', 3),
-      kw('variable', 3),
-      kw('variabletext', 3),
-      kw('fixed', 3),
-      kw('fixedtext', 3)
+      kw('xml', 1),
+      kw('variable', 1),
+      kw('variabletext', 1),
+      kw('fixed', 1),
+      kw('fixedtext', 1)
     ),
 
-    format_property: $ => seq(
-      kw('Format', 10),
-      '=',
-      field('value', $.format_value),
-      ';'
-    ),
+    format_property: _value_property_template($ => kw('Format', 10), $ => $.format_value),
 
     
     xmlport_schema_element: $ => seq(
@@ -255,7 +269,7 @@ module.exports = grammar({
     // 19. RequestFilterHeadingML Property
     request_filter_heading_ml_property: $ => seq(
       'RequestFilterHeadingML',
-      $._ml_simple_template
+      $._ml_property_template
     ),
     
     // 6. LinkTable Property
@@ -273,12 +287,7 @@ module.exports = grammar({
       kw('unbounded')
     ),
     
-    max_occurs_property: $ => seq(
-      'MaxOccurs',
-      '=',
-      field('value', $.max_occurs_value),
-      ';'
-    ),
+    max_occurs_property: _value_property_template('MaxOccurs', $ => $.max_occurs_value),
     
     // 9. MinOccurs Property
     min_occurs_value: $ => choice(
@@ -287,12 +296,7 @@ module.exports = grammar({
       kw('zero')
     ),
     
-    min_occurs_property: $ => seq(
-      'MinOccurs',
-      '=',
-      field('value', $.min_occurs_value),
-      ';'
-    ),
+    min_occurs_property: _value_property_template('MinOccurs', $ => $.min_occurs_value),
     
     // 10. NamespacePrefix Property
     namespace_prefix_property: $ => seq(
@@ -2402,12 +2406,7 @@ module.exports = grammar({
       $._boolean_property_template
     ),
     
-    column_span_property: $ => seq(
-      'ColumnSpan',
-      '=',
-      field('value', $.column_span_value),
-      ';'
-    ),
+    column_span_property: _value_property_template('ColumnSpan', $ => $.column_span_value),
     
     drill_down_property: $ => seq(
       'DrillDown',
@@ -2429,12 +2428,7 @@ module.exports = grammar({
       $._boolean_property_template
     ),
     
-    importance_property: $ => seq(
-      choice('importance', 'Importance', 'IMPORTANCE'),
-      '=',
-      field('value', $.importance_value),
-      ';'
-    ),
+    importance_property: _value_property_template($ => choice('importance', 'Importance', 'IMPORTANCE'), $ => $.importance_value),
 
     navigation_page_id_property: $ => seq(
       'NavigationPageId',
@@ -2480,17 +2474,9 @@ module.exports = grammar({
       $._expression_property_template
     ),
 
-    style_property: $ => seq(
-      'Style',
-      '=',
-      field('value', $.style_value),
-      ';'
-    ),
+    style_property: _value_property_template('Style', $ => $.style_value),
 
-    style_expr_property: $ => seq(
-      'StyleExpr',
-      '=',
-      field('value', choice(
+    style_expr_property: _value_property_template('StyleExpr', $ => choice(
         $.string_literal,
         $.identifier,
         $._quoted_identifier,
@@ -2500,8 +2486,6 @@ module.exports = grammar({
         $.comparison_expression,
         $.qualified_enum_value
       )),
-      ';'
-    ),
 
     page_id_value: $ => choice(
       $.integer,
@@ -2989,17 +2973,17 @@ module.exports = grammar({
 
     caption_ml_property: $ => seq(
       choice('captionml', 'CaptionML', 'CAPTIONML'),
-      $._ml_simple_template
+      $._ml_property_template
     ),
 
     option_caption_ml_property: $ => seq(
       choice('optioncaptionml', 'OptionCaptionML', 'OPTIONCAPTIONML'),
-      $._ml_simple_template
+      $._ml_property_template
     ),
 
     tool_tip_ml_property: $ => seq(
       choice('tooltipml', 'ToolTipML', 'TOOLTIPML'),
-      $._ml_simple_template
+      $._ml_property_template
     ),
 
     ml_value_list: $ => seq(
@@ -3519,7 +3503,7 @@ enum_type: $ => prec(1, seq(
       prec(1, kw('time')),
       prec(1, kw('datetime')),
       prec(1, kw('duration')),
-      kw('dateformula', 1),
+      kw('dateformula'),
       
       // Other Types
       prec(1, kw('boolean')),
@@ -3547,7 +3531,7 @@ enum_type: $ => prec(1, seq(
       prec(1, kw('keyref')), 
 
       // XML Types
-      kw('xmldocument', 1),
+      kw('xmldocument'),
       prec(1, kw('xmlnode')),
       prec(1, kw('xmlelement')),
       prec(1, kw('xmlnodelist')),
@@ -4412,15 +4396,7 @@ enum_type: $ => prec(1, seq(
       $.pragma
     ),
 
-    preproc_conditional_statements: $ => seq(
-      $.preproc_if,
-      repeat($._statement),
-      optional(seq(
-        $.preproc_else,
-        repeat($._statement)
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_statements: _preproc_conditional_block_template($ => $._statement),
 
     _expression_statement: $ => $._expression, // New rule
 
@@ -4746,15 +4722,7 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
-    preproc_conditional_case: $ => seq(
-      $.preproc_if,
-      repeat1($.case_branch),
-      optional(seq(
-        $.preproc_else,
-        repeat1($.case_branch)
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_case: _preproc_conditional_block_template($ => $.case_branch, true),
 
     // _case_pattern now directly handles single or multiple patterns
     // Updated to handle pragmas that may split pattern lists
@@ -4867,7 +4835,7 @@ enum_type: $ => prec(1, seq(
 
     // DATABASE references (DATABASE::Customer pattern)
     database_reference: $ => prec.left(9, seq(
-      kw('database', 10),
+      kw('database', 5),
       '::',
       field('table_name', $._identifier_choice)
     )),
@@ -5338,200 +5306,61 @@ enum_type: $ => prec(1, seq(
     ),
 
     // Preprocessor conditional rules for layout sections
-    preproc_conditional_layout: $ => seq(
-      $.preproc_if,
-      repeat($._layout_element),
-      optional(seq(
-        $.preproc_else,
-        repeat($._layout_element)
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_layout: _preproc_conditional_block_template($ => $._layout_element),
 
     // Preprocessor conditional rules for properties
-    preproc_conditional_properties: $ => seq(
-      $.preproc_if,
-      repeat($._page_properties),
-      optional(seq(
-        $.preproc_else,
-        repeat($._page_properties)
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_properties: _preproc_conditional_block_template($ => $._page_properties),
 
     // Preprocessor conditional rules for object-level properties
-    preproc_conditional_object_properties: $ => seq(
-      $.preproc_if,
-      repeat($.property),
-      optional(seq(
-        $.preproc_else,
-        repeat($.property)
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_object_properties: _preproc_conditional_block_template($ => $.property),
 
     // Preprocessor conditional rules for table properties
-    preproc_conditional_table_properties: $ => seq(
-      $.preproc_if,
-      repeat($._table_properties),
-      optional(seq(
-        $.preproc_else,
-        repeat($._table_properties)
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_table_properties: _preproc_conditional_block_template($ => $._table_properties),
 
     // Preprocessor conditional rules for page properties
-    preproc_conditional_page_properties: $ => seq(
-      $.preproc_if,
-      repeat($._page_properties),
-      optional(seq(
-        $.preproc_else,
-        repeat($._page_properties)
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_page_properties: _preproc_conditional_block_template($ => $._page_properties),
 
     // Preprocessor conditional rules for report properties
-    preproc_conditional_report_properties: $ => seq(
-      $.preproc_if,
-      repeat($._report_properties),
-      optional(seq(
-        $.preproc_else,
-        repeat($._report_properties)
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_report_properties: _preproc_conditional_block_template($ => $._report_properties),
 
     // Preprocessor conditional rules for xmlport properties
-    preproc_conditional_xmlport_properties: $ => seq(
-      $.preproc_if,
-      repeat($._xmlport_properties),
-      optional(seq(
-        $.preproc_else,
-        repeat($._xmlport_properties)
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_xmlport_properties: _preproc_conditional_block_template($ => $._xmlport_properties),
 
     // Preprocessor conditional rules for query properties
-    preproc_conditional_query_properties: $ => seq(
-      $.preproc_if,
-      repeat(choice($._universal_properties, $._query_properties, $.property_list)),
-      optional(seq(
-        $.preproc_else,
-        repeat(choice($._universal_properties, $._query_properties, $.property_list))
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_query_properties: _preproc_conditional_block_template($ => choice($._universal_properties, $._query_properties, $.property_list)),
 
     // Preprocessor conditional rules for enum properties
-    preproc_conditional_enum_properties: $ => seq(
-      $.preproc_if,
-      repeat($._enum_properties),
-      optional(seq(
-        $.preproc_else,
-        repeat($._enum_properties)
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_enum_properties: _preproc_conditional_block_template($ => $._enum_properties),
 
     // Preprocessor conditional rules for permissionset properties
-    preproc_conditional_permissionset_properties: $ => seq(
-      $.preproc_if,
-      repeat(choice($._permissionset_properties, $.property_list)),
-      optional(seq(
-        $.preproc_else,
-        repeat(choice($._permissionset_properties, $.property_list))
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_permissionset_properties: _preproc_conditional_block_template($ => choice($._permissionset_properties, $.property_list)),
 
     // Preprocessor conditional rules for controladdin properties
-    preproc_conditional_controladdin_properties: $ => seq(
-      $.preproc_if,
-      repeat(choice($._controladdin_properties, $.property_list)),
-      optional(seq(
-        $.preproc_else,
-        repeat(choice($._controladdin_properties, $.property_list))
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_controladdin_properties: _preproc_conditional_block_template($ => choice($._controladdin_properties, $.property_list)),
 
-    preproc_conditional_entitlement_properties: $ => seq(
-      $.preproc_if,
-      repeat(choice($._entitlement_properties, $.property_list)),
-      optional(seq(
-        $.preproc_else,
-        repeat(choice($._entitlement_properties, $.property_list))
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_entitlement_properties: _preproc_conditional_block_template($ => choice($._entitlement_properties, $.property_list)),
 
     // Preprocessor conditional rules for profile properties
-    preproc_conditional_profile_properties: $ => seq(
-      $.preproc_if,
-      repeat(choice($._profile_properties, $.property_list)),
-      optional(seq(
-        $.preproc_else,
-        repeat(choice($._profile_properties, $.property_list))
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_profile_properties: _preproc_conditional_block_template($ => choice($._profile_properties, $.property_list)),
 
     // Preprocessor conditional rules for actions
-    preproc_conditional_actions: $ => seq(
-      $.preproc_if,
-      repeat(choice(
+    preproc_conditional_actions: _preproc_conditional_block_template($ => choice(
         $._action_element,
         $._action_group,
         $.action_group_section,
         $.area_action_section
       )),
-      optional(seq(
-        $.preproc_else,
-        repeat(choice(
-          $._action_element,
-          $._action_group,
-          $.action_group_section,
-          $.area_action_section
-        ))
-      )),
-      $.preproc_endif
-    ),
 
     // Preprocessor conditional rules for variable declarations
-    preproc_conditional_variables: $ => seq(
-      $.preproc_if,
-      repeat(choice(
+    preproc_conditional_variables: _preproc_conditional_block_template($ => choice(
         $.variable_declaration,
         $.comment,
         $.multiline_comment,
         $.attribute_list,
         $.pragma
       )),
-      optional(seq(
-        $.preproc_else,
-        repeat(choice(
-          $.variable_declaration,
-          $.comment,
-          $.multiline_comment,
-          $.attribute_list,
-          $.pragma
-        ))
-      )),
-      $.preproc_endif
-    ),
 
-    preproc_conditional_field_properties: $ => seq(
-      $.preproc_if,
-      repeat($._field_properties),
-      optional(seq(
-        $.preproc_else,
-        repeat($._field_properties)
-      )),
-      $.preproc_endif
-    ),
+    preproc_conditional_field_properties: _preproc_conditional_block_template($ => $._field_properties),
 
     preproc_if: $ => seq(
       choice('#if', '#IF', '#If'),
@@ -6292,10 +6121,10 @@ enum_type: $ => prec(1, seq(
     ),
 
     // Explicit keyword rules for multiplicity values
-    zeroorone_keyword: $ => kw('zeroorone', 3),
-    zeroormany_keyword: $ => kw('zeroormany', 3),
-    one_keyword: $ => kw('one', 3),
-    many_keyword: $ => kw('many', 3),
+    zeroorone_keyword: $ => kw('zeroorone', 1),
+    zeroormany_keyword: $ => kw('zeroormany', 1),
+    one_keyword: $ => kw('one', 1),
+    many_keyword: $ => kw('many', 1),
 
     _multiplicity_enum_template: $ => seq(
       '=',
@@ -6332,12 +6161,15 @@ enum_type: $ => prec(1, seq(
 
 
 
-    // Caption property templates for consolidation
-    _caption_string_template: $ => seq(
+    // String value template (used for simple string properties)
+    _string_value_template: $ => seq(
       '=',
       field('value', $.string_literal),
       ';'
     ),
+
+    // DEPRECATED: Use _string_value_template instead
+    _caption_string_template: $ => $._string_value_template,
 
     _caption_full_template: $ => seq(
       '=',
@@ -6425,19 +6257,9 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    // Alternative ML template without field wrapper (for some properties)
-    _ml_simple_template: $ => seq(
-      '=',
-      $.ml_value_list,
-      ';'
-    ),
-
+    // DEPRECATED: Use _string_value_template instead
     // Unified name property template for entity names
-    _name_property_template: $ => seq(
-      '=',
-      field('value', $.string_literal),
-      ';'
-    ),
+    _name_property_template: $ => $._string_value_template,
 
     // Unified integer property template for integer-only properties
     _integer_property_template: $ => seq(

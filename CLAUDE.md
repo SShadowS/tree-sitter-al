@@ -6,7 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central. The project provides grammar definitions to enable syntax highlighting, code analysis, and language tooling support.
 
-**Current status**: 87.4% success rate (13,426 out of 15,358 production AL files from BC.History parse successfully)
+**Current status**: 
+- Production files: 87.4% success rate (13,426 out of 15,358 production AL files from BC.History parse successfully)
+- Test suite: 99.1% success rate (559 out of 564 tests passing)
+- Known limitation: 5 tests fail where keywords are used as variable names (by design)
 
 ## Development Commands
 
@@ -166,6 +169,17 @@ Dont put comments in the parse tree, as they are not supported by tree-sitter.
 - Leverage `choice`, `seq`, `optional`, `repeat` combinators
 - **DRY Principle**: Properties now defined once in semantic categories, used everywhere appropriate
 
+### Helper Functions
+- **`kw(word, precedence = null)`**: Creates case-insensitive keywords using RustRegex
+  - Example: `kw('table')` matches 'table', 'Table', 'TABLE', etc.
+  - Optional precedence: `kw('dotnet', 100)` for high-precedence keywords
+  - Use for all AL keywords to ensure case-insensitive parsing
+
+### Template Functions
+- **`_modification_with_target_template(keyword, content_repeater)`**: For patterns like `addafter(target) { content }`
+- **`_modification_without_target_template(keyword, content_repeater)`**: For patterns like `addfirst { content }`
+- These templates reduce duplication for modification patterns
+
 ### Property Development Workflow
 **Adding New Properties** (follow centralized architecture):
 1. Determine its primary semantic category (e.g., universal, display, validation, data, navigation, access). Some properties might be semantically tied to specific object types; these are still defined centrally but grouped into more specialized semantic categories.
@@ -199,8 +213,9 @@ The most frequent parsing failures occur when:
 
 ### Fix Pattern
 1. Check if property rule exists in grammar.js
-2. Add case variations: `choice('PropertyName', 'propertyname', 'PROPERTYNAME')`
-   or `choice('PropertyId', 'PropertyID', 'propertyid', 'PROPERTYNAID')`
+2. Use `kw()` function for case-insensitive keywords: `kw('PropertyName')`
+   - For high-precedence keywords: `kw('PropertyName', 10)`
+   - Replaces old pattern: `choice('PropertyName', 'propertyname', 'PROPERTYNAME')`
 3. Wrap value in field: `field('value', $.property_value)`
 4. Add property to appropriate semantic category list(s) (e.g., `_universal_properties`, `_dataitem_properties`, `_page_properties`, etc.)
 5. Property automatically becomes available in composed groups
