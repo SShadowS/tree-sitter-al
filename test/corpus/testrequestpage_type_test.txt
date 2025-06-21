@@ -51,7 +51,8 @@ codeunit 50000 "TestRequestPage Test"
         (attribute
           attribute_name: (identifier)))
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (var_section
           (variable_declaration
             name: (identifier)
@@ -64,7 +65,8 @@ codeunit 50000 "TestRequestPage Test"
         (attribute
           attribute_name: (identifier)))
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (var_section
           (variable_declaration
             name: (identifier)
@@ -77,7 +79,8 @@ codeunit 50000 "TestRequestPage Test"
         (attribute
           attribute_name: (identifier)))
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (var_section
           (variable_declaration
             name: (identifier)
@@ -90,11 +93,13 @@ codeunit 50000 "TestRequestPage Test"
         (attribute
           attribute_name: (identifier)))
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
             modifier: (modifier)
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (testrequestpage_type
                 reference: (quoted_identifier)))))
@@ -120,11 +125,13 @@ codeunit 50000 "TestRequestPage Test"
             arguments: (expression_list
               (string_literal)))))
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
             modifier: (modifier)
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (testrequestpage_type
                 reference: (quoted_identifier)))))

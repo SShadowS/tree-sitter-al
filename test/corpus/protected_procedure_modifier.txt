@@ -33,7 +33,8 @@ codeunit 50100 "Test Codeunit"
     (attributed_procedure
       (procedure
         modifier: (procedure_modifier)
-        name: (name)
+        name: (name
+          (identifier))
         (return_value
           return_value: (identifier))
         return_type: (return_type
@@ -45,12 +46,14 @@ codeunit 50100 "Test Codeunit"
     (attributed_procedure
       (procedure
         modifier: (procedure_modifier)
-        name: (name)
+        name: (name
+          (identifier))
         (code_block)))
     (attributed_procedure
       (procedure
         modifier: (procedure_modifier)
-        name: (name)
+        name: (name
+          (identifier))
         (code_block)))
     (var_section
       (variable_declaration

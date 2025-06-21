@@ -53,15 +53,18 @@ codeunit 6466 "Serv. Page Management"
               (boolean)))))
       (procedure
         modifier: (procedure_modifier)
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (recordref_type)))
           (parameter
             modifier: (modifier)
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (basic_type))))
         (code_block)))))

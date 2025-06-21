@@ -40,7 +40,8 @@ report 13 "VAT Register"
       (string_literal))
     (usage_category_property
       value: (usage_category_value))
-    (data_access_intent_property)
+    (data_access_intent_property
+      value: (identifier))
     (dataset_section
       (report_dataitem_section
         name: (quoted_identifier)
@@ -87,7 +88,8 @@ report 14 "Test Report"
     object_name: (quoted_identifier)
     (caption_property
       (string_literal))
-    (data_access_intent_property)
+    (data_access_intent_property
+      value: (identifier))
     (dataset_section
       (report_dataitem_section
         name: (identifier)

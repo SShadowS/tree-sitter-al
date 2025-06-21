@@ -39,8 +39,7 @@ page 50000 "Test Page"
             (caption_property
               (string_literal))
             (min_value_property
-              value: (min_value_value
-                (integer)))))))))
+              value: (integer))))))))
 
 ================================================================================
 Page field with MaxValue property using expression
@@ -84,11 +83,9 @@ page 50001 "Test Page 2"
             (caption_property
               (string_literal))
             (max_value_property
-              value: (max_value_value
-                (integer)))
+              value: (integer))
             (min_value_property
-              value: (min_value_value
-                (integer)))))))))
+              value: (integer))))))))
 
 ================================================================================
 Page field with MinValue using decimal and variable expression
@@ -132,11 +129,9 @@ page 50002 "Test Page 3"
             (caption_property
               (string_literal))
             (min_value_property
-              value: (min_value_value
-                (decimal)))
+              value: (decimal))
             (max_value_property
-              value: (max_value_value
-                (identifier)))))))))
+              value: (identifier))))))))
 
 ================================================================================
 Page field with control name and MinValue property
@@ -178,8 +173,7 @@ page 50003 "Test Page 4"
             (caption_property
               (string_literal))
             (min_value_property
-              value: (min_value_value
-                (integer)))))))))
+              value: (integer))))))))
 
 ================================================================================
 Page field with complex expression in MaxValue
@@ -225,14 +219,12 @@ page 50004 "Test Page 5"
             (caption_property
               (string_literal))
             (min_value_property
-              value: (min_value_value
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list))))
+              value: (call_expression
+                function: (identifier)
+                arguments: (argument_list)))
             (max_value_property
-              value: (max_value_value
-                (multiplicative_expression
-                  left: (call_expression
-                    function: (identifier)
-                    arguments: (argument_list))
-                  right: (identifier))))))))))
+              value: (multiplicative_expression
+                left: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                right: (identifier)))))))))

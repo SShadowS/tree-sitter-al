@@ -24,7 +24,8 @@ codeunit 50000 "WITH Test"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (var_section
           (variable_declaration
             name: (identifier)
@@ -64,7 +65,8 @@ codeunit 50001 "WITH Single Test"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (var_section
           (variable_declaration
             name: (identifier)
@@ -105,7 +107,8 @@ codeunit 50002 "Nested WITH Test"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (var_section
           (variable_declaration
             name: (identifier)

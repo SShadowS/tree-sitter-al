@@ -108,7 +108,8 @@ page 50001 "Test Page"
             value: (string_literal))
           (entity_set_name_property
             value: (string_literal))
-          (multiplicity_property)
+          (multiplicity_property
+            value: (identifier))
           (sub_page_link_property
             value: (run_page_link_value
               field: (identifier)
@@ -151,15 +152,18 @@ page 50002 "Test Page"
         (part_section
           name: (identifier)
           page_name: (quoted_identifier)
-          (multiplicity_property))
+          (multiplicity_property
+            value: (identifier)))
         (part_section
           name: (identifier)
           page_name: (quoted_identifier)
-          (multiplicity_property))
+          (multiplicity_property
+            value: (identifier)))
         (part_section
           name: (identifier)
           page_name: (quoted_identifier)
-          (multiplicity_property))))))
+          (multiplicity_property
+            value: (identifier)))))))
 
 ================================================================================
 Complete API page with all properties

@@ -36,7 +36,8 @@ codeunit 123 "Character Validation Test"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (var_section
           (variable_declaration
             name: (identifier)

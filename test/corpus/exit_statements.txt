@@ -38,13 +38,15 @@ codeunit 50200 "Exit Statements Test"
     (quoted_identifier)
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (code_block
           (exit_statement)
           (comment))))
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (return_type
           (type_specification
             (basic_type)))
@@ -54,7 +56,8 @@ codeunit 50200 "Exit Statements Test"
           (comment))))
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (return_type
           (type_specification
             (basic_type)))
@@ -72,7 +75,8 @@ codeunit 50200 "Exit Statements Test"
           (comment))))
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (return_type
           (type_specification
             (record_type

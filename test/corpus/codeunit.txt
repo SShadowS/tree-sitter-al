@@ -30,14 +30,17 @@ codeunit 50100 "My Test Codeunit"
               (string_literal))))))
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (parameter_list
           (parameter
-            (name)
+            (name
+              (identifier))
             (type_specification
               (basic_type)))
           (parameter
-            (name)
+            (name
+              (identifier))
             (type_specification
               (basic_type))))
         (return_type

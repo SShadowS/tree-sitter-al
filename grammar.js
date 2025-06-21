@@ -7,14 +7,19 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+// Helper function for explicit identifiers
+function ident() {
+  return token(/[A-Za-z_][A-Za-z0-9_]*/);
+}
+
 module.exports = grammar({
   name: "al",
+
 
   conflicts: $ => [
     [$._source_content, $.preproc_conditional_using]
   ],
 
-  word: $ => $.identifier,
   extras: $ => [new RustRegex('\\s'), new RustRegex('\\uFEFF'), $.comment, $.multiline_comment, $.pragma],
 
   rules: {
@@ -67,7 +72,7 @@ module.exports = grammar({
     ),
 
     namespace_declaration: $ => seq(
-      new RustRegex('(?i)namespace'),
+      choice('namespace', 'Namespace', 'NAMESPACE'),
       field('name', $.namespace_name),
       ';'
     ),
@@ -84,7 +89,7 @@ module.exports = grammar({
     ),
     
     xmlport_declaration: $ => seq(
-      new RustRegex('(?i)xmlport'),
+      choice('xmlport', 'XMLport', 'XMLPORT'),
       $._object_header_base,
       '{',
       repeat($._xmlport_element),
@@ -130,22 +135,6 @@ module.exports = grammar({
       ';'
     ),
 
-    page_type_value: $ => choice(
-      new RustRegex('(?i)card'),
-      new RustRegex('(?i)list'),
-      new RustRegex('(?i)rolecenter'),
-      new RustRegex('(?i)worksheet'),
-      new RustRegex('(?i)standarddialog'),
-      new RustRegex('(?i)confirmdialog'),
-      new RustRegex('(?i)navigationpane'),
-      new RustRegex('(?i)headlines'),
-      new RustRegex('(?i)document'),
-      new RustRegex('(?i)api'),
-      new RustRegex('(?i)cardpart'),
-      $.string_literal,
-      $.identifier,
-      $._quoted_identifier
-    ),
     
     xmlport_schema_element: $ => seq(
       new RustRegex('(?i)schema'),
@@ -161,7 +150,7 @@ module.exports = grammar({
         new RustRegex('(?i)textelement')
       ),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       optional(seq(
         ';',
         field('source_table', choice(
@@ -222,7 +211,7 @@ module.exports = grammar({
     request_filter_fields_value: $ => $._identifier_choice_list,
     
     request_filter_fields_property: $ => seq(
-      choice('RequestFilterFields', 'requestfilterfields'),
+      new RustRegex('(?i)requestfilterfields'),
       '=',
       field('value', $.request_filter_fields_value),
       ';'
@@ -230,7 +219,7 @@ module.exports = grammar({
     
     // 18. RequestFilterHeading Property
     request_filter_heading_property: $ => seq(
-      choice('RequestFilterHeading', 'requestfilterheading'),
+      new RustRegex('(?i)requestfilterheading'),
       $._string_property_template
     ),
     
@@ -322,7 +311,7 @@ module.exports = grammar({
     ),
     
     field_mapping: $ => seq(
-      choice($.identifier, $._quoted_identifier),
+      $._identifier_choice,
       '=',
       choice(
         $.identifier, 
@@ -331,17 +320,17 @@ module.exports = grammar({
         seq(
           $._field_keyword,
           '(',
-          choice($.identifier, $._quoted_identifier, $.string_literal),
+          $._flexible_identifier_choice,
           ')'
         )
       )
     ),
 
     enum_declaration: $ => seq(
-      new RustRegex('(?i)enum'),
+      choice('enum', 'Enum', 'ENUM'),
       $._object_header_base,
       optional(seq(
-        new RustRegex('(?i)implements'),
+        choice('implements', 'Implements', 'IMPLEMENTS'),
         field('interface', $._identifier_choice)
       )),
       '{',
@@ -354,9 +343,9 @@ module.exports = grammar({
     ),
 
     enumextension_declaration: $ => seq(
-      new RustRegex('(?i)enumextension'),
+      choice('enumextension', 'EnumExtension', 'ENUMEXTENSION'),
       $._object_header_base,
-      new RustRegex('(?i)extends'),
+      choice('extends', 'Extends', 'EXTENDS'),
       field('base_object', $._identifier_choice),
       '{',
       repeat($.enum_value_declaration),
@@ -364,7 +353,7 @@ module.exports = grammar({
     ),
 
     enum_value_declaration: $ => seq(
-      new RustRegex('(?i)value'),
+      choice('value', 'Value', 'VALUE'),
       '(',
       field('value_id', $.integer),
       ';',
@@ -376,7 +365,7 @@ module.exports = grammar({
     ),
 
     query_declaration: $ => seq(
-      new RustRegex('(?i)query'),
+      choice('query', 'Query', 'QUERY'),
       $._object_header_base,
       '{',
       repeat($._query_element),
@@ -410,7 +399,7 @@ module.exports = grammar({
     // Page-specific version of AboutTextML
     page_about_text_ml_property: $ => seq(
       'AboutTextML',
-      $._about_ml_template
+      $._ml_property_template
     ),
 
     // CONSOLIDATED: page_about_title_property → about_title_property
@@ -418,7 +407,7 @@ module.exports = grammar({
     // Page-specific version of AboutTitleML
     page_about_title_ml_property: $ => seq(
       'AboutTitleML',
-      $._about_ml_template
+      $._ml_property_template
     ),
 
     // Delete Allowed Property
@@ -492,14 +481,7 @@ module.exports = grammar({
 
     prompt_mode_property: $ => seq(
       'PromptMode',
-      '=',
-      field('value', choice(
-        new RustRegex('(?i)auto'),
-        new RustRegex('(?i)always'),
-        new RustRegex('(?i)never'),
-        new RustRegex('(?i)generate')
-      )),
-      ';'
+      $._auto_always_never_enum_template
     ),
 
     refresh_on_activate_property: $ => seq(
@@ -563,16 +545,8 @@ module.exports = grammar({
     ),
 
     multiplicity_property: $ => seq(
-      choice('Multiplicity', 'multiplicity', 'MULTIPLICITY'),
-      '=',
-      field('value', choice(
-        new RustRegex('(?i)zeroorone'),  // ZeroOrOne
-        new RustRegex('(?i)zeroormany'),  // ZeroOrMany
-        new RustRegex('(?i)one'),  // One
-        new RustRegex('(?i)many'),  // Many
-        $.identifier
-      )),
-      ';'
+      new RustRegex('(?i)multiplicity'),
+      $._multiplicity_enum_template
     ),
 
     api_group_property: $ => seq(
@@ -618,25 +592,12 @@ module.exports = grammar({
 
     data_access_intent_property: $ => seq(
       new RustRegex('(?i)dataaccessintent'),
-      '=',
-      field('value', choice(
-        new RustRegex('(?i)readonly'),
-        new RustRegex('(?i)readwrite'),
-        $.identifier,
-        $._quoted_identifier
-      )),
-      ';'
+      $._access_level_enum_template
     ),
 
     query_type_property: $ => seq(
       new RustRegex('(?i)querytype'),
-      '=',
-      field('value', choice(
-        new RustRegex('(?i)normal'),
-        new RustRegex('(?i)api'),
-        new RustRegex('(?i)filter')
-      )),
-      ';'
+      $._query_type_enum_template
     ),
 
     // SourceTableView components
@@ -666,7 +627,7 @@ module.exports = grammar({
     sorting_element: $ => prec(3, seq(
       field('sort_order', alias($.identifier, $.sort_order)),
       '(',
-      field('field', choice($.identifier, $._quoted_identifier)),
+      field('field', $._identifier_choice),
       ')'
     )),
     
@@ -694,24 +655,15 @@ module.exports = grammar({
     filter_expression_function: $ => seq(
       $._filter_keyword,
       '(',
-      field('value', choice(
-        $.filter_or_expression,
-        $.filter_not_equal_expression,
-        $.filter_equal_expression,
-        $.filter_range_expression,
-        $.integer,
-        $.string_literal,
-        $._quoted_identifier,
-        $.identifier
-      )),
+      field('value', $._filter_value),
       ')'
     ),
 
-    filter_or_expression: $ => prec(10, seq(
-      choice($.integer, $.identifier, $._quoted_identifier, $.string_literal),
+    filter_or_expression: $ => prec(8, seq(
+      $._extended_value_choice,
       repeat1(seq(
         '|',
-        choice($.integer, $.identifier, $._quoted_identifier, $.string_literal)
+        $._extended_value_choice
       ))
     )),
 
@@ -736,9 +688,21 @@ module.exports = grammar({
     ),
 
     filter_range_expression: $ => seq(
-      optional(field('start', choice($.integer, $.identifier, $._quoted_identifier, $.string_literal))),
+      optional(field('start', $._extended_value_choice)),
       '..',
-      optional(field('end', choice($.integer, $.identifier, $._quoted_identifier, $.string_literal)))
+      optional(field('end', $._extended_value_choice))
+    ),
+
+    // Unified filter value pattern - used in all FILTER() contexts
+    _filter_value: $ => choice(
+      $.filter_or_expression,
+      $.filter_not_equal_expression, 
+      $.filter_equal_expression,
+      $.filter_range_expression,
+      $.identifier,
+      $._quoted_identifier,
+      $.integer,
+      $.string_literal
     ),
 
     const_expression: $ => seq(
@@ -786,8 +750,8 @@ module.exports = grammar({
       )
     ),
     
-    source_table_view_property: $ => prec(10, seq(
-      choice('SourceTableView', 'sourcetableview', 'SOURCETABLEVIEW'),
+    source_table_view_property: $ => prec(8, seq(
+      choice('sourcetableview', 'SourceTableView', 'SOURCETABLEVIEW'),
       '=',
       field('value', $.source_table_view_value),
       ';'
@@ -803,16 +767,17 @@ module.exports = grammar({
     dataitem_section: $ => seq(
       new RustRegex('(?i)dataitem'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ';',
-      field('table_name', choice($.identifier, $._quoted_identifier)),
+      field('table_name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
         $.column_section,
         $.dataitem_section,
         $.data_item_link_property,
-        $.sql_join_type_property
+        $.sql_join_type_property,
+        $.filters_property
       )),
       '}'
     ),
@@ -825,39 +790,39 @@ module.exports = grammar({
     ),
 
     data_item_link_value: $ => seq(
-      field('field', choice($.identifier, $._quoted_identifier)),
+      field('field', $._identifier_choice),
       '=',
       choice(
         // Traditional dot syntax: RecordRef."Field Name"
         seq(
-          field('linked_field', choice($.identifier, $._quoted_identifier)),
+          field('linked_field', $._identifier_choice),
           '.',
-          field('linked_field_name', choice($.identifier, $._quoted_identifier))
+          field('linked_field_name', $._identifier_choice)
         ),
         // FIELD() function syntax: FIELD("Field Name")
         seq(
           $._field_keyword,
           '(',
-          field('linked_field_name', choice($.identifier, $._quoted_identifier)),
+          field('linked_field_name', $._identifier_choice),
           ')'
         )
       ),
       repeat(seq(
         ',',
-        field('field', choice($.identifier, $._quoted_identifier)),
+        field('field', $._identifier_choice),
         '=',
         choice(
           // Traditional dot syntax: RecordRef."Field Name"
           seq(
-            field('linked_field', choice($.identifier, $._quoted_identifier)),
+            field('linked_field', $._identifier_choice),
             '.',
-            field('linked_field_name', choice($.identifier, $._quoted_identifier))
+            field('linked_field_name', $._identifier_choice)
           ),
           // FIELD() function syntax: FIELD("Field Name")
           seq(
             $._field_keyword,
             '(',
-            field('linked_field_name', choice($.identifier, $._quoted_identifier)),
+            field('linked_field_name', $._identifier_choice),
             ')'
           )
         )
@@ -865,22 +830,16 @@ module.exports = grammar({
     ),
 
     sql_join_type_property: $ => seq(
-      choice('SqlJoinType', 'sqljointype', 'SQLJOINTYPE'),
-      '=',
-      field('value', choice(
-        new RustRegex('(?i)innerjoin'),               // InnerJoin
-        new RustRegex('(?i)leftouterjoin'), // LeftOuterJoin
-        new RustRegex('(?i)crossjoin')                // CrossJoin
-      )),
-      ';'
+      new RustRegex('(?i)sqljointype'),
+      $._sql_join_type_enum_template
     ),
 
     column_section: $ => seq(
       new RustRegex('(?i)column'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ';',
-      field('field_name', choice($.identifier, $._quoted_identifier)),
+      field('field_name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -890,9 +849,9 @@ module.exports = grammar({
     ),
 
     pageextension_declaration: $ => seq(
-      new RustRegex('(?i)pageextension'),
+      choice('pageextension', 'PageExtension', 'PAGEEXTENSION'),
       $._object_header_base,
-      new RustRegex('(?i)extends'),
+      choice('extends', 'Extends', 'EXTENDS'),
       field('base_object', $._identifier_choice),
       '{',
       repeat($._pageextension_element),
@@ -914,9 +873,9 @@ module.exports = grammar({
     ),
 
     tableextension_declaration: $ => seq(
-      new RustRegex('(?i)tableextension'),
+      choice('tableextension', 'TableExtension', 'TABLEEXTENSION'),
       $._object_header_base,
-      new RustRegex('(?i)extends'),
+      choice('extends', 'Extends', 'EXTENDS'),
       field('base_object', $._identifier_choice),
       '{',
       repeat($._tableextension_element),
@@ -975,7 +934,7 @@ module.exports = grammar({
     action_group_section: $ => seq(
       new RustRegex('(?i)group'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -993,7 +952,7 @@ module.exports = grammar({
     separator_action: $ => seq(
       new RustRegex('(?i)separator'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat($._action_property),
@@ -1012,7 +971,7 @@ module.exports = grammar({
     addfirst_action_group: $ => seq(
       new RustRegex('(?i)addfirst'),
       '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
+      field('target', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -1026,7 +985,7 @@ module.exports = grammar({
     addlast_action_group: $ => seq(
       new RustRegex('(?i)addlast'),
       '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
+      field('target', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -1040,7 +999,7 @@ module.exports = grammar({
     addafter_action_group: $ => seq(
       new RustRegex('(?i)addafter'),
       '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
+      field('target', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -1054,7 +1013,7 @@ module.exports = grammar({
     addbefore_action_group: $ => seq(
       new RustRegex('(?i)addbefore'),
       '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
+      field('target', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -1068,7 +1027,7 @@ module.exports = grammar({
     modify_action_group: $ => seq(
       new RustRegex('(?i)modify'),
       '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
+      field('target', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -1082,7 +1041,7 @@ module.exports = grammar({
     modify_action: $ => prec(2, seq(
       new RustRegex('(?i)modify'),
       '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
+      field('target', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -1103,7 +1062,7 @@ module.exports = grammar({
     action_declaration: $ => seq(
       new RustRegex('(?i)action'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -1118,9 +1077,9 @@ module.exports = grammar({
     actionref_declaration: $ => seq(
       new RustRegex('(?i)actionref'),
       '(',
-      field('promoted_name', choice($.identifier, $._quoted_identifier)),
+      field('promoted_name', $._identifier_choice),
       ';',
-      field('action_name', choice($.identifier, $._quoted_identifier)),
+      field('action_name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -1135,7 +1094,7 @@ module.exports = grammar({
     systemaction_declaration: $ => seq(
       new RustRegex('(?i)systemaction'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -1150,7 +1109,7 @@ module.exports = grammar({
     fileuploadaction_declaration: $ => seq(
       new RustRegex('(?i)fileuploadaction'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -1190,8 +1149,8 @@ module.exports = grammar({
       'ApplicationArea',
       '=',
       field('value', seq(
-        choice($.identifier, $._quoted_identifier, $.string_literal),
-        repeat(seq(',', choice($.identifier, $._quoted_identifier, $.string_literal)))
+        $._flexible_identifier_choice,
+        repeat(seq(',', $._flexible_identifier_choice))
       )),
       ';'
     ),
@@ -1204,7 +1163,7 @@ module.exports = grammar({
     ),
 
     source_table_property: $ => seq(
-      new RustRegex('(?i)sourcetable'),
+      choice('sourcetable', 'SourceTable', 'SOURCETABLE'),
       '=',
       field('value', choice($.integer, $.identifier, $._quoted_identifier)),
       ';'
@@ -1284,7 +1243,7 @@ module.exports = grammar({
     ),
 
     run_page_link_value: $ => seq(
-      field('field', choice($.identifier, $._quoted_identifier)),
+      field('field', $._identifier_choice),
       '=',
       field('filter_type', choice(
         seq(
@@ -1296,34 +1255,25 @@ module.exports = grammar({
         seq(
           new RustRegex('(?i)field'),
           '(',
-          field('field_value', choice($.identifier, $._quoted_identifier)),
+          field('field_value', $._identifier_choice),
           ')'
         ),
         seq(
           new RustRegex('(?i)filter'),
           '(',
-          field('filter_value', choice(
-            $.filter_or_expression,
-            $.filter_not_equal_expression,
-            $.filter_equal_expression,
-            $.filter_range_expression,
-            $.identifier, 
-            $._quoted_identifier, 
-            $.integer, 
-            $.string_literal
-          )),
+          field('filter_value', $._filter_value),
           ')'
         )
       ))
     ),
 
     enabled_property: $ => seq(
-      new RustRegex('(?i)enabled'),
+      choice('enabled', 'Enabled', 'ENABLED'),
       $._expression_property_template
     ),
 
     visible_property: $ => seq(
-      choice('Visible', 'visible', 'VISIBLE'),
+      choice('visible', 'Visible', 'VISIBLE'),
       $._expression_property_template
     ),
 
@@ -1340,7 +1290,7 @@ module.exports = grammar({
     promoted_category_property: $ => seq(
       'PromotedCategory',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
@@ -1354,7 +1304,7 @@ module.exports = grammar({
       $._boolean_property_template
     ),
 
-    shortcut_key_property: $ => prec(10, seq(
+    shortcut_key_property: $ => prec(8, seq(
       new RustRegex('(?i)shortcutkey'),
       '=',
       field('value', choice($.string_literal, $._quoted_identifier)),
@@ -1390,7 +1340,7 @@ module.exports = grammar({
     ),
 
     subtype_property: $ => seq(
-      choice('Subtype', 'SubType', 'subtype', 'SUBTYPE'),
+      choice('subtype', 'SubType', 'Subtype', 'SUBTYPE'),
       '=', 
       field('value', alias($.subtype_value, $.value)),
       ';'
@@ -1404,28 +1354,28 @@ module.exports = grammar({
     ),
 
     event_subscriber_instance_property: $ => seq(
-      choice('EventSubscriberInstance', 'eventsubscriberinstance', 'EVENTSUBSCRIBERINSTANCE'),
+      new RustRegex('(?i)eventsubscriberinstance'),
       '=',
       field('value', alias($.event_subscriber_instance_value, $.value)),
       ';'
     ),
 
     test_isolation_property: $ => seq(
-      choice('TestIsolation', 'testisolation', 'TESTISOLATION'),
+      new RustRegex('(?i)testisolation'),
       '=',
       field('value', alias($.test_isolation_value, $.value)),
       ';'
     ),
 
     drilldown_pageid_property: $ => seq(
-      choice('DrillDownPageId', 'DrillDownPageID'),
+      choice('drilldownpageid', 'DrillDownPageId', 'DRILLDOWNPAGEID'),
       '=', 
       field('value', alias($.page_id_value, $.value)),
       ';'
     ),
 
     lookup_pageid_property: $ => seq(
-      choice('LookupPageId', 'LookupPageID'),
+      choice('lookuppageid', 'LookupPageId', 'LOOKUPPAGEID'),
       '=',
       field('value', alias($.page_id_value, $.value)),
       ';'
@@ -1439,7 +1389,7 @@ module.exports = grammar({
     ),
 
     promoted_action_categories_property: $ => seq(
-      choice('PromotedActionCategories', 'promotedactioncategories', 'PROMOTEDACTIONCATEGORIES'),
+      new RustRegex('(?i)promotedactioncategories'),
       $._string_property_template
     ),
 
@@ -1458,7 +1408,7 @@ module.exports = grammar({
     ),
 
     table_declaration: $ => seq(
-      new RustRegex('(?i)table'),
+      choice('table', 'Table', 'TABLE'),
       $._object_header_base,
       '{',
       repeat($._table_element),
@@ -1466,7 +1416,7 @@ module.exports = grammar({
     ),
 
     codeunit_declaration: $ => seq(
-      new RustRegex('(?i)codeunit'),
+      choice('codeunit', 'Codeunit', 'CODEUNIT'),
       $._object_header_base,
       optional($.implements_clause),
       '{',
@@ -1530,15 +1480,15 @@ module.exports = grammar({
     ),
 
     implements_clause: $ => seq(
-      new RustRegex('(?i)implements'),
-      field('interface', choice($._quoted_identifier, $.identifier)),
-      repeat(seq(',', field('interface', choice($._quoted_identifier, $.identifier))))
+      choice('implements', 'Implements', 'IMPLEMENTS'),
+      field('interface', $._identifier_choice),
+      repeat(seq(',', field('interface', $._identifier_choice)))
     ),
 
     // Generic trigger rule for codeunits etc.
 
     page_declaration: $ => seq(
-      new RustRegex('(?i)page'),
+      choice('page', 'Page', 'PAGE'),
       $._object_header_base,
       '{',
       repeat(seq(optional(';'), $._page_element)),
@@ -1546,9 +1496,9 @@ module.exports = grammar({
     ),
 
     pagecustomization_declaration: $ => seq(
-      new RustRegex('(?i)pagecustomization'),
+      choice('pagecustomization', 'PageCustomization', 'PAGECUSTOMIZATION'),
       field('object_name', $._identifier_choice),
-      new RustRegex('(?i)customizes'),
+      choice('customizes', 'Customizes', 'CUSTOMIZES'),
       field('target_page', $._identifier_choice),
       '{',
       repeat($._pagecustomization_element),
@@ -1556,7 +1506,7 @@ module.exports = grammar({
     ),
 
     profile_declaration: $ => seq(
-      new RustRegex('(?i)profile'),
+      choice('profile', 'Profile', 'PROFILE'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($._profile_element),
@@ -1564,7 +1514,7 @@ module.exports = grammar({
     ),
 
     controladdin_declaration: $ => seq(
-      new RustRegex('(?i)controladdin'),
+      choice('controladdin', 'ControlAddIn', 'CONTROLADDIN'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($._controladdin_element),
@@ -1580,7 +1530,7 @@ module.exports = grammar({
     ),
 
     entitlement_declaration: $ => seq(
-      new RustRegex('(?i)entitlement'),
+      choice('entitlement', 'Entitlement', 'ENTITLEMENT'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($._entitlement_element),
@@ -1669,7 +1619,7 @@ module.exports = grammar({
     ),
 
     interface_declaration: $ => seq(
-      new RustRegex('(?i)interface'),
+      choice('interface', 'Interface', 'INTERFACE'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($.interface_procedure),
@@ -1677,7 +1627,7 @@ module.exports = grammar({
     ),
 
     interface_procedure: $ => seq(
-      new RustRegex('(?i)procedure'),
+      choice('procedure', 'Procedure', 'PROCEDURE'),
       field('name', $.identifier),
       '(',
       optional($.parameter_list),
@@ -1687,7 +1637,7 @@ module.exports = grammar({
     ),
 
     report_declaration: $ => seq(
-      new RustRegex('(?i)report'),
+      choice('report', 'Report', 'REPORT'),
       $._object_header_base,
       '{',
       repeat($._report_element),
@@ -1746,7 +1696,7 @@ module.exports = grammar({
     report_dataitem_section: $ => seq(
       'dataitem',
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ';',
       $._identifier_choice,
       ')',
@@ -1763,7 +1713,7 @@ module.exports = grammar({
     report_column_section: $ => seq(
       'column',
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ';',
       field('source', $._expression),
       ')',
@@ -1785,7 +1735,7 @@ module.exports = grammar({
     ),
 
     permissionset_declaration: $ => seq(
-      new RustRegex('(?i)permissionset'),
+      choice('permissionset', 'PermissionSet', 'PERMISSIONSET'),
       $._object_header_base,
       '{',
       repeat($._permissionset_element),
@@ -1800,10 +1750,10 @@ module.exports = grammar({
     ),
 
     permissionsetextension_declaration: $ => seq(
-      new RustRegex('(?i)permissionsetextension'),
+      choice('permissionsetextension', 'PermissionSetExtension', 'PERMISSIONSETEXTENSION'),
       field('object_id', $.integer),
       field('object_name', $._identifier_choice),
-      new RustRegex('(?i)extends'),
+      choice('extends', 'Extends', 'EXTENDS'),
       field('extends_target', $._identifier_choice),
       '{',
       repeat($._permissionsetextension_element),
@@ -1875,48 +1825,33 @@ module.exports = grammar({
       $.preproc_endif
     ),
 
-    permission_entry: $ => choice(
-      $.tabledata_permission_entry,
-      $.table_permission_entry,
-      $.page_permission_entry,
-      $.report_permission_entry,
-      $.codeunit_permission_entry,
-      $.system_permission_entry
-    ),
-
-    tabledata_permission_entry: $ => $._tabledata_permission_entry_template,
-
-    table_permission_entry: $ => $._table_permission_entry_template,
-
-    page_permission_entry: $ => seq(
-      choice('page', 'Page', 'PAGE'),
-      $._standard_permission_entry_template
-    ),
-
-    report_permission_entry: $ => seq(
-      choice('report', 'Report', 'REPORT'),
-      $._standard_permission_entry_template
-    ),
-
-    codeunit_permission_entry: $ => seq(
-      choice('codeunit', 'Codeunit', 'CODEUNIT'),
-      $._standard_permission_entry_template
-    ),
-
-    system_permission_entry: $ => seq(
-      choice('system', 'System', 'SYSTEM'),
-      $._standard_permission_entry_template
-    ),
+    permission_entry: $ => prec(1, seq(
+      field('object_type', choice(
+        $._tabledata_keyword,
+        $._table_permission_keyword,
+        new RustRegex('(?i)page'),
+        new RustRegex('(?i)report'),
+        new RustRegex('(?i)codeunit'),
+        new RustRegex('(?i)system')
+      )),
+      field('object_reference', choice(
+        $._quoted_identifier,
+        $.identifier,
+        $.integer
+      )),
+      '=',
+      field('permission', $.permission_type)
+    )),
 
     dotnet_declaration: $ => seq(
-      new RustRegex('(?i)dotnet'),
+      choice('dotnet', 'DotNet', 'DOTNET'),
       '{',
       repeat($.assembly_declaration),
       '}'
     ),
 
     assembly_declaration: $ => seq(
-      new RustRegex('(?i)assembly'),
+      choice('assembly', 'Assembly', 'ASSEMBLY'),
       '(',
       field('name', choice($.string_literal, $._quoted_identifier)),
       ')',
@@ -1935,7 +1870,7 @@ module.exports = grammar({
     ),
 
     type_declaration: $ => seq(
-      new RustRegex('(?i)type'),
+      choice('type', 'Type', 'TYPE'),
       '(',
       field('dotnet_type', choice(
         $.string_literal, 
@@ -2019,19 +1954,19 @@ module.exports = grammar({
     ),
 
     view_caption_property: $ => seq(
-      choice('Caption', 'caption', 'CAPTION'),
+      new RustRegex('(?i)caption'),
       $._caption_string_template
     ),
 
     view_filters_property: $ => seq(
-      choice('Filters', 'filters', 'FILTERS'),
+      new RustRegex('(?i)filters'),
       '=',
       field('value', $.filter_expression),
       ';'
     ),
 
     view_order_by_property: $ => prec(2, seq(
-      choice('OrderBy', 'orderby', 'ORDERBY'),
+      new RustRegex('(?i)orderby'),
       '=',
       field('value', choice(
         $.sorting_clause,
@@ -2041,7 +1976,7 @@ module.exports = grammar({
     )),
 
     shared_layout_property: $ => seq(
-      choice('SharedLayout', 'sharedlayout', 'SHAREDLAYOUT'),
+      new RustRegex('(?i)sharedlayout'),
       $._boolean_property_template
     ),
 
@@ -2146,7 +2081,7 @@ module.exports = grammar({
     group_section: $ => seq(
       new RustRegex('(?i)group'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -2159,7 +2094,7 @@ module.exports = grammar({
     cuegroup_section: $ => seq(
       new RustRegex('(?i)cuegroup'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -2173,7 +2108,7 @@ module.exports = grammar({
     grid_section: $ => seq(
       new RustRegex('(?i)grid'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -2186,7 +2121,7 @@ module.exports = grammar({
     fixed_section: $ => seq(
       new RustRegex('(?i)fixed'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -2199,7 +2134,7 @@ module.exports = grammar({
     label_section: $ => seq(
       new RustRegex('(?i)label'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -2212,7 +2147,7 @@ module.exports = grammar({
     repeater_section: $ => seq(
       new RustRegex('(?i)repeater'),
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -2227,7 +2162,7 @@ module.exports = grammar({
       seq(
         new RustRegex('(?i)field'),
         '(',
-        field('name', choice($.identifier, $._quoted_identifier)),
+        field('name', $._identifier_choice),
         ')',
         '{',
         repeat($._field_properties),
@@ -2237,10 +2172,10 @@ module.exports = grammar({
       seq(
         new RustRegex('(?i)field'),
         '(',
-        field('name', choice($.identifier, $._quoted_identifier)),
+        field('name', $._identifier_choice),
         ')',
         '(',
-        field('control_name', choice($.identifier, $._quoted_identifier)),
+        field('control_name', $._identifier_choice),
         ')',
         '{',
         repeat($._field_properties),
@@ -2267,7 +2202,7 @@ module.exports = grammar({
       '(',
       field('name', choice($.string_literal, $.identifier, $._quoted_identifier)),
       ';',
-      field('page_name', choice($.identifier, $._quoted_identifier)),
+      field('page_name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -2282,7 +2217,7 @@ module.exports = grammar({
       '(',
       field('control_id', choice($.string_literal, $.identifier, $._quoted_identifier)),
       ';',
-      field('systempart_type', choice($.identifier, $._quoted_identifier)),
+      field('systempart_type', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -2295,9 +2230,9 @@ module.exports = grammar({
     usercontrol_section: $ => seq(
       new RustRegex('(?i)usercontrol'),
       '(',
-      field('control_id', choice($.identifier, $._quoted_identifier)),
+      field('control_id', $._identifier_choice),
       ';',
-      field('addin_name', choice($.identifier, $._quoted_identifier)),
+      field('addin_name', $._identifier_choice),
       ')',
       '{',
       repeat(choice(
@@ -2346,7 +2281,7 @@ module.exports = grammar({
     ),
 
     trigger_declaration: $ => seq(
-      choice('trigger', 'TRIGGER', 'Trigger'),
+      choice('trigger', 'Trigger', 'TRIGGER'),
       field('name', alias($.identifier, $.trigger_name)), // Unified to use 'name' like generic_trigger
       choice(
         seq('(', optional($.parameter_list), ')'),
@@ -2412,10 +2347,6 @@ module.exports = grammar({
       new RustRegex('(?i)normal')
     ),
 
-    editable_value: $ => choice(
-      prec(2, $.boolean),
-      prec(1, $._expression)
-    ),
 
     extended_datatype_value: $ => choice(
       new RustRegex('(?i)phoneno'),
@@ -2479,15 +2410,10 @@ module.exports = grammar({
       $._boolean_property_template
     )),
     
-    hide_value_property: $ => prec(12, seq(
+    hide_value_property: $ => seq(
       'HideValue',
-      '=',
-      field('value', choice(
-        prec(2, $.boolean),
-        prec(1, $._expression)
-      )),
-      ';'
-    )),
+      $._expression_property_template
+    ),
     
     multi_line_property: $ => seq(
       'MultiLine',
@@ -2495,7 +2421,7 @@ module.exports = grammar({
     ),
     
     importance_property: $ => seq(
-      new RustRegex('(?i)importance'),
+      choice('importance', 'Importance', 'IMPORTANCE'),
       '=',
       field('value', $.importance_value),
       ';'
@@ -2524,7 +2450,7 @@ module.exports = grammar({
     ),
 
     show_caption_property: $ => seq(
-      new RustRegex('(?i)showcaption'),
+      choice('showcaption', 'ShowCaption', 'SHOWCAPTION'),
       $._caption_boolean_template
     ),
 
@@ -2629,9 +2555,6 @@ module.exports = grammar({
       'Boolean',
       'Picklist'
     ),
-    init_value_value: $ => $._expression,
-    max_value_value: $ => $._expression, 
-    min_value_value: $ => $._expression,
     not_blank_value: $ => $.boolean,
     numeric_value: $ => $.boolean,
     obsolete_reason_value: $ => $.string_literal,
@@ -2649,19 +2572,19 @@ module.exports = grammar({
     test_table_relation_value: $ => $.boolean,
     tool_tip_value: $ => seq(
       $.string_literal,
-      optional(seq(',', choice('Comment', 'comment', 'COMMENT'), '=', $.string_literal))
+      optional(seq(',', choice('comment', 'Comment', 'COMMENT'), '=', $.string_literal))
     ),
     unique_value: $ => $.boolean,
     validate_table_relation_value: $ => $.boolean,
     values_allowed_value: $ => seq(
-      choice($.identifier, $._quoted_identifier, $.string_literal),
-      repeat(seq(',', choice($.identifier, $._quoted_identifier, $.string_literal)))
+      $._flexible_identifier_choice,
+      repeat(seq(',', $._flexible_identifier_choice))
     ),
 
     // NEW HIGH PRIORITY PROPERTIES - Value Rules
     data_caption_fields_value: $ => seq(
-      choice($._quoted_identifier, $.string_literal, $.identifier),
-      repeat(seq(',', choice($._quoted_identifier, $.string_literal, $.identifier)))
+      $._flexible_identifier_choice,
+      repeat(seq(',', $._flexible_identifier_choice))
     ),
 
     extensible_value: $ => $.boolean,
@@ -2673,8 +2596,8 @@ module.exports = grammar({
     assignment_compatibility_value: $ => $.boolean,
 
     column_store_index_value: $ => seq(
-      choice($.identifier, $._quoted_identifier),
-      repeat(seq(',', choice($.identifier, $._quoted_identifier)))
+      $._identifier_choice,
+      repeat(seq(',', $._identifier_choice))
     ),
 
     compression_type_value: $ => choice(
@@ -2731,7 +2654,6 @@ module.exports = grammar({
       )
     ),
 
-    auto_format_expression_value: $ => $._expression,
 
     auto_format_type_value: $ => choice(
       '0', // None
@@ -2775,16 +2697,14 @@ module.exports = grammar({
       '=',
       field('value', choice(
         alias($.boolean, $.value),
-        alias(choice('Never', 'NEVER', 'never'), $.value)
+        alias(choice('never', 'Never', 'NEVER'), $.value)
       )),
       ';'
     )),
 
     auto_format_expression_property: $ => seq(
       'AutoFormatExpression',
-      '=',
-      field('value', alias($.auto_format_expression_value, $.value)),
-      ';'
+      $._expression_property_template
     ),
 
     auto_format_type_property: $ => seq(
@@ -2844,7 +2764,7 @@ module.exports = grammar({
     ),
 
     description_property: $ => seq(
-      alias(new RustRegex('(?i)description'), 'Description'),
+      alias(choice('description', 'Description', 'DESCRIPTION'), 'Description'),
       $._string_property_template
     ),
 
@@ -2871,23 +2791,17 @@ module.exports = grammar({
 
     init_value_property: $ => seq(
       'InitValue',
-      '=',
-      field('value', $.init_value_value),
-      ';'
+      $._expression_property_template
     ),
 
     max_value_property: $ => seq(
       'MaxValue',
-      '=',
-      field('value', $.max_value_value),
-      ';'
+      $._expression_property_template
     ),
 
     min_value_property: $ => seq(
       'MinValue',
-      '=',
-      field('value', $.min_value_value),
-      ';'
+      $._expression_property_template
     ),
 
     not_blank_property: $ => seq(
@@ -2994,7 +2908,7 @@ module.exports = grammar({
     ),
 
     extended_datatype_property: $ => seq(
-      choice('ExtendedDatatype', 'extendeddatatype', 'EXTENDEDDATATYPE'),
+      new RustRegex('(?i)extendeddatatype'),
       '=',
       field('value', $.extended_datatype_value),
       ';'
@@ -3002,81 +2916,81 @@ module.exports = grammar({
 
     // NEW HIGH PRIORITY PROPERTIES - Property Rules
     data_caption_fields_property: $ => seq(
-      new RustRegex('(?i)datacaptionfields'),
+      choice('datacaptionfields', 'DataCaptionFields', 'DATACAPTIONFIELDS'),
       '=',
       field('value', $.data_caption_fields_value),
       ';'
     ),
 
     extensible_property: $ => seq(
-      'Extensible',
+      choice('extensible', 'Extensible', 'EXTENSIBLE'),
       '=',
       field('value', $.extensible_value),
       ';'
     ),
 
     data_per_company_property: $ => seq(
-      'DataPerCompany',
+      choice('datapercompany', 'DataPerCompany', 'DATAPERCOMPANY'),
       '=',
       field('value', $.data_per_company_value),
       ';'
     ),
 
     replicate_data_property: $ => seq(
-      'ReplicateData',
+      choice('replicatedata', 'ReplicateData', 'REPLICATEDATA'),
       '=',
       field('value', $.replicate_data_value),
       ';'
     ),
 
     assignment_compatibility_property: $ => seq(
-      'AssignmentCompatibility',
+      choice('assignmentcompatibility', 'AssignmentCompatibility', 'ASSIGNMENTCOMPATIBILITY'),
       '=',
       field('value', $.assignment_compatibility_value),
       ';'
     ),
 
     column_store_index_property: $ => seq(
-      'ColumnStoreIndex',
+      choice('columnstoreindex', 'ColumnStoreIndex', 'COLUMNSTOREINDEX'),
       '=',
       field('value', $.column_store_index_value),
       ';'
     ),
 
     compression_type_property: $ => seq(
-      'CompressionType',
+      choice('compressiontype', 'CompressionType', 'COMPRESSIONTYPE'),
       '=',
       field('value', $.compression_type_value),
       ';'
     ),
 
     inherent_permissions_property: $ => seq(
-      'InherentPermissions',
+      choice('inherentpermissions', 'InherentPermissions', 'INHERENTPERMISSIONS'),
       '=',
       field('value', $.inherent_permissions_value),
       ';'
     ),
 
     inherent_entitlements_property: $ => seq(
-      'InherentEntitlements',
+      choice('inherententitlements', 'InherentEntitlements', 'INHERENTENTITLEMENTS'),
       '=',
       field('value', $.inherent_entitlements_value),
       ';'
     ),
 
     caption_ml_property: $ => seq(
-      new RustRegex('(?i)captionml'),
+      choice('captionml', 'CaptionML', 'CAPTIONML'),
       $._ml_simple_template
     ),
 
     option_caption_ml_property: $ => seq(
-      new RustRegex('(?i)optioncaptionml'),
+      choice('optioncaptionml', 'OptionCaptionML', 'OPTIONCAPTIONML'),
       $._ml_simple_template
     ),
 
     tool_tip_ml_property: $ => seq(
-      'ToolTipML',
-      $._tooltip_ml_template
+      choice('tooltipml', 'ToolTipML', 'TOOLTIPML'),
+      $._ml_simple_template
     ),
 
     ml_value_list: $ => seq(
@@ -3103,7 +3017,7 @@ module.exports = grammar({
 
     onrun_trigger: $ => seq(
       $._trigger_keyword,
-      choice('OnRun', 'ONRUN', 'Onrun'),
+      choice('onrun', 'OnRun', 'ONRUN'),
       $._trigger_parameters,
       optional($.var_section),
       $.code_block
@@ -3119,18 +3033,7 @@ module.exports = grammar({
       $.preproc_conditional_var_sections,
       
       // Table triggers
-      $.oninsert_trigger,
-      $.onmodify_trigger,
-      $.ondelete_trigger,
-      $.onrename_trigger,
-      $.onvalidate_trigger,
-      $.onaftergetrecord_trigger,
-      $.onafterinsertevent_trigger,
-      $.onaftermodifyevent_trigger,
-      $.onafterdeleteevent_trigger,
-      $.onbeforeinsertevent_trigger,
-      $.onbeforemodifyevent_trigger,
-      $.onbeforedeleteevent_trigger,
+      $.named_trigger,
       
       // Procedures
       seq(optional($.attribute_list), $.procedure),
@@ -3157,7 +3060,7 @@ module.exports = grammar({
     test_permissions_property: $ => seq(
       'TestPermissions',
       '=',
-      choice('Disabled', 'NonRestrictive', 'Restrictive', 'InherentPermissions'),
+      choice(choice('disabled', 'Disabled', 'DISABLED'), choice('nonrestrictive', 'NonRestrictive', 'NONRESTRICTIVE'), choice('restrictive', 'Restrictive', 'RESTRICTIVE'), choice('inherentpermissions', 'InherentPermissions', 'INHERENTPERMISSIONS')),
       ';'
     ),
 
@@ -3169,97 +3072,22 @@ module.exports = grammar({
     ),
 
 
-    oninsert_trigger: $ => seq(
+    named_trigger: $ => seq(
       $._trigger_keyword,
-      choice('OnInsert', 'ONINSERT', 'Oninsert'),
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
-    ),
-
-    onmodify_trigger: $ => seq(
-      $._trigger_keyword,
-      choice('OnModify', 'ONMODIFY', 'Onmodify'),
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
-    ),
-
-    ondelete_trigger: $ => seq(
-      $._trigger_keyword,
-      choice('OnDelete', 'ONDELETE', 'Ondelete'),
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
-    ),
-
-    onrename_trigger: $ => seq(
-      $._trigger_keyword,
-      choice('OnRename', 'ONRENAME', 'Onrename'),
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
-    ),
-
-    onvalidate_trigger: $ => seq(
-      $._trigger_keyword,
-      choice('OnValidate', 'ONVALIDATE', 'Onvalidate'),
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
-    ),
-
-    onaftergetrecord_trigger: $ => seq(
-      $._trigger_keyword,
-      choice('OnAfterGetRecord', 'ONAFTERGETRECORD', 'Onaftergetrecord'),
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
-    ),
-
-    onafterinsertevent_trigger: $ => seq(
-      $._trigger_keyword,
-      choice('OnAfterInsertEvent', 'ONAFTERINSERTEVENT', 'Onafterinsertevent'),
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
-    ),
-
-    onaftermodifyevent_trigger: $ => seq(
-      $._trigger_keyword,
-      choice('OnAfterModifyEvent', 'ONAFTERMODIFYEVENT', 'Onaftermodifyevent'),
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
-    ),
-
-    onafterdeleteevent_trigger: $ => seq(
-      $._trigger_keyword,
-      choice('OnAfterDeleteEvent', 'ONAFTERDELETEEVENT', 'Onafterdeleteevent'),
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
-    ),
-
-    onbeforeinsertevent_trigger: $ => seq(
-      $._trigger_keyword,
-      'OnBeforeInsertEvent',
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
-    ),
-
-    onbeforemodifyevent_trigger: $ => seq(
-      $._trigger_keyword,
-      'OnBeforeModifyEvent',
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
-    ),
-
-    onbeforedeleteevent_trigger: $ => seq(
-      $._trigger_keyword,
-      'OnBeforeDeleteEvent',
+      field('name', choice(
+        new RustRegex('(?i)oninsert'),
+        new RustRegex('(?i)onmodify'),
+        new RustRegex('(?i)ondelete'),
+        new RustRegex('(?i)onrename'),
+        new RustRegex('(?i)onvalidate'),
+        new RustRegex('(?i)onaftergetrecord'),
+        new RustRegex('(?i)onafterinsertevent'),
+        new RustRegex('(?i)onaftermodifyevent'),
+        new RustRegex('(?i)onafterdeleteevent'),
+        new RustRegex('(?i)onbeforeinsertevent'),
+        new RustRegex('(?i)onbeforemodifyevent'),
+        new RustRegex('(?i)onbeforedeleteevent')
+      )),
       $._trigger_parameters,
       optional($.var_section),
       $.code_block
@@ -3378,12 +3206,12 @@ module.exports = grammar({
     )),
 
     caption_property: $ => seq(
-      field('name', alias(new RustRegex('(?i)caption'), 'Caption')),
+      field('name', alias(choice('caption', 'Caption', 'CAPTION'), 'Caption')),
       $._caption_full_template
     ),
 
     caption_class_property: $ => seq(
-      new RustRegex('(?i)captionclass'),
+      choice('captionclass', 'CaptionClass', 'CAPTIONCLASS'),
       $._expression_property_template
     ),
 
@@ -3457,19 +3285,19 @@ module.exports = grammar({
     _unquoted_variable_name: $ => choice(
       $.identifier,
       // Allow the keyword 'Description' to be treated as an identifier in variable contexts
-      alias(new RustRegex('(?i)description'), $.identifier),
+      alias(choice('description', 'Description', 'DESCRIPTION'), $.identifier),
       // Allow the keyword 'Importance' to be treated as an identifier in variable contexts
-      alias(new RustRegex('(?i)importance'), $.identifier),
+      alias(choice('importance', 'Importance', 'IMPORTANCE'), $.identifier),
       // Allow the keyword 'SourceTable' to be treated as an identifier in variable contexts
-      alias(new RustRegex('(?i)sourcetable'), $.identifier),
+      alias(choice('sourcetable', 'SourceTable', 'SOURCETABLE'), $.identifier),
       // Allow the keyword 'IncludeCaption' to be treated as an identifier in variable contexts
-      alias(new RustRegex('(?i)includecaption'), $.identifier),
+      alias(choice('includecaption', 'IncludeCaption', 'INCLUDECAPTION'), $.identifier),
       // Allow the keyword 'ExcludeCaption' to be treated as an identifier in variable contexts
-      alias(new RustRegex('(?i)excludecaption'), $.identifier),
+      alias(choice('excludecaption', 'ExcludeCaption', 'EXCLUDECAPTION'), $.identifier),
       // Allow the keyword 'SubType' to be treated as an identifier in variable contexts
       alias('Subtype', $.identifier),
       // Allow the keyword 'Caption' to be treated as an identifier in variable contexts
-      alias(new RustRegex('(?i)caption'), $.identifier),
+      alias(choice('caption', 'Caption', 'CAPTION'), $.identifier),
       alias('SubType', $.identifier), 
       alias('subtype', $.identifier),
       alias('SUBTYPE', $.identifier),
@@ -3497,7 +3325,7 @@ module.exports = grammar({
       prec(2, seq(
         field('names', $._variable_name_list),
         ':',
-        field('type', alias(choice('Label', 'LABEL', 'label'), $.basic_type)),
+        field('type', alias(choice('label', 'Label', 'LABEL'), $.basic_type)),
         field('value', $.string_literal),
         optional(seq(
           ',',
@@ -3529,9 +3357,9 @@ module.exports = grammar({
     // Specific rule for inline option parameters
     _parameter_option: $ => seq(
       optional(field('modifier', $.modifier)),
-      field('parameter_name', alias($.identifier, $.name)),
+      field('parameter_name', alias($._identifier_choice, $.name)),
       ':',
-      choice('option', 'OPTION', 'Option'), // Match the keyword
+      choice('option', 'Option', 'OPTION'), // Match the keyword
       field('parameter_type', alias($.option_member_list, $.option_type)) // Reuse option_member_list for members
     ),
 
@@ -3540,7 +3368,7 @@ module.exports = grammar({
       $._parameter_option, // Try matching inline option first
       seq( // Standard parameter with type_specification
         optional(field('modifier', $.modifier)),
-        field('parameter_name', alias(choice($.identifier, $._quoted_identifier), $.name)),
+        field('parameter_name', alias($._identifier_choice, $.name)),
         ':',
         field('parameter_type', $.type_specification),
         // Add optional temporary keyword after type for records
@@ -3581,7 +3409,7 @@ type_specification: $ => choice(
 
 // Handles 'Option' type keyword followed by optional members
 option_type: $ => prec.right(1, seq(
-  choice('Option', 'OPTION', 'option'),
+  choice('option', 'Option', 'OPTION'),
   optional($.option_member_list) // Members are part of the type
 )),
 
@@ -3599,7 +3427,7 @@ option_member_list: $ => prec.left(1, choice(
 )),
 
 interface_type: $ => seq(
-  prec(1, choice('Interface', 'INTERFACE', 'interface')),
+  prec(1, choice('interface', 'Interface', 'INTERFACE')),
   field('reference', choice(
     $._quoted_identifier,
     $.identifier
@@ -3607,7 +3435,7 @@ interface_type: $ => seq(
 ),
 
 controladdin_type: $ => seq(
-  choice('ControlAddIn', 'CONTROLADDIN', 'controladdin'),
+  choice('controladdin', 'ControlAddIn', 'CONTROLADDIN'),
   field('reference', choice(
     $._quoted_identifier,
     $.identifier
@@ -3615,7 +3443,7 @@ controladdin_type: $ => seq(
 ),
 
 enum_type: $ => prec(1, seq(
-  choice('Enum', 'ENUM', 'enum'),
+  choice('enum', 'Enum', 'ENUM'),
   field('enum_name', choice(
     $.identifier,
     $._quoted_identifier,
@@ -3627,11 +3455,11 @@ enum_type: $ => prec(1, seq(
       $.identifier,
       repeat1(seq('.', $.identifier)),
       '.',
-      choice($.identifier, $._quoted_identifier)
+      $._identifier_choice
     )),
 
     page_type: $ => seq(
-      prec(1, choice('Page', 'PAGE', 'page')),
+      prec(1, choice('page', 'Page', 'PAGE')),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
@@ -3640,7 +3468,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     report_type: $ => seq(
-      prec(1, choice('Report', 'REPORT', 'report')),
+      prec(1, choice('report', 'Report', 'REPORT')),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
@@ -3669,56 +3497,56 @@ enum_type: $ => prec(1, seq(
 
     basic_type: $ => choice(
       // Numeric Types
-      prec(1, choice('Integer', 'INTEGER', 'Integer')),
-      prec(1, choice('Decimal', 'DECIMAL', 'Decimal')),
-      prec(1, choice('Byte', 'BYTE', 'Byte')),
+      prec(1, choice('integer', 'Integer', 'INTEGER')),
+      prec(1, choice('decimal', 'Decimal', 'DECIMAL')),
+      prec(1, choice('byte', 'Byte', 'BYTE')),
       
       // Text Types
-      prec(1, choice('Char', 'CHAR', 'Char')),
+      prec(1, choice('char', 'Char', 'CHAR')),
       
       // Date/Time Types
-      prec(1, choice('Date', 'DATE', 'Date')),
-      prec(1, choice('Time', 'TIME', 'Time')),
-      prec(1, choice('DateTime', 'DATETIME', 'Datetime')),
-      prec(1, choice('Duration', 'DURATION', 'Duration')),
-      prec(1, choice('DateFormula', 'DATEFORMULA', 'Dateformula')),
+      prec(1, choice('date', 'Date', 'DATE')),
+      prec(1, choice('time', 'Time', 'TIME')),
+      prec(1, choice('datetime', 'DateTime', 'DATETIME')),
+      prec(1, choice('duration', 'Duration', 'DURATION')),
+      prec(1, choice('dateformula', 'DateFormula', 'DATEFORMULA')),
       
       // Other Types
-      prec(1, choice('Boolean', 'BOOLEAN', 'Boolean')),
+      prec(1, choice('boolean', 'Boolean', 'BOOLEAN')),
       // Option removed, handled by option_type
-      prec(1, choice('Guid', 'GUID', 'Guid')),
-      prec(1, choice('RecordId', 'RECORDID', 'Recordid', 'RecordID')),
-      prec(1, choice('Variant', 'VARIANT', 'Variant')),
-      prec(1, choice('Label', 'LABEL', 'label')),
-      prec(1, choice('Dialog', 'DIALOG', 'Dialog')),
-      prec(1, choice('Action', 'ACTION', 'Action')),
-      prec(1, choice('BLOB', 'Blob', 'blob')),
-      prec(1, choice('FilterPageBuilder', 'FILTERPAGEBUILDER', 'Filterpagebuilder')),
-      prec(1, choice('JsonToken', 'JSONTOKEN', 'Jsontoken')),
-      prec(1, choice('JsonValue', 'JSONVALUE', 'Jsonvalue')),
-      prec(1, choice('JsonArray', 'JSONARRAY', 'Jsonarray')),
-      prec(1, choice('JsonObject', 'JSONOBJECT', 'Jsonobject')),
-      prec(1, choice('Media', 'MEDIA', 'Media')),
-      prec(1, choice('MediaSet', 'MEDIASET', 'Mediaset')),
-      prec(1, choice('OStream', 'OSTREAM', 'Ostream')),
-      prec(1, choice('InStream', 'INSTREAM', 'Instream')),
-      prec(1, choice('OutStream', 'OUTSTREAM', 'Outstream')),
-      prec(1, choice('SecretText', 'SECRETTEXT', 'Secrettext')),
-      prec(1, choice('ModuleInfo', 'MODULEINFO', 'Moduleinfo')), 
-      prec(1, choice('ObjectType', 'OBJECTTYPE', 'Objecttype')), 
-      prec(1, choice('KeyRef', 'KEYREF', 'Keyref')), 
+      prec(1, choice('guid', 'Guid', 'GUID')),
+      prec(1, new RustRegex('(?i)recordid')),
+      prec(1, choice('variant', 'Variant', 'VARIANT')),
+      prec(1, choice('label', 'Label', 'LABEL')),
+      prec(1, choice('dialog', 'Dialog', 'DIALOG')),
+      prec(1, choice('action', 'Action', 'ACTION')),
+      prec(1, choice('blob', 'BLOB', 'Blob')),
+      prec(1, choice('filterpagebuilder', 'FilterPageBuilder', 'FILTERPAGEBUILDER')),
+      prec(1, choice('jsontoken', 'JsonToken', 'JSONTOKEN')),
+      prec(1, choice('jsonvalue', 'JsonValue', 'JSONVALUE')),
+      prec(1, choice('jsonarray', 'JsonArray', 'JSONARRAY')),
+      prec(1, choice('jsonobject', 'JsonObject', 'JSONOBJECT')),
+      prec(1, choice('media', 'Media', 'MEDIA')),
+      prec(1, choice('mediaset', 'MediaSet', 'MEDIASET')),
+      prec(1, choice('ostream', 'OStream', 'OSTREAM')),
+      prec(1, choice('instream', 'InStream', 'INSTREAM')),
+      prec(1, choice('outstream', 'OutStream', 'OUTSTREAM')),
+      prec(1, choice('secrettext', 'SecretText', 'SECRETTEXT')),
+      prec(1, choice('moduleinfo', 'ModuleInfo', 'MODULEINFO')), 
+      prec(1, choice('objecttype', 'ObjectType', 'OBJECTTYPE')), 
+      prec(1, choice('keyref', 'KeyRef', 'KEYREF')), 
 
       // XML Types
-      prec(1, choice('XmlDocument', 'XMLDOCUMENT', 'Xmldocument')),
-      prec(1, choice('XmlNode', 'XMLNODE', 'Xmlnode')),
-      prec(1, choice('XmlElement', 'XMLELEMENT', 'Xmlelement')),
-      prec(1, choice('XmlNodeList', 'XMLNODELIST', 'Xmlnodelist')),
-      prec(1, choice('XmlAttribute', 'XMLATTRIBUTE', 'Xmlattribute')),
-      prec(1, choice('XmlAttributeCollection', 'XMLATTRIBUTECOLLECTION', 'Xmlattributecollection'))
+      prec(1, choice('xmldocument', 'XmlDocument', 'XMLDOCUMENT')),
+      prec(1, choice('xmlnode', 'XmlNode', 'XMLNODE')),
+      prec(1, choice('xmlelement', 'XmlElement', 'XMLELEMENT')),
+      prec(1, choice('xmlnodelist', 'XmlNodeList', 'XMLNODELIST')),
+      prec(1, choice('xmlattribute', 'XmlAttribute', 'XMLATTRIBUTE')),
+      prec(1, choice('xmlattributecollection', 'XmlAttributeCollection', 'XMLATTRIBUTECOLLECTION'))
     ),
 
-    text_type: $ => prec.left(15, seq(
-      choice('Text', 'TEXT', 'text'),
+    text_type: $ => prec.left(10, seq(
+      choice('text', 'Text', 'TEXT'),
       optional(seq(
         '[',
         field('length', $.integer),
@@ -3726,8 +3554,8 @@ enum_type: $ => prec(1, seq(
       ))
     )),
 
-    code_type: $ => prec.left(15, seq(
-      choice('Code', 'CODE', 'code'),
+    code_type: $ => prec.left(10, seq(
+      choice('code', 'Code', 'CODE'),
       optional(seq(
         '[',
         field('length', $.integer),
@@ -3736,18 +3564,17 @@ enum_type: $ => prec(1, seq(
     )),
 
     record_type: $ => prec.right(seq(
-      prec(1, choice('Record', 'RECORD', 'record')),
+      prec(1, choice('record', 'Record', 'RECORD')),
       field('reference', choice(
         prec(2, $.qualified_table_reference),
         prec(1, $._table_reference)
-      )),
-      optional(choice('Temporary', 'TEMPORARY', 'temporary'))
+      ))
     )),
 
     // Dedicated rule for namespace-qualified table references (requires at least one dot)
-    qualified_table_reference: $ => prec.right(10, seq(
-      field('namespace', choice($.identifier, $._quoted_identifier)),
-      repeat1(seq('.', field('part', choice($.identifier, $._quoted_identifier))))
+    qualified_table_reference: $ => prec.right(8, seq(
+      field('namespace', $._identifier_choice),
+      repeat1(seq('.', field('part', $._identifier_choice)))
     )),
     recordref_type: $ => new RustRegex('(?i)recordref'),
     fieldref_type: $ => new RustRegex('(?i)fieldref'),
@@ -3755,12 +3582,11 @@ enum_type: $ => prec(1, seq(
     // Use existing _table_reference rule that already handles both plain and quoted identifiers 
     _table_reference: $ => choice(
       $.integer,
-      $.identifier,
-      $._quoted_identifier  // Already has precedence 2
+      $._identifier_choice  // Unified identifier pattern
     ),
 
-    codeunit_type: $ => prec.right(20, seq(
-      choice('Codeunit', 'codeunit', 'CODEUNIT', 'COdeunit'),
+    codeunit_type: $ => prec.right(10, seq(
+      new RustRegex('(?i)codeunit'),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
@@ -3775,12 +3601,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     testpage_type: $ => seq(
-      prec(1, choice(
-        'TestPage',
-        'Testpage',
-        'TESTPAGE',
-        'testpage'
-      )),
+      prec(1, new RustRegex('(?i)testpage')),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
@@ -3789,12 +3610,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     testrequestpage_type: $ => seq(
-      prec(1, choice(
-        'TestRequestPage',
-        'Testrequestpage',
-        'TESTREQUESTPAGE',
-        'testrequestpage'
-      )),
+      prec(1, choice('testrequestpage', 'TestRequestPage', 'TESTREQUESTPAGE')),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
@@ -3809,7 +3625,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     dotnet_type: $ => seq(
-      prec(1, choice('DotNet', 'DOTNET', 'dotnet')),
+      prec(1, choice('dotnet', 'DotNet', 'DOTNET')),
       field('reference', choice($.dotnet_type_name, $.identifier, $.string_literal, $._quoted_identifier))
     ),
 
@@ -3826,7 +3642,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     fields: $ => seq(
-      choice('fields', 'FIELDS', 'Fields'),
+      choice('fields', 'Fields', 'FIELDS'),
       '{',
       repeat(choice($.field_declaration, $.modify_field_declaration)),
       '}'
@@ -4007,13 +3823,13 @@ enum_type: $ => prec(1, seq(
     ),
 
     if_table_relation: $ => prec.right(1, seq(
-      choice('IF', 'if', 'If'),
+      choice('if', 'IF', 'If'),
       '(',
       field('condition', $.unified_where_conditions),
       ')',
       field('then_relation', $.simple_table_relation),
       optional(seq(
-        choice('ELSE', 'else', 'Else'),
+        choice('else', 'ELSE', 'Else'),
         field('else_relation', $.table_relation_expression)
       ))
     )),
@@ -4024,10 +3840,10 @@ enum_type: $ => prec(1, seq(
       optional($.where_clause)
     ),
 
-    const_filter: $ => prec(10, seq(
+    const_filter: $ => prec(8, seq(
       field('field', $.field_ref),
       '=',
-      choice('CONST', 'const', 'Const'),
+      choice('const', 'CONST', 'Const'),
       '(',
       optional(field('value', choice(
         $.string_literal,
@@ -4040,16 +3856,16 @@ enum_type: $ => prec(1, seq(
       ')'
     )),
 
-    field_filter: $ => prec(10, seq(
+    field_filter: $ => prec(8, seq(
       field('field', $.field_ref),
       '=', 
-      choice('FIELD', 'field', 'Field'),
+      choice('field', 'FIELD', 'Field'),
       '(',
       field('value', $.field_ref),
       ')'
     )),
 
-    filter_condition: $ => prec(10, seq(
+    filter_condition: $ => prec(8, seq(
       field('field', $.field_ref),
       '=',
       field('filter', $.filter_expression_function)
@@ -4133,13 +3949,13 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
-    lookup_formula: $ => prec(10, seq(
+    lookup_formula: $ => prec(8, seq(
       choice('lookup', 'LOOKUP', 'Lookup'),
       '(',
       field('target', choice(
-        prec(20, $.member_expression),
-        prec(15, $.field_access),
-        prec(10, $._quoted_identifier),
+        prec(12, $.member_expression),
+        prec(13, $.field_access),
+        prec(8, $._quoted_identifier),
         prec(5, $.identifier)
       )),
       optional(seq(
@@ -4181,14 +3997,15 @@ enum_type: $ => prec(1, seq(
     // === Unified WHERE Condition Types ===
     
     // Filter expression condition (standard style with operators)
-    filter_expression_condition: $ => seq(
+    // Higher precedence to match before const_value_condition in TableRelation contexts
+    filter_expression_condition: $ => prec(3, seq(
       field('field', $.field_ref),
       field('operator', $.filter_operator),
       field('value', $.filter_value)
-    ),
+    )),
     
     // FIELD(...) reference condition for formulas
-    field_reference_condition: $ => prec(17, seq(
+    field_reference_condition: $ => prec(14, seq(
       field('field', $.field_ref),
       '=',
       choice('field', 'FIELD', 'Field'),
@@ -4226,21 +4043,14 @@ enum_type: $ => prec(1, seq(
       ')'
     ),
     
-    // CONST(...) value condition for formulas
-    const_value_condition: $ => prec(16, seq(
-      field('field', $.field_ref),
-      '=',
-      choice('const', 'CONST', 'Const'),
-      '(',
-      optional(field('value', choice($.string_literal, $.field_ref, $.integer, $.boolean))),
-      ')'
-    )),
+    // Removed const_value_condition - it was an old pattern causing conflicts
+    // CONST(...) is properly handled as a filter_value in filter_expression_condition
     
     // Unified where condition rule
     unified_where_condition: $ => choice(
       $.filter_expression_condition,
-      $.field_reference_condition,
-      $.const_value_condition
+      $.field_reference_condition
+      // Removed const_value_condition - it was causing conflicts and is not needed
     ),
     
     // Unified where conditions list that handles both styles
@@ -4319,9 +4129,7 @@ enum_type: $ => prec(1, seq(
 
     editable_property: $ => seq(
       'Editable',
-      '=',
-      $.editable_value,
-      ';'
+      $._expression_property_template
     ),
 
     processing_only_property: $ => seq(
@@ -4364,11 +4172,11 @@ enum_type: $ => prec(1, seq(
     field_trigger_declaration: $ => seq(
       $._trigger_keyword,
       field('type', alias(choice(
-        choice('OnValidate', 'ONVALIDATE', 'Onvalidate'),
-        choice('OnAfterValidate', 'ONAFTERVALIDATE', 'OnAfterValidate'),
-        choice('OnLookup', 'ONLOOKUP', 'Onlookup'),
-        choice('OnAssistEdit', 'ONASSISTEDIT', 'OnAssistEdit'),
-        choice('OnDrillDown', 'ONDRILLDOWN', 'OnDrillDown')
+        choice('onvalidate', 'OnValidate', 'ONVALIDATE'),
+        choice('onaftervalidate', 'OnAfterValidate', 'ONAFTERVALIDATE'),
+        choice('onlookup', 'OnLookup', 'ONLOOKUP'),
+        choice('onassistedit', 'OnAssistEdit', 'ONASSISTEDIT'),
+        choice('ondrilldown', 'OnDrillDown', 'ONDRILLDOWN')
       ), $.trigger_type)),
       choice(
         seq('(', optional($.parameter_list), ')'),
@@ -4381,7 +4189,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     keys: $ => seq(
-      choice('keys', 'KEYS', 'Keys'),
+      choice('keys', 'Keys', 'KEYS'),
       '{',
       repeat($.key_declaration),
       '}'
@@ -4470,7 +4278,7 @@ enum_type: $ => prec(1, seq(
       repeat(seq(',', $._expression))
     ),
 
-    return_value: $ => field('return_value', choice($.identifier, $._quoted_identifier)),
+    return_value: $ => field('return_value', $._identifier_choice),
 
     _procedure_return_specification: $ => seq(
       ':',
@@ -4485,7 +4293,7 @@ enum_type: $ => prec(1, seq(
     // Use the consistent type_specification rule for return types
     return_type: $ => $.type_specification,
 
-    _procedure_name: $ => alias(choice($.identifier, $._quoted_identifier), $.name),
+    _procedure_name: $ => alias($._identifier_choice, $.name),
 
     procedure_modifier: $ => choice(new RustRegex('(?i)local'), new RustRegex('(?i)internal'), new RustRegex('(?i)protected')),
 
@@ -4529,7 +4337,8 @@ enum_type: $ => prec(1, seq(
 
     modifier: $ => new RustRegex('(?i)var'),
 
-    identifier: $ => new RustRegex('[A-Za-z_][A-Za-z0-9_]*'),
+    // Explicit identifier token
+    identifier: $ => ident(),
 
     _quoted_identifier: $ => alias(
       token(prec(10, seq(
@@ -4576,7 +4385,7 @@ enum_type: $ => prec(1, seq(
       new RustRegex('(?i)columns')
     ),
 
-    temporary: $ => new RustRegex('(?i)temporary'),
+    temporary: $ => choice('temporary', 'Temporary', 'TEMPORARY'),
 
 
     // Define code blocks with explicit keyword handling
@@ -4734,13 +4543,13 @@ enum_type: $ => prec(1, seq(
     )),
 
 
-    qualified_enum_value_tail: $ => prec.left(15, seq( // Higher precedence to attach to field_access
+    qualified_enum_value_tail: $ => prec.left(13, seq( // Higher precedence to attach to field_access
       '::',
-      choice($.identifier, $._quoted_identifier)
+      $._identifier_choice
     )),
 
     unary_expression: $ => prec.right(7, seq( // Keep at 7 but verify context
-      choice('+', '-', 'not', 'Not', 'NOT'),
+      choice('+', '-', choice('not', 'NOT', 'Not')),
       $._expression
     )),
 
@@ -4853,7 +4662,7 @@ enum_type: $ => prec(1, seq(
     member_expression: $ => prec.left(11, seq( // Increased precedence to match field_access
       field('object', $._expression),
       '.',
-      field('property', choice($.identifier, $._quoted_identifier))
+      field('property', $._identifier_choice)
     )),
 
     field_access: $ => prec.left(12, seq( // Increased precedence over member_expression
@@ -5048,14 +4857,14 @@ enum_type: $ => prec(1, seq(
 
     // DATABASE references (DATABASE::Customer pattern)
     database_reference: $ => prec.left(9, seq(
-      choice('DATABASE', 'database', 'Database'),
+      choice('database', 'DATABASE', 'Database'),
       '::',
-      field('table_name', choice($.identifier, $._quoted_identifier))
+      field('table_name', $._identifier_choice)
     )),
 
     // Rule for expressions using Enum keyword with double qualification (Enum::"Type"::"Value")
     enum_keyword_qualified_value: $ => prec.left(9, seq( // Increased precedence
-      choice('Enum', 'ENUM', 'enum'),
+      choice('enum', 'Enum', 'ENUM'),
       field('operator1', $._double__colon),
       field('enum_type', choice(
         $._quoted_identifier,
@@ -5070,7 +4879,7 @@ enum_type: $ => prec(1, seq(
 
     // Rule for enum type references (Enum::"Type") used for static method calls
     enum_type_reference: $ => prec.left(8, seq(
-      choice('Enum', 'ENUM', 'enum'),
+      choice('enum', 'Enum', 'ENUM'),
       field('operator', $._double__colon),
       field('enum_type', choice(
         $._quoted_identifier,
@@ -5166,14 +4975,14 @@ enum_type: $ => prec(1, seq(
     cuegroup_layout_property: $ => seq(
       'CuegroupLayout',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
     freeze_column_property: $ => seq(
       'FreezeColumn',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
@@ -5187,21 +4996,21 @@ enum_type: $ => prec(1, seq(
     indentation_controls_property: $ => seq(
       'IndentationControls',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier)),
+      field('value', $._identifier_choice),
       ';'
     ),
 
     custom_action_type_property: $ => seq(
       'CustomActionType',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
     allowed_file_extensions_property: $ => seq(
       'AllowedFileExtensions',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
@@ -5213,21 +5022,21 @@ enum_type: $ => prec(1, seq(
     file_upload_action_property: $ => seq(
       'FileUploadAction',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
     file_upload_row_action_property: $ => seq(
       'FileUploadRowAction',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
     odata_edm_type_property: $ => seq(
       'ODataEDMType',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
@@ -5281,28 +5090,28 @@ enum_type: $ => prec(1, seq(
     default_rendering_layout_property: $ => seq(
       'DefaultRenderingLayout',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
     excel_layout_property: $ => seq(
       'ExcelLayout',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
     rdlc_layout_property: $ => seq(
       'RDLCLayout',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
     word_layout_property: $ => seq(
       'WordLayout',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
@@ -5347,7 +5156,7 @@ enum_type: $ => prec(1, seq(
     format_region_property: $ => seq(
       'FormatRegion',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
@@ -5363,7 +5172,7 @@ enum_type: $ => prec(1, seq(
 
     // Table external/integration properties
     optimize_for_text_search_property: $ => seq(
-      choice('OptimizeForTextSearch', 'optimizefortextsearch', 'OPTIMIZEFORTEXTSEARCH'),
+      choice('optimizefortextsearch', 'OptimizeForTextSearch', 'OPTIMIZEFORTEXTSEARCH'),
       $._boolean_property_template
     ),
 
@@ -5396,21 +5205,21 @@ enum_type: $ => prec(1, seq(
     paper_source_default_page_property: $ => seq(
       'PaperSourceDefaultPage',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
     paper_source_first_page_property: $ => seq(
       'PaperSourceFirstPage',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
     paper_source_last_page_property: $ => seq(
       'PaperSourceLastPage',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
@@ -5427,21 +5236,21 @@ enum_type: $ => prec(1, seq(
     ),
 
     print_only_if_detail_property: $ => seq(
-      choice('PrintOnlyIfDetail', 'printonlyifdetail', 'PRINTONLYIFDETAIL'),
+      new RustRegex('(?i)printonlyifdetail'),
       $._boolean_property_template
     ),
 
     word_merge_data_item_property: $ => seq(
       'WordMergeDataItem',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
     data_item_link_reference_property: $ => seq(
       choice('DataItemLinkReference', 'dataitemlinkreference', 'DATAITEMLINKREFERENCE'),
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
@@ -5481,7 +5290,7 @@ enum_type: $ => prec(1, seq(
     gesture_property: $ => seq(
       'Gesture',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
@@ -5493,7 +5302,7 @@ enum_type: $ => prec(1, seq(
     provider_property: $ => seq(
       'Provider',
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
 
@@ -5508,20 +5317,14 @@ enum_type: $ => prec(1, seq(
     ),
 
     max_iteration_property: $ => seq(
-      choice('MaxIteration', 'maxiteration', 'MAXITERATION'),
+      new RustRegex('(?i)maxiteration'),
       $._integer_property_template
     ),
 
-    sorting_expression: $ => seq(
-      choice('SORTING', 'Sorting', 'sorting'),
-      '(',
-      $.field_list,
-      ')'
-    ),
 
     field_list: $ => seq(
-      choice($.identifier, $._quoted_identifier),
-      repeat(seq(',', choice($.identifier, $._quoted_identifier)))
+      $._identifier_choice,
+      repeat(seq(',', $._identifier_choice))
     ),
 
     // Preprocessor conditional rules for layout sections
@@ -5864,7 +5667,7 @@ enum_type: $ => prec(1, seq(
     addafter_views: $ => seq(
       new RustRegex('(?i)addafter'),
       '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
+      field('target', $._identifier_choice),
       ')',
       '{',
       repeat($.view_definition),
@@ -5874,7 +5677,7 @@ enum_type: $ => prec(1, seq(
     addbefore_views: $ => seq(
       new RustRegex('(?i)addbefore'),
       '(',
-      field('target', choice($.identifier, $._quoted_identifier)),
+      field('target', $._identifier_choice),
       ')',
       '{',
       repeat($.view_definition),
@@ -5884,7 +5687,7 @@ enum_type: $ => prec(1, seq(
     view_definition: $ => seq(
       'view',
       '(',
-      field('name', choice($.identifier, $._quoted_identifier)),
+      field('name', $._identifier_choice),
       ')',
       '{',
       repeat($._view_property),
@@ -6430,13 +6233,19 @@ enum_type: $ => prec(1, seq(
     ),
 
     // Centralized trigger components for DRY principle
-    _trigger_keyword: $ => choice('trigger', 'TRIGGER', 'Trigger'),
+    _trigger_keyword: $ => choice('trigger', 'Trigger', 'TRIGGER'),
 
     // Trigger parameter patterns (simplified from '()' duplication)
     _trigger_parameters: $ => '()',
 
     // Centralized identifier choice pattern (appears 35+ times)
-    _identifier_choice: $ => choice($._quoted_identifier, $.identifier),
+    _identifier_choice: $ => prec(2, choice($._quoted_identifier, $.identifier)),
+
+    // Flexible identifier choice pattern (includes string literals)
+    _flexible_identifier_choice: $ => choice($.identifier, $._quoted_identifier, $.string_literal),
+
+    // Extended value choice pattern (includes integers and identifiers)
+    _extended_value_choice: $ => choice($.integer, $.identifier, $._quoted_identifier, $.string_literal),
 
     // Centralized property template for DRY principle
     _boolean_property_template: $ => seq(
@@ -6453,15 +6262,73 @@ enum_type: $ => prec(1, seq(
 
     _identifier_property_template: $ => seq(
       '=',
-      field('value', choice($.identifier, $._quoted_identifier)),
+      field('value', $._identifier_choice),
       ';'
     ),
 
     _mixed_identifier_string_property_template: $ => seq(
       '=',
-      field('value', choice($.identifier, $._quoted_identifier, $.string_literal)),
+      field('value', $._flexible_identifier_choice),
       ';'
     ),
+
+    // Enum property templates for common patterns
+    _access_level_enum_template: $ => seq(
+      '=',
+      field('value', choice(
+        new RustRegex('(?i)readonly'),
+        new RustRegex('(?i)readwrite'),
+        $.identifier,
+        $._quoted_identifier
+      )),
+      ';'
+    ),
+
+    _auto_always_never_enum_template: $ => seq(
+      '=',
+      field('value', choice(
+        new RustRegex('(?i)auto'),
+        new RustRegex('(?i)always'),
+        new RustRegex('(?i)never'),
+        new RustRegex('(?i)generate')
+      )),
+      ';'
+    ),
+
+    _multiplicity_enum_template: $ => seq(
+      '=',
+      field('value', choice(
+        new RustRegex('(?i)zeroorone'),
+        new RustRegex('(?i)zeroormany'),
+        new RustRegex('(?i)one'),
+        new RustRegex('(?i)many'),
+        $.identifier
+      )),
+      ';'
+    ),
+
+    _query_type_enum_template: $ => seq(
+      '=',
+      field('value', choice(
+        new RustRegex('(?i)normal'),
+        new RustRegex('(?i)api'),
+        new RustRegex('(?i)filter')
+      )),
+      ';'
+    ),
+
+
+    _sql_join_type_enum_template: $ => seq(
+      '=',
+      field('value', choice(
+        new RustRegex('(?i)innerjoin'),
+        new RustRegex('(?i)leftouterjoin'),
+        new RustRegex('(?i)crossjoin')
+      )),
+      ';'
+    ),
+
+
 
     // Caption property templates for consolidation
     _caption_string_template: $ => seq(
@@ -6525,11 +6392,6 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    _tooltip_ml_template: $ => seq(
-      '=',
-      $.ml_value_list,
-      ';'
-    ),
 
     // About property templates (same as caption_full_template)
     _about_template: $ => seq(
@@ -6553,11 +6415,6 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    _about_ml_template: $ => seq(
-      '=',
-      field('value', $.ml_value_list),
-      ';'
-    ),
 
     // Unified ML property template for all multilanguage properties
     _ml_property_template: $ => seq(
@@ -6615,26 +6472,6 @@ enum_type: $ => prec(1, seq(
       field('permission', $.permission_type)
     ),
 
-    // Permission entry templates for consolidating permission entry patterns
-    _standard_permission_entry_template: $ => seq(
-      $._identifier_choice,
-      '=',
-      $.permission_type
-    ),
-
-    _tabledata_permission_entry_template: $ => prec(1, seq(
-      $._tabledata_keyword,
-      choice($._quoted_identifier, $.identifier, $.integer),
-      '=',
-      $.permission_type
-    )),
-
-    _table_permission_entry_template: $ => seq(
-      $._table_permission_keyword,
-      choice($._quoted_identifier, $.identifier, $.integer),
-      '=',
-      $.permission_type
-    ),
 
     // Centralized extension object pattern for DRY principle
 
@@ -6670,15 +6507,15 @@ enum_type: $ => prec(1, seq(
 
 
     // Centralized case-insensitive keyword patterns for DRY principle
-    _field_keyword: $ => choice('FIELD', 'Field', 'field'),
-    _filter_keyword: $ => choice('FILTER', 'filter', 'Filter'),
+    _field_keyword: $ => choice('field', 'FIELD', 'Field'),
+    _filter_keyword: $ => choice('filter', 'FILTER', 'Filter'),
     _cardpart_keyword: $ => new RustRegex('(?i)cardpart'),
     _tabledata_keyword: $ => new RustRegex('(?i)tabledata'),
     _table_permission_keyword: $ => new RustRegex('(?i)table'),
 
     // Missing alias target rules
     const: $ => new RustRegex('(?i)const'),
-    name: $ => choice($.identifier, $._quoted_identifier),
+    name: $ => $._identifier_choice,
     quoted_identifier: $ => $._quoted_identifier,
     table_reference: $ => $._table_reference,
     trigger_name: $ => $.identifier,

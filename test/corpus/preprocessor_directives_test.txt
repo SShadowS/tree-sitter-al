@@ -68,7 +68,8 @@ codeunit 123 "Test Codeunit"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (var_section
           (variable_declaration
             name: (identifier)
@@ -113,7 +114,8 @@ codeunit 124 "Test Codeunit Mixed"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (var_section
           (variable_declaration
             name: (identifier)
@@ -161,7 +163,8 @@ codeunit 125 "Test Complex Preprocessor"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (var_section
           (variable_declaration
             name: (identifier)

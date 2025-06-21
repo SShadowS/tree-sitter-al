@@ -51,7 +51,8 @@ codeunit 50111 "Enum Assignment Test"
     (quoted_identifier)
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (var_section
           (variable_declaration
             (identifier)
@@ -103,7 +104,8 @@ codeunit 50112 "Enum Comparison Test"
     (quoted_identifier)
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (var_section
           (variable_declaration
             (identifier)
@@ -170,7 +172,8 @@ codeunit 50113 "Enum Case Test"
     (quoted_identifier)
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (var_section
           (variable_declaration
             (identifier)
@@ -244,7 +247,8 @@ codeunit 50114 "Quoted Enum Values Test"
     (quoted_identifier)
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (var_section
           (variable_declaration
             (identifier)
@@ -321,7 +325,8 @@ codeunit 50115 "Enum Return Test"
     (quoted_identifier)
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (return_type
           (type_specification
             (enum_type
@@ -333,7 +338,8 @@ codeunit 50115 "Enum Return Test"
               (identifier))))))
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (return_value
           (identifier))
         (return_type
@@ -376,10 +382,12 @@ codeunit 50116 "Enum Parameter Test"
     (quoted_identifier)
     (attributed_procedure
       (procedure
-        (name)
+        (name
+          (identifier))
         (parameter_list
           (parameter
-            (name)
+            (name
+              (identifier))
             (type_specification
               (enum_type
                 (quoted_identifier)))))

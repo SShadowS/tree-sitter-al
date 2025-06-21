@@ -99,15 +99,18 @@ codeunit 50100 MyCodeunit
     (attributed_procedure
       (procedure
         (procedure_modifier)
-        (name)
+        (name
+          (identifier))
         (parameter_list
           (parameter
-            (name)
+            (name
+              (identifier))
             (type_specification
               (basic_type)))
           (parameter
             (modifier)
-            (name)
+            (name
+              (identifier))
             (type_specification
               (text_type))))
         (return_type
@@ -164,10 +167,12 @@ codeunit 50100 MyCodeunit
     (attributed_procedure
       (procedure
         (procedure_modifier)
-        (name)
+        (name
+          (identifier))
         (parameter_list
           (parameter
-            (name)
+            (name
+              (identifier))
             (type_specification
               (code_type
                 (integer)))))

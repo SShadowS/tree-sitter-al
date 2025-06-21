@@ -37,13 +37,11 @@ permissionset 50000 "TEST-PERMSET"
     (permissionset_permissions
       (permission_list
         (permission_entry
-          (tabledata_permission_entry
-            (quoted_identifier)
-            (permission_type)))
+          object_reference: (quoted_identifier)
+          permission: (permission_type))
         (permission_entry
-          (tabledata_permission_entry
-            (quoted_identifier)
-            (permission_type)))))))
+          object_reference: (quoted_identifier)
+          permission: (permission_type))))))
 
 ================================================================================
 PermissionSet with single IncludedPermissionSet
@@ -76,9 +74,8 @@ permissionset 50001 "SINGLE-INCLUDE"
     (permissionset_permissions
       (permission_list
         (permission_entry
-          (tabledata_permission_entry
-            (quoted_identifier)
-            (permission_type)))))))
+          object_reference: (quoted_identifier)
+          permission: (permission_type))))))
 
 ================================================================================
 PermissionSet with Access Private and unquoted included sets
@@ -110,9 +107,8 @@ permissionset 50002 PRIVATE_PERM
     (permissionset_permissions
       (permission_list
         (permission_entry
-          (tabledata_permission_entry
-            (quoted_identifier)
-            (permission_type)))))))
+          object_reference: (quoted_identifier)
+          permission: (permission_type))))))
 
 ================================================================================
 PermissionSet with only basic properties
@@ -141,9 +137,8 @@ permissionset 50003 "BASIC-ONLY"
     (permissionset_permissions
       (permission_list
         (permission_entry
-          (tabledata_permission_entry
-            (quoted_identifier)
-            (permission_type)))))))
+          object_reference: (quoted_identifier)
+          permission: (permission_type))))))
 
 ================================================================================
 PermissionSet with multiple included permission sets (three items)
@@ -176,6 +171,5 @@ permissionset 50004 "MULTI-INCLUDE"
     (permissionset_permissions
       (permission_list
         (permission_entry
-          (tabledata_permission_entry
-            (quoted_identifier)
-            (permission_type)))))))
+          object_reference: (quoted_identifier)
+          permission: (permission_type))))))

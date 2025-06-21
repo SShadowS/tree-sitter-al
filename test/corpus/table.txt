@@ -101,17 +101,19 @@ table 50100 "My Test Table"
         (identifier)
         (type_specification
           (basic_type))))
-    (oninsert_trigger
+    (named_trigger
       (code_block
         (call_expression
           (identifier)
           (argument_list
             (string_literal)))))
     (procedure
-      (name)
+      (name
+        (identifier))
       (parameter_list
         (parameter
-          (name)
+          (name
+            (identifier))
           (type_specification
             (text_type))))
       (return_type

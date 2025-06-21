@@ -56,16 +56,19 @@ codeunit 50100 TestUnit
         (preproc_endif))
       (procedure
         modifier: (procedure_modifier)
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (record_type
                 reference: (quoted_identifier))))
           (parameter
             modifier: (modifier)
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (basic_type))))
         (var_section
@@ -88,6 +91,7 @@ codeunit 50100 TestUnit
                 (boolean)))))
         (preproc_endif))
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block
           (comment))))))

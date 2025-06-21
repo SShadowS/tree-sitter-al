@@ -19,8 +19,9 @@ table 50101 "Empty Code Block Test"
   (table_declaration
     (integer)
     (quoted_identifier)
-    (oninsert_trigger
+    (named_trigger
       (code_block))
     (procedure
-      (name)
+      (name
+        (identifier))
       (code_block))))

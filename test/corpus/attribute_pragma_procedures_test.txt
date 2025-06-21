@@ -49,17 +49,20 @@ codeunit 50100 "Test Codeunit"
       (pragma)
       (procedure
         modifier: (procedure_modifier)
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
             modifier: (modifier)
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (text_type
                 length: (integer))))
           (parameter
             modifier: (modifier)
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (basic_type))))
         (code_block
@@ -91,16 +94,19 @@ codeunit 50100 "Test Codeunit"
       (pragma)
       (procedure
         modifier: (procedure_modifier)
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
             modifier: (modifier)
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (basic_type)))
           (parameter
             modifier: (modifier)
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (basic_type))))
         (code_block

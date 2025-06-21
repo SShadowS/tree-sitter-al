@@ -85,10 +85,12 @@ codeunit 456 "Test Codeunit"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (option_type
                 (option_member_list
@@ -101,17 +103,20 @@ codeunit 456 "Test Codeunit"
                   (option_member
                     (identifier))))))
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (basic_type))))
         (code_block
           (comment))))
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (option_type
                 (option_member_list
@@ -125,10 +130,12 @@ codeunit 456 "Test Codeunit"
           (comment))))
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (option_type
                 (option_member_list
@@ -141,7 +148,8 @@ codeunit 456 "Test Codeunit"
                   (option_member
                     (quoted_identifier))))))
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (option_type
                 (option_member_list

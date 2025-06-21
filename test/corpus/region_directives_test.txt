@@ -33,10 +33,12 @@ codeunit 50000 "Test Codeunit"
     (comment)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (code_type
                 length: (integer)))))
@@ -51,7 +53,8 @@ codeunit 50000 "Test Codeunit"
     (preproc_region)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block)))
     (preproc_endregion)))
 
@@ -296,17 +299,20 @@ codeunit 50005 "Nested Regions"
     (preproc_region)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block)))
     (preproc_region)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block)))
     (preproc_endregion)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block)))
     (preproc_endregion)))
 
@@ -332,6 +338,7 @@ codeunit 50006 "Empty Region Name"
     (preproc_region)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block)))
     (preproc_endregion)))

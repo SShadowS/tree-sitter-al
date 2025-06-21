@@ -30,10 +30,12 @@ codeunit 50000 "BOM Test"
         (code_block)))
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (option_type))))
         (code_block)))))

@@ -23,7 +23,7 @@ table 50020 "Test Table"
   (table_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (oninsert_trigger
+    (named_trigger
       (var_section
         (variable_declaration
           name: (identifier)
@@ -89,7 +89,7 @@ table 50021 "Test Table"
   (table_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (onvalidate_trigger
+    (named_trigger
       (var_section
         (variable_declaration
           name: (identifier)
@@ -151,7 +151,7 @@ table 50022 "Test Table"
   (table_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (oninsert_trigger
+    (named_trigger
       (var_section
         (variable_declaration
           name: (identifier)
@@ -194,7 +194,7 @@ table 50023 "Test Table"
   (table_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (oninsert_trigger
+    (named_trigger
       (var_section
         (variable_declaration
           name: (identifier)

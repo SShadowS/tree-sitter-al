@@ -3390,12 +3390,326 @@
     "type": "auto_format_expression_property",
     "named": true,
     "fields": {
+      "left": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "AS",
+            "named": false
+          },
+          {
+            "type": "As",
+            "named": false
+          },
+          {
+            "type": "IS",
+            "named": false
+          },
+          {
+            "type": "Is",
+            "named": false
+          },
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "as",
+            "named": false
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "duration_literal",
+            "named": true
+          },
+          {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
+            "type": "enum_type_reference",
+            "named": true
+          },
+          {
+            "type": "field_access",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "is",
+            "named": false
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "AS",
+            "named": false
+          },
+          {
+            "type": "As",
+            "named": false
+          },
+          {
+            "type": "IS",
+            "named": false
+          },
+          {
+            "type": "Is",
+            "named": false
+          },
+          {
+            "type": "as",
+            "named": false
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "is",
+            "named": false
+          }
+        ]
+      },
+      "right": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      },
       "value": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
-            "type": "value",
+            "type": "AS",
+            "named": false
+          },
+          {
+            "type": "As",
+            "named": false
+          },
+          {
+            "type": "IS",
+            "named": false
+          },
+          {
+            "type": "Is",
+            "named": false
+          },
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "as",
+            "named": false
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "duration_literal",
+            "named": true
+          },
+          {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
+            "type": "enum_type_reference",
+            "named": true
+          },
+          {
+            "type": "field_access",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "is",
+            "named": false
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
             "named": true
           }
         ]
@@ -5935,29 +6249,6 @@
     }
   },
   {
-    "type": "codeunit_permission_entry",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "permission_type",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "codeunit_type",
     "named": true,
     "fields": {
@@ -6543,44 +6834,6 @@
           },
           {
             "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "string_literal",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "const_value_condition",
-    "named": true,
-    "fields": {
-      "field": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "field_ref",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "field_ref",
-            "named": true
-          },
-          {
-            "type": "integer",
             "named": true
           },
           {
@@ -8032,6 +8285,10 @@
           "named": true
         },
         {
+          "type": "filters_property",
+          "named": true
+        },
+        {
           "type": "sql_join_type_property",
           "named": true
         }
@@ -8336,21 +8593,6 @@
   {
     "type": "editable_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "editable_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "editable_value",
-    "named": true,
     "fields": {
       "left": {
         "multiple": true,
@@ -8537,109 +8779,145 @@
             "named": true
           }
         ]
+      },
+      "value": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "AS",
+            "named": false
+          },
+          {
+            "type": "As",
+            "named": false
+          },
+          {
+            "type": "IS",
+            "named": false
+          },
+          {
+            "type": "Is",
+            "named": false
+          },
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "as",
+            "named": false
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "duration_literal",
+            "named": true
+          },
+          {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
+            "type": "enum_type_reference",
+            "named": true
+          },
+          {
+            "type": "field_access",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "is",
+            "named": false
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "additive_expression",
-          "named": true
-        },
-        {
-          "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "call_expression",
-          "named": true
-        },
-        {
-          "type": "comparison_expression",
-          "named": true
-        },
-        {
-          "type": "database_reference",
-          "named": true
-        },
-        {
-          "type": "datetime_literal",
-          "named": true
-        },
-        {
-          "type": "decimal",
-          "named": true
-        },
-        {
-          "type": "duration_literal",
-          "named": true
-        },
-        {
-          "type": "enum_keyword_qualified_value",
-          "named": true
-        },
-        {
-          "type": "enum_type_reference",
-          "named": true
-        },
-        {
-          "type": "field_access",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "logical_expression",
-          "named": true
-        },
-        {
-          "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "multiplicative_expression",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
-          "named": true
-        },
-        {
-          "type": "qualified_enum_value",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        },
-        {
-          "type": "range_expression",
-          "named": true
-        },
-        {
-          "type": "string_literal",
-          "named": true
-        },
-        {
-          "type": "subscript_expression",
-          "named": true
-        },
-        {
-          "type": "time_literal",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -18518,22 +18796,6 @@
     "type": "init_value_property",
     "named": true,
     "fields": {
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "init_value_value",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "init_value_value",
-    "named": true,
-    "fields": {
       "left": {
         "multiple": true,
         "required": false,
@@ -18719,109 +18981,145 @@
             "named": true
           }
         ]
+      },
+      "value": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "AS",
+            "named": false
+          },
+          {
+            "type": "As",
+            "named": false
+          },
+          {
+            "type": "IS",
+            "named": false
+          },
+          {
+            "type": "Is",
+            "named": false
+          },
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "as",
+            "named": false
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "duration_literal",
+            "named": true
+          },
+          {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
+            "type": "enum_type_reference",
+            "named": true
+          },
+          {
+            "type": "field_access",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "is",
+            "named": false
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "additive_expression",
-          "named": true
-        },
-        {
-          "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "call_expression",
-          "named": true
-        },
-        {
-          "type": "comparison_expression",
-          "named": true
-        },
-        {
-          "type": "database_reference",
-          "named": true
-        },
-        {
-          "type": "datetime_literal",
-          "named": true
-        },
-        {
-          "type": "decimal",
-          "named": true
-        },
-        {
-          "type": "duration_literal",
-          "named": true
-        },
-        {
-          "type": "enum_keyword_qualified_value",
-          "named": true
-        },
-        {
-          "type": "enum_type_reference",
-          "named": true
-        },
-        {
-          "type": "field_access",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "logical_expression",
-          "named": true
-        },
-        {
-          "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "multiplicative_expression",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
-          "named": true
-        },
-        {
-          "type": "qualified_enum_value",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        },
-        {
-          "type": "range_expression",
-          "named": true
-        },
-        {
-          "type": "string_literal",
-          "named": true
-        },
-        {
-          "type": "subscript_expression",
-          "named": true
-        },
-        {
-          "type": "time_literal",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -20162,22 +20460,6 @@
     "type": "max_value_property",
     "named": true,
     "fields": {
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "max_value_value",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "max_value_value",
-    "named": true,
-    "fields": {
       "left": {
         "multiple": true,
         "required": false,
@@ -20363,109 +20645,145 @@
             "named": true
           }
         ]
+      },
+      "value": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "AS",
+            "named": false
+          },
+          {
+            "type": "As",
+            "named": false
+          },
+          {
+            "type": "IS",
+            "named": false
+          },
+          {
+            "type": "Is",
+            "named": false
+          },
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "as",
+            "named": false
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "duration_literal",
+            "named": true
+          },
+          {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
+            "type": "enum_type_reference",
+            "named": true
+          },
+          {
+            "type": "field_access",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "is",
+            "named": false
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "additive_expression",
-          "named": true
-        },
-        {
-          "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "call_expression",
-          "named": true
-        },
-        {
-          "type": "comparison_expression",
-          "named": true
-        },
-        {
-          "type": "database_reference",
-          "named": true
-        },
-        {
-          "type": "datetime_literal",
-          "named": true
-        },
-        {
-          "type": "decimal",
-          "named": true
-        },
-        {
-          "type": "duration_literal",
-          "named": true
-        },
-        {
-          "type": "enum_keyword_qualified_value",
-          "named": true
-        },
-        {
-          "type": "enum_type_reference",
-          "named": true
-        },
-        {
-          "type": "field_access",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "logical_expression",
-          "named": true
-        },
-        {
-          "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "multiplicative_expression",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
-          "named": true
-        },
-        {
-          "type": "qualified_enum_value",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        },
-        {
-          "type": "range_expression",
-          "named": true
-        },
-        {
-          "type": "string_literal",
-          "named": true
-        },
-        {
-          "type": "subscript_expression",
-          "named": true
-        },
-        {
-          "type": "time_literal",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -20905,22 +21223,6 @@
     "type": "min_value_property",
     "named": true,
     "fields": {
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "min_value_value",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "min_value_value",
-    "named": true,
-    "fields": {
       "left": {
         "multiple": true,
         "required": false,
@@ -21106,109 +21408,145 @@
             "named": true
           }
         ]
+      },
+      "value": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "AS",
+            "named": false
+          },
+          {
+            "type": "As",
+            "named": false
+          },
+          {
+            "type": "IS",
+            "named": false
+          },
+          {
+            "type": "Is",
+            "named": false
+          },
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "as",
+            "named": false
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "duration_literal",
+            "named": true
+          },
+          {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
+            "type": "enum_type_reference",
+            "named": true
+          },
+          {
+            "type": "field_access",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "is",
+            "named": false
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "additive_expression",
-          "named": true
-        },
-        {
-          "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "call_expression",
-          "named": true
-        },
-        {
-          "type": "comparison_expression",
-          "named": true
-        },
-        {
-          "type": "database_reference",
-          "named": true
-        },
-        {
-          "type": "datetime_literal",
-          "named": true
-        },
-        {
-          "type": "decimal",
-          "named": true
-        },
-        {
-          "type": "duration_literal",
-          "named": true
-        },
-        {
-          "type": "enum_keyword_qualified_value",
-          "named": true
-        },
-        {
-          "type": "enum_type_reference",
-          "named": true
-        },
-        {
-          "type": "field_access",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "logical_expression",
-          "named": true
-        },
-        {
-          "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "multiplicative_expression",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
-          "named": true
-        },
-        {
-          "type": "qualified_enum_value",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        },
-        {
-          "type": "range_expression",
-          "named": true
-        },
-        {
-          "type": "string_literal",
-          "named": true
-        },
-        {
-          "type": "subscript_expression",
-          "named": true
-        },
-        {
-          "type": "time_literal",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -22934,7 +23272,30 @@
       "required": false,
       "types": [
         {
+          "type": "identifier",
+          "named": true
+        },
+        {
           "type": "quoted_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "named_trigger",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "code_block",
+          "named": true
+        },
+        {
+          "type": "var_section",
           "named": true
         }
       ]
@@ -23251,235 +23612,7 @@
     }
   },
   {
-    "type": "onafterdeleteevent_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "onaftergetrecord_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "onafterinsertevent_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "onaftermodifyevent_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "onbeforedeleteevent_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "onbeforeinsertevent_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "onbeforemodifyevent_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "ondelete_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "oninsert_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "onmodify_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "onrename_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "onrun_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "onvalidate_trigger",
     "named": true,
     "fields": {},
     "children": {
@@ -24330,29 +24463,6 @@
         },
         {
           "type": "integer",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "page_permission_entry",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "permission_type",
           "named": true
         },
         {
@@ -26017,36 +26127,35 @@
   {
     "type": "permission_entry",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "codeunit_permission_entry",
-          "named": true
-        },
-        {
-          "type": "page_permission_entry",
-          "named": true
-        },
-        {
-          "type": "report_permission_entry",
-          "named": true
-        },
-        {
-          "type": "system_permission_entry",
-          "named": true
-        },
-        {
-          "type": "table_permission_entry",
-          "named": true
-        },
-        {
-          "type": "tabledata_permission_entry",
-          "named": true
-        }
-      ]
+    "fields": {
+      "object_reference": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "permission": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "permission_type",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -34232,29 +34341,6 @@
     }
   },
   {
-    "type": "report_permission_entry",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "permission_type",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "report_type",
     "named": true,
     "fields": {
@@ -36828,29 +36914,6 @@
     }
   },
   {
-    "type": "system_permission_entry",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "permission_type",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "systemaction_declaration",
     "named": true,
     "fields": {
@@ -37822,6 +37885,10 @@
           "named": true
         },
         {
+          "type": "named_trigger",
+          "named": true
+        },
+        {
           "type": "navigation_page_id_property",
           "named": true
         },
@@ -37835,54 +37902,6 @@
         },
         {
           "type": "obsolete_tag_property",
-          "named": true
-        },
-        {
-          "type": "onafterdeleteevent_trigger",
-          "named": true
-        },
-        {
-          "type": "onaftergetrecord_trigger",
-          "named": true
-        },
-        {
-          "type": "onafterinsertevent_trigger",
-          "named": true
-        },
-        {
-          "type": "onaftermodifyevent_trigger",
-          "named": true
-        },
-        {
-          "type": "onbeforedeleteevent_trigger",
-          "named": true
-        },
-        {
-          "type": "onbeforeinsertevent_trigger",
-          "named": true
-        },
-        {
-          "type": "onbeforemodifyevent_trigger",
-          "named": true
-        },
-        {
-          "type": "ondelete_trigger",
-          "named": true
-        },
-        {
-          "type": "oninsert_trigger",
-          "named": true
-        },
-        {
-          "type": "onmodify_trigger",
-          "named": true
-        },
-        {
-          "type": "onrename_trigger",
-          "named": true
-        },
-        {
-          "type": "onvalidate_trigger",
           "named": true
         },
         {
@@ -38009,33 +38028,6 @@
     }
   },
   {
-    "type": "table_permission_entry",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "permission_type",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "table_reference",
     "named": true,
     "fields": {},
@@ -38145,33 +38137,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "tabledata_permission_entry",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "permission_type",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -39147,10 +39112,6 @@
       "required": true,
       "types": [
         {
-          "type": "const_value_condition",
-          "named": true
-        },
-        {
           "type": "field_reference_condition",
           "named": true
         },
@@ -39928,144 +39889,6 @@
     "type": "value",
     "named": true,
     "fields": {
-      "left": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "AS",
-            "named": false
-          },
-          {
-            "type": "As",
-            "named": false
-          },
-          {
-            "type": "IS",
-            "named": false
-          },
-          {
-            "type": "Is",
-            "named": false
-          },
-          {
-            "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "as",
-            "named": false
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "comparison_expression",
-            "named": true
-          },
-          {
-            "type": "database_reference",
-            "named": true
-          },
-          {
-            "type": "datetime_literal",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "duration_literal",
-            "named": true
-          },
-          {
-            "type": "enum_keyword_qualified_value",
-            "named": true
-          },
-          {
-            "type": "enum_type_reference",
-            "named": true
-          },
-          {
-            "type": "field_access",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "in_operator",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "is",
-            "named": false
-          },
-          {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "logical_expression",
-            "named": true
-          },
-          {
-            "type": "member_expression",
-            "named": true
-          },
-          {
-            "type": "multiplicative_expression",
-            "named": true
-          },
-          {
-            "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "qualified_enum_value",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "range_expression",
-            "named": true
-          },
-          {
-            "type": "string_literal",
-            "named": true
-          },
-          {
-            "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "time_literal",
-            "named": true
-          },
-          {
-            "type": "type_specification",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
       "object_name": {
         "multiple": false,
         "required": false,
@@ -40084,60 +39907,12 @@
           }
         ]
       },
-      "operator": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "AS",
-            "named": false
-          },
-          {
-            "type": "As",
-            "named": false
-          },
-          {
-            "type": "IS",
-            "named": false
-          },
-          {
-            "type": "Is",
-            "named": false
-          },
-          {
-            "type": "as",
-            "named": false
-          },
-          {
-            "type": "in_operator",
-            "named": true
-          },
-          {
-            "type": "is",
-            "named": false
-          }
-        ]
-      },
       "permission": {
         "multiple": false,
         "required": false,
         "types": [
           {
             "type": "permission_type",
-            "named": true
-          }
-        ]
-      },
-      "right": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "type_specification",
             "named": true
           }
         ]
@@ -40166,47 +39941,7 @@
       "required": false,
       "types": [
         {
-          "type": "additive_expression",
-          "named": true
-        },
-        {
           "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "call_expression",
-          "named": true
-        },
-        {
-          "type": "comparison_expression",
-          "named": true
-        },
-        {
-          "type": "database_reference",
-          "named": true
-        },
-        {
-          "type": "datetime_literal",
-          "named": true
-        },
-        {
-          "type": "decimal",
-          "named": true
-        },
-        {
-          "type": "duration_literal",
-          "named": true
-        },
-        {
-          "type": "enum_keyword_qualified_value",
-          "named": true
-        },
-        {
-          "type": "enum_type_reference",
-          "named": true
-        },
-        {
-          "type": "field_access",
           "named": true
         },
         {
@@ -40218,47 +39953,11 @@
           "named": true
         },
         {
-          "type": "logical_expression",
-          "named": true
-        },
-        {
-          "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "multiplicative_expression",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
-          "named": true
-        },
-        {
-          "type": "qualified_enum_value",
-          "named": true
-        },
-        {
           "type": "quoted_identifier",
           "named": true
         },
         {
-          "type": "range_expression",
-          "named": true
-        },
-        {
           "type": "string_literal",
-          "named": true
-        },
-        {
-          "type": "subscript_expression",
-          "named": true
-        },
-        {
-          "type": "time_literal",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
           "named": true
         }
       ]
@@ -42947,6 +42646,14 @@
     "named": false
   },
   {
+    "type": "ASSEMBLY",
+    "named": false
+  },
+  {
+    "type": "ASSIGNMENTCOMPATIBILITY",
+    "named": false
+  },
+  {
     "type": "AVERAGE",
     "named": false
   },
@@ -43008,6 +42715,10 @@
   },
   {
     "type": "As",
+    "named": false
+  },
+  {
+    "type": "Assembly",
     "named": false
   },
   {
@@ -43115,7 +42826,11 @@
     "named": false
   },
   {
-    "type": "CAPTION",
+    "type": "CAPTIONCLASS",
+    "named": false
+  },
+  {
+    "type": "CAPTIONML",
     "named": false
   },
   {
@@ -43135,7 +42850,15 @@
     "named": false
   },
   {
+    "type": "COLUMNSTOREINDEX",
+    "named": false
+  },
+  {
     "type": "COMMENT",
+    "named": false
+  },
+  {
+    "type": "COMPRESSIONTYPE",
     "named": false
   },
   {
@@ -43151,7 +42874,7 @@
     "named": false
   },
   {
-    "type": "COdeunit",
+    "type": "CUSTOMIZES",
     "named": false
   },
   {
@@ -43164,6 +42887,14 @@
   },
   {
     "type": "Caption",
+    "named": false
+  },
+  {
+    "type": "CaptionClass",
+    "named": false
+  },
+  {
+    "type": "CaptionML",
     "named": false
   },
   {
@@ -43263,11 +42994,23 @@
     "named": false
   },
   {
+    "type": "Customizes",
+    "named": false
+  },
+  {
     "type": "DATABASE",
     "named": false
   },
   {
+    "type": "DATACAPTIONFIELDS",
+    "named": false
+  },
+  {
     "type": "DATAITEMLINKREFERENCE",
+    "named": false
+  },
+  {
+    "type": "DATAPERCOMPANY",
     "named": false
   },
   {
@@ -43291,6 +43034,10 @@
     "named": false
   },
   {
+    "type": "DISABLED",
+    "named": false
+  },
+  {
     "type": "DIV",
     "named": false
   },
@@ -43307,7 +43054,15 @@
     "named": false
   },
   {
+    "type": "DRILLDOWNPAGEID",
+    "named": false
+  },
+  {
     "type": "DURATION",
+    "named": false
+  },
+  {
+    "type": "DataCaptionFields",
     "named": false
   },
   {
@@ -43344,14 +43099,6 @@
   },
   {
     "type": "DateTime",
-    "named": false
-  },
-  {
-    "type": "Dateformula",
-    "named": false
-  },
-  {
-    "type": "Datetime",
     "named": false
   },
   {
@@ -43415,10 +43162,6 @@
     "named": false
   },
   {
-    "type": "DrillDownPageID",
-    "named": false
-  },
-  {
     "type": "DrillDownPageId",
     "named": false
   },
@@ -43431,7 +43174,15 @@
     "named": false
   },
   {
+    "type": "ENABLED",
+    "named": false
+  },
+  {
     "type": "END",
+    "named": false
+  },
+  {
+    "type": "ENTITLEMENT",
     "named": false
   },
   {
@@ -43439,7 +43190,7 @@
     "named": false
   },
   {
-    "type": "EVENTSUBSCRIBERINSTANCE",
+    "type": "ENUMEXTENSION",
     "named": false
   },
   {
@@ -43451,7 +43202,11 @@
     "named": false
   },
   {
-    "type": "EXTENDEDDATATYPE",
+    "type": "EXTENDS",
+    "named": false
+  },
+  {
+    "type": "EXTENSIBLE",
     "named": false
   },
   {
@@ -43479,7 +43234,15 @@
     "named": false
   },
   {
+    "type": "Enabled",
+    "named": false
+  },
+  {
     "type": "End",
+    "named": false
+  },
+  {
+    "type": "Entitlement",
     "named": false
   },
   {
@@ -43487,7 +43250,7 @@
     "named": false
   },
   {
-    "type": "EventSubscriberInstance",
+    "type": "EnumExtension",
     "named": false
   },
   {
@@ -43511,7 +43274,7 @@
     "named": false
   },
   {
-    "type": "ExtendedDatatype",
+    "type": "Extends",
     "named": false
   },
   {
@@ -43552,10 +43315,6 @@
   },
   {
     "type": "FILTERPAGEBUILDER",
-    "named": false
-  },
-  {
-    "type": "FILTERS",
     "named": false
   },
   {
@@ -43604,10 +43363,6 @@
   },
   {
     "type": "FilterPageBuilder",
-    "named": false
-  },
-  {
-    "type": "Filterpagebuilder",
     "named": false
   },
   {
@@ -43671,7 +43426,23 @@
     "named": false
   },
   {
+    "type": "IMPLEMENTS",
+    "named": false
+  },
+  {
+    "type": "IMPORTANCE",
+    "named": false
+  },
+  {
     "type": "IN",
+    "named": false
+  },
+  {
+    "type": "INHERENTENTITLEMENTS",
+    "named": false
+  },
+  {
+    "type": "INHERENTPERMISSIONS",
     "named": false
   },
   {
@@ -43704,6 +43475,14 @@
   },
   {
     "type": "Implementation",
+    "named": false
+  },
+  {
+    "type": "Implements",
+    "named": false
+  },
+  {
+    "type": "Importance",
     "named": false
   },
   {
@@ -43744,10 +43523,6 @@
   },
   {
     "type": "InsertAllowed",
-    "named": false
-  },
-  {
-    "type": "Instream",
     "named": false
   },
   {
@@ -43815,22 +43590,6 @@
     "named": false
   },
   {
-    "type": "Jsonarray",
-    "named": false
-  },
-  {
-    "type": "Jsonobject",
-    "named": false
-  },
-  {
-    "type": "Jsontoken",
-    "named": false
-  },
-  {
-    "type": "Jsonvalue",
-    "named": false
-  },
-  {
     "type": "KEYREF",
     "named": false
   },
@@ -43840,10 +43599,6 @@
   },
   {
     "type": "KeyRef",
-    "named": false
-  },
-  {
-    "type": "Keyref",
     "named": false
   },
   {
@@ -43860,6 +43615,10 @@
   },
   {
     "type": "LOOKUP",
+    "named": false
+  },
+  {
+    "type": "LOOKUPPAGEID",
     "named": false
   },
   {
@@ -43903,19 +43662,11 @@
     "named": false
   },
   {
-    "type": "LookupPageID",
-    "named": false
-  },
-  {
     "type": "LookupPageId",
     "named": false
   },
   {
     "type": "MAX",
-    "named": false
-  },
-  {
-    "type": "MAXITERATION",
     "named": false
   },
   {
@@ -43939,10 +43690,6 @@
     "named": false
   },
   {
-    "type": "MULTIPLICITY",
-    "named": false
-  },
-  {
     "type": "MaintainSiftIndex",
     "named": false
   },
@@ -43952,10 +43699,6 @@
   },
   {
     "type": "Max",
-    "named": false
-  },
-  {
-    "type": "MaxIteration",
     "named": false
   },
   {
@@ -43983,10 +43726,6 @@
     "named": false
   },
   {
-    "type": "Mediaset",
-    "named": false
-  },
-  {
     "type": "Min",
     "named": false
   },
@@ -44011,10 +43750,6 @@
     "named": false
   },
   {
-    "type": "Moduleinfo",
-    "named": false
-  },
-  {
     "type": "MovedFrom",
     "named": false
   },
@@ -44031,11 +43766,19 @@
     "named": false
   },
   {
-    "type": "Multiplicity",
+    "type": "NAMESPACE",
+    "named": false
+  },
+  {
+    "type": "NONRESTRICTIVE",
     "named": false
   },
   {
     "type": "NOT",
+    "named": false
+  },
+  {
+    "type": "Namespace",
     "named": false
   },
   {
@@ -44083,43 +43826,7 @@
     "named": false
   },
   {
-    "type": "ONAFTERDELETEEVENT",
-    "named": false
-  },
-  {
-    "type": "ONAFTERGETRECORD",
-    "named": false
-  },
-  {
-    "type": "ONAFTERINSERTEVENT",
-    "named": false
-  },
-  {
-    "type": "ONAFTERMODIFYEVENT",
-    "named": false
-  },
-  {
-    "type": "ONDELETE",
-    "named": false
-  },
-  {
-    "type": "ONINSERT",
-    "named": false
-  },
-  {
-    "type": "ONMODIFY",
-    "named": false
-  },
-  {
-    "type": "ONRENAME",
-    "named": false
-  },
-  {
     "type": "ONRUN",
-    "named": false
-  },
-  {
-    "type": "ONVALIDATE",
     "named": false
   },
   {
@@ -44131,11 +43838,11 @@
     "named": false
   },
   {
-    "type": "OR",
+    "type": "OPTIONCAPTIONML",
     "named": false
   },
   {
-    "type": "ORDERBY",
+    "type": "OR",
     "named": false
   },
   {
@@ -44152,10 +43859,6 @@
   },
   {
     "type": "ObjectType",
-    "named": false
-  },
-  {
-    "type": "Objecttype",
     "named": false
   },
   {
@@ -44179,95 +43882,7 @@
     "named": false
   },
   {
-    "type": "OnAfterDeleteEvent",
-    "named": false
-  },
-  {
-    "type": "OnAfterGetRecord",
-    "named": false
-  },
-  {
-    "type": "OnAfterInsertEvent",
-    "named": false
-  },
-  {
-    "type": "OnAfterModifyEvent",
-    "named": false
-  },
-  {
-    "type": "OnBeforeDeleteEvent",
-    "named": false
-  },
-  {
-    "type": "OnBeforeInsertEvent",
-    "named": false
-  },
-  {
-    "type": "OnBeforeModifyEvent",
-    "named": false
-  },
-  {
-    "type": "OnDelete",
-    "named": false
-  },
-  {
-    "type": "OnInsert",
-    "named": false
-  },
-  {
-    "type": "OnModify",
-    "named": false
-  },
-  {
-    "type": "OnRename",
-    "named": false
-  },
-  {
     "type": "OnRun",
-    "named": false
-  },
-  {
-    "type": "OnValidate",
-    "named": false
-  },
-  {
-    "type": "Onafterdeleteevent",
-    "named": false
-  },
-  {
-    "type": "Onaftergetrecord",
-    "named": false
-  },
-  {
-    "type": "Onafterinsertevent",
-    "named": false
-  },
-  {
-    "type": "Onaftermodifyevent",
-    "named": false
-  },
-  {
-    "type": "Ondelete",
-    "named": false
-  },
-  {
-    "type": "Oninsert",
-    "named": false
-  },
-  {
-    "type": "Onmodify",
-    "named": false
-  },
-  {
-    "type": "Onrename",
-    "named": false
-  },
-  {
-    "type": "Onrun",
-    "named": false
-  },
-  {
-    "type": "Onvalidate",
     "named": false
   },
   {
@@ -44276,6 +43891,10 @@
   },
   {
     "type": "Option",
+    "named": false
+  },
+  {
+    "type": "OptionCaptionML",
     "named": false
   },
   {
@@ -44295,15 +43914,7 @@
     "named": false
   },
   {
-    "type": "Ostream",
-    "named": false
-  },
-  {
     "type": "OutStream",
-    "named": false
-  },
-  {
-    "type": "Outstream",
     "named": false
   },
   {
@@ -44315,7 +43926,19 @@
     "named": false
   },
   {
-    "type": "PRINTONLYIFDETAIL",
+    "type": "PAGECUSTOMIZATION",
+    "named": false
+  },
+  {
+    "type": "PAGEEXTENSION",
+    "named": false
+  },
+  {
+    "type": "PERMISSIONSET",
+    "named": false
+  },
+  {
+    "type": "PERMISSIONSETEXTENSION",
     "named": false
   },
   {
@@ -44323,7 +43946,7 @@
     "named": false
   },
   {
-    "type": "PROMOTEDACTIONCATEGORIES",
+    "type": "PROFILE",
     "named": false
   },
   {
@@ -44336,6 +43959,14 @@
   },
   {
     "type": "Page",
+    "named": false
+  },
+  {
+    "type": "PageCustomization",
+    "named": false
+  },
+  {
+    "type": "PageExtension",
     "named": false
   },
   {
@@ -44363,6 +43994,14 @@
     "named": false
   },
   {
+    "type": "PermissionSet",
+    "named": false
+  },
+  {
+    "type": "PermissionSetExtension",
+    "named": false
+  },
+  {
     "type": "Permissions",
     "named": false
   },
@@ -44379,10 +44018,6 @@
     "named": false
   },
   {
-    "type": "PrintOnlyIfDetail",
-    "named": false
-  },
-  {
     "type": "Procedure",
     "named": false
   },
@@ -44391,11 +44026,11 @@
     "named": false
   },
   {
-    "type": "ProfileDescription",
+    "type": "Profile",
     "named": false
   },
   {
-    "type": "PromotedActionCategories",
+    "type": "ProfileDescription",
     "named": false
   },
   {
@@ -44451,11 +44086,11 @@
     "named": false
   },
   {
-    "type": "RECORDID",
+    "type": "REPEAT",
     "named": false
   },
   {
-    "type": "REPEAT",
+    "type": "REPLICATEDATA",
     "named": false
   },
   {
@@ -44463,19 +44098,11 @@
     "named": false
   },
   {
+    "type": "RESTRICTIVE",
+    "named": false
+  },
+  {
     "type": "Record",
-    "named": false
-  },
-  {
-    "type": "RecordID",
-    "named": false
-  },
-  {
-    "type": "RecordId",
-    "named": false
-  },
-  {
-    "type": "Recordid",
     "named": false
   },
   {
@@ -44492,14 +44119,6 @@
   },
   {
     "type": "Report",
-    "named": false
-  },
-  {
-    "type": "RequestFilterFields",
-    "named": false
-  },
-  {
-    "type": "RequestFilterHeading",
     "named": false
   },
   {
@@ -44543,15 +44162,15 @@
     "named": false
   },
   {
-    "type": "SHAREDLAYOUT",
+    "type": "SHOWCAPTION",
+    "named": false
+  },
+  {
+    "type": "SOURCETABLE",
     "named": false
   },
   {
     "type": "SOURCETABLEVIEW",
-    "named": false
-  },
-  {
-    "type": "SQLJOINTYPE",
     "named": false
   },
   {
@@ -44560,10 +44179,6 @@
   },
   {
     "type": "SUM",
-    "named": false
-  },
-  {
-    "type": "SYSTEM",
     "named": false
   },
   {
@@ -44579,19 +44194,15 @@
     "named": false
   },
   {
-    "type": "Secrettext",
-    "named": false
-  },
-  {
-    "type": "SharedLayout",
-    "named": false
-  },
-  {
     "type": "ShowAs",
     "named": false
   },
   {
     "type": "ShowAsTree",
+    "named": false
+  },
+  {
+    "type": "ShowCaption",
     "named": false
   },
   {
@@ -44619,6 +44230,10 @@
     "named": false
   },
   {
+    "type": "SourceTable",
+    "named": false
+  },
+  {
     "type": "SourceTableTemporary",
     "named": false
   },
@@ -44632,10 +44247,6 @@
   },
   {
     "type": "SqlIndex",
-    "named": false
-  },
-  {
-    "type": "SqlJoinType",
     "named": false
   },
   {
@@ -44687,23 +44298,15 @@
     "named": false
   },
   {
-    "type": "System",
-    "named": false
-  },
-  {
     "type": "TABLE",
     "named": false
   },
   {
+    "type": "TABLEEXTENSION",
+    "named": false
+  },
+  {
     "type": "TEMPORARY",
-    "named": false
-  },
-  {
-    "type": "TESTISOLATION",
-    "named": false
-  },
-  {
-    "type": "TESTPAGE",
     "named": false
   },
   {
@@ -44727,6 +44330,10 @@
     "named": false
   },
   {
+    "type": "TOOLTIPML",
+    "named": false
+  },
+  {
     "type": "TRIGGER",
     "named": false
   },
@@ -44735,7 +44342,15 @@
     "named": false
   },
   {
+    "type": "TYPE",
+    "named": false
+  },
+  {
     "type": "Table",
+    "named": false
+  },
+  {
+    "type": "TableExtension",
     "named": false
   },
   {
@@ -44755,14 +44370,6 @@
     "named": false
   },
   {
-    "type": "TestIsolation",
-    "named": false
-  },
-  {
-    "type": "TestPage",
-    "named": false
-  },
-  {
     "type": "TestPermissions",
     "named": false
   },
@@ -44772,14 +44379,6 @@
   },
   {
     "type": "TestTableRelation",
-    "named": false
-  },
-  {
-    "type": "Testpage",
-    "named": false
-  },
-  {
-    "type": "Testrequestpage",
     "named": false
   },
   {
@@ -44816,6 +44415,10 @@
   },
   {
     "type": "True",
+    "named": false
+  },
+  {
+    "type": "Type",
     "named": false
   },
   {
@@ -44863,6 +44466,10 @@
     "named": false
   },
   {
+    "type": "VALUE",
+    "named": false
+  },
+  {
     "type": "VAR",
     "named": false
   },
@@ -44880,6 +44487,10 @@
   },
   {
     "type": "ValidateTableRelation",
+    "named": false
+  },
+  {
+    "type": "Value",
     "named": false
   },
   {
@@ -45007,30 +44618,6 @@
     "named": false
   },
   {
-    "type": "Xmlattribute",
-    "named": false
-  },
-  {
-    "type": "Xmlattributecollection",
-    "named": false
-  },
-  {
-    "type": "Xmldocument",
-    "named": false
-  },
-  {
-    "type": "Xmlelement",
-    "named": false
-  },
-  {
-    "type": "Xmlnode",
-    "named": false
-  },
-  {
-    "type": "Xmlnodelist",
-    "named": false
-  },
-  {
     "type": "Xor",
     "named": false
   },
@@ -45043,6 +44630,10 @@
     "named": false
   },
   {
+    "type": "action",
+    "named": false
+  },
+  {
     "type": "and",
     "named": false
   },
@@ -45052,6 +44643,14 @@
   },
   {
     "type": "as",
+    "named": false
+  },
+  {
+    "type": "assembly",
+    "named": false
+  },
+  {
+    "type": "assignmentcompatibility",
     "named": false
   },
   {
@@ -45079,11 +44678,23 @@
     "named": false
   },
   {
-    "type": "caption",
+    "type": "byte",
+    "named": false
+  },
+  {
+    "type": "captionclass",
+    "named": false
+  },
+  {
+    "type": "captionml",
     "named": false
   },
   {
     "type": "case",
+    "named": false
+  },
+  {
+    "type": "char",
     "named": false
   },
   {
@@ -45099,9 +44710,8 @@
     "named": false
   },
   {
-    "type": "comment",
-    "named": true,
-    "extra": true
+    "type": "columnstoreindex",
+    "named": false
   },
   {
     "type": "comment",
@@ -45109,12 +44719,21 @@
     "extra": true
   },
   {
-    "type": "const",
-    "named": true
+    "type": "comment",
+    "named": true,
+    "extra": true
+  },
+  {
+    "type": "compressiontype",
+    "named": false
   },
   {
     "type": "const",
     "named": false
+  },
+  {
+    "type": "const",
+    "named": true
   },
   {
     "type": "controladdin",
@@ -45125,7 +44744,15 @@
     "named": false
   },
   {
+    "type": "customizes",
+    "named": false
+  },
+  {
     "type": "database",
+    "named": false
+  },
+  {
+    "type": "datacaptionfields",
     "named": false
   },
   {
@@ -45137,11 +44764,19 @@
     "named": false
   },
   {
+    "type": "datapercompany",
+    "named": false
+  },
+  {
     "type": "dataset",
     "named": false
   },
   {
     "type": "date",
+    "named": false
+  },
+  {
+    "type": "dateformula",
     "named": false
   },
   {
@@ -45154,10 +44789,18 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
+    "named": true
+  },
+  {
+    "type": "dialog",
+    "named": false
+  },
+  {
+    "type": "disabled",
     "named": false
   },
   {
@@ -45181,6 +44824,14 @@
     "named": false
   },
   {
+    "type": "drilldownpageid",
+    "named": false
+  },
+  {
+    "type": "duration",
+    "named": false
+  },
+  {
     "type": "duration_literal",
     "named": true
   },
@@ -45189,7 +44840,15 @@
     "named": false
   },
   {
+    "type": "enabled",
+    "named": false
+  },
+  {
     "type": "end",
+    "named": false
+  },
+  {
+    "type": "entitlement",
     "named": false
   },
   {
@@ -45197,11 +44856,11 @@
     "named": false
   },
   {
-    "type": "event",
+    "type": "enumextension",
     "named": false
   },
   {
-    "type": "eventsubscriberinstance",
+    "type": "event",
     "named": false
   },
   {
@@ -45213,7 +44872,11 @@
     "named": false
   },
   {
-    "type": "extendeddatatype",
+    "type": "extends",
+    "named": false
+  },
+  {
+    "type": "extensible",
     "named": false
   },
   {
@@ -45237,7 +44900,7 @@
     "named": false
   },
   {
-    "type": "filters",
+    "type": "filterpagebuilder",
     "named": false
   },
   {
@@ -45269,7 +44932,27 @@
     "named": false
   },
   {
+    "type": "implements",
+    "named": false
+  },
+  {
+    "type": "importance",
+    "named": false
+  },
+  {
     "type": "in",
+    "named": false
+  },
+  {
+    "type": "inherententitlements",
+    "named": false
+  },
+  {
+    "type": "inherentpermissions",
+    "named": false
+  },
+  {
+    "type": "instream",
     "named": false
   },
   {
@@ -45293,7 +44976,27 @@
     "named": false
   },
   {
+    "type": "jsonarray",
+    "named": false
+  },
+  {
+    "type": "jsonobject",
+    "named": false
+  },
+  {
+    "type": "jsontoken",
+    "named": false
+  },
+  {
+    "type": "jsonvalue",
+    "named": false
+  },
+  {
     "type": "key",
+    "named": false
+  },
+  {
+    "type": "keyref",
     "named": false
   },
   {
@@ -45313,11 +45016,19 @@
     "named": false
   },
   {
+    "type": "lookuppageid",
+    "named": false
+  },
+  {
     "type": "max",
     "named": false
   },
   {
-    "type": "maxiteration",
+    "type": "media",
+    "named": false
+  },
+  {
+    "type": "mediaset",
     "named": false
   },
   {
@@ -45333,16 +45044,28 @@
     "named": false
   },
   {
+    "type": "moduleinfo",
+    "named": false
+  },
+  {
     "type": "multiline_comment",
     "named": true,
     "extra": true
   },
   {
-    "type": "multiplicity",
+    "type": "namespace",
+    "named": false
+  },
+  {
+    "type": "nonrestrictive",
     "named": false
   },
   {
     "type": "not",
+    "named": false
+  },
+  {
+    "type": "objecttype",
     "named": false
   },
   {
@@ -45354,6 +45077,10 @@
     "named": false
   },
   {
+    "type": "onrun",
+    "named": false
+  },
+  {
     "type": "optimizefortextsearch",
     "named": false
   },
@@ -45362,11 +45089,19 @@
     "named": false
   },
   {
+    "type": "optioncaptionml",
+    "named": false
+  },
+  {
     "type": "or",
     "named": false
   },
   {
-    "type": "orderby",
+    "type": "ostream",
+    "named": false
+  },
+  {
+    "type": "outstream",
     "named": false
   },
   {
@@ -45374,8 +45109,24 @@
     "named": false
   },
   {
+    "type": "pagecustomization",
+    "named": false
+  },
+  {
+    "type": "pageextension",
+    "named": false
+  },
+  {
     "type": "permission_type",
     "named": true
+  },
+  {
+    "type": "permissionset",
+    "named": false
+  },
+  {
+    "type": "permissionsetextension",
+    "named": false
   },
   {
     "type": "pragma",
@@ -45391,15 +45142,11 @@
     "named": true
   },
   {
-    "type": "printonlyifdetail",
-    "named": false
-  },
-  {
     "type": "procedure",
     "named": false
   },
   {
-    "type": "promotedactioncategories",
+    "type": "profile",
     "named": false
   },
   {
@@ -45431,15 +45178,11 @@
     "named": false
   },
   {
+    "type": "replicatedata",
+    "named": false
+  },
+  {
     "type": "report",
-    "named": false
-  },
-  {
-    "type": "requestfilterfields",
-    "named": false
-  },
-  {
-    "type": "requestfilterheading",
     "named": false
   },
   {
@@ -45447,7 +45190,15 @@
     "named": false
   },
   {
-    "type": "sharedlayout",
+    "type": "restrictive",
+    "named": false
+  },
+  {
+    "type": "secrettext",
+    "named": false
+  },
+  {
+    "type": "showcaption",
     "named": false
   },
   {
@@ -45455,11 +45206,11 @@
     "named": true
   },
   {
-    "type": "sourcetableview",
+    "type": "sourcetable",
     "named": false
   },
   {
-    "type": "sqljointype",
+    "type": "sourcetableview",
     "named": false
   },
   {
@@ -45475,23 +45226,15 @@
     "named": false
   },
   {
-    "type": "system",
-    "named": false
-  },
-  {
     "type": "table",
     "named": false
   },
   {
+    "type": "tableextension",
+    "named": false
+  },
+  {
     "type": "temporary",
-    "named": false
-  },
-  {
-    "type": "testisolation",
-    "named": false
-  },
-  {
-    "type": "testpage",
     "named": false
   },
   {
@@ -45519,6 +45262,10 @@
     "named": false
   },
   {
+    "type": "tooltipml",
+    "named": false
+  },
+  {
     "type": "trigger",
     "named": false
   },
@@ -45535,6 +45282,10 @@
     "named": false
   },
   {
+    "type": "type",
+    "named": false
+  },
+  {
     "type": "until",
     "named": false
   },
@@ -45547,7 +45298,15 @@
     "named": false
   },
   {
+    "type": "value",
+    "named": false
+  },
+  {
     "type": "var",
+    "named": false
+  },
+  {
+    "type": "variant",
     "named": false
   },
   {
@@ -45568,6 +45327,30 @@
   },
   {
     "type": "with",
+    "named": false
+  },
+  {
+    "type": "xmlattribute",
+    "named": false
+  },
+  {
+    "type": "xmlattributecollection",
+    "named": false
+  },
+  {
+    "type": "xmldocument",
+    "named": false
+  },
+  {
+    "type": "xmlelement",
+    "named": false
+  },
+  {
+    "type": "xmlnode",
+    "named": false
+  },
+  {
+    "type": "xmlnodelist",
     "named": false
   },
   {

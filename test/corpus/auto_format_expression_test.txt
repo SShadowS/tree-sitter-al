@@ -38,35 +38,31 @@ table 50001 TestTable
         type: (type_specification
           (basic_type))
         (auto_format_expression_property
-          value: (value
-            (field_access
-              record: (identifier)
-              field: (quoted_identifier)))))
+          value: (field_access
+            record: (identifier)
+            field: (quoted_identifier))))
       (field_declaration
         id: (integer)
         name: (identifier)
         type: (type_specification
           (basic_type))
         (auto_format_expression_property
-          value: (value
-            (field_access
-              record: (identifier)
-              field: (quoted_identifier)))))
+          value: (field_access
+            record: (identifier)
+            field: (quoted_identifier))))
       (field_declaration
         id: (integer)
         name: (identifier)
         type: (type_specification
           (basic_type))
         (auto_format_expression_property
-          value: (value
-            (member_expression
-              object: (identifier)
-              property: (identifier)))))
+          value: (member_expression
+            object: (identifier)
+            property: (identifier))))
       (field_declaration
         id: (integer)
         name: (identifier)
         type: (type_specification
           (basic_type))
         (auto_format_expression_property
-          value: (value
-            (string_literal)))))))
+          value: (string_literal))))))

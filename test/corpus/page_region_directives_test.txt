@@ -87,7 +87,8 @@ page 50100 "Manufacturing Factbox"
     (preproc_region)
     (procedure
       modifier: (procedure_modifier)
-      name: (name)
+      name: (name
+        (identifier))
       return_type: (return_type
         (type_specification
           (basic_type)))
@@ -112,7 +113,8 @@ page 50100 "Manufacturing Factbox"
           return_value: (boolean))))
     (procedure
       modifier: (procedure_modifier)
-      name: (name)
+      name: (name
+        (identifier))
       return_type: (return_type
         (type_specification
           (code_type

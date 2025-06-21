@@ -19,7 +19,8 @@ codeunit 50100 Test
     object_name: (identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block
           (if_statement
             left: (identifier)
@@ -50,7 +51,8 @@ codeunit 50101 Test2
     object_name: (identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block
           (assignment_statement
             left: (identifier)
@@ -79,7 +81,8 @@ codeunit 50102 Test3
     object_name: (identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block
           (if_statement
             condition: (logical_expression

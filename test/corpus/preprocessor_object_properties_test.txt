@@ -322,7 +322,8 @@ query 50004 "Test Query"
       (preproc_if
         condition: (identifier))
       (query_type_property)
-      (data_access_intent_property)
+      (data_access_intent_property
+        value: (identifier))
       (preproc_endif))
     (elements_section
       (dataitem_section
@@ -402,9 +403,8 @@ permissionset 50006 "Test Permission Set"
     (permissionset_permissions
       (permission_list
         (permission_entry
-          (tabledata_permission_entry
-            (identifier)
-            (permission_type)))))))
+          object_reference: (identifier)
+          permission: (permission_type))))))
 
 ================================================================================
 ControlAddIn with preprocessor conditional properties

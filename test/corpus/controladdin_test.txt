@@ -52,7 +52,8 @@ controladdin "Test.ControlAddin"
       name: (identifier)
       (parameter_list
         (parameter
-          parameter_name: (name)
+          parameter_name: (name
+            (identifier))
           parameter_type: (type_specification
             (text_type)))))
     (controladdin_procedure
@@ -61,6 +62,7 @@ controladdin "Test.ControlAddin"
       name: (identifier)
       (parameter_list
         (parameter
-          parameter_name: (name)
+          parameter_name: (name
+            (identifier))
           parameter_type: (type_specification
             (text_type)))))))

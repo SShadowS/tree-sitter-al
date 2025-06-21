@@ -22,7 +22,8 @@ codeunit 50000 "Test Codeunit"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block)))))
 
 ================================================================================
@@ -205,6 +206,5 @@ permissionset 50005 "Sample Permissions"
     (permissionset_permissions
       (permission_list
         (permission_entry
-          (tabledata_permission_entry
-            (quoted_identifier)
-            (permission_type)))))))
+          object_reference: (quoted_identifier)
+          permission: (permission_type))))))

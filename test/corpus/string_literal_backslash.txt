@@ -23,10 +23,12 @@ codeunit 123 TestBackslash
     object_name: (identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (text_type))))
         return_type: (return_type
@@ -42,10 +44,12 @@ codeunit 123 TestBackslash
                 (string_literal)))))))
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (text_type))))
         return_type: (return_type
@@ -87,7 +91,8 @@ codeunit 456 TestSpecialChars
     object_name: (identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block
           (call_expression
             function: (identifier)
@@ -147,10 +152,12 @@ codeunit 789 TestComplexStrings
     object_name: (identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (parameter_list
           (parameter
-            parameter_name: (name)
+            parameter_name: (name
+              (identifier))
             parameter_type: (type_specification
               (text_type))))
         return_type: (return_type
@@ -212,7 +219,8 @@ codeunit 999 TestMixed
     object_name: (identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         return_type: (return_type
           (type_specification
             (text_type)))

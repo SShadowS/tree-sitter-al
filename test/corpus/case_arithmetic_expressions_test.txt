@@ -25,7 +25,8 @@ codeunit 123 "Test Codeunit"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-        name: (name)
+        name: (name
+          (identifier))
         (code_block
           (case_statement
             expression: (identifier)
