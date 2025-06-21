@@ -716,6 +716,10 @@
         {
           "type": "SYMBOL",
           "name": "request_filter_heading_ml_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "use_temporary_property"
         }
       ]
     },
@@ -1484,6 +1488,22 @@
         {
           "type": "STRING",
           "value": "SourceTableTemporary"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_boolean_property_template"
+        }
+      ]
+    },
+    "use_temporary_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)usetemporary"
+          }
         },
         {
           "type": "SYMBOL",
@@ -9533,8 +9553,17 @@
                     "type": "CHOICE",
                     "members": [
                       {
-                        "type": "SYMBOL",
-                        "name": "var_section"
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "var_section"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "preproc_conditional_var_sections"
+                          }
+                        ]
                       },
                       {
                         "type": "BLANK"
@@ -17687,8 +17716,17 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "var_section"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "var_section"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_conditional_var_sections"
+                }
+              ]
             },
             {
               "type": "BLANK"
@@ -18667,6 +18705,10 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "asserterror_statement"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "_expression_statement"
               }
             ]
@@ -19078,6 +19120,34 @@
                 "type": "BLANK"
               }
             ]
+          }
+        ]
+      }
+    },
+    "asserterror_statement": {
+      "type": "PREC",
+      "value": 14,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 10,
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)asserterror"
+              }
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "expression",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_expression"
+            }
           }
         ]
       }
@@ -23180,6 +23250,10 @@
               {
                 "type": "SYMBOL",
                 "name": "area_action_section"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "separator_action"
               }
             ]
           }
@@ -23214,6 +23288,10 @@
                       {
                         "type": "SYMBOL",
                         "name": "area_action_section"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "separator_action"
                       }
                     ]
                   }
@@ -25704,6 +25782,10 @@
         {
           "type": "SYMBOL",
           "name": "sql_join_type_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "use_temporary_property"
         }
       ]
     },

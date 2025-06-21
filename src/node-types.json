@@ -2857,6 +2857,264 @@
     }
   },
   {
+    "type": "asserterror_statement",
+    "named": true,
+    "fields": {
+      "expression": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "duration_literal",
+            "named": true
+          },
+          {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
+            "type": "enum_type_reference",
+            "named": true
+          },
+          {
+            "type": "field_access",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "left": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "duration_literal",
+            "named": true
+          },
+          {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
+            "type": "enum_type_reference",
+            "named": true
+          },
+          {
+            "type": "field_access",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "in_operator",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "assignable_property",
     "named": true,
     "fields": {}
@@ -4677,6 +4935,10 @@
             "named": true
           },
           {
+            "type": "asserterror_statement",
+            "named": true
+          },
+          {
             "type": "assignment_statement",
             "named": true
           },
@@ -5380,6 +5642,10 @@
       "types": [
         {
           "type": "additive_expression",
+          "named": true
+        },
+        {
+          "type": "asserterror_statement",
           "named": true
         },
         {
@@ -8496,6 +8762,10 @@
           },
           {
             "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "asserterror_statement",
             "named": true
           },
           {
@@ -12440,6 +12710,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
           "type": "type_specification",
           "named": true
         },
@@ -13923,6 +14197,10 @@
             "named": true
           },
           {
+            "type": "asserterror_statement",
+            "named": true
+          },
+          {
             "type": "assignment_statement",
             "named": true
           },
@@ -14464,6 +14742,10 @@
           },
           {
             "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "asserterror_statement",
             "named": true
           },
           {
@@ -16602,6 +16884,10 @@
             "named": true
           },
           {
+            "type": "asserterror_statement",
+            "named": true
+          },
+          {
             "type": "assignment_statement",
             "named": true
           },
@@ -16903,6 +17189,10 @@
           },
           {
             "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "asserterror_statement",
             "named": true
           },
           {
@@ -24881,6 +25171,10 @@
           "named": true
         },
         {
+          "type": "separator_action",
+          "named": true
+        },
+        {
           "type": "systemaction_declaration",
           "named": true
         }
@@ -27864,6 +28158,10 @@
       "types": [
         {
           "type": "additive_expression",
+          "named": true
+        },
+        {
+          "type": "asserterror_statement",
           "named": true
         },
         {
@@ -31344,6 +31642,10 @@
           "named": true
         },
         {
+          "type": "asserterror_statement",
+          "named": true
+        },
+        {
           "type": "assignment_statement",
           "named": true
         },
@@ -32574,6 +32876,10 @@
         },
         {
           "type": "usage_category_property",
+          "named": true
+        },
+        {
+          "type": "use_temporary_property",
           "named": true
         }
       ]
@@ -37223,6 +37529,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
           "type": "type_specification",
           "named": true
         },
@@ -37822,6 +38132,22 @@
   },
   {
     "type": "use_system_printer_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "use_temporary_property",
     "named": true,
     "fields": {
       "value": {
@@ -39409,6 +39735,10 @@
             "named": true
           },
           {
+            "type": "asserterror_statement",
+            "named": true
+          },
+          {
             "type": "assignment_statement",
             "named": true
           },
@@ -39842,6 +40172,10 @@
           },
           {
             "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "asserterror_statement",
             "named": true
           },
           {
@@ -40745,6 +41079,10 @@
         },
         {
           "type": "usage_category_property",
+          "named": true
+        },
+        {
+          "type": "use_temporary_property",
           "named": true
         },
         {
@@ -42217,11 +42555,11 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "div",
@@ -42297,11 +42635,11 @@
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "interface",

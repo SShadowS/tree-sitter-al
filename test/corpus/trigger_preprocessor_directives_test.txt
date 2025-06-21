@@ -1,0 +1,186 @@
+================================================================================
+Trigger with preprocessor in var section
+================================================================================
+
+report 50100 "Test Report"
+{
+    dataset
+    {
+        dataitem(Item; Item)
+        {
+            trigger OnPreDataItem()
+#if not CLEAN26
+            var
+                TestRecord: Record "Test Table";
+                TempItem: Record Item temporary;
+#endif
+            begin
+                Message('Test');
+            end;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (trigger_declaration
+          name: (trigger_name)
+          (preproc_conditional_var_sections
+            (preproc_if
+              condition: (identifier))
+            (var_section
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (record_type
+                    reference: (quoted_identifier))))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (record_type
+                    reference: (identifier)))
+                temporary: (temporary)))
+            (preproc_endif))
+          (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))))
+
+================================================================================
+Field trigger with preprocessor in var section
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; "Code"; Code[20])
+        {
+            trigger OnValidate()
+#if CLEAN25
+            var
+                Customer: Record Customer;
+#else
+            var
+                OldCustomer: Record "Customer Table";
+                TempBuffer: Record TempBuffer temporary;
+#endif
+            begin
+                ValidateCode();
+            end;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (field_trigger_declaration
+          type: (trigger_type)
+          (preproc_conditional_var_sections
+            (preproc_if
+              condition: (identifier))
+            (var_section
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (record_type
+                    reference: (identifier)))))
+            (preproc_else)
+            (var_section
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (record_type
+                    reference: (quoted_identifier))))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (record_type
+                    reference: (identifier)))
+                temporary: (temporary)))
+            (preproc_endif))
+          (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))))))))
+
+================================================================================
+Multiple nested preprocessor conditions in trigger
+================================================================================
+
+page 50100 "Test Page"
+{
+    trigger OnOpenPage()
+#if not CLEAN26
+    var
+        Setup: Record "Company Information";
+#if ONPREM
+        LocalSetup: Record "Local Setup";
+#endif
+#else
+    var
+        ModernSetup: Record "Modern Setup";
+#endif
+    begin
+        Initialize();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (trigger_declaration
+      name: (trigger_name)
+      (preproc_conditional_var_sections
+        (preproc_if
+          condition: (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (preproc_conditional_variables
+            (preproc_if
+              condition: (identifier))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))
+            (preproc_endif)))
+        (preproc_else)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (preproc_endif))
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list))))))

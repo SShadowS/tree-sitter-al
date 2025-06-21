@@ -2309,7 +2309,10 @@ module.exports = grammar({
         // Standard trigger with code block
         prec(2, seq(
           optional(';'), // Allow optional semicolon after trigger declaration
-          optional($.var_section),
+          optional(choice(
+            $.var_section,
+            $.preproc_conditional_var_sections
+          )),
           $.code_block
         )),
         // Control add-in trigger declaration ending with semicolon (without code block)
@@ -4179,7 +4182,10 @@ enum_type: $ => prec(1, seq(
       ),
       optional(seq(':', $.type_specification)),
       optional(';'),  // Allow optional semicolon after return type
-      optional($.var_section),
+      optional(choice(
+        $.var_section,
+        $.preproc_conditional_var_sections
+      )),
       $.code_block
     ),
 
