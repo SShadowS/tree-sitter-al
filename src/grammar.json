@@ -23617,8 +23617,8 @@
       "value": "#region[^\\n\\r]*"
     },
     "preproc_endregion": {
-      "type": "STRING",
-      "value": "#endregion"
+      "type": "PATTERN",
+      "value": "#endregion[^\\n\\r]*"
     },
     "pragma": {
       "type": "PATTERN",
@@ -27104,6 +27104,14 @@
     {
       "type": "SYMBOL",
       "name": "pragma"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "preproc_region"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "preproc_endregion"
     }
   ],
   "conflicts": [

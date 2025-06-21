@@ -73,7 +73,7 @@ module.exports = grammar({
     [$._source_content, $.preproc_conditional_using]
   ],
 
-  extras: $ => [new RustRegex('\\s'), new RustRegex('\\uFEFF'), $.comment, $.multiline_comment, $.pragma],
+  extras: $ => [new RustRegex('\\s'), new RustRegex('\\uFEFF'), $.comment, $.multiline_comment, $.pragma, $.preproc_region, $.preproc_endregion],
 
   rules: {
     source_file: $ => choice(
@@ -5411,7 +5411,7 @@ enum_type: $ => prec(1, seq(
 
     preproc_region: $ => new RustRegex('#region[^\\n\\r]*'),
 
-    preproc_endregion: $ => '#endregion',
+    preproc_endregion: $ => new RustRegex('#endregion[^\\n\\r]*'),
 
     pragma: $ => new RustRegex('#pragma[^\\n]*'), // Match lines starting with #pragma specifically
 

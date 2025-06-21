@@ -1,24 +1,17 @@
 ================================================================================
-Codeunit with region directives
+Basic region directive in codeunit
 ================================================================================
 
-codeunit 50000 "Test Codeunit"
+codeunit 50100 "Test Codeunit"
 {
-    #region GetNextNo
-    /// <summary>
-    /// Get the next number in the No. Series.
-    /// </summary>
-    procedure GetNextNo(NoSeriesCode: Code[20]): Code[20]
+    #region Tests
+    
+    procedure TestMethod()
     begin
-        exit('TEST-001');
+        Message('Inside region');
     end;
-    #endregion
-
-    #region ValidateData
-    procedure ValidateRecord()
-    begin
-    end;
-    #endregion
+    
+    #endregion Tests
 }
 
 --------------------------------------------------------------------------------
@@ -28,61 +21,122 @@ codeunit 50000 "Test Codeunit"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    (comment)
-    (comment)
-    (comment)
     (attributed_procedure
       (procedure
         name: (name
           (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (code_type
-                length: (integer)))))
-        return_type: (return_type
-          (type_specification
-            (code_type
-              length: (integer))))
         (code_block
-          (exit_statement
-            return_value: (string_literal)))))
-    (preproc_endregion)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))
+    (preproc_endregion)))
+
+================================================================================
+Region with description text
+================================================================================
+
+codeunit 50101 "Another Codeunit"
+{
+    #region Helper Methods
+    
+    procedure HelperMethod()
+    begin
+        // Helper code
+    end;
+    
+    #endregion Helper Methods
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
     (preproc_region)
     (attributed_procedure
       (procedure
         name: (name
           (identifier))
-        (code_block)))
+        (code_block
+          (comment))))
     (preproc_endregion)))
 
 ================================================================================
-Table with region directives
+Nested regions
 ================================================================================
 
-table 50001 "Test Table"
+codeunit 50102 "Nested Regions"
+{
+    #region Outer Region
+    
+    procedure OuterMethod()
+    begin
+        Message('Outer');
+    end;
+    
+    #region Inner Region
+    
+    procedure InnerMethod()
+    begin
+        Message('Inner');
+    end;
+    
+    #endregion Inner Region
+    
+    #endregion Outer Region
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (preproc_region)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (code_block
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))
+    (preproc_region)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (code_block
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))
+    (preproc_endregion)
+    (preproc_endregion)))
+
+================================================================================
+Region in table with fields
+================================================================================
+
+table 50100 "Test Table"
 {
     #region Fields
+    
     fields
     {
-        field(1; "Code"; Code[20])
+        field(1; Code; Code[20])
         {
-            Caption = 'Code';
+        }
+        
+        field(2; Description; Text[100])
+        {
         }
     }
-    #endregion
-
-    #region Keys
-    keys
-    {
-        key(PK; "Code")
-        {
-            Clustered = true;
-        }
-    }
-    #endregion
+    
+    #endregion Fields
 }
 
 --------------------------------------------------------------------------------
@@ -95,199 +149,46 @@ table 50001 "Test Table"
     (fields
       (field_declaration
         id: (integer)
-        name: (quoted_identifier)
+        name: (identifier)
         type: (type_specification
           (code_type
-            length: (integer)))
-        (caption_property
-          (string_literal))))
-    (preproc_endregion)
-    (preproc_region)
-    (keys
-      (key_declaration
-        name: (name)
-        fields: (key_field_list
-          (quoted_identifier))
-        (clustered_property
-          value: (boolean))))
-    (preproc_endregion)))
-
-================================================================================
-Report with region directives
-================================================================================
-
-report 50002 "Test Report"
-{
-    #region Properties
-    Caption = 'Test Report';
-    UsageCategory = ReportsAndAnalysis;
-    #endregion
-
-    #region Dataset
-    dataset
-    {
-        dataitem(Customer; Customer)
-        {
-            column(No; "No.")
-            {
-            }
-        }
-    }
-    #endregion
-}
-
---------------------------------------------------------------------------------
-
-(source_file
-  (report_declaration
-    object_id: (integer)
-    object_name: (quoted_identifier)
-    (preproc_region)
-    (caption_property
-      (string_literal))
-    (usage_category_property
-      value: (usage_category_value))
-    (preproc_endregion)
-    (preproc_region)
-    (dataset_section
-      (report_dataitem_section
+            length: (integer))))
+      (field_declaration
+        id: (integer)
         name: (identifier)
-        (identifier)
-        (report_column_section
-          name: (identifier)
-          source: (quoted_identifier))))
+        type: (type_specification
+          (text_type
+            length: (integer)))))
     (preproc_endregion)))
 
 ================================================================================
-Page with region directives
+Region with var section and procedures
 ================================================================================
 
-page 50003 "Test Page"
+codeunit 50103 "Complex Region"
 {
-    #region Layout
-    layout
-    {
-        area(Content)
-        {
-            group(General)
-            {
-                field(Code; Code)
-                {
-                    ApplicationArea = All;
-                }
-            }
-        }
-    }
-    #endregion
-
-    #region Actions
-    actions
-    {
-        area(Processing)
-        {
-            action(TestAction)
-            {
-                Caption = 'Test';
-            }
-        }
-    }
-    #endregion
-}
-
---------------------------------------------------------------------------------
-
-(source_file
-  (page_declaration
-    object_id: (integer)
-    object_name: (quoted_identifier)
-    (preproc_region)
-    (layout_section
-      (area_section
-        (group_section
-          name: (identifier)
-          (field_section
-            control_id: (identifier)
-            source_or_field_name: (identifier)
-            (application_area_property
-              value: (identifier))))))
-    (preproc_endregion)
-    (preproc_region)
-    (actions_section
-      (area_action_section
-        (action_declaration
-          name: (identifier)
-          (caption_property
-            (string_literal)))))
-    (preproc_endregion)))
-
-================================================================================
-Query with region directives
-================================================================================
-
-query 50004 "Test Query"
-{
-    #region Properties
-    Caption = 'Test Query';
-    QueryType = Normal;
-    #endregion
-
-    #region Elements
-    elements
-    {
-        dataitem(Customer; Customer)
-        {
-            column(No; "No.")
-            {
-            }
-        }
-    }
-    #endregion
-}
-
---------------------------------------------------------------------------------
-
-(source_file
-  (query_declaration
-    object_id: (integer)
-    object_name: (quoted_identifier)
-    (preproc_region)
-    (property_list
-      (property
-        (caption_property
-          (string_literal))))
-    (query_type_property)
-    (preproc_endregion)
-    (preproc_region)
-    (elements_section
-      (dataitem_section
-        name: (identifier)
-        table_name: (identifier)
-        (column_section
-          name: (identifier)
-          field_name: (quoted_identifier))))
-    (preproc_endregion)))
-
-================================================================================
-Nested region directives
-================================================================================
-
-codeunit 50005 "Nested Regions"
-{
-    #region OuterRegion
-    procedure OuterProcedure()
+    var
+        GlobalVar: Integer;
+    
+    #region Public Methods
+    
+    procedure PublicMethod()
+    var
+        LocalVar: Text;
     begin
+        LocalVar := 'Test';
     end;
-
-    #region InnerRegion
-    procedure InnerProcedure()
+    
+    #endregion Public Methods
+    
+    #region Private Methods
+    
+    local procedure PrivateMethod()
     begin
+        GlobalVar := 10;
     end;
-    #endregion
-
-    procedure AnotherProcedure()
-    begin
-    end;
-    #endregion
+    
+    #endregion Private Methods
 }
 
 --------------------------------------------------------------------------------
@@ -296,49 +197,34 @@ codeunit 50005 "Nested Regions"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))
     (preproc_region)
     (attributed_procedure
       (procedure
         name: (name
           (identifier))
-        (code_block)))
-    (preproc_region)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block)))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            right: (string_literal)))))
     (preproc_endregion)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block)))
-    (preproc_endregion)))
-
-================================================================================
-Region directive with empty name
-================================================================================
-
-codeunit 50006 "Empty Region Name"
-{
-    #region
-    procedure TestProcedure()
-    begin
-    end;
-    #endregion
-}
-
---------------------------------------------------------------------------------
-
-(source_file
-  (codeunit_declaration
-    object_id: (integer)
-    object_name: (quoted_identifier)
     (preproc_region)
     (attributed_procedure
       (procedure
+        modifier: (procedure_modifier)
         name: (name
           (identifier))
-        (code_block)))
+        (code_block
+          (assignment_statement
+            left: (identifier)
+            right: (integer)))))
     (preproc_endregion)))
