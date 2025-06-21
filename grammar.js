@@ -230,6 +230,7 @@ module.exports = grammar({
       $.request_filter_fields_property,
       $.request_filter_heading_property,
       $.request_filter_heading_ml_property,
+      $.use_temporary_property,
     ),
     
     // 11. Unbound Property
@@ -454,6 +455,9 @@ module.exports = grammar({
 
     // Source Table Temporary Property
     source_table_temporary_property: $ => seq('SourceTableTemporary', $._boolean_property_template),
+
+    // Use Temporary Property
+    use_temporary_property: $ => seq(kw('usetemporary'), $._boolean_property_template),
 
     // Phase 2A - Medium Priority Boolean Page Properties
     analysis_mode_enabled_property: $ => seq('AnalysisModeEnabled', $._boolean_property_template),
@@ -5992,6 +5996,7 @@ enum_type: $ => prec(1, seq(
       $.request_filter_heading_property,
       $.print_only_if_detail_property,
       $.sql_join_type_property,
+      $.use_temporary_property,
     ),
 
     // Report column-specific properties

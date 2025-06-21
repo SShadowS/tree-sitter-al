@@ -1,0 +1,208 @@
+================================================================================
+UseTemporary property in report dataitem
+================================================================================
+
+report 50100 "Test Report"
+{
+    dataset
+    {
+        dataitem("Warehouse Source Filter"; "Warehouse Source Filter")
+        {
+            DataItemTableView = sorting(Type, Code);
+            UseTemporary = true;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (quoted_identifier)
+        (quoted_identifier)
+        (data_item_table_view_property
+          value: (source_table_view_value
+            (sorting_clause
+              fields: (field_reference_list
+                (field_reference
+                  (identifier))
+                (field_reference
+                  (identifier))))))
+        (use_temporary_property
+          value: (boolean))))))
+
+================================================================================
+UseTemporary property with false value
+================================================================================
+
+report 50101 "Another Report"
+{
+    dataset
+    {
+        dataitem(Customer; Customer)
+        {
+            UseTemporary = false;
+            RequestFilterFields = "No.", Name;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (use_temporary_property
+          value: (boolean))
+        (request_filter_fields_property
+          value: (request_filter_fields_value
+            (quoted_identifier)
+            (identifier)))))))
+
+================================================================================
+UseTemporary in XMLPort tableelement
+================================================================================
+
+xmlport 50100 "Test XMLPort"
+{
+    Format = VariableText;
+    
+    schema
+    {
+        tableelement("Gen. Journal Line"; "Gen. Journal Line")
+        {
+            XmlName = 'Document';
+            UseTemporary = true;
+            
+            fieldelement(AccountNo; "Gen. Journal Line"."Account No.")
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (format_property
+      value: (format_value))
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (quoted_identifier)
+        source_table: (quoted_identifier)
+        (xmlport_table_property
+          (xml_name_property
+            value: (string_literal)))
+        (xmlport_table_property
+          (use_temporary_property
+            value: (boolean)))
+        (xmlport_table_element
+          name: (identifier)
+          source_table: (field_access
+            record: (quoted_identifier)
+            field: (quoted_identifier)))))))
+
+================================================================================
+UseTemporary with mixed properties in report dataitem
+================================================================================
+
+report 50102 "Complex Report"
+{
+    dataset
+    {
+        dataitem("Warehouse Source Filter"; "Warehouse Source Filter")
+        {
+            DataItemTableView = sorting(Type, Code);
+            RequestFilterFields = "Item No. Filter", "Variant Code Filter";
+            RequestFilterHeading = 'Document details';
+            UseTemporary = true;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (quoted_identifier)
+        (quoted_identifier)
+        (data_item_table_view_property
+          value: (source_table_view_value
+            (sorting_clause
+              fields: (field_reference_list
+                (field_reference
+                  (identifier))
+                (field_reference
+                  (identifier))))))
+        (request_filter_fields_property
+          value: (request_filter_fields_value
+            (quoted_identifier)
+            (quoted_identifier)))
+        (request_filter_heading_property
+          value: (string_literal))
+        (use_temporary_property
+          value: (boolean))))))
+
+================================================================================
+UseTemporary case variations
+================================================================================
+
+report 50103 "Case Test"
+{
+    dataset
+    {
+        dataitem(Item; Item)
+        {
+            usetemporary = true;
+        }
+        
+        dataitem(Vendor; Vendor)
+        {
+            UseTemporary = TRUE;
+        }
+        
+        dataitem(Customer; Customer)
+        {
+            USETEMPORARY = false;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (use_temporary_property
+          value: (boolean)))
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (use_temporary_property
+          value: (boolean)))
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (use_temporary_property
+          value: (boolean))))))
