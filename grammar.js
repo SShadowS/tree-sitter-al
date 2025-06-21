@@ -5357,7 +5357,8 @@ enum_type: $ => prec(1, seq(
         $._action_element,
         $._action_group,
         $.action_group_section,
-        $.area_action_section
+        $.area_action_section,
+        $.separator_action
       )),
 
     // Preprocessor conditional rules for variable declarations
