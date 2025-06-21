@@ -101,7 +101,7 @@ module.exports = grammar({
     ),
 
     namespace_declaration: $ => seq(
-      choice('namespace', 'Namespace', 'NAMESPACE'),
+      kw('namespace'),
       field('name', $.namespace_name),
       ';'
     ),
@@ -356,10 +356,10 @@ module.exports = grammar({
     ),
 
     enum_declaration: $ => seq(
-      choice('enum', 'Enum', 'ENUM'),
+      kw('enum'),
       $._object_header_base,
       optional(seq(
-        choice('implements', 'Implements', 'IMPLEMENTS'),
+        kw('implements'),
         field('interface', $._identifier_choice)
       )),
       '{',
@@ -372,9 +372,9 @@ module.exports = grammar({
     ),
 
     enumextension_declaration: $ => seq(
-      choice('enumextension', 'EnumExtension', 'ENUMEXTENSION'),
+      kw('enumextension'),
       $._object_header_base,
-      choice('extends', 'Extends', 'EXTENDS'),
+      kw('extends'),
       field('base_object', $._identifier_choice),
       '{',
       repeat($.enum_value_declaration),
@@ -382,7 +382,7 @@ module.exports = grammar({
     ),
 
     enum_value_declaration: $ => seq(
-      choice('value', 'Value', 'VALUE'),
+      kw('value'),
       '(',
       field('value_id', $.integer),
       ';',
@@ -394,7 +394,7 @@ module.exports = grammar({
     ),
 
     query_declaration: $ => seq(
-      choice('query', 'Query', 'QUERY'),
+      kw('query'),
       $._object_header_base,
       '{',
       repeat($._query_element),
@@ -780,7 +780,7 @@ module.exports = grammar({
     ),
     
     source_table_view_property: $ => prec(8, seq(
-      choice('sourcetableview', 'SourceTableView', 'SOURCETABLEVIEW'),
+      kw('sourcetableview'),
       '=',
       field('value', $.source_table_view_value),
       ';'
@@ -878,9 +878,9 @@ module.exports = grammar({
     ),
 
     pageextension_declaration: $ => seq(
-      choice('pageextension', 'PageExtension', 'PAGEEXTENSION'),
+      kw('pageextension'),
       $._object_header_base,
-      choice('extends', 'Extends', 'EXTENDS'),
+      kw('extends'),
       field('base_object', $._identifier_choice),
       '{',
       repeat($._pageextension_element),
@@ -902,9 +902,9 @@ module.exports = grammar({
     ),
 
     tableextension_declaration: $ => seq(
-      choice('tableextension', 'TableExtension', 'TABLEEXTENSION'),
+      kw('tableextension'),
       $._object_header_base,
-      choice('extends', 'Extends', 'EXTENDS'),
+      kw('extends'),
       field('base_object', $._identifier_choice),
       '{',
       repeat($._tableextension_element),
@@ -1131,7 +1131,7 @@ module.exports = grammar({
     ),
 
     fileuploadaction_trigger: $ => seq(
-      'trigger',
+      kw('trigger'),
       field('name', choice(
         'OnAction',
         'onaction',
@@ -1172,7 +1172,7 @@ module.exports = grammar({
     ),
 
     source_table_property: $ => seq(
-      choice('sourcetable', 'SourceTable', 'SOURCETABLE'),
+      kw('sourcetable'),
       '=',
       field('value', choice($.integer, $.identifier, $._quoted_identifier)),
       ';'
@@ -1277,12 +1277,12 @@ module.exports = grammar({
     ),
 
     enabled_property: $ => seq(
-      choice('enabled', 'Enabled', 'ENABLED'),
+      kw('enabled'),
       $._expression_property_template
     ),
 
     visible_property: $ => seq(
-      choice('visible', 'Visible', 'VISIBLE'),
+      kw('visible'),
       $._expression_property_template
     ),
 
@@ -1349,7 +1349,7 @@ module.exports = grammar({
     ),
 
     subtype_property: $ => seq(
-      choice('subtype', 'SubType', 'Subtype', 'SUBTYPE'),
+      kw('subtype'),
       '=', 
       field('value', alias($.subtype_value, $.value)),
       ';'
@@ -1377,14 +1377,14 @@ module.exports = grammar({
     ),
 
     drilldown_pageid_property: $ => seq(
-      choice('drilldownpageid', 'DrillDownPageId', 'DRILLDOWNPAGEID'),
+      kw('drilldownpageid'),
       '=', 
       field('value', alias($.page_id_value, $.value)),
       ';'
     ),
 
     lookup_pageid_property: $ => seq(
-      choice('lookuppageid', 'LookupPageId', 'LOOKUPPAGEID'),
+      kw('lookuppageid'),
       '=',
       field('value', alias($.page_id_value, $.value)),
       ';'
@@ -1417,7 +1417,7 @@ module.exports = grammar({
     ),
 
     table_declaration: $ => seq(
-      choice('table', 'Table', 'TABLE'),
+      kw('table'),
       $._object_header_base,
       '{',
       repeat($._table_element),
@@ -1425,7 +1425,7 @@ module.exports = grammar({
     ),
 
     codeunit_declaration: $ => seq(
-      choice('codeunit', 'Codeunit', 'CODEUNIT'),
+      kw('codeunit'),
       $._object_header_base,
       optional($.implements_clause),
       '{',
@@ -1497,7 +1497,7 @@ module.exports = grammar({
     // Generic trigger rule for codeunits etc.
 
     page_declaration: $ => seq(
-      choice('page', 'Page', 'PAGE'),
+      kw('page'),
       $._object_header_base,
       '{',
       repeat(seq(optional(';'), $._page_element)),
@@ -1505,9 +1505,9 @@ module.exports = grammar({
     ),
 
     pagecustomization_declaration: $ => seq(
-      choice('pagecustomization', 'PageCustomization', 'PAGECUSTOMIZATION'),
+      kw('pagecustomization'),
       field('object_name', $._identifier_choice),
-      choice('customizes', 'Customizes', 'CUSTOMIZES'),
+      kw('customizes'),
       field('target_page', $._identifier_choice),
       '{',
       repeat($._pagecustomization_element),
@@ -1515,7 +1515,7 @@ module.exports = grammar({
     ),
 
     profile_declaration: $ => seq(
-      choice('profile', 'Profile', 'PROFILE'),
+      kw('profile'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($._profile_element),
@@ -1523,7 +1523,7 @@ module.exports = grammar({
     ),
 
     controladdin_declaration: $ => seq(
-      choice('controladdin', 'ControlAddIn', 'CONTROLADDIN'),
+      kw('controladdin'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($._controladdin_element),
@@ -1539,7 +1539,7 @@ module.exports = grammar({
     ),
 
     entitlement_declaration: $ => seq(
-      choice('entitlement', 'Entitlement', 'ENTITLEMENT'),
+      kw('entitlement'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($._entitlement_element),
@@ -1619,7 +1619,7 @@ module.exports = grammar({
     ),
 
     controladdin_procedure: $ => seq(
-      'procedure',
+      kw('procedure'),
       field('name', $.identifier),
       '(',
       optional($.parameter_list),
@@ -1628,7 +1628,7 @@ module.exports = grammar({
     ),
 
     interface_declaration: $ => seq(
-      choice('interface', 'Interface', 'INTERFACE'),
+      kw('interface'),
       field('object_name', $._identifier_choice),
       '{',
       repeat($.interface_procedure),
@@ -1636,7 +1636,7 @@ module.exports = grammar({
     ),
 
     interface_procedure: $ => seq(
-      choice('procedure', 'Procedure', 'PROCEDURE'),
+      kw('procedure'),
       field('name', $.identifier),
       '(',
       optional($.parameter_list),
@@ -1646,7 +1646,7 @@ module.exports = grammar({
     ),
 
     report_declaration: $ => seq(
-      choice('report', 'Report', 'REPORT'),
+      kw('report'),
       $._object_header_base,
       '{',
       repeat($._report_element),
@@ -1744,7 +1744,7 @@ module.exports = grammar({
     ),
 
     permissionset_declaration: $ => seq(
-      choice('permissionset', 'PermissionSet', 'PERMISSIONSET'),
+      kw('permissionset'),
       $._object_header_base,
       '{',
       repeat($._permissionset_element),
@@ -1759,10 +1759,10 @@ module.exports = grammar({
     ),
 
     permissionsetextension_declaration: $ => seq(
-      choice('permissionsetextension', 'PermissionSetExtension', 'PERMISSIONSETEXTENSION'),
+      kw('permissionsetextension'),
       field('object_id', $.integer),
       field('object_name', $._identifier_choice),
-      choice('extends', 'Extends', 'EXTENDS'),
+      kw('extends'),
       field('extends_target', $._identifier_choice),
       '{',
       repeat($._permissionsetextension_element),
@@ -1853,7 +1853,7 @@ module.exports = grammar({
     )),
 
     dotnet_declaration: $ => seq(
-      choice('dotnet', 'DotNet', 'DOTNET'),
+      kw('dotnet'),
       '{',
       repeat($.assembly_declaration),
       '}'
@@ -3296,11 +3296,11 @@ module.exports = grammar({
       // Allow the keyword 'Description' to be treated as an identifier in variable contexts
       alias(choice('description', 'Description', 'DESCRIPTION'), $.identifier),
       // Allow the keyword 'Importance' to be treated as an identifier in variable contexts
-      alias(choice('importance', 'Importance', 'IMPORTANCE'), $.identifier),
+      alias(kw('importance'), $.identifier),
       // Allow the keyword 'SourceTable' to be treated as an identifier in variable contexts
-      alias(choice('sourcetable', 'SourceTable', 'SOURCETABLE'), $.identifier),
+      alias(kw('sourcetable'), $.identifier),
       // Allow the keyword 'IncludeCaption' to be treated as an identifier in variable contexts
-      alias(choice('includecaption', 'IncludeCaption', 'INCLUDECAPTION'), $.identifier),
+      alias(kw('includecaption'), $.identifier),
       // Allow the keyword 'ExcludeCaption' to be treated as an identifier in variable contexts
       alias(choice('excludecaption', 'ExcludeCaption', 'EXCLUDECAPTION'), $.identifier),
       // Allow the keyword 'SubType' to be treated as an identifier in variable contexts
@@ -3652,14 +3652,14 @@ enum_type: $ => prec(1, seq(
     ),
 
     fields: $ => seq(
-      choice('fields', 'Fields', 'FIELDS'),
+      kw('fields'),
       '{',
       repeat(choice($.field_declaration, $.modify_field_declaration)),
       '}'
     ),
 
     field_declaration: $ => seq(
-      'field',
+      kw('field'),
       '(',
       field('id', $.integer),
       token(';'),  // Make semi_colon an explicit token
@@ -3732,7 +3732,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     modify_field_declaration: $ => seq(
-      'modify',
+      kw('modify'),
       '(',
       field('name', choice(
         $._quoted_identifier,
@@ -4199,14 +4199,14 @@ enum_type: $ => prec(1, seq(
     ),
 
     keys: $ => seq(
-      choice('keys', 'Keys', 'KEYS'),
+      kw('keys'),
       '{',
       repeat($.key_declaration),
       '}'
     ),
 
     key_declaration: $ => seq(
-      'key',
+      kw('key'),
       '(',
       field('name', alias($.identifier, $.name)),
       ';',
@@ -4867,14 +4867,14 @@ enum_type: $ => prec(1, seq(
 
     // DATABASE references (DATABASE::Customer pattern)
     database_reference: $ => prec.left(9, seq(
-      choice('database', 'DATABASE', 'Database'),
+      kw('database', 10),
       '::',
       field('table_name', $._identifier_choice)
     )),
 
     // Rule for expressions using Enum keyword with double qualification (Enum::"Type"::"Value")
     enum_keyword_qualified_value: $ => prec.left(9, seq( // Increased precedence
-      choice('enum', 'Enum', 'ENUM'),
+      kw('enum'),
       field('operator1', $._double__colon),
       field('enum_type', choice(
         $._quoted_identifier,
@@ -4889,7 +4889,7 @@ enum_type: $ => prec(1, seq(
 
     // Rule for enum type references (Enum::"Type") used for static method calls
     enum_type_reference: $ => prec.left(8, seq(
-      choice('enum', 'Enum', 'ENUM'),
+      kw('enum'),
       field('operator', $._double__colon),
       field('enum_type', choice(
         $._quoted_identifier,
@@ -6509,7 +6509,7 @@ enum_type: $ => prec(1, seq(
 
 
     // Centralized case-insensitive keyword patterns for DRY principle
-    _field_keyword: $ => choice('field', 'FIELD', 'Field'),
+    _field_keyword: $ => kw('field'),
     _filter_keyword: $ => choice('filter', 'FILTER', 'Filter'),
     _cardpart_keyword: $ => kw('cardpart'),
     _tabledata_keyword: $ => kw('tabledata'),
