@@ -12686,6 +12686,16 @@
     "type": "field_trigger_declaration",
     "named": true,
     "fields": {
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "return_type",
+            "named": true
+          }
+        ]
+      },
       "type": {
         "multiple": false,
         "required": true,
@@ -12711,6 +12721,10 @@
         },
         {
           "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
+          "type": "return_value",
           "named": true
         },
         {
@@ -37522,6 +37536,16 @@
             "named": true
           }
         ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "return_type",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
@@ -37538,6 +37562,10 @@
         },
         {
           "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
+          "type": "return_value",
           "named": true
         },
         {

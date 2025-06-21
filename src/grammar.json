@@ -9519,15 +9519,24 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SEQ",
+              "type": "CHOICE",
               "members": [
                 {
-                  "type": "STRING",
-                  "value": ":"
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": ":"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "type_specification"
+                    }
+                  ]
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "type_specification"
+                  "name": "_procedure_named_return"
                 }
               ]
             },
@@ -17695,15 +17704,24 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SEQ",
+              "type": "CHOICE",
               "members": [
                 {
-                  "type": "STRING",
-                  "value": ":"
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": ":"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "type_specification"
+                    }
+                  ]
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "type_specification"
+                  "name": "_procedure_named_return"
                 }
               ]
             },

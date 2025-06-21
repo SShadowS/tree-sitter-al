@@ -1,0 +1,262 @@
+================================================================================
+Page trigger with named return value - OnFindRecord
+================================================================================
+
+page 50100 "Item Turnover Lines"
+{
+    trigger OnFindRecord(Which: Text) FoundDate: Boolean
+    var
+        VariantRec: Variant;
+    begin
+        VariantRec := Rec;
+        FoundDate := PeriodFormLinesMgt.FindDate(VariantRec, DateRec, Which, PeriodType.AsInteger());
+        Rec := VariantRec;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (trigger_declaration
+      name: (trigger_name)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type))))
+      (return_value
+        return_value: (identifier))
+      return_type: (return_type
+        (type_specification
+          (basic_type)))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_statement
+          left: (identifier)
+          right: (identifier))
+        (assignment_statement
+          left: (identifier)
+          right: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (identifier)
+              (identifier)
+              (identifier)
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list)))))
+        (assignment_statement
+          left: (identifier)
+          right: (identifier))))))
+
+================================================================================
+Page trigger with named return value - OnNextRecord
+================================================================================
+
+page 50101 "Test Page"
+{
+    trigger OnNextRecord(Steps: Integer) ResultSteps: Integer
+    var
+        VariantRec: Variant;
+    begin
+        VariantRec := Rec;
+        ResultSteps := PeriodFormLinesMgt.NextDate(VariantRec, DateRec, Steps, PeriodType.AsInteger());
+        Rec := VariantRec;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (trigger_declaration
+      name: (trigger_name)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (return_value
+        return_value: (identifier))
+      return_type: (return_type
+        (type_specification
+          (basic_type)))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_statement
+          left: (identifier)
+          right: (identifier))
+        (assignment_statement
+          left: (identifier)
+          right: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (identifier)
+              (identifier)
+              (identifier)
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list)))))
+        (assignment_statement
+          left: (identifier)
+          right: (identifier))))))
+
+================================================================================
+Field trigger with named return value
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; Code; Code[20])
+        {
+            trigger OnLookup(var Text: Text) LookupResult: Boolean
+            begin
+                LookupResult := LookupCustomCode(Text);
+                exit(LookupResult);
+            end;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (field_trigger_declaration
+          type: (trigger_type)
+          (parameter_list
+            (parameter
+              modifier: (modifier)
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (text_type))))
+          (return_value
+            return_value: (identifier))
+          return_type: (return_type
+            (type_specification
+              (basic_type)))
+          (code_block
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier))))
+            (exit_statement
+              return_value: (identifier))))))))
+
+================================================================================
+Trigger with quoted named return value
+================================================================================
+
+page 50102 "Test Page"
+{
+    trigger OnAfterGetRecord() "Has Data": Boolean
+    begin
+        "Has Data" := not IsEmpty();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (trigger_declaration
+      name: (trigger_name)
+      (return_value
+        return_value: (quoted_identifier))
+      return_type: (return_type
+        (type_specification
+          (basic_type)))
+      (code_block
+        (assignment_statement
+          left: (quoted_identifier)
+          right: (unary_expression
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))))))))
+
+================================================================================
+Trigger with named return value and semicolon
+================================================================================
+
+page 50103 "Test Page"
+{
+    trigger OnQueryClosePage(CloseAction: Action) AllowClose: Boolean;
+    var
+        Customer: Record Customer;
+    begin
+        AllowClose := Customer.IsEmpty();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (trigger_declaration
+      name: (trigger_name)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (return_value
+        return_value: (identifier))
+      return_type: (return_type
+        (type_specification
+          (basic_type)))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (assignment_statement
+          left: (identifier)
+          right: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list)))))))

@@ -2306,7 +2306,10 @@ module.exports = grammar({
         seq('(', optional($.parameter_list), ')'),
         seq()
       ),
-      optional(seq(':', $.type_specification)),
+      optional(choice(
+        seq(':', $.type_specification), // Simple return type
+        $._procedure_named_return        // Named return value
+      )),
       choice(
         // Standard trigger with code block
         prec(2, seq(
@@ -4183,7 +4186,10 @@ enum_type: $ => prec(1, seq(
         seq('(', optional($.parameter_list), ')'),
         seq()
       ),
-      optional(seq(':', $.type_specification)),
+      optional(choice(
+        seq(':', $.type_specification), // Simple return type
+        $._procedure_named_return        // Named return value
+      )),
       optional(';'),  // Allow optional semicolon after return type
       optional(choice(
         $.var_section,
