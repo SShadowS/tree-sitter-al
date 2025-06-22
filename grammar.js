@@ -2011,6 +2011,26 @@ module.exports = grammar({
       field('name', $.identifier),
       '=',
       field('value', $.string_literal),
+      repeat(seq(
+        ',',
+        choice(
+          seq(
+            kw('comment'),
+            '=',
+            field('comment', $.string_literal)
+          ),
+          seq(
+            kw('locked'),
+            '=',
+            field('locked', $.boolean)
+          ),
+          seq(
+            kw('maxlength'),
+            '=',
+            field('maxlength', $.integer)
+          )
+        )
+      )),
       ';'
     ),
 
