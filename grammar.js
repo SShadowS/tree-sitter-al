@@ -4654,7 +4654,10 @@ enum_type: $ => prec(1, seq(
       // Optional semicolon even when there's no return type (for test procedures)
       optional(';'),
       repeat($.pragma),
-      optional($.var_section),
+      optional(choice(
+        $.var_section,
+        $.preproc_conditional_var_sections
+      )),
       $.code_block
     ),
 
