@@ -3114,7 +3114,7 @@ module.exports = grammar({
     ),
 
     date_formula_property: $ => seq(
-      'DateFormula',
+      kw('dateformula'),
       '=',
       field('value', $.date_formula_value),
       ';'
@@ -6119,6 +6119,7 @@ enum_type: $ => prec(1, seq(
       $.values_allowed_property,     // Enumerated valid values
       $.validate_table_relation_property, // FK validation
       $.char_allowed_property,       // Character input restrictions
+      $.date_formula_property,       // Date formula validation
     ),
 
     // Data source/relationship properties

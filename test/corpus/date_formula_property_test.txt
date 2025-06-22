@@ -1,0 +1,97 @@
+==================
+Field with DateFormula property in report
+==================
+
+report 50000 "Test Report"
+{
+    dataset
+    {
+        dataitem(DataItemName; "Table Name")
+        {
+            column(TestColumn; SourceExpression) { }
+        }
+    }
+    
+    requestpage
+    {
+        layout
+        {
+            area(Content)
+            {
+                field(DateFormulaField; DateFormulaVar)
+                {
+                    Caption = 'Date Formula Field';
+                    DateFormula = true;
+                }
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (quoted_identifier)
+        (report_column_section
+          name: (identifier)
+          source: (identifier))))
+    (requestpage_section
+      (layout_section
+        (area_section
+          (field_section
+            control_id: (identifier)
+            source_or_field_name: (identifier)
+            (caption_property
+              (string_literal))
+            (date_formula_property
+              value: (date_formula_value
+                (boolean)))))))))
+
+==================
+Field with DateFormula mixed case
+==================
+
+page 50000 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(TestField; TestVar)
+            {
+                dateformula = true;
+            }
+            field(TestField2; TestVar2)
+            {
+                DATEFORMULA = false;
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (date_formula_property
+            value: (date_formula_value
+              (boolean))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (date_formula_property
+            value: (date_formula_value
+              (boolean))))))))

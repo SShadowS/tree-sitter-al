@@ -13129,8 +13129,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "DateFormula"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)dateformula"
+          }
         },
         {
           "type": "STRING",
@@ -26651,6 +26654,10 @@
         {
           "type": "SYMBOL",
           "name": "char_allowed_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "date_formula_property"
         }
       ]
     },
