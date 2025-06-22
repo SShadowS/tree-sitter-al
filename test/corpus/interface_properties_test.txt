@@ -1,0 +1,104 @@
+==================
+Interface with obsolete properties
+==================
+
+interface "Legacy Interface"
+{
+    ObsoleteReason = 'Replaced by new interface with better support.';
+    ObsoleteState = Pending;
+    ObsoleteTag = '24.0';
+    
+    procedure GetValue(Name: Text): Text;
+}
+
+---
+
+(source_file
+  (interface_declaration
+    object_name: (quoted_identifier)
+    (obsolete_reason_property
+      value: (obsolete_reason_value
+        (string_literal)))
+    (obsolete_state_property
+      value: (obsolete_state_value))
+    (obsolete_tag_property
+      value: (obsolete_tag_value
+        (string_literal)))
+    (interface_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type))))
+      return_type: (type_specification
+        (text_type)))))
+
+==================
+Interface with access and inherent permissions
+==================
+
+interface "Secure Interface"
+{
+    Access = Internal;
+    InherentPermissions = X;
+    
+    procedure DoWork();
+}
+
+---
+
+(source_file
+  (interface_declaration
+    object_name: (quoted_identifier)
+    (access_property
+      value: (value))
+    (inherent_permissions_property
+      value: (inherent_permissions_value
+        (permission_type)))
+    (interface_procedure
+      name: (identifier))))
+
+==================
+Interface with caption and description
+==================
+
+interface "User Interface"
+{
+    Caption = 'User Management Interface';
+    Description = 'Interface for user management operations';
+    
+    procedure CreateUser(UserName: Text): Boolean;
+    procedure DeleteUser(UserID: Guid): Boolean;
+}
+
+---
+
+(source_file
+  (interface_declaration
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (description_property
+      value: (string_literal))
+    (interface_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type))))
+      return_type: (type_specification
+        (boolean_type)))
+    (interface_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      return_type: (type_specification
+        (basic_type)))))

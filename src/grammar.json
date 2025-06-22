@@ -7453,8 +7453,17 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "SYMBOL",
-            "name": "interface_procedure"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_interface_properties"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "interface_procedure"
+              }
+            ]
           }
         },
         {
@@ -8161,6 +8170,23 @@
         {
           "type": "SYMBOL",
           "name": "preproc_endif"
+        }
+      ]
+    },
+    "_interface_properties": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_universal_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "inherent_permissions_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "access_property"
         }
       ]
     },

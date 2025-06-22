@@ -1864,7 +1864,10 @@ module.exports = grammar({
         ))
       )),
       '{',
-      repeat($.interface_procedure),
+      repeat(choice(
+        $._interface_properties,
+        $.interface_procedure
+      )),
       '}'
     ),
 
@@ -2021,6 +2024,13 @@ module.exports = grammar({
       $.report_dataitem_section,
       $.preproc_conditional_report_dataitems
     )),
+
+    // Interface-specific properties
+    _interface_properties: $ => choice(
+      $._universal_properties,  // Includes obsolete properties
+      $.inherent_permissions_property,
+      $.access_property
+    ),
 
     report_dataitem_section: $ => seq(
       'dataitem',
