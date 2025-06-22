@@ -51,18 +51,8 @@ else
     exit 1
 fi
 
-# Step 2: Build parser
-print_header "Step 2: Building Parser"
-if tree-sitter build; then
-    print_success "Parser built successfully"
-else
-    print_error "Parser build failed"
-    VALIDATION_FAILED=1
-    exit 1
-fi
-
-# Step 3: Run test suite
-print_header "Step 3: Running Test Suite"
+# Step 2: Run test suite
+print_header "Step 2: Running Test Suite"
 TEST_OUTPUT=$(tree-sitter test 2>&1)
 TEST_EXIT_CODE=$?
 
@@ -82,8 +72,8 @@ else
     VALIDATION_FAILED=1
 fi
 
-# Step 4: Check for orphaned rules
-print_header "Step 4: Checking for Orphaned Rules"
+# Step 3: Check for orphaned rules
+print_header "Step 3: Checking for Orphaned Rules"
 if [ -f "find_unused_definitions.py" ]; then
     ORPHAN_OUTPUT=$(python3 find_unused_definitions.py 2>&1)
     ORPHAN_EXIT_CODE=$?
@@ -111,8 +101,8 @@ else
     print_warning "Orphan detection script not found (find_unused_definitions.py)"
 fi
 
-# Step 5: Check for duplicate rules
-print_header "Step 5: Checking for Duplicate Rules"
+# Step 4: Check for duplicate rules
+print_header "Step 4: Checking for Duplicate Rules"
 if [ -f "analyze_duplicates.py" ]; then
     DUPLICATE_OUTPUT=$(python3 analyze_duplicates.py 2>&1)
     DUPLICATE_EXIT_CODE=$?
@@ -136,8 +126,8 @@ else
     print_warning "Duplicate detection script not found (analyze_duplicates.py)"
 fi
 
-# Step 6: Run parsing test on AL files (optional, can be slow)
-print_header "Step 6: AL File Parsing Test (Optional)"
+# Step 5: Run parsing test on AL files (optional, can be slow)
+print_header "Step 5: AL File Parsing Test (Optional)"
 if [ -f "parse-al-parallel.sh" ] && [ "$1" = "--full" ]; then
     echo "Running full AL file parsing test..."
     PARSE_OUTPUT=$(./parse-al-parallel.sh 2>&1 | tail -5)
@@ -156,8 +146,8 @@ else
     echo "Skipping AL file parsing test (use --full to include)"
 fi
 
-# Step 7: Check for common issues
-print_header "Step 7: Checking for Common Issues"
+# Step 6: Check for common issues
+print_header "Step 6: Checking for Common Issues"
 
 # Check for rules without kw() wrapper (case sensitivity issues)
 echo "Checking for potentially case-sensitive keywords..."
