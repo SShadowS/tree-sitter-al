@@ -8,9 +8,16 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **13,768 files (89.6%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **13,892 files (90.4%) parse successfully**.
 
 Recent improvements include:
+- **Query computed columns** - Added support for computed columns in queries with Method properties (Count, Sum, etc.) using syntax like `column(LinesCount) { Method = Count; }`
+- **RunObject qualified names** - Added support for fully qualified object names in RunObject property (e.g., `Page Microsoft.Manufacturing.StandardCost."Standard Cost Worksheet Names"`)
+- **OptionOrdinalValues lists** - Added support for OptionOrdinalValues property with comma-separated integer lists including negative values (e.g., `-1, 0, 1`)
+- **XMLPort enhancements** - Added Occurrence property (Required/Optional), OnBeforeInsertRecord trigger, and requestpage support for XMLPort objects
+- **Preprocessor conditional var sections** - Added support for preprocessor conditionals (#if/#else/#endif) between procedure headers and code blocks for conditional variable declarations
+- **Interface named return values** - Added support for named return values in interface procedures (e.g., `procedure Calculate() Result: Integer;`)
+- **Query filter elements** - Added support for filter elements within query dataitems for advanced data filtering
 - **OptimizeForTextSearch field property** - Added support for OptimizeForTextSearch property in table field declarations, enabling text search optimization at the field level
 - **Preprocessor conditionals in using statements** - Added support for `#if not`, `#else`, and `#endif` directives within using statement sections for conditional compilation
 - **Report column properties** - Created specialized property group for report columns with IncludeCaption, AutoFormatExpression, AutoFormatType, DecimalPlaces, and OptionCaption properties
