@@ -621,16 +621,20 @@ module.exports = grammar({
     order_by_property: $ => seq(
       kw('orderby'),
       '=',
-      field('value', choice(
-        kw('ascending'),
-        kw('descending'),
-        seq(
-          field('field', $._identifier_choice),
-          '=',
-          choice(kw('ascending'), kw('descending'))
-        )
-      )),
+      field('value', $.order_by_list),
       ';'
+    ),
+
+    order_by_list: $ => seq(
+      $.order_by_item,
+      repeat(seq(',', $.order_by_item))
+    ),
+
+    order_by_item: $ => seq(
+      choice(kw('ascending'), kw('descending')),
+      '(',
+      $._identifier_choice,
+      ')'
     ),
 
     multiplicity_property: $ => seq(
@@ -5725,16 +5729,7 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    order_by_property: $ => seq(
-      'OrderBy',
-      '=',
-      field('value', choice(
-        $.identifier,
-        $._quoted_identifier,
-        $.string_literal
-      )),
-      ';'
-    ),
+    // CONSOLIDATED: Removing duplicate - use the more comprehensive one above
 
     ellipsis_property: $ => seq(
       'Ellipsis',

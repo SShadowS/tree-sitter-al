@@ -23268,6 +23268,40 @@
     }
   },
   {
+    "type": "order_by_item",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "order_by_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "order_by_item",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "order_by_property",
     "named": true,
     "fields": {
@@ -23276,15 +23310,7 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "string_literal",
+            "type": "order_by_list",
             "named": true
           }
         ]
@@ -43014,10 +43040,6 @@
   },
   {
     "type": "Or",
-    "named": false
-  },
-  {
-    "type": "OrderBy",
     "named": false
   },
   {
