@@ -7,15 +7,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central. The project provides grammar definitions to enable syntax highlighting, code analysis, and language tooling support.
 
 **Current status**: 
-- Production files: 87.4% success rate (13,426 out of 15,358 production AL files from BC.History parse successfully)
-- Test suite: 100% success rate (608 out of 608 tests passing)
-- All ERROR nodes have been eliminated from test files
-- Known limitations documented below (qualified enum values with quoted names, WHERE clauses in preprocessor contexts)
+- Production files: 90.4% success rate (13,892 out of 15,358 production AL files from BC.History parse successfully)
+- Test suite: 99.1% success rate (629 out of 634 tests passing)
+- Known limitation: 5 tests fail where keywords are used as variable names (by design)
 
 ## Development Commands
 
 ### Core Grammar Development
 ```bash
+# Comprehensive validation (recommended - runs all checks)
+./validate-grammar.sh        # Quick validation
+./validate-grammar.sh --full # Include AL file parsing test
+
+# Individual commands:
 # Generate parser from grammar.js changes
 tree-sitter generate
 
@@ -46,6 +50,29 @@ tree-sitter test --overview-only             # Show only pass-fail overview
 # Combined development cycle
 tree-sitter generate && tree-sitter test
 ```
+
+### Grammar Validation Script
+The `validate-grammar.sh` script provides comprehensive validation in a single command:
+
+**Features:**
+- **Parser generation and build** - Ensures grammar compiles correctly
+- **Test suite execution** - Runs all tests and reports pass/fail statistics
+- **Orphan rule detection** - Finds unused grammar rules using `find_unused_definitions.py`
+- **Duplicate rule detection** - Identifies duplicate definitions using `analyze_duplicates.py`
+- **AL file parsing test** (optional) - Tests against real Business Central files with `--full` flag
+- **Common issue detection** - Checks for case-sensitive keywords and TODO comments
+- **Colored output** - Clear visual feedback with success/warning/error indicators
+
+**Usage:**
+```bash
+# Quick validation (recommended for regular development)
+./validate-grammar.sh
+
+# Full validation including AL file parsing test
+./validate-grammar.sh --full
+```
+
+The script exits with status 0 if all checks pass, or 1 if any issues are found.
 
 ### Interactive Development
 ```bash
@@ -283,9 +310,10 @@ Use these resources to:
 - Verify AL property names, types, and contexts
 
 ## Memories
-- At the end always run this before saying a change is complete: `tree-sitter generate && tree-sitter test`
+- At the end always run this before saying a change is complete: `./validate-grammar.sh` (or `tree-sitter generate && tree-sitter test`)
 - A common fix is adding properties to the $._universal_properties list
 - When doing changes to grammar, lookup the property, type, field and so on in the documentation so you know what the given item is defined and supports
+- Use `./validate-grammar.sh` for comprehensive validation including orphan and duplicate detection
 
 ## Contextual Keywords Pattern
 When AL keywords can be used as both properties and variable names (contextual keywords), they must be handled consistently:
