@@ -1,0 +1,101 @@
+==================
+Report with rendering section
+==================
+
+report 50100 "Customer List Excel"
+{
+    Caption = 'Customer List Excel Report';
+    
+    dataset
+    {
+        dataitem(Customer; Customer)
+        {
+            RequestFilterFields = "No.";
+            PrintOnlyIfDetail = true;
+            
+            column(No; Customer."No.")
+            {
+                IncludeCaption = true;
+            }
+        }
+    }
+    
+    rendering
+    {
+        layout(CustomerListExcel)
+        {
+            Type = Excel;
+            LayoutFile = './Layouts/CustomerList.xlsx';
+            Caption = 'Customer List Excel Layout';
+            Summary = 'Excel layout for customer list with formatting';
+        }
+        
+        layout(CustomerListPDF)
+        {
+            Type = PDF;
+            LayoutFile = './Layouts/CustomerList.rdlc';
+            Caption = 'Customer List PDF Layout';
+        }
+    }
+}
+
+---
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (request_filter_fields_property
+          value: (request_filter_fields_value
+            (quoted_identifier)))
+        (print_only_if_detail_property
+          value: (boolean))
+        (report_column_section
+          name: (identifier)
+          source: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (include_caption_property
+            value: (boolean)))))
+    (rendering_section
+      (rendering_layout
+        name: (identifier)
+        (rendering_type_property)
+        (layout_file_property
+          value: (string_literal))
+        (caption_property
+          (string_literal))
+        (summary_property
+          value: (string_literal)))
+      (rendering_layout
+        name: (identifier)
+        (rendering_type_property)
+        (layout_file_property
+          value: (string_literal))
+        (caption_property
+          (string_literal))))))
+
+==================
+Empty rendering section
+==================
+
+report 50101 "Simple Report"
+{
+    rendering
+    {
+    }
+}
+
+---
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (rendering_section)))

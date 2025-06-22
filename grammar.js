@@ -1918,6 +1918,7 @@ module.exports = grammar({
       $.dataset_section,
       $.labels_section,
       $.requestpage_section,
+      $.rendering_section,
       $.actions_section,
       $.var_section,
       $.preproc_conditional_var_sections,
@@ -1946,6 +1947,57 @@ module.exports = grammar({
 
     _label_element: $ => choice(
       $.label_declaration
+    ),
+
+    rendering_section: $ => seq(
+      kw('rendering'),
+      '{',
+      repeat($.rendering_layout),
+      '}'
+    ),
+
+    rendering_layout: $ => seq(
+      kw('layout'),
+      '(',
+      field('name', $._identifier_choice),
+      ')',
+      '{',
+      repeat($._rendering_layout_property),
+      '}'
+    ),
+
+    _rendering_layout_property: $ => choice(
+      $.rendering_type_property,
+      $.layout_file_property,
+      $.summary_property,
+      $._universal_properties  // includes caption_property
+    ),
+
+    rendering_type_property: $ => seq(
+      kw('Type'),
+      '=',
+      field('value', choice(
+        kw('Excel'),
+        kw('Word'),
+        kw('PDF'),
+        kw('RDLC'),
+        $.identifier
+      )),
+      ';'
+    ),
+
+    layout_file_property: $ => seq(
+      kw('LayoutFile'),
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    summary_property: $ => seq(
+      kw('Summary'),
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     label_declaration: $ => seq(
