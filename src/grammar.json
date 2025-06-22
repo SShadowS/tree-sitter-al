@@ -26381,8 +26381,12 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_profile_properties"
+          "type": "PREC",
+          "value": 2,
+          "content": {
+            "type": "SYMBOL",
+            "name": "_profile_properties"
+          }
         },
         {
           "type": "SYMBOL",

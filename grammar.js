@@ -6000,8 +6000,8 @@ enum_type: $ => prec(1, seq(
 
     // Profile elements
     _profile_element: $ => choice(
-      $._profile_properties,         // Centralized properties
-      $.property_list,               // Generic fallback
+      prec(2, $._profile_properties),         // Centralized properties (higher precedence)
+      $.property_list,                        // Generic fallback
       $.preproc_conditional_profile_properties
     ),
 
