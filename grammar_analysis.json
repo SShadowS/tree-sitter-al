@@ -1,9 +1,9 @@
 {
   "summary": {
     "total_definitions": 725,
-    "total_references": 749,
-    "unused_count": 1,
-    "low_usage_count": 301,
+    "total_references": 752,
+    "unused_count": 0,
+    "low_usage_count": 302,
     "missing_count": 32,
     "excluded_rules": [
       "ERROR",
@@ -31,14 +31,7 @@
       "word"
     ]
   },
-  "unused_rules": [
-    {
-      "name": "_action_properties",
-      "line": 6435,
-      "grammar_refs": 0,
-      "test_refs": 0
-    }
-  ],
+  "unused_rules": [],
   "low_usage_rules": [
     {
       "name": "_xmlport_element",
@@ -967,6 +960,13 @@
     {
       "name": "_dataitem_properties",
       "line": 6379,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_action_properties",
+      "line": 6435,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
