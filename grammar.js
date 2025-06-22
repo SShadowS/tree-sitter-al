@@ -2790,7 +2790,13 @@ module.exports = grammar({
       kw('normal'),
       kw('temporary'),
       kw('external'),
-      kw('system')
+      kw('system'),
+      kw('crm'),
+      kw('exchangeobject'),
+      kw('externalsql'),
+      kw('exchange'),
+      kw('microsoftgraph'),
+      kw('masterdataintegration')
     ),
 
     closing_dates_value: $ => $.boolean,
@@ -3253,19 +3259,6 @@ module.exports = grammar({
       ';'
     ),
 
-    table_type_property: $ => seq(
-      kw('tabletype'),
-      '=',
-      field('value', choice(
-        kw('normal'),
-        kw('temporary'),
-        kw('crm'),
-        kw('exchangeobject'),
-        kw('masterdataintegration'),
-        $.identifier
-      )),
-      ';'
-    ),
 
     external_access_property: $ => seq(
       kw('externalaccess'),
