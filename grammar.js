@@ -1420,7 +1420,12 @@ module.exports = grammar({
         'Codeunit', 'CODEUNIT', 'codeunit',
         'Table', 'TABLE', 'table'
       ),
-      field('object_ref', choice($.integer, $.identifier, $._quoted_identifier))
+      field('object_ref', choice(
+        $.integer, 
+        $.identifier, 
+        $._quoted_identifier,
+        $.member_expression  // Support fully qualified names like Microsoft.Manufacturing.StandardCost."Standard Cost Worksheet Names"
+      ))
     ),
 
     run_page_link_property: $ => seq(

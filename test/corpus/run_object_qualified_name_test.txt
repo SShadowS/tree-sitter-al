@@ -1,0 +1,69 @@
+==================
+Page action with qualified RunObject name
+==================
+
+page 50000 "Test Page"
+{
+    actions
+    {
+        area(processing)
+        {
+            action("Standard Cost")
+            {
+                RunObject = Page Microsoft.Manufacturing.StandardCost."Standard Cost Worksheet Names";
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (actions_section
+      (area_action_section
+        (action_declaration
+          name: (quoted_identifier)
+          (run_object_property
+            value: (run_object_value
+              object_ref: (member_expression
+                object: (member_expression
+                  object: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  property: (identifier))
+                property: (quoted_identifier)))))))))
+
+==================
+Action with simple RunObject reference
+==================
+
+page 50001 "Test Page"
+{
+    actions
+    {
+        area(navigation)
+        {
+            action(CustomerCard)
+            {
+                RunObject = Page "Customer Card";
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (actions_section
+      (area_action_section
+        (action_declaration
+          name: (identifier)
+          (run_object_property
+            value: (run_object_value
+              object_ref: (quoted_identifier))))))))
