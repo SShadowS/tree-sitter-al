@@ -331,6 +331,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -677,6 +681,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -1014,6 +1022,10 @@
         },
         {
           "type": "row_span_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
           "named": true
         },
         {
@@ -2810,6 +2822,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "dotnet_assembly_name",
+            "named": true
+          },
           {
             "type": "quoted_identifier",
             "named": true
@@ -6009,6 +6025,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -6145,7 +6165,35 @@
       "required": false,
       "types": [
         {
-          "type": "property_list",
+          "type": "auto_format_expression_property",
+          "named": true
+        },
+        {
+          "type": "auto_format_type_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "decimal_places_property",
+          "named": true
+        },
+        {
+          "type": "generic_property",
+          "named": true
+        },
+        {
+          "type": "include_caption_property",
+          "named": true
+        },
+        {
+          "type": "option_caption_property",
+          "named": true
+        },
+        {
+          "type": "option_members_property",
           "named": true
         }
       ]
@@ -7309,6 +7357,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -7900,6 +7952,102 @@
     }
   },
   {
+    "type": "data_item_table_filter_property",
+    "named": true,
+    "fields": {
+      "field": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "filter": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "=",
+            "named": false
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "data_item_table_view_property",
     "named": true,
     "fields": {
@@ -8012,7 +8160,15 @@
           "named": true
         },
         {
+          "type": "data_item_table_filter_property",
+          "named": true
+        },
+        {
           "type": "dataitem_section",
+          "named": true
+        },
+        {
+          "type": "filter_section",
           "named": true
         },
         {
@@ -8034,6 +8190,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "preproc_conditional_report_dataitems",
+          "named": true
+        },
         {
           "type": "report_dataitem_section",
           "named": true
@@ -8132,6 +8292,22 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "default_namespace_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
             "named": true
           }
         ]
@@ -8247,6 +8423,11 @@
     "fields": {}
   },
   {
+    "type": "dotnet_assembly_name",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "dotnet_declaration",
     "named": true,
     "fields": {},
@@ -8288,6 +8469,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "dotnet_type_name",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "drill_down_property",
@@ -9232,6 +9418,22 @@
     }
   },
   {
+    "type": "encoding_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "entitlement_declaration",
     "named": true,
     "fields": {
@@ -9296,6 +9498,10 @@
         },
         {
           "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "entitlement_group_name_property",
           "named": true
         },
         {
@@ -9371,6 +9577,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "entitlement_group_name_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -9521,20 +9743,6 @@
     "type": "enum_declaration",
     "named": true,
     "fields": {
-      "interface": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          }
-        ]
-      },
       "object_id": {
         "multiple": false,
         "required": true,
@@ -9638,6 +9846,10 @@
         },
         {
           "type": "implementation_property",
+          "named": true
+        },
+        {
+          "type": "implements_clause",
           "named": true
         },
         {
@@ -10805,17 +11017,12 @@
         "required": true,
         "types": [
           {
-            "type": "external_access_value",
+            "type": "identifier",
             "named": true
           }
         ]
       }
     }
-  },
-  {
-    "type": "external_access_value",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "external_name_property",
@@ -12588,6 +12795,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -12809,6 +13020,10 @@
         {
           "type": "fieldgroup_declaration",
           "named": true
+        },
+        {
+          "type": "preproc_conditional_fieldgroups",
+          "named": true
         }
       ]
     }
@@ -12827,6 +13042,10 @@
         },
         {
           "type": "modify_field_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_fields",
           "named": true
         }
       ]
@@ -13124,6 +13343,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -13313,7 +13536,7 @@
     "named": true,
     "fields": {
       "value": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
@@ -13331,6 +13554,10 @@
           {
             "type": "string_literal",
             "named": true
+          },
+          {
+            "type": "|",
+            "named": false
           }
         ]
       }
@@ -13404,6 +13631,22 @@
             "named": true
           },
           {
+            "type": "filter_greater_than_expression",
+            "named": true
+          },
+          {
+            "type": "filter_greater_than_or_equal_expression",
+            "named": true
+          },
+          {
+            "type": "filter_less_than_expression",
+            "named": true
+          },
+          {
+            "type": "filter_less_than_or_equal_expression",
+            "named": true
+          },
+          {
             "type": "filter_not_equal_expression",
             "named": true
           },
@@ -13415,6 +13658,118 @@
             "type": "filter_range_expression",
             "named": true
           },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "filter_greater_than_expression",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "filter_greater_than_or_equal_expression",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "filter_less_than_expression",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "filter_less_than_or_equal_expression",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
           {
             "type": "identifier",
             "named": true
@@ -13543,6 +13898,142 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "filter_section",
+    "named": true,
+    "fields": {
+      "field_name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "about_text_property",
+          "named": true
+        },
+        {
+          "type": "about_title_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_ml_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "context_sensitive_help_page_property",
+          "named": true
+        },
+        {
+          "type": "data_access_intent_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "generic_property",
+          "named": true
+        },
+        {
+          "type": "help_link_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "scope_property",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -14061,6 +14552,10 @@
         },
         {
           "type": "row_span_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
           "named": true
         },
         {
@@ -15177,6 +15672,22 @@
     }
   },
   {
+    "type": "format_evaluate_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "format_property",
     "named": true,
     "fields": {
@@ -15246,6 +15757,48 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "generic_property",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
             "named": true
           },
           {
@@ -15766,6 +16319,10 @@
         },
         {
           "type": "row_span_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
           "named": true
         },
         {
@@ -16360,6 +16917,10 @@
         },
         {
           "type": "row_span_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
           "named": true
         },
         {
@@ -17434,7 +17995,7 @@
         "required": true,
         "types": [
           {
-            "type": "implementation_value",
+            "type": "implementation_value_list",
             "named": true
           }
         ]
@@ -17473,6 +18034,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "implementation_value_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "implementation_value",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -18054,6 +18630,16 @@
     "type": "interface_declaration",
     "named": true,
     "fields": {
+      "access_value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
       "object_name": {
         "multiple": false,
         "required": true,
@@ -18257,6 +18843,10 @@
       "types": [
         {
           "type": "key_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_keys",
           "named": true
         }
       ]
@@ -20461,6 +21051,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -21224,6 +21818,10 @@
         },
         {
           "type": "row_span_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
           "named": true
         },
         {
@@ -22886,6 +23484,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -23572,6 +24174,10 @@
         },
         {
           "type": "row_span_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
           "named": true
         },
         {
@@ -24494,6 +25100,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -24660,6 +25270,10 @@
         "required": true,
         "types": [
           {
+            "type": "*",
+            "named": false
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -24669,6 +25283,16 @@
           },
           {
             "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "object_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -24695,10 +25319,6 @@
       "types": [
         {
           "type": "permission_entry",
-          "named": true
-        },
-        {
-          "type": "pragma",
           "named": true
         },
         {
@@ -25421,6 +26041,10 @@
           "named": true
         },
         {
+          "type": "entitlement_group_name_property",
+          "named": true
+        },
+        {
           "type": "entitlement_id_property",
           "named": true
         },
@@ -25927,6 +26551,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -26016,6 +26644,99 @@
         },
         {
           "type": "width_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_fieldgroups",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "fieldgroup_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_fieldgroups",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_fields",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "field_declaration",
+          "named": true
+        },
+        {
+          "type": "modify_field_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_keys",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "key_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_keys",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
           "named": true
         }
       ]
@@ -26540,6 +27261,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -26672,10 +27397,6 @@
       "types": [
         {
           "type": "permission_entry",
-          "named": true
-        },
-        {
-          "type": "pragma",
           "named": true
         },
         {
@@ -27471,6 +28192,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -27702,6 +28427,10 @@
           "named": true
         },
         {
+          "type": "order_by_property",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -27743,6 +28472,37 @@
         },
         {
           "type": "usage_category_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_report_dataitems",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_conditional_report_dataitems",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "report_dataitem_section",
           "named": true
         }
       ]
@@ -28426,6 +29186,10 @@
           "named": true
         },
         {
+          "type": "external_access_property",
+          "named": true
+        },
+        {
           "type": "external_name_property",
           "named": true
         },
@@ -28523,6 +29287,10 @@
         },
         {
           "type": "replicate_data_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
           "named": true
         },
         {
@@ -28769,6 +29537,10 @@
           "named": true
         },
         {
+          "type": "default_namespace_property",
+          "named": true
+        },
+        {
           "type": "description_property",
           "named": true
         },
@@ -28777,11 +29549,19 @@
           "named": true
         },
         {
+          "type": "encoding_property",
+          "named": true
+        },
+        {
           "type": "extensible_property",
           "named": true
         },
         {
           "type": "external_schema_property",
+          "named": true
+        },
+        {
+          "type": "format_evaluate_property",
           "named": true
         },
         {
@@ -28878,6 +29658,10 @@
         },
         {
           "type": "usage_category_property",
+          "named": true
+        },
+        {
+          "type": "use_default_namespace_property",
           "named": true
         },
         {
@@ -29010,6 +29794,10 @@
             "named": true
           },
           {
+            "type": "reportextension_declaration",
+            "named": true
+          },
+          {
             "type": "table_declaration",
             "named": true
           },
@@ -29111,6 +29899,10 @@
           },
           {
             "type": "report_declaration",
+            "named": true
+          },
+          {
+            "type": "reportextension_declaration",
             "named": true
           },
           {
@@ -30083,683 +30875,35 @@
       },
       "value": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
-          {
-            "type": "AND",
-            "named": false
-          },
-          {
-            "type": "And",
-            "named": false
-          },
-          {
-            "type": "BEGIN",
-            "named": false
-          },
-          {
-            "type": "BIGINTEGER",
-            "named": false
-          },
-          {
-            "type": "BLOB",
-            "named": false
-          },
-          {
-            "type": "BOOLEAN",
-            "named": false
-          },
-          {
-            "type": "BREAK",
-            "named": false
-          },
-          {
-            "type": "Begin",
-            "named": false
-          },
-          {
-            "type": "BigInteger",
-            "named": false
-          },
-          {
-            "type": "Blob",
-            "named": false
-          },
-          {
-            "type": "Boolean",
-            "named": false
-          },
-          {
-            "type": "Break",
-            "named": false
-          },
-          {
-            "type": "CASE",
-            "named": false
-          },
-          {
-            "type": "CODE",
-            "named": false
-          },
-          {
-            "type": "CODEUNIT",
-            "named": false
-          },
-          {
-            "type": "CONTROLADDIN",
-            "named": false
-          },
-          {
-            "type": "Case",
-            "named": false
-          },
-          {
-            "type": "Code",
-            "named": false
-          },
-          {
-            "type": "Codeunit",
-            "named": false
-          },
-          {
-            "type": "ControlAddin",
-            "named": false
-          },
-          {
-            "type": "DATABASE",
-            "named": false
-          },
-          {
-            "type": "DATE",
-            "named": false
-          },
-          {
-            "type": "DATETIME",
-            "named": false
-          },
-          {
-            "type": "DECIMAL",
-            "named": false
-          },
-          {
-            "type": "DIV",
-            "named": false
-          },
-          {
-            "type": "DO",
-            "named": false
-          },
-          {
-            "type": "Database",
-            "named": false
-          },
-          {
-            "type": "Date",
-            "named": false
-          },
-          {
-            "type": "DateTime",
-            "named": false
-          },
-          {
-            "type": "Decimal",
-            "named": false
-          },
-          {
-            "type": "Div",
-            "named": false
-          },
-          {
-            "type": "Do",
-            "named": false
-          },
-          {
-            "type": "ELSE",
-            "named": false
-          },
-          {
-            "type": "END",
-            "named": false
-          },
-          {
-            "type": "ENUM",
-            "named": false
-          },
-          {
-            "type": "EXIT",
-            "named": false
-          },
-          {
-            "type": "Else",
-            "named": false
-          },
-          {
-            "type": "End",
-            "named": false
-          },
-          {
-            "type": "Enum",
-            "named": false
-          },
-          {
-            "type": "Exit",
-            "named": false
-          },
-          {
-            "type": "FALSE",
-            "named": false
-          },
-          {
-            "type": "FOR",
-            "named": false
-          },
-          {
-            "type": "FUNCTION",
-            "named": false
-          },
-          {
-            "type": "False",
-            "named": false
-          },
-          {
-            "type": "For",
-            "named": false
-          },
-          {
-            "type": "Function",
-            "named": false
-          },
-          {
-            "type": "GLOBAL",
-            "named": false
-          },
-          {
-            "type": "GUID",
-            "named": false
-          },
-          {
-            "type": "Global",
-            "named": false
-          },
-          {
-            "type": "Guid",
-            "named": false
-          },
-          {
-            "type": "IF",
-            "named": false
-          },
-          {
-            "type": "INTEGER",
-            "named": false
-          },
-          {
-            "type": "INTERFACE",
-            "named": false
-          },
-          {
-            "type": "INTERNAL",
-            "named": false
-          },
-          {
-            "type": "If",
-            "named": false
-          },
-          {
-            "type": "Integer",
-            "named": false
-          },
-          {
-            "type": "Interface",
-            "named": false
-          },
-          {
-            "type": "Internal",
-            "named": false
-          },
-          {
-            "type": "LOCAL",
-            "named": false
-          },
-          {
-            "type": "Local",
-            "named": false
-          },
-          {
-            "type": "MOD",
-            "named": false
-          },
-          {
-            "type": "Mod",
-            "named": false
-          },
-          {
-            "type": "NOT",
-            "named": false
-          },
-          {
-            "type": "Not",
-            "named": false
-          },
-          {
-            "type": "OF",
-            "named": false
-          },
-          {
-            "type": "OPTION",
-            "named": false
-          },
-          {
-            "type": "OR",
-            "named": false
-          },
-          {
-            "type": "Of",
-            "named": false
-          },
-          {
-            "type": "Option",
-            "named": false
-          },
-          {
-            "type": "Or",
-            "named": false
-          },
-          {
-            "type": "PAGE",
-            "named": false
-          },
-          {
-            "type": "PROCEDURE",
-            "named": false
-          },
-          {
-            "type": "PROTECTED",
-            "named": false
-          },
-          {
-            "type": "PUBLIC",
-            "named": false
-          },
-          {
-            "type": "Page",
-            "named": false
-          },
-          {
-            "type": "Procedure",
-            "named": false
-          },
-          {
-            "type": "Protected",
-            "named": false
-          },
-          {
-            "type": "Public",
-            "named": false
-          },
-          {
-            "type": "QUERY",
-            "named": false
-          },
-          {
-            "type": "Query",
-            "named": false
-          },
-          {
-            "type": "RECORD",
-            "named": false
-          },
-          {
-            "type": "REPEAT",
-            "named": false
-          },
-          {
-            "type": "REPORT",
-            "named": false
-          },
-          {
-            "type": "Record",
-            "named": false
-          },
-          {
-            "type": "Repeat",
-            "named": false
-          },
-          {
-            "type": "Report",
-            "named": false
-          },
-          {
-            "type": "TABLE",
-            "named": false
-          },
-          {
-            "type": "THEN",
-            "named": false
-          },
-          {
-            "type": "TIME",
-            "named": false
-          },
-          {
-            "type": "TRIGGER",
-            "named": false
-          },
-          {
-            "type": "TRUE",
-            "named": false
-          },
-          {
-            "type": "Table",
-            "named": false
-          },
-          {
-            "type": "Then",
-            "named": false
-          },
-          {
-            "type": "Time",
-            "named": false
-          },
-          {
-            "type": "Trigger",
-            "named": false
-          },
-          {
-            "type": "True",
-            "named": false
-          },
-          {
-            "type": "UNTIL",
-            "named": false
-          },
-          {
-            "type": "Until",
-            "named": false
-          },
-          {
-            "type": "VAR",
-            "named": false
-          },
-          {
-            "type": "Var",
-            "named": false
-          },
-          {
-            "type": "WHILE",
-            "named": false
-          },
-          {
-            "type": "WITH",
-            "named": false
-          },
-          {
-            "type": "While",
-            "named": false
-          },
-          {
-            "type": "With",
-            "named": false
-          },
-          {
-            "type": "XMLPORT",
-            "named": false
-          },
-          {
-            "type": "XMLport",
-            "named": false
-          },
-          {
-            "type": "XOR",
-            "named": false
-          },
-          {
-            "type": "Xor",
-            "named": false
-          },
-          {
-            "type": "and",
-            "named": false
-          },
-          {
-            "type": "begin",
-            "named": false
-          },
-          {
-            "type": "biginteger",
-            "named": false
-          },
-          {
-            "type": "blob",
-            "named": false
-          },
-          {
-            "type": "boolean",
-            "named": false
-          },
-          {
-            "type": "break",
-            "named": false
-          },
           {
             "type": "call_expression",
             "named": true
-          },
-          {
-            "type": "case",
-            "named": false
-          },
-          {
-            "type": "code",
-            "named": false
-          },
-          {
-            "type": "codeunit",
-            "named": false
-          },
-          {
-            "type": "controladdin",
-            "named": false
-          },
-          {
-            "type": "database",
-            "named": false
-          },
-          {
-            "type": "date",
-            "named": false
-          },
-          {
-            "type": "datetime",
-            "named": false
-          },
-          {
-            "type": "decimal",
-            "named": false
-          },
-          {
-            "type": "div",
-            "named": false
-          },
-          {
-            "type": "do",
-            "named": false
-          },
-          {
-            "type": "else",
-            "named": false
-          },
-          {
-            "type": "end",
-            "named": false
-          },
-          {
-            "type": "enum",
-            "named": false
-          },
-          {
-            "type": "exit",
-            "named": false
-          },
-          {
-            "type": "false",
-            "named": false
           },
           {
             "type": "field_access",
             "named": true
           },
           {
-            "type": "for",
-            "named": false
-          },
-          {
-            "type": "function",
-            "named": false
-          },
-          {
-            "type": "global",
-            "named": false
-          },
-          {
-            "type": "guid",
-            "named": false
-          },
-          {
             "type": "identifier",
             "named": true
-          },
-          {
-            "type": "if",
-            "named": false
-          },
-          {
-            "type": "integer",
-            "named": false
-          },
-          {
-            "type": "interface",
-            "named": false
-          },
-          {
-            "type": "internal",
-            "named": false
-          },
-          {
-            "type": "local",
-            "named": false
           },
           {
             "type": "member_expression",
             "named": true
           },
           {
-            "type": "mod",
-            "named": false
-          },
-          {
-            "type": "not",
-            "named": false
-          },
-          {
-            "type": "of",
-            "named": false
-          },
-          {
-            "type": "option",
-            "named": false
-          },
-          {
-            "type": "or",
-            "named": false
-          },
-          {
-            "type": "page",
-            "named": false
-          },
-          {
-            "type": "procedure",
-            "named": false
-          },
-          {
-            "type": "protected",
-            "named": false
-          },
-          {
-            "type": "public",
-            "named": false
-          },
-          {
             "type": "qualified_enum_value_tail",
             "named": true
-          },
-          {
-            "type": "query",
-            "named": false
           },
           {
             "type": "quoted_identifier",
             "named": true
           },
           {
-            "type": "record",
-            "named": false
-          },
-          {
-            "type": "repeat",
-            "named": false
-          },
-          {
-            "type": "report",
-            "named": false
-          },
-          {
             "type": "string_literal",
             "named": true
-          },
-          {
-            "type": "table",
-            "named": false
-          },
-          {
-            "type": "then",
-            "named": false
-          },
-          {
-            "type": "time",
-            "named": false
-          },
-          {
-            "type": "trigger",
-            "named": false
-          },
-          {
-            "type": "true",
-            "named": false
-          },
-          {
-            "type": "until",
-            "named": false
-          },
-          {
-            "type": "var",
-            "named": false
-          },
-          {
-            "type": "while",
-            "named": false
-          },
-          {
-            "type": "with",
-            "named": false
-          },
-          {
-            "type": "xmlport",
-            "named": false
-          },
-          {
-            "type": "xor",
-            "named": false
           }
         ]
       }
@@ -30969,6 +31113,10 @@
         },
         {
           "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "order_by_property",
           "named": true
         },
         {
@@ -32262,6 +32410,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -32720,6 +32872,10 @@
         },
         {
           "type": "option_caption_property",
+          "named": true
+        },
+        {
+          "type": "option_members_property",
           "named": true
         }
       ]
@@ -33268,6 +33424,352 @@
     }
   },
   {
+    "type": "reportextension_declaration",
+    "named": true,
+    "fields": {
+      "base_object": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "object_id": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "object_name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "about_text_property",
+          "named": true
+        },
+        {
+          "type": "about_title_property",
+          "named": true
+        },
+        {
+          "type": "access_by_permission_property",
+          "named": true
+        },
+        {
+          "type": "access_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_ml_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_property",
+          "named": true
+        },
+        {
+          "type": "allow_scheduling_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "context_sensitive_help_page_property",
+          "named": true
+        },
+        {
+          "type": "data_access_intent_property",
+          "named": true
+        },
+        {
+          "type": "data_item_link_reference_property",
+          "named": true
+        },
+        {
+          "type": "data_per_company_property",
+          "named": true
+        },
+        {
+          "type": "dataset_section",
+          "named": true
+        },
+        {
+          "type": "default_layout_property",
+          "named": true
+        },
+        {
+          "type": "default_rendering_layout_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "enable_external_assemblies_property",
+          "named": true
+        },
+        {
+          "type": "enable_external_images_property",
+          "named": true
+        },
+        {
+          "type": "enable_hyperlinks_property",
+          "named": true
+        },
+        {
+          "type": "event_subscriber_instance_property",
+          "named": true
+        },
+        {
+          "type": "excel_layout_multiple_data_sheets_property",
+          "named": true
+        },
+        {
+          "type": "excel_layout_property",
+          "named": true
+        },
+        {
+          "type": "execution_timeout_property",
+          "named": true
+        },
+        {
+          "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "format_region_property",
+          "named": true
+        },
+        {
+          "type": "help_link_property",
+          "named": true
+        },
+        {
+          "type": "inherent_entitlements_property",
+          "named": true
+        },
+        {
+          "type": "inherent_permissions_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_property",
+          "named": true
+        },
+        {
+          "type": "maximum_dataset_size_property",
+          "named": true
+        },
+        {
+          "type": "maximum_document_count_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "page_type_property",
+          "named": true
+        },
+        {
+          "type": "paper_source_default_page_property",
+          "named": true
+        },
+        {
+          "type": "paper_source_first_page_property",
+          "named": true
+        },
+        {
+          "type": "paper_source_last_page_property",
+          "named": true
+        },
+        {
+          "type": "pdf_font_embedding_property",
+          "named": true
+        },
+        {
+          "type": "permissions_property",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
+          "type": "preproc_endregion",
+          "named": true
+        },
+        {
+          "type": "preproc_region",
+          "named": true
+        },
+        {
+          "type": "preview_mode_property",
+          "named": true
+        },
+        {
+          "type": "print_only_if_detail_property",
+          "named": true
+        },
+        {
+          "type": "procedure",
+          "named": true
+        },
+        {
+          "type": "processing_only_property",
+          "named": true
+        },
+        {
+          "type": "rdlc_layout_property",
+          "named": true
+        },
+        {
+          "type": "replicate_data_property",
+          "named": true
+        },
+        {
+          "type": "requestpage_section",
+          "named": true
+        },
+        {
+          "type": "scope_property",
+          "named": true
+        },
+        {
+          "type": "show_print_status_property",
+          "named": true
+        },
+        {
+          "type": "single_instance_property",
+          "named": true
+        },
+        {
+          "type": "source_table_property",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "table_no_property",
+          "named": true
+        },
+        {
+          "type": "table_type_property",
+          "named": true
+        },
+        {
+          "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "transaction_type_property",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
+          "named": true
+        },
+        {
+          "type": "use_request_page_property",
+          "named": true
+        },
+        {
+          "type": "use_system_printer_property",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        },
+        {
+          "type": "word_layout_property",
+          "named": true
+        },
+        {
+          "type": "word_merge_data_item_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "request_filter_fields_property",
     "named": true,
     "fields": {
@@ -33707,6 +34209,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -33885,6 +34391,22 @@
     }
   },
   {
+    "type": "run_form_link_type_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "run_object_property",
     "named": true,
     "fields": {
@@ -34022,6 +34544,22 @@
         "types": [
           {
             "type": "filter_equal_expression",
+            "named": true
+          },
+          {
+            "type": "filter_greater_than_expression",
+            "named": true
+          },
+          {
+            "type": "filter_greater_than_or_equal_expression",
+            "named": true
+          },
+          {
+            "type": "filter_less_than_expression",
+            "named": true
+          },
+          {
+            "type": "filter_less_than_or_equal_expression",
             "named": true
           },
           {
@@ -34382,6 +34920,10 @@
         },
         {
           "type": "row_span_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
           "named": true
         },
         {
@@ -35091,6 +35633,10 @@
         },
         {
           "type": "report_declaration",
+          "named": true
+        },
+        {
+          "type": "reportextension_declaration",
           "named": true
         },
         {
@@ -35945,6 +36491,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -36437,6 +36987,10 @@
           "named": true
         },
         {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
           "type": "run_object_property",
           "named": true
         },
@@ -36685,6 +37239,10 @@
           "named": true
         },
         {
+          "type": "external_access_property",
+          "named": true
+        },
+        {
           "type": "external_name_property",
           "named": true
         },
@@ -36810,6 +37368,10 @@
         },
         {
           "type": "replicate_data_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
           "named": true
         },
         {
@@ -36966,7 +37528,7 @@
         "required": true,
         "types": [
           {
-            "type": "value",
+            "type": "identifier",
             "named": true
           }
         ]
@@ -37166,6 +37728,10 @@
           "named": true
         },
         {
+          "type": "external_access_property",
+          "named": true
+        },
+        {
           "type": "external_name_property",
           "named": true
         },
@@ -37267,6 +37833,10 @@
         },
         {
           "type": "replicate_data_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
           "named": true
         },
         {
@@ -38151,6 +38721,22 @@
     }
   },
   {
+    "type": "use_default_namespace_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "use_request_page_property",
     "named": true,
     "fields": {
@@ -38601,6 +39187,10 @@
         },
         {
           "type": "row_span_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
           "named": true
         },
         {
@@ -40764,6 +41354,10 @@
           "named": true
         },
         {
+          "type": "default_namespace_property",
+          "named": true
+        },
+        {
           "type": "description_property",
           "named": true
         },
@@ -40772,11 +41366,19 @@
           "named": true
         },
         {
+          "type": "encoding_property",
+          "named": true
+        },
+        {
           "type": "extensible_property",
           "named": true
         },
         {
           "type": "external_schema_property",
+          "named": true
+        },
+        {
+          "type": "format_evaluate_property",
           "named": true
         },
         {
@@ -40880,6 +41482,10 @@
           "named": true
         },
         {
+          "type": "use_default_namespace_property",
+          "named": true
+        },
+        {
           "type": "use_request_page_property",
           "named": true
         },
@@ -40922,6 +41528,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "member_expression",
             "named": true
           }
         ]
@@ -41004,6 +41614,10 @@
         },
         {
           "type": "xmlport_table_property",
+          "named": true
+        },
+        {
+          "type": "xmlport_text_attribute",
           "named": true
         }
       ]
@@ -41171,6 +41785,36 @@
         },
         {
           "type": "xml_name_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "xmlport_text_attribute",
+    "named": true,
+    "fields": {
+      "attribute_name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "xmlport_table_property",
           "named": true
         }
       ]
@@ -41417,51 +42061,11 @@
     "named": false
   },
   {
-    "type": "AutoReplace",
-    "named": false
-  },
-  {
-    "type": "AutoSave",
-    "named": false
-  },
-  {
     "type": "AutoSplitKey",
     "named": false
   },
   {
-    "type": "AutoUpdate",
-    "named": false
-  },
-  {
-    "type": "BEGIN",
-    "named": false
-  },
-  {
-    "type": "BIGINTEGER",
-    "named": false
-  },
-  {
-    "type": "BLOB",
-    "named": false
-  },
-  {
-    "type": "BOOLEAN",
-    "named": false
-  },
-  {
-    "type": "BREAK",
-    "named": false
-  },
-  {
-    "type": "Begin",
-    "named": false
-  },
-  {
     "type": "BigInt",
-    "named": false
-  },
-  {
-    "type": "BigInteger",
     "named": false
   },
   {
@@ -41473,31 +42077,11 @@
     "named": false
   },
   {
-    "type": "Blob",
-    "named": false
-  },
-  {
     "type": "Boolean",
     "named": false
   },
   {
-    "type": "Break",
-    "named": false
-  },
-  {
-    "type": "CASE",
-    "named": false
-  },
-  {
-    "type": "CODE",
-    "named": false
-  },
-  {
     "type": "CODEUNIT",
-    "named": false
-  },
-  {
-    "type": "CONTROLADDIN",
     "named": false
   },
   {
@@ -41510,10 +42094,6 @@
   },
   {
     "type": "Caption",
-    "named": false
-  },
-  {
-    "type": "Case",
     "named": false
   },
   {
@@ -41545,10 +42125,6 @@
     "named": false
   },
   {
-    "type": "Code",
-    "named": false
-  },
-  {
     "type": "Codeunit",
     "named": false
   },
@@ -41558,10 +42134,6 @@
   },
   {
     "type": "Compressed",
-    "named": false
-  },
-  {
-    "type": "ControlAddin",
     "named": false
   },
   {
@@ -41581,30 +42153,6 @@
     "named": false
   },
   {
-    "type": "DATABASE",
-    "named": false
-  },
-  {
-    "type": "DATE",
-    "named": false
-  },
-  {
-    "type": "DATETIME",
-    "named": false
-  },
-  {
-    "type": "DECIMAL",
-    "named": false
-  },
-  {
-    "type": "DIV",
-    "named": false
-  },
-  {
-    "type": "DO",
-    "named": false
-  },
-  {
     "type": "DataClassification",
     "named": false
   },
@@ -41617,23 +42165,11 @@
     "named": false
   },
   {
-    "type": "Database",
-    "named": false
-  },
-  {
-    "type": "Date",
-    "named": false
-  },
-  {
     "type": "DateFormula",
     "named": false
   },
   {
     "type": "DateTime",
-    "named": false
-  },
-  {
-    "type": "Decimal",
     "named": false
   },
   {
@@ -41657,35 +42193,7 @@
     "named": false
   },
   {
-    "type": "Direction",
-    "named": false
-  },
-  {
-    "type": "Div",
-    "named": false
-  },
-  {
-    "type": "Do",
-    "named": false
-  },
-  {
     "type": "DrillDown",
-    "named": false
-  },
-  {
-    "type": "ELSE",
-    "named": false
-  },
-  {
-    "type": "END",
-    "named": false
-  },
-  {
-    "type": "ENUM",
-    "named": false
-  },
-  {
-    "type": "EXIT",
     "named": false
   },
   {
@@ -41694,10 +42202,6 @@
   },
   {
     "type": "Ellipsis",
-    "named": false
-  },
-  {
-    "type": "Else",
     "named": false
   },
   {
@@ -41713,14 +42217,6 @@
     "named": false
   },
   {
-    "type": "End",
-    "named": false
-  },
-  {
-    "type": "Enum",
-    "named": false
-  },
-  {
     "type": "ExcelLayout",
     "named": false
   },
@@ -41733,14 +42229,6 @@
     "named": false
   },
   {
-    "type": "Exit",
-    "named": false
-  },
-  {
-    "type": "ExternalAccess",
-    "named": false
-  },
-  {
     "type": "ExternalName",
     "named": false
   },
@@ -41750,22 +42238,6 @@
   },
   {
     "type": "ExternalType",
-    "named": false
-  },
-  {
-    "type": "FALSE",
-    "named": false
-  },
-  {
-    "type": "FOR",
-    "named": false
-  },
-  {
-    "type": "FUNCTION",
-    "named": false
-  },
-  {
-    "type": "False",
     "named": false
   },
   {
@@ -41789,10 +42261,6 @@
     "named": false
   },
   {
-    "type": "For",
-    "named": false
-  },
-  {
     "type": "FormatRegion",
     "named": false
   },
@@ -41801,27 +42269,7 @@
     "named": false
   },
   {
-    "type": "Function",
-    "named": false
-  },
-  {
-    "type": "GLOBAL",
-    "named": false
-  },
-  {
-    "type": "GUID",
-    "named": false
-  },
-  {
     "type": "Gesture",
-    "named": false
-  },
-  {
-    "type": "Global",
-    "named": false
-  },
-  {
-    "type": "Guid",
     "named": false
   },
   {
@@ -41833,27 +42281,7 @@
     "named": false
   },
   {
-    "type": "IF",
-    "named": false
-  },
-  {
     "type": "IN",
-    "named": false
-  },
-  {
-    "type": "INTEGER",
-    "named": false
-  },
-  {
-    "type": "INTERFACE",
-    "named": false
-  },
-  {
-    "type": "INTERNAL",
-    "named": false
-  },
-  {
-    "type": "If",
     "named": false
   },
   {
@@ -41901,23 +42329,11 @@
     "named": false
   },
   {
-    "type": "Interface",
-    "named": false
-  },
-  {
-    "type": "Internal",
-    "named": false
-  },
-  {
     "type": "IsHeader",
     "named": false
   },
   {
     "type": "IsPreview",
-    "named": false
-  },
-  {
-    "type": "LOCAL",
     "named": false
   },
   {
@@ -41949,15 +42365,7 @@
     "named": false
   },
   {
-    "type": "Local",
-    "named": false
-  },
-  {
     "type": "Lookup",
-    "named": false
-  },
-  {
-    "type": "MOD",
     "named": false
   },
   {
@@ -41966,10 +42374,6 @@
   },
   {
     "type": "MaintainSqlIndex",
-    "named": false
-  },
-  {
-    "type": "MaxOccurs",
     "named": false
   },
   {
@@ -41985,15 +42389,7 @@
     "named": false
   },
   {
-    "type": "MinOccurs",
-    "named": false
-  },
-  {
     "type": "MinValue",
-    "named": false
-  },
-  {
-    "type": "Mod",
     "named": false
   },
   {
@@ -42049,19 +42445,11 @@
     "named": false
   },
   {
-    "type": "OF",
-    "named": false
-  },
-  {
     "type": "ONACTION",
     "named": false
   },
   {
     "type": "OPTIMIZEFORTEXTSEARCH",
-    "named": false
-  },
-  {
-    "type": "OPTION",
     "named": false
   },
   {
@@ -42081,19 +42469,11 @@
     "named": false
   },
   {
-    "type": "Of",
-    "named": false
-  },
-  {
     "type": "OnAction",
     "named": false
   },
   {
     "type": "OptimizeForTextSearch",
-    "named": false
-  },
-  {
-    "type": "Option",
     "named": false
   },
   {
@@ -42118,18 +42498,6 @@
   },
   {
     "type": "PAGE",
-    "named": false
-  },
-  {
-    "type": "PROCEDURE",
-    "named": false
-  },
-  {
-    "type": "PROTECTED",
-    "named": false
-  },
-  {
-    "type": "PUBLIC",
     "named": false
   },
   {
@@ -42173,10 +42541,6 @@
     "named": false
   },
   {
-    "type": "Procedure",
-    "named": false
-  },
-  {
     "type": "ProcessingOnly",
     "named": false
   },
@@ -42201,27 +42565,11 @@
     "named": false
   },
   {
-    "type": "Protected",
-    "named": false
-  },
-  {
     "type": "Provider",
     "named": false
   },
   {
-    "type": "Public",
-    "named": false
-  },
-  {
     "type": "PublicKeyToken",
-    "named": false
-  },
-  {
-    "type": "QUERY",
-    "named": false
-  },
-  {
-    "type": "Query",
     "named": false
   },
   {
@@ -42233,27 +42581,11 @@
     "named": false
   },
   {
-    "type": "RECORD",
-    "named": false
-  },
-  {
-    "type": "REPEAT",
-    "named": false
-  },
-  {
     "type": "REPORT",
     "named": false
   },
   {
-    "type": "Record",
-    "named": false
-  },
-  {
     "type": "RefreshOnActivate",
-    "named": false
-  },
-  {
-    "type": "Repeat",
     "named": false
   },
   {
@@ -42385,22 +42717,6 @@
     "named": false
   },
   {
-    "type": "THEN",
-    "named": false
-  },
-  {
-    "type": "TIME",
-    "named": false
-  },
-  {
-    "type": "TRIGGER",
-    "named": false
-  },
-  {
-    "type": "TRUE",
-    "named": false
-  },
-  {
     "type": "Table",
     "named": false
   },
@@ -42413,10 +42729,6 @@
     "named": false
   },
   {
-    "type": "TableType",
-    "named": false
-  },
-  {
     "type": "TestPermissions",
     "named": false
   },
@@ -42425,31 +42737,11 @@
     "named": false
   },
   {
-    "type": "Then",
-    "named": false
-  },
-  {
-    "type": "Time",
-    "named": false
-  },
-  {
     "type": "Title",
     "named": false
   },
   {
     "type": "TransactionType",
-    "named": false
-  },
-  {
-    "type": "Trigger",
-    "named": false
-  },
-  {
-    "type": "True",
-    "named": false
-  },
-  {
-    "type": "UNTIL",
     "named": false
   },
   {
@@ -42462,10 +42754,6 @@
   },
   {
     "type": "Uniqueidentifier",
-    "named": false
-  },
-  {
-    "type": "Until",
     "named": false
   },
   {
@@ -42485,10 +42773,6 @@
     "named": false
   },
   {
-    "type": "VAR",
-    "named": false
-  },
-  {
     "type": "ValidateTableRelation",
     "named": false
   },
@@ -42497,31 +42781,11 @@
     "named": false
   },
   {
-    "type": "Var",
-    "named": false
-  },
-  {
     "type": "Version",
     "named": false
   },
   {
-    "type": "WHILE",
-    "named": false
-  },
-  {
-    "type": "WITH",
-    "named": false
-  },
-  {
-    "type": "While",
-    "named": false
-  },
-  {
     "type": "Width",
-    "named": false
-  },
-  {
-    "type": "With",
     "named": false
   },
   {
@@ -42533,19 +42797,7 @@
     "named": false
   },
   {
-    "type": "XMLPORT",
-    "named": false
-  },
-  {
-    "type": "XMLport",
-    "named": false
-  },
-  {
     "type": "XOR",
-    "named": false
-  },
-  {
-    "type": "XmlName",
     "named": false
   },
   {
@@ -42562,34 +42814,6 @@
   },
   {
     "type": "and",
-    "named": false
-  },
-  {
-    "type": "begin",
-    "named": false
-  },
-  {
-    "type": "biginteger",
-    "named": false
-  },
-  {
-    "type": "blob",
-    "named": false
-  },
-  {
-    "type": "boolean",
-    "named": false
-  },
-  {
-    "type": "break",
-    "named": false
-  },
-  {
-    "type": "case",
-    "named": false
-  },
-  {
-    "type": "code",
     "named": false
   },
   {
@@ -42610,14 +42834,6 @@
     "named": true
   },
   {
-    "type": "controladdin",
-    "named": false
-  },
-  {
-    "type": "database",
-    "named": false
-  },
-  {
     "type": "dataitem",
     "named": false
   },
@@ -42626,35 +42842,11 @@
     "named": false
   },
   {
-    "type": "date",
-    "named": false
-  },
-  {
-    "type": "datetime",
-    "named": false
-  },
-  {
     "type": "datetime_literal",
     "named": true
   },
   {
     "type": "decimal",
-    "named": false
-  },
-  {
-    "type": "decimal",
-    "named": true
-  },
-  {
-    "type": "div",
-    "named": false
-  },
-  {
-    "type": "do",
-    "named": false
-  },
-  {
-    "type": "dotnet_type_name",
     "named": true
   },
   {
@@ -42662,27 +42854,7 @@
     "named": true
   },
   {
-    "type": "else",
-    "named": false
-  },
-  {
-    "type": "end",
-    "named": false
-  },
-  {
-    "type": "enum",
-    "named": false
-  },
-  {
     "type": "event",
-    "named": false
-  },
-  {
-    "type": "exit",
-    "named": false
-  },
-  {
-    "type": "false",
     "named": false
   },
   {
@@ -42690,28 +42862,8 @@
     "named": true
   },
   {
-    "type": "for",
-    "named": false
-  },
-  {
-    "type": "function",
-    "named": false
-  },
-  {
-    "type": "global",
-    "named": false
-  },
-  {
-    "type": "guid",
-    "named": false
-  },
-  {
     "type": "identifier",
     "named": true
-  },
-  {
-    "type": "if",
-    "named": false
   },
   {
     "type": "in_operator",
@@ -42719,31 +42871,11 @@
   },
   {
     "type": "integer",
-    "named": false
-  },
-  {
-    "type": "integer",
     "named": true
-  },
-  {
-    "type": "interface",
-    "named": false
-  },
-  {
-    "type": "internal",
-    "named": false
-  },
-  {
-    "type": "local",
-    "named": false
   },
   {
     "type": "many_keyword",
     "named": true
-  },
-  {
-    "type": "mod",
-    "named": false
   },
   {
     "type": "multiline_comment",
@@ -42768,10 +42900,6 @@
   },
   {
     "type": "optimizefortextsearch",
-    "named": false
-  },
-  {
-    "type": "option",
     "named": false
   },
   {
@@ -42802,36 +42930,12 @@
     "extra": true
   },
   {
-    "type": "procedure",
-    "named": false
-  },
-  {
-    "type": "protected",
-    "named": false
-  },
-  {
-    "type": "public",
-    "named": false
-  },
-  {
-    "type": "query",
-    "named": false
-  },
-  {
     "type": "quoted_identifier",
     "named": true
   },
   {
-    "type": "record",
-    "named": false
-  },
-  {
     "type": "recordref_type",
     "named": true
-  },
-  {
-    "type": "repeat",
-    "named": false
   },
   {
     "type": "report",
@@ -42854,20 +42958,8 @@
     "named": false
   },
   {
-    "type": "then",
-    "named": false
-  },
-  {
-    "type": "time",
-    "named": false
-  },
-  {
     "type": "time_literal",
     "named": true
-  },
-  {
-    "type": "trigger",
-    "named": false
   },
   {
     "type": "trigger_name",
@@ -42878,35 +42970,11 @@
     "named": true
   },
   {
-    "type": "true",
-    "named": false
-  },
-  {
-    "type": "until",
-    "named": false
-  },
-  {
     "type": "using",
     "named": false
   },
   {
-    "type": "var",
-    "named": false
-  },
-  {
     "type": "view",
-    "named": false
-  },
-  {
-    "type": "while",
-    "named": false
-  },
-  {
-    "type": "with",
-    "named": false
-  },
-  {
-    "type": "xmlport",
     "named": false
   },
   {
