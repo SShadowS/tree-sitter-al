@@ -13296,8 +13296,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "InitValue"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)initvalue"
+          }
         },
         {
           "type": "SYMBOL",
@@ -13309,8 +13312,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "MaxValue"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)maxvalue"
+          }
         },
         {
           "type": "SYMBOL",
@@ -13322,8 +13328,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "MinValue"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)minvalue"
+          }
         },
         {
           "type": "SYMBOL",
@@ -13335,8 +13344,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "NotBlank"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)notblank"
+          }
         },
         {
           "type": "STRING",
@@ -13360,8 +13372,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Numeric"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)numeric"
+          }
         },
         {
           "type": "STRING",

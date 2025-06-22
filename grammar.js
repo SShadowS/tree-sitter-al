@@ -3147,29 +3147,29 @@ module.exports = grammar({
     ),
 
     init_value_property: $ => seq(
-      'InitValue',
+      kw('initvalue'),
       $._expression_property_template
     ),
 
     max_value_property: $ => seq(
-      'MaxValue',
+      kw('maxvalue'),
       $._expression_property_template
     ),
 
     min_value_property: $ => seq(
-      'MinValue',
+      kw('minvalue'),
       $._expression_property_template
     ),
 
     not_blank_property: $ => seq(
-      'NotBlank',
+      kw('notblank'),
       '=',
       field('value', $.not_blank_value),
       ';'
     ),
 
     numeric_property: $ => seq(
-      'Numeric',
+      kw('numeric'),
       '=',
       field('value', $.numeric_value),
       ';'
