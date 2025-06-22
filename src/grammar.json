@@ -26329,8 +26329,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "RoleCenter"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)rolecenter"
+          }
         },
         {
           "type": "STRING",
@@ -26354,8 +26357,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Customizations"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)customizations"
+          }
         },
         {
           "type": "STRING",

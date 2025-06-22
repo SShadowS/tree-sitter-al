@@ -6013,7 +6013,7 @@ enum_type: $ => prec(1, seq(
     // CONSOLIDATED: profile_description_property → description_property
 
     profile_rolecenter_property: $ => seq(
-      'RoleCenter',
+      kw('rolecenter'),
       '=',
       field('value', $._identifier_choice),
       ';'
@@ -6022,7 +6022,7 @@ enum_type: $ => prec(1, seq(
     // CONSOLIDATED: profile_caption_property -> caption_property
 
     profile_customizations_property: $ => seq(
-      'Customizations',
+      kw('customizations'),
       '=',
       field('value', optional($.customizations_list)),
       ';'
