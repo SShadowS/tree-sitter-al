@@ -157,7 +157,8 @@ module.exports = grammar({
       $.procedure,
       $.trigger_declaration,
       $._xmlport_properties,
-      $.preproc_conditional_xmlport_properties
+      $.preproc_conditional_xmlport_properties,
+      $.requestpage_section  // Support requestpage in XMLports
     ),
     
     // XMLPort specific properties
@@ -209,7 +210,8 @@ module.exports = grammar({
         $.xmlport_table_property,
         $.xmlport_table_element,  // Allow nesting of elements
         $.xmlport_field_attribute,
-        $.xmlport_text_attribute
+        $.xmlport_text_attribute,
+        $.named_trigger  // Allow triggers in XMLport table elements
       )),
       '}'
     ),
@@ -225,6 +227,7 @@ module.exports = grammar({
       $.external_schema_property,
       $.link_table_property,
       $.link_table_force_insert_property,
+      $.occurrence_property,  // Add support for Occurrence property
       $.max_occurs_property,
       $.min_occurs_property,
       $.namespace_prefix_property,
@@ -327,6 +330,14 @@ module.exports = grammar({
     ),
     
     min_occurs_property: _value_property_template($ => kw('MinOccurs'), $ => $.min_occurs_value),
+    
+    // Occurrence Property (for XMLPort field attributes)
+    occurrence_value: $ => choice(
+      kw('Required'),
+      kw('Optional')
+    ),
+    
+    occurrence_property: _value_property_template($ => kw('Occurrence'), $ => $.occurrence_value),
     
     // 10. NamespacePrefix Property
     namespace_prefix_property: $ => seq(
@@ -3362,7 +3373,8 @@ module.exports = grammar({
         kw('onafterdeleteevent'),
         kw('onbeforeinsertevent'),
         kw('onbeforemodifyevent'),
-        kw('onbeforedeleteevent')
+        kw('onbeforedeleteevent'),
+        kw('onbeforeinsertrecord')  // XMLPort-specific trigger
       )),
       $._trigger_parameters,
       optional($.var_section),

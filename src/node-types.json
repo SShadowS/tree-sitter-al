@@ -22733,6 +22733,27 @@
     }
   },
   {
+    "type": "occurrence_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "occurrence_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "occurrence_value",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "odata_edm_type_property",
     "named": true,
     "fields": {
@@ -41462,6 +41483,10 @@
           "named": true
         },
         {
+          "type": "requestpage_section",
+          "named": true
+        },
+        {
           "type": "scope_property",
           "named": true
         },
@@ -41613,6 +41638,10 @@
       "required": false,
       "types": [
         {
+          "type": "named_trigger",
+          "named": true
+        },
+        {
           "type": "xmlport_field_attribute",
           "named": true
         },
@@ -41749,6 +41778,10 @@
         },
         {
           "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "occurrence_property",
           "named": true
         },
         {
