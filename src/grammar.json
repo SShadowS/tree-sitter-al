@@ -5397,52 +5397,32 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "Page"
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)page"
+              }
             },
             {
-              "type": "STRING",
-              "value": "PAGE"
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)report"
+              }
             },
             {
-              "type": "STRING",
-              "value": "page"
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)codeunit"
+              }
             },
             {
-              "type": "STRING",
-              "value": "Report"
-            },
-            {
-              "type": "STRING",
-              "value": "REPORT"
-            },
-            {
-              "type": "STRING",
-              "value": "report"
-            },
-            {
-              "type": "STRING",
-              "value": "Codeunit"
-            },
-            {
-              "type": "STRING",
-              "value": "CODEUNIT"
-            },
-            {
-              "type": "STRING",
-              "value": "codeunit"
-            },
-            {
-              "type": "STRING",
-              "value": "Table"
-            },
-            {
-              "type": "STRING",
-              "value": "TABLE"
-            },
-            {
-              "type": "STRING",
-              "value": "table"
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)table"
+              }
             }
           ]
         },
@@ -24214,31 +24194,6 @@
         }
       ]
     },
-    "field_list": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_identifier_choice"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": ","
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_identifier_choice"
-              }
-            ]
-          }
-        }
-      ]
-    },
     "preproc_conditional_layout": {
       "type": "SEQ",
       "members": [
@@ -28511,13 +28466,6 @@
       "content": {
         "type": "PATTERN",
         "value": "(?i)tabledata"
-      }
-    },
-    "_table_permission_keyword": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PATTERN",
-        "value": "(?i)table"
       }
     },
     "const": {

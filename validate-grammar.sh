@@ -161,7 +161,8 @@ print_header "Step 7: Checking for Common Issues"
 
 # Check for rules without kw() wrapper (case sensitivity issues)
 echo "Checking for potentially case-sensitive keywords..."
-CASE_SENSITIVE=$(grep -n "'\(table\|page\|field\|procedure\|trigger\|var\|begin\|end\|if\|then\|else\)'" grammar.js | grep -v "kw(" | head -5 || true)
+# Exclude field() function calls which are grammar metadata, not AL keywords
+CASE_SENSITIVE=$(grep -n "'\(table\|page\|field\|procedure\|trigger\|var\|begin\|end\|if\|then\|else\)'" grammar.js | grep -v "kw(" | grep -v "field(" | head -5 || true)
 if [ -n "$CASE_SENSITIVE" ]; then
     print_warning "Found potentially case-sensitive keywords (should use kw()):"
     echo "$CASE_SENSITIVE"

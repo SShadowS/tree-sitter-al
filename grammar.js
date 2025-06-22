@@ -1423,10 +1423,10 @@ module.exports = grammar({
 
     run_object_value: $ => seq(
       choice(
-        'Page', 'PAGE', 'page', 
-        'Report', 'REPORT', 'report',
-        'Codeunit', 'CODEUNIT', 'codeunit',
-        'Table', 'TABLE', 'table'
+        kw('page'), 
+        kw('report'),
+        kw('codeunit'),
+        kw('table')
       ),
       field('object_ref', choice(
         $.integer, 
@@ -5692,10 +5692,6 @@ enum_type: $ => prec(1, seq(
     ),
 
 
-    field_list: $ => seq(
-      $._identifier_choice,
-      repeat(seq(',', $._identifier_choice))
-    ),
 
     // Preprocessor conditional rules for layout sections
     preproc_conditional_layout: _preproc_conditional_block_template($ => $._layout_element),
@@ -6742,7 +6738,6 @@ enum_type: $ => prec(1, seq(
     _filter_keyword: $ => kw('filter'),
     _cardpart_keyword: $ => kw('cardpart'),
     _tabledata_keyword: $ => kw('tabledata'),
-    _table_permission_keyword: $ => kw('table'),
 
     // Missing alias target rules
     const: $ => kw('const'),
