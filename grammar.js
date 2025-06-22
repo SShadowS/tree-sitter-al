@@ -4542,6 +4542,27 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
+    namespaces_property: $ => seq(
+      kw('namespaces'),
+      '=',
+      field('value', $.namespace_list),
+      ';'
+    ),
+
+    namespace_list: $ => seq(
+      $.namespace_mapping,
+      repeat(seq(',', $.namespace_mapping))
+    ),
+
+    namespace_mapping: $ => seq(
+      field('prefix', choice(
+        $.string_literal,  // Empty string for default namespace
+        $.identifier       // Named prefix like 'cac', 'cbc', etc.
+      )),
+      '=',
+      field('uri', $.string_literal)
+    ),
+
     format_evaluate_property: $ => seq(
       kw('formatevaluate'),
       '=',
@@ -6490,6 +6511,7 @@ enum_type: $ => prec(1, seq(
       $.use_request_page_property,
       $.default_namespace_property,
       $.encoding_property,
+      $.namespaces_property,
       $.format_evaluate_property,
       $.use_default_namespace_property,
     ),

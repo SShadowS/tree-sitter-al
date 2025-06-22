@@ -22666,6 +22666,51 @@
     }
   },
   {
+    "type": "namespace_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "namespace_mapping",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "namespace_mapping",
+    "named": true,
+    "fields": {
+      "prefix": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      },
+      "uri": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "namespace_name",
     "named": true,
     "fields": {},
@@ -22713,6 +22758,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "namespaces_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "namespace_list",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -29851,6 +29912,10 @@
         },
         {
           "type": "moved_to_property",
+          "named": true
+        },
+        {
+          "type": "namespaces_property",
           "named": true
         },
         {
@@ -41894,6 +41959,10 @@
         },
         {
           "type": "moved_to_property",
+          "named": true
+        },
+        {
+          "type": "namespaces_property",
           "named": true
         },
         {

@@ -1,0 +1,70 @@
+==================
+XMLPort with namespaces property
+==================
+
+xmlport 50000 "Test XMLPort"
+{
+    Direction = Export;
+    Encoding = UTF8;
+    Namespaces = "" = 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2', cac = 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2', cbc = 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2';
+    
+    schema
+    {
+        textelement(root)
+        {
+        }
+    }
+}
+
+---
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (direction_property
+      value: (direction_value))
+    (encoding_property)
+    (namespaces_property
+      value: (namespace_list
+        (namespace_mapping
+          prefix: (string_literal)
+          uri: (string_literal))
+        (namespace_mapping
+          prefix: (identifier)
+          uri: (string_literal))
+        (namespace_mapping
+          prefix: (identifier)
+          uri: (string_literal))))
+    (xmlport_schema_element
+      (xmlport_text_element
+        name: (identifier)))))
+
+==================
+XMLPort with single namespace mapping
+==================
+
+xmlport 50001 "Simple XMLPort"
+{
+    Namespaces = xmlns = 'http://example.com/schema';
+    
+    schema
+    {
+        textelement(data) { }
+    }
+}
+
+---
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (namespaces_property
+      value: (namespace_list
+        (namespace_mapping
+          prefix: (identifier)
+          uri: (string_literal))))
+    (xmlport_schema_element
+      (xmlport_text_element
+        name: (identifier)))))
