@@ -22962,18 +22962,38 @@
     }
   },
   {
-    "type": "option_ordinal_values_property",
+    "type": "option_ordinal_values_list",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "option_ordinal_values_value",
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "option_ordinal_values_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "option_ordinal_values_value",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -22984,6 +23004,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "option_ordinal_values_list",
+          "named": true
+        },
         {
           "type": "string_literal",
           "named": true

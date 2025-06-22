@@ -2822,7 +2822,15 @@ module.exports = grammar({
       kw('moved')
     ),
     obsolete_tag_value: $ => $.string_literal,
-    option_ordinal_values_value: $ => $.string_literal,
+    option_ordinal_values_value: $ => choice(
+      $.string_literal,
+      $.option_ordinal_values_list
+    ),
+    
+    option_ordinal_values_list: $ => seq(
+      choice($.integer, $.unary_expression),  // Support negative integers
+      repeat(seq(',', choice($.integer, $.unary_expression)))
+    ),
     paste_is_valid_value: $ => $.boolean,
     sign_displacement_value: $ => $.boolean,
     sql_data_type_value: $ => $.string_literal,
@@ -3100,7 +3108,7 @@ module.exports = grammar({
     option_ordinal_values_property: $ => seq(
       'OptionOrdinalValues',
       '=',
-      $.option_ordinal_values_value,
+      field('value', $.option_ordinal_values_value),
       ';'
     ),
 

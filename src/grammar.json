@@ -12007,8 +12007,60 @@
       "name": "string_literal"
     },
     "option_ordinal_values_value": {
-      "type": "SYMBOL",
-      "name": "string_literal"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "string_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "option_ordinal_values_list"
+        }
+      ]
+    },
+    "option_ordinal_values_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "integer"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "unary_expression"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "integer"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "unary_expression"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
     },
     "paste_is_valid_value": {
       "type": "SYMBOL",
@@ -13122,8 +13174,12 @@
           "value": "="
         },
         {
-          "type": "SYMBOL",
-          "name": "option_ordinal_values_value"
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "option_ordinal_values_value"
+          }
         },
         {
           "type": "STRING",
