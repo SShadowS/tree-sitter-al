@@ -3381,6 +3381,7 @@ module.exports = grammar({
       $._trigger_keyword,
       kw('onrun'),
       $._trigger_parameters,
+      optional(';'), // Allow optional semicolon after OnRun() like other triggers
       optional($.var_section),
       $.code_block
     ),
