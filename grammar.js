@@ -1168,7 +1168,8 @@ module.exports = grammar({
         $.action_group_section,
         $._action_property,
         $.separator_action,
-        $.empty_statement
+        $.empty_statement,
+        $.preproc_conditional_actions  // Add support for preprocessor conditionals in action groups
       )),
       '}'
     ),
