@@ -1025,9 +1025,16 @@ module.exports = grammar({
     column_section: $ => seq(
       kw('column'),
       '(',
-      field('name', $._identifier_choice),
-      ';',
-      field('field_name', $._identifier_choice),
+      choice(
+        // Standard column: column(name; field_name)
+        seq(
+          field('name', $._identifier_choice),
+          ';',
+          field('field_name', $._identifier_choice)
+        ),
+        // Computed column: column(name) - no field reference
+        field('name', $._identifier_choice)
+      ),
       ')',
       '{',
       repeat(choice(

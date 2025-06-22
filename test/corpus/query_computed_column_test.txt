@@ -1,0 +1,88 @@
+==================
+Query with computed column
+==================
+
+query 50000 "Test Query"
+{
+    elements
+    {
+        dataitem(InvoiceLines; "Invoice Line")
+        {
+            column(LinesCount)
+            {
+                Method = Count;
+            }
+            column(TotalAmount)
+            {
+                Method = Sum;
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (column_section
+          name: (identifier)
+          (generic_property
+            name: (identifier)
+            value: (identifier)))
+        (column_section
+          name: (identifier)
+          (generic_property
+            name: (identifier)
+            value: (identifier)))))))
+
+==================
+Query with standard and computed columns
+==================
+
+query 50001 "Mixed Columns"
+{
+    elements
+    {
+        dataitem(Orders; "Sales Order")
+        {
+            column(Order_No_; "Order No.")
+            {
+            }
+            column(RecordCount)
+            {
+                Method = Count;
+            }
+            column(Amount; Amount)
+            {
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          (generic_property
+            name: (identifier)
+            value: (identifier)))
+        (column_section
+          name: (identifier)
+          field_name: (identifier))))))

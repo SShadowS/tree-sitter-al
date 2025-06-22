@@ -3659,24 +3659,42 @@
           "value": "("
         },
         {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_identifier_choice"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": ";"
-        },
-        {
-          "type": "FIELD",
-          "name": "field_name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_identifier_choice"
-          }
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "name",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_identifier_choice"
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": ";"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "field_name",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_identifier_choice"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "FIELD",
+              "name": "name",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_identifier_choice"
+              }
+            }
+          ]
         },
         {
           "type": "STRING",
