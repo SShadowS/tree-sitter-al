@@ -11624,6 +11624,49 @@
         }
       ]
     },
+    "tree_initial_state_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)TreeInitialState"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "(?i)CollapseAll"
+                }
+              },
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "(?i)ExpandAll"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "grid_layout_property": {
       "type": "SEQ",
       "members": [
@@ -14512,6 +14555,10 @@
           {
             "type": "SYMBOL",
             "name": "show_as_tree_property"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "tree_initial_state_property"
           },
           {
             "type": "SYMBOL",
@@ -26237,6 +26284,10 @@
         {
           "type": "SYMBOL",
           "name": "show_as_tree_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "tree_initial_state_property"
         },
         {
           "type": "SYMBOL",

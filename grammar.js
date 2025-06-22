@@ -2740,6 +2740,16 @@ module.exports = grammar({
       $._boolean_property_template
     ),
 
+    tree_initial_state_property: $ => seq(
+      kw('TreeInitialState'),
+      '=',
+      field('value', choice(
+        kw('CollapseAll'),
+        kw('ExpandAll')
+      )),
+      ';'
+    ),
+
     grid_layout_property: $ => seq(
       kw('gridlayout'),
       '=',
@@ -3495,6 +3505,7 @@ module.exports = grammar({
       $.width_property,
       $.show_caption_property,
       $.show_as_tree_property,
+      $.tree_initial_state_property,
       $.show_mandatory_property,
       $.style_property,
       $.style_expr_property,
@@ -6016,6 +6027,7 @@ enum_type: $ => prec(1, seq(
       $.importance_property,         // Priority/emphasis level
       $.show_caption_property,       // Caption visibility
       $.show_as_tree_property,       // Tree-style presentation
+      $.tree_initial_state_property,  // Initial tree expansion state
       $.show_mandatory_property,     // Mandatory field indication
       $.multi_line_property,         // Multi-line text support
       $.hide_value_property,         // Value masking (e.g., passwords)
