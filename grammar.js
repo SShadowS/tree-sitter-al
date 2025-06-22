@@ -1850,7 +1850,10 @@ module.exports = grammar({
       '(',
       optional($.parameter_list),
       ')',
-      optional(seq(':', field('return_type', $.type_specification))),
+      optional(choice(
+        seq(':', field('return_type', $.type_specification)), // Simple return type
+        $._procedure_named_return        // Named return value
+      )),
       optional(';')
     ),
 

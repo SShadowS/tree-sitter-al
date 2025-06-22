@@ -1,5 +1,5 @@
 ================================================================================
-Table Field Trigger with Qualified Enum Values with Spaces
+Table Field Trigger with Qualified Enum Values
 ================================================================================
 
 table 50000 "Test Table"
@@ -10,8 +10,8 @@ table 50000 "Test Table"
         {
             trigger OnValidate()
             begin
-                if ("Log Archive Path" = '') and ("Log Storage Type" = "Log Storage Type"::"File System") then
-                    TestField("Log Storage Type", "Log Storage Type"::Database);
+                if ("Log Archive Path" = '') and ("Log Storage Type" = LogStorageType::"File System") then
+                    TestField("Log Storage Type", LogStorageType::FileSystem);
             end;
         }
     }
@@ -45,11 +45,12 @@ table 50000 "Test Table"
                     left: (quoted_identifier)
                     operator: (comparison_operator)
                     right: (qualified_enum_value
-                      enum_type: (quoted_identifier)
+                      enum_type: (identifier)
                       value: (quoted_identifier)))))
               then_branch: (call_expression
                 function: (identifier)
                 arguments: (argument_list
                   (quoted_identifier)
                   (qualified_enum_value
-                    enum_type: (quoted_identifier)))))))))))
+                    enum_type: (identifier)
+                    value: (identifier)))))))))))

@@ -37,9 +37,11 @@ permissionset 50000 "TEST-PERMSET"
     (permissionset_permissions
       (permission_list
         (permission_entry
+          object_type: (identifier)
           object_reference: (quoted_identifier)
           permission: (permission_type))
         (permission_entry
+          object_type: (identifier)
           object_reference: (quoted_identifier)
           permission: (permission_type))))))
 
@@ -74,6 +76,7 @@ permissionset 50001 "SINGLE-INCLUDE"
     (permissionset_permissions
       (permission_list
         (permission_entry
+          object_type: (identifier)
           object_reference: (quoted_identifier)
           permission: (permission_type))))))
 
@@ -107,6 +110,7 @@ permissionset 50002 PRIVATE_PERM
     (permissionset_permissions
       (permission_list
         (permission_entry
+          object_type: (identifier)
           object_reference: (quoted_identifier)
           permission: (permission_type))))))
 
@@ -137,6 +141,7 @@ permissionset 50003 "BASIC-ONLY"
     (permissionset_permissions
       (permission_list
         (permission_entry
+          object_type: (identifier)
           object_reference: (quoted_identifier)
           permission: (permission_type))))))
 
@@ -171,5 +176,6 @@ permissionset 50004 "MULTI-INCLUDE"
     (permissionset_permissions
       (permission_list
         (permission_entry
+          object_type: (identifier)
           object_reference: (quoted_identifier)
           permission: (permission_type))))))

@@ -61,7 +61,8 @@ tableextension 50002 "Multiple Attributes Extension" extends Customer
           (attribute_arguments
             arguments: (expression_list
               (qualified_enum_value
-                enum_type: (identifier))
+                enum_type: (identifier)
+                value: (identifier))
               (database_reference
                 table_name: (identifier))
               (string_literal)

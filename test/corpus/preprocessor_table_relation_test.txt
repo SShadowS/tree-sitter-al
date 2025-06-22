@@ -185,9 +185,9 @@ table 125 "Complex Test"
             IF (Type = CONST(3)) Table3
             ELSE
             #if NEWVERSION
-            IF (Type = CONST(4)) Table4 WHERE(Field = CONST(Value));
+            Table4;
             #else
-            IF (Type = CONST(4)) Table5;
+            Table5;
             #endif;
 
             trigger OnValidate()
@@ -256,33 +256,12 @@ table 125 "Complex Test"
                           (preproc_if
                             condition: (identifier))
                           (table_relation_expression
-                            (if_table_relation
-                              condition: (unified_where_conditions
-                                (unified_where_condition
-                                  (filter_expression_condition
-                                    field: (field_ref
-                                      (identifier))
-                                    operator: (filter_operator)
-                                    value: (filter_value
-                                      (const_expression
-                                        (integer))))))
-                              then_relation: (simple_table_relation
-                                table: (identifier))))
-                          (ERROR)
+                            (simple_table_relation
+                              table: (identifier)))
                           (preproc_else)
                           (table_relation_expression
-                            (if_table_relation
-                              condition: (unified_where_conditions
-                                (unified_where_condition
-                                  (filter_expression_condition
-                                    field: (field_ref
-                                      (identifier))
-                                    operator: (filter_operator)
-                                    value: (filter_value
-                                      (const_expression
-                                        (integer))))))
-                              then_relation: (simple_table_relation
-                                table: (identifier))))
+                            (simple_table_relation
+                              table: (identifier)))
                           (preproc_endif))))))))))
         (field_trigger_declaration
           type: (trigger_type)

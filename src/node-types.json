@@ -18685,6 +18685,10 @@
         "required": false,
         "types": [
           {
+            "type": "return_type",
+            "named": true
+          },
+          {
             "type": "type_specification",
             "named": true
           }
@@ -18692,11 +18696,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
           "type": "parameter_list",
+          "named": true
+        },
+        {
+          "type": "return_value",
           "named": true
         }
       ]

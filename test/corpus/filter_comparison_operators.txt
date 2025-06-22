@@ -1,0 +1,179 @@
+================================================================================
+Filter with less than operator
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; "Quantity"; Decimal)
+        {
+            TableRelation = if (Amount = filter(< 0)) Item."No.";
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (integer)
+    (quoted_identifier)
+    (fields
+      (field_declaration
+        (integer)
+        (quoted_identifier)
+        (type_specification
+          (basic_type))
+        (table_relation_property
+          (table_relation_expression
+            (if_table_relation
+              (unified_where_conditions
+                (unified_where_condition
+                  (filter_expression_condition
+                    (field_ref
+                      (identifier))
+                    (filter_operator)
+                    (filter_value
+                      (filter_expression_function
+                        (filter_less_than_expression
+                          (integer)))))))
+              (simple_table_relation
+                (identifier)
+                (field_ref
+                  (quoted_identifier))))))))))
+
+================================================================================
+Filter with greater than operator
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; "Amount"; Decimal)
+        {
+            TableRelation = if (Balance = filter(> 100)) Customer."No.";
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (integer)
+    (quoted_identifier)
+    (fields
+      (field_declaration
+        (integer)
+        (quoted_identifier)
+        (type_specification
+          (basic_type))
+        (table_relation_property
+          (table_relation_expression
+            (if_table_relation
+              (unified_where_conditions
+                (unified_where_condition
+                  (filter_expression_condition
+                    (field_ref
+                      (identifier))
+                    (filter_operator)
+                    (filter_value
+                      (filter_expression_function
+                        (filter_greater_than_expression
+                          (integer)))))))
+              (simple_table_relation
+                (identifier)
+                (field_ref
+                  (quoted_identifier))))))))))
+
+================================================================================
+Filter with less than or equal operator
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; "Days"; Integer)
+        {
+            TableRelation = if (Days = filter(<= 30)) "Payment Terms".Code;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (integer)
+    (quoted_identifier)
+    (fields
+      (field_declaration
+        (integer)
+        (quoted_identifier)
+        (type_specification
+          (basic_type))
+        (table_relation_property
+          (table_relation_expression
+            (if_table_relation
+              (unified_where_conditions
+                (unified_where_condition
+                  (filter_expression_condition
+                    (field_ref
+                      (identifier))
+                    (filter_operator)
+                    (filter_value
+                      (filter_expression_function
+                        (filter_less_than_or_equal_expression
+                          (integer)))))))
+              (simple_table_relation
+                (quoted_identifier)
+                (field_ref
+                  (identifier))))))))))
+
+================================================================================
+Filter with greater than or equal operator
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; "Score"; Integer)
+        {
+            TableRelation = if (Score = filter(>= 80)) "Grade".Code;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (integer)
+    (quoted_identifier)
+    (fields
+      (field_declaration
+        (integer)
+        (quoted_identifier)
+        (type_specification
+          (basic_type))
+        (table_relation_property
+          (table_relation_expression
+            (if_table_relation
+              (unified_where_conditions
+                (unified_where_condition
+                  (filter_expression_condition
+                    (field_ref
+                      (identifier))
+                    (filter_operator)
+                    (filter_value
+                      (filter_expression_function
+                        (filter_greater_than_or_equal_expression
+                          (integer)))))))
+              (simple_table_relation
+                (quoted_identifier)
+                (field_ref
+                  (identifier))))))))))

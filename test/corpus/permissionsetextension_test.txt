@@ -96,15 +96,19 @@ permissionsetextension 50102 "Table Access Extension" extends "D365 READ"
     (permissionset_permissions
       (permission_list
         (permission_entry
+          object_type: (identifier)
           object_reference: (quoted_identifier)
           permission: (permission_type))
         (permission_entry
+          object_type: (identifier)
           object_reference: (quoted_identifier)
           permission: (permission_type))
         (permission_entry
+          object_type: (identifier)
           object_reference: (quoted_identifier)
           permission: (permission_type))
         (permission_entry
+          object_type: (identifier)
           object_reference: (quoted_identifier)
           permission: (permission_type))))))
 
@@ -150,9 +154,11 @@ permissionsetextension 50103 "Mixed Properties Ext" extends "Base Permissions"
     (permissionset_permissions
       (permission_list
         (permission_entry
+          object_type: (identifier)
           object_reference: (identifier)
           permission: (permission_type))
         (permission_entry
+          object_type: (identifier)
           object_reference: (quoted_identifier)
           permission: (permission_type))))))
 

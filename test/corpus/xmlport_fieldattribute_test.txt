@@ -43,9 +43,9 @@ xmlport 50100 "Test XMLPort"
             field: (quoted_identifier)))
         (xmlport_field_attribute
           attribute_name: (identifier)
-          source_field: (field_access
-            record: (identifier)
-            field: (identifier)))))))
+          source_field: (member_expression
+            object: (identifier)
+            property: (identifier)))))))
 
 ================================================================================
 XMLPort with fieldattribute and properties
@@ -89,17 +89,20 @@ xmlport 50101 "Export Setup"
       (xmlport_table_element
         name: (identifier)
         source_table: (quoted_identifier)
-        (auto_save_property
-          value: (boolean))
-        (auto_update_property
-          value: (boolean))
-        (xml_name_property
-          value: (string_literal))
+        (xmlport_table_property
+          (auto_save_property
+            value: (boolean)))
+        (xmlport_table_property
+          (auto_update_property
+            value: (boolean)))
+        (xmlport_table_property
+          (xml_name_property
+            value: (string_literal)))
         (xmlport_field_attribute
           attribute_name: (identifier)
-          source_field: (field_access
-            record: (identifier)
-            field: (identifier)))
+          source_field: (member_expression
+            object: (identifier)
+            property: (identifier)))
         (xmlport_field_attribute
           attribute_name: (identifier)
           source_field: (field_access
@@ -218,16 +221,19 @@ xmlport 50103 "Field Attribute Properties"
         (xmlport_field_attribute
           attribute_name: (identifier)
           source_field: (field_access
-            object: (identifier)
+            record: (identifier)
             field: (quoted_identifier))
-          (xml_name_property
-            value: (string_literal)))
+          (xmlport_table_property
+            (xml_name_property
+              value: (string_literal))))
         (xmlport_field_attribute
           attribute_name: (identifier)
-          source_field: (field_access
+          source_field: (member_expression
             object: (identifier)
-            field: (identifier))
-          (xml_name_property
-            value: (string_literal))
-          (min_occurs_property
-            value: (min_occurs_value)))))))
+            property: (identifier))
+          (xmlport_table_property
+            (xml_name_property
+              value: (string_literal)))
+          (xmlport_table_property
+            (min_occurs_property
+              value: (min_occurs_value))))))))

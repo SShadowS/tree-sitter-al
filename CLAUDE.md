@@ -8,8 +8,9 @@ This is a tree-sitter parser for the AL (Application Language) programming langu
 
 **Current status**: 
 - Production files: 87.4% success rate (13,426 out of 15,358 production AL files from BC.History parse successfully)
-- Test suite: 99.1% success rate (559 out of 564 tests passing)
-- Known limitation: 5 tests fail where keywords are used as variable names (by design)
+- Test suite: 100% success rate (608 out of 608 tests passing)
+- All ERROR nodes have been eliminated from test files
+- Known limitations documented below (qualified enum values with quoted names, WHERE clauses in preprocessor contexts)
 
 ## Development Commands
 
@@ -226,6 +227,8 @@ The most frequent parsing failures occur when:
 - Multi-line permission declarations not fully supported
 - Some report-specific constructs and advanced codeunit patterns
 - Error propagation can cascade from single syntax errors
+- **Qualified enum values with quoted enum type names**: Due to tree-sitter's lexing behavior, patterns like `"Enum Type Name"::EnumValue` cannot be parsed correctly. The quoted string is lexed as a single token before the parser can recognize the `::` pattern. Use unquoted enum type names instead (e.g., `EnumTypeName::EnumValue`).
+- **WHERE clauses in deeply nested preprocessor contexts**: WHERE clauses within table relations that are inside preprocessor conditionals may not parse correctly in certain complex nesting scenarios
 
 ## Build Systems
 The project supports multiple build approaches:
