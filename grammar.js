@@ -777,6 +777,30 @@ module.exports = grammar({
       ))
     )),
 
+    filter_and_expression: $ => prec(9, seq(
+      choice(
+        $.filter_not_equal_expression,
+        $.filter_equal_expression,
+        $.filter_less_than_expression,
+        $.filter_greater_than_expression,
+        $.filter_less_than_or_equal_expression,
+        $.filter_greater_than_or_equal_expression,
+        $.filter_range_expression
+      ),
+      repeat1(seq(
+        '&',
+        choice(
+          $.filter_not_equal_expression,
+          $.filter_equal_expression,
+          $.filter_less_than_expression,
+          $.filter_greater_than_expression,
+          $.filter_less_than_or_equal_expression,
+          $.filter_greater_than_or_equal_expression,
+          $.filter_range_expression
+        )
+      ))
+    )),
+
     filter_not_equal_expression: $ => seq(
       '<>',
       field('value', choice(
@@ -828,6 +852,7 @@ module.exports = grammar({
 
     // Unified filter value pattern - used in all FILTER() contexts
     _filter_value: $ => choice(
+      $.filter_and_expression,
       $.filter_or_expression,
       $.filter_not_equal_expression, 
       $.filter_equal_expression,
