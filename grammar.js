@@ -6306,6 +6306,7 @@ enum_type: $ => prec(1, seq(
       $.option_caption_property,
       $.option_members_property,
       $.sign_displacement_property,
+      $.data_classification_property,
       $.title_property,
       $.extended_datatype_property,
       $.page_about_title_ml_property,
