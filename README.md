@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,189 files (92.3%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **12,881 files (83.8%) parse successfully**.
 
 Recent improvements include:
 - **Extended AutoFormatType values** - Added support for AutoFormatType property with any integer value (e.g., `AutoFormatType = 11;`)
@@ -49,6 +49,9 @@ Recent improvements include:
 - **FOR...DOWNTO loops** - Added support for `DOWNTO` keyword in FOR statements (e.g., `FOR i := 10 DOWNTO 1 DO`)
 - **StyleExpr comparison expressions** - Enhanced StyleExpr property to support comparison expressions with enum values (e.g., `StyleExpr = "Field" = "Field"::EnumValue;`)
 - **ValuesAllowed mixed types** - Enhanced ValuesAllowed property to support both string literals and identifiers in comma-separated lists
+- **OrderBy multiple fields** - Added support for OrderBy property with multiple fields in single directive (e.g., `OrderBy = ascending(Document_No_, Posting_Date);`)
+- **Filter AND expressions** - Added support for combining filter conditions with & operator (e.g., `filter(<> "External User" & <> "Application" & <> "AAD Group")`)
+- **Preprocessor conditional enums** - Added support for preprocessor conditionals around enum declarations with different implements clauses
 - **String literal backslash support** - Fixed parsing of string literals containing backslash characters in function arguments
 - **SubPageView table view syntax** - Enhanced SubPageView property to support full `sorting(...) where(...)` syntax
 - **Report dataitem properties** - Added comprehensive support for DataItemTableView, RequestFilterFields, and RequestFilterHeading properties
