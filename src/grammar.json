@@ -6004,7 +6004,7 @@
       "members": [
         {
           "type": "PREC",
-          "value": 10,
+          "value": 20,
           "content": {
             "type": "SYMBOL",
             "name": "database_reference"
@@ -18482,27 +18482,11 @@
                   "members": [
                     {
                       "type": "SYMBOL",
-                      "name": "string_literal"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "identifier"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "_quoted_identifier"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "integer"
+                      "name": "_const_value"
                     },
                     {
                       "type": "SYMBOL",
                       "name": "boolean"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "database_reference"
                     }
                   ]
                 }
@@ -23338,7 +23322,7 @@
     },
     "database_reference": {
       "type": "PREC",
-      "value": 200,
+      "value": 300,
       "content": {
         "type": "SEQ",
         "members": [

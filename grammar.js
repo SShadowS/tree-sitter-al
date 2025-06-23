@@ -1495,7 +1495,7 @@ module.exports = grammar({
     ),
 
     _const_value: $ => choice(
-      prec(10, $.database_reference),
+      prec(20, $.database_reference),  // Higher precedence for Database:: patterns
       prec(9, $.qualified_enum_value),  // Allow Enum::Value patterns
       $.identifier,
       $._quoted_identifier,
@@ -4206,12 +4206,8 @@ enum_type: $ => prec(1, seq(
       kw('const'),
       '(',
       optional(field('value', choice(
-        $.string_literal,
-        $.identifier,
-        $._quoted_identifier,
-        $.integer,
-        $.boolean,
-        $.database_reference
+        $._const_value,
+        $.boolean
       ))),
       ')'
     )),
@@ -5280,7 +5276,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     // DATABASE references (DATABASE::Customer pattern)
-    database_reference: $ => prec(200, seq(
+    database_reference: $ => prec(300, seq(  // Increased precedence to beat qualified_enum_value
       field('keyword', alias(kw('database'), 'database')),
       '::',
       field('table_name', $._identifier_choice)

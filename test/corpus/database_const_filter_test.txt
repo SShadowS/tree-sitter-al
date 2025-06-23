@@ -1,0 +1,187 @@
+================================================================================
+Database reference in const filter expressions
+================================================================================
+
+table 50000 "Sales Line Test"
+{
+    fields
+    {
+        field(2677; "Alloc. Acc. Modified by User"; Boolean)
+        {
+            Caption = 'Allocation Account Distributions Modified';
+            FieldClass = FlowField;
+            CalcFormula = exist("Alloc. Acc. Manual Override" where("Parent System Id" = field(SystemId), "Parent Table Id" = const(Database::"Sales Line")));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (caption_property
+          (string_literal))
+        (field_class_property
+          value: (field_class_value))
+        (calc_formula_property
+          (exist_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (field_ref_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    field_name: (field_ref
+                      field: (identifier))))
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (const_expression
+                      (database_reference
+                        keyword: (database)
+                        table_name: (quoted_identifier)))))))))))))
+
+================================================================================
+Database reference with unquoted table name
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; ParentTableId; Integer)
+        {
+            TableRelation = AllObj."Object ID" where("Object Type" = const(Table), "Object ID" = const(Database::Customer));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (table_relation_property
+          relation: (table_relation_expression
+            (simple_table_relation
+              table: (member_expression
+                object: (identifier)
+                property: (quoted_identifier))
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (quoted_identifier))
+                      value: (const_expression
+                        (identifier))))
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (quoted_identifier))
+                      value: (const_expression
+                        (database_reference
+                          keyword: (database)
+                          table_name: (identifier))))))))))))))
+
+================================================================================
+Database reference in various contexts
+================================================================================
+
+codeunit 50200 "Database References"
+{
+    procedure TestDatabaseRefs()
+    var
+        TableId: Integer;
+    begin
+        // Direct assignment
+        TableId := Database::"Sales Line";
+        
+        // In case statement
+        case TableId of
+            Database::Customer:
+                Message('Customer table');
+            Database::"Sales Line":
+                Message('Sales Line table');
+        end;
+        
+        // In if statement
+        if TableId = Database::Item then
+            Message('Item table');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (line_comment)
+          (assignment_statement
+            left: (identifier)
+            right: (database_reference
+              keyword: (database)
+              table_name: (quoted_identifier)))
+          (line_comment)
+          (case_statement
+            expression: (identifier)
+            (case_branch
+              pattern: (database_reference
+                keyword: (database)
+                table_name: (identifier))
+              statements: (procedure_call_statement
+                (procedure_call
+                  procedure: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))))
+            (case_branch
+              pattern: (database_reference
+                keyword: (database)
+                table_name: (quoted_identifier))
+              statements: (procedure_call_statement
+                (procedure_call
+                  procedure: (identifier)
+                  arguments: (argument_list
+                    (string_literal))))))
+          (line_comment)
+          (if_statement
+            condition: (comparison_expression
+              left: (identifier)
+              operator: (comparison_operator)
+              right: (database_reference
+                keyword: (database)
+                table_name: (identifier)))
+            then_branch: (procedure_call_statement
+              (procedure_call
+                procedure: (identifier)
+                arguments: (argument_list
+                  (string_literal))))))))))
