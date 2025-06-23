@@ -38,19 +38,18 @@ table 50000 "Sales Line Test"
             (where_clause
               conditions: (where_conditions
                 (where_condition
-                  (field_ref_filter
+                  (field_filter
                     field: (field_ref
                       (quoted_identifier))
-                    field_name: (field_ref
-                      field: (identifier))))
+                    value: (field_ref
+                      (identifier))))
                 (where_condition
                   (const_filter
                     field: (field_ref
                       (quoted_identifier))
-                    value: (const_expression
-                      (database_reference
-                        keyword: (database)
-                        table_name: (quoted_identifier)))))))))))))
+                    value: (qualified_enum_value
+                      enum_type: (identifier)
+                      value: (quoted_identifier)))))))))))))
 
 ================================================================================
 Database reference with unquoted table name
@@ -97,10 +96,9 @@ table 50100 "Test Table"
                     (const_filter
                       field: (field_ref
                         (quoted_identifier))
-                      value: (const_expression
-                        (database_reference
-                          keyword: (database)
-                          table_name: (identifier))))))))))))))
+                      value: (qualified_enum_value
+                        enum_type: (identifier)
+                        value: (identifier))))))))))))))
 
 ================================================================================
 Database reference in various contexts
@@ -148,25 +146,25 @@ codeunit 50200 "Database References"
           (line_comment)
           (assignment_statement
             left: (identifier)
-            right: (database_reference
-              keyword: (database)
-              table_name: (quoted_identifier)))
+            right: (qualified_enum_value
+              enum_type: (identifier)
+              value: (quoted_identifier)))
           (line_comment)
           (case_statement
             expression: (identifier)
             (case_branch
-              pattern: (database_reference
-                keyword: (database)
-                table_name: (identifier))
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
               statements: (procedure_call_statement
                 (procedure_call
                   procedure: (identifier)
                   arguments: (argument_list
                     (string_literal)))))
             (case_branch
-              pattern: (database_reference
-                keyword: (database)
-                table_name: (quoted_identifier))
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (quoted_identifier))
               statements: (procedure_call_statement
                 (procedure_call
                   procedure: (identifier)
@@ -177,9 +175,9 @@ codeunit 50200 "Database References"
             condition: (comparison_expression
               left: (identifier)
               operator: (comparison_operator)
-              right: (database_reference
-                keyword: (database)
-                table_name: (identifier)))
+              right: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier)))
             then_branch: (procedure_call_statement
               (procedure_call
                 procedure: (identifier)

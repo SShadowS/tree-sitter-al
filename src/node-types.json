@@ -26133,7 +26133,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "tabledata_permission_list",
@@ -39294,6 +39294,10 @@
         {
           "type": "text_type",
           "named": true
+        },
+        {
+          "type": "xmlport_type",
+          "named": true
         }
       ]
     }
@@ -42846,6 +42850,30 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "xmlport_type",
+    "named": true,
+    "fields": {
+      "reference": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

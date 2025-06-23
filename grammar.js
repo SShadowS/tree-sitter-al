@@ -3490,9 +3490,9 @@ module.exports = grammar({
 
     // For single table permission property
     permissions_property: $ => seq(
-      'Permissions',
+      kw('Permissions'),
       '=',
-      $.tabledata_permission_list,
+      optional($.tabledata_permission_list),
       ';'
     ),
 
@@ -3851,6 +3851,7 @@ type_specification: $ => choice(
   $.testpage_type,
   $.testrequestpage_type,
   $.report_type,
+  $.xmlport_type,
   $.dotnet_type,
   $.list_type,
   $.dictionary_type,
@@ -3925,6 +3926,15 @@ enum_type: $ => prec(1, seq(
 
     report_type: $ => seq(
       prec(1, kw('report')),
+      field('reference', choice(
+        $.integer,
+        $._quoted_identifier,
+        $.identifier
+      ))
+    ),
+
+    xmlport_type: $ => seq(
+      prec(1, kw('xmlport')),
       field('reference', choice(
         $.integer,
         $._quoted_identifier,

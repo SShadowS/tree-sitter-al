@@ -1,0 +1,115 @@
+================================================================================
+Empty permissions property
+================================================================================
+
+page 123 "Code Coverage"
+{
+    PageType = Worksheet;
+    Permissions =;
+    SourceTable = "Code Coverage";
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (permissions_property)
+    (source_table_property
+      value: (quoted_identifier))))
+
+================================================================================
+XMLport type in variable declaration
+================================================================================
+
+codeunit 50100 "XMLport Example"
+{
+    procedure TestXMLport()
+    var
+        CodeCoverage: Record "Code Coverage";
+        CodeCoverageSummary: XMLport "Code Coverage Summary";
+    begin
+        CodeCoverage.SetRange("Line No.", 1, 100);
+        CodeCoverageSummary.SetTableView(CodeCoverage);
+        CodeCoverageSummary.Run();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (xmlport_type
+                reference: (quoted_identifier)))))
+        (code_block
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (quoted_identifier)
+              (integer)
+              (integer)))
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (identifier)))
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list)))))))
+
+================================================================================
+XMLport type with integer reference
+================================================================================
+
+page 50200 "Test Page"
+{
+    trigger OnOpenPage()
+    var
+        MyXMLport: XMLport 50100;
+    begin
+        MyXMLport.Run();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (trigger_declaration
+      name: (trigger_name)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (xmlport_type
+              reference: (integer)))))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list))))))

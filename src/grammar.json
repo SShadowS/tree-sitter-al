@@ -14989,16 +14989,27 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Permissions"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Permissions"
+          }
         },
         {
           "type": "STRING",
           "value": "="
         },
         {
-          "type": "SYMBOL",
-          "name": "tabledata_permission_list"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "tabledata_permission_list"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "STRING",
@@ -16641,6 +16652,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "xmlport_type"
+        },
+        {
+          "type": "SYMBOL",
           "name": "dotnet_type"
         },
         {
@@ -16964,6 +16979,43 @@
             "content": {
               "type": "PATTERN",
               "value": "(?i)report"
+            }
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "reference",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "integer"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_quoted_identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "xmlport_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)xmlport"
             }
           }
         },
