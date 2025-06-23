@@ -130,6 +130,7 @@ module.exports = grammar({
       $.query_declaration,
       $.enum_declaration,
       $.enumextension_declaration, 
+      $.preproc_conditional_enum_declaration,
       $.xmlport_declaration,
       $.interface_declaration,
       $.dotnet_declaration,
@@ -442,6 +443,31 @@ module.exports = grammar({
       )),
       '}'
     ),
+
+    preproc_conditional_enum_declaration: $ => prec(1, seq(
+      $.preproc_if,
+      optional($.pragma),
+      field('consequence', seq(
+        kw('enum'),
+        $._object_header_base,
+        optional($.implements_clause)
+      )),
+      optional($.pragma),
+      $.preproc_else,
+      field('alternative', seq(
+        kw('enum'),
+        $._object_header_base,
+        optional($.implements_clause)
+      )),
+      $.preproc_endif,
+      '{',
+      repeat(choice(
+        $._enum_properties, 
+        $.enum_value_declaration,
+        $.preproc_conditional_enum_properties
+      )),
+      '}'
+    )),
 
     enum_value_declaration: $ => seq(
       kw('value'),

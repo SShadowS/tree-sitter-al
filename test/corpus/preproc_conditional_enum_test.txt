@@ -1,0 +1,80 @@
+================================================================================
+Preprocessor conditional enum declaration with different implements
+================================================================================
+
+#if not CLEAN24
+#pragma warning disable AL0432
+enum 1446 SignatureAlgorithm implements SignatureAlgorithm, "Signature Algorithm v2"
+#pragma warning restore AL0432
+#else
+enum 1446 SignatureAlgorithm implements "Signature Algorithm v2"
+#endif
+{
+    Extensible = false;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_enum_declaration
+    (preproc_if
+      condition: (identifier))
+    (pragma)
+    object_id: (integer)
+    object_name: (identifier)
+    consequence: (implements_clause
+      interface: (identifier)
+      interface: (quoted_identifier))
+    (pragma)
+    (preproc_else)
+    object_id: (integer)
+    object_name: (identifier)
+    alternative: (implements_clause
+      interface: (quoted_identifier))
+    (preproc_endif)
+    (extensible_property
+      value: (extensible_value
+        (boolean)))))
+
+
+================================================================================
+Simple preprocessor conditional enum without pragma
+================================================================================
+
+#if FEATUREFLAG
+enum 100 TestEnum
+#else  
+enum 100 TestEnum implements ITestInterface
+#endif
+{
+    Extensible = true;
+    
+    value(0; None) { }
+    value(1; Option1) { Caption = 'Option 1'; }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_enum_declaration
+    (preproc_if
+      condition: (identifier))
+    object_id: (integer)
+    object_name: (identifier)
+    (preproc_else)
+    object_id: (integer)
+    object_name: (identifier)
+    alternative: (implements_clause
+      interface: (identifier))
+    (preproc_endif)
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)
+      (caption_property
+        (string_literal)))))

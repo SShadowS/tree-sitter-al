@@ -26909,6 +26909,238 @@
     }
   },
   {
+    "type": "preproc_conditional_enum_declaration",
+    "named": true,
+    "fields": {
+      "alternative": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "implements_clause",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "consequence": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "implements_clause",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "object_id": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "object_name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "about_text_property",
+          "named": true
+        },
+        {
+          "type": "about_title_property",
+          "named": true
+        },
+        {
+          "type": "access_by_permission_property",
+          "named": true
+        },
+        {
+          "type": "access_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_ml_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "assignment_compatibility_property",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "context_sensitive_help_page_property",
+          "named": true
+        },
+        {
+          "type": "data_access_intent_property",
+          "named": true
+        },
+        {
+          "type": "default_implementation_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "enum_value_declaration",
+          "named": true
+        },
+        {
+          "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "help_link_property",
+          "named": true
+        },
+        {
+          "type": "implementation_property",
+          "named": true
+        },
+        {
+          "type": "inherent_entitlements_property",
+          "named": true
+        },
+        {
+          "type": "inherent_permissions_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "permissions_property",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_enum_properties",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "scope_property",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_enum_properties",
     "named": true,
     "fields": {},
@@ -30467,6 +30699,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_enum_declaration",
+            "named": true
+          },
+          {
             "type": "preproc_conditional_using",
             "named": true
           },
@@ -30576,6 +30812,10 @@
           },
           {
             "type": "pragma",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_enum_declaration",
             "named": true
           },
           {
@@ -36391,6 +36631,10 @@
         },
         {
           "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_enum_declaration",
           "named": true
         },
         {
