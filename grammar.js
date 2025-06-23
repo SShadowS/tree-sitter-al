@@ -4563,12 +4563,9 @@ enum_type: $ => prec(1, seq(
     ),
 
     option_members_property: $ => prec(1, seq(
-      'OptionMembers',
+      kw('OptionMembers'),
       '=',
-      choice(
-        $.string_literal,  // Single string literal case
-        field('value', $.option_member_list)  // Multiple members case
-      ),
+      field('value', $.option_member_list),
       ';'
     )),
 
@@ -6307,6 +6304,7 @@ enum_type: $ => prec(1, seq(
       $.assist_edit_property,
       $.quick_entry_property,
       $.option_caption_property,
+      $.option_members_property,
       $.sign_displacement_property,
       $.title_property,
       $.extended_datatype_property,

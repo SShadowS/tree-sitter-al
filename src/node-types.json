@@ -11789,6 +11789,10 @@
           "named": true
         },
         {
+          "type": "option_members_property",
+          "named": true
+        },
+        {
           "type": "page_about_text_ml_property",
           "named": true
         },
@@ -13046,6 +13050,10 @@
         },
         {
           "type": "option_caption_property",
+          "named": true
+        },
+        {
+          "type": "option_members_property",
           "named": true
         },
         {
@@ -22010,6 +22018,10 @@
           "named": true
         },
         {
+          "type": "option_members_property",
+          "named": true
+        },
+        {
           "type": "page_about_text_ml_property",
           "named": true
         },
@@ -23685,7 +23697,7 @@
     "fields": {
       "value": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "option_member_list",
@@ -23693,16 +23705,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "string_literal",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -27541,6 +27543,10 @@
         },
         {
           "type": "option_caption_property",
+          "named": true
+        },
+        {
+          "type": "option_members_property",
           "named": true
         },
         {
@@ -43356,10 +43362,6 @@
   },
   {
     "type": "OptimizeForTextSearch",
-    "named": false
-  },
-  {
-    "type": "OptionMembers",
     "named": false
   },
   {

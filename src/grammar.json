@@ -19892,29 +19892,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
-            "value": "OptionMembers"
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)OptionMembers"
+            }
           },
           {
             "type": "STRING",
             "value": "="
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "string_literal"
-              },
-              {
-                "type": "FIELD",
-                "name": "value",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "option_member_list"
-                }
-              }
-            ]
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "SYMBOL",
+              "name": "option_member_list"
+            }
           },
           {
             "type": "STRING",
@@ -27837,6 +27831,10 @@
         {
           "type": "SYMBOL",
           "name": "option_caption_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "option_members_property"
         },
         {
           "type": "SYMBOL",
