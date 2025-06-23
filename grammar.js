@@ -652,6 +652,7 @@ module.exports = grammar({
       choice(kw('ascending'), kw('descending')),
       '(',
       $._identifier_choice,
+      repeat(seq(',', $._identifier_choice)),
       ')'
     ),
 
@@ -3699,7 +3700,14 @@ module.exports = grammar({
       // Allow the keyword 'PrintOnlyIfDetail' to be treated as an identifier in variable contexts
       alias(kw('printonlyifdetail'), $.identifier),
       // Allow the keyword 'MaxIteration' to be treated as an identifier in variable contexts
-      alias(kw('maxiteration'), $.identifier)
+      alias(kw('maxiteration'), $.identifier),
+      // Allow common End* identifiers that conflict with 'end' keyword
+      alias(kw('endindex'), $.identifier),
+      alias(kw('endvalue'), $.identifier),
+      alias(kw('enddata'), $.identifier),
+      alias(kw('endpoint'), $.identifier),
+      alias(kw('enddate'), $.identifier),
+      alias(kw('endtime'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
@@ -6543,7 +6551,17 @@ enum_type: $ => prec(1, seq(
     _trigger_parameters: $ => '()',
 
     // Centralized identifier choice pattern (appears 35+ times)
-    _identifier_choice: $ => prec(2, choice($.identifier, $._quoted_identifier)),
+    _identifier_choice: $ => prec(2, choice(
+      $.identifier, 
+      $._quoted_identifier,
+      // Allow common End* identifiers that conflict with 'end' keyword
+      alias(kw('endindex'), $.identifier),
+      alias(kw('endvalue'), $.identifier),
+      alias(kw('enddata'), $.identifier),
+      alias(kw('endpoint'), $.identifier),
+      alias(kw('enddate'), $.identifier),
+      alias(kw('endtime'), $.identifier)
+    )),
 
     // Flexible identifier choice pattern (includes string literals)
     _flexible_identifier_choice: $ => choice($.identifier, $._quoted_identifier, $.string_literal),
