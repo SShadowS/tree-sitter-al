@@ -40,8 +40,9 @@ page 50000 TestPage
           (sub_page_link_property
             value: (run_page_link_value
               field: (quoted_identifier)
-              const_value: (database_reference
-                table_name: (identifier)))
+              const_value: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier)))
             value: (run_page_link_value
               field: (quoted_identifier)
               field_value: (quoted_identifier))))))))
@@ -120,12 +121,14 @@ page 50002 TestPage
           (sub_page_link_property
             value: (run_page_link_value
               field: (quoted_identifier)
-              const_value: (database_reference
-                table_name: (quoted_identifier)))
+              const_value: (qualified_enum_value
+                enum_type: (identifier)
+                value: (quoted_identifier)))
             value: (run_page_link_value
               field: (quoted_identifier)
               field_value: (quoted_identifier))
             value: (run_page_link_value
               field: (quoted_identifier)
-              const_value: (database_reference
-                table_name: (identifier)))))))))
+              const_value: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier)))))))))

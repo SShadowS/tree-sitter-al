@@ -28,8 +28,9 @@ table 50010 "Test Table"
           (case_branch
             left: (identifier)
             operator: (comparison_operator)
-            right: (database_reference
-              table_name: (identifier))
+            right: (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier))
             statements: (call_expression
               function: (member_expression
                 object: (identifier)
@@ -39,8 +40,9 @@ table 50010 "Test Table"
           (case_branch
             left: (identifier)
             operator: (comparison_operator)
-            right: (database_reference
-              table_name: (identifier))
+            right: (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier))
             statements: (call_expression
               function: (member_expression
                 object: (identifier)

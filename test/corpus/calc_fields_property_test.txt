@@ -1,0 +1,128 @@
+================================================================================
+Report dataitem with CalcFields property
+================================================================================
+
+report 50100 "Customer Balance Report"
+{
+    dataset
+    {
+        dataitem(Customer; Customer)
+        {
+            CalcFields = Balance, "Balance (LCY)";
+            
+            column(CustomerNo; "No.")
+            {
+            }
+            column(Balance; Balance)
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (calc_fields_property
+          fields: (calc_fields_list
+            (calc_field
+              (identifier))
+            (calc_field
+              (quoted_identifier))))
+        (report_column_section
+          name: (identifier)
+          source: (quoted_identifier))
+        (report_column_section
+          name: (identifier)
+          source: (identifier))))))
+
+================================================================================
+CalcFields with single field
+================================================================================
+
+report 50101 "Simple Balance"
+{
+    dataset
+    {
+        dataitem(Vendor; Vendor)
+        {
+            CalcFields = Balance;
+            
+            column(VendorNo; "No.")
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (calc_fields_property
+          fields: (calc_fields_list
+            (calc_field
+              (identifier))))
+        (report_column_section
+          name: (identifier)
+          source: (quoted_identifier))))))
+
+================================================================================
+CalcFields with multiple quoted fields
+================================================================================
+
+report 50102 "Item Statistics"
+{
+    dataset
+    {
+        dataitem(Item; Item)
+        {
+            CalcFields = Inventory, "Qty. on Purch. Order", "Qty. on Sales Order";
+            
+            column(ItemNo; "No.")
+            {
+            }
+            column(Inventory; Inventory)
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (calc_fields_property
+          fields: (calc_fields_list
+            (calc_field
+              (identifier))
+            (calc_field
+              (quoted_identifier))
+            (calc_field
+              (quoted_identifier))))
+        (report_column_section
+          name: (identifier)
+          source: (quoted_identifier))
+        (report_column_section
+          name: (identifier)
+          source: (identifier))))))

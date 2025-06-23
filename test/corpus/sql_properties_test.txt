@@ -1,0 +1,151 @@
+================================================================================
+Field with SqlDataType property
+================================================================================
+
+table 50100 "SQL Properties Test"
+{
+    fields
+    {
+        field(1; "Entry No."; Integer)
+        {
+            SqlDataType = BigInt;
+        }
+        
+        field(2; "Amount"; Decimal)
+        {
+            SqlDataType = Decimal;
+        }
+        
+        field(3; "Text Field"; Text[50])
+        {
+            SqlDataType = Varchar;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (sql_data_type_property
+          value: (sql_data_type_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (sql_data_type_property
+          value: (sql_data_type_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (sql_data_type_property
+          value: (sql_data_type_value))))))
+
+================================================================================
+Field with SqlTimestamp property
+================================================================================
+
+table 50101 "Timestamp Table"
+{
+    fields
+    {
+        field(1; "Primary Key"; Code[10])
+        {
+        }
+        
+        field(2; "Timestamp"; BigInteger)
+        {
+            SqlTimestamp = true;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (sql_timestamp_property
+          value: (sql_timestamp_value
+            (boolean)))))))
+
+================================================================================
+Field with TestTableRelation property
+================================================================================
+
+table 50102 "Test Table Relation"
+{
+    fields
+    {
+        field(1; "Customer No."; Code[20])
+        {
+            TableRelation = Customer;
+            TestTableRelation = false;
+        }
+        
+        field(2; "Item No."; Code[20])
+        {
+            TableRelation = Item;
+            TestTableRelation = true;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (table_relation_property
+          relation: (table_relation_expression
+            (simple_table_relation
+              table: (identifier))))
+        (test_table_relation_property
+          value: (test_table_relation_value
+            (boolean))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (table_relation_property
+          relation: (table_relation_expression
+            (simple_table_relation
+              table: (identifier))))
+        (test_table_relation_property
+          value: (test_table_relation_value
+            (boolean)))))))

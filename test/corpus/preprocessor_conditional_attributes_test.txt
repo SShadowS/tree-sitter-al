@@ -48,8 +48,9 @@ codeunit 50100 TestUnit
                 (qualified_enum_value
                   enum_type: (identifier)
                   value: (identifier))
-                (database_reference
-                  table_name: (quoted_identifier))
+                (qualified_enum_value
+                  enum_type: (identifier)
+                  value: (quoted_identifier))
                 (string_literal)
                 (string_literal)
                 (boolean)

@@ -1,0 +1,84 @@
+================================================================================
+DotNet type with IsControlAddIn property
+================================================================================
+
+codeunit 50100 "Control AddIn Manager"
+{
+    var
+        MyControl: DotNet MyCustomControl;
+
+    trigger OnRun()
+    begin
+        Message('Control loaded');
+    end;
+
+    procedure InitializeControl()
+    var
+        [RunOnClient]
+        ClientControl: DotNet MyClientControl;
+    begin
+        // Initialize control
+    end;
+}
+
+dotnet
+{
+    assembly("MyCustomAssembly")
+    {
+        type("MyNamespace.MyCustomControl"; "MyCustomControl")
+        {
+            IsControlAddIn = true;
+        }
+        
+        type("MyNamespace.MyClientControl"; "MyClientControl")
+        {
+            IsControlAddIn = false;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (dotnet_type
+            reference: (dotnet_type_name)))))
+    (attributed_onrun_trigger
+      (onrun_trigger
+        (code_block
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (attribute_list
+            (attribute
+              attribute_name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                reference: (dotnet_type_name)))))
+        (code_block
+          (comment)))))
+  (dotnet_declaration
+    (assembly_declaration
+      name: (quoted_identifier)
+      (type_declaration
+        dotnet_type: (quoted_identifier)
+        al_name: (quoted_identifier)
+        (boolean))
+      (type_declaration
+        dotnet_type: (quoted_identifier)
+        al_name: (quoted_identifier)
+        (boolean)))))

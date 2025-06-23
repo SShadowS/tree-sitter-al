@@ -462,10 +462,8 @@ profile "Test Profile"
     (preproc_conditional_profile_properties
       (preproc_if
         condition: (identifier))
-      (property_list
-        (property
-          (description_property
-            value: (string_literal))))
+      (description_property
+        value: (string_literal))
       (enabled_property
         value: (boolean))
       (preproc_endif))

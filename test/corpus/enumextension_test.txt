@@ -1,0 +1,116 @@
+================================================================================
+Basic enum extension
+================================================================================
+
+enumextension 50100 "Payment Method Extension" extends "Payment Method Code"
+{
+    value(50100; "Digital Wallet")
+    {
+        Caption = 'Digital Wallet';
+    }
+    
+    value(50101; Cryptocurrency)
+    {
+        Caption = 'Cryptocurrency';
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enumextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (quoted_identifier)
+      (caption_property
+        (string_literal)))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)
+      (caption_property
+        (string_literal)))))
+
+================================================================================
+Enum extension with implementation
+================================================================================
+
+enumextension 50101 "Document Type Ext" extends "Sales Document Type"
+{
+    value(50100; Proforma)
+    {
+        Caption = 'Proforma Invoice';
+        Implementation = "Document Handler" = "Proforma Handler";
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enumextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)
+      (caption_property
+        (string_literal))
+      (implementation_property
+        value: (implementation_value_list
+          (implementation_value
+            interface: (quoted_identifier)
+            implementation: (quoted_identifier)))))))
+
+================================================================================
+Enum extension with multiple properties
+================================================================================
+
+enumextension 50102 MyEnumExt extends BaseEnum
+{
+    value(1; FirstValue)
+    {
+        Caption = 'First Value';
+        CaptionML = ENU = 'First Value', DAN = 'Første værdi';
+    }
+    
+    value(2; "Second Value")
+    {
+        Caption = 'Second Value';
+        ObsoleteState = Pending;
+        ObsoleteReason = 'Use ThirdValue instead';
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enumextension_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    base_object: (identifier)
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)
+      (caption_property
+        (string_literal))
+      (caption_ml_property
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal)))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (quoted_identifier)
+      (caption_property
+        (string_literal))
+      (obsolete_state_property
+        value: (obsolete_state_value))
+      (obsolete_reason_property
+        value: (obsolete_reason_value
+          (string_literal))))))

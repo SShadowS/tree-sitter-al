@@ -33,8 +33,10 @@ table 50000 "Test Table"
           value: (identifier))
         (option_members_property
           value: (option_member_list
-            (quoted_identifier)
-            (identifier)))))))
+            (option_member
+              (quoted_identifier))
+            (option_member
+              (identifier))))))))
 
 ==================
 Field with MinValue and MaxValue properties
@@ -63,7 +65,7 @@ table 50001 "Test Table 2"
         id: (integer)
         name: (identifier)
         type: (type_specification
-          (decimal_type))
+          (basic_type))
         (min_value_property
           value: (integer))
         (max_value_property

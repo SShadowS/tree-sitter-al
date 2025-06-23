@@ -8,9 +8,16 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **13,892 files (90.4%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,189 files (92.3%) parse successfully**.
 
 Recent improvements include:
+- **Extended AutoFormatType values** - Added support for AutoFormatType property with any integer value (e.g., `AutoFormatType = 11;`)
+- **DataItemTableFilter pipe syntax** - Added support for pipe-separated filter values in queries (e.g., `filter(Planned | "Firm Planned" | Released)`)
+- **Case-insensitive property keywords** - Updated DeleteAllowed, InsertAllowed, ModifyAllowed, SourceTableTemporary, AutoFormatExpression to be case-insensitive
+- **Performance optimizations** - Improved parser performance through optimized choice ordering and regex patterns
+- **Preprocessor in enum extensions** - Added support for #if/#else/#endif directives within enumextension declarations
+- **IsControlAddIn property** - Added support for IsControlAddIn property in dotnet type declarations
+- **EntitySetCaption property** - Added support for EntitySetCaption property in query objects
 - **Query computed columns** - Added support for computed columns in queries with Method properties (Count, Sum, etc.) using syntax like `column(LinesCount) { Method = Count; }`
 - **RunObject qualified names** - Added support for fully qualified object names in RunObject property (e.g., `Page Microsoft.Manufacturing.StandardCost."Standard Cost Worksheet Names"`)
 - **OptionOrdinalValues lists** - Added support for OptionOrdinalValues property with comma-separated integer lists including negative values (e.g., `-1, 0, 1`)

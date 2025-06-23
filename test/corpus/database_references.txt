@@ -46,7 +46,8 @@ codeunit 50100 "Database Reference Test"
               (identifier)
               (identifier))
             (argument_list
-              (database_reference
+              (qualified_enum_value
+                (identifier)
                 (identifier))))
           (comment)
           (call_expression
@@ -54,12 +55,14 @@ codeunit 50100 "Database Reference Test"
               (identifier)
               (identifier))
             (argument_list
-              (database_reference
+              (qualified_enum_value
+                (identifier)
                 (quoted_identifier))))
           (comment)
           (if_statement
             (comparison_expression
-              (database_reference
+              (qualified_enum_value
+                (identifier)
                 (identifier))
               (comparison_operator)
               (integer))
@@ -72,12 +75,14 @@ codeunit 50100 "Database Reference Test"
               (identifier)
               (identifier))
             (argument_list
-              (database_reference
+              (qualified_enum_value
+                (identifier)
                 (identifier))))
           (call_expression
             (member_expression
               (identifier)
               (identifier))
             (argument_list
-              (database_reference
+              (qualified_enum_value
+                (identifier)
                 (quoted_identifier)))))))))

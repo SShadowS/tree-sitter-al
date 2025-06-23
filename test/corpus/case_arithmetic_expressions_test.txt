@@ -32,8 +32,9 @@ codeunit 123 "Test Codeunit"
             expression: (identifier)
             (case_branch
               pattern: (additive_expression
-                left: (database_reference
-                  table_name: (quoted_identifier))
+                left: (qualified_enum_value
+                  enum_type: (identifier)
+                  value: (quoted_identifier))
                 right: (integer))
               statements: (call_expression
                 function: (identifier)
@@ -41,8 +42,9 @@ codeunit 123 "Test Codeunit"
                   (string_literal))))
             (case_branch
               pattern: (additive_expression
-                left: (database_reference
-                  table_name: (quoted_identifier))
+                left: (qualified_enum_value
+                  enum_type: (identifier)
+                  value: (quoted_identifier))
                 right: (integer))
               statements: (call_expression
                 function: (identifier)
@@ -50,8 +52,9 @@ codeunit 123 "Test Codeunit"
                   (string_literal))))
             (case_branch
               pattern: (multiplicative_expression
-                left: (database_reference
-                  table_name: (quoted_identifier))
+                left: (qualified_enum_value
+                  enum_type: (identifier)
+                  value: (quoted_identifier))
                 right: (integer))
               statements: (call_expression
                 function: (identifier)

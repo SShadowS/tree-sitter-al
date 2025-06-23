@@ -14,16 +14,12 @@ profile TestProfile
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (property_list
-      (property
-        (description_property
-          value: (string_literal))))
+    (description_property
+      value: (string_literal))
     (profile_rolecenter_property
       value: (quoted_identifier))
-    (property_list
-      (property
-        (caption_property
-          (string_literal))))))
+    (caption_property
+      (string_literal))))
 
 ================================================================================
 Profile with customizations list
@@ -42,16 +38,12 @@ profile DocumentCapture
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (property_list
-      (property
-        (description_property
-          value: (string_literal))))
+    (description_property
+      value: (string_literal))
     (profile_rolecenter_property
       value: (quoted_identifier))
-    (property_list
-      (property
-        (caption_property
-          (string_literal))))
+    (caption_property
+      (string_literal))
     (profile_customizations_property
       value: (customizations_list
         (quoted_identifier)
@@ -74,10 +66,8 @@ profile SimpleProfile
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (property_list
-      (property
-        (description_property
-          value: (string_literal))))
+    (description_property
+      value: (string_literal))
     (profile_rolecenter_property
       value: (quoted_identifier))
     (profile_customizations_property
@@ -101,16 +91,12 @@ profile UnquotedProfile
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (property_list
-      (property
-        (description_property
-          value: (string_literal))))
+    (description_property
+      value: (string_literal))
     (profile_rolecenter_property
       value: (identifier))
-    (property_list
-      (property
-        (caption_property
-          (string_literal))))
+    (caption_property
+      (string_literal))
     (profile_customizations_property
       value: (customizations_list
         (identifier)
@@ -131,10 +117,8 @@ profile MinimalProfile
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (property_list
-      (property
-        (description_property
-          value: (string_literal))))
+    (description_property
+      value: (string_literal))
     (profile_rolecenter_property
       value: (quoted_identifier))))
 
@@ -160,10 +144,8 @@ profile ExtendedProfile
       value: (boolean))
     (profile_description_property2
       value: (string_literal))
-    (property_list
-      (property
-        (caption_property
-          (string_literal))))
+    (caption_property
+      (string_literal))
     (profile_rolecenter_property
       value: (quoted_identifier))
     (promoted_property
@@ -190,10 +172,8 @@ profile MixedProfile
     object_name: (identifier)
     (enabled_property
       value: (boolean))
-    (property_list
-      (property
-        (description_property
-          value: (string_literal))))
+    (description_property
+      value: (string_literal))
     (profile_description_property2
       value: (string_literal))
     (profile_rolecenter_property
@@ -222,14 +202,10 @@ profile EmptyCustomizationsProfile
 (source_file
   (profile_declaration
     object_name: (identifier)
-    (property_list
-      (property
-        (description_property
-          value: (string_literal))))
+    (description_property
+      value: (string_literal))
     (profile_rolecenter_property
       value: (quoted_identifier))
     (profile_customizations_property)
-    (property_list
-      (property
-        (caption_property
-          (string_literal))))))
+    (caption_property
+      (string_literal))))

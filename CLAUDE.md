@@ -7,9 +7,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central. The project provides grammar definitions to enable syntax highlighting, code analysis, and language tooling support.
 
 **Current status**: 
-- Production files: 90.4% success rate (13,892 out of 15,358 production AL files from BC.History parse successfully)
-- Test suite: 99.1% success rate (629 out of 634 tests passing)
-- Known limitation: 5 tests fail where keywords are used as variable names (by design)
+- Production files: 92.3% success rate (14,189 out of 15,358 production AL files from BC.History parse successfully)
+- Test suite: 100% success rate (680 out of 680 tests passing)
+- All tests pass including contextual keyword tests and edge cases
+- Grammar improvements completed through 30 iterations
+- Enhanced with template functions for DRY principle
+- Performance optimizations applied
+- FormatEvaluate property added with higher precedence
 
 ## Development Commands
 
@@ -142,6 +146,14 @@ The grammar is monolithic in `grammar.js` but logically organized into sections:
 - Property definitions
 - Trigger and procedure handling
 
+### DRY (Don't Repeat Yourself) Principle
+The grammar follows DRY principles extensively to minimize duplication and improve maintainability:
+- **Centralized Property Definitions**: Properties are defined once and reused across all relevant contexts through semantic category lists
+- **Template Functions**: Common patterns like modifications use template functions to avoid repetition
+- **Semantic Categories**: Properties are organized into logical groups (`_universal_properties`, `_display_properties`, `_validation_properties`, etc.) that can be composed for different object types
+- **Reusable Patterns**: Common constructs are defined as separate rules and referenced wherever needed
+This approach ensures consistency, reduces errors, and makes the grammar easier to maintain and extend.
+
 ### Language Bindings
 Multi-language support via dedicated binding directories:
 - `bindings/c/` - C headers and pkg-config
@@ -195,7 +207,7 @@ Dont put comments in the parse tree, as they are not supported by tree-sitter.
 - Avoid left recursion (tree-sitter doesn't support it)
 - Use error recovery strategies for graceful error handling
 - Leverage `choice`, `seq`, `optional`, `repeat` combinators
-- **DRY Principle**: Properties now defined once in semantic categories, used everywhere appropriate
+- **Apply DRY Principle**: Always look for existing patterns before creating new ones. Properties should be defined once in semantic categories and reused everywhere appropriate
 
 ### Helper Functions
 - **`kw(word, precedence = null)`**: Creates case-insensitive keywords using RustRegex

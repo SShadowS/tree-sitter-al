@@ -1249,6 +1249,46 @@
     }
   },
   {
+    "type": "addafter_fieldgroup",
+    "named": true,
+    "fields": {
+      "fields": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "fieldgroup_list",
+            "named": true
+          }
+        ]
+      },
+      "group_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "addafter_layout_modification",
     "named": true,
     "fields": {
@@ -1447,6 +1487,46 @@
     }
   },
   {
+    "type": "addbefore_fieldgroup",
+    "named": true,
+    "fields": {
+      "fields": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "fieldgroup_list",
+            "named": true
+          }
+        ]
+      },
+      "group_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "addbefore_layout_modification",
     "named": true,
     "fields": {
@@ -1642,6 +1722,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "addfirst_fieldgroup",
+    "named": true,
+    "fields": {
+      "fields": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "fieldgroup_list",
+            "named": true
+          }
+        ]
+      },
+      "group_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -2109,6 +2215,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "addlast_fieldgroup",
+    "named": true,
+    "fields": {
+      "fields": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "fieldgroup_list",
+            "named": true
+          }
+        ]
+      },
+      "group_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -5479,37 +5611,6 @@
     }
   },
   {
-    "type": "closing_dates_property",
-    "named": true,
-    "fields": {
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "closing_dates_value",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "closing_dates_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "boolean",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "clustered_property",
     "named": true,
     "fields": {
@@ -6535,37 +6636,6 @@
     "fields": {}
   },
   {
-    "type": "compressed_property",
-    "named": true,
-    "fields": {
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "compressed_value",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "compressed_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "boolean",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "compression_type_property",
     "named": true,
     "fields": {
@@ -6608,6 +6678,10 @@
         },
         {
           "type": "integer",
+          "named": true
+        },
+        {
+          "type": "qualified_enum_value",
           "named": true
         },
         {
@@ -7866,16 +7940,17 @@
   {
     "type": "data_classification_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "data_classification_value",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "data_classification_value",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -8020,6 +8095,10 @@
           {
             "type": "string_literal",
             "named": true
+          },
+          {
+            "type": "|",
+            "named": false
           }
         ]
       },
@@ -8062,6 +8141,10 @@
           {
             "type": "string_literal",
             "named": true
+          },
+          {
+            "type": "|",
+            "named": false
           }
         ]
       }
@@ -8118,6 +8201,16 @@
     "type": "database_reference",
     "named": true,
     "fields": {
+      "keyword": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "database",
+            "named": false
+          }
+        ]
+      },
       "table_name": {
         "multiple": false,
         "required": true,
@@ -10303,6 +10396,26 @@
         {
           "type": "enum_value_declaration",
           "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_endregion",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_region",
+          "named": true
         }
       ]
     }
@@ -11092,37 +11205,6 @@
     }
   },
   {
-    "type": "external_type_property",
-    "named": true,
-    "fields": {
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "external_type_value",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "external_type_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "string_literal",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "field_access",
     "named": true,
     "fields": {
@@ -11463,11 +11545,31 @@
       "required": false,
       "types": [
         {
+          "type": "about_text_property",
+          "named": true
+        },
+        {
+          "type": "about_title_property",
+          "named": true
+        },
+        {
           "type": "access_by_permission_property",
           "named": true
         },
         {
-          "type": "allow_in_customizations_property",
+          "type": "additional_search_terms_ml_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "assist_edit_property",
           "named": true
         },
         {
@@ -11491,6 +11593,10 @@
           "named": true
         },
         {
+          "type": "calc_fields_property",
+          "named": true
+        },
+        {
           "type": "calc_formula_property",
           "named": true
         },
@@ -11507,19 +11613,23 @@
           "named": true
         },
         {
+          "type": "card_page_id_property",
+          "named": true
+        },
+        {
           "type": "char_allowed_property",
           "named": true
         },
         {
-          "type": "closing_dates_property",
+          "type": "column_span_property",
           "named": true
         },
         {
-          "type": "compressed_property",
+          "type": "context_sensitive_help_page_property",
           "named": true
         },
         {
-          "type": "data_classification_property",
+          "type": "data_access_intent_property",
           "named": true
         },
         {
@@ -11535,7 +11645,23 @@
           "named": true
         },
         {
+          "type": "drill_down_property",
+          "named": true
+        },
+        {
+          "type": "drilldown_pageid_property",
+          "named": true
+        },
+        {
           "type": "editable_property",
+          "named": true
+        },
+        {
+          "type": "empty_statement",
+          "named": true
+        },
+        {
+          "type": "enabled_property",
           "named": true
         },
         {
@@ -11543,15 +11669,7 @@
           "named": true
         },
         {
-          "type": "external_access_property",
-          "named": true
-        },
-        {
-          "type": "external_name_property",
-          "named": true
-        },
-        {
-          "type": "external_type_property",
+          "type": "extensible_property",
           "named": true
         },
         {
@@ -11563,7 +11681,55 @@
           "named": true
         },
         {
+          "type": "freeze_column_property",
+          "named": true
+        },
+        {
+          "type": "grid_layout_property",
+          "named": true
+        },
+        {
+          "type": "help_link_property",
+          "named": true
+        },
+        {
+          "type": "hide_value_property",
+          "named": true
+        },
+        {
+          "type": "image_property",
+          "named": true
+        },
+        {
+          "type": "importance_property",
+          "named": true
+        },
+        {
+          "type": "indentation_column_property",
+          "named": true
+        },
+        {
+          "type": "indentation_controls_property",
+          "named": true
+        },
+        {
           "type": "init_value_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_property",
+          "named": true
+        },
+        {
+          "type": "lookup_pageid_property",
+          "named": true
+        },
+        {
+          "type": "lookup_property",
           "named": true
         },
         {
@@ -11572,6 +11738,22 @@
         },
         {
           "type": "min_value_property",
+          "named": true
+        },
+        {
+          "type": "moved_from_property",
+          "named": true
+        },
+        {
+          "type": "moved_to_property",
+          "named": true
+        },
+        {
+          "type": "multi_line_property",
+          "named": true
+        },
+        {
+          "type": "navigation_page_id_property",
           "named": true
         },
         {
@@ -11595,11 +11777,11 @@
           "named": true
         },
         {
-          "type": "optimize_for_text_search_property",
+          "type": "odata_edm_type_property",
           "named": true
         },
         {
-          "type": "option_caption_ml_property",
+          "type": "optimize_for_text_search_property",
           "named": true
         },
         {
@@ -11607,15 +11789,11 @@
           "named": true
         },
         {
-          "type": "option_members_property",
+          "type": "page_about_text_ml_property",
           "named": true
         },
         {
-          "type": "option_ordinal_values_property",
-          "named": true
-        },
-        {
-          "type": "paste_is_valid_property",
+          "type": "page_about_title_ml_property",
           "named": true
         },
         {
@@ -11623,15 +11801,63 @@
           "named": true
         },
         {
+          "type": "quick_entry_property",
+          "named": true
+        },
+        {
+          "type": "row_span_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
+          "type": "run_object_property",
+          "named": true
+        },
+        {
+          "type": "run_page_link_property",
+          "named": true
+        },
+        {
+          "type": "run_page_view_property",
+          "named": true
+        },
+        {
+          "type": "scope_property",
+          "named": true
+        },
+        {
+          "type": "shortcut_key_property",
+          "named": true
+        },
+        {
+          "type": "show_as_tree_property",
+          "named": true
+        },
+        {
+          "type": "show_caption_property",
+          "named": true
+        },
+        {
+          "type": "show_mandatory_property",
+          "named": true
+        },
+        {
           "type": "sign_displacement_property",
           "named": true
         },
         {
-          "type": "sql_data_type_property",
+          "type": "source_expr_property",
           "named": true
         },
         {
-          "type": "sql_timestamp_property",
+          "type": "style_expr_property",
+          "named": true
+        },
+        {
+          "type": "style_property",
           "named": true
         },
         {
@@ -11643,7 +11869,7 @@
           "named": true
         },
         {
-          "type": "test_table_relation_property",
+          "type": "title_property",
           "named": true
         },
         {
@@ -11655,7 +11881,15 @@
           "named": true
         },
         {
+          "type": "tree_initial_state_property",
+          "named": true
+        },
+        {
           "type": "unique_property",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
           "named": true
         },
         {
@@ -11664,6 +11898,14 @@
         },
         {
           "type": "values_allowed_property",
+          "named": true
+        },
+        {
+          "type": "visible_property",
+          "named": true
+        },
+        {
+          "type": "width_property",
           "named": true
         }
       ]
@@ -12759,6 +13001,14 @@
           "named": true
         },
         {
+          "type": "moved_from_property",
+          "named": true
+        },
+        {
+          "type": "moved_to_property",
+          "named": true
+        },
+        {
           "type": "multi_line_property",
           "named": true
         },
@@ -13038,6 +13288,33 @@
     }
   },
   {
+    "type": "fieldgroup_modification",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "addafter_fieldgroup",
+          "named": true
+        },
+        {
+          "type": "addbefore_fieldgroup",
+          "named": true
+        },
+        {
+          "type": "addfirst_fieldgroup",
+          "named": true
+        },
+        {
+          "type": "addlast_fieldgroup",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "fieldgroups_section",
     "named": true,
     "fields": {},
@@ -13047,6 +13324,10 @@
       "types": [
         {
           "type": "fieldgroup_declaration",
+          "named": true
+        },
+        {
+          "type": "fieldgroup_modification",
           "named": true
         },
         {
@@ -19425,16 +19706,17 @@
   {
     "type": "link_fields_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "link_fields_value",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "link_fields_value",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -21437,11 +21719,31 @@
       "required": false,
       "types": [
         {
+          "type": "about_text_property",
+          "named": true
+        },
+        {
+          "type": "about_title_property",
+          "named": true
+        },
+        {
           "type": "access_by_permission_property",
           "named": true
         },
         {
-          "type": "allow_in_customizations_property",
+          "type": "additional_search_terms_ml_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "assist_edit_property",
           "named": true
         },
         {
@@ -21469,7 +21771,15 @@
           "named": true
         },
         {
+          "type": "calc_fields_property",
+          "named": true
+        },
+        {
           "type": "calc_formula_property",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
           "named": true
         },
         {
@@ -21481,19 +21791,23 @@
           "named": true
         },
         {
+          "type": "card_page_id_property",
+          "named": true
+        },
+        {
           "type": "char_allowed_property",
           "named": true
         },
         {
-          "type": "closing_dates_property",
+          "type": "column_span_property",
           "named": true
         },
         {
-          "type": "compressed_property",
+          "type": "context_sensitive_help_page_property",
           "named": true
         },
         {
-          "type": "data_classification_property",
+          "type": "data_access_intent_property",
           "named": true
         },
         {
@@ -21509,7 +21823,23 @@
           "named": true
         },
         {
+          "type": "drill_down_property",
+          "named": true
+        },
+        {
+          "type": "drilldown_pageid_property",
+          "named": true
+        },
+        {
           "type": "editable_property",
+          "named": true
+        },
+        {
+          "type": "empty_statement",
+          "named": true
+        },
+        {
+          "type": "enabled_property",
           "named": true
         },
         {
@@ -21517,15 +21847,7 @@
           "named": true
         },
         {
-          "type": "external_access_property",
-          "named": true
-        },
-        {
-          "type": "external_name_property",
-          "named": true
-        },
-        {
-          "type": "external_type_property",
+          "type": "extensible_property",
           "named": true
         },
         {
@@ -21537,7 +21859,55 @@
           "named": true
         },
         {
+          "type": "freeze_column_property",
+          "named": true
+        },
+        {
+          "type": "grid_layout_property",
+          "named": true
+        },
+        {
+          "type": "help_link_property",
+          "named": true
+        },
+        {
+          "type": "hide_value_property",
+          "named": true
+        },
+        {
+          "type": "image_property",
+          "named": true
+        },
+        {
+          "type": "importance_property",
+          "named": true
+        },
+        {
+          "type": "indentation_column_property",
+          "named": true
+        },
+        {
+          "type": "indentation_controls_property",
+          "named": true
+        },
+        {
           "type": "init_value_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_property",
+          "named": true
+        },
+        {
+          "type": "lookup_pageid_property",
+          "named": true
+        },
+        {
+          "type": "lookup_property",
           "named": true
         },
         {
@@ -21546,6 +21916,22 @@
         },
         {
           "type": "min_value_property",
+          "named": true
+        },
+        {
+          "type": "moved_from_property",
+          "named": true
+        },
+        {
+          "type": "moved_to_property",
+          "named": true
+        },
+        {
+          "type": "multi_line_property",
+          "named": true
+        },
+        {
+          "type": "navigation_page_id_property",
           "named": true
         },
         {
@@ -21569,7 +21955,11 @@
           "named": true
         },
         {
-          "type": "option_caption_ml_property",
+          "type": "odata_edm_type_property",
+          "named": true
+        },
+        {
+          "type": "optimize_for_text_search_property",
           "named": true
         },
         {
@@ -21577,15 +21967,11 @@
           "named": true
         },
         {
-          "type": "option_members_property",
+          "type": "page_about_text_ml_property",
           "named": true
         },
         {
-          "type": "option_ordinal_values_property",
-          "named": true
-        },
-        {
-          "type": "paste_is_valid_property",
+          "type": "page_about_title_ml_property",
           "named": true
         },
         {
@@ -21593,15 +21979,63 @@
           "named": true
         },
         {
+          "type": "quick_entry_property",
+          "named": true
+        },
+        {
+          "type": "row_span_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
+          "type": "run_object_property",
+          "named": true
+        },
+        {
+          "type": "run_page_link_property",
+          "named": true
+        },
+        {
+          "type": "run_page_view_property",
+          "named": true
+        },
+        {
+          "type": "scope_property",
+          "named": true
+        },
+        {
+          "type": "shortcut_key_property",
+          "named": true
+        },
+        {
+          "type": "show_as_tree_property",
+          "named": true
+        },
+        {
+          "type": "show_caption_property",
+          "named": true
+        },
+        {
+          "type": "show_mandatory_property",
+          "named": true
+        },
+        {
           "type": "sign_displacement_property",
           "named": true
         },
         {
-          "type": "sql_data_type_property",
+          "type": "source_expr_property",
           "named": true
         },
         {
-          "type": "sql_timestamp_property",
+          "type": "style_expr_property",
+          "named": true
+        },
+        {
+          "type": "style_property",
           "named": true
         },
         {
@@ -21613,7 +22047,7 @@
           "named": true
         },
         {
-          "type": "test_table_relation_property",
+          "type": "title_property",
           "named": true
         },
         {
@@ -21625,6 +22059,10 @@
           "named": true
         },
         {
+          "type": "tree_initial_state_property",
+          "named": true
+        },
+        {
           "type": "trigger_declaration",
           "named": true
         },
@@ -21633,11 +22071,23 @@
           "named": true
         },
         {
+          "type": "usage_category_property",
+          "named": true
+        },
+        {
           "type": "validate_table_relation_property",
           "named": true
         },
         {
           "type": "values_allowed_property",
+          "named": true
+        },
+        {
+          "type": "visible_property",
+          "named": true
+        },
+        {
+          "type": "width_property",
           "named": true
         }
       ]
@@ -22723,6 +23173,10 @@
         "required": true,
         "types": [
           {
+            "type": "empty_namespace_prefix",
+            "named": true
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -23111,22 +23565,6 @@
     }
   },
   {
-    "type": "option_caption_ml_property",
-    "named": true,
-    "fields": {
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "ml_value_list",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "option_caption_property",
     "named": true,
     "fields": {},
@@ -23217,60 +23655,6 @@
       "multiple": false,
       "required": false,
       "types": [
-        {
-          "type": "string_literal",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "option_ordinal_values_list",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "option_ordinal_values_property",
-    "named": true,
-    "fields": {
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "option_ordinal_values_value",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "option_ordinal_values_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "option_ordinal_values_list",
-          "named": true
-        },
         {
           "type": "string_literal",
           "named": true
@@ -26837,6 +27221,14 @@
           "named": true
         },
         {
+          "type": "moved_from_property",
+          "named": true
+        },
+        {
+          "type": "moved_to_property",
+          "named": true
+        },
+        {
           "type": "multi_line_property",
           "named": true
         },
@@ -27021,6 +27413,10 @@
       "types": [
         {
           "type": "fieldgroup_declaration",
+          "named": true
+        },
+        {
+          "type": "fieldgroup_modification",
           "named": true
         },
         {
@@ -27983,31 +28379,7 @@
       "required": true,
       "types": [
         {
-          "type": "about_text_property",
-          "named": true
-        },
-        {
-          "type": "about_title_property",
-          "named": true
-        },
-        {
-          "type": "additional_search_terms_ml_property",
-          "named": true
-        },
-        {
-          "type": "additional_search_terms_property",
-          "named": true
-        },
-        {
           "type": "application_area_property",
-          "named": true
-        },
-        {
-          "type": "caption_class_property",
-          "named": true
-        },
-        {
-          "type": "caption_ml_property",
           "named": true
         },
         {
@@ -28015,71 +28387,11 @@
           "named": true
         },
         {
-          "type": "column_span_property",
-          "named": true
-        },
-        {
-          "type": "context_sensitive_help_page_property",
-          "named": true
-        },
-        {
-          "type": "data_access_intent_property",
-          "named": true
-        },
-        {
           "type": "description_property",
           "named": true
         },
         {
-          "type": "editable_property",
-          "named": true
-        },
-        {
           "type": "enabled_property",
-          "named": true
-        },
-        {
-          "type": "extensible_property",
-          "named": true
-        },
-        {
-          "type": "freeze_column_property",
-          "named": true
-        },
-        {
-          "type": "grid_layout_property",
-          "named": true
-        },
-        {
-          "type": "help_link_property",
-          "named": true
-        },
-        {
-          "type": "hide_value_property",
-          "named": true
-        },
-        {
-          "type": "importance_property",
-          "named": true
-        },
-        {
-          "type": "indentation_column_property",
-          "named": true
-        },
-        {
-          "type": "indentation_controls_property",
-          "named": true
-        },
-        {
-          "type": "instructional_text_ml_property",
-          "named": true
-        },
-        {
-          "type": "instructional_text_property",
-          "named": true
-        },
-        {
-          "type": "multi_line_property",
           "named": true
         },
         {
@@ -28123,42 +28435,6 @@
           "named": true
         },
         {
-          "type": "property_list",
-          "named": true
-        },
-        {
-          "type": "row_span_property",
-          "named": true
-        },
-        {
-          "type": "scope_property",
-          "named": true
-        },
-        {
-          "type": "show_as_tree_property",
-          "named": true
-        },
-        {
-          "type": "show_caption_property",
-          "named": true
-        },
-        {
-          "type": "show_mandatory_property",
-          "named": true
-        },
-        {
-          "type": "style_expr_property",
-          "named": true
-        },
-        {
-          "type": "style_property",
-          "named": true
-        },
-        {
-          "type": "subtype_property",
-          "named": true
-        },
-        {
           "type": "tool_tip_ml_property",
           "named": true
         },
@@ -28167,19 +28443,7 @@
           "named": true
         },
         {
-          "type": "tree_initial_state_property",
-          "named": true
-        },
-        {
-          "type": "usage_category_property",
-          "named": true
-        },
-        {
           "type": "visible_property",
-          "named": true
-        },
-        {
-          "type": "width_property",
           "named": true
         }
       ]
@@ -28766,6 +29030,14 @@
         },
         {
           "type": "entity_name_property",
+          "named": true
+        },
+        {
+          "type": "entity_set_caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "entity_set_caption_property",
           "named": true
         },
         {
@@ -30450,31 +30722,7 @@
       "required": false,
       "types": [
         {
-          "type": "about_text_property",
-          "named": true
-        },
-        {
-          "type": "about_title_property",
-          "named": true
-        },
-        {
-          "type": "additional_search_terms_ml_property",
-          "named": true
-        },
-        {
-          "type": "additional_search_terms_property",
-          "named": true
-        },
-        {
           "type": "application_area_property",
-          "named": true
-        },
-        {
-          "type": "caption_class_property",
-          "named": true
-        },
-        {
-          "type": "caption_ml_property",
           "named": true
         },
         {
@@ -30482,71 +30730,11 @@
           "named": true
         },
         {
-          "type": "column_span_property",
-          "named": true
-        },
-        {
-          "type": "context_sensitive_help_page_property",
-          "named": true
-        },
-        {
-          "type": "data_access_intent_property",
-          "named": true
-        },
-        {
           "type": "description_property",
           "named": true
         },
         {
-          "type": "editable_property",
-          "named": true
-        },
-        {
           "type": "enabled_property",
-          "named": true
-        },
-        {
-          "type": "extensible_property",
-          "named": true
-        },
-        {
-          "type": "freeze_column_property",
-          "named": true
-        },
-        {
-          "type": "grid_layout_property",
-          "named": true
-        },
-        {
-          "type": "help_link_property",
-          "named": true
-        },
-        {
-          "type": "hide_value_property",
-          "named": true
-        },
-        {
-          "type": "importance_property",
-          "named": true
-        },
-        {
-          "type": "indentation_column_property",
-          "named": true
-        },
-        {
-          "type": "indentation_controls_property",
-          "named": true
-        },
-        {
-          "type": "instructional_text_ml_property",
-          "named": true
-        },
-        {
-          "type": "instructional_text_property",
-          "named": true
-        },
-        {
-          "type": "multi_line_property",
           "named": true
         },
         {
@@ -30582,42 +30770,6 @@
           "named": true
         },
         {
-          "type": "property_list",
-          "named": true
-        },
-        {
-          "type": "row_span_property",
-          "named": true
-        },
-        {
-          "type": "scope_property",
-          "named": true
-        },
-        {
-          "type": "show_as_tree_property",
-          "named": true
-        },
-        {
-          "type": "show_caption_property",
-          "named": true
-        },
-        {
-          "type": "show_mandatory_property",
-          "named": true
-        },
-        {
-          "type": "style_expr_property",
-          "named": true
-        },
-        {
-          "type": "style_property",
-          "named": true
-        },
-        {
-          "type": "subtype_property",
-          "named": true
-        },
-        {
           "type": "tool_tip_ml_property",
           "named": true
         },
@@ -30626,19 +30778,7 @@
           "named": true
         },
         {
-          "type": "tree_initial_state_property",
-          "named": true
-        },
-        {
-          "type": "usage_category_property",
-          "named": true
-        },
-        {
           "type": "visible_property",
-          "named": true
-        },
-        {
-          "type": "width_property",
           "named": true
         }
       ]
@@ -30670,6 +30810,10 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
             "named": true
           },
           {
@@ -31471,6 +31615,14 @@
         },
         {
           "type": "entity_name_property",
+          "named": true
+        },
+        {
+          "type": "entity_set_caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "entity_set_caption_property",
           "named": true
         },
         {
@@ -33484,6 +33636,10 @@
           "named": true
         },
         {
+          "type": "calc_fields_property",
+          "named": true
+        },
+        {
           "type": "caption_class_property",
           "named": true
         },
@@ -35054,6 +35210,10 @@
             "named": true
           },
           {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
             "type": "quoted_identifier",
             "named": true
           },
@@ -36309,36 +36469,6 @@
     }
   },
   {
-    "type": "sql_data_type_property",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "sql_data_type_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "sql_data_type_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "string_literal",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "sql_index_property",
     "named": true,
     "fields": {},
@@ -36357,36 +36487,6 @@
     "type": "sql_join_type_property",
     "named": true,
     "fields": {}
-  },
-  {
-    "type": "sql_timestamp_property",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "sql_timestamp_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "sql_timestamp_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "boolean",
-          "named": true
-        }
-      ]
-    }
   },
   {
     "type": "style_expr_property",
@@ -38525,36 +38625,17 @@
   {
     "type": "test_permissions_property",
     "named": true,
-    "fields": {}
-  },
-  {
-    "type": "test_table_relation_property",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "test_table_relation_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "test_table_relation_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "boolean",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "test_permissions_value",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -38789,6 +38870,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "boolean",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -42649,10 +42740,6 @@
     "named": false
   },
   {
-    "type": "AnalysisModeEnabled",
-    "named": false
-  },
-  {
     "type": "And",
     "named": false
   },
@@ -42669,14 +42756,6 @@
     "named": false
   },
   {
-    "type": "AutoFormatExpression",
-    "named": false
-  },
-  {
-    "type": "AutoFormatType",
-    "named": false
-  },
-  {
     "type": "AutoIncrement",
     "named": false
   },
@@ -42685,19 +42764,11 @@
     "named": false
   },
   {
-    "type": "BigInt",
-    "named": false
-  },
-  {
     "type": "BlankNumbers",
     "named": false
   },
   {
     "type": "BlankZero",
-    "named": false
-  },
-  {
-    "type": "Boolean",
     "named": false
   },
   {
@@ -42733,19 +42804,11 @@
     "named": false
   },
   {
-    "type": "ClosingDates",
-    "named": false
-  },
-  {
     "type": "Clustered",
     "named": false
   },
   {
     "type": "ColumnSpan",
-    "named": false
-  },
-  {
-    "type": "Compressed",
     "named": false
   },
   {
@@ -42761,19 +42824,7 @@
     "named": false
   },
   {
-    "type": "DataClassification",
-    "named": false
-  },
-  {
-    "type": "DataItemLink",
-    "named": false
-  },
-  {
     "type": "DataItemTableView",
-    "named": false
-  },
-  {
-    "type": "DateTime",
     "named": false
   },
   {
@@ -42786,10 +42837,6 @@
   },
   {
     "type": "DelayedInsert",
-    "named": false
-  },
-  {
-    "type": "DeleteAllowed",
     "named": false
   },
   {
@@ -42838,10 +42885,6 @@
   },
   {
     "type": "ExternalSchema",
-    "named": false
-  },
-  {
-    "type": "ExternalType",
     "named": false
   },
   {
@@ -42913,19 +42956,11 @@
     "named": false
   },
   {
-    "type": "InsertAllowed",
-    "named": false
-  },
-  {
     "type": "InstructionalText",
     "named": false
   },
   {
     "type": "InstructionalTextML",
-    "named": false
-  },
-  {
-    "type": "Integer",
     "named": false
   },
   {
@@ -42937,23 +42972,7 @@
     "named": false
   },
   {
-    "type": "LinkFields",
-    "named": false
-  },
-  {
     "type": "LinkTable",
-    "named": false
-  },
-  {
-    "type": "LinkTableForceInsert",
-    "named": false
-  },
-  {
-    "type": "LinkedInTransaction",
-    "named": false
-  },
-  {
-    "type": "LinkedObject",
     "named": false
   },
   {
@@ -42985,18 +43004,6 @@
     "named": false
   },
   {
-    "type": "ModifyAllowed",
-    "named": false
-  },
-  {
-    "type": "MovedFrom",
-    "named": false
-  },
-  {
-    "type": "MovedTo",
-    "named": false
-  },
-  {
     "type": "MultiLine",
     "named": false
   },
@@ -43022,10 +43029,6 @@
   },
   {
     "type": "ODataEDMType",
-    "named": false
-  },
-  {
-    "type": "ODataKeyFields",
     "named": false
   },
   {
@@ -43065,15 +43068,7 @@
     "named": false
   },
   {
-    "type": "OptionOrdinalValues",
-    "named": false
-  },
-  {
     "type": "Or",
-    "named": false
-  },
-  {
-    "type": "Owner",
     "named": false
   },
   {
@@ -43101,10 +43096,6 @@
     "named": false
   },
   {
-    "type": "Picklist",
-    "named": false
-  },
-  {
     "type": "PopulateAllFields",
     "named": false
   },
@@ -43118,10 +43109,6 @@
   },
   {
     "type": "ProfileDescription",
-    "named": false
-  },
-  {
-    "type": "PromotedCategory",
     "named": false
   },
   {
@@ -43165,10 +43152,6 @@
     "named": false
   },
   {
-    "type": "RunObject",
-    "named": false
-  },
-  {
     "type": "RunPageLink",
     "named": false
   },
@@ -43178,10 +43161,6 @@
   },
   {
     "type": "RunPageOnRec",
-    "named": false
-  },
-  {
-    "type": "RunPageView",
     "named": false
   },
   {
@@ -43225,31 +43204,7 @@
     "named": false
   },
   {
-    "type": "SourceTableTemporary",
-    "named": false
-  },
-  {
-    "type": "SqlDataType",
-    "named": false
-  },
-  {
     "type": "SqlIndex",
-    "named": false
-  },
-  {
-    "type": "SqlTimestamp",
-    "named": false
-  },
-  {
-    "type": "State",
-    "named": false
-  },
-  {
-    "type": "Status",
-    "named": false
-  },
-  {
-    "type": "String",
     "named": false
   },
   {
@@ -43285,14 +43240,6 @@
     "named": false
   },
   {
-    "type": "TestPermissions",
-    "named": false
-  },
-  {
-    "type": "TestTableRelation",
-    "named": false
-  },
-  {
     "type": "Title",
     "named": false
   },
@@ -43301,23 +43248,11 @@
     "named": false
   },
   {
-    "type": "Unbound",
-    "named": false
-  },
-  {
     "type": "Unique",
     "named": false
   },
   {
-    "type": "Uniqueidentifier",
-    "named": false
-  },
-  {
     "type": "UpdatePropagation",
-    "named": false
-  },
-  {
-    "type": "UsageCategory",
     "named": false
   },
   {
@@ -43386,6 +43321,10 @@
     "named": true
   },
   {
+    "type": "database",
+    "named": false
+  },
+  {
     "type": "dataitem",
     "named": false
   },
@@ -43403,6 +43342,10 @@
   },
   {
     "type": "duration_literal",
+    "named": true
+  },
+  {
+    "type": "empty_namespace_prefix",
     "named": true
   },
   {
@@ -43495,6 +43438,10 @@
   },
   {
     "type": "string_literal",
+    "named": true
+  },
+  {
+    "type": "test_permissions_value",
     "named": true
   },
   {

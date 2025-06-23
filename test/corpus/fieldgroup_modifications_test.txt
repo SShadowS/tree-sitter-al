@@ -1,0 +1,98 @@
+================================================================================
+Fieldgroup addlast modification
+================================================================================
+
+tableextension 50100 "Customer Extension" extends Customer
+{
+    fieldgroups
+    {
+        addlast(Brick; "Date Filter")
+        {
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (identifier)
+    (fieldgroups_section
+      (fieldgroup_modification
+        (addlast_fieldgroup
+          group_type: (identifier)
+          fields: (fieldgroup_list
+            (fieldgroup_field
+              (quoted_identifier))))))))
+
+================================================================================
+Fieldgroup addfirst modification
+================================================================================
+
+tableextension 50101 "Item Extension" extends Item
+{
+    fieldgroups
+    {
+        addfirst(DropDown; "Custom Field")
+        {
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (identifier)
+    (fieldgroups_section
+      (fieldgroup_modification
+        (addfirst_fieldgroup
+          group_type: (identifier)
+          fields: (fieldgroup_list
+            (fieldgroup_field
+              (quoted_identifier))))))))
+
+================================================================================
+Multiple fieldgroup modifications
+================================================================================
+
+tableextension 50104 "Mixed Fieldgroup Extension" extends "Base Table"
+{
+    fieldgroups
+    {
+        addlast(Brick; "Field One", "Field Two")
+        {
+        }
+        
+        addfirst(DropDown; "Priority Field")
+        {
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (fieldgroups_section
+      (fieldgroup_modification
+        (addlast_fieldgroup
+          group_type: (identifier)
+          fields: (fieldgroup_list
+            (fieldgroup_field
+              (quoted_identifier))
+            (fieldgroup_field
+              (quoted_identifier)))))
+      (fieldgroup_modification
+        (addfirst_fieldgroup
+          group_type: (identifier)
+          fields: (fieldgroup_list
+            (fieldgroup_field
+              (quoted_identifier))))))))

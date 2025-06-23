@@ -21,8 +21,10 @@ query 50000 "Test Query"
   (query_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (caption_property
-      (string_literal))
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))
     (order_by_property
       value: (order_by_list
         (order_by_item

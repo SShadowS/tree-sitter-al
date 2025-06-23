@@ -28,7 +28,7 @@ xmlport 50000 "Test XMLPort"
     (namespaces_property
       value: (namespace_list
         (namespace_mapping
-          prefix: (string_literal)
+          prefix: (empty_namespace_prefix)
           uri: (string_literal))
         (namespace_mapping
           prefix: (identifier)
@@ -37,7 +37,7 @@ xmlport 50000 "Test XMLPort"
           prefix: (identifier)
           uri: (string_literal))))
     (xmlport_schema_element
-      (xmlport_text_element
+      (xmlport_table_element
         name: (identifier)))))
 
 ==================
@@ -66,5 +66,5 @@ xmlport 50001 "Simple XMLPort"
           prefix: (identifier)
           uri: (string_literal))))
     (xmlport_schema_element
-      (xmlport_text_element
+      (xmlport_table_element
         name: (identifier)))))
