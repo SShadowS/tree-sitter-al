@@ -1,0 +1,151 @@
+================================================================================
+DataItemLink with multiple field mappings
+================================================================================
+
+query 50100 "Vendor Ledger Entry Test"
+{
+    QueryType = Normal;
+    
+    elements
+    {
+        dataitem(VendorLedgerEntry; "Vendor Ledger Entry")
+        {
+            dataitem(DetailedVendorLedgEntry; "Detailed Vendor Ledg. Entry")
+            {
+                DataItemLink = "Vendor Ledger Entry No." = VendorLedgerEntry."Entry No.", "Posting Date" = VendorLedgerEntry."Posting Date";
+                
+                column(Amount; Amount)
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (query_type_property)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (dataitem_section
+          name: (identifier)
+          table_name: (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)))
+          (column_section
+            name: (identifier)
+            field_name: (identifier)))))))
+
+================================================================================
+DataItemLink variations
+================================================================================
+
+report 50200 "Link Test"
+{
+    dataset
+    {
+        dataitem(Customer; Customer)
+        {
+            dataitem(CustLedgerEntry; "Cust. Ledger Entry")
+            {
+                DataItemLink = "Customer No." = Customer."No.";
+            }
+            dataitem(SalesLine; "Sales Line")
+            {
+                DataItemLink = "Document Type" = Customer."Document Type", 
+                               "Sell-to Customer No." = Customer."No.", 
+                               "Document No." = Customer."Document No.";
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (report_dataitem_section
+          name: (identifier)
+          (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier))))
+        (report_dataitem_section
+          name: (identifier)
+          (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier))))))))
+
+================================================================================
+DataItemLink with FIELD syntax
+================================================================================
+
+xmlport 50300 "Export Test"
+{
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(Item; Item)
+            {
+                tableelement(ItemLedgerEntry; "Item Ledger Entry")
+                {
+                    DataItemLink = "Item No." = FIELD("No."), "Location Code" = FIELD("Location Filter");
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (schema
+      (textelement
+        name: (identifier)
+        (tableelement
+          name: (identifier)
+          source: (identifier)
+          (tableelement
+            name: (identifier)
+            source: (quoted_identifier)
+            (data_item_link_property
+              (data_item_link_value
+                field: (quoted_identifier)
+                (field_function
+                  field: (quoted_identifier))
+                field: (quoted_identifier)
+                (field_function
+                  field: (quoted_identifier))))))))))
