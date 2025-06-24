@@ -1179,7 +1179,8 @@ module.exports = grammar({
         kw('promoted'),
         kw('systemactions'),
         kw('sections'),
-        kw('embedding')
+        kw('embedding'),
+        kw('promptguide')
       )),
       ')',
       '{',
