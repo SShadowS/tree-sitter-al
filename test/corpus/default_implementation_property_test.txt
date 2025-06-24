@@ -24,9 +24,10 @@ enum 204 "Alt. Cust. VAT Reg. Consist." implements "Alt. Cust. VAT Reg. Consist.
       value: (extensible_value
         (boolean)))
     (default_implementation_property
-      value: (implementation_value
-        interface: (quoted_identifier)
-        implementation: (quoted_identifier)))
+      value: (implementation_value_list
+        (implementation_value
+          interface: (quoted_identifier)
+          implementation: (quoted_identifier))))
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier))))
@@ -55,13 +56,15 @@ enum 100 "Test Enum" implements "ITestInterface"
     (implements_clause
       interface: (quoted_identifier))
     (default_implementation_property
-      value: (implementation_value
-        interface: (quoted_identifier)
-        implementation: (quoted_identifier)))
+      value: (implementation_value_list
+        (implementation_value
+          interface: (quoted_identifier)
+          implementation: (quoted_identifier))))
     (default_implementation_property
-      value: (implementation_value
-        interface: (quoted_identifier)
-        implementation: (quoted_identifier)))
+      value: (implementation_value_list
+        (implementation_value
+          interface: (quoted_identifier)
+          implementation: (quoted_identifier))))
     (extensible_property
       value: (extensible_value
         (boolean)))
@@ -95,9 +98,10 @@ enum 150 "Simple Enum" implements SimpleInterface
       value: (extensible_value
         (boolean)))
     (default_implementation_property
-      value: (implementation_value
-        interface: (identifier)
-        implementation: (identifier)))
+      value: (implementation_value_list
+        (implementation_value
+          interface: (identifier)
+          implementation: (identifier))))
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier))))
@@ -144,9 +148,10 @@ enum 200 "Complex Enum" implements "IComplexInterface"
       value: (extensible_value
         (boolean)))
     (default_implementation_property
-      value: (implementation_value
-        interface: (quoted_identifier)
-        implementation: (quoted_identifier)))
+      value: (implementation_value_list
+        (implementation_value
+          interface: (quoted_identifier)
+          implementation: (quoted_identifier))))
     (access_property
       value: (value))
     (enum_value_declaration

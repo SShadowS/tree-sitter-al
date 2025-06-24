@@ -1668,7 +1668,7 @@ module.exports = grammar({
     default_implementation_property: $ => seq(
       kw('defaultimplementation'),
       '=',
-      field('value', $.implementation_value),
+      field('value', $.implementation_value_list),
       ';'
     ),
 
