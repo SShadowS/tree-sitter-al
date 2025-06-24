@@ -13775,8 +13775,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "ClosingDates"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)ClosingDates"
+          }
         },
         {
           "type": "STRING",
@@ -27460,6 +27463,10 @@
         {
           "type": "SYMBOL",
           "name": "date_formula_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "closing_dates_property"
         }
       ]
     },

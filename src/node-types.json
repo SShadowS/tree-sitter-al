@@ -5611,6 +5611,37 @@
     }
   },
   {
+    "type": "closing_dates_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "closing_dates_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "closing_dates_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "boolean",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "clustered_property",
     "named": true,
     "fields": {
@@ -11625,6 +11656,10 @@
           "named": true
         },
         {
+          "type": "closing_dates_property",
+          "named": true
+        },
+        {
           "type": "column_span_property",
           "named": true
         },
@@ -12890,6 +12925,10 @@
         },
         {
           "type": "char_allowed_property",
+          "named": true
+        },
+        {
+          "type": "closing_dates_property",
           "named": true
         },
         {
@@ -21862,6 +21901,10 @@
           "named": true
         },
         {
+          "type": "closing_dates_property",
+          "named": true
+        },
+        {
           "type": "column_span_property",
           "named": true
         },
@@ -27391,6 +27434,10 @@
         },
         {
           "type": "char_allowed_property",
+          "named": true
+        },
+        {
+          "type": "closing_dates_property",
           "named": true
         },
         {

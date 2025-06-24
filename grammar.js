@@ -3176,7 +3176,7 @@ module.exports = grammar({
     ),
 
     closing_dates_property: $ => seq(
-      'ClosingDates',
+      kw('ClosingDates'),
       '=',
       field('value', $.closing_dates_value),
       ';'
@@ -6162,6 +6162,7 @@ enum_type: $ => prec(1, seq(
       $.validate_table_relation_property, // FK validation
       $.char_allowed_property,       // Character input restrictions
       $.date_formula_property,       // Date formula validation
+      $.closing_dates_property,      // Allow closing date selection
     ),
 
     // Data source/relationship properties

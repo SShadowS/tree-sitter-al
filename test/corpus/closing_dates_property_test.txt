@@ -1,0 +1,146 @@
+================================================================================
+ClosingDates property in table field
+================================================================================
+
+table 15 "G/L Entry Posting Preview"
+{
+    fields
+    {
+        field(4; "Posting Date"; Date)
+        {
+            Caption = 'Posting Date';
+            ClosingDates = true;
+        }
+        field(5; "Document Date"; Date)
+        {
+            Caption = 'Document Date';
+            ClosingDates = false;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (caption_property
+          (string_literal))
+        (closing_dates_property
+          value: (closing_dates_value
+            (boolean))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (caption_property
+          (string_literal))
+        (closing_dates_property
+          value: (closing_dates_value
+            (boolean)))))))
+
+================================================================================
+ClosingDates property case variations
+================================================================================
+
+page 50100 "Date Test Page"
+{
+    PageType = Card;
+    
+    layout
+    {
+        area(content)
+        {
+            field("Start Date"; StartDate)
+            {
+                closingdates = true;
+            }
+            field("End Date"; EndDate)
+            {
+                CLOSINGDATES = false;
+            }
+            field("Transaction Date"; TransDate)
+            {
+                ClosingDates = true;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (quoted_identifier)
+          source_or_field_name: (identifier)
+          (closing_dates_property
+            value: (closing_dates_value
+              (boolean))))
+        (field_section
+          control_id: (quoted_identifier)
+          source_or_field_name: (identifier)
+          (closing_dates_property
+            value: (closing_dates_value
+              (boolean))))
+        (field_section
+          control_id: (quoted_identifier)
+          source_or_field_name: (identifier)
+          (closing_dates_property
+            value: (closing_dates_value
+              (boolean))))))))
+
+================================================================================
+ClosingDates with other date field properties
+================================================================================
+
+table 50200 "Custom Entry"
+{
+    fields
+    {
+        field(1; "Entry Date"; Date)
+        {
+            Caption = 'Entry Date';
+            ClosingDates = true;
+            NotBlank = true;
+            DateFormula = '-1D';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (caption_property
+          (string_literal))
+        (closing_dates_property
+          value: (closing_dates_value
+            (boolean)))
+        (not_blank_property
+          value: (not_blank_value
+            (boolean)))
+        (date_formula_property
+          value: (date_formula_value
+            (string_literal)))))))
