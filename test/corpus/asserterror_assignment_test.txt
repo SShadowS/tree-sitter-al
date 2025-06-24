@@ -1,0 +1,247 @@
+================================================================================
+Asserterror with assignment expression
+================================================================================
+
+codeunit 50100 "Test Asserterror Assignment"
+{
+    procedure TestAssertErrorAssignment()
+    var
+        ServiceOrderNo: Code[20];
+        CustomerNo: Code[20];
+        ServiceItemNo: Code[20];
+    begin
+        CustomerNo := '10000';
+        ServiceItemNo := 'ITEM001';
+        
+        // Assignment inside asserterror
+        asserterror ServiceOrderNo := CreateServiceOrder(CustomerNo, ServiceItemNo);
+        
+        // Verify error was caught
+        if GetLastErrorText() = '' then
+            Error('Expected an error');
+    end;
+    
+    local procedure CreateServiceOrder(CustNo: Code[20]; ItemNo: Code[20]): Code[20]
+    begin
+        Error('Not allowed');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (string_literal))
+          (assignment_expression
+            left: (identifier)
+            right: (string_literal))
+          (comment)
+          (asserterror_statement
+            expression: (assignment_expression
+              left: (identifier)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (identifier)))))
+          (comment)
+          (if_statement
+            condition: (comparison_expression
+              left: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              operator: (comparison_operator)
+              right: (string_literal))
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))
+    (attributed_procedure
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (code_type
+                length: (integer))))
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (code_type
+                length: (integer)))))
+        return_type: (return_type
+          (type_specification
+            (code_type
+              length: (integer))))
+        (code_block
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))))
+
+================================================================================
+Multiple asserterror assignment patterns
+================================================================================
+
+codeunit 50200 "Complex Asserterror Tests"
+{
+    procedure TestMultiplePatterns()
+    var
+        Result: Integer;
+        Text: Text;
+        RecordVar: Record Customer;
+    begin
+        // Simple assignment
+        asserterror Result := 10 / 0;
+        
+        // Method call with assignment
+        asserterror Text := RecordVar.GetName();
+        
+        // Complex expression assignment
+        asserterror Result := CalculateValue(5) * ProcessData(10);
+    end;
+    
+    local procedure CalculateValue(Input: Integer): Integer
+    begin
+        if Input = 5 then
+            Error('Invalid input');
+        exit(Input * 2);
+    end;
+    
+    local procedure ProcessData(Value: Integer): Integer
+    begin
+        exit(Value div 0);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        (code_block
+          (comment)
+          (asserterror_statement
+            expression: (assignment_expression
+              left: (identifier)
+              right: (multiplicative_expression
+                left: (integer)
+                right: (integer))))
+          (comment)
+          (asserterror_statement
+            expression: (assignment_expression
+              left: (identifier)
+              right: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list))))
+          (comment)
+          (asserterror_statement
+            expression: (assignment_expression
+              left: (identifier)
+              right: (multiplicative_expression
+                left: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer)))
+                right: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer)))))))))
+    (attributed_procedure
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (basic_type))))
+        return_type: (return_type
+          (type_specification
+            (basic_type)))
+        (code_block
+          (if_statement
+            condition: (comparison_expression
+              left: (identifier)
+              operator: (comparison_operator)
+              right: (integer))
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (exit_statement
+            return_value: (multiplicative_expression
+              left: (identifier)
+              right: (integer))))))
+    (attributed_procedure
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (basic_type))))
+        return_type: (return_type
+          (type_specification
+            (basic_type)))
+        (code_block
+          (exit_statement
+            return_value: (multiplicative_expression
+              left: (identifier)
+              right: (integer))))))))

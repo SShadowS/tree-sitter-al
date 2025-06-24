@@ -84,7 +84,9 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$._source_content, $.preproc_conditional_using],
-    [$._source_content]
+    [$._source_content],
+    [$.assignment_expression, $._assignable_expression],
+    [$.assignment_statement, $.assignment_expression]
   ],
 
   extras: $ => [new RustRegex('\\s'), $.comment, $.multiline_comment, $.pragma, $.preproc_region, $.preproc_endregion, new RustRegex('\\uFEFF')],
@@ -4944,6 +4946,13 @@ enum_type: $ => prec(1, seq(
       field('right', $._expression)
     ),
 
+    // Assignment as expression (returns the assigned value)
+    assignment_expression: $ => seq(
+      field('left', $._assignable_expression),
+      field('operator', $._assignment_operator),
+      field('right', $._expression)
+    ),
+
     _assignable_expression: $ => $._expression,
 
     // Unified call expression rule
@@ -5031,7 +5040,9 @@ enum_type: $ => prec(1, seq(
       $._quoted_identifier,
       $._literal_value,
       $.parenthesized_expression,
-      $.unary_expression // (prec 7)
+      $.unary_expression, // (prec 7)
+      // Assignment as expression (for asserterror and other contexts)
+      prec.left(1, $.assignment_expression)
     ),
 
     // Explicit binary expression rules for proper precedence handling

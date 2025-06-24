@@ -21701,6 +21701,35 @@
         }
       ]
     },
+    "assignment_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "left",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_assignable_expression"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_assignment_operator"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "right",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expression"
+          }
+        }
+      ]
+    },
     "_assignable_expression": {
       "type": "SYMBOL",
       "name": "_expression"
@@ -22069,6 +22098,14 @@
         {
           "type": "SYMBOL",
           "name": "unary_expression"
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "assignment_expression"
+          }
         }
       ]
     },
@@ -29880,6 +29917,14 @@
     ],
     [
       "_source_content"
+    ],
+    [
+      "assignment_expression",
+      "_assignable_expression"
+    ],
+    [
+      "assignment_statement",
+      "assignment_expression"
     ]
   ],
   "precedences": [],
