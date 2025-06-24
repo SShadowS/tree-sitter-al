@@ -4714,7 +4714,8 @@ enum_type: $ => prec(1, seq(
 
     _procedure_return_specification: $ => seq(
       ':',
-      field('return_type', $.return_type)
+      field('return_type', $.return_type),
+      optional(field('temporary', $.temporary))
     ),
 
     _procedure_named_return: $ => seq(
