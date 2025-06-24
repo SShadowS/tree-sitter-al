@@ -4326,7 +4326,8 @@ enum_type: $ => prec(1, seq(
         $.average_formula,
         $.min_formula,
         $.max_formula,
-        $.count_formula
+        $.count_formula,
+        $.exist_formula
       ))
     ),
 

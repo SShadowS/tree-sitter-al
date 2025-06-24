@@ -1,0 +1,93 @@
+================================================================================
+Negated exist formula in CalcFormula
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; "Entry No."; Integer)
+        {
+        }
+        field(2; Closed; Boolean)
+        {
+            CalcFormula = - exist("Cust. Ledger Entry" where("Entry No." = field("Cust. Ledger Entry No."),
+                                                              Open = filter(true)));
+            FieldClass = FlowField;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields_section
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (exist_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (field_filter
+                  field: (quoted_identifier)
+                  value: (field_function
+                    field: (quoted_identifier)))
+                (field_filter
+                  field: (identifier)
+                  value: (filter_function
+                    filter_value: (boolean)))))))
+        (field_class_property
+          value: (identifier))))))
+
+================================================================================
+Simple negated exist formula
+================================================================================
+
+table 50101 "Simple Test"
+{
+    fields
+    {
+        field(1; IsEmpty; Boolean)
+        {
+            CalcFormula = - exist("Item" where("No." = field("Item No.")));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (exist_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (field_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (field_ref
+                      (quoted_identifier))))))))))))
