@@ -5501,7 +5501,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     cuegroup_layout_property: $ => seq(
-      'CuegroupLayout',
+      kw('CueGroupLayout'),
       '=',
       field('value', $._flexible_identifier_choice),
       ';'

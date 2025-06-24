@@ -24343,8 +24343,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "CuegroupLayout"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)CueGroupLayout"
+          }
         },
         {
           "type": "STRING",

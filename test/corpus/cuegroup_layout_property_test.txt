@@ -1,0 +1,95 @@
+================================================================================
+CueGroupLayout property test
+================================================================================
+
+page 9037 "Accountant Activities"
+{
+    PageType = CardPart;
+    
+    layout
+    {
+        area(content)
+        {
+            cuegroup(Control1)
+            {
+                CueGroupLayout = Wide;
+                ShowCaption = false;
+                
+                field("Cash Accounts Balance"; Rec."Cash Accounts Balance")
+                {
+                    ApplicationArea = All;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (layout_section
+      (area_section
+        (cuegroup_section
+          name: (identifier)
+          (cuegroup_layout_property
+            value: (identifier))
+          (show_caption_property
+            value: (boolean))
+          (field_section
+            control_id: (quoted_identifier)
+            source_or_field_name: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            (application_area_property
+              value: (identifier))))))))
+
+================================================================================
+CueGroupLayout variations
+================================================================================
+
+page 50100 "Test Cues"
+{
+    layout
+    {
+        area(content)
+        {
+            cuegroup(Wide)
+            {
+                CueGroupLayout = Wide;
+            }
+            cuegroup(Narrow)
+            {
+                cuegroupLayout = Narrow;
+            }
+            cuegroup(Mixed)
+            {
+                CUEGROUPLAYOUT = Wide;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (cuegroup_section
+          name: (identifier)
+          (cuegroup_layout_property
+            value: (identifier)))
+        (cuegroup_section
+          name: (identifier)
+          (cuegroup_layout_property
+            value: (identifier)))
+        (cuegroup_section
+          name: (identifier)
+          (cuegroup_layout_property
+            value: (identifier)))))))
