@@ -4673,28 +4673,28 @@ enum_type: $ => prec(1, seq(
     ),
     
     maintain_sift_index_property: $ => seq(
-      'MaintainSiftIndex',
+      kw('MaintainSIFTIndex'),
       '=',
       $.boolean,
       ';'
     ),
     
     maintain_sql_index_property: $ => seq(
-      'MaintainSqlIndex',
+      kw('MaintainSQLIndex'),
       '=',
       $.boolean,
       ';'
     ),
     
     sql_index_property: $ => seq(
-      'SqlIndex',
+      kw('SQLIndex'),
       '=',
       $.key_field_list,
       ';'
     ),
     
     sum_index_fields_property: $ => seq(
-      'SumIndexFields',
+      kw('SumIndexFields'),
       '=',
       $.key_field_list,
       ';'

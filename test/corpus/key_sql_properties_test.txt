@@ -1,0 +1,223 @@
+================================================================================
+Key with MaintainSQLIndex property
+================================================================================
+
+table 50100 "Warehouse Request Test"
+{
+    keys
+    {
+        key(PK; "Type", "Location Code", "Source Type")
+        {
+            Clustered = true;
+        }
+        key(Key2; "Source Type", "Source Subtype", "Source No.")
+        {
+            MaintainSQLIndex = false;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (keys
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (quoted_identifier)
+          (quoted_identifier)
+          (quoted_identifier))
+        (clustered_property
+          value: (boolean)))
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (quoted_identifier)
+          (quoted_identifier)
+          (quoted_identifier))
+        (maintain_sql_index_property
+          (boolean))))))
+
+================================================================================
+Key properties case variations
+================================================================================
+
+table 50200 "Index Test"
+{
+    keys
+    {
+        key(Key1; "Field1")
+        {
+            maintainsqlindex = true;
+            MaintainSQLIndex = false;
+            MAINTAINSQLINDEX = true;
+        }
+        key(Key2; "Field2")
+        {
+            MaintainSIFTIndex = true;
+            maintainsiftindex = false;
+        }
+        key(Key3; "Field3", "Field4")
+        {
+            SQLIndex = "Field4", "Field3";
+            sqlindex = "Field3";
+        }
+        key(Key4; "Amount")
+        {
+            SumIndexFields = "Amount";
+            sumindexfields = "Amount", "Quantity";
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (keys
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (key_field
+            (quoted_identifier)))
+        (maintain_sql_index_property
+          (boolean))
+        (maintain_sql_index_property
+          (boolean))
+        (maintain_sql_index_property
+          (boolean)))
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (key_field
+            (quoted_identifier)))
+        (maintain_sift_index_property
+          (boolean))
+        (maintain_sift_index_property
+          (boolean)))
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (key_field
+            (quoted_identifier))
+          (key_field
+            (quoted_identifier)))
+        (sql_index_property
+          (key_field_list
+            (key_field
+              (quoted_identifier))
+            (key_field
+              (quoted_identifier))))
+        (sql_index_property
+          (key_field_list
+            (key_field
+              (quoted_identifier)))))
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (key_field
+            (quoted_identifier)))
+        (sum_index_fields_property
+          (key_field_list
+            (key_field
+              (quoted_identifier))))
+        (sum_index_fields_property
+          (key_field_list
+            (key_field
+              (quoted_identifier))
+            (key_field
+              (quoted_identifier))))))))
+
+================================================================================
+Complete key with all SQL-related properties
+================================================================================
+
+table 50300 "Full Key Test"
+{
+    keys
+    {
+        key(PrimaryKey; "Entry No.")
+        {
+            Clustered = true;
+            MaintainSQLIndex = true;
+            MaintainSIFTIndex = false;
+        }
+        key(SecondaryKey; "Document Type", "Document No.", "Line No.")
+        {
+            MaintainSQLIndex = false;
+            SQLIndex = "Document No.", "Line No.";
+            IncludedFields = "Amount", "Quantity";
+        }
+        key(SumKey; "Item No.", "Location Code", "Posting Date")
+        {
+            MaintainSIFTIndex = true;
+            SumIndexFields = "Quantity", "Amount", "Cost Amount";
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (keys
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (key_field
+            (quoted_identifier)))
+        (clustered_property
+          (boolean))
+        (maintain_sql_index_property
+          (boolean))
+        (maintain_sift_index_property
+          (boolean)))
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (key_field
+            (quoted_identifier))
+          (key_field
+            (quoted_identifier))
+          (key_field
+            (quoted_identifier)))
+        (maintain_sql_index_property
+          (boolean))
+        (sql_index_property
+          (key_field_list
+            (key_field
+              (quoted_identifier))
+            (key_field
+              (quoted_identifier))))
+        (included_fields_property
+          (key_field_list
+            (key_field
+              (quoted_identifier))
+            (key_field
+              (quoted_identifier)))))
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (key_field
+            (quoted_identifier))
+          (key_field
+            (quoted_identifier))
+          (key_field
+            (quoted_identifier)))
+        (maintain_sift_index_property
+          (boolean))
+        (sum_index_fields_property
+          (key_field_list
+            (key_field
+              (quoted_identifier))
+            (key_field
+              (quoted_identifier))
+            (key_field
+              (quoted_identifier))))))))
