@@ -1,0 +1,22 @@
+================================================================================
+Conditional object declaration (known limitation)
+================================================================================
+
+// This pattern is currently not supported by the parser
+// Object declarations inside preprocessor conditionals are not recognized
+
+#if not CLEAN24
+codeunit 139754 "Test" implements "Interface1", "Interface2"
+#else  
+codeunit 139754 "Test" implements "Interface2"
+#endif
+{
+    // procedures
+}
+
+--------------------------------------------------------------------------------
+
+// Note: This test documents a known limitation.
+// The parser currently cannot handle object declarations
+// that are inside preprocessor conditional blocks.
+// This would require significant grammar restructuring.
