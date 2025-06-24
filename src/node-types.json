@@ -36118,21 +36118,16 @@
   {
     "type": "run_page_link_property",
     "named": true,
-    "fields": {
-      "value": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "run_page_link_value",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "run_page_link_value",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -37518,21 +37513,16 @@
   {
     "type": "sub_page_link_property",
     "named": true,
-    "fields": {
-      "value": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "run_page_link_value",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "run_page_link_value",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -44279,10 +44269,6 @@
   },
   {
     "type": "StyleExpr",
-    "named": false
-  },
-  {
-    "type": "SubPageLink",
     "named": false
   },
   {

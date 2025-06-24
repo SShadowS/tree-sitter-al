@@ -1473,10 +1473,10 @@ module.exports = grammar({
     run_page_link_property: $ => seq(
       'RunPageLink',
       '=',
-      field('value', seq(
+      seq(
         $.run_page_link_value,
         repeat(seq(',', $.run_page_link_value))
-      )),
+      ),
       ';'
     ),
 
@@ -2655,12 +2655,12 @@ module.exports = grammar({
     ),
 
     sub_page_link_property: $ => seq(
-      'SubPageLink',
+      kw('SubPageLink'),
       '=',
-      field('value', seq(
+      seq(
         $.run_page_link_value,
         repeat(seq(',', $.run_page_link_value))
-      )),
+      ),
       ';'
     ),
 
