@@ -39811,6 +39811,32 @@
     }
   },
   {
+    "type": "trigger_name",
+    "named": true,
+    "fields": {
+      "event": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "provider": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "type_declaration",
     "named": true,
     "fields": {
@@ -44502,10 +44528,6 @@
   },
   {
     "type": "time_literal",
-    "named": true
-  },
-  {
-    "type": "trigger_name",
     "named": true
   },
   {

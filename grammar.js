@@ -2688,9 +2688,21 @@ module.exports = grammar({
       ';'
     ),
 
+    qualified_trigger_name: $ => seq(
+      field('provider', $.identifier),
+      '::',
+      field('event', $.identifier)
+    ),
+
     trigger_declaration: $ => seq(
       kw('trigger'),
-      field('name', alias($.identifier, $.trigger_name)), // Unified to use 'name' like generic_trigger
+      field('name', alias(
+        choice(
+          $.identifier,
+          $.qualified_trigger_name
+        ),
+        $.trigger_name
+      )),
       choice(
         seq('(', optional($.parameter_list), ')'),
         seq()
