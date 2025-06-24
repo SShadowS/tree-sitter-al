@@ -4442,7 +4442,7 @@ enum_type: $ => prec(1, seq(
       kw('count'),
       '(',
       field('table', alias($._table_reference, $.table_reference)),
-      $.where_clause,
+      optional($.where_clause),
       ')'
     ),
 

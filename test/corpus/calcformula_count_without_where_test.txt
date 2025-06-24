@@ -1,0 +1,156 @@
+================================================================================
+CalcFormula count without WHERE clause
+================================================================================
+
+table 50100 "User Status"
+{
+    fields
+    {
+        field(1; "User ID"; Code[50])
+        {
+        }
+        field(2; "Error Count"; Integer)
+        {
+            CalcFormula = count("Integration Synch. Job Errors");
+            Caption = 'Total Errors';
+            FieldClass = FlowField;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (quoted_identifier))))
+        (caption_property
+          (string_literal))
+        (field_class_property
+          value: (field_class_value))))))
+
+================================================================================
+CalcFormula count with WHERE clause
+================================================================================
+
+table 50200 "Statistics"
+{
+    fields
+    {
+        field(1; "Active Users"; Integer)
+        {
+            CalcFormula = count(User where(State = const(Enabled)));
+            FieldClass = FlowField;
+        }
+        field(2; "Total Records"; Integer)
+        {
+            CalcFormula = count("My Table");
+            FieldClass = FlowField;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (identifier))
+                    value: (identifier)))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (quoted_identifier))))
+        (field_class_property
+          value: (field_class_value))))))
+
+================================================================================
+CalcFormula count case variations
+================================================================================
+
+table 50300 "Count Test"
+{
+    fields
+    {
+        field(1; "Count1"; Integer)
+        {
+            CalcFormula = COUNT("Table Name");
+        }
+        field(2; "Count2"; Integer)
+        {
+            CalcFormula = Count(TableName where(Field = filter('>0')));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (quoted_identifier)))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (identifier))
+            (where_clause
+              (filter_expression_condition
+                field: (field_ref
+                  (identifier))
+                operator: (filter_operator)
+                value: (filter_value
+                  (filter_expression))))))))))
