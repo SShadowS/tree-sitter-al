@@ -1,0 +1,109 @@
+================================================================================
+AllowInCustomizations property case variations
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; "Primary Key"; Code[10])
+        {
+            AllowInCustomizations = Never;
+        }
+        field(2; Name; Text[100])
+        {
+            allowincustomizations = false;
+        }
+        field(3; Value; Decimal)
+        {
+            ALLOWINCUSTOMIZATIONS = true;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (allow_in_customizations_property
+          value: (value)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (allow_in_customizations_property
+          value: (value)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (allow_in_customizations_property
+          value: (value))))))
+
+================================================================================
+AllowInCustomizations with Never value in various contexts
+================================================================================
+
+table 50101 "Config Setup"
+{
+    fields
+    {
+        field(1; ID; Integer)
+        {
+            AllowInCustomizations = Never;
+        }
+    }
+}
+
+page 50101 "Test Page"
+{
+    layout
+    {
+        area(content)
+        {
+            field(TestField; Rec.ID)
+            {
+                AllowInCustomizations = Never;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (allow_in_customizations_property
+          value: (value)))))
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (identifier))
+          (allow_in_customizations_property
+            value: (value)))))))

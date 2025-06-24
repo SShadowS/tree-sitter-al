@@ -13624,8 +13624,11 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
-            "value": "AllowInCustomizations"
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)AllowInCustomizations"
+            }
           },
           {
             "type": "STRING",
@@ -15702,6 +15705,10 @@
           {
             "type": "SYMBOL",
             "name": "provider_property"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "allow_in_customizations_property"
           }
         ]
       }

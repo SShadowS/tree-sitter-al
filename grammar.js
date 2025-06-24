@@ -3148,7 +3148,7 @@ module.exports = grammar({
     ),
 
     allow_in_customizations_property: $ => prec(1, seq(
-      'AllowInCustomizations', 
+      kw('AllowInCustomizations'), 
       '=',
       field('value', choice(
         alias($.boolean, $.value),
@@ -3665,7 +3665,8 @@ module.exports = grammar({
       $.sub_page_view_property,
       $.update_propagation_property,
       $.visible_property,
-      $.provider_property
+      $.provider_property,
+      $.allow_in_customizations_property
     )),
 
     caption_property: $ => seq(
