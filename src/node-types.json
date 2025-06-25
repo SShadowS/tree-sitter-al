@@ -1249,6 +1249,36 @@
     }
   },
   {
+    "type": "addafter_dataitem",
+    "named": true,
+    "fields": {
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "report_dataitem_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "addafter_fieldgroup",
     "named": true,
     "fields": {
@@ -1487,6 +1517,36 @@
     }
   },
   {
+    "type": "addbefore_dataitem",
+    "named": true,
+    "fields": {
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "report_dataitem_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "addbefore_fieldgroup",
     "named": true,
     "fields": {
@@ -1719,6 +1779,21 @@
         },
         {
           "type": "systemaction_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "addfirst_dataitem",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "report_dataitem_section",
           "named": true
         }
       ]
@@ -2220,6 +2295,21 @@
         },
         {
           "type": "systemaction_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "addlast_dataitem",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "report_dataitem_section",
           "named": true
         }
       ]
@@ -8785,6 +8875,22 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "addafter_dataitem",
+          "named": true
+        },
+        {
+          "type": "addbefore_dataitem",
+          "named": true
+        },
+        {
+          "type": "addfirst_dataitem",
+          "named": true
+        },
+        {
+          "type": "addlast_dataitem",
+          "named": true
+        },
         {
           "type": "preproc_conditional_report_dataitems",
           "named": true

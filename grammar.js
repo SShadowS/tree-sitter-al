@@ -2095,7 +2095,11 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $.report_dataitem_section,
-        $.preproc_conditional_report_dataitems
+        $.preproc_conditional_report_dataitems,
+        $.addafter_dataitem,
+        $.addbefore_dataitem,
+        $.addfirst_dataitem,
+        $.addlast_dataitem
       )),
       '}'
     ),
@@ -2104,6 +2108,26 @@ module.exports = grammar({
       $.report_dataitem_section,
       $.preproc_conditional_report_dataitems
     )),
+
+    addafter_dataitem: $ => _modification_with_target_template(
+      'addafter',
+      $.report_dataitem_section
+    )($),
+
+    addbefore_dataitem: $ => _modification_with_target_template(
+      'addbefore',
+      $.report_dataitem_section
+    )($),
+
+    addfirst_dataitem: $ => _modification_without_target_template(
+      'addfirst',
+      $.report_dataitem_section
+    )($),
+
+    addlast_dataitem: $ => _modification_without_target_template(
+      'addlast',
+      $.report_dataitem_section
+    )($),
 
     // Interface-specific properties
     _interface_properties: $ => choice(
