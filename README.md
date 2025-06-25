@@ -8,9 +8,15 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,489 files (94.3%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,719 files (95.8%) parse successfully**.
 
 Recent improvements include:
+- **Views sections in page extensions** - Added support for views sections in pageextension objects with view definitions and modification patterns
+- **ExternalName property** - Added support for ExternalName property in table fields with case-insensitive matching
+- **Indentation properties** - Fixed IndentationColumn, IndentationControls, and ShowAsTree properties to be case-insensitive and accept field references (e.g., `Rec.Indentation`)
+- **OnAfterLookup field trigger** - Added support for OnAfterLookup trigger in field sections with parameter support
+- **AutoCalcField property** - Added support for AutoCalcField boolean property in report columns
+- **ReadState property** - Added support for ReadState property in query objects (e.g., `ReadState = ReadUncommitted;`)
 - **Trailing commas in Caption/OptionCaption** - Added support for trailing commas in Caption and OptionCaption properties (e.g., `Caption = 'text',;`)
 - **End as identifier** - Fixed parsing of "End" and "EndingTime" as valid identifiers in assignment statements
 - **Enabled property in keys** - Added support for Enabled property in table key declarations
