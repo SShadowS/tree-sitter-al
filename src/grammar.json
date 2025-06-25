@@ -14013,8 +14013,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Access"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Access"
+          }
         },
         {
           "type": "STRING",
@@ -28366,6 +28369,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "_access_properties"
+        },
+        {
+          "type": "SYMBOL",
           "name": "field_trigger_declaration"
         },
         {
@@ -28451,10 +28458,6 @@
         {
           "type": "SYMBOL",
           "name": "preproc_conditional_field_properties"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "access_by_permission_property"
         },
         {
           "type": "SYMBOL",

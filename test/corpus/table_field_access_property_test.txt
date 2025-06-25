@@ -1,0 +1,103 @@
+================================================================================
+Table field with Access property
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; "Public Field"; Text[100])
+        {
+            Caption = 'Public Field';
+        }
+        
+        field(2; "Internal Field"; Guid)
+        {
+            Access = Internal;
+            Caption = 'Internal Field';
+        }
+        
+        field(3; "Public Number"; Integer)
+        {
+            Access = Public;
+            Caption = 'Public Number';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (caption_property
+          (string_literal)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (access_property
+          value: (value))
+        (caption_property
+          (string_literal)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (access_property
+          value: (value))
+        (caption_property
+          (string_literal))))))
+
+================================================================================
+Table field with case-insensitive Access property
+================================================================================
+
+table 50101 "Another Test"
+{
+    fields
+    {
+        field(1; "Field1"; Code[20])
+        {
+            access = Internal;
+        }
+        
+        field(2; "Field2"; Boolean)
+        {
+            ACCESS = Public;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (access_property
+          value: (value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (access_property
+          value: (value))))))

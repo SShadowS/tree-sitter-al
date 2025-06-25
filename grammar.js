@@ -3202,7 +3202,7 @@ module.exports = grammar({
     ),
 
     access_property: $ => seq(
-      'Access',
+      kw('Access'),
       '=',
       field('value', alias($.access_value, $.value)),
       ';'
@@ -6367,6 +6367,7 @@ enum_type: $ => prec(1, seq(
       $._validation_properties,
       $._data_properties,
       $._navigation_properties,
+      $._access_properties,           // Access property for fields
       $.field_trigger_declaration,   // Field-specific triggers
       // Field-specific additional properties
       $.assist_edit_property,
@@ -6390,7 +6391,6 @@ enum_type: $ => prec(1, seq(
       $.external_type_property,  // External type mapping for fields
       $.external_name_property,  // External name mapping for fields
       $.preproc_conditional_field_properties,
-      $.access_by_permission_property,
       $.empty_statement,  // Allow standalone semicolons in field property lists
     ),
 
