@@ -1,0 +1,33 @@
+================================================================================
+Complex preprocessor conditionals in triggers (known limitation)
+================================================================================
+
+table 5080 Todo
+{
+    trigger OnInsert()
+#if not CLEAN24
+    var
+        NoSeriesManagement: Codeunit NoSeriesManagement;
+        IsHandled: Boolean;
+#endif
+    begin
+        if "No." = '' then begin
+            RMSetup.Get();
+#if not CLEAN24
+            NoSeriesManagement.RaiseObsoleteOnBeforeInitSeries();
+            if not IsHandled then
+                "No." := NoSeries.GetNextNo("No. Series");
+#else
+            "No." := NoSeries.GetNextNo("No. Series");
+#endif
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+Note: This pattern where preprocessor conditionals appear both between the trigger
+header and var section, AND within the code block with #else branches, is not
+currently supported. The parser can handle preprocessor conditionals for var
+sections (preproc_conditional_var_sections) but not this complex interleaving
+of preprocessor directives throughout the trigger body.
