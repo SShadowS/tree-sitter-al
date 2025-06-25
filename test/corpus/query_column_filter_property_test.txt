@@ -1,0 +1,198 @@
+================================================================================
+Query with ColumnFilter in filter section
+================================================================================
+
+query 50100 "Test Query"
+{
+    elements
+    {
+        dataitem(Item; Item)
+        {
+            filter(Type; Type)
+            {
+                ColumnFilter = Type = filter(<> Inventory);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (filter_section
+          name: (identifier)
+          field_name: (identifier)
+          (column_filter_property
+            field_name: (identifier)
+            filter_expression: (filter_not_equal_expression
+              value: (identifier))))))))
+
+================================================================================
+Query with ColumnFilter in column section
+================================================================================
+
+query 50101 "Column Filter Test"
+{
+    elements
+    {
+        dataitem(Account; "G/L Account")
+        {
+            column(Description; Description)
+            {
+                ColumnFilter = Description = filter(<> '');
+            }
+            
+            column(Count_)
+            {
+                ColumnFilter = Count_ = filter(> 1);
+                Method = Count;
+            }
+            
+            column(Balance; Balance)
+            {
+                ColumnFilter = Balance = filter(< 0 | > 1000);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (column_section
+          name: (identifier)
+          field_name: (identifier)
+          (column_filter_property
+            field_name: (identifier)
+            filter_expression: (filter_not_equal_expression
+              value: (string_literal))))
+        (column_section
+          name: (identifier)
+          (column_filter_property
+            field_name: (identifier)
+            filter_expression: (filter_greater_than_expression
+              value: (integer)))
+          (generic_property
+            name: (identifier)
+            value: (identifier)))
+        (column_section
+          name: (identifier)
+          field_name: (identifier)
+          (column_filter_property
+            field_name: (identifier)
+            (ERROR
+              (filter_less_than_expression
+                value: (integer)))
+            filter_expression: (filter_greater_than_expression
+              value: (integer))))))))
+
+================================================================================
+Query with case-insensitive ColumnFilter
+================================================================================
+
+query 50102 "Case Test"
+{
+    elements
+    {
+        dataitem(Item; Item)
+        {
+            column(Inventory)
+            {
+                columnfilter = Inventory = filter(> 0);
+            }
+            column(OnHand)
+            {
+                COLUMNFILTER = OnHand = FILTER(<> 0);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          (column_filter_property
+            field_name: (identifier)
+            filter_expression: (filter_greater_than_expression)))
+        (column_section
+          name: (identifier)
+          (column_filter_property
+            field_name: (identifier)
+            filter_expression: (filter_not_equal_expression)))))))
+
+================================================================================
+Query with ColumnFilter using const values
+================================================================================
+
+query 50103 "Const Filter Test"
+{
+    elements
+    {
+        dataitem(Sales_Line; "Sales Line")
+        {
+            column(Cancelled)
+            {
+                ColumnFilter = Cancelled = const(false);
+            }
+            
+            column(Reversed)
+            {
+                ColumnFilter = Reversed = const(false);
+            }
+            
+            column(Type)
+            {
+                ColumnFilter = Type = const("Item");
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (column_section
+          name: (identifier)
+          (column_filter_property
+            field_name: (identifier)
+            const_value: (boolean)))
+        (column_section
+          name: (identifier)
+          (column_filter_property
+            field_name: (identifier)
+            const_value: (boolean)))
+        (column_section
+          name: (identifier)
+          (column_filter_property
+            field_name: (identifier)
+            const_value: (quoted_identifier)))))))

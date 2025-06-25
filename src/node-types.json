@@ -6714,6 +6714,110 @@
     }
   },
   {
+    "type": "column_filter_property",
+    "named": true,
+    "fields": {
+      "const_value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      },
+      "field_name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "filter_expression": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "filter_and_expression",
+            "named": true
+          },
+          {
+            "type": "filter_equal_expression",
+            "named": true
+          },
+          {
+            "type": "filter_greater_than_expression",
+            "named": true
+          },
+          {
+            "type": "filter_greater_than_or_equal_expression",
+            "named": true
+          },
+          {
+            "type": "filter_less_than_expression",
+            "named": true
+          },
+          {
+            "type": "filter_less_than_or_equal_expression",
+            "named": true
+          },
+          {
+            "type": "filter_not_equal_expression",
+            "named": true
+          },
+          {
+            "type": "filter_or_expression",
+            "named": true
+          },
+          {
+            "type": "filter_range_expression",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "column_section",
     "named": true,
     "fields": {
@@ -6764,6 +6868,10 @@
         },
         {
           "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "column_filter_property",
           "named": true
         },
         {
@@ -15150,6 +15258,10 @@
         },
         {
           "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "column_filter_property",
           "named": true
         },
         {

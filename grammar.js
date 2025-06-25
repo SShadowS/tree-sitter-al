@@ -1096,10 +1096,40 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
+        $.column_filter_property,     // Add ColumnFilter property
         $._report_column_properties,  // Use centralized column properties
         $.generic_property            // Support generic properties like Method = Sum
       )),
       '}'
+    ),
+
+    column_filter_property: $ => seq(
+      kw('ColumnFilter'),
+      '=',
+      field('field_name', $._identifier_choice),
+      '=',
+      choice(
+        // filter(expression) pattern
+        seq(
+          kw('filter'),
+          '(',
+          field('filter_expression', $._filter_value),
+          ')'
+        ),
+        // const(value) pattern
+        seq(
+          kw('const'),
+          '(',
+          field('const_value', choice(
+            $.boolean,
+            $.integer,
+            $.string_literal,
+            $._identifier_choice
+          )),
+          ')'
+        )
+      ),
+      ';'
     ),
 
     filter_section: $ => seq(
@@ -1111,6 +1141,7 @@ module.exports = grammar({
       ')',
       '{',
       repeat(choice(
+        $.column_filter_property,  // Add specific ColumnFilter property
         $._universal_properties,  // Allow universal properties like Caption, etc.
         $.generic_property        // Generic property fallback
       )),
