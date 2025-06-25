@@ -4636,8 +4636,8 @@ enum_type: $ => prec(1, seq(
       field('uri', $.string_literal)
     )),
 
-    format_evaluate_property: $ => prec(15, seq(
-      kw('formatevaluate'),
+    format_evaluate_property: $ => seq(
+      kw('formatevaluate', 20),  // Higher precedence than Format (10)
       '=',
       field('value', choice(
         kw('xml'),
@@ -4645,7 +4645,7 @@ enum_type: $ => prec(1, seq(
         $.identifier
       )),
       ';'
-    )),
+    ),
 
     use_default_namespace_property: $ => seq(
       kw('usedefaultnamespace'),
