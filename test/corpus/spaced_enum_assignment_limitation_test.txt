@@ -1,0 +1,80 @@
+================================================================================
+Array assignment with spaced enum value (known limitation)
+================================================================================
+
+codeunit 50100 "Test"
+{
+    procedure TestSpacedEnum()
+    var
+        SalesLineType: array[2] of Enum "Sales Line Type";
+    begin
+        // Space before :: is not recognized - known limitation
+        SalesLineType[1] := SalesLineType[1] ::Resource;
+        SalesLineType[2] := SalesLineType[2] ::"G/L Account";
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+Note: The AL language allows spaces before the :: operator in enum assignments
+like `SalesLineType[1] ::Resource`, but the parser currently requires them to
+be together without spaces: `SalesLineType[1]::Resource`. This is a known
+limitation due to the complexity of parsing spaces within expressions.
+
+================================================================================
+Correct enum assignment without spaces
+================================================================================
+
+codeunit 50101 "Test"
+{
+    procedure TestEnumWithoutSpace()
+    var
+        SalesLineType: array[2] of Enum "Sales Line Type";
+    begin
+        // Without spaces - this works correctly
+        SalesLineType[1] := SalesLineType[1]::Resource;
+        SalesLineType[2] := SalesLineType[2]::"G/L Account";
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (var_declaration
+            (identifier)
+            (array_type
+              length: (integer)
+              (enum_type
+                (quoted_identifier)))))
+        (code_block
+          (comment)
+          (assignment_statement
+            left: (subscript_expression
+              array: (identifier)
+              indices: (expression_list
+                (integer)))
+            right: (qualified_enum_value
+              enum_type: (subscript_expression
+                array: (identifier)
+                indices: (expression_list
+                  (integer)))
+              value: (identifier)))
+          (assignment_statement
+            left: (subscript_expression
+              array: (identifier)
+              indices: (expression_list
+                (integer)))
+            right: (qualified_enum_value
+              enum_type: (subscript_expression
+                array: (identifier)
+                indices: (expression_list
+                  (integer)))
+              value: (quoted_identifier))))))))
