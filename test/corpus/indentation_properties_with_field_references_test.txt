@@ -1,0 +1,88 @@
+================================================================================
+IndentationColumn and IndentationControls with field references
+================================================================================
+
+page 1505 "Workflow Templates"
+{
+    layout
+    {
+        area(content)
+        {
+            repeater(Group)
+            {
+                IndentationColumn = Rec.Indentation;
+                IndentationControls = Description;
+                ShowAsTree = true;
+                field(Description; Rec.Description)
+                {
+                    ApplicationArea = Suite;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (repeater_section
+          name: (identifier)
+          (indentation_column_property
+            value: (member_expression
+              object: (identifier)
+              property: (identifier)))
+          (indentation_controls_property
+            value: (identifier))
+          (show_as_tree_property
+            value: (boolean))
+          (field_section
+            control_id: (identifier)
+            source_or_field_name: (member_expression
+              object: (identifier)
+              property: (identifier))
+            (application_area_property
+              value: (identifier))))))))
+
+================================================================================
+Case variations for indentation properties
+================================================================================
+
+page 50100 "Test Page"
+{
+    layout
+    {
+        area(content)
+        {
+            repeater(TestRepeater)
+            {
+                indentationcolumn = Rec."Indent Level";
+                INDENTATIONCONTROLS = "Name Field";
+                showAsTree = false;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (repeater_section
+          name: (identifier)
+          (indentation_column_property
+            value: (field_access
+              record: (identifier)
+              field: (quoted_identifier)))
+          (indentation_controls_property
+            value: (quoted_identifier))
+          (show_as_tree_property
+            value: (boolean)))))))

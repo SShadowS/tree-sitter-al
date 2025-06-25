@@ -2852,7 +2852,7 @@ module.exports = grammar({
     ),
 
     show_as_tree_property: $ => seq(
-      'ShowAsTree',
+      kw('ShowAsTree'),
       $._boolean_property_template
     ),
 
@@ -5495,19 +5495,9 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    indentation_column_property: $ => seq(
-      'IndentationColumn',
-      '=',
-      field('value', choice($.integer, $.identifier, $._quoted_identifier)),
-      ';'
-    ),
+    indentation_column_property: _value_property_template($ => kw('IndentationColumn'), $ => $._expression),
 
-    indentation_controls_property: $ => seq(
-      'IndentationControls',
-      '=',
-      field('value', $._identifier_choice),
-      ';'
-    ),
+    indentation_controls_property: _value_property_template($ => kw('IndentationControls'), $ => $._expression),
 
     custom_action_type_property: $ => seq(
       'CustomActionType',

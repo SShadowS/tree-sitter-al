@@ -12388,8 +12388,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "ShowAsTree"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)ShowAsTree"
+          }
         },
         {
           "type": "SYMBOL",
@@ -24434,8 +24437,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "IndentationColumn"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)IndentationColumn"
+          }
         },
         {
           "type": "STRING",
@@ -24445,21 +24451,8 @@
           "type": "FIELD",
           "name": "value",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "integer"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_quoted_identifier"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_expression"
           }
         },
         {
@@ -24472,8 +24465,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "IndentationControls"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)IndentationControls"
+          }
         },
         {
           "type": "STRING",
@@ -24484,7 +24480,7 @@
           "name": "value",
           "content": {
             "type": "SYMBOL",
-            "name": "_identifier_choice"
+            "name": "_expression"
           }
         },
         {

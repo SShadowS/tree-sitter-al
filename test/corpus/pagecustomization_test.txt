@@ -30,14 +30,13 @@ pagecustomization "Test Page Customization" customizes "Target Page"
           (view_caption_property
             value: (string_literal))
           (view_filters_property
-            value: (filter_expression
-              (where_clause
-                conditions: (where_conditions
-                  (where_condition
-                    (const_filter
-                      field: (field_ref
-                        (identifier))
-                      value: (identifier))))))))))))
+            value: (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (identifier))
+                    value: (identifier)))))))))))
 
 ================================================================================
 Page customization with addlast views
@@ -71,14 +70,13 @@ pagecustomization "Test Customization" customizes "Base Page"
           (view_caption_property
             value: (string_literal))
           (view_filters_property
-            value: (filter_expression
-              (where_clause
-                conditions: (where_conditions
-                  (where_condition
-                    (const_filter
-                      field: (field_ref
-                        (identifier))
-                      value: (identifier))))))))))))
+            value: (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (identifier))
+                    value: (identifier)))))))))))
 
 ================================================================================
 Page customization with addafter views
@@ -113,14 +111,13 @@ pagecustomization "Enhanced Page" customizes "Original Page"
           (view_caption_property
             value: (string_literal))
           (view_filters_property
-            value: (filter_expression
-              (where_clause
-                conditions: (where_conditions
-                  (where_condition
-                    (const_filter
-                      field: (field_ref
-                        (identifier))
-                      value: (identifier))))))))))))
+            value: (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (identifier))
+                    value: (identifier)))))))))))
 
 ================================================================================
 Page customization with multiple views
@@ -159,24 +156,22 @@ pagecustomization "Multi View Page" customizes "Base Page"
           (view_caption_property
             value: (string_literal))
           (view_filters_property
-            value: (filter_expression
-              (where_clause
-                conditions: (where_conditions
-                  (where_condition
-                    (const_filter
-                      field: (field_ref
-                        (identifier))
-                      value: (identifier))))))))
+            value: (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (identifier))
+                    value: (identifier)))))))
         (view_definition
           name: (identifier)
           (view_caption_property
             value: (string_literal))
           (view_filters_property
-            value: (filter_expression
-              (where_clause
-                conditions: (where_conditions
-                  (where_condition
-                    (const_filter
-                      field: (field_ref
-                        (identifier))
-                      value: (identifier))))))))))))
+            value: (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (identifier))
+                    value: (identifier)))))))))))
