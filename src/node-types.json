@@ -215,6 +215,14 @@
           "named": true
         },
         {
+          "type": "flow_environment_id_property",
+          "named": true
+        },
+        {
+          "type": "flow_template_category_name_property",
+          "named": true
+        },
+        {
           "type": "freeze_column_property",
           "named": true
         },
@@ -529,6 +537,10 @@
           "named": true
         },
         {
+          "type": "customaction_declaration",
+          "named": true
+        },
+        {
           "type": "data_access_intent_property",
           "named": true
         },
@@ -566,6 +578,14 @@
         },
         {
           "type": "file_upload_row_action_property",
+          "named": true
+        },
+        {
+          "type": "flow_environment_id_property",
+          "named": true
+        },
+        {
+          "type": "flow_template_category_name_property",
           "named": true
         },
         {
@@ -921,6 +941,14 @@
           "named": true
         },
         {
+          "type": "flow_environment_id_property",
+          "named": true
+        },
+        {
+          "type": "flow_template_category_name_property",
+          "named": true
+        },
+        {
           "type": "freeze_column_property",
           "named": true
         },
@@ -1176,6 +1204,10 @@
           "named": true
         },
         {
+          "type": "customaction_declaration",
+          "named": true
+        },
+        {
           "type": "fileuploadaction_declaration",
           "named": true
         },
@@ -1231,6 +1263,10 @@
         },
         {
           "type": "actionref_declaration",
+          "named": true
+        },
+        {
+          "type": "customaction_declaration",
           "named": true
         },
         {
@@ -1502,6 +1538,10 @@
           "named": true
         },
         {
+          "type": "customaction_declaration",
+          "named": true
+        },
+        {
           "type": "fileuploadaction_declaration",
           "named": true
         },
@@ -1767,6 +1807,10 @@
         },
         {
           "type": "actionref_declaration",
+          "named": true
+        },
+        {
+          "type": "customaction_declaration",
           "named": true
         },
         {
@@ -2286,6 +2330,10 @@
           "named": true
         },
         {
+          "type": "customaction_declaration",
+          "named": true
+        },
+        {
           "type": "fileuploadaction_declaration",
           "named": true
         },
@@ -2656,6 +2704,10 @@
         },
         {
           "type": "actionref_declaration",
+          "named": true
+        },
+        {
+          "type": "customaction_declaration",
           "named": true
         },
         {
@@ -8216,13 +8268,347 @@
           {
             "type": "quoted_identifier",
             "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "customaction_declaration",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
           },
           {
-            "type": "string_literal",
+            "type": "quoted_identifier",
             "named": true
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "about_text_property",
+          "named": true
+        },
+        {
+          "type": "about_title_property",
+          "named": true
+        },
+        {
+          "type": "access_by_permission_property",
+          "named": true
+        },
+        {
+          "type": "access_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_ml_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_property",
+          "named": true
+        },
+        {
+          "type": "allow_multiple_files_property",
+          "named": true
+        },
+        {
+          "type": "allowed_file_extensions_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "card_page_id_property",
+          "named": true
+        },
+        {
+          "type": "column_span_property",
+          "named": true
+        },
+        {
+          "type": "context_sensitive_help_page_property",
+          "named": true
+        },
+        {
+          "type": "custom_action_type_property",
+          "named": true
+        },
+        {
+          "type": "data_access_intent_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "drilldown_pageid_property",
+          "named": true
+        },
+        {
+          "type": "editable_property",
+          "named": true
+        },
+        {
+          "type": "ellipsis_property",
+          "named": true
+        },
+        {
+          "type": "enabled_property",
+          "named": true
+        },
+        {
+          "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "file_upload_action_property",
+          "named": true
+        },
+        {
+          "type": "file_upload_row_action_property",
+          "named": true
+        },
+        {
+          "type": "flow_environment_id_property",
+          "named": true
+        },
+        {
+          "type": "flow_template_category_name_property",
+          "named": true
+        },
+        {
+          "type": "freeze_column_property",
+          "named": true
+        },
+        {
+          "type": "gesture_property",
+          "named": true
+        },
+        {
+          "type": "grid_layout_property",
+          "named": true
+        },
+        {
+          "type": "help_link_property",
+          "named": true
+        },
+        {
+          "type": "hide_value_property",
+          "named": true
+        },
+        {
+          "type": "image_property",
+          "named": true
+        },
+        {
+          "type": "importance_property",
+          "named": true
+        },
+        {
+          "type": "in_footer_bar_property",
+          "named": true
+        },
+        {
+          "type": "indentation_column_property",
+          "named": true
+        },
+        {
+          "type": "indentation_controls_property",
+          "named": true
+        },
+        {
+          "type": "inherent_entitlements_property",
+          "named": true
+        },
+        {
+          "type": "inherent_permissions_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_property",
+          "named": true
+        },
+        {
+          "type": "is_header_property",
+          "named": true
+        },
+        {
+          "type": "lookup_pageid_property",
+          "named": true
+        },
+        {
+          "type": "multi_line_property",
+          "named": true
+        },
+        {
+          "type": "navigation_page_id_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "page_about_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "page_about_title_ml_property",
+          "named": true
+        },
+        {
+          "type": "permissions_property",
+          "named": true
+        },
+        {
+          "type": "promoted_category_property",
+          "named": true
+        },
+        {
+          "type": "promoted_is_big_property",
+          "named": true
+        },
+        {
+          "type": "promoted_only_property",
+          "named": true
+        },
+        {
+          "type": "promoted_property",
+          "named": true
+        },
+        {
+          "type": "row_span_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
+          "type": "run_object_property",
+          "named": true
+        },
+        {
+          "type": "run_page_link_property",
+          "named": true
+        },
+        {
+          "type": "run_page_mode_property",
+          "named": true
+        },
+        {
+          "type": "run_page_on_rec_property",
+          "named": true
+        },
+        {
+          "type": "run_page_view_property",
+          "named": true
+        },
+        {
+          "type": "scope_property",
+          "named": true
+        },
+        {
+          "type": "shortcut_key_property",
+          "named": true
+        },
+        {
+          "type": "show_as_property",
+          "named": true
+        },
+        {
+          "type": "show_as_tree_property",
+          "named": true
+        },
+        {
+          "type": "show_caption_property",
+          "named": true
+        },
+        {
+          "type": "show_mandatory_property",
+          "named": true
+        },
+        {
+          "type": "style_expr_property",
+          "named": true
+        },
+        {
+          "type": "style_property",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "tree_initial_state_property",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
+          "named": true
+        },
+        {
+          "type": "visible_property",
+          "named": true
+        },
+        {
+          "type": "width_property",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -14475,6 +14861,14 @@
           "named": true
         },
         {
+          "type": "flow_environment_id_property",
+          "named": true
+        },
+        {
+          "type": "flow_template_category_name_property",
+          "named": true
+        },
+        {
           "type": "freeze_column_property",
           "named": true
         },
@@ -15990,6 +16384,38 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "flow_environment_id_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "flow_template_category_name_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -23033,6 +23459,14 @@
           "named": true
         },
         {
+          "type": "flow_environment_id_property",
+          "named": true
+        },
+        {
+          "type": "flow_template_category_name_property",
+          "named": true
+        },
+        {
           "type": "freeze_column_property",
           "named": true
         },
@@ -23276,6 +23710,10 @@
         },
         {
           "type": "actionref_declaration",
+          "named": true
+        },
+        {
+          "type": "customaction_declaration",
           "named": true
         },
         {
@@ -28324,6 +28762,10 @@
         },
         {
           "type": "area_action_section",
+          "named": true
+        },
+        {
+          "type": "customaction_declaration",
           "named": true
         },
         {
@@ -37762,6 +38204,14 @@
           "named": true
         },
         {
+          "type": "flow_environment_id_property",
+          "named": true
+        },
+        {
+          "type": "flow_template_category_name_property",
+          "named": true
+        },
+        {
           "type": "freeze_column_property",
           "named": true
         },
@@ -39354,6 +39804,14 @@
         },
         {
           "type": "file_upload_row_action_property",
+          "named": true
+        },
+        {
+          "type": "flow_environment_id_property",
+          "named": true
+        },
+        {
+          "type": "flow_template_category_name_property",
           "named": true
         },
         {
@@ -45223,10 +45681,6 @@
   },
   {
     "type": "Culture",
-    "named": false
-  },
-  {
-    "type": "CustomActionType",
     "named": false
   },
   {

@@ -4905,6 +4905,10 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "customaction_declaration"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "action_group_section"
               },
               {
@@ -5379,6 +5383,10 @@
         {
           "type": "SYMBOL",
           "name": "fileuploadaction_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "customaction_declaration"
         }
       ]
     },
@@ -5620,6 +5628,58 @@
               {
                 "type": "SYMBOL",
                 "name": "var_section"
+              },
+              {
+                "type": "STRING",
+                "value": ";"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "customaction_declaration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)customaction"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_identifier_choice"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_action_property"
               },
               {
                 "type": "STRING",
@@ -24971,8 +25031,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "CustomActionType"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)CustomActionType"
+          }
         },
         {
           "type": "STRING",
@@ -24983,7 +25046,7 @@
           "name": "value",
           "content": {
             "type": "SYMBOL",
-            "name": "_flexible_identifier_choice"
+            "name": "_identifier_choice"
           }
         },
         {
@@ -25072,6 +25135,62 @@
           "content": {
             "type": "SYMBOL",
             "name": "_flexible_identifier_choice"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "flow_template_category_name_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)FlowTemplateCategoryName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "flow_environment_id_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)FlowEnvironmentId"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
           }
         },
         {
@@ -29358,6 +29477,14 @@
         {
           "type": "SYMBOL",
           "name": "file_upload_row_action_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "flow_template_category_name_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "flow_environment_id_property"
         },
         {
           "type": "SYMBOL",

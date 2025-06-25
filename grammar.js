@@ -1258,6 +1258,7 @@ module.exports = grammar({
       repeat(choice(
         $.action_declaration,
         $.actionref_declaration,
+        $.customaction_declaration,  // Add support for customaction in groups
         $.action_group_section,
         $._action_property,
         $.separator_action,
@@ -1355,7 +1356,8 @@ module.exports = grammar({
       $.action_declaration,
       $.actionref_declaration,
       $.systemaction_declaration,
-      $.fileuploadaction_declaration
+      $.fileuploadaction_declaration,
+      $.customaction_declaration
     ),
 
     action_declaration: $ => seq(
@@ -1415,6 +1417,19 @@ module.exports = grammar({
         $._action_property,
         $.fileuploadaction_trigger,
         $.var_section,
+        ';'
+      )),
+      '}'
+    ),
+
+    customaction_declaration: $ => seq(
+      kw('customaction'),
+      '(',
+      field('name', $._identifier_choice),
+      ')',
+      '{',
+      repeat(choice(
+        $._action_property,
         ';'
       )),
       '}'
@@ -5637,6 +5652,27 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
+    custom_action_type_property: $ => seq(
+      kw('CustomActionType'),
+      '=',
+      field('value', $._identifier_choice),
+      ';'
+    ),
+
+    flow_template_category_name_property: $ => seq(
+      kw('FlowTemplateCategoryName'),
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    flow_environment_id_property: $ => seq(
+      kw('FlowEnvironmentId'),
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
     odata_edm_type_property: $ => seq(
       'ODataEDMType',
       '=',
@@ -6709,6 +6745,8 @@ enum_type: $ => prec(1, seq(
       $.ellipsis_property,
       $.file_upload_action_property,
       $.file_upload_row_action_property,
+      $.flow_template_category_name_property,
+      $.flow_environment_id_property,
       $.gesture_property,
       $.image_property,
       $.in_footer_bar_property,
