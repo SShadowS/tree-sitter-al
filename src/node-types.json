@@ -8495,6 +8495,10 @@
             "named": true
           },
           {
+            "type": "const_expression",
+            "named": true
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -8538,6 +8542,10 @@
           },
           {
             "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "const_expression",
             "named": true
           },
           {
@@ -12182,6 +12190,10 @@
           "named": true
         },
         {
+          "type": "external_access_property",
+          "named": true
+        },
+        {
           "type": "external_type_property",
           "named": true
         },
@@ -13048,7 +13060,7 @@
     "fields": {
       "control_id": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "identifier",
@@ -13196,20 +13208,6 @@
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
             "named": true
           }
         ]
@@ -13503,6 +13501,10 @@
         },
         {
           "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "external_access_property",
           "named": true
         },
         {
@@ -19945,6 +19947,10 @@
           "named": true
         },
         {
+          "type": "enabled_property",
+          "named": true
+        },
+        {
           "type": "included_fields_property",
           "named": true
         },
@@ -22620,6 +22626,10 @@
         },
         {
           "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "external_access_property",
           "named": true
         },
         {
@@ -28277,6 +28287,10 @@
           "named": true
         },
         {
+          "type": "external_access_property",
+          "named": true
+        },
+        {
           "type": "external_type_property",
           "named": true
         },
@@ -30992,10 +31006,6 @@
           "named": true
         },
         {
-          "type": "external_access_property",
-          "named": true
-        },
-        {
           "type": "external_name_property",
           "named": true
         },
@@ -31277,6 +31287,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "procedure",
           "named": true
         },
         {
@@ -39210,10 +39224,6 @@
           "named": true
         },
         {
-          "type": "external_access_property",
-          "named": true
-        },
-        {
           "type": "external_name_property",
           "named": true
         },
@@ -39696,10 +39706,6 @@
         },
         {
           "type": "extensible_property",
-          "named": true
-        },
-        {
-          "type": "external_access_property",
           "named": true
         },
         {
@@ -44572,10 +44578,6 @@
   },
   {
     "type": "SaveValues",
-    "named": false
-  },
-  {
-    "type": "Scope",
     "named": false
   },
   {

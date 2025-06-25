@@ -2568,44 +2568,23 @@ module.exports = grammar({
       '}'
     ),
 
-    field_section: $ => choice(
-      // Standard field: field(Name) { ... }
-      seq(
-        kw('field'),
-        '(',
-        field('name', $._identifier_choice),
-        ')',
-        '{',
-        repeat($._field_properties),
-        '}'
-      ),
-      // Field with control name: field(Name)(ControlName) { ... }
-      seq(
-        kw('field'),
-        '(',
-        field('name', $._identifier_choice),
-        ')',
+    field_section: $ => seq(
+      kw('field'),
+      '(',
+      field('control_id', choice($.string_literal, $._quoted_identifier, $.integer, $.identifier)),
+      optional(seq(
+        ';',
+        field('source_or_field_name', $._expression)
+      )),
+      ')',
+      optional(seq(
         '(',
         field('control_name', $._identifier_choice),
-        ')',
-        '{',
-        repeat($._field_properties),
-        '}'
-      ),
-      // Combined field: field(ControlId; SourceOrFieldName) { ... }
-      seq(
-        kw('field'),
-        '(',
-        // ControlId can be string, quoted identifier, integer, or identifier
-        field('control_id', choice($.string_literal, $._quoted_identifier, $.integer, $.identifier)),
-        ';',
-        // SourceOrFieldName can be identifier, quoted identifier, or complex expression
-        field('source_or_field_name', $._expression),
-        ')',
-        '{',
-        repeat($._field_properties),
-        '}'
-      )
+        ')'
+      )),
+      '{',
+      repeat($._field_properties),
+      '}'
     ),
 
     part_section: $ => seq(

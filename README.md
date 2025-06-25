@@ -8,9 +8,12 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,273 files (92.9%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,489 files (94.3%) parse successfully**.
 
 Recent improvements include:
+- **Trailing commas in Caption/OptionCaption** - Added support for trailing commas in Caption and OptionCaption properties (e.g., `Caption = 'text',;`)
+- **End as identifier** - Fixed parsing of "End" and "EndingTime" as valid identifiers in assignment statements
+- **Enabled property in keys** - Added support for Enabled property in table key declarations
 - **AllowInCustomizations property** - Added support for AllowInCustomizations property with Never value and case-insensitive matching
 - **SQL properties** - Added support for SqlDataType, SqlTimestamp, and TestTableRelation properties in table fields
 - **OptionOrdinalValues property** - Added support for OptionOrdinalValues property with comma-separated integer lists including negative values
