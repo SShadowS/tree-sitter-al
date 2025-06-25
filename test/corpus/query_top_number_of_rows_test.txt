@@ -1,0 +1,141 @@
+================================================================================
+Query with TopNumberOfRows property
+================================================================================
+
+query 1470 "Top 10 Customer Sales"
+{
+    Caption = 'Top 10 Customer Sales';
+    DataAccessIntent = ReadOnly;
+    OrderBy = descending(Sum_Sales_LCY);
+    TopNumberOfRows = 10;
+
+    elements
+    {
+        dataitem(Cust_Ledger_Entry; "Cust. Ledger Entry")
+        {
+            filter(Posting_Date; "Posting Date")
+            {
+            }
+            column(Customer_No; "Customer No.")
+            {
+            }
+            column(Sum_Sales_LCY; "Sales (LCY)")
+            {
+                Method = Sum;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))
+    (data_access_intent_property
+      value: (identifier))
+    (order_by_property
+      value: (order_by_list
+        (order_by_item
+          (identifier))))
+    (top_number_of_rows_property
+      value: (integer))
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (filter_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier)
+          (generic_property
+            name: (identifier)
+            value: (identifier)))))))
+
+================================================================================
+Query with different TopNumberOfRows values
+================================================================================
+
+query 50100 "Top Records Query"
+{
+    TopNumberOfRows = 100;
+    QueryType = API;
+    
+    elements
+    {
+        dataitem(Item; Item)
+        {
+            column(No; "No.")
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (top_number_of_rows_property
+      value: (integer))
+    (query_type_property)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))))
+
+================================================================================
+Query with TopNumberOfRows and case variations
+================================================================================
+
+query 50101 "Case Test Query"
+{
+    topnumberofrows = 5;
+    TOPNUMBEROFROWS = 20;
+    TopNumberOfRows = 50;
+    
+    elements
+    {
+        dataitem(Customer; Customer)
+        {
+            column(No; "No.")
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (top_number_of_rows_property
+      value: (integer))
+    (top_number_of_rows_property
+      value: (integer))
+    (top_number_of_rows_property
+      value: (integer))
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))))

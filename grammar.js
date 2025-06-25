@@ -766,6 +766,13 @@ module.exports = grammar({
       field('value', $.identifier),
       ';'
     ),
+    
+    top_number_of_rows_property: $ => seq(
+      kw('TopNumberOfRows'),
+      '=',
+      field('value', $.integer),
+      ';'
+    ),
 
     // SourceTableView components
     field_reference: $ => prec(5, choice(
@@ -6407,6 +6414,7 @@ enum_type: $ => prec(1, seq(
       $.read_state_property,         // Read state (ReadCommitted, ReadUncommitted)
       $.query_category_property,     // Query categorization
       $.order_by_property,           // Order by clause
+      $.top_number_of_rows_property, // Top number of rows to return
       // API-specific properties
       $.entity_caption_property,     // API entity caption
       $.entity_caption_ml_property,  // API entity caption (multi-language)

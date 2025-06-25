@@ -31598,6 +31598,10 @@
           "named": true
         },
         {
+          "type": "top_number_of_rows_property",
+          "named": true
+        },
+        {
           "type": "usage_category_property",
           "named": true
         }
@@ -34214,6 +34218,10 @@
         },
         {
           "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "top_number_of_rows_property",
           "named": true
         },
         {
@@ -41484,6 +41492,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "top_number_of_rows_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

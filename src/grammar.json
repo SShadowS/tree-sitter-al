@@ -2689,6 +2689,34 @@
         }
       ]
     },
+    "top_number_of_rows_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)TopNumberOfRows"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "integer"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "field_reference": {
       "type": "PREC",
       "value": 5,
@@ -28530,6 +28558,10 @@
         {
           "type": "SYMBOL",
           "name": "order_by_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "top_number_of_rows_property"
         },
         {
           "type": "SYMBOL",
