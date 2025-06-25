@@ -1,0 +1,89 @@
+================================================================================
+Report with TransactionType UpdateNoLocks
+================================================================================
+
+report 50100 "Test Report"
+{
+    ProcessingOnly = true;
+    TransactionType = UpdateNoLocks;
+
+    dataset
+    {
+        dataitem(Item; Item)
+        {
+            trigger OnAfterGetRecord()
+            begin
+                Message('Processing');
+            end;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (processing_only_property)
+    (transaction_type_property
+      value: (value))
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (trigger_declaration
+          name: (trigger_name)
+          (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))))
+
+================================================================================
+Report with various TransactionType values
+================================================================================
+
+report 50101 "Various Transaction Types"
+{
+    TransactionType = Update;
+}
+
+report 50102 "Snapshot Report"
+{
+    TransactionType = Snapshot;
+}
+
+report 50103 "Browse Report"
+{
+    TransactionType = Browse;
+}
+
+report 50104 "Case Insensitive"
+{
+    TransactionType = updateNoLocks;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (transaction_type_property
+      value: (value)))
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (transaction_type_property
+      value: (value)))
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (transaction_type_property
+      value: (value)))
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (transaction_type_property
+      value: (value))))

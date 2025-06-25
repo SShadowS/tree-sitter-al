@@ -5694,6 +5694,7 @@ enum_type: $ => prec(1, seq(
       '=',
       field('value', choice(
         kw('update'),        // Update
+        kw('updatenolocks'), // UpdateNoLocks
         kw('snapshot'), // Snapshot
         kw('browse')          // Browse
       )),
