@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,719 files (95.8%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,809 files (96.4%) parse successfully**.
 
 Recent improvements include:
 - **Views sections in page extensions** - Added support for views sections in pageextension objects with view definitions and modification patterns
@@ -77,6 +77,13 @@ Recent improvements include:
 - **Complete built-in function coverage** - All AL built-in functions across database, math, string, date/time categories
 - **Advanced language constructs** - Interface operators, multi-dimensional arrays, range expressions
 - **Extension objects** - Full support for page/table extensions and control add-ins
+- **For loop enhancements** - Added support for field access and member expressions as loop variables (e.g., `for Rec.Index := 1 to 10`)
+- **DataItemTableFilter comparisons** - Added support for comparison operators in DataItemTableFilter (e.g., `"Cost Amount (Actual)" = filter(> 0)`)
+- **Query triggers** - Added trigger support to query objects including OnPreDataItem and other standard triggers
+- **XMLPort triggers** - Added trigger support to XMLPort fieldattribute and tableelement nodes
+- **Prompting area type** - Added support for 'prompting' area type in page actions for AI/Copilot features
+- **Report extension dataset modifications** - Added support for addafter, addbefore, addfirst, addlast dataitem modifications in report extensions
+- **Access property for fields** - Added support for Access property in table fields with values Internal/Public and case-insensitive matching
 
 The parser successfully handles:
 - All core AL object types (table, page, codeunit, enum, etc.)
