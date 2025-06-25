@@ -1543,7 +1543,7 @@ module.exports = grammar({
     ),
 
     scope_property: $ => seq(
-      'Scope',
+      kw('scope'),
       $._identifier_property_template
     ),
 
@@ -3752,6 +3752,8 @@ module.exports = grammar({
       alias(kw('subtype'), $.identifier),
       // Allow the keyword 'Caption' to be treated as an identifier in variable contexts
       alias(kw('caption'), $.identifier),
+      // Allow the keyword 'Scope' to be treated as an identifier in variable contexts
+      alias(kw('scope'), $.identifier),
       // Allow the keyword 'TableNo' to be treated as an identifier in variable contexts
       alias(kw('tableno'), $.identifier),
       // Allow the keyword 'PrintOnlyIfDetail' to be treated as an identifier in variable contexts
