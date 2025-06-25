@@ -1,0 +1,167 @@
+================================================================================
+CalcFormula lookup with filter in where clause
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; "Table Name"; Text[250])
+        {
+            CalcFormula = lookup(AllObjWithCaption."Object Name" where("Object Type" = filter(Table),
+                                                                        "Object ID" = field("Table ID")));
+            FieldClass = FlowField;
+        }
+        
+        field(2; "Page Name"; Text[250])
+        {
+            CalcFormula = lookup(AllObjWithCaption."Object Name" where("Object Type" = filter(Page)));
+            FieldClass = FlowField;
+        }
+        
+        field(3; "Mixed Conditions"; Text[100])
+        {
+            CalcFormula = lookup(Item.Description where("No." = field("Item No."),
+                                                       Type = filter(Inventory)));
+            FieldClass = FlowField;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (calc_formula_property
+          (lookup_formula
+            target: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            (lookup_where_conditions
+              (lookup_where_condition
+                field: (field_ref
+                  (quoted_identifier))
+                filter_value: (identifier))
+              (lookup_where_condition
+                field: (field_ref
+                  (quoted_identifier))
+                value: (field_ref
+                  (quoted_identifier))))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (calc_formula_property
+          (lookup_formula
+            target: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            (lookup_where_conditions
+              (lookup_where_condition
+                field: (field_ref
+                  (quoted_identifier))
+                filter_value: (identifier)))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (calc_formula_property
+          (lookup_formula
+            target: (field_access
+              record: (identifier)
+              field: (identifier))
+            (lookup_where_conditions
+              (lookup_where_condition
+                field: (field_ref
+                  (quoted_identifier))
+                value: (field_ref
+                  (quoted_identifier)))
+              (lookup_where_condition
+                field: (field_ref
+                  (identifier))
+                filter_value: (identifier)))))
+        (field_class_property
+          value: (field_class_value))))))
+
+================================================================================
+CalcFormula lookup with case-insensitive filter
+================================================================================
+
+table 50101 "Case Test"
+{
+    fields
+    {
+        field(1; "Name1"; Text[50])
+        {
+            CalcFormula = lookup(Table.Name where(Type = FILTER(Codeunit)));
+            FieldClass = FlowField;
+        }
+        
+        field(2; "Name2"; Text[50])
+        {
+            CalcFormula = lookup(Table.Name where(Type = Filter("Table")));
+            FieldClass = FlowField;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (calc_formula_property
+          (lookup_formula
+            target: (field_access
+              record: (identifier)
+              field: (identifier))
+            (lookup_where_conditions
+              (lookup_where_condition
+                field: (field_ref
+                  (identifier))
+                filter_value: (identifier)))))
+        (field_class_property
+          value: (field_class_value)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (calc_formula_property
+          (lookup_formula
+            target: (field_access
+              record: (identifier)
+              field: (identifier))
+            (lookup_where_conditions
+              (lookup_where_condition
+                field: (field_ref
+                  (identifier))
+                filter_value: (quoted_identifier)))))
+        (field_class_property
+          value: (field_class_value))))))

@@ -136,12 +136,14 @@ query 50102 "Case Test"
           name: (identifier)
           (column_filter_property
             field_name: (identifier)
-            filter_expression: (filter_greater_than_expression)))
+            filter_expression: (filter_greater_than_expression
+              value: (integer))))
         (column_section
           name: (identifier)
           (column_filter_property
             field_name: (identifier)
-            filter_expression: (filter_not_equal_expression)))))))
+            filter_expression: (filter_not_equal_expression
+              value: (integer))))))))
 
 ================================================================================
 Query with ColumnFilter using const values

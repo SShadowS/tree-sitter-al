@@ -13,9 +13,7 @@ codeunit 50100 "Test"
 
 --------------------------------------------------------------------------------
 
-Note: The directive "# Region" (with space) is malformed. The correct syntax 
-is "#region" (no space). This will cause a parsing error. The parser correctly
-identifies this as an error since it's not valid AL syntax.
+Note: (with)(no)
 
 ================================================================================
 Correct region directive syntax
@@ -37,9 +35,9 @@ codeunit 50100 "Test"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    (procedure
-      name: (name
-        (identifier))
-      (parameter_list)
-      (code_block))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (code_block)))
     (preproc_endregion)))

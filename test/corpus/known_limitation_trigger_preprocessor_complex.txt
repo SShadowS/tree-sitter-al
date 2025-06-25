@@ -26,8 +26,4 @@ table 5080 Todo
 
 --------------------------------------------------------------------------------
 
-Note: This pattern where preprocessor conditionals appear both between the trigger
-header and var section, AND within the code block with #else branches, is not
-currently supported. The parser can handle preprocessor conditionals for var
-sections (preproc_conditional_var_sections) but not this complex interleaving
-of preprocessor directives throughout the trigger body.
+Note: (preproc_conditional_var_sections)

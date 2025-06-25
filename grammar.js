@@ -4422,6 +4422,18 @@ enum_type: $ => prec(1, seq(
           field('value', $.field_ref),
           ')'
         ),
+        // filter(value) pattern
+        seq(
+          kw('filter'),
+          '(',
+          field('filter_value', choice(
+            $.identifier,
+            $._quoted_identifier,
+            $.string_literal,
+            $.integer
+          )),
+          ')'
+        ),
         seq(
           field('keyword', alias(kw('const'), $.const)),
           '(',

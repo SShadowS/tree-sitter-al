@@ -20,8 +20,20 @@ query 76 "Posted Docs With No Inc Doc"
 
 --------------------------------------------------------------------------------
 
-Note: ColumnFilter with complex filter expressions (field = const(value)) is
-currently parsed as a generic property but fails because generic properties
-only accept simple values. This would require enhancing the generic_property
-rule to handle complex expressions or creating a specialized parser for
-filter expressions in query columns.
+(source_file
+  (query_declaration
+    (integer)
+    (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        (identifier)
+        (quoted_identifier)
+        (column_section
+          (identifier)
+          (comment)
+          (column_filter_property
+            (identifier)
+            (integer))
+          (generic_property
+            (identifier)
+            (identifier)))))))

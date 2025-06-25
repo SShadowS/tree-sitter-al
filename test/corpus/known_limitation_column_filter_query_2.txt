@@ -20,7 +20,21 @@ query 986 "Time Sheet Line Status Count"
 
 --------------------------------------------------------------------------------
 
-Note: ColumnFilter with filter expressions like "= filter(> 0)" is currently
-parsed as a generic property but fails because generic properties only accept
-simple values. This specific pattern with nested filter expressions would
-require enhancing the generic_property rule or creating a specialized parser.
+(source_file
+  (query_declaration
+    (integer)
+    (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        (identifier)
+        (quoted_identifier)
+        (column_section
+          (identifier)
+          (generic_property
+            (identifier)
+            (identifier))
+          (comment)
+          (column_filter_property
+            (identifier)
+            (filter_greater_than_expression
+              (integer))))))))

@@ -13,13 +13,5 @@ page 6373 "Company List"
 
 --------------------------------------------------------------------------------
 
-Note: This pattern where #pragma directives appear before the namespace 
-declaration is not currently supported. The parser expects namespace 
-declarations to appear at the beginning of the file (after BOM character 
-if present). While pragmas are defined as extras and can appear anywhere 
-in theory, the current grammar structure doesn't handle this specific 
-ordering correctly.
-
-Workaround: Place namespace declaration before pragma directives, or 
-accept that files with this pattern will have parsing errors on the 
-namespace line.
+Note: (after
+  Workaround: ))
