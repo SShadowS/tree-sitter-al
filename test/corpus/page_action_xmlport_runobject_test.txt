@@ -1,0 +1,105 @@
+================================================================================
+Page action with XMLport RunObject
+================================================================================
+
+page 50100 "Test Page"
+{
+    actions
+    {
+        area(processing)
+        {
+            action("Import Data")
+            {
+                Caption = 'Import Data';
+                Image = Import;
+                RunObject = XMLport "Data Import";
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (actions_section
+      (area_action_section
+        (action_declaration
+          name: (quoted_identifier)
+          (caption_property
+            (string_literal))
+          (image_property
+            value: (identifier))
+          (run_object_property
+            value: (run_object_value
+              object_ref: (quoted_identifier))))))))
+
+================================================================================
+Page actions with various RunObject types
+================================================================================
+
+page 50101 "Multi Action Page"
+{
+    actions
+    {
+        area(processing)
+        {
+            action(ImportXML)
+            {
+                RunObject = xmlport 50100;
+            }
+            action(RunReport)
+            {
+                RunObject = report "Customer List";
+            }
+            action(OpenPage)
+            {
+                RunObject = page 21;
+            }
+            action(RunCodeunit)
+            {
+                RunObject = codeunit "Sales-Post";
+            }
+            action(OpenTable)
+            {
+                RunObject = table Customer;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (actions_section
+      (area_action_section
+        (action_declaration
+          name: (identifier)
+          (run_object_property
+            value: (run_object_value
+              object_ref: (integer))))
+        (action_declaration
+          name: (identifier)
+          (run_object_property
+            value: (run_object_value
+              object_ref: (quoted_identifier))))
+        (action_declaration
+          name: (identifier)
+          (run_object_property
+            value: (run_object_value
+              object_ref: (integer))))
+        (action_declaration
+          name: (identifier)
+          (run_object_property
+            value: (run_object_value
+              object_ref: (quoted_identifier))))
+        (action_declaration
+          name: (identifier)
+          (run_object_property
+            value: (run_object_value
+              object_ref: (identifier))))))))

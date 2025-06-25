@@ -1513,7 +1513,8 @@ module.exports = grammar({
         kw('page'), 
         kw('report'),
         kw('codeunit'),
-        kw('table')
+        kw('table'),
+        kw('xmlport')
       ),
       field('object_ref', choice(
         $.integer, 
