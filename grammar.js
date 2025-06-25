@@ -4661,6 +4661,7 @@ enum_type: $ => prec(1, seq(
         '{',
         repeat(choice(
           $.clustered_property,
+          $.enabled_property,
           $.included_fields_property,
           $.maintain_sift_index_property,
           $.maintain_sql_index_property,
