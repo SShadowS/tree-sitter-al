@@ -4724,6 +4724,7 @@ enum_type: $ => prec(1, seq(
         repeat(choice(
           $.clustered_property,
           $.enabled_property,
+          $.unique_property,
           $.included_fields_property,
           $.maintain_sift_index_property,
           $.maintain_sql_index_property,
@@ -4893,6 +4894,11 @@ enum_type: $ => prec(1, seq(
 
     clustered_property: $ => seq(
       'Clustered',
+      $._boolean_property_template
+    ),
+
+    unique_property: $ => seq(
+      kw('Unique'),
       $._boolean_property_template
     ),
 

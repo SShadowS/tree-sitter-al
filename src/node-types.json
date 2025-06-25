@@ -20795,6 +20795,10 @@
         {
           "type": "sum_index_fields_property",
           "named": true
+        },
+        {
+          "type": "unique_property",
+          "named": true
         }
       ]
     }
@@ -41611,31 +41615,17 @@
   {
     "type": "unique_property",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "unique_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "unique_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "boolean",
-          "named": true
-        }
-      ]
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -45586,10 +45576,6 @@
   },
   {
     "type": "TransactionType",
-    "named": false
-  },
-  {
-    "type": "Unique",
     "named": false
   },
   {

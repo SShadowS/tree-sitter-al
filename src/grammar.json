@@ -14704,20 +14704,15 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Unique"
-        },
-        {
-          "type": "STRING",
-          "value": "="
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Unique"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "unique_value"
-        },
-        {
-          "type": "STRING",
-          "value": ";"
+          "name": "_boolean_property_template"
         }
       ]
     },
@@ -20848,6 +20843,10 @@
                       {
                         "type": "SYMBOL",
                         "name": "enabled_property"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "unique_property"
                       },
                       {
                         "type": "SYMBOL",
