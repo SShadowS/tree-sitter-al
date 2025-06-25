@@ -5897,7 +5897,8 @@ enum_type: $ => prec(1, seq(
         $.comment,
         $.multiline_comment,
         $.attribute_list,
-        $.pragma
+        $.pragma,
+        $.procedure  // Allow procedures inside preprocessor conditionals in var sections
       )),
 
     preproc_conditional_field_properties: _preproc_conditional_block_template($ => $._field_properties),

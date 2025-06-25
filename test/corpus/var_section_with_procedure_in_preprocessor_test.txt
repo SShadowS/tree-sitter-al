@@ -1,0 +1,52 @@
+================================================================================
+Var section with procedure inside preprocessor conditional
+================================================================================
+
+codeunit 50100 "Test Codeunit"
+{
+    procedure TestMethod()
+    var
+        Item: Record Item;
+#if BC24
+        procedure LocalProcedure()
+        begin
+            // Some local logic
+        end;
+#endif
+        TempInteger: Integer;
+    begin
+        // Test code
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier))))
+          (preproc_conditional_variables
+            (preproc_if
+              condition: (identifier))
+            (procedure
+              name: (name
+                (identifier))
+              (code_block
+                (comment)))
+            (preproc_endif))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (comment))))))
