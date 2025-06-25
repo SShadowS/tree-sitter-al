@@ -1,0 +1,27 @@
+================================================================================
+Complex ColumnFilter expressions in query columns (known limitation)
+================================================================================
+
+query 76 "Posted Docs With No Inc Doc"
+{
+    elements
+    {
+        dataitem(Incoming_Document; "Incoming Document")
+        {
+            column(NoOfIncomingDocuments)
+            {
+                // This pattern is not currently supported
+                ColumnFilter = NoOfIncomingDocuments = const(0);
+                Method = Count;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+Note: ColumnFilter with complex filter expressions (field = const(value)) is
+currently parsed as a generic property but fails because generic properties
+only accept simple values. This would require enhancing the generic_property
+rule to handle complex expressions or creating a specialized parser for
+filter expressions in query columns.
