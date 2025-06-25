@@ -1015,6 +1015,11 @@ module.exports = grammar({
       $._quoted_identifier,
       $.integer,
       $.boolean,
+      // Support for comparison operators
+      seq(
+        choice('>', '<', '>=', '<=', '<>'),
+        choice($.integer, $.identifier, $._quoted_identifier, $.string_literal)
+      ),
       // Support for pipe-separated values
       seq(
         choice($.string_literal, $.identifier, $._quoted_identifier),
