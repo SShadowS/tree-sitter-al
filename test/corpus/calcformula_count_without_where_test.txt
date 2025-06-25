@@ -117,7 +117,7 @@ table 50300 "Count Test"
         }
         field(2; "Count2"; Integer)
         {
-            CalcFormula = Count(TableName where(Field = filter('>0')));
+            CalcFormula = Count(TableName where("Field" = filter('>0')));
         }
     }
 }
@@ -148,9 +148,10 @@ table 50300 "Count Test"
             table: (table_reference
               (identifier))
             (where_clause
-              (filter_expression_condition
-                field: (field_ref
-                  (identifier))
-                operator: (filter_operator)
-                value: (filter_value
-                  (filter_expression))))))))))
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (string_literal))))))))))))

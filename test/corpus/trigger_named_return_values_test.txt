@@ -39,10 +39,10 @@ page 50100 "Item Turnover Lines"
           type: (type_specification
             (basic_type))))
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (identifier))
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (call_expression
             function: (member_expression
@@ -57,7 +57,7 @@ page 50100 "Item Turnover Lines"
                   object: (identifier)
                   property: (identifier))
                 arguments: (argument_list)))))
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (identifier))))))
 
@@ -102,10 +102,10 @@ page 50101 "Test Page"
           type: (type_specification
             (basic_type))))
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (identifier))
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (call_expression
             function: (member_expression
@@ -120,7 +120,7 @@ page 50101 "Test Page"
                   object: (identifier)
                   property: (identifier))
                 arguments: (argument_list)))))
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (identifier))))))
 
@@ -171,7 +171,7 @@ table 50100 "Test Table"
             (type_specification
               (basic_type)))
           (code_block
-            (assignment_statement
+            (assignment_expression
               left: (identifier)
               right: (call_expression
                 function: (identifier)
@@ -206,7 +206,7 @@ page 50102 "Test Page"
         (type_specification
           (basic_type)))
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (quoted_identifier)
           right: (unary_expression
             (call_expression
@@ -253,7 +253,7 @@ page 50103 "Test Page"
             (record_type
               reference: (identifier)))))
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (call_expression
             function: (member_expression

@@ -1500,6 +1500,7 @@ module.exports = grammar({
     _const_value: $ => choice(
       prec(20, $.database_reference),  // Higher precedence for Database:: patterns
       prec(9, $.qualified_enum_value),  // Allow Enum::Value patterns
+      prec(5, $.boolean),  // Add boolean with precedence to avoid conflicts
       $.identifier,
       $._quoted_identifier,
       $.integer,
@@ -2966,17 +2967,17 @@ module.exports = grammar({
     external_type_value: $ => choice(
       $.string_literal,
       // Also support bare identifiers for compatibility
-      'Uniqueidentifier',
-      'DateTime', 
-      'Lookup',
-      'Owner',
-      'State',
-      'Status',
-      'BigInt',
-      'Integer',
-      'String',
-      'Boolean',
-      'Picklist'
+      kw('Uniqueidentifier'),
+      kw('DateTime'), 
+      kw('Lookup'),
+      kw('Owner'),
+      kw('State'),
+      kw('Status'),
+      kw('BigInt'),
+      kw('Integer'),
+      kw('String'),
+      kw('Boolean'),
+      kw('Picklist')
     ),
     not_blank_value: $ => $.boolean,
     numeric_value: $ => $.boolean,
@@ -3150,10 +3151,10 @@ module.exports = grammar({
     allow_in_customizations_property: $ => prec(1, seq(
       kw('AllowInCustomizations'), 
       '=',
-      field('value', choice(
-        alias($.boolean, $.value),
-        alias(kw('never'), $.value)
-      )),
+      field('value', alias(choice(
+        $.boolean,
+        kw('never')
+      ), $.value)),
       ';'
     )),
 
@@ -3205,7 +3206,7 @@ module.exports = grammar({
     ),
 
     compressed_property: $ => seq(
-      'Compressed', 
+      kw('compressed'), 
       '=',
       field('value', $.compressed_value),
       ';'
@@ -3238,7 +3239,7 @@ module.exports = grammar({
     ),
 
     external_type_property: $ => seq(
-      'ExternalType',
+      kw('ExternalType'),
       '=',
       field('value', $.external_type_value),
       ';'
@@ -3295,7 +3296,7 @@ module.exports = grammar({
     ),
 
     option_ordinal_values_property: $ => seq(
-      'OptionOrdinalValues',
+      kw('OptionOrdinalValues'),
       '=',
       field('value', $.option_ordinal_values_value),
       ';'
@@ -3774,7 +3775,9 @@ module.exports = grammar({
       alias(kw('enddata'), $.identifier),
       alias(kw('endpoint'), $.identifier),
       alias(kw('enddate'), $.identifier),
-      alias(kw('endtime'), $.identifier)
+      alias(kw('endtime'), $.identifier),
+      // Allow 'field' to be used as an identifier in variable contexts
+      alias(kw('field'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
@@ -4258,7 +4261,8 @@ enum_type: $ => prec(1, seq(
       $.const_filter,
       $.field_reference_condition,  // Use updated field reference condition that supports upperlimit
       $.field_filter,               // Keep for backward compatibility
-      $.filter_condition
+      $.filter_condition,
+      $.filter_expression_condition  // Add support for filter expressions like Field = filter('>0')
     ),
 
     where_conditions: $ => seq(
@@ -6183,13 +6187,14 @@ enum_type: $ => prec(1, seq(
       $.numeric_property,            // Numeric input only
       $.decimal_places_property,     // Decimal precision
       $.blank_zero_property,         // Display blank for zero
-      $.blank_numbers_property,      // Blank number display rules
+      $.blank_numbers_property,     // Blank number display rules
       $.unique_property,             // Uniqueness constraint
       $.values_allowed_property,     // Enumerated valid values
       $.validate_table_relation_property, // FK validation
       $.char_allowed_property,       // Character input restrictions
       $.date_formula_property,       // Date formula validation
       $.closing_dates_property,      // Allow closing date selection
+      $.allow_in_customizations_property, // Control field availability in customizations
     ),
 
     // Data source/relationship properties
@@ -6204,6 +6209,10 @@ enum_type: $ => prec(1, seq(
       $.auto_increment_property,     // Auto-increment behavior
       $.field_class_property,        // Field classification
       $.init_value_property,         // Default value
+      $.sql_data_type_property,      // SQL data type mapping
+      $.sql_timestamp_property,      // SQL timestamp behavior
+      $.test_table_relation_property, // Test table relation validation
+      $.compressed_property,         // Field compression behavior
     ),
 
     // Navigation/interaction properties
@@ -6338,7 +6347,9 @@ enum_type: $ => prec(1, seq(
       $.assist_edit_property,
       $.quick_entry_property,
       $.option_caption_property,
+      $.option_caption_ml_property,
       $.option_members_property,
+      $.option_ordinal_values_property,
       $.sign_displacement_property,
       $.data_classification_property,
       $.title_property,
@@ -6351,6 +6362,7 @@ enum_type: $ => prec(1, seq(
       $.optimize_for_text_search_property,  // Field-level text search optimization
       $.moved_from_property,  // Add MovedFrom property for fields
       $.moved_to_property,    // Add MovedTo property for fields
+      $.external_type_property,  // External type mapping for fields
       $.preproc_conditional_field_properties,
       $.access_by_permission_property,
       $.empty_statement,  // Allow standalone semicolons in field property lists
@@ -6775,6 +6787,7 @@ enum_type: $ => prec(1, seq(
           )
         )
       )),
+      optional(','),  // Support trailing comma
       ';'
     ),
 
@@ -6797,6 +6810,7 @@ enum_type: $ => prec(1, seq(
           )
         )
       )),
+      optional(','),  // Support trailing comma
       ';'
     ),
 

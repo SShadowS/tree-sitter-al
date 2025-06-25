@@ -37,7 +37,7 @@ codeunit 50000 "WITH Test"
             record_variable: (identifier)
             body: (code_block
               (identifier)
-              (assignment_statement
+              (assignment_expression
                 left: (identifier)
                 right: (string_literal))
               (identifier))))))))
@@ -129,7 +129,7 @@ codeunit 50002 "Nested WITH Test"
                 record_variable: (identifier)
                 body: (code_block
                   (identifier)
-                  (assignment_statement
+                  (assignment_expression
                     left: (quoted_identifier)
                     right: (field_access
                       record: (identifier)

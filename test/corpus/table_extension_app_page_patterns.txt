@@ -58,7 +58,7 @@ table 6175314 "CDO Extension App Page"
     (caption_property
       (string_literal))
     (data_classification_property
-      (data_classification_value))
+      value: (data_classification_value))
     (fields
       (field_declaration
         id: (integer)
@@ -68,11 +68,12 @@ table 6175314 "CDO Extension App Page"
         (caption_property
           (string_literal))
         (data_classification_property
-          (data_classification_value))
+          value: (data_classification_value))
         (table_relation_property
           relation: (table_relation_expression
             (simple_table_relation
-              table: (quoted_identifier)))))
+              table: (quoted_identifier))))
+        (empty_statement))
       (field_declaration
         id: (integer)
         name: (quoted_identifier)
@@ -81,7 +82,7 @@ table 6175314 "CDO Extension App Page"
         (caption_property
           (string_literal))
         (data_classification_property
-          (data_classification_value))
+          value: (data_classification_value))
         (table_relation_property
           relation: (table_relation_expression
             (simple_table_relation
@@ -95,6 +96,7 @@ table 6175314 "CDO Extension App Page"
                       field: (field_ref
                         (quoted_identifier))
                       value: (identifier))))))))
+        (empty_statement)
         (field_trigger_declaration
           type: (trigger_type)
           (var_section
@@ -119,7 +121,7 @@ table 6175314 "CDO Extension App Page"
                 left: (quoted_identifier)
                 operator: (comparison_operator)
                 right: (integer))
-              then_branch: (assignment_statement
+              then_branch: (assignment_expression
                 left: (quoted_identifier)
                 right: (call_expression
                   function: (member_expression
@@ -131,7 +133,7 @@ table 6175314 "CDO Extension App Page"
                 left: (quoted_identifier)
                 operator: (comparison_operator)
                 right: (string_literal))
-              then_branch: (assignment_statement
+              then_branch: (assignment_expression
                 left: (quoted_identifier)
                 right: (call_expression
                   function: (identifier)

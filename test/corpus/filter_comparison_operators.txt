@@ -41,7 +41,8 @@ table 50100 "Test Table"
               (simple_table_relation
                 (identifier)
                 (field_ref
-                  (quoted_identifier))))))))))
+                  (quoted_identifier))))))
+        (empty_statement)))))
 
 ================================================================================
 Filter with greater than operator
@@ -86,7 +87,8 @@ table 50100 "Test Table"
               (simple_table_relation
                 (identifier)
                 (field_ref
-                  (quoted_identifier))))))))))
+                  (quoted_identifier))))))
+        (empty_statement)))))
 
 ================================================================================
 Filter with less than or equal operator
@@ -131,7 +133,8 @@ table 50100 "Test Table"
               (simple_table_relation
                 (quoted_identifier)
                 (field_ref
-                  (identifier))))))))))
+                  (identifier))))))
+        (empty_statement)))))
 
 ================================================================================
 Filter with greater than or equal operator
@@ -176,4 +179,5 @@ table 50100 "Test Table"
               (simple_table_relation
                 (quoted_identifier)
                 (field_ref
-                  (identifier))))))))))
+                  (identifier))))))
+        (empty_statement)))))

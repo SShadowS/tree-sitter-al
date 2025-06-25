@@ -33,15 +33,15 @@ page 50100 "Test Page"
           (application_area_property
             value: (identifier))
           (sub_page_link_property
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               const_value: (integer))
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               filter_value: (filter_or_expression
                 (integer)
                 (integer)))
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               field_value: (quoted_identifier))))))))
 
@@ -78,14 +78,14 @@ pageextension 50100 "Test Extension" extends "Customer List"
           name: (identifier)
           page_name: (quoted_identifier)
           (sub_page_link_property
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               filter_value: (filter_or_expression
                 (integer)
                 (integer)
                 (integer)
                 (integer)))
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               filter_value: (filter_or_expression
                 (identifier)
@@ -122,11 +122,11 @@ page 50100 "Test Page"
           name: (identifier)
           page_name: (quoted_identifier)
           (sub_page_link_property
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               filter_value: (filter_not_equal_expression
                 value: (string_literal)))
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               filter_value: (filter_equal_expression
                 value: (string_literal)))))))))

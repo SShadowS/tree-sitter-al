@@ -139,12 +139,12 @@ table 50101 "VAT Amount Line"
               object: (identifier)
               property: (identifier))
             arguments: (argument_list))
-          (assignment_statement
+          (assignment_expression
             left: (field_access
               record: (identifier)
               field: (quoted_identifier))
             right: (identifier))
-          (assignment_statement
+          (assignment_expression
             left: (field_access
               record: (identifier)
               field: (quoted_identifier))
@@ -180,10 +180,10 @@ table 50101 "VAT Amount Line"
             parameter_type: (type_specification
               (basic_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (quoted_identifier)
             right: (identifier))
-          (assignment_statement
+          (assignment_expression
             left: (quoted_identifier)
             right: (identifier))
           (call_expression
@@ -326,7 +326,7 @@ table 50103 "Test Table"
       (preproc_endif))
     (named_trigger
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (boolean))))))
 

@@ -58,7 +58,7 @@ codeunit 50100 "Return Types Test"
           (type_specification
             (basic_type)))
         (code_block
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (integer))
           (exit_statement
@@ -85,7 +85,7 @@ codeunit 50100 "Return Types Test"
             (record_type
               (identifier))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (identifier))
           (exit_statement

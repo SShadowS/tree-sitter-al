@@ -65,12 +65,12 @@ codeunit 50111 "Enum Assignment Test"
               (enum_type
                 (identifier)))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (qualified_enum_value
               (quoted_identifier)
               (identifier)))
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (qualified_enum_value
               (identifier)
@@ -113,7 +113,7 @@ codeunit 50112 "Enum Comparison Test"
               (enum_type
                 (quoted_identifier)))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (qualified_enum_value
               (quoted_identifier)
@@ -181,7 +181,7 @@ codeunit 50113 "Enum Case Test"
               (enum_type
                 (quoted_identifier)))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (qualified_enum_value
               (quoted_identifier)
@@ -256,7 +256,7 @@ codeunit 50114 "Quoted Enum Values Test"
               (enum_type
                 (quoted_identifier)))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (qualified_enum_value
               (quoted_identifier)
@@ -347,7 +347,7 @@ codeunit 50115 "Enum Return Test"
             (enum_type
               (quoted_identifier))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (qualified_enum_value
               (quoted_identifier)

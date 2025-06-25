@@ -33,7 +33,7 @@ codeunit 50000 "Range Test"
             type: (type_specification
               (basic_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             left: (identifier)
             operator: (in_operator)
@@ -78,7 +78,7 @@ codeunit 50001 "Multiple Range Test"
             type: (type_specification
               (basic_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             left: (identifier)
             operator: (in_operator)
@@ -129,7 +129,7 @@ codeunit 50002 "Value List Test"
             type: (type_specification
               (basic_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             left: (identifier)
             operator: (in_operator)
@@ -185,14 +185,14 @@ codeunit 50003 "Range Context Test"
             type: (type_specification
               (basic_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (integer))
           (for_statement
             variable: (identifier)
             start: (integer)
             end: (integer)
-            body: (assignment_statement
+            body: (assignment_expression
               left: (identifier)
               right: (additive_expression
                 left: (identifier)
@@ -207,7 +207,7 @@ codeunit 50003 "Range Context Test"
             type: (type_specification
               (text_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (string_literal)))))))
 
@@ -247,7 +247,7 @@ codeunit 50004 "Field Access Test"
             type: (type_specification
               (basic_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             left: (member_expression
               object: (identifier)

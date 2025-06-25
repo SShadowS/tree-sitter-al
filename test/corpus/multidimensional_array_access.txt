@@ -46,19 +46,19 @@ table 50020 "Test Table"
           type: (type_specification
             (text_type))))
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (additive_expression
             left: (identifier)
             right: (integer)))
-        (assignment_statement
+        (assignment_expression
           left: (subscript_expression
             array: (identifier)
             indices: (expression_list
               (identifier)
               (integer)))
           right: (identifier))
-        (assignment_statement
+        (assignment_expression
           left: (subscript_expression
             array: (identifier)
             indices: (expression_list
@@ -104,7 +104,7 @@ table 50021 "Test Table"
           type: (type_specification
             (basic_type))))
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (additive_expression
             left: (subscript_expression
@@ -163,7 +163,7 @@ table 50022 "Test Table"
               (type_specification
                 (basic_type))))))
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (subscript_expression
             array: (identifier)
             indices: (expression_list
@@ -210,14 +210,14 @@ table 50023 "Test Table"
           type: (type_specification
             (basic_type))))
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (subscript_expression
             array: (identifier)
             indices: (expression_list
               (identifier)
               (identifier)))
           right: (string_literal))
-        (assignment_statement
+        (assignment_expression
           left: (subscript_expression
             array: (identifier)
             indices: (expression_list

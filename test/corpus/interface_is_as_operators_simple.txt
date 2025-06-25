@@ -54,7 +54,7 @@ codeunit 50101 Test2
         name: (name
           (identifier))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             left: (identifier)
             right: (type_specification
@@ -94,7 +94,7 @@ codeunit 50102 Test3
                 left: (identifier)
                 right: (type_specification
                   (identifier))))
-            then_branch: (assignment_statement
+            then_branch: (assignment_expression
               left: (identifier)
               left: (identifier)
               right: (type_specification

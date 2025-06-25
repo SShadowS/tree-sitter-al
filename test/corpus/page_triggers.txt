@@ -111,7 +111,7 @@ page 50000 "Test Page Triggers"
     (trigger_declaration
       name: (trigger_name)
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (boolean))))
     (trigger_declaration
@@ -139,7 +139,7 @@ page 50000 "Test Page Triggers"
     (trigger_declaration
       name: (trigger_name)
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (member_expression
             object: (identifier)
@@ -147,7 +147,7 @@ page 50000 "Test Page Triggers"
     (trigger_declaration
       name: (trigger_name)
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (member_expression
             object: (identifier)
             property: (identifier))
@@ -159,7 +159,7 @@ page 50000 "Test Page Triggers"
     (trigger_declaration
       name: (trigger_name)
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (integer))
         (exit_statement
@@ -167,7 +167,7 @@ page 50000 "Test Page Triggers"
     (trigger_declaration
       name: (trigger_name)
       (code_block
-        (assignment_statement
+        (assignment_expression
           left: (identifier)
           right: (integer))
         (exit_statement

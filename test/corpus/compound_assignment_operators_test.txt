@@ -45,34 +45,34 @@ codeunit 123 "Test Compound Assignment"
             type: (type_specification
               (text_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (integer))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (integer))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (decimal))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (integer))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (string_literal))
           (comment)
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (parenthesized_expression
               (additive_expression
                 left: (integer)
                 right: (integer))))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (call_expression
               function: (identifier)
               arguments: (argument_list)))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (call_expression
               function: (identifier)

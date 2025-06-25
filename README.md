@@ -8,9 +8,15 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **12,881 files (83.8%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,273 files (92.9%) parse successfully**.
 
 Recent improvements include:
+- **AllowInCustomizations property** - Added support for AllowInCustomizations property with Never value and case-insensitive matching
+- **SQL properties** - Added support for SqlDataType, SqlTimestamp, and TestTableRelation properties in table fields
+- **OptionOrdinalValues property** - Added support for OptionOrdinalValues property with comma-separated integer lists including negative values
+- **ExternalType property** - Added support for ExternalType property mapping AL field types to SQL data types (e.g., `ExternalType = Uniqueidentifier;`)
+- **Multiline page link properties** - Fixed support for multiline SubPageLink/RunPageLink properties with boolean const values
+- **Compressed property** - Added support for Compressed property in table fields with case-insensitive matching
 - **Extended AutoFormatType values** - Added support for AutoFormatType property with any integer value (e.g., `AutoFormatType = 11;`)
 - **DataItemTableFilter pipe syntax** - Added support for pipe-separated filter values in queries (e.g., `filter(Planned | "Firm Planned" | Released)`)
 - **Case-insensitive property keywords** - Updated DeleteAllowed, InsertAllowed, ModifyAllowed, SourceTableTemporary, AutoFormatExpression to be case-insensitive

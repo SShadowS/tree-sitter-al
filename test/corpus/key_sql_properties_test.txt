@@ -83,8 +83,7 @@ table 50200 "Index Test"
       (key_declaration
         name: (name)
         fields: (key_field_list
-          (key_field
-            (quoted_identifier)))
+          (quoted_identifier))
         (maintain_sql_index_property
           (boolean))
         (maintain_sql_index_property
@@ -94,8 +93,7 @@ table 50200 "Index Test"
       (key_declaration
         name: (name)
         fields: (key_field_list
-          (key_field
-            (quoted_identifier)))
+          (quoted_identifier))
         (maintain_sift_index_property
           (boolean))
         (maintain_sift_index_property
@@ -103,35 +101,26 @@ table 50200 "Index Test"
       (key_declaration
         name: (name)
         fields: (key_field_list
-          (key_field
-            (quoted_identifier))
-          (key_field
+          (quoted_identifier)
+          (quoted_identifier))
+        (sql_index_property
+          (key_field_list
+            (quoted_identifier)
             (quoted_identifier)))
         (sql_index_property
           (key_field_list
-            (key_field
-              (quoted_identifier))
-            (key_field
-              (quoted_identifier))))
-        (sql_index_property
-          (key_field_list
-            (key_field
-              (quoted_identifier)))))
+            (quoted_identifier))))
       (key_declaration
         name: (name)
         fields: (key_field_list
-          (key_field
+          (quoted_identifier))
+        (sum_index_fields_property
+          (key_field_list
             (quoted_identifier)))
         (sum_index_fields_property
           (key_field_list
-            (key_field
-              (quoted_identifier))))
-        (sum_index_fields_property
-          (key_field_list
-            (key_field
-              (quoted_identifier))
-            (key_field
-              (quoted_identifier))))))))
+            (quoted_identifier)
+            (quoted_identifier)))))))
 
 ================================================================================
 Complete key with all SQL-related properties
@@ -171,10 +160,9 @@ table 50300 "Full Key Test"
       (key_declaration
         name: (name)
         fields: (key_field_list
-          (key_field
-            (quoted_identifier)))
+          (quoted_identifier))
         (clustered_property
-          (boolean))
+          value: (boolean))
         (maintain_sql_index_property
           (boolean))
         (maintain_sift_index_property
@@ -182,42 +170,29 @@ table 50300 "Full Key Test"
       (key_declaration
         name: (name)
         fields: (key_field_list
-          (key_field
-            (quoted_identifier))
-          (key_field
-            (quoted_identifier))
-          (key_field
-            (quoted_identifier)))
+          (quoted_identifier)
+          (quoted_identifier)
+          (quoted_identifier))
         (maintain_sql_index_property
           (boolean))
         (sql_index_property
           (key_field_list
-            (key_field
-              (quoted_identifier))
-            (key_field
-              (quoted_identifier))))
+            (quoted_identifier)
+            (quoted_identifier)))
         (included_fields_property
           (key_field_list
-            (key_field
-              (quoted_identifier))
-            (key_field
-              (quoted_identifier)))))
+            (quoted_identifier)
+            (quoted_identifier))))
       (key_declaration
         name: (name)
         fields: (key_field_list
-          (key_field
-            (quoted_identifier))
-          (key_field
-            (quoted_identifier))
-          (key_field
-            (quoted_identifier)))
+          (quoted_identifier)
+          (quoted_identifier)
+          (quoted_identifier))
         (maintain_sift_index_property
           (boolean))
         (sum_index_fields_property
           (key_field_list
-            (key_field
-              (quoted_identifier))
-            (key_field
-              (quoted_identifier))
-            (key_field
-              (quoted_identifier))))))))
+            (quoted_identifier)
+            (quoted_identifier)
+            (quoted_identifier)))))))

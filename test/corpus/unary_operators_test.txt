@@ -40,22 +40,22 @@ codeunit 123 "Test"
             type: (type_specification
               (basic_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (unary_expression
               (integer)))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (integer))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (unary_expression
               (boolean)))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (unary_expression
               (boolean)))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (unary_expression
               (boolean))))))))

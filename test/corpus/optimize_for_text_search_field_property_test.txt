@@ -37,7 +37,7 @@ table 50000 "Service Item Test"
     (caption_property
       (string_literal))
     (data_classification_property
-      (data_classification_value))
+      value: (data_classification_value))
     (fields
       (field_declaration
         id: (integer)
@@ -70,4 +70,4 @@ table 50000 "Service Item Test"
         (optimize_for_text_search_property
           value: (boolean))
         (data_classification_property
-          (data_classification_value))))))
+          value: (data_classification_value))))))

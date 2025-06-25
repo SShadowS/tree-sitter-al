@@ -37,7 +37,7 @@ codeunit 50100 TestUnit
             condition: (identifier)
             then_branch: (code_block
               (pragma)
-              (assignment_statement
+              (assignment_expression
                 left: (identifier)
                 right: (call_expression
                   function: (member_expression

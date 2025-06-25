@@ -55,14 +55,14 @@ codeunit 50100 "Built-in Functions Test"
             (type_specification
               (text_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (call_expression
               (member_expression
                 (identifier)
                 (identifier))
               (argument_list)))
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (call_expression
               (identifier)
@@ -70,7 +70,7 @@ codeunit 50100 "Built-in Functions Test"
                 (field_access
                   (identifier)
                   (quoted_identifier)))))
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (call_expression
               (identifier)
@@ -78,7 +78,7 @@ codeunit 50100 "Built-in Functions Test"
                 (field_access
                   (identifier)
                   (quoted_identifier)))))
-          (assignment_statement
+          (assignment_expression
             (identifier)
             (call_expression
               (identifier)

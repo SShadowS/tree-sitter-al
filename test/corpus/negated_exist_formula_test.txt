@@ -24,10 +24,10 @@ table 50100 "Test Table"
   (table_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
+    (fields
       (field_declaration
         id: (integer)
-        name: (identifier)
+        name: (quoted_identifier)
         type: (type_specification
           (basic_type)))
       (field_declaration
@@ -41,16 +41,20 @@ table 50100 "Test Table"
               (quoted_identifier))
             (where_clause
               conditions: (where_conditions
-                (field_filter
-                  field: (quoted_identifier)
-                  value: (field_function
-                    field: (quoted_identifier)))
-                (field_filter
-                  field: (identifier)
-                  value: (filter_function
-                    filter_value: (boolean)))))))
+                (where_condition
+                  (field_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (field_ref
+                      (quoted_identifier))))
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (identifier))
+                    filter: (filter_expression_function
+                      value: (identifier))))))))
         (field_class_property
-          value: (identifier))))))
+          value: (field_class_value))))))
 
 ================================================================================
 Simple negated exist formula

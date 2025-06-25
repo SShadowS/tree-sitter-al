@@ -213,7 +213,7 @@ codeunit 50103 "Complex Region"
             type: (type_specification
               (text_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (string_literal)))))
     (preproc_endregion)
@@ -224,7 +224,7 @@ codeunit 50103 "Complex Region"
         name: (name
           (identifier))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (integer)))))
     (preproc_endregion)))

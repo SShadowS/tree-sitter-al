@@ -273,13 +273,14 @@ table 50002 "Test Field Properties"
           value: (closing_dates_value
             (boolean)))
         (data_classification_property
-          (data_classification_value))
+          value: (data_classification_value))
         (table_relation_property
           relation: (table_relation_expression
             (simple_table_relation
               table: (identifier)
               field: (field_ref
                 (quoted_identifier)))))
+        (empty_statement)
         (char_allowed_property
           value: (value
             (string_literal)))

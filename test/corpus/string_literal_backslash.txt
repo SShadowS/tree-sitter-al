@@ -164,7 +164,7 @@ codeunit 789 TestComplexStrings
           (type_specification
             (text_type)))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (call_expression
               function: (identifier)
@@ -172,7 +172,7 @@ codeunit 789 TestComplexStrings
                 (identifier)
                 (string_literal)
                 (string_literal))))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (call_expression
               function: (identifier)

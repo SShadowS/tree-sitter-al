@@ -27,7 +27,7 @@ page 50100 "Job WIP Cockpit"
       (area_section
         (part_section
           name: (identifier)
-          page_ref: (quoted_identifier)
+          page_name: (quoted_identifier)
           (sub_page_link_property
             (run_page_link_value
               field: (quoted_identifier)
@@ -63,12 +63,12 @@ page 50101 "Job WIP G/L Entries"
     object_id: (integer)
     object_name: (quoted_identifier)
     (actions_section
-      (area_section
-        (action_section
+      (area_action_section
+        (action_declaration
           name: (identifier)
           (run_object_property
-            type: (identifier)
-            object_ref: (quoted_identifier))
+            value: (run_object_value
+              object_ref: (quoted_identifier)))
           (run_page_link_property
             (run_page_link_value
               field: (quoted_identifier)
@@ -89,7 +89,7 @@ page 50102 "Mixed Links"
         {
             part(Part1; "Test Part")
             {
-                SubPageLink = "Job No." = field("No."), "Type" = const(Resource)
+                SubPageLink = "Job No." = field("No."), "Type" = const(Resource),
                               "Posted" = const(false);
             }
         }
@@ -106,7 +106,7 @@ page 50102 "Mixed Links"
       (area_section
         (part_section
           name: (identifier)
-          page_ref: (quoted_identifier)
+          page_name: (quoted_identifier)
           (sub_page_link_property
             (run_page_link_value
               field: (quoted_identifier)

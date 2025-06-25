@@ -49,7 +49,7 @@ table 50000 "Sales Line Test"
                       (quoted_identifier))
                     value: (qualified_enum_value
                       enum_type: (identifier)
-                      value: (quoted_identifier)))))))))))))
+                      value: (quoted_identifier))))))))))))
 
 ================================================================================
 Database reference with unquoted table name
@@ -81,24 +81,24 @@ table 50100 "Test Table"
         (table_relation_property
           relation: (table_relation_expression
             (simple_table_relation
-              table: (member_expression
-                object: (identifier)
-                property: (quoted_identifier))
+              table: (identifier)
+              field: (field_ref
+                (quoted_identifier))
               (where_clause
                 conditions: (where_conditions
                   (where_condition
                     (const_filter
                       field: (field_ref
                         (quoted_identifier))
-                      value: (const_expression
-                        (identifier))))
+                      value: (identifier)))
                   (where_condition
                     (const_filter
                       field: (field_ref
                         (quoted_identifier))
                       value: (qualified_enum_value
                         enum_type: (identifier)
-                        value: (identifier))))))))))))))
+                        value: (identifier)))))))))
+        (empty_statement)))))
 
 ================================================================================
 Database reference in various contexts
@@ -143,34 +143,32 @@ codeunit 50200 "Database References"
             type: (type_specification
               (basic_type))))
         (code_block
-          (line_comment)
-          (assignment_statement
+          (comment)
+          (assignment_expression
             left: (identifier)
             right: (qualified_enum_value
               enum_type: (identifier)
               value: (quoted_identifier)))
-          (line_comment)
+          (comment)
           (case_statement
             expression: (identifier)
             (case_branch
               pattern: (qualified_enum_value
                 enum_type: (identifier)
                 value: (identifier))
-              statements: (procedure_call_statement
-                (procedure_call
-                  procedure: (identifier)
-                  arguments: (argument_list
-                    (string_literal)))))
+              statements: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
             (case_branch
               pattern: (qualified_enum_value
                 enum_type: (identifier)
                 value: (quoted_identifier))
-              statements: (procedure_call_statement
-                (procedure_call
-                  procedure: (identifier)
-                  arguments: (argument_list
-                    (string_literal))))))
-          (line_comment)
+              statements: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))))
+          (comment)
           (if_statement
             condition: (comparison_expression
               left: (identifier)
@@ -178,8 +176,7 @@ codeunit 50200 "Database References"
               right: (qualified_enum_value
                 enum_type: (identifier)
                 value: (identifier)))
-            then_branch: (procedure_call_statement
-              (procedure_call
-                procedure: (identifier)
-                arguments: (argument_list
-                  (string_literal))))))))))
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))))

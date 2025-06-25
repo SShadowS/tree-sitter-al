@@ -1,0 +1,91 @@
+================================================================================
+Caption property with trailing comma at object level
+================================================================================
+
+page 50100 "Test Page"
+{
+    Caption = 'Customer Purchase Order Reference',;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))))
+
+================================================================================
+Caption with parameters and trailing comma
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; Description; Text[100])
+        {
+            Caption = 'Description', Locked = true, Comment = 'Field comment',;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (caption_property
+          (string_literal)
+          (boolean)
+          (string_literal))))))
+
+================================================================================
+OptionCaption with comment and trailing comma
+================================================================================
+
+table 50101 "Test Options"
+{
+    fields
+    {
+        field(1; Status; Option)
+        {
+            OptionCaption = 'Open,In Progress,Completed', Comment = 'Status options',;
+            OptionMembers = Open,"In Progress",Completed;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (option_type))
+        (option_caption_property
+          (option_caption_value
+            (string_literal))
+          (string_literal))
+        (option_members_property
+          value: (option_member_list
+            (option_member
+              (identifier))
+            (option_member
+              (quoted_identifier))
+            (option_member
+              (identifier))))))))

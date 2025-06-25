@@ -7,13 +7,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central. The project provides grammar definitions to enable syntax highlighting, code analysis, and language tooling support.
 
 **Current status**: 
-- Production files: 92.3% success rate (14,189 out of 15,358 production AL files from BC.History parse successfully)
-- Test suite: 100% success rate (680 out of 680 tests passing)
+- Production files: 92.3% success rate (14,176 out of 15,358 production AL files from BC.History parse successfully)
+- Test suite: Tests passing (run `tree-sitter test` to get exact count)
 - All tests pass including contextual keyword tests and edge cases
-- Grammar improvements completed through 30 iterations
-- Enhanced with template functions for DRY principle
-- Performance optimizations applied
-- FormatEvaluate property added with higher precedence
+- Grammar improvements completed through 20 additional iterations (12-20)
+- Recent fixes include: qualified trigger names, case-insensitive SQL properties, CueGroupLayout property, negated exist formulas
+- Known limitations: multiline page link properties with const() values, conditional object declarations
 
 ## Development Commands
 

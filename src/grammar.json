@@ -6022,6 +6022,14 @@
           }
         },
         {
+          "type": "PREC",
+          "value": 5,
+          "content": {
+            "type": "SYMBOL",
+            "name": "boolean"
+          }
+        },
+        {
           "type": "SYMBOL",
           "name": "identifier"
         },
@@ -12845,48 +12853,81 @@
           "name": "string_literal"
         },
         {
-          "type": "STRING",
-          "value": "Uniqueidentifier"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Uniqueidentifier"
+          }
         },
         {
-          "type": "STRING",
-          "value": "DateTime"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)DateTime"
+          }
         },
         {
-          "type": "STRING",
-          "value": "Lookup"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Lookup"
+          }
         },
         {
-          "type": "STRING",
-          "value": "Owner"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Owner"
+          }
         },
         {
-          "type": "STRING",
-          "value": "State"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)State"
+          }
         },
         {
-          "type": "STRING",
-          "value": "Status"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Status"
+          }
         },
         {
-          "type": "STRING",
-          "value": "BigInt"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)BigInt"
+          }
         },
         {
-          "type": "STRING",
-          "value": "Integer"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Integer"
+          }
         },
         {
-          "type": "STRING",
-          "value": "String"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)String"
+          }
         },
         {
-          "type": "STRING",
-          "value": "Boolean"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Boolean"
+          }
         },
         {
-          "type": "STRING",
-          "value": "Picklist"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Picklist"
+          }
         }
       ]
     },
@@ -13638,30 +13679,25 @@
             "type": "FIELD",
             "name": "value",
             "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "ALIAS",
-                  "content": {
+              "type": "ALIAS",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
                     "type": "SYMBOL",
                     "name": "boolean"
                   },
-                  "named": true,
-                  "value": "value"
-                },
-                {
-                  "type": "ALIAS",
-                  "content": {
+                  {
                     "type": "TOKEN",
                     "content": {
                       "type": "PATTERN",
                       "value": "(?i)never"
                     }
-                  },
-                  "named": true,
-                  "value": "value"
-                }
-              ]
+                  }
+                ]
+              },
+              "named": true,
+              "value": "value"
             }
           },
           {
@@ -13872,8 +13908,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Compressed"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)compressed"
+          }
         },
         {
           "type": "STRING",
@@ -14039,8 +14078,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "ExternalType"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)ExternalType"
+          }
         },
         {
           "type": "STRING",
@@ -14243,8 +14285,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "OptionOrdinalValues"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)OptionOrdinalValues"
+          }
         },
         {
           "type": "STRING",
@@ -16210,6 +16255,18 @@
             "content": {
               "type": "PATTERN",
               "value": "(?i)endtime"
+            }
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)field"
             }
           },
           "named": true,
@@ -18696,6 +18753,10 @@
         {
           "type": "SYMBOL",
           "name": "filter_condition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "filter_expression_condition"
         }
       ]
     },
@@ -27590,6 +27651,10 @@
         {
           "type": "SYMBOL",
           "name": "closing_dates_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "allow_in_customizations_property"
         }
       ]
     },
@@ -27635,6 +27700,22 @@
         {
           "type": "SYMBOL",
           "name": "init_value_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "sql_data_type_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "sql_timestamp_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "test_table_relation_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "compressed_property"
         }
       ]
     },
@@ -28000,7 +28081,15 @@
         },
         {
           "type": "SYMBOL",
+          "name": "option_caption_ml_property"
+        },
+        {
+          "type": "SYMBOL",
           "name": "option_members_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "option_ordinal_values_property"
         },
         {
           "type": "SYMBOL",
@@ -28049,6 +28138,10 @@
         {
           "type": "SYMBOL",
           "name": "moved_to_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "external_type_property"
         },
         {
           "type": "SYMBOL",
@@ -29382,6 +29475,18 @@
           }
         },
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ","
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "STRING",
           "value": ";"
         }
@@ -29455,6 +29560,18 @@
               }
             ]
           }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ","
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "STRING",

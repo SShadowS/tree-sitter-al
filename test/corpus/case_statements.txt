@@ -36,10 +36,10 @@ table 50001 "Test Table"
               enum_type: (identifier)
               value: (identifier))
             statements: (code_block
-              (assignment_statement
+              (assignment_expression
                 left: (identifier)
                 right: (integer))
-              (assignment_statement
+              (assignment_expression
                 left: (identifier)
                 right: (integer))))
           (case_branch
@@ -47,10 +47,10 @@ table 50001 "Test Table"
               enum_type: (identifier)
               value: (identifier))
             statements: (code_block
-              (assignment_statement
+              (assignment_expression
                 left: (identifier)
                 right: (integer))
-              (assignment_statement
+              (assignment_expression
                 left: (identifier)
                 right: (integer)))))))))
 
@@ -83,12 +83,12 @@ table 50002 "Test Table"
           expression: (identifier)
           (case_branch
             pattern: (string_literal)
-            statements: (assignment_statement
+            statements: (assignment_expression
               left: (identifier)
               right: (integer)))
           (case_branch
             pattern: (string_literal)
-            statements: (assignment_statement
+            statements: (assignment_expression
               left: (identifier)
               right: (integer))))))))
 
@@ -129,7 +129,7 @@ table 50003 "Test Table"
             pattern: (qualified_enum_value
               enum_type: (identifier)
               value: (identifier))
-            statements: (assignment_statement
+            statements: (assignment_expression
               left: (identifier)
               right: (integer)))
           (case_branch
@@ -143,10 +143,10 @@ table 50003 "Test Table"
               enum_type: (identifier)
               value: (identifier))
             statements: (code_block
-              (assignment_statement
+              (assignment_expression
                 left: (identifier)
                 right: (integer))
-              (assignment_statement
+              (assignment_expression
                 left: (identifier)
                 right: (string_literal)))))))))
 
@@ -181,16 +181,16 @@ table 50004 "Test Table"
           expression: (identifier)
           (case_branch
             pattern: (string_literal)
-            statements: (assignment_statement
+            statements: (assignment_expression
               left: (identifier)
               right: (integer)))
           (case_branch
             pattern: (string_literal)
-            statements: (assignment_statement
+            statements: (assignment_expression
               left: (identifier)
               right: (integer)))
           (else_branch
-            statements: (assignment_statement
+            statements: (assignment_expression
               left: (identifier)
               right: (integer))))))))
 
@@ -227,14 +227,14 @@ table 50005 "Test Table"
             pattern: (qualified_enum_value
               enum_type: (identifier)
               value: (identifier))
-            statements: (assignment_statement
+            statements: (assignment_expression
               left: (identifier)
               right: (integer)))
           (else_branch
             statements: (code_block
-              (assignment_statement
+              (assignment_expression
                 left: (identifier)
                 right: (integer))
-              (assignment_statement
+              (assignment_expression
                 left: (identifier)
                 right: (string_literal)))))))))

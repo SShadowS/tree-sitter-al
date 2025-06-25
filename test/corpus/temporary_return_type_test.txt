@@ -76,12 +76,12 @@ codeunit 50200 "Temporary Record Handler"
               object: (identifier)
               property: (identifier))
             arguments: (argument_list))
-          (assignment_statement
-            left: (member_expression
-              object: (identifier)
-              property: (quoted_identifier))
+          (assignment_expression
+            left: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
             right: (string_literal))
-          (assignment_statement
+          (assignment_expression
             left: (member_expression
               object: (identifier)
               property: (identifier))
@@ -140,13 +140,13 @@ codeunit 50300 "Temp Record Processor"
               object: (identifier)
               property: (identifier))
             arguments: (argument_list))
-          (assignment_statement
-            left: (member_expression
-              object: (identifier)
-              property: (quoted_identifier))
-            right: (member_expression
-              object: (identifier)
-              property: (quoted_identifier)))
+          (assignment_expression
+            left: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            right: (field_access
+              record: (identifier)
+              field: (quoted_identifier)))
           (exit_statement
             return_value: (identifier)))))))
 

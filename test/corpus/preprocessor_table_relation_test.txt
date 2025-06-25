@@ -118,7 +118,8 @@ table 123 "Test Table"
                                     (quoted_identifier))))))
                           then_relation: (simple_table_relation
                             table: (quoted_identifier))))
-                      (preproc_endif))))))))))))
+                      (preproc_endif))))))))
+        (empty_statement)))))
 
 ================================================================================
 Simple TableRelation with preprocessor
@@ -263,6 +264,7 @@ table 125 "Complex Test"
                             (simple_table_relation
                               table: (identifier)))
                           (preproc_endif))))))))))
+        (empty_statement)
         (field_trigger_declaration
           type: (trigger_type)
           (code_block

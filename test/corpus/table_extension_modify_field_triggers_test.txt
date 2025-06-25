@@ -78,7 +78,7 @@ tableextension 50000 "Customer Extension" extends Customer
               right: (qualified_enum_value
                 enum_type: (identifier)
                 value: (identifier)))
-            then_branch: (assignment_statement
+            then_branch: (assignment_expression
               left: (quoted_identifier)
               right: (field_access
                 record: (member_expression
@@ -92,7 +92,7 @@ tableextension 50000 "Customer Extension" extends Customer
       (field_trigger_declaration
         type: (trigger_type)
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (quoted_identifier)
             right: (identifier)))))))
 
@@ -139,7 +139,7 @@ tableextension 50001 "Item Extension" extends Item
                 property: (identifier))
               arguments: (argument_list
                 (quoted_identifier)))
-            then_branch: (assignment_statement
+            then_branch: (assignment_expression
               left: (quoted_identifier)
               right: (member_expression
                 object: (identifier)

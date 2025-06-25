@@ -1,7 +1,7 @@
   EmptyCodeblock:
-      1. ✓ [32mEmpty Code Block Test[0m[31m -- Warning: Slow parse rate (1102.966 bytes/ms)[0m
+      1. ✓ [32mEmpty Code Block Test[0m[31m -- Warning: Slow parse rate (1000.700 bytes/ms)[0m
   about_properties_in_fields:
-      2. ✓ [32mField with AboutTitle and AboutText properties[0m
+      2. ✓ [32mField with AboutTitle and AboutText properties[0m[31m -- Warning: Slow parse rate (7594.171 bytes/ms)[0m
       3. ✓ [32mField with AboutTitle and AboutText ML properties[0m
       4. ✓ [32mStandard field with AboutTitle and AboutText properties[0m
   access_by_permission_all_object_types_test:
@@ -9,874 +9,1096 @@
   access_by_permission_case_variations_test:
       6. ✓ [32mAccessByPermission property case variations test[0m
   access_by_permission_property_test:
-      7. ✓ [32mAccessByPermission property in action declarations[0m[31m -- Warning: Slow parse rate (6666.106 bytes/ms)[0m
+      7. ✓ [32mAccessByPermission property in action declarations[0m[31m -- Warning: Slow parse rate (6867.894 bytes/ms)[0m
       8. ✓ [32mAccessByPermission property with quoted table name[0m
       9. ✓ [32mAccessByPermission property in field sections[0m
      10. ✓ [32mAccessByPermission property with different permission types[0m
   access_by_permission_system_objects_test:
      11. ✓ [32mAccessByPermission property with System objects test[0m
+  action_group_preprocessor_test:
+     12. ✓ [32mAction group with preprocessor conditional actionref[0m
+     13. ✓ [32mNested action groups with preprocessor conditionals[0m
   action_groups_and_shortcut_keys:
-     12. ✓ [32mAction groups with navigation properties and shortcut keys[0m
-     13. ✓ [32mDirect action groups in actions section[0m
+     14. ✓ [32mAction groups with navigation properties and shortcut keys[0m
+     15. ✓ [32mDirect action groups in actions section[0m
   additional_search_terms_property_test:
-     14. ✓ [32mAdditionalSearchTerms property in report[0m
-     15. ✓ [32mAdditionalSearchTerms property in page[0m
-     16. ✓ [32mAdditionalSearchTermsML property test[0m
-     17. ✓ [32mReport with multiple properties including AdditionalSearchTerms[0m
+     16. ✓ [32mAdditionalSearchTerms property in report[0m
+     17. ✓ [32mAdditionalSearchTerms property in page[0m
+     18. ✓ [32mAdditionalSearchTermsML property test[0m
+     19. ✓ [32mReport with multiple properties including AdditionalSearchTerms[0m
   al_built_in_functions:
-     18. ✓ [32mAL Built-in Functions[0m
-  allow_in_customizations_property_test:
-     19. ✓ [32mAllowInCustomizations property with Never value[0m
-     20. ✓ [32mAllowInCustomizations property with boolean value[0m
+     20. ✓ [32mAL Built-in Functions[0m
+  allow_in_customizations_case_test:
      21. ✓ [32mAllowInCustomizations property case variations[0m
+     22. ✓ [32mAllowInCustomizations with Never value in various contexts[0m
+  allow_in_customizations_property_test:
+     23. ✓ [32mAllowInCustomizations property with Never value[0m
+     24. ✓ [32mAllowInCustomizations property with boolean value[0m
+     25. ✓ [32mAllowInCustomizations property case variations[0m
   api_group_publisher_properties_test:
-     22. ✓ [32mAPI page with APIGroup and APIPublisher properties[0m
-     23. ✓ [32mAPI page with all API-related properties[0m
-     24. ✓ [32mAPI page with mixed case properties[0m
-     25. ✓ [32mQuery with APIGroup and APIPublisher properties[0m
+     26. ✓ [32mAPI page with APIGroup and APIPublisher properties[0m
+     27. ✓ [32mAPI page with all API-related properties[0m
+     28. ✓ [32mAPI page with mixed case properties[0m
+     29. ✓ [32mQuery with APIGroup and APIPublisher properties[0m
   api_page_properties_test:
-     26. ✓ [32mAPI page with APIVersion property[0m
-     27. ✓ [32mAPI page with beta APIVersion[0m
-     28. ✓ [32mPart with Multiplicity property[0m
-     29. ✓ [32mMultiplicity property case variations[0m
-     30. ✓ [32mComplete API page with all properties[0m
+     30. ✓ [32mAPI page with APIVersion property[0m
+     31. ✓ [32mAPI page with beta APIVersion[0m
+     32. ✓ [32mPart with Multiplicity property[0m
+     33. ✓ [32mMultiplicity property case variations[0m
+     34. ✓ [32mComplete API page with all properties[0m
   area_sections_action_test:
-     31. ✓ [32mPage actions with area(sections) for RoleCenter pages[0m
+     35. ✓ [32mPage actions with area(sections) for RoleCenter pages[0m
   area_tooltip_property_test:
-     32. ✓ [32mArea section with ToolTip property - embedding[0m
-     33. ✓ [32mArea section with ToolTip property - processing[0m
-     34. ✓ [32mArea section with ToolTip and multiple actions[0m
-     35. ✓ [32mArea section without ToolTip property (backward compatibility)[0m
+     36. ✓ [32mArea section with ToolTip property - embedding[0m
+     37. ✓ [32mArea section with ToolTip property - processing[0m
+     38. ✓ [32mArea section with ToolTip and multiple actions[0m
+     39. ✓ [32mArea section without ToolTip property (backward compatibility)[0m
   area_types_comprehensive_test:
-     36. ✓ [32mComprehensive area types including new prompt areas[0m
+     40. ✓ [32mComprehensive area types including new prompt areas[0m
   array_indexing:
-     37. ✓ [32mArray Indexing Expressions[0m
+     41. ✓ [32mArray Indexing Expressions[0m
   array_indexing_simple:
-     38. ✓ [32mSimple Array Indexing[0m
+     42. ✓ [32mSimple Array Indexing[0m
   array_types:
-     39. ✓ [32mComplex Array Types[0m
+     43. ✓ [32mComplex Array Types[0m
+  asserterror_assignment_test:
+     44. ✓ [32mAsserterror with assignment expression[0m
+     45. ✓ [32mMultiple asserterror assignment patterns[0m
   asserterror_statement_test:
-     40. ✓ [32mBasic asserterror statement[0m
-     41. ✓ [32mAsserterror with method call[0m
-     42. ✓ [32mAsserterror with enum value[0m
-     43. ✓ [32mAsserterror in test procedure[0m
+     46. ✓ [32mBasic asserterror statement[0m
+     47. ✓ [32mAsserterror with method call[0m
+     48. ✓ [32mAsserterror with enum value[0m
+     49. ✓ [32mAsserterror in test procedure[0m
   attribute_pragma_procedures_test:
-     44. ✓ [32mEventSubscriber attribute with pragma directives before procedure[0m
+     50. ✓ [32mEventSubscriber attribute with pragma directives before procedure[0m
   auto_format_expression_test:
-     45. ✓ [32mAutoFormatExpression with member expressions[0m
+     51. ✓ [32mAutoFormatExpression with member expressions[0m
+  auto_format_type_extended_test:
+     52. ✓ [32mAutoFormatType with extended values[0m
   basic_page_triggers:
-     46. ✓ [32mBasic Page Triggers[0m
+     53. ✓ [32mBasic Page Triggers[0m
   blob_subtype_comprehensive_test:
-     47. ✓ [32mBLOB field with various SubType values[0m
-     48. ✓ [32mBLOB SubType case variations[0m
-     49. ✓ [32mSubType with custom identifier values[0m
+     54. ✓ [32mBLOB field with various SubType values[0m
+     55. ✓ [32mBLOB SubType case variations[0m
+     56. ✓ [32mSubType with custom identifier values[0m
   blob_subtype_test:
-     50. ✓ [32mBLOB field with SubType property[0m
+     57. ✓ [32mBLOB field with SubType property[0m
   bom_character_support_test:
-     51. ✓ [32mByte Order Mark (BOM) character support test[0m
+     58. ✓ [32mByte Order Mark (BOM) character support test[0m
   built_in_functions_database:
-     52. ✓ [32mBuilt-in Functions Database[0m
+     59. ✓ [32mBuilt-in Functions Database[0m
   built_in_functions_date_and_time:
-     53. ✓ [32mBuilt-in Functions Date and Time[0m
+     60. ✓ [32mBuilt-in Functions Date and Time[0m
   built_in_functions_math:
-     54. ✓ [32mBuilt-in Functions Math[0m
+     61. ✓ [32mBuilt-in Functions Math[0m
   built_in_functions_simple:
-     55. ✓ [32mBuilt-in Functions Simple[0m
+     62. ✓ [32mBuilt-in Functions Simple[0m
   built_in_functions_string:
-     56. ✓ [32mBuilt-in Functions String[0m
+     63. ✓ [32mBuilt-in Functions String[0m
   built_in_functions_user_and_session:
-     57. ✓ [32mBuilt-in Functions User and session functions[0m
+     64. ✓ [32mBuilt-in Functions User and session functions[0m
+  calc_fields_property_test:
+     65. ✓ [32mReport dataitem with CalcFields property[0m
+     66. ✓ [32mCalcFields with single field[0m
+     67. ✓ [32mCalcFields with multiple quoted fields[0m
   calc_formula_average:
-     58. ✓ [32mAverage Formula Test[0m
+     68. ✓ [32mAverage Formula Test[0m
   calc_formula_count:
-     59. ✓ [32mCount Formula Test[0m
+     69. ✓ [32mCount Formula Test[0m
   calc_formula_lookup:
-     60. ✓ [32mLookup Formula Test[0m
+     70. ✓ [32mLookup Formula Test[0m
   calc_formula_minmax:
-     61. ✓ [32mMin/Max Formula Test[0m
+     71. ✓ [32mMin/Max Formula Test[0m
   calc_formula_negated_test:
-     62. ✓ [32mNegated CalcFormula expressions for FlowFields[0m
+     72. ✓ [32mNegated CalcFormula expressions for FlowFields[0m
   calc_formula_sum:
-     63. ✓ [32mSum Formula Test[0m
+     73. ✓ [32mSum Formula Test[0m
+  calcformula_count_without_where_test:
+     74. ✓ [32mCalcFormula count without WHERE clause[0m
+     75. ✓ [32mCalcFormula count with WHERE clause[0m
+     76. ✓ [32mCalcFormula count case variations[0m
   caption_as_variable_name_test:
-     64. ✓ [32mCaption as variable name[0m[31m -- Warning: Slow parse rate (6771.496 bytes/ms)[0m
+     77. ✓ [32mCaption as variable name[0m
   caption_class_label_test:
-     65. ✓ [32mCaptionClass property in label sections[0m
+     78. ✓ [32mCaptionClass property in label sections[0m
   caption_class_property_test:
-     66. ✓ [32mField with CaptionClass property using method call[0m
-     67. ✓ [32mField with CaptionClass property using string literal[0m
+     79. ✓ [32mField with CaptionClass property using method call[0m
+     80. ✓ [32mField with CaptionClass property using string literal[0m
   caption_comment_lowercase_test:
-     68. ✓ [32mCaption property with lowercase comment parameter[0m
-     69. ✓ [32mCaption with different case comment variations[0m
+     81. ✓ [32mCaption property with lowercase comment parameter[0m
+     82. ✓ [32mCaption with different case comment variations[0m
   caption_locked_property:
-     70. ✓ [32mCaption property with Locked attribute[0m
-     71. ✓ [32mCaption property with empty string and Locked[0m
-     72. ✓ [32mCaption property with Locked false[0m
-     73. ✓ [32mCaption property without Locked attribute[0m
-     74. ✓ [32mCaption property with different case Locked attribute[0m
-     75. ✓ [32mMultiple properties with Caption and Locked[0m
+     83. ✓ [32mCaption property with Locked attribute[0m
+     84. ✓ [32mCaption property with empty string and Locked[0m
+     85. ✓ [32mCaption property with Locked false[0m
+     86. ✓ [32mCaption property without Locked attribute[0m
+     87. ✓ [32mCaption property with different case Locked attribute[0m
+     88. ✓ [32mMultiple properties with Caption and Locked[0m
   caption_property_maxlength_test:
-     76. ✓ [32mCaption property with MaxLength parameter[0m
+     89. ✓ [32mCaption property with MaxLength parameter[0m
   caption_with_comment_and_locked:
-     77. ✓ [32mCaption property with Comment and Locked parameters[0m
+     90. ✓ [32mCaption property with Comment and Locked parameters[0m
   case_arithmetic_expressions_test:
-     78. ✓ [32mCase statement with arithmetic expressions in patterns[0m
+     91. ✓ [32mCase statement with arithmetic expressions in patterns[0m
   case_member_access:
-     79. ✓ [32mCase with member access patterns[0m
+     92. ✓ [32mCase with member access patterns[0m
   case_range_expressions_test:
-     80. ✓ [32mCase statement with range expressions[0m
+     93. ✓ [32mCase statement with range expressions[0m
   case_statements:
-     81. ✓ [32mCase with begin/end block branches[0m
-     82. ✓ [32mCase with string literals[0m
-     83. ✓ [32mCase with multiple patterns per branch[0m
-     84. ✓ [32mCase with else clause[0m
-     85. ✓ [32mCase with else block[0m
+     94. ✓ [32mCase with begin/end block branches[0m
+     95. ✓ [32mCase with string literals[0m
+     96. ✓ [32mCase with multiple patterns per branch[0m
+     97. ✓ [32mCase with else clause[0m
+     98. ✓ [32mCase with else block[0m
   case_statements_enum_qualified_values:
-     86. ✓ [32mCase statements with enum qualified values using Enum:: pattern[0m
-     87. ✓ [32mSimple enum case pattern test[0m
+     99. ✓ [32mCase statements with enum qualified values using Enum:: pattern[0m
+    100. ✓ [32mSimple enum case pattern test[0m
   case_statements_simple:
-     88. ✓ [32mSimple case with single statement branches[0m
+    101. ✓ [32mSimple case with single statement branches[0m
   case_true_of_in_expressions_test:
-     89. ✓ [32mCASE TRUE OF with IN expressions and array indexing[0m
+    102. ✓ [32mCASE TRUE OF with IN expressions and array indexing[0m
   case_true_of_statements:
-     90. ✓ [32mCase TRUE OF with comparison expressions[0m
-     91. ✓ [32mCase TRUE OF with simple comparison[0m
-     92. ✓ [32mCase TRUE OF with NOT expression[0m
+    103. ✓ [32mCase TRUE OF with comparison expressions[0m
+    104. ✓ [32mCase TRUE OF with simple comparison[0m
+    105. ✓ [32mCase TRUE OF with NOT expression[0m
   char_allowed_property_test:
-     93. ✓ [32mPage field with CharAllowed property[0m
+    106. ✓ [32mPage field with CharAllowed property[0m
+  closing_dates_property_test:
+    107. ✓ [32mClosingDates property in table field[0m
+    108. ✓ [32mClosingDates property case variations[0m
+    109. ✓ [32mClosingDates with other date field properties[0m
   codeunit:
-     94. ✓ [32mBasic Codeunit Test[0m
+    110. ✓ [32mBasic Codeunit Test[0m
   codeunitAdvanced:
-     95. ✓ [32mBasic Codeunit Declaration[0m
-     96. ✓ [32mCodeunit With Properties[0m
-     97. ✓ [32mVariable Declarations[0m
-     98. ✓ [32mBasic Procedure[0m
-     99. ✓ [32mBasic Trigger[0m
-    100. ✓ [32mProcedure With Var Section[0m
+    111. ✓ [32mBasic Codeunit Declaration[0m
+    112. ✓ [32mCodeunit With Properties[0m
+    113. ✓ [32mVariable Declarations[0m
+    114. ✓ [32mBasic Procedure[0m
+    115. ✓ [32mBasic Trigger[0m
+    116. ✓ [32mProcedure With Var Section[0m
   codeunit_case_variations_test:
-    101. ✓ [32mCodeunit type case variations[0m
+    117. ✓ [32mCodeunit type case variations[0m
   codeunit_table_no_property:
-    102. ✓ [32mCodeunit with TableNo property using quoted identifier[0m
-    103. ✓ [32mCodeunit with TableNo property using identifier[0m
-    104. ✓ [32mCodeunit with TableNo property using integer table ID[0m
-    105. ✓ [32mCodeunit with multiple properties including TableNo[0m
+    118. ✓ [32mCodeunit with TableNo property using quoted identifier[0m
+    119. ✓ [32mCodeunit with TableNo property using identifier[0m
+    120. ✓ [32mCodeunit with TableNo property using integer table ID[0m
+    121. ✓ [32mCodeunit with multiple properties including TableNo[0m
   compound_assignment_operators_test:
-    106. ✓ [32mCodeunit with compound assignment operators[0m
+    122. ✓ [32mCodeunit with compound assignment operators[0m
+  conditional_object_declaration_test:
+    123. ✗ [31mConditional object declaration (known limitation)[0m[31m -- Warning: Slow parse rate (1174.290 bytes/ms)[0m
   conditional_procedure_test:
-    107. ✓ [32mProcedures inside conditional compilation blocks test[0m
+    124. ✓ [32mProcedures inside conditional compilation blocks test[0m
   context_sensitive_validation_test:
-    108. ✓ [32mNew property keywords work automatically as variable names[0m
-    109. ✓ [32mHigh precedence variables work with standard identifiers[0m
+    125. ✓ [32mNew property keywords work automatically as variable names[0m
+    126. ✓ [32mHigh precedence variables work with standard identifiers[0m
   controladdin_obsolete_properties:
-    110. ✓ [32mControlAddIn with all obsolete properties[0m[31m -- Warning: Slow parse rate (5370.045 bytes/ms)[0m
-    111. ✓ [32mControlAddIn with ObsoleteState Removed[0m
-    112. ✓ [32mControlAddIn with only ObsoleteState property[0m
-    113. ✓ [32mControlAddIn with case variations of obsolete state[0m
-    114. ✓ [32mControlAddIn mixing obsolete and normal properties[0m
+    127. ✓ [32mControlAddIn with all obsolete properties[0m[31m -- Warning: Slow parse rate (7148.056 bytes/ms)[0m
+    128. ✓ [32mControlAddIn with ObsoleteState Removed[0m
+    129. ✓ [32mControlAddIn with only ObsoleteState property[0m
+    130. ✓ [32mControlAddIn with case variations of obsolete state[0m
+    131. ✓ [32mControlAddIn mixing obsolete and normal properties[0m
   controladdin_test:
-    115. ✓ [32mControl Add-in Declaration[0m
+    132. ✓ [32mControl Add-in Declaration[0m
+  cuegroup_layout_property_test:
+    133. ✓ [32mCueGroupLayout property test[0m
+    134. ✓ [32mCueGroupLayout variations[0m
   data_caption_expression:
-    116. ✓ [32mDataCaptionExpression property with expressions[0m
+    135. ✓ [32mDataCaptionExpression property with expressions[0m
+  data_classification_field_test:
+    136. ✓ [32mDataClassification property in field declarations[0m
+    137. ✓ [32mDataClassification with all possible values[0m
+    138. ✓ [32mDataClassification with case variations[0m
+  database_const_filter_test:
+    139. ✓ [32mDatabase reference in const filter expressions[0m
+    140. ✓ [32mDatabase reference with unquoted table name[0m
+    141. ✓ [32mDatabase reference in various contexts[0m
   database_references:
-    117. ✓ [32mDATABASE References Test[0m
+    142. ✓ [32mDATABASE References Test[0m
   dataitem_link_field_function_test:
-    118. ✓ [32mDataItemLink property with FIELD function syntax[0m
-    119. ✓ [32mDataItemLink property with traditional dot syntax[0m
-    120. ✓ [32mDataItemLink property with multiple fields and mixed syntax[0m
-    121. ✓ [32mDataItemLink property with case variations[0m
+    143. ✓ [32mDataItemLink property with FIELD function syntax[0m
+    144. ✓ [32mDataItemLink property with traditional dot syntax[0m
+    145. ✓ [32mDataItemLink property with multiple fields and mixed syntax[0m
+    146. ✓ [32mDataItemLink property with case variations[0m
   dataitem_link_reference_test:
-    122. ✓ [32mReport dataitem with DataItemLinkReference property[0m
-    123. ✓ [32mDataItemLinkReference with quoted identifier[0m
-    124. ✓ [32mDataItemLinkReference case variations[0m
-    125. ✓ [32mDataItemLinkReference with multiple properties[0m
+    147. ✓ [32mReport dataitem with DataItemLinkReference property[0m
+    148. ✓ [32mDataItemLinkReference with quoted identifier[0m
+    149. ✓ [32mDataItemLinkReference case variations[0m
+    150. ✓ [32mDataItemLinkReference with multiple properties[0m
+  dataitem_table_filter_pipe_test:
+    151. ✓ [32mDataItemTableFilter with pipe-separated values[0m
+  dataitemlink_multiple_test:
+    152. ✓ [32mDataItemLink with multiple field mappings[0m
+    153. ✓ [32mDataItemLink variations[0m
+    154. ✓ [32mDataItemLink with FIELD syntax[0m
+  date_formula_property_test:
+    155. ✓ [32mField with DateFormula property in report[0m
+    156. ✓ [32mField with DateFormula mixed case[0m
+  default_implementation_multiple_test:
+    157. ✓ [32mDefaultImplementation with multiple interfaces[0m
+    158. ✓ [32mDefaultImplementation mixed quoted and unquoted[0m
+    159. ✓ [32mDefaultImplementation case variations with multiple values[0m
   default_implementation_property_test:
-    126. ✓ [32mDefaultImplementation property in enum with interface[0m
-    127. ✓ [32mDefaultImplementation property with case variations[0m
-    128. ✓ [32mDefaultImplementation property with unquoted identifiers[0m
-    129. ✓ [32mEnum with multiple properties including DefaultImplementation[0m
+    160. ✓ [32mDefaultImplementation property in enum with interface[0m
+    161. ✓ [32mDefaultImplementation property with case variations[0m
+    162. ✓ [32mDefaultImplementation property with unquoted identifiers[0m
+    163. ✓ [32mEnum with multiple properties including DefaultImplementation[0m
+  dotnet_is_control_addin_test:
+    164. ✓ [32mDotNet type with IsControlAddIn property[0m
   dotnet_types_with_namespaces:
-    130. ✓ [32mDotNet types with namespaces[0m
-    131. ✓ [32mDotNet types in field declarations[0m
-    132. ✓ [32mMultiple DotNet namespace levels[0m
+    165. ✓ [32mDotNet types with namespaces[0m
+    166. ✓ [32mDotNet types in field declarations[0m
+    167. ✓ [32mMultiple DotNet namespace levels[0m
   entitlement_roletype_test:
-    133. ✓ [32mEntitlement with RoleType property - Delegated[0m
-    134. ✓ [32mEntitlement with RoleType property - case variations[0m
-    135. ✓ [32mComplete entitlement with all properties[0m
-    136. ✓ [32mEntitlement with custom RoleType identifier[0m
+    168. ✓ [32mEntitlement with RoleType property - Delegated[0m
+    169. ✓ [32mEntitlement with RoleType property - case variations[0m
+    170. ✓ [32mComplete entitlement with all properties[0m
+    171. ✓ [32mEntitlement with custom RoleType identifier[0m
   entitlement_test:
-    137. ✓ [32mBasic entitlement with ApplicationScope[0m
-    138. ✓ [32mEntitlement with PerUserServicePlan[0m
-    139. ✓ [32mEntitlement with namespace[0m
-    140. ✓ [32mEntitlement with multiple ObjectEntitlements[0m
-    141. ✓ [32mEntitlement with case variations[0m
-    142. ✓ [32mEntitlement with universal properties[0m
+    172. ✓ [32mBasic entitlement with ApplicationScope[0m
+    173. ✓ [32mEntitlement with PerUserServicePlan[0m
+    174. ✓ [32mEntitlement with namespace[0m
+    175. ✓ [32mEntitlement with multiple ObjectEntitlements[0m
+    176. ✓ [32mEntitlement with case variations[0m
+    177. ✓ [32mEntitlement with universal properties[0m
   enum_assignment_compatibility:
-    143. ✓ [32mEnum with AssignmentCompatibility property[0m
-    144. ✓ [32mEnum with AssignmentCompatibility false[0m
-    145. ✓ [32mEnum with both AssignmentCompatibility and Extensible properties[0m
-    146. ✓ [32mEnum with only AssignmentCompatibility property[0m
-    147. ✓ [32mEnum with uppercase TRUE/FALSE values[0m
+    178. ✓ [32mEnum with AssignmentCompatibility property[0m
+    179. ✓ [32mEnum with AssignmentCompatibility false[0m
+    180. ✓ [32mEnum with both AssignmentCompatibility and Extensible properties[0m
+    181. ✓ [32mEnum with only AssignmentCompatibility property[0m
+    182. ✓ [32mEnum with uppercase TRUE/FALSE values[0m
   enum_field:
-    148. ✓ [32mEnum field in table[0m
+    183. ✓ [32mEnum field in table[0m
   enum_interface_implementations:
-    149. ✓ [32mEnum with interface implementations - basic case[0m
-    150. ✓ [32mEnum with quoted identifier implementations[0m
-    151. ✓ [32mEnum with mixed quoted and unquoted implementations[0m
-    152. ✓ [32mEnum with multiple properties including implementation[0m
+    184. ✓ [32mEnum with interface implementations - basic case[0m
+    185. ✓ [32mEnum with quoted identifier implementations[0m
+    186. ✓ [32mEnum with mixed quoted and unquoted implementations[0m
+    187. ✓ [32mEnum with multiple properties including implementation[0m
   enum_keyword_qualification:
-    153. ✓ [32mEnum Keyword Qualification[0m
+    188. ✓ [32mEnum Keyword Qualification[0m
   enum_type_reference_methods_test:
-    154. ✓ [32mEnum type reference with Ordinals method call[0m
-    155. ✓ [32mEnum type reference with Names method call[0m
-    156. ✓ [32mMultiple enum type references with different methods[0m
-    157. ✓ [32mEnum type reference with case variations[0m
-    158. ✓ [32mEnum type reference with unquoted identifier[0m
+    189. ✓ [32mEnum type reference with Ordinals method call[0m
+    190. ✓ [32mEnum type reference with Names method call[0m
+    191. ✓ [32mMultiple enum type references with different methods[0m
+    192. ✓ [32mEnum type reference with case variations[0m
+    193. ✓ [32mEnum type reference with unquoted identifier[0m
   enum_variables:
-    159. ✓ [32mEnum Variable Declaration[0m
-    160. ✓ [32mEnum Variable Assignment[0m
-    161. ✓ [32mEnum Comparison in If Statement[0m
-    162. ✓ [32mEnum in Case Statement[0m
-    163. ✓ [32mQuoted Enum Values[0m
-    164. ✓ [32mReturn Enum Value[0m
-    165. ✓ [32mParameter of Enum Type[0m
+    194. ✓ [32mEnum Variable Declaration[0m
+    195. ✓ [32mEnum Variable Assignment[0m
+    196. ✓ [32mEnum Comparison in If Statement[0m
+    197. ✓ [32mEnum in Case Statement[0m
+    198. ✓ [32mQuoted Enum Values[0m
+    199. ✓ [32mReturn Enum Value[0m
+    200. ✓ [32mParameter of Enum Type[0m
+  enumextension_test:
+    201. ✓ [32mBasic enum extension[0m
+    202. ✓ [32mEnum extension with implementation[0m
+    203. ✓ [32mEnum extension with multiple properties[0m
   event_subscriber_instance_property_test:
-    166. ✓ [32mEventSubscriberInstance property with StaticAutomatic value[0m
-    167. ✓ [32mEventSubscriberInstance property with Static value[0m
-    168. ✓ [32mEventSubscriberInstance property with Manual value[0m
+    204. ✓ [32mEventSubscriberInstance property with StaticAutomatic value[0m
+    205. ✓ [32mEventSubscriberInstance property with Static value[0m
+    206. ✓ [32mEventSubscriberInstance property with Manual value[0m
   exit_statements:
-    169. ✓ [32mBasic Exit Statement Patterns[0m
+    207. ✓ [32mBasic Exit Statement Patterns[0m
   extended_datatype_barcode_test:
-    170. ✓ [32mExtendedDatatype property with Barcode value test[0m
+    208. ✓ [32mExtendedDatatype property with Barcode value test[0m
   external_type_simple_test:
-    171. ✓ [32mExternalType property simple test[0m
+    209. ✓ [32mExternalType property simple test[0m
   field_image_property_with_trigger:
-    172. ✓ [32mField with Image property and trigger in cuegroup[0m
+    210. ✓ [32mField with Image property and trigger in cuegroup[0m
   field_reference_comprehensive_test:
-    173. ✓ [32mComprehensive field reference expressions test[0m
+    211. ✓ [32mComprehensive field reference expressions test[0m
   field_trigger_parameters_return_type_test:
-    174. ✓ [32mField trigger with parameters and return type - OnLookup with semicolon[0m
-    175. ✓ [32mField trigger with parameters and return type - OnLookup without semicolon[0m
-    176. ✓ [32mField trigger with multiple parameters and return type[0m
-    177. ✓ [32mField trigger without parameters but with return type[0m
-    178. ✓ [32mField trigger compatibility with basic triggers[0m
+    212. ✓ [32mField trigger with parameters and return type - OnLookup with semicolon[0m
+    213. ✓ [32mField trigger with parameters and return type - OnLookup without semicolon[0m
+    214. ✓ [32mField trigger with multiple parameters and return type[0m
+    215. ✓ [32mField trigger without parameters but with return type[0m
+    216. ✓ [32mField trigger compatibility with basic triggers[0m
+  fieldgroup_modifications_test:
+    217. ✓ [32mFieldgroup addlast modification[0m
+    218. ✓ [32mFieldgroup addfirst modification[0m
+    219. ✓ [32mMultiple fieldgroup modifications[0m
+  fieldgroups_test:
+    220. ✓ [32mBasic fieldgroup declaration[0m
+    221. ✓ [32mFieldgroup with single field[0m
+    222. ✓ [32mMultiple fieldgroups with mixed identifiers[0m
   file_level_preprocessor_test:
-    179. ✓ [32mFile-level preprocessor conditional[0m
-    180. ✓ [32mFile-level preprocessor with else branch[0m
-    181. ✓ [32mFile-level preprocessor with namespace[0m
+    223. ✓ [32mFile-level preprocessor conditional[0m
+    224. ✓ [32mFile-level preprocessor with else branch[0m
+    225. ✓ [32mFile-level preprocessor with namespace[0m
   fileuploadaction_test:
-    182. ✓ [32mBasic fileuploadaction declaration[0m
-    183. ✓ [32mFileUploadAction with all properties[0m
-    184. ✓ [32mFileUploadAction case variations[0m
-    185. ✓ [32mFileUploadAction with complex trigger[0m
-    186. ✓ [32mFileUploadAction with obsolete properties[0m
+    226. ✓ [32mBasic fileuploadaction declaration[0m
+    227. ✓ [32mFileUploadAction with all properties[0m
+    228. ✓ [32mFileUploadAction case variations[0m
+    229. ✓ [32mFileUploadAction with complex trigger[0m
+    230. ✓ [32mFileUploadAction with obsolete properties[0m
+  filter_and_expression_test:
+    231. ✓ [32mFilter with AND expression - two not equal conditions[0m
+    232. ✓ [32mFilter with AND expression - three conditions[0m
+    233. ✓ [32mFilter with AND expression - mixed operators[0m
+    234. ✓ [32mFilter with AND expression - with identifiers[0m
+    235. ✓ [32mFilter with AND expression - range and comparison[0m
   filter_comparison_operators:
-    187. ✓ [32mFilter with less than operator[0m
-    188. ✓ [32mFilter with greater than operator[0m
-    189. ✓ [32mFilter with less than or equal operator[0m
-    190. ✓ [32mFilter with greater than or equal operator[0m
+    236. ✓ [32mFilter with less than operator[0m
+    237. ✓ [32mFilter with greater than operator[0m
+    238. ✓ [32mFilter with less than or equal operator[0m
+    239. ✓ [32mFilter with greater than or equal operator[0m
   filter_equal_expression_test:
-    191. ✓ [32mFILTER expressions with equals prefix for field filters[0m
+    240. ✓ [32mFILTER expressions with equals prefix for field filters[0m
   filter_field_reference_test:
-    192. ✓ [32mFILTER function in field references test[0m
+    241. ✓ [32mFILTER function in field references test[0m
   filter_pipe_syntax_test:
-    193. ✓ [32mFILTER pipe syntax in SubPageLink[0m
-    194. ✓ [32mFILTER with multiple OR conditions[0m
-    195. ✓ [32mFILTER with comparison operators[0m
+    242. ✓ [32mFILTER pipe syntax in SubPageLink[0m
+    243. ✓ [32mFILTER with multiple OR conditions[0m
+    244. ✓ [32mFILTER with comparison operators[0m
   filter_properties_baseline_test:
-    196. ✓ [32mBASELINE: ShowFilter property (boolean pattern)[0m
-    197. ✓ [32mBASELINE: DataItemTableView property (source_table_view_value pattern)[0m
-    198. ✓ [32mBASELINE: SourceTableView property (source_table_view_value pattern)[0m
-    199. ✓ [32mBASELINE: filters_property simple usage (mixed pattern)[0m
-    200. ✓ [32mBASELINE: FILTER function with range (detailed pattern)[0m
-    201. ✓ [32mBASELINE: FILTER function with identifier (detailed pattern)[0m
+    245. ✓ [32mBASELINE: ShowFilter property (boolean pattern)[0m
+    246. ✓ [32mBASELINE: DataItemTableView property (source_table_view_value pattern)[0m
+    247. ✓ [32mBASELINE: SourceTableView property (source_table_view_value pattern)[0m
+    248. ✓ [32mBASELINE: filters_property simple usage (mixed pattern)[0m
+    249. ✓ [32mBASELINE: FILTER function with range (detailed pattern)[0m
+    250. ✓ [32mBASELINE: FILTER function with identifier (detailed pattern)[0m
   filter_range_expression_test:
-    202. ✓ [32mFilter range expression with open-ended range[0m
-    203. ✓ [32mFilter range expression with both start and end values[0m
-    204. ✓ [32mFilter range expression with string values[0m
-    205. ✓ [32mOpen-ended range with string start value[0m
+    251. ✓ [32mFilter range expression with open-ended range[0m
+    252. ✓ [32mFilter range expression with both start and end values[0m
+    253. ✓ [32mFilter range expression with string values[0m
+    254. ✓ [32mOpen-ended range with string start value[0m
   for_downto_statement_test:
-    206. ✓ [32mFOR statement with DOWNTO keyword[0m
+    255. ✓ [32mFOR statement with DOWNTO keyword[0m
   freeze_column_property_test:
-    207. ✓ [32mFreezeColumn property in repeater sections[0m
+    256. ✓ [32mFreezeColumn property in repeater sections[0m
   grid_layout_property_test:
-    208. ✓ [32mGridLayout property in report requestpage grid sections[0m
-    209. ✓ [32mGridLayout property with Rows value[0m
-    210. ✓ [32mGridLayout property combined with other grid properties[0m
-    211. ✓ [32mGridLayout property in page grid sections[0m
-    212. ✓ [32mGridLayout property case variations[0m
+    257. ✓ [32mGridLayout property in report requestpage grid sections[0m
+    258. ✓ [32mGridLayout property with Rows value[0m
+    259. ✓ [32mGridLayout property combined with other grid properties[0m
+    260. ✓ [32mGridLayout property in page grid sections[0m
+    261. ✓ [32mGridLayout property case variations[0m
   identifiers:
-    213. ✓ [32mBasic identifiers[0m
-    214. ✓ [32mField identifiers[0m
+    262. ✓ [32mBasic identifiers[0m
+    263. ✓ [32mField identifiers[0m
   include_caption_property_variations_test:
-    215. ✓ [32mIncludeCaption property variations in report columns[0m
+    264. ✓ [32mIncludeCaption property variations in report columns[0m
   indentation_column_property_test:
-    216. ✓ [32mIndentationColumn property in repeater sections[0m
-    217. ✓ [32mIndentationColumn property with different values[0m
+    265. ✓ [32mIndentationColumn property in repeater sections[0m
+    266. ✓ [32mIndentationColumn property with different values[0m
   indentation_controls_property_test:
-    218. ✓ [32mIndentationControls property with identifier value[0m
-    219. ✓ [32mIndentationControls property with quoted identifier value[0m
-    220. ✓ [32mIndentationControls in G/L Account hierarchy list context[0m
-    221. ✓ [32mIndentationControls with mixed properties in complex repeater[0m
+    267. ✓ [32mIndentationControls property with identifier value[0m
+    268. ✓ [32mIndentationControls property with quoted identifier value[0m
+    269. ✓ [32mIndentationControls in G/L Account hierarchy list context[0m
+    270. ✓ [32mIndentationControls with mixed properties in complex repeater[0m
   instructional_text_property_test:
-    222. ✓ [32mInstructionalText property in page group[0m
-    223. ✓ [32mInstructionalTextML property in page group[0m
-    224. ✓ [32mInstructionalText in wizard page pattern[0m
+    271. ✓ [32mInstructionalText property in page group[0m
+    272. ✓ [32mInstructionalTextML property in page group[0m
+    273. ✓ [32mInstructionalText in wizard page pattern[0m
   interface_is_as_operators_simple:
-    225. ✓ [32mSimple 'is' operator test[0m
-    226. ✓ [32mSimple 'as' operator test[0m
-    227. ✓ [32mMixed operators test[0m
+    274. ✓ [32mSimple 'is' operator test[0m
+    275. ✓ [32mSimple 'as' operator test[0m
+    276. ✓ [32mMixed operators test[0m
+  interface_named_return_test:
+    277. ✓ [32mInterface with named return values[0m
+    278. ✓ [32mInterface with simple return types (existing support)[0m
+    279. ✓ [32mInterface procedures without return types[0m
+  interface_properties_test:
+    280. ✓ [32mInterface with obsolete properties[0m
+    281. ✓ [32mInterface with access and inherent permissions[0m
+    282. ✓ [32mInterface with caption and description[0m
   interface_test:
-    228. ✓ [32mInterface Declaration[0m
+    283. ✓ [32mInterface Declaration[0m
   key_properties:
-    229. ✓ [32mKey Properties Test[0m
+    284. ✓ [32mKey Properties Test[0m
+  key_sql_properties_test:
+    285. ✓ [32mKey with MaintainSQLIndex property[0m
+    286. ✓ [32mKey properties case variations[0m
+    287. ✓ [32mComplete key with all SQL-related properties[0m
+  label_declaration_test:
+    288. ✓ [32mReport with label declarations[0m
+    289. ✓ [32mLabels with mixed case properties[0m
   label_multiline_property:
-    230. ✓ [32mLabel MultiLine property support[0m
+    290. ✓ [32mLabel MultiLine property support[0m
   label_variables:
-    231. ✓ [32mLabel variable declarations[0m
-    232. ✓ [32mLabel variables with attributes[0m
-    233. ✓ [32mProperty keywords as variable names[0m
+    291. ✓ [32mLabel variable declarations[0m
+    292. ✓ [32mLabel variables with attributes[0m
+    293. ✓ [32mProperty keywords as variable names[0m
   label_variables_with_values_test:
-    234. ✓ [32mLabel variable declarations with string literal values[0m
+    294. ✓ [32mLabel variable declarations with string literal values[0m
   layout_movement_commands_test:
-    235. ✓ [32mLayout movement commands in page extensions - movelast[0m
-    236. ✓ [32mLayout movement commands - movefirst[0m
-    237. ✓ [32mLayout movement commands - moveafter[0m
-    238. ✓ [32mLayout movement commands - movebefore with quoted identifiers[0m
+    295. ✓ [32mLayout movement commands in page extensions - movelast[0m
+    296. ✓ [32mLayout movement commands - movefirst[0m
+    297. ✓ [32mLayout movement commands - moveafter[0m
+    298. ✓ [32mLayout movement commands - movebefore with quoted identifiers[0m
   lookup_formula_test:
-    239. ✓ [32mLookup formula with table.field syntax[0m
+    299. ✓ [32mLookup formula with table.field syntax[0m
   max_iteration_property_test:
-    240. ✓ [32mMaxIteration property in report dataitem[0m
-    241. ✓ [32mMaxIteration property with different case variations[0m
-    242. ✓ [32mMaxIteration property with large integer values[0m
+    300. ✓ [32mMaxIteration property in report dataitem[0m
+    301. ✓ [32mMaxIteration property with different case variations[0m
+    302. ✓ [32mMaxIteration property with large integer values[0m
   method_calls:
-    243. ✓ [32mGeneric Method Call[0m
-    244. ✓ [32mRecord Method Calls[0m
-    245. ✓ [32mBoolean Method Conditions[0m
-    246. ✓ [32mMixed Method Calls With Parameters[0m
+    303. ✓ [32mGeneric Method Call[0m
+    304. ✓ [32mRecord Method Calls[0m
+    305. ✓ [32mBoolean Method Conditions[0m
+    306. ✓ [32mMixed Method Calls With Parameters[0m
   mixed_method_calls:
-    247. ✓ [32mMixed Method Types[0m
-    248. ✓ [32mComplex Parameter Calls[0m
+    307. ✓ [32mMixed Method Types[0m
+    308. ✓ [32mComplex Parameter Calls[0m
   modify_layout_modification_test:
-    249. ✓ [32mPage extension with modify layout modifications[0m
+    309. ✓ [32mPage extension with modify layout modifications[0m
+  moved_from_moved_to_properties_test:
+    310. ✓ [32mMovedFrom property in field declaration[0m
+    311. ✓ [32mMovedTo property in field declaration[0m
+    312. ✓ [32mBoth MovedFrom and MovedTo properties together[0m
   multidimensional_array_access:
-    250. ✓ [32mMulti-dimensional array assignment[0m
-    251. ✓ [32mMulti-dimensional array access in expressions[0m
-    252. ✓ [32mThree-dimensional array access[0m
-    253. ✓ [32mArray access with variable indices[0m
+    313. ✓ [32mMulti-dimensional array assignment[0m
+    314. ✓ [32mMulti-dimensional array access in expressions[0m
+    315. ✓ [32mThree-dimensional array access[0m
+    316. ✓ [32mArray access with variable indices[0m
   multidimensional_arrays:
-    254. ✓ [32mMulti-dimensional arrays in procedure parameters[0m
-    255. ✓ [32mSingle-dimensional array for comparison[0m
-    256. ✓ [32mThree-dimensional array[0m
+    317. ✓ [32mMulti-dimensional arrays in procedure parameters[0m
+    318. ✓ [32mSingle-dimensional array for comparison[0m
+    319. ✓ [32mThree-dimensional array[0m
+  multiline_comment_test:
+    320. ✓ [32mMultiline comment in codeunit[0m
+    321. ✓ [32mMultiline comment with special characters[0m
+    322. ✓ [32mMultiline comment between statements[0m
+  multiline_page_link_properties_test:
+    323. ✓ [32mSubPageLink with multiline field mappings with comma[0m
+    324. ✓ [32mRunPageLink with multiline field mappings with comma[0m
+    325. ✓ [32mMixed multiline and comma-separated syntax[0m
   multiple_interface_implementations:
-    257. ✓ [32mCodeunit with multiple interface implementations[0m
-    258. ✓ [32mCodeunit with single interface implementation[0m
-    259. ✓ [32mCodeunit with quoted interface names[0m
-    260. ✓ [32mCodeunit with many interfaces (5 interfaces)[0m
-    261. ✓ [32mCodeunit with interfaces and procedures[0m
+    326. ✓ [32mCodeunit with multiple interface implementations[0m
+    327. ✓ [32mCodeunit with single interface implementation[0m
+    328. ✓ [32mCodeunit with quoted interface names[0m
+    329. ✓ [32mCodeunit with many interfaces (5 interfaces)[0m
+    330. ✓ [32mCodeunit with interfaces and procedures[0m
   namespace_case_insensitive_test:
-    262. ✓ [32mNamespace declaration with case variations[0m
+    331. ✓ [32mNamespace declaration with case variations[0m[31m -- Warning: Slow parse rate (2843.805 bytes/ms)[0m
   namespace_declarations:
-    263. ✓ [32mSimple namespace with single identifier[0m
-    264. ✓ [32mNamespace with dotted path and page extension[0m
-    265. ✓ [32mNamespace with table declaration[0m
-    266. ✓ [32mLong namespace path with multiple dots[0m
-    267. ✓ [32mFile without namespace (backwards compatibility)[0m
-    268. ✓ [32mNamespace with permissionset[0m
+    332. ✓ [32mSimple namespace with single identifier[0m
+    333. ✓ [32mNamespace with dotted path and page extension[0m
+    334. ✓ [32mNamespace with table declaration[0m
+    335. ✓ [32mLong namespace path with multiple dots[0m
+    336. ✓ [32mFile without namespace (backwards compatibility)[0m
+    337. ✓ [32mNamespace with permissionset[0m
   namespace_qualified_enum_types:
-    269. ✓ [32mNamespace-qualified enum type in field declaration[0m
-    270. ✓ [32mMultiple namespace-qualified enum fields[0m
-    271. ✓ [32mNamespace-qualified enum with unquoted identifier[0m
-    272. ✓ [32mNamespace-qualified enum in variable declaration[0m
-    273. ✓ [32mNamespace-qualified enum in procedure parameter[0m
+    338. ✓ [32mNamespace-qualified enum type in field declaration[0m
+    339. ✓ [32mMultiple namespace-qualified enum fields[0m
+    340. ✓ [32mNamespace-qualified enum with unquoted identifier[0m
+    341. ✓ [32mNamespace-qualified enum in variable declaration[0m
+    342. ✓ [32mNamespace-qualified enum in procedure parameter[0m
   namespace_qualified_records_test:
-    274. ✓ [32mNamespace qualified record types in variable declarations[0m
+    343. ✓ [32mNamespace qualified record types in variable declarations[0m
+  namespaces_property_test:
+    344. ✓ [32mXMLPort with namespaces property[0m
+    345. ✓ [32mXMLPort with single namespace mapping[0m
+  negated_exist_formula_test:
+    346. ✓ [32mNegated exist formula in CalcFormula[0m
+    347. ✓ [32mSimple negated exist formula[0m
   obsolete_state_moved_test:
-    275. ✓ [32mObsoleteState property with Moved value test[0m
+    348. ✓ [32mObsoleteState property with Moved value test[0m
   onaftergetcurr_trigger:
-    276. ✓ [32mOnAfterGetCurrRecord Trigger[0m
+    349. ✓ [32mOnAfterGetCurrRecord Trigger[0m
+  onrun_trigger_semicolon_test:
+    350. ✓ [32mOnRun trigger with semicolon[0m
+    351. ✓ [32mOnRun trigger without semicolon (backward compatibility)[0m
+    352. ✓ [32mOnRun trigger with var section and semicolon[0m
   optimize_for_text_search_field_property_test:
-    277. ✓ [32mOptimizeForTextSearch property in table field declarations[0m
+    353. ✓ [32mOptimizeForTextSearch property in table field declarations[0m
   option_caption_comment_parameter_test:
-    278. ✓ [32mOptionCaption property with Comment parameter support[0m
+    354. ✓ [32mOptionCaption property with Comment parameter support[0m
   option_empty_members_test:
-    279. ✓ [32mOption type with empty members (consecutive commas)[0m
-    280. ✓ [32mOption type with all empty members[0m
-    281. ✓ [32mOption type with mixed empty and non-empty members[0m
-    282. ✓ [32mOptionMembers property with consecutive commas[0m
+    355. ✓ [32mOption type with empty members (consecutive commas)[0m[31m -- Warning: Slow parse rate (7348.785 bytes/ms)[0m
+    356. ✓ [32mOption type with all empty members[0m
+    357. ✓ [32mOption type with mixed empty and non-empty members[0m
+    358. ✓ [32mOptionMembers property with consecutive commas[0m
   option_enum_with_backslashes:
-    283. ✓ [32mOption enum with backslashes in quoted identifiers[0m
+    359. ✓ [32mOption enum with backslashes in quoted identifiers[0m
+  option_members_mixed_test:
+    360. ✓ [32mOptionMembers with string literal space as first member[0m
+    361. ✓ [32mOptionMembers with all string literals[0m
+    362. ✓ [32mOptionMembers with mixed string literals and identifiers[0m
+    363. ✓ [32mOptionMembers with quoted identifiers[0m
+    364. ✓ [32mOptionMembers single string literal edge case[0m
+  option_ordinal_values_test:
+    365. ✓ [32mOption field with OptionOrdinalValues property[0m
+    366. ✓ [32mOption field with complex OptionOrdinalValues[0m
   option_type_inline_members:
-    284. ✓ [32mOption type with inline members in variable declarations[0m
-    285. ✓ [32mOption type with inline members in procedure parameters[0m
+    367. ✓ [32mOption type with inline members in variable declarations[0m
+    368. ✓ [32mOption type with inline members in procedure parameters[0m
   option_variable_in_page_var_section_test:
-    286. ✓ [32mOption type variable in page var section followed by other variables[0m
+    369. ✓ [32mOption type variable in page var section followed by other variables[0m
+  order_by_multiple_fields_test:
+    370. ✓ [32mOrderBy property with multiple fields in single item[0m
+    371. ✓ [32mOrderBy property with multiple fields and mixed directions[0m
+    372. ✓ [32mOrderBy property with quoted field names[0m
+  order_by_property_test:
+    373. ✓ [32mQuery with OrderBy property[0m
+    374. ✓ [32mQuery with single OrderBy item[0m
+    375. ✓ [32mQuery with mixed case OrderBy[0m
   page_about_properties_test:
-    287. ✓ [32mPage with AboutTitle and AboutText properties[0m
-    288. ✓ [32mPage with AboutTitle, AboutText, and other properties[0m
-    289. ✓ [32mPage with AboutTitle containing apostrophes[0m
-    290. ✓ [32mPage with long AboutText[0m
+    376. ✓ [32mPage with AboutTitle and AboutText properties[0m
+    377. ✓ [32mPage with AboutTitle, AboutText, and other properties[0m
+    378. ✓ [32mPage with AboutTitle containing apostrophes[0m
+    379. ✓ [32mPage with long AboutText[0m
   page_action_areas_test:
-    291. ✓ [32mPage action area embedding[0m
-    292. ✓ [32mPage action area sections with groups[0m
-    293. ✓ [32mAction with complex RunPageView WHERE clause[0m
-    294. ✓ [32mAction obsolete properties[0m
+    380. ✓ [32mPage action area embedding[0m
+    381. ✓ [32mPage action area sections with groups[0m
+    382. ✓ [32mAction with complex RunPageView WHERE clause[0m
+    383. ✓ [32mAction obsolete properties[0m
   page_action_groups:
-    295. ✓ [32mPage with action groups and variable properties[0m
+    384. ✓ [32mPage with action groups and variable properties[0m
   page_complex_properties_test:
-    296. ✓ [32mPage with complex properties test[0m
+    385. ✓ [32mPage with complex properties test[0m
   page_extension_action_modify_triggers_test:
-    297. ✓ [32mPage extension with action modify containing triggers[0m
-    298. ✓ [32mPage extension action modify with mixed properties and triggers[0m
+    386. ✓ [32mPage extension with action modify containing triggers[0m
+    387. ✓ [32mPage extension action modify with mixed properties and triggers[0m
   page_field_min_max_value_properties:
-    299. ✓ [32mPage field with MinValue property using integer[0m
-    300. ✓ [32mPage field with MaxValue property using expression[0m
-    301. ✓ [32mPage field with MinValue using decimal and variable expression[0m
-    302. ✓ [32mPage field with control name and MinValue property[0m
-    303. ✓ [32mPage field with complex expression in MaxValue[0m
+    388. ✓ [32mPage field with MinValue property using integer[0m
+    389. ✓ [32mPage field with MaxValue property using expression[0m
+    390. ✓ [32mPage field with MinValue using decimal and variable expression[0m
+    391. ✓ [32mPage field with control name and MinValue property[0m
+    392. ✓ [32mPage field with complex expression in MaxValue[0m
   page_field_properties_batch1:
-    304. ✓ [32mFirst batch of Page Field Properties[0m
+    393. ✓ [32mFirst batch of Page Field Properties[0m
   page_field_properties_new_batch:
-    305. ✓ [32mNewly Implemented Page Field Properties[0m
+    394. ✓ [32mNewly Implemented Page Field Properties[0m
   page_field_properties_phase3:
-    306. ✓ [32mPage Field Properties Phase 3 - High Priority[0m
+    395. ✓ [32mPage Field Properties Phase 3 - High Priority[0m
   page_field_triggers_test:
-    307. ✓ [32mPage field trigger with OnDrillDown and semicolon[0m
-    308. ✓ [32mPage field trigger with OnDrillDown without semicolon[0m
-    309. ✓ [32mPage field triggers with multiple trigger types[0m
+    396. ✓ [32mPage field trigger with OnDrillDown and semicolon[0m
+    397. ✓ [32mPage field trigger with OnDrillDown without semicolon[0m
+    398. ✓ [32mPage field triggers with multiple trigger types[0m
   page_level_variable_declarations_test:
-    310. ✓ [32mPage-level variable declarations with keyword-named variables[0m
+    399. ✓ [32mPage-level variable declarations with keyword-named variables[0m
   page_properties:
-    311. ✓ [32mPage Properties[0m
+    400. ✓ [32mPage Properties[0m
   page_properties_phase1:
-    312. ✓ [32mPage Properties Phase 1[0m
+    401. ✓ [32mPage Properties Phase 1[0m
   page_properties_phase2a:
-    313. ✓ [32mPage Properties Phase 2A - Boolean Properties[0m
+    402. ✓ [32mPage Properties Phase 2A - Boolean Properties[0m
   page_properties_phase2b:
-    314. ✓ [32mPage Properties Phase 2B - Complex Properties[0m
+    403. ✓ [32mPage Properties Phase 2B - Complex Properties[0m
   page_properties_phase4a:
-    315. ✓ [32mPage Properties Phase 4A - High + Medium Priority[0m
+    404. ✓ [32mPage Properties Phase 4A - High + Medium Priority[0m
   page_properties_phase4b_batch1:
-    316. ✓ [32mPage Properties Phase 4B Batch 1 - AdditionalSearchTermsML[0m
+    405. ✓ [32mPage Properties Phase 4B Batch 1 - AdditionalSearchTermsML[0m
   page_properties_phase4b_batch2:
-    317. ✓ [32mPage Properties Phase 4B Batch 2 - Web Service Properties[0m
+    406. ✓ [32mPage Properties Phase 4B Batch 2 - Web Service Properties[0m
   page_properties_phase4c:
-    318. ✓ [32mPage Properties Phase 4C - Remaining Low Priority Properties[0m
+    407. ✓ [32mPage Properties Phase 4C - Remaining Low Priority Properties[0m
   page_region_directives_test:
-    319. ✓ [32mPage with region directives for code organization[0m
+    408. ✓ [32mPage with region directives for code organization[0m
   page_trigger_with_return_type:
-    320. ✓ [32mPage trigger with return type[0m
+    409. ✓ [32mPage trigger with return type[0m
   page_triggers:
-    321. ✓ [32mPage-level triggers[0m
+    410. ✓ [32mPage-level triggers[0m
   page_type_variable:
-    322. ✓ [32mPage Type Variable Test[0m
+    411. ✓ [32mPage Type Variable Test[0m
   page_views_test:
-    323. ✓ [32mList page with simple view using Filters property[0m
-    324. ✓ [32mList page with multiple views and different properties[0m
-    325. ✓ [32mPage extension with additional view[0m
-    326. ✓ [32mViews with CaptionML property[0m
-    327. ✓ [32mEmpty views section[0m
+    412. ✓ [32mList page with simple view using Filters property[0m
+    413. ✓ [32mList page with multiple views and different properties[0m
+    414. ✓ [32mPage extension with additional view[0m
+    415. ✓ [32mViews with CaptionML property[0m
+    416. ✓ [32mEmpty views section[0m
   pagecustomization_test:
-    328. ✓ [32mPage customization with addfirst views[0m
-    329. ✓ [32mPage customization with addlast views[0m
-    330. ✓ [32mPage customization with addafter views[0m
-    331. ✓ [32mPage customization with multiple views[0m
+    417. ✓ [32mPage customization with addfirst views[0m
+    418. ✓ [32mPage customization with addlast views[0m
+    419. ✓ [32mPage customization with addafter views[0m
+    420. ✓ [32mPage customization with multiple views[0m
   pageextension_attributed_procedures_test:
-    332. ✓ [32mPage extension with IntegrationEvent attributed procedure[0m
-    333. ✓ [32mPage extension with EventSubscriber attributed procedure[0m
+    421. ✓ [32mPage extension with IntegrationEvent attributed procedure[0m
+    422. ✓ [32mPage extension with EventSubscriber attributed procedure[0m
   pageextension_field_properties_test:
-    334. ✓ [32mPageExtension modify field with QuickEntry and Importance properties[0m
+    423. ✓ [32mPageExtension modify field with QuickEntry and Importance properties[0m
+  permissions_empty_xmlport_test:
+    424. ✓ [32mEmpty permissions property[0m
+    425. ✓ [32mXMLport type in variable declaration[0m
+    426. ✓ [32mXMLport type with integer reference[0m
+  permissions_property_test:
+    427. ✓ [32mCodeunit with Permissions property[0m
+    428. ✓ [32mReport with TestPermissions property[0m
+    429. ✓ [32mPage with multiple permission properties[0m
+    430. ✓ [32mTestPermissions with NonRestrictedProperties value[0m
   permissionset_pragma_directives_test:
-    335. ✓ [32mPermissionSet with pragma directives in permissions[0m
+    431. ✓ [32mPermissionSet with pragma directives in permissions[0m
   permissionset_preprocessor_pragma_test:
-    336. ✓ [32mPermissionSet with preprocessor and pragma directives in permissions[0m
-    337. ✓ [32mPermissionSet with preprocessor else branch and pragma[0m
-    338. ✓ [32mPermissionSet with multiple pragma directives in preprocessor[0m
-    339. ✓ [32mPermissionSet with pragma between every permission in preprocessor[0m
+    432. ✓ [32mPermissionSet with preprocessor and pragma directives in permissions[0m
+    433. ✓ [32mPermissionSet with preprocessor else branch and pragma[0m
+    434. ✓ [32mPermissionSet with multiple pragma directives in preprocessor[0m
+    435. ✓ [32mPermissionSet with pragma between every permission in preprocessor[0m
   permissionset_properties:
-    340. ✓ [32mPermissionSet with Access and IncludedPermissionSets properties[0m
-    341. ✓ [32mPermissionSet with single IncludedPermissionSet[0m
-    342. ✓ [32mPermissionSet with Access Private and unquoted included sets[0m
-    343. ✓ [32mPermissionSet with only basic properties[0m
-    344. ✓ [32mPermissionSet with multiple included permission sets (three items)[0m
+    436. ✓ [32mPermissionSet with Access and IncludedPermissionSets properties[0m
+    437. ✓ [32mPermissionSet with single IncludedPermissionSet[0m
+    438. ✓ [32mPermissionSet with Access Private and unquoted included sets[0m
+    439. ✓ [32mPermissionSet with only basic properties[0m
+    440. ✓ [32mPermissionSet with multiple included permission sets (three items)[0m
   permissionsetextension_test:
-    345. ✓ [32mBasic permissionsetextension[0m
-    346. ✓ [32mPermissionSetExtension with namespace[0m
-    347. ✓ [32mPermissionSetExtension with multiple included permission sets[0m
-    348. ✓ [32mPermissionSetExtension with permissions[0m
-    349. ✓ [32mPermissionSetExtension with mixed properties[0m
-    350. ✓ [32mPermissionSetExtension case variations[0m
-    351. ✓ [32mPermissionSetExtension with excluded permission sets[0m
+    441. ✓ [32mBasic permissionsetextension[0m
+    442. ✓ [32mPermissionSetExtension with namespace[0m
+    443. ✓ [32mPermissionSetExtension with multiple included permission sets[0m
+    444. ✓ [32mPermissionSetExtension with permissions[0m
+    445. ✓ [32mPermissionSetExtension with mixed properties[0m
+    446. ✓ [32mPermissionSetExtension case variations[0m
+    447. ✓ [32mPermissionSetExtension with excluded permission sets[0m
   pragma:
-    352. ✓ [32mPragma directives[0m
+    448. ✓ [32mPragma directives[0m
   pragma_directives_test:
-    353. ✓ [32mPragma directives in variable declarations[0m
+    449. ✓ [32mPragma directives in variable declarations[0m
   pragma_in_code_blocks_test:
-    354. ✓ [32mPragma directives within code blocks[0m
+    450. ✓ [32mPragma directives within code blocks[0m
   pragma_in_if_statement:
-    355. ✓ [32mPragma directives in if statement without begin/end block[0m
+    451. ✓ [32mPragma directives in if statement without begin/end block[0m
   pragma_layout_directives_test:
-    356. ✓ [32mPragma directives in page layout sections[0m
+    452. ✓ [32mPragma directives in page layout sections[0m
+  preproc_conditional_enum_test:
+    453. ✓ [32mPreprocessor conditional enum declaration with different implements[0m
+    454. ✓ [32mSimple preprocessor conditional enum without pragma[0m
   preproc_conditional_var_sections_test:
-    357. ✓ [32mCodeunit with conditional var section using CLEAN directive[0m
-    358. ✓ [32mPage with conditional var section with else clause[0m
-    359. ✓ [32mTable with conditional var section[0m
-    360. ✓ [32mReport with conditional var section[0m
-    361. ✓ [32mXMLPort with conditional var section[0m
+    455. ✓ [32mCodeunit with conditional var section using CLEAN directive[0m
+    456. ✓ [32mPage with conditional var section with else clause[0m
+    457. ✓ [32mTable with conditional var section[0m
+    458. ✓ [32mReport with conditional var section[0m
+    459. ✓ [32mXMLPort with conditional var section[0m
   preprocessor_actions_test:
-    362. ✓ [32mPreprocessor directives in actions section[0m
-    363. ✓ [32mPreprocessor with else branch in actions[0m
-    364. ✓ [32mNested action groups with preprocessor[0m
-    365. ✓ [32mMixed preprocessor cases in actions[0m
+    460. ✓ [32mPreprocessor directives in actions section[0m
+    461. ✓ [32mPreprocessor with else branch in actions[0m
+    462. ✓ [32mNested action groups with preprocessor[0m
+    463. ✓ [32mMixed preprocessor cases in actions[0m
   preprocessor_case_statements_test:
-    366. ✓ [32mPreprocessor directives in case statements[0m
+    464. ✓ [32mPreprocessor directives in case statements[0m
   preprocessor_conditional_attributes_test:
-    367. ✓ [32mPreprocessor directives wrapping attributes for procedures[0m
+    465. ✓ [32mPreprocessor directives wrapping attributes for procedures[0m
   preprocessor_conditional_using_statements_test:
-    368. ✓ [32mPreprocessor conditional directives in using statements[0m
+    466. ✓ [32mPreprocessor conditional directives in using statements[0m
   preprocessor_directives_test:
-    369. ✓ [32mPreprocessor directives in layout[0m
-    370. ✓ [32mUppercase preprocessor directives in code blocks[0m
-    371. ✓ [32mMixed case preprocessor directives in code blocks[0m
-    372. ✓ [32mUppercase preprocessor directives with complex conditions[0m
+    467. ✓ [32mPreprocessor directives in layout[0m
+    468. ✓ [32mUppercase preprocessor directives in code blocks[0m
+    469. ✓ [32mMixed case preprocessor directives in code blocks[0m
+    470. ✓ [32mUppercase preprocessor directives with complex conditions[0m
+  preprocessor_enum_extension_test:
+    471. ✓ [32mPreprocessor conditionals in enum extensions[0m
   preprocessor_if_not_with_else_test:
-    373. ✓ [32mPreprocessor #if not with #else in using statements[0m
+    472. ✓ [32mPreprocessor #if not with #else in using statements[0m
   preprocessor_multiple_using_statements_test:
-    374. ✓ [32mMultiple using statements in preprocessor conditionals[0m
+    473. ✓ [32mMultiple using statements in preprocessor conditionals[0m
   preprocessor_object_properties_test:
-    375. ✓ [32mCodeunit with preprocessor conditional properties[0m
-    376. ✓ [32mCodeunit with mixed properties and preprocessor conditionals[0m
-    377. ✓ [32mTable with preprocessor conditional properties[0m
-    378. ✓ [32mPage with preprocessor conditional properties[0m
-    379. ✓ [32mReport with preprocessor conditional properties[0m
-    380. ✓ [32mXMLPort with preprocessor conditional properties[0m
-    381. ✓ [32mQuery with preprocessor conditional properties[0m
-    382. ✓ [32mEnum with preprocessor conditional properties[0m
-    383. ✓ [32mPermissionSet with preprocessor conditional properties[0m
-    384. ✓ [32mControlAddIn with preprocessor conditional properties[0m
-    385. ✓ [32mProfile with preprocessor conditional properties[0m
+    474. ✓ [32mCodeunit with preprocessor conditional properties[0m
+    475. ✓ [32mCodeunit with mixed properties and preprocessor conditionals[0m
+    476. ✓ [32mTable with preprocessor conditional properties[0m
+    477. ✓ [32mPage with preprocessor conditional properties[0m
+    478. ✓ [32mReport with preprocessor conditional properties[0m
+    479. ✓ [32mXMLPort with preprocessor conditional properties[0m
+    480. ✓ [32mQuery with preprocessor conditional properties[0m
+    481. ✓ [32mEnum with preprocessor conditional properties[0m
+    482. ✓ [32mPermissionSet with preprocessor conditional properties[0m
+    483. ✓ [32mControlAddIn with preprocessor conditional properties[0m
+    484. ✓ [32mProfile with preprocessor conditional properties[0m
   preprocessor_separator_actions_test:
-    386. ✓ [32mPreprocessor with separator in actions[0m
-    387. ✓ [32mComplex preprocessor with multiple separators and actions[0m
-    388. ✓ [32mSeparator with various properties[0m
-    389. ✓ [32mSeparator in else branch of preprocessor[0m
+    485. ✓ [32mPreprocessor with separator in actions[0m
+    486. ✓ [32mComplex preprocessor with multiple separators and actions[0m
+    487. ✓ [32mSeparator with various properties[0m
+    488. ✓ [32mSeparator in else branch of preprocessor[0m
   preprocessor_statements_test:
-    390. ✓ [32mPreprocessor directives within statement blocks[0m
+    489. ✓ [32mPreprocessor directives within statement blocks[0m
   preprocessor_table_relation_test:
-    391. ✓ [32mTableRelation with preprocessor conditional at end[0m
-    392. ✓ [32mSimple TableRelation with preprocessor[0m
-    393. ✗ [31mTableRelation with multiple nested IFs and preprocessor[0m
+    490. ✓ [32mTableRelation with preprocessor conditional at end[0m
+    491. ✓ [32mSimple TableRelation with preprocessor[0m
+    492. ✓ [32mTableRelation with multiple nested IFs and preprocessor[0m
   print_only_if_detail_test:
-    394. ✓ [32mReport dataitem with PrintOnlyIfDetail property[0m
-    395. ✓ [32mReport dataitem with PrintOnlyIfDetail false[0m
-    396. ✓ [32mReport dataitem with PrintOnlyIfDetail case variations[0m
+    493. ✓ [32mReport dataitem with PrintOnlyIfDetail property[0m
+    494. ✓ [32mReport dataitem with PrintOnlyIfDetail false[0m
+    495. ✓ [32mReport dataitem with PrintOnlyIfDetail case variations[0m
+  printonlyifdetail_after_requestfilterfields_test:
+    496. ✓ [32mPrintOnlyIfDetail after RequestFilterFields[0m
+    497. ✓ [32mMultiple properties with PrintOnlyIfDetail[0m
+    498. ✓ [32mPrintOnlyIfDetail used as field name in RequestFilterFields[0m
+  procedure_preproc_var_test:
+    499. ✓ [32mProcedure with preprocessor conditional var section[0m
+    500. ✓ [32mProcedure with simple preprocessor var section[0m
   procedure_return_types:
-    397. ✓ [32mProcedure Return Types[0m
+    501. ✓ [32mProcedure Return Types[0m
   procedure_simple:
-    398. ✓ [32mProcedure Simple[0m
+    502. ✓ [32mProcedure Simple[0m
+  profile_properties_test:
+    503. ✓ [32mProfile with RoleCenter property[0m
+    504. ✓ [32mProfile with Customizations property[0m
+    505. ✓ [32mProfile with mixed case properties[0m
   profile_test:
-    399. ✓ [32mBasic profile declaration[0m
-    400. ✓ [32mProfile with customizations list[0m
-    401. ✓ [32mProfile with single customization[0m
-    402. ✓ [32mProfile with unquoted identifiers[0m
-    403. ✓ [32mProfile with minimal properties[0m
-    404. ✓ [32mProfile with extended properties[0m
-    405. ✓ [32mProfile with mixed property types[0m
-    406. ✓ [32mProfile with empty customizations[0m
+    506. ✓ [32mBasic profile declaration[0m
+    507. ✓ [32mProfile with customizations list[0m
+    508. ✓ [32mProfile with single customization[0m
+    509. ✓ [32mProfile with unquoted identifiers[0m
+    510. ✓ [32mProfile with minimal properties[0m
+    511. ✓ [32mProfile with extended properties[0m
+    512. ✓ [32mProfile with mixed property types[0m
+    513. ✓ [32mProfile with empty customizations[0m
   prompt_dialog_features_test:
-    407. ✓ [32mPrompt dialog with PromptMode Generate and new area types[0m
+    514. ✓ [32mPrompt dialog with PromptMode Generate and new area types[0m
   prompt_mode_property_test:
-    408. ✓ [32mPromptMode property with different values[0m
+    515. ✓ [32mPromptMode property with different values[0m
+  promptguide_area_test:
+    516. ✓ [32mPromptGuide area in actions[0m
+    517. ✓ [32mPromptGuide area case variations[0m
+    518. ✓ [32mPromptGuide with multiple groups[0m
   property_comment_parameters_extended_test:
-    409. ✓ [32mAboutTitle property with comment parameter variations[0m
-    410. ✓ [32mInstructionalText property with comment parameters[0m
-    411. ✓ [32mToolTip property with case-insensitive comment parameters[0m
+    519. ✓ [32mAboutTitle property with comment parameter variations[0m
+    520. ✓ [32mInstructionalText property with comment parameters[0m
+    521. ✓ [32mToolTip property with case-insensitive comment parameters[0m
   protected_procedure_modifier:
-    412. ✓ [32mProtected procedure modifier[0m
+    522. ✓ [32mProtected procedure modifier[0m
   provider_property_test:
-    413. ✓ [32mPage part with Provider property[0m
-    414. ✓ [32mPage part with quoted Provider property value[0m
+    523. ✓ [32mPage part with Provider property[0m
+    524. ✓ [32mPage part with quoted Provider property value[0m
+  qualified_trigger_test:
+    525. ✓ [32mQualified trigger with provider and event[0m
+    526. ✓ [32mMultiple qualified triggers[0m
+    527. ✓ [32mRegular triggers alongside qualified triggers[0m
   query:
     query_object:
-      415. ✓ [32mBasic Query Test[0m
+      528. ✓ [32mBasic Query Test[0m
   query_api_properties_test:
-    416. ✓ [32mQuery with API properties[0m
-    417. ✓ [32mQuery with mixed case API properties[0m
-    418. ✓ [32mQuery with all supported properties[0m
+    529. ✓ [32mQuery with API properties[0m
+    530. ✓ [32mQuery with mixed case API properties[0m
+    531. ✓ [32mQuery with all supported properties[0m
+  query_computed_column_test:
+    532. ✓ [32mQuery with computed column[0m
+    533. ✓ [32mQuery with standard and computed columns[0m
+  query_entity_properties_test:
+    534. ✓ [32mQuery with EntitySetCaption and other entity properties[0m
+  query_filter_test:
+    535. ✓ [32mQuery with filter elements in dataitem[0m
+    536. ✓ [32mQuery with filter elements and caption[0m
   quoted_identifier_escaped_test:
-    419. ✓ [32mQuoted identifier with escaped double quotes in field[0m
-    420. ✓ [32mField with pragma directives and escaped quotes[0m
-    421. ✓ [32mReport column with escaped quotes[0m
-    422. ✓ [32mTable field with quoted identifier[0m
+    537. ✓ [32mQuoted identifier with escaped double quotes in field[0m
+    538. ✓ [32mField with pragma directives and escaped quotes[0m
+    539. ✓ [32mReport column with escaped quotes[0m
+    540. ✓ [32mTable field with quoted identifier[0m
   quoted_return_parameter_test:
-    423. ✓ [32mProcedure with quoted return parameter name[0m
-    424. ✓ [32mProcedure with unquoted return parameter name[0m
+    541. ✓ [32mProcedure with quoted return parameter name[0m
+    542. ✓ [32mProcedure with unquoted return parameter name[0m
   range_and_in_expressions:
-    425. ✓ [32mIN expression with range operator[0m
-    426. ✓ [32mIN expression with multiple ranges[0m
-    427. ✓ [32mIN expression with individual values[0m
-    428. ✓ [32mRange operator in other contexts[0m
-    429. ✓ [32mComplex IN expression with field access[0m
+    543. ✓ [32mIN expression with range operator[0m
+    544. ✓ [32mIN expression with multiple ranges[0m
+    545. ✓ [32mIN expression with individual values[0m
+    546. ✓ [32mRange operator in other contexts[0m[31m -- Warning: Slow parse rate (7521.986 bytes/ms)[0m
+    547. ✓ [32mComplex IN expression with field access[0m
   recordid_case_variant:
-    430. ✓ [32mRecordID type with mixed case[0m
+    548. ✓ [32mRecordID type with mixed case[0m
   region_directives_test:
-    431. ✓ [32mBasic region directive in codeunit[0m
-    432. ✓ [32mRegion with description text[0m
-    433. ✓ [32mNested regions[0m
-    434. ✓ [32mRegion in table with fields[0m
-    435. ✓ [32mRegion with var section and procedures[0m
+    549. ✓ [32mBasic region directive in codeunit[0m
+    550. ✓ [32mRegion with description text[0m
+    551. ✓ [32mNested regions[0m
+    552. ✓ [32mRegion in table with fields[0m
+    553. ✓ [32mRegion with var section and procedures[0m
+  rendering_section_test:
+    554. ✓ [32mReport with rendering section[0m
+    555. ✓ [32mEmpty rendering section[0m
   repeater_visible_property_test:
-    436. ✓ [32mRepeater with Visible property[0m
+    556. ✓ [32mRepeater with Visible property[0m
   report_column_expressions:
-    437. ✓ [32mReport column with method call expression[0m
-    438. ✓ [32mReport column with function call[0m
-    439. ✓ [32mReport column with field caption[0m
+    557. ✓ [32mReport column with method call expression[0m
+    558. ✓ [32mReport column with function call[0m
+    559. ✓ [32mReport column with field caption[0m
   report_column_properties_test:
-    440. ✓ [32mReport column properties test[0m
+    560. ✓ [32mReport column properties test[0m
   report_comprehensive_test:
-    441. ✓ [32mComprehensive report with dataitem properties and column expressions[0m
+    561. ✓ [32mComprehensive report with dataitem properties and column expressions[0m
   report_data_access_intent_property_test:
-    442. ✓ [32mReport with DataAccessIntent property variations[0m
-    443. ✓ [32mReport with DataAccessIntent ReadWrite case variation[0m
+    562. ✓ [32mReport with DataAccessIntent property variations[0m
+    563. ✓ [32mReport with DataAccessIntent ReadWrite case variation[0m
   report_dataitem_properties:
-    444. ✓ [32mReport dataitem with DataItemTableView property[0m
-    445. ✓ [32mReport dataitem with RequestFilterFields property[0m[31m -- Warning: Slow parse rate (5623.345 bytes/ms)[0m
-    446. ✓ [32mReport dataitem with RequestFilterHeading property[0m
-    447. ✓ [32mReport dataitem with all three properties combined[0m
-    448. ✓ [32mReport dataitem with case variations[0m
+    564. ✓ [32mReport dataitem with DataItemTableView property[0m
+    565. ✓ [32mReport dataitem with RequestFilterFields property[0m
+    566. ✓ [32mReport dataitem with RequestFilterHeading property[0m
+    567. ✓ [32mReport dataitem with all three properties combined[0m
+    568. ✓ [32mReport dataitem with case variations[0m
   report_default_layout_test:
-    449. ✓ [32mBasic report with DefaultLayout[0m
-    450. ✓ [32mReport with mixed layout properties[0m
-    451. ✓ [32mReport with DefaultLayout and RDLCLayout[0m
-    452. ✓ [32mReport with DefaultLayout case variations[0m
-    453. ✓ [32mReport from error file with all properties[0m
+    569. ✓ [32mBasic report with DefaultLayout[0m
+    570. ✓ [32mReport with mixed layout properties[0m
+    571. ✓ [32mReport with DefaultLayout and RDLCLayout[0m
+    572. ✓ [32mReport with DefaultLayout case variations[0m
+    573. ✓ [32mReport from error file with all properties[0m
   report_use_request_page_property:
-    454. ✓ [32mReport with UseRequestPage property true[0m
-    455. ✓ [32mReport with UseRequestPage property false[0m
-    456. ✓ [32mReport with only UseRequestPage property[0m
-    457. ✓ [32mReport with mixed properties including UseRequestPage[0m
-    458. ✓ [32mReport with UseRequestPage and case variations[0m
+    574. ✓ [32mReport with UseRequestPage property true[0m
+    575. ✓ [32mReport with UseRequestPage property false[0m
+    576. ✓ [32mReport with only UseRequestPage property[0m
+    577. ✓ [32mReport with mixed properties including UseRequestPage[0m
+    578. ✓ [32mReport with UseRequestPage and case variations[0m
+  run_object_qualified_name_test:
+    579. ✓ [32mPage action with qualified RunObject name[0m
+    580. ✓ [32mAction with simple RunObject reference[0m
   run_page_view_test:
-    459. ✓ [32mRunPageView with SORTING and ORDER[0m
-    460. ✓ [32mRunPageView with SORTING only[0m
-    461. ✓ [32mRunPageView with SORTING, ORDER and WHERE[0m
+    581. ✓ [32mRunPageView with SORTING and ORDER[0m
+    582. ✓ [32mRunPageView with SORTING only[0m
+    583. ✓ [32mRunPageView with SORTING, ORDER and WHERE[0m
+  secrettext_type_test:
+    584. ✓ [32mSecretText type declaration[0m
+    585. ✓ [32mSecretText case variations[0m
+    586. ✓ [32mSecretText with methods[0m
   separator_action:
-    462. ✓ [32mSeparator Action Test[0m
+    587. ✓ [32mSeparator Action Test[0m
   show_as_property_test:
-    463. ✓ [32mShowAs property with SplitButton value[0m
-    464. ✓ [32mShowAs property with Menu value[0m
-    465. ✓ [32mShowAs property case variations[0m
-    466. ✓ [32mComplete action group with ShowAs and other properties[0m
+    588. ✓ [32mShowAs property with SplitButton value[0m
+    589. ✓ [32mShowAs property with Menu value[0m
+    590. ✓ [32mShowAs property case variations[0m
+    591. ✓ [32mComplete action group with ShowAs and other properties[0m
   show_as_tree_property_test:
-    467. ✓ [32mShowAsTree property in repeater sections[0m
-    468. ✓ [32mShowAsTree property with false value[0m
+    592. ✓ [32mShowAsTree property in repeater sections[0m
+    593. ✓ [32mShowAsTree property with false value[0m
   show_filter_property_test:
-    469. ✓ [32mShowFilter property in part sections[0m
+    594. ✓ [32mShowFilter property in part sections[0m
   show_mandatory_expressions:
-    470. ✓ [32mShowMandatory property with expressions[0m
+    595. ✓ [32mShowMandatory property with expressions[0m
   simple_member_access:
-    471. ✓ [32mSimple member access[0m
+    596. ✓ [32mSimple member access[0m
   source_table_view_property:
-    472. ✓ [32mSourceTableView Property Test[0m
+    597. ✓ [32mSourceTableView Property Test[0m
   sql_join_type_property_test:
-    473. ✓ [32mQuery with SqlJoinType InnerJoin[0m
-    474. ✓ [32mQuery with SqlJoinType LeftOuterJoin[0m
-    475. ✓ [32mQuery with SqlJoinType CrossJoin[0m
-    476. ✓ [32mReport dataitem with SqlJoinType[0m
-    477. ✓ [32mMixed case SqlJoinType property[0m
+    598. ✓ [32mQuery with SqlJoinType InnerJoin[0m
+    599. ✓ [32mQuery with SqlJoinType LeftOuterJoin[0m
+    600. ✓ [32mQuery with SqlJoinType CrossJoin[0m
+    601. ✓ [32mReport dataitem with SqlJoinType[0m
+    602. ✓ [32mMixed case SqlJoinType property[0m
+  sql_properties_test:
+    603. ✓ [32mSQL Data Type Property Test[0m[31m -- Warning: Slow parse rate (4623.779 bytes/ms)[0m
+    604. ✓ [32mSQL Timestamp Property Test[0m
+    605. ✓ [32mTest Table Relation Property Test[0m
   standalone_semicolon_test:
-    478. ✓ [32mStandalone semicolon in part section[0m
-    479. ✓ [32mStandalone semicolon in action block[0m
-    480. ✓ [32mMultiple standalone semicolons in action[0m
-    481. ✓ [32mStandalone semicolon in systempart[0m
-    482. ✓ [32mStandalone semicolon in action group[0m
-    483. ✓ [32mStandalone semicolon at beginning of properties[0m
-    484. ✓ [32mStandalone semicolon in modify action[0m
+    606. ✓ [32mStandalone semicolon in part section[0m
+    607. ✓ [32mStandalone semicolon in action block[0m
+    608. ✓ [32mMultiple standalone semicolons in action[0m
+    609. ✓ [32mStandalone semicolon in systempart[0m
+    610. ✓ [32mStandalone semicolon in action group[0m
+    611. ✓ [32mStandalone semicolon at beginning of properties[0m
+    612. ✓ [32mStandalone semicolon in modify action[0m
   standalone_semicolons_in_properties_test:
-    485. ✓ [32mStandalone semicolons in property lists[0m
+    613. ✓ [32mStandalone semicolons in property lists[0m
   string_concatenation_complex:
-    486. ✓ [32mString concatenation with multiple terms[0m
+    614. ✓ [32mString concatenation with multiple terms[0m
   string_literal_backslash:
-    487. ✓ [32mString literals with backslash characters[0m
-    488. ✓ [32mString literals with various special characters[0m
-    489. ✓ [32mString literals in complex expressions[0m
-    490. ✓ [32mMixed string literals and function calls[0m
+    615. ✓ [32mString literals with backslash characters[0m
+    616. ✓ [32mString literals with various special characters[0m
+    617. ✓ [32mString literals in complex expressions[0m
+    618. ✓ [32mMixed string literals and function calls[0m
   style_attention_accent:
-    491. ✓ [32mStyle property with AttentionAccent value[0m
-    492. ✓ [32mStyle property with AttentionAccent in repeater[0m
-    493. ✓ [32mStyle property with case variations of AttentionAccent[0m
+    619. ✓ [32mStyle property with AttentionAccent value[0m
+    620. ✓ [32mStyle property with AttentionAccent in repeater[0m
+    621. ✓ [32mStyle property with case variations of AttentionAccent[0m
   style_expr_boolean:
-    494. ✓ [32mStyleExpr property with boolean values[0m
-    495. ✓ [32mStyleExpr property with boolean case variations[0m
-    496. ✓ [32mStyleExpr property with mixed value types[0m
-    497. ✓ [32mStyleExpr with Style property combination[0m
+    622. ✓ [32mStyleExpr property with boolean values[0m
+    623. ✓ [32mStyleExpr property with boolean case variations[0m
+    624. ✓ [32mStyleExpr property with mixed value types[0m
+    625. ✓ [32mStyleExpr with Style property combination[0m
   style_expr_comparison_test:
-    498. ✓ [32mStyleExpr with comparison expressions and enum values[0m
+    626. ✓ [32mStyleExpr with comparison expressions and enum values[0m
   style_expr_unary_test:
-    499. ✓ [32mStyleExpr with NOT unary expression[0m
-    500. ✓ [32mStyleExpr with 'not' lowercase unary expression[0m
-    501. ✓ [32mStyleExpr with minus unary expression[0m
-    502. ✓ [32mStyleExpr with boolean literal (existing functionality)[0m
-    503. ✓ [32mStyleExpr with identifier (existing functionality)[0m
+    627. ✓ [32mStyleExpr with NOT unary expression[0m
+    628. ✓ [32mStyleExpr with 'not' lowercase unary expression[0m
+    629. ✓ [32mStyleExpr with minus unary expression[0m
+    630. ✓ [32mStyleExpr with boolean literal (existing functionality)[0m
+    631. ✓ [32mStyleExpr with identifier (existing functionality)[0m
   style_subordinate_test:
-    504. ✓ [32mStyle property with Subordinate value[0m
+    632. ✓ [32mStyle property with Subordinate value[0m
   sub_page_link_filter_function_test:
-    505. ✓ [32mSubPageLink property with FILTER function support[0m
+    633. ✓ [32mSubPageLink property with FILTER function support[0m
   sub_page_link_property_test:
-    506. ✓ [32mSubPageLink property in part sections[0m
+    634. ✓ [32mSubPageLink property in part sections[0m
   sub_page_view_enhanced:
-    507. ✓ [32mSubPageView with sorting and where clause[0m
-    508. ✓ [32mSubPageView with simple sorting only[0m
-    509. ✓ [32mSubPageView with where clause only[0m
-    510. ✓ [32mSubPageView with string literal value[0m
-    511. ✓ [32mSubPageView with identifier value[0m
+    635. ✓ [32mSubPageView with sorting and where clause[0m
+    636. ✓ [32mSubPageView with simple sorting only[0m
+    637. ✓ [32mSubPageView with where clause only[0m
+    638. ✓ [32mSubPageView with string literal value[0m
+    639. ✓ [32mSubPageView with identifier value[0m
   subpagelink_database_reference_test:
-    512. ✓ [32mSubPageLink with Database reference in const[0m
-    513. ✓ [32mAction group with ShowAs property[0m
-    514. ✓ [32mSubPageLink with multiple Database references[0m
+    640. ✓ [32mSubPageLink with Database reference in const[0m
+    641. ✓ [32mAction group with ShowAs property[0m
+    642. ✓ [32mSubPageLink with multiple Database references[0m
   subtype_option_variable_test:
-    515. ✓ [32mSubType variable with Option type (from CDCDocumentFileList.Page.al)[0m
+    643. ✓ [32mSubType variable with Option type (from CDCDocumentFileList.Page.al)[0m
   subtype_userdefined_test:
-    516. ✓ [32mSubType property with UserDefined value in BLOB field[0m
-    517. ✓ [32mSubType property with existing values (Install, Upgrade, Test)[0m
-    518. ✓ [32mSubType property case variations with UserDefined[0m
-    519. ✓ [32mSubType property mixed with other BLOB field properties[0m
-    520. ✓ [32mSubType property in different object types (codeunit vs table)[0m
+    644. ✓ [32mSubType property with UserDefined value in BLOB field[0m
+    645. ✓ [32mSubType property with existing values (Install, Upgrade, Test)[0m
+    646. ✓ [32mSubType property case variations with UserDefined[0m
+    647. ✓ [32mSubType property mixed with other BLOB field properties[0m
+    648. ✓ [32mSubType property in different object types (codeunit vs table)[0m
   subtype_variable_vs_property_test:
-    521. ✓ [32mSubType variable declaration vs property usage[0m
+    649. ✓ [32mSubType variable declaration vs property usage[0m
   systempart_test:
-    522. ✓ [32mSystemPart Elements[0m
+    650. ✓ [32mSystemPart Elements[0m
   table:
-    523. ✓ [32m Simple Table Test[0m
+    651. ✓ [32m Simple Table Test[0m
   table_extension_app_page_patterns:
-    524. ✓ [32mTable with complex field properties and lookup formula[0m
+    652. ✓ [32mTable with complex field properties and lookup formula[0m
   table_extension_attributed_triggers_test:
-    525. ✓ [32mTable extension with attributed triggers test[0m
+    653. ✓ [32mTable extension with attributed triggers test[0m
   table_extension_integration_event_attribute_test:
-    526. ✓ [32mTable extension with IntegrationEvent attributes test[0m
+    654. ✓ [32mTable extension with IntegrationEvent attributes test[0m
   table_extension_modify_field_triggers_test:
-    527. ✓ [32mTable extension with modify field triggers[0m
-    528. ✓ [32mTable extension with generic triggers in field modify[0m
+    655. ✓ [32mTable extension with modify field triggers[0m
+    656. ✓ [32mTable extension with generic triggers in field modify[0m
   table_extension_modify_test:
-    529. ✓ [32mTable extension with modify field statements[0m
-    530. ✓ [32mTable extension with field and modify statements combined[0m
+    657. ✓ [32mTable extension with modify field statements[0m
+    658. ✓ [32mTable extension with field and modify statements combined[0m
   table_extension_multiple_attributes_test:
-    531. ✓ [32mTable extension with multiple method attributes test[0m
+    659. ✓ [32mTable extension with multiple method attributes test[0m
   table_field_trigger_enum:
-    532. ✓ [32mTable Field Trigger with Qualified Enum Values with Spaces[0m
+    660. ✓ [32mTable Field Trigger with Qualified Enum Values[0m
   table_preprocessor_procedures_test:
-    533. ✓ [32mTable with preprocessor conditional procedures[0m
-    534. ✓ [32mTable with multiple preprocessor conditional procedures[0m
-    535. ✓ [32mTable with preprocessor else branch procedures[0m
-    536. ✓ [32mTable with mixed procedures and triggers in preprocessor[0m
-    537. ✓ [32mTable with procedure without attributes in preprocessor[0m
+    661. ✓ [32mTable with preprocessor conditional procedures[0m
+    662. ✓ [32mTable with multiple preprocessor conditional procedures[0m
+    663. ✓ [32mTable with preprocessor else branch procedures[0m
+    664. ✓ [32mTable with mixed procedures and triggers in preprocessor[0m
+    665. ✓ [32mTable with procedure without attributes in preprocessor[0m
   table_properties:
-    538. ✓ [32mHigh Priority Properties[0m
-    539. ✓ [32mMedium/Low Priority Properties[0m
-    540. ✓ [32mField Properties[0m
+    666. ✓ [32mHigh Priority Properties[0m
+    667. ✓ [32mMedium/Low Priority Properties[0m
+    668. ✗ [31mField Properties[0m
   table_relation_preprocessor_conditionals_test:
-    541. ✓ [32mTable relation with preprocessor conditionals in IF...ELSE chain[0m
+    669. ✓ [32mTable relation with preprocessor conditionals in IF...ELSE chain[0m
   table_relation_preprocessor_test:
-    542. ✓ [32mTableRelation with preprocessor in IF chain[0m
-    543. ✓ [32mSimple TableRelation with preprocessor[0m
+    670. ✓ [32mTableRelation with preprocessor in IF chain[0m
+    671. ✓ [32mSimple TableRelation with preprocessor[0m
   tableno_variable_test:
-    544. ✓ [32mTableNo as variable name after Option type[0m
-    545. ✓ [32mTableNo property still works[0m
+    672. ✓ [32mTableNo as variable name after Option type[0m
+    673. ✓ [32mTableNo property still works[0m
+  temporary_return_type_test:
+    674. ✓ [32mProcedure with temporary return type[0m
+    675. ✓ [32mProcedure with named return value and temporary[0m
+    676. ✓ [32mProcedure with temporary parameter and return[0m
+    677. ✓ [32mCase variations of temporary keyword[0m
   testpage_case_variations_test:
-    546. ✓ [32mTestPage case variations[0m
+    678. ✓ [32mTestPage case variations[0m
   testrequestpage_type_test:
-    547. ✓ [32mTestRequestPage data type with various reference formats[0m
+    679. ✓ [32mTestRequestPage data type with various reference formats[0m
   tooltip_case_variations_test:
-    548. ✓ [32mToolTip property with case variations[0m
+    680. ✓ [32mToolTip property with case variations[0m
   tooltip_with_comment:
-    549. ✓ [32mToolTip with Comment parameter[0m
+    681. ✓ [32mToolTip with Comment parameter[0m
+  tree_initial_state_test:
+    682. ✓ [32mRepeater with TreeInitialState property[0m
+    683. ✓ [32mRepeater with ExpandAll TreeInitialState[0m
   trigger_named_return_values_test:
-    550. ✓ [32mPage trigger with named return value - OnFindRecord[0m
-    551. ✓ [32mPage trigger with named return value - OnNextRecord[0m
-    552. ✓ [32mField trigger with named return value[0m
-    553. ✓ [32mTrigger with quoted named return value[0m
-    554. ✓ [32mTrigger with named return value and semicolon[0m
+    684. ✓ [32mPage trigger with named return value - OnFindRecord[0m
+    685. ✓ [32mPage trigger with named return value - OnNextRecord[0m
+    686. ✓ [32mField trigger with named return value[0m
+    687. ✓ [32mTrigger with quoted named return value[0m
+    688. ✓ [32mTrigger with named return value and semicolon[0m
   trigger_preprocessor_directives_test:
-    555. ✓ [32mTrigger with preprocessor in var section[0m
-    556. ✓ [32mField trigger with preprocessor in var section[0m
-    557. ✓ [32mMultiple nested preprocessor conditions in trigger[0m
+    689. ✓ [32mTrigger with preprocessor in var section[0m
+    690. ✓ [32mField trigger with preprocessor in var section[0m
+    691. ✓ [32mMultiple nested preprocessor conditions in trigger[0m
   trigger_semicolon_termination_test:
-    558. ✓ [32mTrigger with semicolon termination after parameters[0m
-    559. ✓ [32mTrigger without semicolon (backward compatibility)[0m
+    692. ✓ [32mTrigger with semicolon termination after parameters[0m
+    693. ✓ [32mTrigger without semicolon (backward compatibility)[0m
   unary_operators_test:
-    560. ✓ [32mUnary operators - plus, minus, and not[0m
+    694. ✓ [32mUnary operators - plus, minus, and not[0m
   unified_filter_pattern_proof_test:
-    561. ✓ [32mPROOF: Unified filter pattern - range expressions work everywhere[0m
-    562. ✓ [32mPROOF: Unified filter pattern - OR expressions work everywhere[0m
-    563. ✓ [32mPROOF: Unified filter pattern - open-ended ranges work everywhere[0m
-    564. ✓ [32mPROOF: Unified filter pattern - simple identifiers work everywhere[0m
+    695. ✓ [32mPROOF: Unified filter pattern - range expressions work everywhere[0m
+    696. ✓ [32mPROOF: Unified filter pattern - OR expressions work everywhere[0m
+    697. ✓ [32mPROOF: Unified filter pattern - open-ended ranges work everywhere[0m
+    698. ✓ [32mPROOF: Unified filter pattern - simple identifiers work everywhere[0m
   universal_properties_expanded_test:
-    565. ✓ [32mContextSensitiveHelpPage property in multiple object types[0m
-    566. ✓ [32mInstructionalText properties in pages and fields[0m
-    567. ✓ [32mAdditionalSearchTerms in pages and reports[0m
-    568. ✓ [32mExtensible property in multiple object types[0m
+    699. ✓ [32mContextSensitiveHelpPage property in multiple object types[0m
+    700. ✓ [32mInstructionalText properties in pages and fields[0m
+    701. ✓ [32mAdditionalSearchTerms in pages and reports[0m
+    702. ✓ [32mExtensible property in multiple object types[0m
   update_propagation_property_test:
-    569. ✓ [32mUpdatePropagation property in part section[0m
-    570. ✓ [32mUpdatePropagation property with different values[0m
+    703. ✓ [32mUpdatePropagation property in part section[0m
+    704. ✓ [32mUpdatePropagation property with different values[0m
   upperlimit_field_reference_test:
-    571. ✓ [32mUPPERLIMIT function in field references test[0m
+    705. ✓ [32mUPPERLIMIT function in field references test[0m
   upperlimit_filter_field_reference_test:
-    572. ✓ [32mUPPERLIMIT with FILTER function in field references test[0m
+    706. ✓ [32mUPPERLIMIT with FILTER function in field references test[0m
   use_temporary_property_test:
-    573. ✓ [32mUseTemporary property in report dataitem[0m
-    574. ✓ [32mUseTemporary property with false value[0m
-    575. ✓ [32mUseTemporary in XMLPort tableelement[0m
-    576. ✓ [32mUseTemporary with mixed properties in report dataitem[0m
-    577. ✓ [32mUseTemporary case variations[0m
+    707. ✓ [32mUseTemporary property in report dataitem[0m
+    708. ✓ [32mUseTemporary property with false value[0m
+    709. ✓ [32mUseTemporary in XMLPort tableelement[0m
+    710. ✓ [32mUseTemporary with mixed properties in report dataitem[0m
+    711. ✓ [32mUseTemporary case variations[0m
   usercontrol_preprocessor_directives_test:
-    578. ✓ [32mUsercontrol with preprocessor directives[0m
+    712. ✓ [32mUsercontrol with preprocessor directives[0m
   using_statement_test:
-    579. ✓ [32mUsing statement for namespace imports[0m
-    580. ✓ [32mUsing statement without namespace declaration[0m
+    713. ✓ [32mUsing statement for namespace imports[0m
+    714. ✓ [32mUsing statement without namespace declaration[0m
+  validation_properties_test:
+    715. ✓ [32mField with InitValue property[0m
+    716. ✓ [32mField with MinValue and MaxValue properties[0m
+    717. ✓ [32mField with NotBlank and Numeric properties[0m
+    718. ✓ [32mMixed case validation properties[0m
   values_allowed_property_test:
-    581. ✓ [32mValuesAllowed property with mixed string literals and identifiers[0m
-    582. ✓ [32mValuesAllowed property with only string literals[0m
-    583. ✓ [32mValuesAllowed property with only identifiers[0m
-    584. ✓ [32mValuesAllowed property in page field[0m
-    585. ✓ [32mValuesAllowed property with single value[0m
+    719. ✓ [32mValuesAllowed property with mixed string literals and identifiers[0m
+    720. ✓ [32mValuesAllowed property with only string literals[0m
+    721. ✓ [32mValuesAllowed property with only identifiers[0m
+    722. ✓ [32mValuesAllowed property in page field[0m
+    723. ✓ [32mValuesAllowed property with single value[0m
   var_section_preprocessor_directives_test:
-    586. ✓ [32mVar section with preprocessor directives[0m
+    724. ✓ [32mVar section with preprocessor directives[0m
   visible_property_case_variations_test:
-    587. ✓ [32mVisible property case variations test[0m
+    725. ✓ [32mVisible property case variations test[0m
   width_property:
-    588. ✓ [32mWidth property in page field[0m
-    589. ✓ [32mWidth property with various values[0m
-    590. ✓ [32mWidth property in different field formats[0m
+    726. ✓ [32mWidth property in page field[0m
+    727. ✓ [32mWidth property with various values[0m
+    728. ✓ [32mWidth property in different field formats[0m
   with_statement:
-    591. ✓ [32mWITH statement with record variable and code block[0m
-    592. ✓ [32mWITH statement with single statement[0m
-    593. ✓ [32mNested WITH statements[0m
+    729. ✓ [32mWITH statement with record variable and code block[0m
+    730. ✓ [32mWITH statement with single statement[0m
+    731. ✓ [32mNested WITH statements[0m
   xmlport_fieldattribute_test:
-    594. ✓ [32mXMLPort with fieldattribute elements[0m
-    595. ✓ [32mXMLPort with fieldattribute and properties[0m
-    596. ✓ [32mNested XMLPort elements with fieldattribute[0m
-    597. ✓ [32mXMLPort fieldattribute with properties[0m
+    732. ✓ [32mXMLPort with fieldattribute elements[0m
+    733. ✓ [32mXMLPort with fieldattribute and properties[0m
+    734. ✓ [32mNested XMLPort elements with fieldattribute[0m
+    735. ✓ [32mXMLPort fieldattribute with properties[0m
   xmlport_fieldelement_test:
-    598. ✓ [32mXMLPort fieldelement with table.field syntax[0m
-    599. ✓ [32mXMLPort fieldelement with simple table reference[0m
+    736. ✓ [32mXMLPort fieldelement with table.field syntax[0m
+    737. ✓ [32mXMLPort fieldelement with simple table reference[0m
   xmlport_format_property_test:
-    600. ✓ [32mXMLPort Format property with VariableText[0m
-    601. ✓ [32mXMLPort Format property with FixedText[0m
-    602. ✓ [32mXMLPort Format property with original values[0m
-    603. ✓ [32mXMLPort Format property case variations[0m
+    738. ✓ [32mXMLPort Format property with VariableText[0m
+    739. ✓ [32mXMLPort Format property with FixedText[0m
+    740. ✓ [32mXMLPort Format property with original values[0m
+    741. ✓ [32mXMLPort Format property case variations[0m
+  xmlport_occurrence_test:
+    742. ✓ [32mXMLPort with fieldattribute Occurrence property[0m
+    743. ✓ [32mXMLPort field attribute with mixed properties[0m
   xmlport_properties:
-    604. ✓ [32mXMLPort Properties[0m
+    744. ✓ [32mXMLPort Properties[0m
+  xmlport_triggers_requestpage_test:
+    745. ✓ [32mXMLPort with trigger in table element[0m
+    746. ✓ [32mXMLPort with requestpage[0m
   xmlport_use_request_page_test:
-    605. ✓ [32mXMLPort UseRequestPage property false[0m
-    606. ✓ [32mXMLPort UseRequestPage property true[0m
-    607. ✓ [32mXMLPort with UseRequestPage and Direction properties[0m
+    747. ✓ [32mXMLPort UseRequestPage property false[0m
+    748. ✓ [32mXMLPort UseRequestPage property true[0m
+    749. ✓ [32mXMLPort with UseRequestPage and Direction properties[0m
   xor_logical_operator_test:
-    608. ✓ [32mXOR logical operator expressions[0m
+    750. ✓ [32mXOR logical operator expressions[0m
 
-1 failure:
+2 failures:
 
 correct / [32mexpected[0m / [31munexpected[0m
 
-  1. TableRelation with multiple nested IFs and preprocessor:
+  1. Conditional object declaration (known limitation):
+
+[31m    (source_file
+[0m[31m      (comment)
+[0m[31m      (comment)
+[0m[31m      (ERROR
+[0m[31m        (preproc_if
+[0m[31m          (identifier))
+[0m[31m        (codeunit_declaration
+[0m[31m          (ERROR
+[0m[31m            (integer)
+[0m[31m            (quoted_identifier)
+[0m[31m            (implements_clause
+[0m[31m              (quoted_identifier)
+[0m[31m              (quoted_identifier))
+[0m[31m            (identifier))
+[0m[31m          (integer)
+[0m[31m          (quoted_identifier)
+[0m[31m          (implements_clause
+[0m[31m            (quoted_identifier))
+[0m[31m          (ERROR)
+[0m[31m          (comment))))[0m
+[32m    Note: ))[0m
+
+
+  2. Field Properties:
 
     (source_file
       (table_declaration
@@ -889,92 +1111,91 @@ correct / [32mexpected[0m / [31munexpected[0m
             type: (type_specification
               (code_type
                 length: (integer)))
-            (table_relation_property
+            (caption_property
+              (string_literal))
+            (tool_tip_property
+              (tool_tip_value
+                (string_literal)))
+            (tool_tip_ml_property
+              value: (ml_value_list
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))))
+            (caption_ml_property
+              value: (ml_value_list
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))))
+            (blank_zero_property
+              (blank_zero_value
+                (boolean)))
+            (not_blank_property
+              value: (not_blank_value
+                (boolean)))
+            (auto_increment_property
+              value: (value
+                (boolean)))
+            (access_by_permission_property
+              value: (value
+                table_name: (identifier)
+                permission: (permission_type)))
+            (allow_in_customizations_property
+              value: (value))
+            (auto_format_expression_property
+              value: (string_literal))
+            (auto_format_type_property
+              value: (value))
+            (blank_numbers_property
+              value: (value
+                (identifier)))
+            (closing_dates_property
+              value: (closing_dates_value
+                (boolean)))
+            (data_classification_property
+[31m              value: (data_classification_value))
+[0m[32m              (data_classification_value))
+[0m            (table_relation_property
               relation: (table_relation_expression
-                (if_table_relation
-                  condition: (unified_where_conditions
-                    (unified_where_condition
-                      (filter_expression_condition
-                        field: (field_ref
-                          (identifier))
-                        operator: (filter_operator)
-                        value: (filter_value
-                          (const_expression
-                            (integer))))))
-                  then_relation: (simple_table_relation
-                    table: (identifier))
-                  else_relation: (table_relation_expression
-                    (if_table_relation
-                      condition: (unified_where_conditions
-                        (unified_where_condition
-                          (filter_expression_condition
-                            field: (field_ref
-                              (identifier))
-                            operator: (filter_operator)
-                            value: (filter_value
-                              (const_expression
-                                (integer))))))
-                      then_relation: (simple_table_relation
-                        table: (identifier))
-                      else_relation: (table_relation_expression
-                        (if_table_relation
-                          condition: (unified_where_conditions
-                            (unified_where_condition
-                              (filter_expression_condition
-                                field: (field_ref
-                                  (identifier))
-                                operator: (filter_operator)
-                                value: (filter_value
-                                  (const_expression
-                                    (integer))))))
-                          then_relation: (simple_table_relation
-                            table: (identifier))
-                          else_relation: (table_relation_expression
-                            (preproc_conditional_table_relation
-                              (preproc_if
-                                condition: (identifier))
-                              (table_relation_expression
-                                (if_table_relation
-                                  condition: (unified_where_conditions
-                                    (unified_where_condition
-                                      (filter_expression_condition
-                                        field: (field_ref
-                                          (identifier))
-                                        operator: (filter_operator)
-                                        value: (filter_value
-                                          (const_expression
-                                            (integer))))))
-                                  then_relation: (simple_table_relation
-[31m                                    table: (identifier))))
-[0m[31m                              (ERROR)
-[0m[32m                                    table: (identifier)
-[0m[32m                                    (where_clause
-[0m[32m                                      conditions: (where_conditions
-[0m[32m                                        (where_condition
-[0m[32m                                          (const_filter
-[0m[32m                                            field: (field_ref
-[0m[32m                                              (identifier))
-[0m[32m                                            value: (identifier))))))))
-[0m                              (preproc_else)
-                              (table_relation_expression
-                                (if_table_relation
-                                  condition: (unified_where_conditions
-                                    (unified_where_condition
-                                      (filter_expression_condition
-                                        field: (field_ref
-                                          (identifier))
-                                        operator: (filter_operator)
-                                        value: (filter_value
-                                          (const_expression
-                                            (integer))))))
-                                  then_relation: (simple_table_relation
-                                    table: (identifier))))
-                              (preproc_endif))))))))))
-            (field_trigger_declaration
-              type: (trigger_type)
-              (code_block
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal)))))))))
+                (simple_table_relation
+                  table: (identifier)
+                  field: (field_ref
+                    (quoted_identifier)))))
+[31m            (empty_statement)
+[0m            (char_allowed_property
+              value: (value
+                (string_literal)))
+            (date_formula_property
+              value: (date_formula_value
+                (boolean)))
+            (extended_datatype_property
+              value: (extended_datatype_value))
+            (compressed_property
+              value: (compressed_value
+                (boolean)))
+            (option_caption_property
+              (option_caption_value
+                (string_literal)))
+[31m            (option_caption_property
+[0m[31m              (ERROR
+[0m[31m                (identifier)
+[0m[31m                (identifier)
+[0m[31m                (option_caption_value
+[0m[31m                  (string_literal))
+[0m[31m                (identifier))
+[0m[31m              (option_caption_value
+[0m[31m                (string_literal)))))))[0m
+[32m            (option_caption_ml_property
+[0m[32m              value: (ml_value_list
+[0m[32m                (ml_value_pair
+[0m[32m                  language: (identifier)
+[0m[32m                  value: (string_literal))
+[0m[32m                (ml_value_pair
+[0m[32m                  language: (identifier)
+[0m[32m                  value: (string_literal))))))))[0m
 

@@ -26,7 +26,7 @@ codeunit 12345 TestCodeunit
             type: (type_specification
               (basic_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (member_expression
               object: (call_expression
@@ -67,7 +67,7 @@ codeunit 23456 NamesTestCodeunit
                 (type_specification
                   (text_type))))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (call_expression
               function: (member_expression
@@ -118,7 +118,7 @@ codeunit 34567 MultiEnumCodeunit
                 (type_specification
                   (text_type))))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (member_expression
               object: (call_expression
@@ -128,7 +128,7 @@ codeunit 34567 MultiEnumCodeunit
                   property: (identifier))
                 arguments: (argument_list))
               property: (identifier)))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (call_expression
               function: (member_expression
@@ -136,7 +136,7 @@ codeunit 34567 MultiEnumCodeunit
                   enum_type: (quoted_identifier))
                 property: (identifier))
               arguments: (argument_list)))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (call_expression
               function: (member_expression
@@ -175,7 +175,7 @@ codeunit 45678 CaseVariationCodeunit
             type: (type_specification
               (basic_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (member_expression
               object: (call_expression
@@ -185,7 +185,7 @@ codeunit 45678 CaseVariationCodeunit
                   property: (identifier))
                 arguments: (argument_list))
               property: (identifier)))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (member_expression
               object: (call_expression
@@ -195,7 +195,7 @@ codeunit 45678 CaseVariationCodeunit
                   property: (identifier))
                 arguments: (argument_list))
               property: (identifier)))
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (member_expression
               object: (call_expression
@@ -234,7 +234,7 @@ codeunit 56789 UnquotedEnumCodeunit
             type: (type_specification
               (basic_type))))
         (code_block
-          (assignment_statement
+          (assignment_expression
             left: (identifier)
             right: (member_expression
               object: (call_expression

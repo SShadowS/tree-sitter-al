@@ -7007,6 +7007,37 @@
     "fields": {}
   },
   {
+    "type": "compressed_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "compressed_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "compressed_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "boolean",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "compression_type_property",
     "named": true,
     "fields": {
@@ -11628,6 +11659,37 @@
     }
   },
   {
+    "type": "external_type_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "external_type_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "external_type_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "string_literal",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "field_access",
     "named": true,
     "fields": {
@@ -11996,6 +12058,10 @@
           "named": true
         },
         {
+          "type": "allow_in_customizations_property",
+          "named": true
+        },
+        {
           "type": "application_area_property",
           "named": true
         },
@@ -12060,6 +12126,10 @@
           "named": true
         },
         {
+          "type": "compressed_property",
+          "named": true
+        },
+        {
           "type": "context_sensitive_help_page_property",
           "named": true
         },
@@ -12109,6 +12179,10 @@
         },
         {
           "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "external_type_property",
           "named": true
         },
         {
@@ -12224,11 +12298,19 @@
           "named": true
         },
         {
+          "type": "option_caption_ml_property",
+          "named": true
+        },
+        {
           "type": "option_caption_property",
           "named": true
         },
         {
           "type": "option_members_property",
+          "named": true
+        },
+        {
+          "type": "option_ordinal_values_property",
           "named": true
         },
         {
@@ -12296,6 +12378,14 @@
           "named": true
         },
         {
+          "type": "sql_data_type_property",
+          "named": true
+        },
+        {
+          "type": "sql_timestamp_property",
+          "named": true
+        },
+        {
           "type": "style_expr_property",
           "named": true
         },
@@ -12309,6 +12399,10 @@
         },
         {
           "type": "table_relation_property",
+          "named": true
+        },
+        {
+          "type": "test_table_relation_property",
           "named": true
         },
         {
@@ -13288,6 +13382,10 @@
           "named": true
         },
         {
+          "type": "allow_in_customizations_property",
+          "named": true
+        },
+        {
           "type": "application_area_property",
           "named": true
         },
@@ -13352,6 +13450,10 @@
           "named": true
         },
         {
+          "type": "compressed_property",
+          "named": true
+        },
+        {
           "type": "context_sensitive_help_page_property",
           "named": true
         },
@@ -13401,6 +13503,10 @@
         },
         {
           "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "external_type_property",
           "named": true
         },
         {
@@ -13516,11 +13622,19 @@
           "named": true
         },
         {
+          "type": "option_caption_ml_property",
+          "named": true
+        },
+        {
           "type": "option_caption_property",
           "named": true
         },
         {
           "type": "option_members_property",
+          "named": true
+        },
+        {
+          "type": "option_ordinal_values_property",
           "named": true
         },
         {
@@ -13588,6 +13702,14 @@
           "named": true
         },
         {
+          "type": "sql_data_type_property",
+          "named": true
+        },
+        {
+          "type": "sql_timestamp_property",
+          "named": true
+        },
+        {
           "type": "style_expr_property",
           "named": true
         },
@@ -13601,6 +13723,10 @@
         },
         {
           "type": "table_relation_property",
+          "named": true
+        },
+        {
+          "type": "test_table_relation_property",
           "named": true
         },
         {
@@ -22369,6 +22495,10 @@
           "named": true
         },
         {
+          "type": "allow_in_customizations_property",
+          "named": true
+        },
+        {
           "type": "application_area_property",
           "named": true
         },
@@ -22437,6 +22567,10 @@
           "named": true
         },
         {
+          "type": "compressed_property",
+          "named": true
+        },
+        {
           "type": "context_sensitive_help_page_property",
           "named": true
         },
@@ -22486,6 +22620,10 @@
         },
         {
           "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "external_type_property",
           "named": true
         },
         {
@@ -22601,11 +22739,19 @@
           "named": true
         },
         {
+          "type": "option_caption_ml_property",
+          "named": true
+        },
+        {
           "type": "option_caption_property",
           "named": true
         },
         {
           "type": "option_members_property",
+          "named": true
+        },
+        {
+          "type": "option_ordinal_values_property",
           "named": true
         },
         {
@@ -22673,6 +22819,14 @@
           "named": true
         },
         {
+          "type": "sql_data_type_property",
+          "named": true
+        },
+        {
+          "type": "sql_timestamp_property",
+          "named": true
+        },
+        {
           "type": "style_expr_property",
           "named": true
         },
@@ -22686,6 +22840,10 @@
         },
         {
           "type": "table_relation_property",
+          "named": true
+        },
+        {
+          "type": "test_table_relation_property",
           "named": true
         },
         {
@@ -24215,6 +24373,22 @@
     }
   },
   {
+    "type": "option_caption_ml_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "ml_value_list",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "option_caption_property",
     "named": true,
     "fields": {},
@@ -24300,6 +24474,60 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "option_ordinal_values_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "option_ordinal_values_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "option_ordinal_values_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "option_ordinal_values_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "option_ordinal_values_list",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -27925,6 +28153,10 @@
           "named": true
         },
         {
+          "type": "allow_in_customizations_property",
+          "named": true
+        },
+        {
           "type": "application_area_property",
           "named": true
         },
@@ -27989,6 +28221,10 @@
           "named": true
         },
         {
+          "type": "compressed_property",
+          "named": true
+        },
+        {
           "type": "context_sensitive_help_page_property",
           "named": true
         },
@@ -28038,6 +28274,10 @@
         },
         {
           "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "external_type_property",
           "named": true
         },
         {
@@ -28153,11 +28393,19 @@
           "named": true
         },
         {
+          "type": "option_caption_ml_property",
+          "named": true
+        },
+        {
           "type": "option_caption_property",
           "named": true
         },
         {
           "type": "option_members_property",
+          "named": true
+        },
+        {
+          "type": "option_ordinal_values_property",
           "named": true
         },
         {
@@ -28237,6 +28485,14 @@
           "named": true
         },
         {
+          "type": "sql_data_type_property",
+          "named": true
+        },
+        {
+          "type": "sql_timestamp_property",
+          "named": true
+        },
+        {
           "type": "style_expr_property",
           "named": true
         },
@@ -28250,6 +28506,10 @@
         },
         {
           "type": "table_relation_property",
+          "named": true
+        },
+        {
+          "type": "test_table_relation_property",
           "named": true
         },
         {
@@ -36139,6 +36399,10 @@
         "required": false,
         "types": [
           {
+            "type": "boolean",
+            "named": true
+          },
+          {
             "type": "database_reference",
             "named": true
           },
@@ -37426,6 +37690,27 @@
     }
   },
   {
+    "type": "sql_data_type_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "sql_data_type_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "sql_data_type_value",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "sql_index_property",
     "named": true,
     "fields": {},
@@ -37444,6 +37729,37 @@
     "type": "sql_join_type_property",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "sql_timestamp_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "sql_timestamp_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "sql_timestamp_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "boolean",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "style_expr_property",
@@ -39596,6 +39912,37 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "test_table_relation_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "test_table_relation_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "test_table_relation_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "boolean",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -42043,6 +42390,10 @@
         },
         {
           "type": "filter_expression",
+          "named": true
+        },
+        {
+          "type": "filter_expression_condition",
           "named": true
         }
       ]

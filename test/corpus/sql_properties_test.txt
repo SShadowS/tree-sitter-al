@@ -1,24 +1,22 @@
 ================================================================================
-Field with SqlDataType property
+SQL Data Type Property Test
 ================================================================================
 
-table 50100 "SQL Properties Test"
+table 50100 "SQL Test Table"
 {
     fields
     {
-        field(1; "Entry No."; Integer)
+        field(1; "ID"; Integer)
         {
             SqlDataType = BigInt;
         }
-        
-        field(2; "Amount"; Decimal)
+        field(2; "Name"; Text[50])
         {
-            SqlDataType = Decimal;
+            SqlDataType = NVarchar;
         }
-        
-        field(3; "Text Field"; Text[50])
+        field(3; "Amount"; Decimal)
         {
-            SqlDataType = Varchar;
+            SqlDataType = Money;
         }
     }
 }
@@ -41,31 +39,27 @@ table 50100 "SQL Properties Test"
         id: (integer)
         name: (quoted_identifier)
         type: (type_specification
-          (basic_type))
+          (text_type
+            length: (integer)))
         (sql_data_type_property
           value: (sql_data_type_value)))
       (field_declaration
         id: (integer)
         name: (quoted_identifier)
         type: (type_specification
-          (text_type
-            length: (integer)))
+          (basic_type))
         (sql_data_type_property
           value: (sql_data_type_value))))))
 
 ================================================================================
-Field with SqlTimestamp property
+SQL Timestamp Property Test
 ================================================================================
 
-table 50101 "Timestamp Table"
+table 50101 "Timestamp Test"
 {
     fields
     {
-        field(1; "Primary Key"; Code[10])
-        {
-        }
-        
-        field(2; "Timestamp"; BigInteger)
+        field(1; "Record ID"; Integer)
         {
             SqlTimestamp = true;
         }
@@ -83,19 +77,13 @@ table 50101 "Timestamp Table"
         id: (integer)
         name: (quoted_identifier)
         type: (type_specification
-          (code_type
-            length: (integer))))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
           (basic_type))
         (sql_timestamp_property
           value: (sql_timestamp_value
             (boolean)))))))
 
 ================================================================================
-Field with TestTableRelation property
+Test Table Relation Property Test
 ================================================================================
 
 table 50102 "Test Table Relation"
@@ -106,12 +94,6 @@ table 50102 "Test Table Relation"
         {
             TableRelation = Customer;
             TestTableRelation = false;
-        }
-        
-        field(2; "Item No."; Code[20])
-        {
-            TableRelation = Item;
-            TestTableRelation = true;
         }
     }
 }
@@ -133,19 +115,7 @@ table 50102 "Test Table Relation"
           relation: (table_relation_expression
             (simple_table_relation
               table: (identifier))))
-        (test_table_relation_property
-          value: (test_table_relation_value
-            (boolean))))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (table_relation_property
-          relation: (table_relation_expression
-            (simple_table_relation
-              table: (identifier))))
+        (empty_statement)
         (test_table_relation_property
           value: (test_table_relation_value
             (boolean)))))))

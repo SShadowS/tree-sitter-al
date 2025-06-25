@@ -38,12 +38,12 @@ page 50000 TestPage
           (update_propagation_property
             value: (update_propagation_value))
           (sub_page_link_property
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               const_value: (qualified_enum_value
                 enum_type: (identifier)
                 value: (identifier)))
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               field_value: (quoted_identifier))))))))
 
@@ -119,15 +119,15 @@ page 50002 TestPage
           name: (identifier)
           page_name: (quoted_identifier)
           (sub_page_link_property
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               const_value: (qualified_enum_value
                 enum_type: (identifier)
                 value: (quoted_identifier)))
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               field_value: (quoted_identifier))
-            value: (run_page_link_value
+            (run_page_link_value
               field: (quoted_identifier)
               const_value: (qualified_enum_value
                 enum_type: (identifier)

@@ -119,7 +119,7 @@ xmlport 50300 "Export Test"
             {
                 tableelement(ItemLedgerEntry; "Item Ledger Entry")
                 {
-                    DataItemLink = "Item No." = FIELD("No."), "Location Code" = FIELD("Location Filter");
+                    LinkFields = "Item No." = FIELD("No."), "Location Code" = FIELD("Location Filter");
                 }
             }
         }
@@ -132,20 +132,21 @@ xmlport 50300 "Export Test"
   (xmlport_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (schema
-      (textelement
+    (xmlport_schema_element
+      (xmlport_table_element
         name: (identifier)
-        (tableelement
+        (xmlport_table_element
           name: (identifier)
-          source: (identifier)
-          (tableelement
+          source_table: (identifier)
+          (xmlport_table_element
             name: (identifier)
-            source: (quoted_identifier)
-            (data_item_link_property
-              (data_item_link_value
-                field: (quoted_identifier)
-                (field_function
-                  field: (quoted_identifier))
-                field: (quoted_identifier)
-                (field_function
-                  field: (quoted_identifier))))))))))
+            source_table: (quoted_identifier)
+            (xmlport_table_property
+              (link_fields_property
+                value: (link_fields_value
+                  (field_mapping
+                    (quoted_identifier)
+                    (quoted_identifier))
+                  (field_mapping
+                    (quoted_identifier)
+                    (quoted_identifier)))))))))))

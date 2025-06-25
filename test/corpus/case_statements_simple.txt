@@ -29,13 +29,13 @@ table 50000 "Test Table"
             pattern: (qualified_enum_value
               enum_type: (identifier)
               value: (identifier))
-            statements: (assignment_statement
+            statements: (assignment_expression
               left: (identifier)
               right: (integer)))
           (case_branch
             pattern: (qualified_enum_value
               enum_type: (identifier)
               value: (identifier))
-            statements: (assignment_statement
+            statements: (assignment_expression
               left: (identifier)
               right: (integer))))))))

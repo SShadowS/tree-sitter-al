@@ -29,7 +29,7 @@ table 50006 "Test Table"
             pattern: (qualified_enum_value
               enum_type: (quoted_identifier)
               value: (identifier))
-            statements: (assignment_statement
+            statements: (assignment_expression
               left: (quoted_identifier)
               right: (string_literal)))
           (case_branch
