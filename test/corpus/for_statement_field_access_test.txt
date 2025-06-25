@@ -1,0 +1,96 @@
+================================================================================
+For statement with field access as loop variable
+================================================================================
+
+codeunit 50000 "Test For Loop"
+{
+    procedure TestEnumFieldLoop()
+    var
+        BusChartBuf: Record "Business Chart Buffer";
+    begin
+        for BusChartBuf."Period Length" := BusChartBuf."Period Length"::Day to BusChartBuf."Period Length"::Year do begin
+            // Process each period
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (code_block
+          (for_statement
+            variable: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            start: (qualified_enum_value
+              enum_type: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              value: (identifier))
+            end: (qualified_enum_value
+              enum_type: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              value: (identifier))
+            body: (code_block
+              (comment))))))))
+
+================================================================================
+For statement with member expression
+================================================================================
+
+codeunit 50001 "Test Member Loop"
+{
+    procedure TestMemberLoop()
+    var
+        Config: Codeunit Configuration;
+    begin
+        for Config.Index := 1 to Config.MaxItems do
+            ProcessItem(Config.Index);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (codeunit_type
+                reference: (identifier)))))
+        (code_block
+          (for_statement
+            variable: (member_expression
+              object: (identifier)
+              property: (identifier))
+            start: (integer)
+            end: (member_expression
+              object: (identifier)
+              property: (identifier))
+            body: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (member_expression
+                  object: (identifier)
+                  property: (identifier))))))))))

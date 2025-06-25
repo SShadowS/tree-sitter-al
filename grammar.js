@@ -4894,7 +4894,11 @@ enum_type: $ => prec(1, seq(
 
     for_statement: $ => prec.right(seq(
       kw('for', 10),
-      field('variable', $.identifier),
+      field('variable', choice(
+        $.identifier,
+        $.field_access,
+        $.member_expression
+      )),
       ':=',
       field('start', $._expression),
       field('direction', choice(
