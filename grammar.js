@@ -497,6 +497,7 @@ module.exports = grammar({
       $.elements_section,            // dataitem and column definitions
       $.property_list,               // generic property container
       $.preproc_conditional_query_properties,
+      $.trigger_declaration,         // triggers like OnBeforeOpen
       
       // Region directives for code organization
       $.preproc_region,

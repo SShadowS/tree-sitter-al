@@ -1,0 +1,102 @@
+================================================================================
+Query with OnBeforeOpen trigger
+================================================================================
+
+query 50145 "Delayed Prod Orders by Cost"
+{
+    QueryType = Normal;
+    
+    elements
+    {
+        dataitem(Production_Order; "Production Order")
+        {
+            filter(Status; Status) { }
+            column(Due_Date; "Due Date") { }
+        }
+    }
+
+    trigger OnBeforeOpen()
+    begin
+        SetFilter(Due_Date, '<%1', Today);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (query_type_property)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (filter_section
+          name: (identifier)
+          field_name: (identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))
+    (trigger_declaration
+      name: (trigger_name)
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (identifier)
+            (string_literal)
+            (identifier)))))))
+
+================================================================================
+Query with multiple triggers
+================================================================================
+
+query 50000 "Test Query"
+{
+    elements
+    {
+        dataitem(Item; Item)
+        {
+            column(No; "No.") { }
+        }
+    }
+    
+    trigger OnBeforeOpen()
+    begin
+        Message('Opening query');
+    end;
+    
+    trigger OnAfterOpen()
+    begin
+        Message('Query opened');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))
+    (trigger_declaration
+      name: (trigger_name)
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))
+    (trigger_declaration
+      name: (trigger_name)
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))
