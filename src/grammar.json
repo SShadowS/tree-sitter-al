@@ -15754,6 +15754,22 @@
         }
       ]
     },
+    "auto_calc_field_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)AutoCalcField"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_boolean_property_template"
+        }
+      ]
+    },
     "calc_fields_list": {
       "type": "SEQ",
       "members": [
@@ -28698,6 +28714,10 @@
         {
           "type": "SYMBOL",
           "name": "decimal_places_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "auto_calc_field_property"
         },
         {
           "type": "SYMBOL",

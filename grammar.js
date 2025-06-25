@@ -3655,6 +3655,11 @@ module.exports = grammar({
       ';'
     ),
 
+    auto_calc_field_property: $ => seq(
+      kw('AutoCalcField'),
+      $._boolean_property_template
+    ),
+
     calc_fields_list: $ => seq(
       $.calc_field,
       repeat(seq(',', $.calc_field))
@@ -6550,6 +6555,7 @@ enum_type: $ => prec(1, seq(
       $.auto_format_expression_property,
       $.auto_format_type_property,
       $.decimal_places_property,
+      $.auto_calc_field_property,
       
       // Option-specific properties
       $.option_caption_property,

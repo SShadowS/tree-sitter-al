@@ -3997,6 +3997,22 @@
     }
   },
   {
+    "type": "auto_calc_field_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "auto_format_expression_property",
     "named": true,
     "fields": {
@@ -6644,6 +6660,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "auto_calc_field_property",
+          "named": true
+        },
         {
           "type": "auto_format_expression_property",
           "named": true
@@ -35327,6 +35347,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "auto_calc_field_property",
+          "named": true
+        },
         {
           "type": "auto_format_expression_property",
           "named": true
