@@ -86,7 +86,8 @@ module.exports = grammar({
     [$._source_content, $.preproc_conditional_using],
     [$._source_content],
     [$.assignment_expression, $._assignable_expression],
-    [$.assignment_statement, $.assignment_expression]
+    [$.assignment_statement, $.assignment_expression],
+    [$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values]
   ],
 
   extras: $ => [new RustRegex('\\s'), $.comment, $.multiline_comment, $.pragma, $.preproc_region, $.preproc_endregion, new RustRegex('\\uFEFF')],
@@ -428,7 +429,8 @@ module.exports = grammar({
       repeat(choice(
         $._enum_properties, 
         $.enum_value_declaration,
-        $.preproc_conditional_enum_properties
+        $.preproc_conditional_enum_properties,
+        $.preproc_conditional_enum_values  // Support conditional enum values
       )),
       '}'
     ),
@@ -5942,6 +5944,9 @@ enum_type: $ => prec(1, seq(
 
     // Preprocessor conditional rules for enum properties
     preproc_conditional_enum_properties: _preproc_conditional_block_template($ => $._enum_properties),
+
+    // Preprocessor conditional rules for enum values
+    preproc_conditional_enum_values: _preproc_conditional_block_template($ => $.enum_value_declaration),
 
     // Preprocessor conditional rules for permissionset properties
     preproc_conditional_permissionset_properties: _preproc_conditional_block_template($ => choice($._permissionset_properties, $.property_list)),

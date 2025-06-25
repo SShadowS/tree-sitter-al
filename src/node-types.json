@@ -10722,6 +10722,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_enum_values",
+          "named": true
+        },
+        {
           "type": "scope_property",
           "named": true
         },
@@ -29047,6 +29051,33 @@
         },
         {
           "type": "usage_category_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_enum_values",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "enum_value_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
           "named": true
         }
       ]

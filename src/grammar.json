@@ -1433,6 +1433,10 @@
               {
                 "type": "SYMBOL",
                 "name": "preproc_conditional_enum_properties"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_enum_values"
               }
             ]
           }
@@ -26407,6 +26411,50 @@
         }
       ]
     },
+    "preproc_conditional_enum_values": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "enum_value_declaration"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "enum_value_declaration"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
     "preproc_conditional_permissionset_properties": {
       "type": "SEQ",
       "members": [
@@ -30598,6 +30646,10 @@
     [
       "assignment_statement",
       "assignment_expression"
+    ],
+    [
+      "preproc_conditional_enum_properties",
+      "preproc_conditional_enum_values"
     ]
   ],
   "precedences": [],
