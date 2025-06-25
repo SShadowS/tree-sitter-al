@@ -1,0 +1,75 @@
+================================================================================
+End as variable name in various contexts
+================================================================================
+
+codeunit 50100 "End Edge Cases"
+{
+    procedure TestEndCases()
+    var
+        End: Text;
+        EndArray: array[10] of Integer;
+    begin
+        // End as simple variable
+        End := 'test';
+        
+        // End in member access
+        Message(End);
+        
+        // End in array access
+        EndArray[1] := 100;
+        
+        // End in complex expression
+        if End = 'test' then
+            Message('End works');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                sizes: (integer)
+                (type_specification
+                  (basic_type))))))
+        (code_block
+          (comment)
+          (assignment_expression
+            left: (identifier)
+            right: (string_literal))
+          (comment)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)))
+          (comment)
+          (assignment_expression
+            left: (subscript_expression
+              array: (identifier)
+              indices: (expression_list
+                (integer)))
+            right: (integer))
+          (comment)
+          (if_statement
+            condition: (comparison_expression
+              left: (identifier)
+              operator: (comparison_operator)
+              right: (string_literal))
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))))

@@ -1,0 +1,42 @@
+================================================================================
+End identifier at beginning of assignment
+================================================================================
+
+codeunit 50100 "End Test"
+{
+    procedure TestEnd()
+    var
+        End: Integer;
+        EndingTime: Time;
+    begin
+        End := 100000T;
+        EndingTime := 100000T;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (time_literal))
+          (assignment_expression
+            left: (identifier)
+            right: (time_literal)))))))

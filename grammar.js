@@ -3770,6 +3770,8 @@ module.exports = grammar({
       // Allow the keyword 'MaxIteration' to be treated as an identifier in variable contexts
       alias(kw('maxiteration'), $.identifier),
       // Allow common End* identifiers that conflict with 'end' keyword
+      alias(kw('end'), $.identifier),
+      alias(kw('endingtime'), $.identifier),
       alias(kw('endindex'), $.identifier),
       alias(kw('endvalue'), $.identifier),
       alias(kw('enddata'), $.identifier),
@@ -4849,7 +4851,7 @@ enum_type: $ => prec(1, seq(
     code_block: $ => prec.right(1, seq(
       kw('begin', 10),
       optional(repeat($._statement_or_preprocessor)),
-      kw('end', 10),
+      kw('end'),
       optional(token(';')) // Explicit token
     )),
 
@@ -5055,6 +5057,8 @@ enum_type: $ => prec(1, seq(
       $.member_expression, // (prec 11)
       $.subscript_expression, // (prec 9)
       $.identifier,
+      // Allow 'End' to be used as identifier in expressions
+      alias(kw('end'), $.identifier),
       $._quoted_identifier,
       $._literal_value,
       $.parenthesized_expression,
@@ -5188,7 +5192,7 @@ enum_type: $ => prec(1, seq(
       kw('of', 10),
       repeat1($._case_item),
       optional($.else_branch),
-      kw('end', 10)
+      kw('end')
     )),
 
     _case_item: $ => choice(
@@ -6651,6 +6655,8 @@ enum_type: $ => prec(1, seq(
       $.identifier, 
       $._quoted_identifier,
       // Allow common End* identifiers that conflict with 'end' keyword
+      alias(kw('end'), $.identifier),
+      alias(kw('endingtime'), $.identifier),
       alias(kw('endindex'), $.identifier),
       alias(kw('endvalue'), $.identifier),
       alias(kw('enddata'), $.identifier),
