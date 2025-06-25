@@ -1,0 +1,148 @@
+================================================================================
+OnAfterLookup trigger in field
+================================================================================
+
+page 116 "Sales Cr. Memo Subform"
+{
+    layout
+    {
+        area(content)
+        {
+            field("No."; Rec."No.")
+            {
+                ApplicationArea = Basic, Suite;
+                ToolTip = 'Specifies the number of a general ledger account, item, additional cost, or fixed asset.';
+
+                trigger OnValidate()
+                begin
+                    if Rec."No." = xRec."No." then
+                        exit;
+                    NoOnAfterValidate();
+                end;
+
+                trigger OnAfterLookup(Selected: RecordRef)
+                begin
+                    Rec.SaveLookupSelection(Selected);
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (quoted_identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (application_area_property
+            value: (identifier)
+            value: (identifier))
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal)))
+          (field_trigger_declaration
+            type: (trigger_type)
+            (code_block
+              (if_statement
+                condition: (comparison_expression
+                  left: (field_access
+                    record: (identifier)
+                    field: (quoted_identifier))
+                  operator: (comparison_operator)
+                  right: (field_access
+                    record: (identifier)
+                    field: (quoted_identifier)))
+                then_branch: (exit_statement))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (field_trigger_declaration
+            type: (trigger_type)
+            (parameter_list
+              (parameter
+                parameter_name: (name
+                  (identifier))
+                parameter_type: (type_specification
+                  (recordref_type))))
+            (code_block
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier))))))))))
+
+================================================================================
+OnAfterLookup with different parameter types
+================================================================================
+
+page 50000 "Test Page"
+{
+    layout
+    {
+        area(content)
+        {
+            field(CustomerNo; CustomerNo)
+            {
+                trigger OnAfterLookup(var SelectedRecord: RecordRef)
+                begin
+                    ProcessSelectedRecord(SelectedRecord);
+                end;
+            }
+            field(ItemNo; ItemNo)
+            {
+                trigger onafterlookup(Selected: RecordRef)
+                begin
+                    // Process selection
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (field_trigger_declaration
+            type: (trigger_type)
+            (parameter_list
+              (parameter
+                modifier: (modifier)
+                parameter_name: (name
+                  (identifier))
+                parameter_type: (type_specification
+                  (recordref_type))))
+            (code_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier))))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (field_trigger_declaration
+            type: (trigger_type)
+            (parameter_list
+              (parameter
+                parameter_name: (name
+                  (identifier))
+                parameter_type: (type_specification
+                  (recordref_type))))
+            (code_block
+              (comment))))))))

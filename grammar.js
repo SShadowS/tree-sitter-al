@@ -4586,6 +4586,7 @@ enum_type: $ => prec(1, seq(
         kw('onvalidate'),
         kw('onaftervalidate'),
         kw('onlookup'),
+        kw('onafterlookup'),
         kw('onassistedit'),
         kw('ondrilldown')
       ), $.trigger_type)),
