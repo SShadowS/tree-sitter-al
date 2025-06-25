@@ -986,6 +986,7 @@ module.exports = grammar({
       field('filter', choice(
         $.string_literal,
         $._quoted_identifier,
+        $.const_expression,
         seq(kw('filter'), '(', $._filter_value_simple, ')')
       )),
       repeat(seq(
@@ -995,6 +996,7 @@ module.exports = grammar({
         field('filter', choice(
           $.string_literal,
           $._quoted_identifier,
+          $.const_expression,
           seq(kw('filter'), '(', $._filter_value_simple, ')')
         ))
       ))

@@ -1,0 +1,36 @@
+================================================================================
+DataItemTableFilter with const() expression
+================================================================================
+
+query 50100 "Item Query"
+{
+    elements
+    {
+        dataitem(My_Item; Item)
+        {
+            DataItemTableFilter = Type = const(Item);
+            
+            column(Item_No; "No.")
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (data_item_table_filter_property
+          field: (identifier)
+          filter: (const_expression
+            (identifier)))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))))

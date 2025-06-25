@@ -1,0 +1,43 @@
+================================================================================
+DataItemTableFilter with mixed filter types including const()
+================================================================================
+
+query 50100 "Production Query"
+{
+    elements
+    {
+        dataitem(Prod_Order; "Production Order")
+        {
+            DataItemTableFilter = Status = filter(Released | "Firm Planned"), 
+                                  "Source Type" = const(Item),
+                                  "Location Code" = "MAIN";
+            
+            column(Order_No; "No.")
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (data_item_table_filter_property
+          field: (identifier)
+          filter: (identifier)
+          filter: (quoted_identifier)
+          field: (quoted_identifier)
+          filter: (const_expression
+            (identifier))
+          field: (quoted_identifier)
+          filter: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))))
