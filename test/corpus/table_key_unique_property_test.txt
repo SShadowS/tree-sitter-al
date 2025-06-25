@@ -131,7 +131,9 @@ table 50101 "Case Test"
         name: (identifier)
         type: (type_specification
           (basic_type))
-        (auto_increment_property))
+        (auto_increment_property
+          value: (value
+            (boolean))))
       (field_declaration
         id: (integer)
         name: (identifier)

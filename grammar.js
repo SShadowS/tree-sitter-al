@@ -5048,7 +5048,10 @@ enum_type: $ => prec(1, seq(
 
     asserterror_statement: $ => prec(14, seq(
       kw('asserterror', 10),
-      field('expression', $._expression)
+      field('body', choice(
+        $._expression,
+        $.code_block
+      ))
     )),
 
     assignment_statement: $ => seq(

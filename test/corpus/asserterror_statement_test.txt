@@ -166,3 +166,47 @@ codeunit 50103 "Unit Test Example"
               property: (identifier))
             arguments: (argument_list
               (string_literal))))))))
+================================================================================
+Asserterror with code block
+================================================================================
+
+codeunit 50104 "Test Asserterror Block"
+{
+    procedure TestAssertErrorBlock()
+    var
+        Variable: Integer;
+    begin
+        asserterror
+        begin
+            Variable := 10;
+            Error("Test");
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (asserterror_statement
+            body: (code_block
+              (assignment_expression
+                left: (identifier)
+                right: (integer))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (quoted_identifier)))))))))))
+

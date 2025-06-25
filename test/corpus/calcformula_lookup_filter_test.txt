@@ -84,9 +84,9 @@ table 50100 "Test Table"
             length: (integer)))
         (calc_formula_property
           (lookup_formula
-            target: (field_access
-              record: (identifier)
-              field: (identifier))
+            target: (member_expression
+              object: (identifier)
+              property: (identifier))
             (lookup_where_conditions
               (lookup_where_condition
                 field: (field_ref
@@ -137,9 +137,9 @@ table 50101 "Case Test"
             length: (integer)))
         (calc_formula_property
           (lookup_formula
-            target: (field_access
-              record: (identifier)
-              field: (identifier))
+            target: (member_expression
+              object: (identifier)
+              property: (identifier))
             (lookup_where_conditions
               (lookup_where_condition
                 field: (field_ref
@@ -155,9 +155,9 @@ table 50101 "Case Test"
             length: (integer)))
         (calc_formula_property
           (lookup_formula
-            target: (field_access
-              record: (identifier)
-              field: (identifier))
+            target: (member_expression
+              object: (identifier)
+              property: (identifier))
             (lookup_where_conditions
               (lookup_where_condition
                 field: (field_ref

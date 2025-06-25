@@ -36,11 +36,10 @@ xmlport 12 "IC Outbox Imp/Exp"
     (format_evaluate_property)
     (xmlport_schema_element
       (xmlport_table_element
-        type: (identifier)
         name: (identifier)
         (xmlport_table_element
-          type: (identifier)
           name: (identifier)
-          table_name: (quoted_identifier)
-          (xmlname_property
-            value: (string_literal)))))))
+          source_table: (quoted_identifier)
+          (xmlport_table_property
+            (xml_name_property
+              value: (string_literal))))))))
