@@ -1,0 +1,122 @@
+================================================================================
+XMLPort tableelement with triggers
+================================================================================
+
+xmlport 50000 "Test Import"
+{
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(AITSuite; "AIT Test Suite")
+            {
+                trigger OnAfterInitRecord()
+                begin
+                    if SkipTestSuites.Contains(AITSuite.Code) then
+                        currXMLport.Skip();
+                end;
+
+                trigger OnBeforeInsertRecord()
+                begin
+                    ValidateRecord();
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (identifier)
+          source_table: (quoted_identifier)
+          (trigger_declaration
+            name: (trigger_name)
+            (code_block
+              (if_statement
+                condition: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list
+                    (member_expression
+                      object: (identifier)
+                      property: (identifier))))
+                then_branch: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list)))))
+          (named_trigger
+            (code_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list)))))))))
+
+================================================================================
+XMLPort tableelement with properties and triggers
+================================================================================
+
+xmlport 50001 "Customer Import"
+{
+    schema
+    {
+        textelement(Data)
+        {
+            tableelement(Customer; Customer)
+            {
+                AutoUpdate = true;
+                MaxOccurs = Unbounded;
+                
+                trigger OnAfterGetRecord()
+                begin
+                    ProcessCustomer();
+                end;
+                
+                fieldattribute(No; Customer."No.")
+                {
+                    Occurrence = Required;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (identifier)
+          source_table: (identifier)
+          (xmlport_table_property
+            (auto_update_property
+              value: (boolean)))
+          (xmlport_table_property
+            (max_occurs_property
+              value: (max_occurs_value)))
+          (named_trigger
+            (code_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (xmlport_field_attribute
+            attribute_name: (identifier)
+            source_field: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            (xmlport_table_property
+              (occurrence_property
+                value: (occurrence_value)))))))))

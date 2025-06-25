@@ -229,7 +229,8 @@ module.exports = grammar({
         $.xmlport_table_element,  // Allow nesting of elements
         $.xmlport_field_attribute,
         $.xmlport_text_attribute,
-        $.named_trigger  // Allow triggers in XMLport table elements
+        $.named_trigger,  // Allow triggers in XMLport table elements
+        $.trigger_declaration  // Also support regular trigger declarations
       )),
       '}'
     ),
@@ -269,7 +270,10 @@ module.exports = grammar({
       )),
       ')',
       '{',
-      repeat($.xmlport_table_property),
+      repeat(choice(
+        $.xmlport_table_property,
+        $.trigger_declaration  // Support triggers in fieldattribute
+      )),
       '}'
     ),
     
@@ -1197,7 +1201,8 @@ module.exports = grammar({
         kw('systemactions'),
         kw('sections'),
         kw('embedding'),
-        kw('promptguide')
+        kw('promptguide'),
+        kw('prompting')
       )),
       ')',
       '{',
@@ -2492,6 +2497,7 @@ module.exports = grammar({
         kw('rolecenter'),
         kw('promptoptions'),
         kw('prompt'),
+        kw('prompting'),
         kw('systemactions')
       )),
       ')',

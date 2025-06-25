@@ -1,0 +1,132 @@
+================================================================================
+XMLPort fieldattribute with triggers
+================================================================================
+
+xmlport 149031 "AIT Test Suite Import/Export"
+{
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(AITSuite; "AIT Test Suite")
+            {
+                fieldattribute(Code; AITSuite.Code)
+                {
+                    Occurrence = Required;
+
+                    trigger OnAfterAssignField()
+                    var
+                        AITTestSuiteRec: Record "AIT Test Suite";
+                    begin
+                        if AITTestSuiteRec.Get(AITSuite.Code) then
+                            Error('Suite already exists');
+                    end;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (identifier)
+          source_table: (quoted_identifier)
+          (xmlport_field_attribute
+            attribute_name: (identifier)
+            source_field: (member_expression
+              object: (identifier)
+              property: (identifier))
+            (xmlport_table_property
+              (occurrence_property
+                value: (occurrence_value)))
+            (trigger_declaration
+              name: (trigger_name)
+              (var_section
+                (variable_declaration
+                  name: (identifier)
+                  type: (type_specification
+                    (record_type
+                      reference: (quoted_identifier)))))
+              (code_block
+                (if_statement
+                  condition: (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      property: (identifier))
+                    arguments: (argument_list
+                      (member_expression
+                        object: (identifier)
+                        property: (identifier))))
+                  then_branch: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal))))))))))))
+
+================================================================================
+XMLPort fieldattribute with multiple triggers
+================================================================================
+
+xmlport 50000 "Test XMLPort"
+{
+    schema
+    {
+        textelement(Data)
+        {
+            tableelement(Customer; Customer)
+            {
+                fieldattribute(No; Customer."No.")
+                {
+                    trigger OnBeforePassField()
+                    begin
+                        Message('Before pass');
+                    end;
+
+                    trigger OnAfterAssignField()
+                    begin
+                        Message('After assign');
+                    end;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (identifier)
+          source_table: (identifier)
+          (xmlport_field_attribute
+            attribute_name: (identifier)
+            source_field: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            (trigger_declaration
+              name: (trigger_name)
+              (code_block
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))))
+            (trigger_declaration
+              name: (trigger_name)
+              (code_block
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))))))))))

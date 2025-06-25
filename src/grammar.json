@@ -674,6 +674,10 @@
               {
                 "type": "SYMBOL",
                 "name": "named_trigger"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "trigger_declaration"
               }
             ]
           }
@@ -819,8 +823,17 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "SYMBOL",
-            "name": "xmlport_table_property"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "xmlport_table_property"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "trigger_declaration"
+              }
+            ]
           }
         },
         {
@@ -4671,6 +4684,13 @@
                 "content": {
                   "type": "PATTERN",
                   "value": "(?i)promptguide"
+                }
+              },
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "(?i)prompting"
                 }
               }
             ]
@@ -10585,6 +10605,13 @@
                 "content": {
                   "type": "PATTERN",
                   "value": "(?i)prompt"
+                }
+              },
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "(?i)prompting"
                 }
               },
               {

@@ -1,0 +1,97 @@
+================================================================================
+Page with area(Prompting)
+================================================================================
+
+page 7221104 "Modify Marketing Text"
+{
+    actions
+    {
+        area(Prompting)
+        {
+            action(SuggestMarketingText)
+            {
+                ApplicationArea = All;
+                Caption = 'Suggest marketing text';
+                Tooltip = 'Get help writing engaging texts';
+                trigger OnAction()
+                begin
+                    SuggestWithCopilot();
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (actions_section
+      (area_action_section
+        (action_declaration
+          name: (identifier)
+          (application_area_property
+            value: (identifier))
+          (caption_property
+            (string_literal))
+          (tool_tip_property
+            (tool_tip_value
+              (string_literal)))
+          (trigger_declaration
+            name: (trigger_name)
+            (code_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list)))))))))
+
+================================================================================
+BankAccReconciliationList with area(Prompting)
+================================================================================
+
+page 50100 "Bank Acc. Reconciliation List"
+{
+    PageType = List;
+    
+    actions
+    {
+        area(Prompting)
+        {
+            action(AIDraftBankRecLines)
+            {
+                Caption = 'Copilot action';
+                Visible = true;
+                Enabled = true;
+                trigger OnAction()
+                begin
+                    CopilotAction();
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (actions_section
+      (area_action_section
+        (action_declaration
+          name: (identifier)
+          (caption_property
+            (string_literal))
+          (visible_property
+            value: (boolean))
+          (enabled_property
+            value: (boolean))
+          (trigger_declaration
+            name: (trigger_name)
+            (code_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list)))))))))
