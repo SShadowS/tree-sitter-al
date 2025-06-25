@@ -13909,8 +13909,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "ExternalName"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)ExternalName"
+          }
         },
         {
           "type": "STRING",
@@ -28138,6 +28141,10 @@
         {
           "type": "SYMBOL",
           "name": "external_type_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "external_name_property"
         },
         {
           "type": "SYMBOL",

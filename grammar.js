@@ -3200,7 +3200,7 @@ module.exports = grammar({
 
 
     external_name_property: $ => seq(
-      'ExternalName',
+      kw('ExternalName'),
       '=',
       field('value', $.external_name_value),
       ';'
@@ -6344,6 +6344,7 @@ enum_type: $ => prec(1, seq(
       $.moved_from_property,  // Add MovedFrom property for fields
       $.moved_to_property,    // Add MovedTo property for fields
       $.external_type_property,  // External type mapping for fields
+      $.external_name_property,  // External name mapping for fields
       $.preproc_conditional_field_properties,
       $.access_by_permission_property,
       $.empty_statement,  // Allow standalone semicolons in field property lists
