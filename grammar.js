@@ -2958,11 +2958,6 @@ module.exports = grammar({
       $.identifier,
       $._quoted_identifier
     ),
-    external_access_value: $ => choice(
-      kw('external'),
-      kw('internal'),
-      kw('local')
-    ),
     external_name_value: $ => $.string_literal,
     external_type_value: $ => choice(
       $.string_literal,
@@ -3224,12 +3219,6 @@ module.exports = grammar({
       $._string_property_template
     ),
 
-    external_access_property: $ => seq(
-      'ExternalAccess',
-      '=',
-      field('value', $.external_access_value),
-      ';'
-    ),
 
     external_name_property: $ => seq(
       'ExternalName',
@@ -6218,6 +6207,7 @@ enum_type: $ => prec(1, seq(
       $.sql_timestamp_property,      // SQL timestamp behavior
       $.test_table_relation_property, // Test table relation validation
       $.compressed_property,         // Field compression behavior
+      $.external_access_property,    // External access control for fields
     ),
 
     // Navigation/interaction properties
@@ -6478,7 +6468,6 @@ enum_type: $ => prec(1, seq(
       $.data_caption_fields_property,
       $.column_store_index_property,
       $.compression_type_property,
-      $.external_access_property,
       // Note: data_per_company_property, replicate_data_property, and table_type_property are in _object_specific_properties
       
       // Table metadata properties
