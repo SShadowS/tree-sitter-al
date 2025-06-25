@@ -1,0 +1,26 @@
+================================================================================
+ColumnFilter with comparison expression in query (known limitation)
+================================================================================
+
+query 986 "Time Sheet Line Status Count"
+{
+    elements
+    {
+        dataitem(Time_Sheet_Line; "Time Sheet Line")
+        {
+            column(Time_Sheet_LineInStatus_Count)
+            {
+                Method = Count;
+                // This pattern is not currently supported
+                ColumnFilter = Time_Sheet_LineInStatus_Count = filter(> 0);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+Note: ColumnFilter with filter expressions like "= filter(> 0)" is currently
+parsed as a generic property but fails because generic properties only accept
+simple values. This specific pattern with nested filter expressions would
+require enhancing the generic_property rule or creating a specialized parser.

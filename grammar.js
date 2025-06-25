@@ -738,6 +738,13 @@ module.exports = grammar({
       $._query_type_enum_template
     ),
 
+    read_state_property: $ => seq(
+      kw('ReadState'),
+      '=',
+      field('value', $.identifier),
+      ';'
+    ),
+
     // SourceTableView components
     field_reference: $ => prec(5, choice(
       $.string_literal,
@@ -6241,6 +6248,7 @@ enum_type: $ => prec(1, seq(
     // Query-specific properties that are unique to query objects
     _query_properties: $ => choice(
       $.query_type_property,         // Query type (Normal, API, Filter)
+      $.read_state_property,         // Read state (ReadCommitted, ReadUncommitted)
       $.query_category_property,     // Query categorization
       $.order_by_property,           // Order by clause
       // API-specific properties

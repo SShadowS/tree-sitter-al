@@ -30837,6 +30837,10 @@
           "named": true
         },
         {
+          "type": "read_state_property",
+          "named": true
+        },
+        {
           "type": "scope_property",
           "named": true
         },
@@ -33448,6 +33452,10 @@
           "named": true
         },
         {
+          "type": "read_state_property",
+          "named": true
+        },
+        {
           "type": "scope_property",
           "named": true
         },
@@ -33804,6 +33812,22 @@
           },
           {
             "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "read_state_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]

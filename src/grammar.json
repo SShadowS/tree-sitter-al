@@ -2578,6 +2578,34 @@
         }
       ]
     },
+    "read_state_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)ReadState"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "field_reference": {
       "type": "PREC",
       "value": 5,
@@ -27858,6 +27886,10 @@
         {
           "type": "SYMBOL",
           "name": "query_type_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "read_state_property"
         },
         {
           "type": "SYMBOL",
