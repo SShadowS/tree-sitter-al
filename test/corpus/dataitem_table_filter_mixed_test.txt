@@ -30,14 +30,16 @@ query 50100 "Production Query"
         name: (identifier)
         table_name: (quoted_identifier)
         (data_item_table_filter_property
-          field: (identifier)
-          filter: (identifier)
-          filter: (quoted_identifier)
-          field: (quoted_identifier)
-          filter: (const_expression
-            (identifier))
-          field: (quoted_identifier)
-          filter: (quoted_identifier))
+          value: (table_filter_value
+            field: (identifier)
+            filter: (filter_expression
+              (identifier)
+              (quoted_identifier))
+            field: (quoted_identifier)
+            filter: (const_expression
+              (identifier))
+            field: (quoted_identifier)
+            filter: (quoted_identifier)))
         (column_section
           name: (identifier)
           field_name: (quoted_identifier))))))

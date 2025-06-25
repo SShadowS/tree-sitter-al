@@ -22,7 +22,7 @@ codeunit 50100 "Test Asserterror"
           (identifier))
         (code_block
           (asserterror_statement
-            expression: (call_expression
+            body: (call_expression
               function: (identifier)
               arguments: (argument_list
                 (string_literal)))))))))
@@ -59,7 +59,7 @@ codeunit 50101 "Test Asserterror Methods"
                 reference: (identifier)))))
         (code_block
           (asserterror_statement
-            expression: (call_expression
+            body: (call_expression
               function: (member_expression
                 object: (identifier)
                 property: (identifier))
@@ -105,7 +105,7 @@ codeunit 50102 "Test Asserterror Enum"
                 enum_name: (quoted_identifier)))))
         (code_block
           (asserterror_statement
-            expression: (call_expression
+            body: (call_expression
               function: (member_expression
                 object: (identifier)
                 property: (identifier))
@@ -156,7 +156,7 @@ codeunit 50103 "Unit Test Example"
                 reference: (identifier)))))
         (code_block
           (asserterror_statement
-            expression: (call_expression
+            body: (call_expression
               function: (identifier)
               arguments: (argument_list
                 (string_literal))))
@@ -166,6 +166,7 @@ codeunit 50103 "Unit Test Example"
               property: (identifier))
             arguments: (argument_list
               (string_literal))))))))
+
 ================================================================================
 Asserterror with code block
 ================================================================================
@@ -208,5 +209,4 @@ codeunit 50104 "Test Asserterror Block"
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (quoted_identifier)))))))))))
-
+                  (quoted_identifier))))))))))

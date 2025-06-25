@@ -344,3 +344,144 @@ alias(kw('subtype'), $.identifier),  // Correct - case-insensitive
 ```
 
 This ensures keywords work correctly in both property and identifier contexts with any case variation.
+
+## Common Test Failure Patterns and Fixes
+
+When fixing failing tests, these patterns occur frequently and have established solutions:
+
+### 1. Property Not Recognized in Context
+**Symptom**: Parser creates ERROR nodes where a property should be recognized
+```
+(ERROR
+  (identifier)  // Property name like "CustomActionType"
+  (identifier)  // Property value
+)
+```
+
+**Root Cause**: Property exists but isn't included in the appropriate property list for that context
+
+**Fix Pattern**:
+1. Find where the property is used (e.g., in `customaction_declaration`)
+2. Identify which property list is used (e.g., `_action_properties`)
+3. Add the property to that list:
+```javascript
+_action_properties: $ => choice(
+  $._universal_properties,
+  $.custom_action_type_property,  // Add this line
+  // ... other properties
+),
+```
+
+### 2. Case-Sensitive Keywords Causing Parser State Issues
+**Symptom**: Property works in isolation but fails when other properties precede it
+```
+// Works: CustomActionType = Flow;
+// Fails: Visible = true; CustomActionType = Flow;
+```
+
+**Root Cause**: Parser state conflict after certain properties, often due to case-sensitive token matching
+
+**Fix Pattern**:
+1. Ensure property uses `kw()` function with precedence if needed:
+```javascript
+custom_action_type_property: $ => seq(
+  kw('CustomActionType', 10),  // Add precedence
+  '=',
+  field('value', $._identifier_choice),
+  ';'
+),
+```
+2. Add the keyword to `_unquoted_variable_name` as a contextual keyword:
+```javascript
+alias(kw('customactiontype'), $.identifier),
+```
+
+### 3. Structural Mismatches in Test Expectations
+**Symptom**: Parser works correctly but test shows differences in node structure
+```
+// Actual: assignment_expression
+// Expected: assignment_statement
+```
+
+**Root Cause**: Grammar evolution has changed the parse tree structure
+
+**Fix Pattern**:
+1. If the current parsing is semantically correct, update test expectations:
+```bash
+tree-sitter test --file-name "test_file.txt" -u
+```
+2. Only do this if there are no ERROR or MISSING nodes
+
+### 4. Missing Value Type Support
+**Symptom**: Complex expressions not parsing in specific contexts
+```
+// Example: SalesLineType[1]::Resource fails
+(ERROR
+  (qualified_enum_value_tail
+    (identifier))
+)
+```
+
+**Root Cause**: Grammar rule doesn't accept all valid value types
+
+**Fix Pattern**:
+1. Find the rule that should match (e.g., `qualified_enum_value`)
+2. Add missing value types to choices:
+```javascript
+field('enum_type', choice(
+  $._enum_type_reference,
+  $.identifier,
+  $._quoted_identifier,
+  $.field_access,
+  $.subscript_expression,  // Add this
+  $._chained_expression
+)),
+```
+
+### 5. Malformed Syntax Handling
+**Symptom**: Invalid syntax causes complete parsing failure
+```
+// Example: "# Region" with space causes ERROR
+```
+
+**Root Cause**: Parser expects strict syntax and doesn't handle common mistakes
+
+**Fix Pattern**:
+1. Add a catch-all rule for malformed constructs:
+```javascript
+malformed_directive: $ => new RustRegex('# [A-Za-z][^\\n\\r]*'),
+```
+2. Include in extras to treat as ignorable:
+```javascript
+extras: $ => [..., $.malformed_directive, ...],
+```
+
+### 6. Hidden Rules Preventing Expected Structure
+**Symptom**: Expected nodes don't appear in parse tree
+```
+// Missing: table_filter_value node
+```
+
+**Root Cause**: Using hidden rules (prefixed with `_`) that don't create nodes
+
+**Fix Pattern**:
+1. Change hidden rule to visible by removing underscore:
+```javascript
+// Change: _table_filter_value
+// To: table_filter_value
+```
+2. Update references to use the visible rule
+3. Create proper node hierarchy (e.g., add `filter_expression` nodes)
+
+### Quick Debugging Process
+1. **Isolate the failing construct**: Test just the problematic line
+2. **Test in minimal context**: Wrap in simplest valid AL structure
+3. **Check if property/rule exists**: Search grammar.js
+4. **Verify accessibility**: Check if included in relevant property lists
+5. **Test with precedence**: Add precedence if parser state issues
+6. **Update test expectations**: Use `-u` flag if parsing is correct
+
+### When to Update Tests vs Fix Grammar
+- **Update tests**: When grammar correctly parses the construct but tree structure has evolved
+- **Fix grammar**: When ERROR or MISSING nodes appear, or functionality is broken
+- **Document as limitation**: Only for genuinely complex cases (e.g., preprocessor splitting constructs)

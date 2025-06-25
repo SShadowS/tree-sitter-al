@@ -54,10 +54,12 @@ query 50100 "Production Orders"
               linked_field: (identifier)
               linked_field_name: (quoted_identifier)))
           (data_item_table_filter_property
-            field: (identifier)
-            filter: (identifier)
-            filter: (quoted_identifier)
-            filter: (identifier))
+            value: (table_filter_value
+              field: (identifier)
+              filter: (filter_expression
+                (identifier)
+                (quoted_identifier)
+                (identifier))))
           (column_section
             name: (identifier)
             field_name: (identifier))

@@ -28,9 +28,10 @@ query 50100 "Item Query"
         name: (identifier)
         table_name: (identifier)
         (data_item_table_filter_property
-          field: (identifier)
-          filter: (const_expression
-            (identifier)))
+          value: (table_filter_value
+            field: (identifier)
+            filter: (const_expression
+              (identifier))))
         (column_section
           name: (identifier)
           field_name: (quoted_identifier))))))

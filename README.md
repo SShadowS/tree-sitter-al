@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,809 files (96.4%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,888 files (96.9%) parse successfully**.
 
 Recent improvements include:
 - **Views sections in page extensions** - Added support for views sections in pageextension objects with view definitions and modification patterns

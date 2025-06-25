@@ -16,9 +16,47 @@ codeunit 50100 "Test"
 
 --------------------------------------------------------------------------------
 
-Note: 
-  :: 
-    spaces: )
+(source_file
+  (codeunit_declaration
+    (integer)
+    (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (array_type
+                (integer)
+                (type_specification
+                  (enum_type
+                    (quoted_identifier)))))))
+        (code_block
+          (comment)
+          (assignment_expression
+            (subscript_expression
+              (identifier)
+              (expression_list
+                (integer)))
+            (qualified_enum_value
+              (subscript_expression
+                (identifier)
+                (expression_list
+                  (integer)))
+              (identifier)))
+          (assignment_expression
+            (subscript_expression
+              (identifier)
+              (expression_list
+                (integer)))
+            (qualified_enum_value
+              (subscript_expression
+                (identifier)
+                (expression_list
+                  (integer)))
+              (quoted_identifier))))))))
 
 ================================================================================
 Correct enum assignment without spaces
@@ -47,15 +85,17 @@ codeunit 50101 "Test"
         name: (name
           (identifier))
         (var_section
-          (var_declaration
-            (identifier)
-            (array_type
-              length: (integer)
-              (enum_type
-                (quoted_identifier)))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                sizes: (integer)
+                (type_specification
+                  (enum_type
+                    enum_name: (quoted_identifier)))))))
         (code_block
           (comment)
-          (assignment_statement
+          (assignment_expression
             left: (subscript_expression
               array: (identifier)
               indices: (expression_list
@@ -66,7 +106,7 @@ codeunit 50101 "Test"
                 indices: (expression_list
                   (integer)))
               value: (identifier)))
-          (assignment_statement
+          (assignment_expression
             left: (subscript_expression
               array: (identifier)
               indices: (expression_list

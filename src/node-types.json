@@ -9072,149 +9072,13 @@
     "type": "data_item_table_filter_property",
     "named": true,
     "fields": {
-      "field": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          }
-        ]
-      },
-      "filter": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
-          {
-            "type": "<",
-            "named": false
-          },
-          {
-            "type": "<=",
-            "named": false
-          },
-          {
-            "type": "<>",
-            "named": false
-          },
-          {
-            "type": ">",
-            "named": false
-          },
-          {
-            "type": ">=",
-            "named": false
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "const_expression",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "string_literal",
-            "named": true
-          },
-          {
-            "type": "|",
-            "named": false
-          }
-        ]
-      },
       "value": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
-          {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "<",
-            "named": false
-          },
-          {
-            "type": "<=",
-            "named": false
-          },
-          {
-            "type": "<>",
-            "named": false
-          },
-          {
-            "type": "=",
-            "named": false
-          },
-          {
-            "type": ">",
-            "named": false
-          },
-          {
-            "type": ">=",
-            "named": false
-          },
-          {
-            "type": "boolean",
+            "type": "table_filter_value",
             "named": true
-          },
-          {
-            "type": "const_expression",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "string_literal",
-            "named": true
-          },
-          {
-            "type": "|",
-            "named": false
           }
         ]
       }
@@ -14557,6 +14421,22 @@
     }
   },
   {
+    "type": "field_validate_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "fieldgroup_declaration",
     "named": true,
     "fields": {
@@ -15261,11 +15141,23 @@
       "required": true,
       "types": [
         {
-          "type": "sorting_clause",
+          "type": "boolean",
           "named": true
         },
         {
-          "type": "where_clause",
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        },
+        {
+          "type": "string_literal",
           "named": true
         }
       ]
@@ -34009,6 +33901,10 @@
           {
             "type": "quoted_identifier",
             "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
           }
         ]
       },
@@ -36336,6 +36232,10 @@
         },
         {
           "type": "data_item_link_reference_property",
+          "named": true
+        },
+        {
+          "type": "data_item_table_filter_property",
           "named": true
         },
         {
@@ -40890,6 +40790,48 @@
     }
   },
   {
+    "type": "table_filter_value",
+    "named": true,
+    "fields": {
+      "field": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "filter": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "const_expression",
+            "named": true
+          },
+          {
+            "type": "filter_expression",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "table_no_property",
     "named": true,
     "fields": {
@@ -45145,6 +45087,10 @@
             "named": true
           },
           {
+            "type": "member_expression",
+            "named": true
+          },
+          {
             "type": "quoted_identifier",
             "named": true
           }
@@ -45252,6 +45198,10 @@
         },
         {
           "type": "external_schema_property",
+          "named": true
+        },
+        {
+          "type": "field_validate_property",
           "named": true
         },
         {
@@ -46183,6 +46133,11 @@
   {
     "type": "integer",
     "named": true
+  },
+  {
+    "type": "malformed_directive",
+    "named": true,
+    "extra": true
   },
   {
     "type": "many_keyword",

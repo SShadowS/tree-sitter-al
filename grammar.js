@@ -90,7 +90,7 @@ module.exports = grammar({
     [$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values]
   ],
 
-  extras: $ => [new RustRegex('\\s'), $.comment, $.multiline_comment, $.pragma, $.preproc_region, $.preproc_endregion, new RustRegex('\\uFEFF')],
+  extras: $ => [new RustRegex('\\s'), $.comment, $.multiline_comment, $.pragma, $.preproc_region, $.preproc_endregion, $.malformed_directive, new RustRegex('\\uFEFF')],
 
   rules: {
     source_file: $ => choice(
@@ -220,7 +220,8 @@ module.exports = grammar({
         field('source_table', choice(
           $.identifier, 
           $._quoted_identifier,
-          $.field_access  // Support Table.Field syntax
+          $.field_access,  // Support Table."Field" syntax
+          $.member_expression  // Support Table.Field syntax (unquoted)
         ))
       )),
       ')',
@@ -257,6 +258,7 @@ module.exports = grammar({
       $.request_filter_heading_property,
       $.request_filter_heading_ml_property,
       $.use_temporary_property,
+      $.field_validate_property,
     ),
     
     xmlport_field_attribute: $ => seq(
@@ -338,7 +340,8 @@ module.exports = grammar({
     // 8. MaxOccurs Property
     max_occurs_value: $ => choice(
       $.integer,
-      kw('unbounded')
+      kw('unbounded'),
+      kw('once')
     ),
     
     max_occurs_property: _value_property_template($ => kw('MaxOccurs'), $ => $.max_occurs_value),
@@ -351,6 +354,18 @@ module.exports = grammar({
     ),
     
     min_occurs_property: _value_property_template($ => kw('MinOccurs'), $ => $.min_occurs_value),
+    
+    // 10. FieldValidate Property
+    field_validate_property: $ => seq(
+      kw('FieldValidate'),
+      '=',
+      field('value', choice(
+        kw('yes'),
+        kw('no'),
+        $.boolean
+      )),
+      ';'
+    ),
     
     // Occurrence Property (for XMLPort field attributes)
     occurrence_value: $ => choice(
@@ -991,17 +1006,17 @@ module.exports = grammar({
 
     data_item_table_filter_property: _value_property_template(
       $ => kw('dataitemtablefilter'),
-      $ => $._table_filter_value
+      $ => $.table_filter_value
     ),
 
-    _table_filter_value: $ => seq(
+    table_filter_value: $ => seq(
       field('field', $._identifier_choice),
       '=',
       field('filter', choice(
         $.string_literal,
         $._quoted_identifier,
         $.const_expression,
-        seq(kw('filter'), '(', $._filter_value_simple, ')')
+        $.filter_expression
       )),
       repeat(seq(
         ',',
@@ -1011,9 +1026,16 @@ module.exports = grammar({
           $.string_literal,
           $._quoted_identifier,
           $.const_expression,
-          seq(kw('filter'), '(', $._filter_value_simple, ')')
+          $.filter_expression
         ))
       ))
+    ),
+
+    filter_expression: $ => seq(
+      kw('filter'),
+      '(',
+      $._filter_value_simple,
+      ')'
     ),
 
     _filter_value_simple: $ => choice(
@@ -3846,7 +3868,9 @@ module.exports = grammar({
       alias(kw('enddate'), $.identifier),
       alias(kw('endtime'), $.identifier),
       // Allow 'field' to be used as an identifier in variable contexts
-      alias(kw('field'), $.identifier)
+      alias(kw('field'), $.identifier),
+      // Allow 'CustomActionType' to be used as an identifier in variable contexts
+      alias(kw('customactiontype'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
@@ -5452,6 +5476,7 @@ enum_type: $ => prec(1, seq(
         $.identifier,
         $._quoted_identifier,
         $.field_access,
+        $.subscript_expression,
         $._chained_expression
       )),
       field('operator', $._double__colon),
@@ -5622,13 +5647,6 @@ enum_type: $ => prec(1, seq(
 
     indentation_controls_property: _value_property_template($ => kw('IndentationControls'), $ => $._expression),
 
-    custom_action_type_property: $ => seq(
-      'CustomActionType',
-      '=',
-      field('value', $._flexible_identifier_choice),
-      ';'
-    ),
-
     allowed_file_extensions_property: $ => seq(
       'AllowedFileExtensions',
       '=',
@@ -5656,7 +5674,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     custom_action_type_property: $ => seq(
-      kw('CustomActionType'),
+      kw('CustomActionType', 10),
       '=',
       field('value', $._identifier_choice),
       ';'
@@ -6047,11 +6065,14 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     )),
 
-    preproc_region: $ => new RustRegex('#region[^\\n\\r]*'),
+    preproc_region: $ => new RustRegex('#\\s*region[^\\n\\r]*', 'i'),
 
     preproc_endregion: $ => new RustRegex('#endregion[^\\n\\r]*'),
 
     pragma: $ => new RustRegex('#pragma[^\\n]*'), // Match lines starting with #pragma specifically
+
+    // Handle malformed preprocessor directives (like "# Region" with space)
+    malformed_directive: $ => new RustRegex('# [A-Za-z][^\\n\\r]*'),
 
     comment: $ => token(seq('//', new RustRegex('[^\\n\\r]*'))),
 
@@ -6676,6 +6697,7 @@ enum_type: $ => prec(1, seq(
     // Report dataitem-specific properties
     _dataitem_properties: $ => choice(
       $._universal_properties,
+      $.data_item_table_filter_property,
       $.data_item_table_view_property,
       $.max_iteration_property,
       $.data_item_link_property,
