@@ -2340,39 +2340,37 @@ module.exports = grammar({
     views_section: $ => seq(
       kw('views'),
       '{',
-      repeat($.view_declaration),
+      repeat(choice(
+        $.view_definition,
+        $.addafter_views,
+        $.addfirst_views,
+        $.addlast_views,
+        $.modify_views
+      )),
       '}'
     ),
-
-    view_declaration: $ => seq(
-      kw('view'),
+    
+    modify_views: $ => seq(
+      kw('modify'),
       '(',
-      field('name', $.identifier),
+      field('target', $.identifier),
       ')',
       '{',
-      repeat($._view_properties),
+      repeat($._view_property),
       '}'
-    ),
-
-    _view_properties: $ => choice(
-      $.view_caption_property,
-      $.caption_ml_property,
-      $.view_filters_property,
-      $.view_order_by_property,
-      $.shared_layout_property,
-      $.visible_property,
-      // Add other view-specific properties as needed
     ),
 
     view_caption_property: $ => seq(
       kw('caption'),
-      $._caption_string_template
+      '=',
+      field('value', $.string_literal),
+      ';'
     ),
 
     view_filters_property: $ => seq(
       kw('filters'),
       '=',
-      field('value', $.filter_expression),
+      field('value', $.where_clause),
       ';'
     ),
 
@@ -6047,7 +6045,11 @@ enum_type: $ => prec(1, seq(
 
     _view_property: $ => choice(
       $.view_caption_property,
-      $.view_filters_property
+      $.caption_ml_property,
+      $.view_filters_property,
+      $.view_order_by_property,
+      $.shared_layout_property,
+      $.visible_property
     ),
 
 

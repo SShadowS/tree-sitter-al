@@ -1,0 +1,24 @@
+================================================================================
+Preprocessor conditional splitting procedure header (known limitation)
+================================================================================
+
+codeunit 50000 "Known Limitation"
+{
+    // This pattern is not currently supported
+#if not CLEAN26
+    local procedure GetPageID(RecRef: RecordRef) Result: Integer
+#else  
+    local procedure GetPageID(RecRef: RecordRef): Integer
+#endif
+    var
+        TestVar: Integer;
+    begin
+        Result := 0;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+Note: This pattern where preprocessor conditionals split a procedure header 
+but share the same body is not currently supported. The parser cannot handle
+procedure declarations that span across preprocessor branches.

@@ -23422,6 +23422,52 @@
     }
   },
   {
+    "type": "modify_views",
+    "named": true,
+    "fields": {
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "shared_layout_property",
+          "named": true
+        },
+        {
+          "type": "view_caption_property",
+          "named": true
+        },
+        {
+          "type": "view_filters_property",
+          "named": true
+        },
+        {
+          "type": "view_order_by_property",
+          "named": true
+        },
+        {
+          "type": "visible_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "moveafter_layout_modification",
     "named": true,
     "fields": {
@@ -41931,7 +41977,7 @@
     }
   },
   {
-    "type": "view_declaration",
+    "type": "view_definition",
     "named": true,
     "fields": {
       "name": {
@@ -41940,6 +41986,10 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
             "named": true
           }
         ]
@@ -41977,40 +42027,6 @@
     }
   },
   {
-    "type": "view_definition",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "view_caption_property",
-          "named": true
-        },
-        {
-          "type": "view_filters_property",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "view_filters_property",
     "named": true,
     "fields": {
@@ -42019,7 +42035,7 @@
         "required": true,
         "types": [
           {
-            "type": "filter_expression",
+            "type": "where_clause",
             "named": true
           }
         ]
@@ -42082,7 +42098,23 @@
       "required": false,
       "types": [
         {
-          "type": "view_declaration",
+          "type": "addafter_views",
+          "named": true
+        },
+        {
+          "type": "addfirst_views",
+          "named": true
+        },
+        {
+          "type": "addlast_views",
+          "named": true
+        },
+        {
+          "type": "modify_views",
+          "named": true
+        },
+        {
+          "type": "view_definition",
           "named": true
         }
       ]

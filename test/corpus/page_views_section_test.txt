@@ -1,0 +1,64 @@
+================================================================================
+Page extension with views section
+================================================================================
+
+pageextension 50000 "Test Views" extends "User List"
+{
+    views
+    {
+        addafter(ActiveUsers)
+        {
+            view(EssentialUsers)
+            {
+                Caption = 'Essential Users';
+                Filters = where("Has Essential Plan" = const(true));
+                Visible = true;
+            }
+            view(PremiumUsers)
+            {
+                Caption = 'Premium Users';
+                Filters = where("Has Premium Plan" = const(true));
+                Visible = IsSaaS;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pageextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (views_section
+      (addafter_views
+        target: (identifier)
+        (view_definition
+          name: (identifier)
+          (view_caption_property
+            value: (string_literal))
+          (view_filters_property
+            value: (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (boolean))))))
+          (visible_property
+            value: (boolean)))
+        (view_definition
+          name: (identifier)
+          (view_caption_property
+            value: (string_literal))
+          (view_filters_property
+            value: (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (boolean))))))
+          (visible_property
+            value: (identifier)))))))
