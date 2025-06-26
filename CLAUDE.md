@@ -7,12 +7,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central. The project provides grammar definitions to enable syntax highlighting, code analysis, and language tooling support.
 
 **Current status**: 
-- Production files: 92.3% success rate (14,176 out of 15,358 production AL files from BC.History parse successfully)
-- Test suite: Tests passing (run `tree-sitter test` to get exact count)
-- All tests pass including contextual keyword tests and edge cases
-- Grammar improvements completed through 20 additional iterations (12-20)
-- Recent fixes include: qualified trigger names, case-insensitive SQL properties, CueGroupLayout property, negated exist formulas
-- Known limitations: multiline page link properties with const() values, conditional object declarations
+- Production files: 97.3% success rate (14,946 out of 15,358 production AL files from BC.History parse successfully)
+- Test suite: 851 tests passing (run `tree-sitter test` to verify)
+- All tests pass including preprocessor patterns and edge cases
+- Grammar improvements completed through 20+ iterations
+- Recent major achievement: Comprehensive preprocessor support via external scanner
+- Previous "known limitations" now fixed: preprocessor split procedures, conditional object declarations, mixed var/procedure sections
 
 ## Development Commands
 
@@ -291,6 +291,93 @@ When adding properties, follow this decision process:
      ...
    )
    ```
+
+## External Scanner and Preprocessor Handling
+
+The parser uses an external scanner (src/scanner.c) to handle complex preprocessor patterns that cannot be expressed in the JavaScript grammar alone.
+
+### When to Use External Scanner
+External scanners are needed when:
+1. **Lexical lookahead is required** - Need to examine upcoming tokens to make parsing decisions
+2. **State tracking across tokens** - Need to maintain state between different parts of the parse
+3. **Complex token patterns** - Patterns that depend on context or preceding tokens
+
+### Preprocessor Support Implementation
+The external scanner implements comprehensive preprocessor support by:
+
+1. **Tracking preprocessor state** - Maintains a stack of preprocessor contexts
+2. **Detecting split constructs** - Identifies when preprocessor directives split AL language constructs
+3. **Emitting special tokens** - Produces tokens like `PREPROC_SPLIT_MARKER` that the grammar uses
+
+### Key Scanner Tokens
+```c
+enum TokenType {
+    PREPROC_ACTIVE_REGION_START,    // Start of #if active region
+    PREPROC_ACTIVE_REGION_END,      // End of active region
+    PREPROC_INACTIVE_REGION_START,  // Start of inactive region
+    PREPROC_INACTIVE_REGION_END,    // End of inactive region
+    PREPROC_SPLIT_MARKER,           // Marks split constructs
+    PREPROC_CONTINUATION_MARKER,    // Marks continuations
+    ERROR_SENTINEL                  // Error handling
+};
+```
+
+### Grammar Integration
+The grammar uses these scanner tokens through:
+
+1. **externals array** - Declares scanner tokens in grammar.js
+2. **Special rules** - Rules like `preproc_split_procedure` that handle split constructs
+3. **Conditional parsing** - Different parse paths based on preprocessor context
+
+### Common Preprocessor Patterns Fixed
+
+1. **Split procedure headers**:
+   ```al
+   #if not CLEAN26
+       procedure Test() Result: Integer
+   #else
+       procedure Test(): Integer
+   #endif
+   ```
+   - Uses `preproc_split_procedure` rule
+   - Scanner detects the split pattern
+   - Grammar handles both branches
+
+2. **Conditional object declarations**:
+   ```al
+   #if CLEAN26
+   table 50000 MyTable
+   #else
+   table 50000 "My Table"
+   #endif
+   {
+       // fields...
+   }
+   ```
+   - Uses `preproc_conditional_object_declaration` rule
+   - Allows different object headers in branches
+
+3. **Mixed var/procedure sections**:
+   ```al
+   #if not CLEAN25
+       var
+           Item: Record Item;
+       
+       procedure CalcPrice()
+       begin
+       end;
+   #endif
+   ```
+   - Uses `preproc_conditional_mixed_content` rule
+   - Handles mixed content types in preprocessor blocks
+
+### Adding New Scanner Features
+When adding scanner features:
+1. Update `src/scanner.c` with new token types and detection logic
+2. Add tokens to `externals` array in grammar.js
+3. Create grammar rules that use the new tokens
+4. Update build files (binding.gyp, bindings/rust/build.rs) if needed
+5. Test thoroughly with edge cases
 
 ## Known Limitations
 - Standalone semicolons in object properties cause parsing failures

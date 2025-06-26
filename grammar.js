@@ -4821,6 +4821,26 @@ enum_type: $ => prec(1, seq(
       $._boolean_property_template
     ),
 
+    table_separator_property: $ => seq(
+      kw('TableSeparator'),
+      '=',
+      field('value', choice(
+        $.string_literal,
+        kw('NewLine'),
+        kw('TAB'),
+        kw('None')
+      )),
+      ';'
+    ),
+
+    text_encoding_property: _value_property_template($ => kw('TextEncoding'), $ => choice(
+      kw('utf8'),
+      kw('utf16'),
+      kw('windows'),
+      kw('msdos'),
+      $.identifier
+    )),
+
     option_members_property: $ => prec(1, seq(
       kw('OptionMembers'),
       '=',
@@ -6939,6 +6959,8 @@ enum_type: $ => prec(1, seq(
       $.direction_property,
       $.format_evaluate_property,  // Move before format_property to avoid conflict
       $.format_property,
+      $.table_separator_property,
+      $.text_encoding_property,
       $.paste_is_valid_property,
       $.moved_from_property,
       $.moved_to_property,

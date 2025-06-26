@@ -33043,7 +33043,15 @@
           "named": true
         },
         {
+          "type": "table_separator_property",
+          "named": true
+        },
+        {
           "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "text_encoding_property",
           "named": true
         },
         {
@@ -41361,6 +41369,22 @@
     }
   },
   {
+    "type": "table_separator_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "table_type_property",
     "named": true,
     "fields": {
@@ -41853,6 +41877,22 @@
           },
           {
             "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "text_encoding_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -45434,7 +45474,15 @@
           "named": true
         },
         {
+          "type": "table_separator_property",
+          "named": true
+        },
+        {
           "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "text_encoding_property",
           "named": true
         },
         {

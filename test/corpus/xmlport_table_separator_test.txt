@@ -1,0 +1,70 @@
+================================================================================
+XMLPort with TableSeparator and TextEncoding properties
+================================================================================
+
+xmlport 5080 "Export Contact"
+{
+    Caption = 'Export Contact';
+    Direction = Export;
+    Format = VariableText;
+    TableSeparator = '<NewLine>';
+    TextEncoding = UTF8;
+    UseRequestPage = false;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (direction_property
+      value: (direction_value))
+    (format_property
+      value: (format_value))
+    (table_separator_property
+      value: (string_literal))
+    (text_encoding_property)
+    (use_request_page_property
+      value: (boolean))))
+
+================================================================================
+XMLPort with TableSeparator special values
+================================================================================
+
+xmlport 50000 "Test XMLPort"
+{
+    TableSeparator = NewLine;
+    TextEncoding = WINDOWS;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (table_separator_property)
+    (text_encoding_property)))
+
+================================================================================
+XMLPort with TableSeparator string values
+================================================================================
+
+xmlport 50001 "Test XMLPort 2"
+{
+    TableSeparator = 'CR/LF';
+    TextEncoding = UTF16;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (table_separator_property
+      value: (string_literal))
+    (text_encoding_property)))
