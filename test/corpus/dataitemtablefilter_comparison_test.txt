@@ -32,10 +32,10 @@ query 50000 "Sales Lines Outstanding"
             filter: (const_expression
               (identifier))
             field: (quoted_identifier)
-            filter: (filter_expression
+            filter: (simple_filter_expression
               (integer))
             field: (quoted_identifier)
-            filter: (filter_expression
+            filter: (simple_filter_expression
               (identifier)
               (quoted_identifier))))
         (column_section
@@ -70,11 +70,11 @@ report 50001 "Test Report"
         (data_item_table_filter_property
           value: (table_filter_value
             field: (identifier)
-            filter: (filter_expression
+            filter: (simple_filter_expression
               (integer))
             field: (quoted_identifier)
-            filter: (filter_expression
+            filter: (simple_filter_expression
               (integer))
             field: (quoted_identifier)
-            filter: (filter_expression
+            filter: (simple_filter_expression
               (integer))))))))

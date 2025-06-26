@@ -113,6 +113,30 @@ Importance : Option;      // Variable declaration
 3. **Maintenance overhead**: _unreserved_identifier becomes a growing list of special cases
 4. **Architectural debt**: Fundamental issue not addressed, only symptoms patched
 
-## Recommended Solution Strategy
+## Recommended Solution: Contextual Keyword Pattern
 
-**Context-Sensitive Parsing**: Replace global property literals with contextual property identifiers that only match in property assignment contexts, combined with high precedence for variable declarations to ensure variable names take priority in variable contexts.
+The most robust and scalable solution is to adopt a **Contextual Keyword Pattern**. This pattern resolves ambiguity by explicitly defining that certain keywords can be treated as identifiers in specific contexts, such as variable declarations. This approach is proactive, scalable, and eliminates the need for a `conflicts` array for these specific issues.
+
+### Core Principles
+
+1.  **Case-Insensitive Keywords**: All property keywords must be defined using the `kw('keyword')` helper function. This ensures that `Importance`, `importance`, and `IMPORTANCE` are all treated as the same token, reducing complexity.
+
+2.  **Contextual Aliasing**: For any keyword that can also be used as a variable name, a corresponding alias must be added to the `_unquoted_variable_name` rule. The alias should also use the `kw()` helper to maintain case-insensitivity.
+
+    ```javascript
+    // In _unquoted_variable_name rule
+    alias(kw('importance'), $.identifier)
+    ```
+
+3.  **High Precedence for Variable Declarations**: Variable declaration rules (`variable_declaration`, `parameter_declaration`) should have a higher precedence than property assignment rules. This ensures that in an ambiguous situation like `Importance : Enum "My Enum";`, the parser correctly interprets it as a variable declaration.
+
+### Implementation Steps
+
+1.  **Identify Conflicting Keywords**: Systematically identify all keywords that can be used as both property names and variable identifiers.
+2.  **Convert to `kw()`**: Ensure all property definitions use the `kw()` helper.
+3.  **Add Aliases**: For each conflicting keyword, add an `alias(kw('keyword'), $.identifier)` to the `_unquoted_variable_name` rule.
+4.  **Remove Manual Aliases**: Remove the old, case-sensitive aliases from `_unreserved_identifier`.
+5.  **Verify Precedence**: Ensure that variable-related rules have appropriate precedence to win in ambiguous contexts.
+6.  **Test Extensively**: Add test cases that specifically target these contextual keywords in both property and variable contexts to prevent regressions.
+
+By implementing this pattern, the grammar becomes more resilient, easier to maintain, and correctly reflects the contextual nature of the AL language's keywords. This strategy has already been successfully applied to several keywords and should be expanded to cover all remaining conflicts.

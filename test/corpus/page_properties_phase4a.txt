@@ -31,14 +31,14 @@ page 50100 "Test Phase 4A Properties"
 
 (source_file
   (page_declaration
-    object_id:
-      (integer)
+    object_id: (integer)
     object_name: (quoted_identifier)
     (page_type_property)
     (source_table_property
       value: (identifier))
     (access_by_permission_property
       value: (value
+        keyword: (tabledata_keyword)
         table_name: (identifier)
         permission: (permission_type)))
     (prompt_mode_property)

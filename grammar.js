@@ -999,14 +999,6 @@ module.exports = grammar({
       ')'
     ),
     
-    filter_expression: $ => seq(
-      choice(
-        $.where_clause,
-        $.sorting_clause,
-        seq($.where_clause, $.sorting_clause),
-        seq($.sorting_clause, $.where_clause)
-      )
-    ),
     
     // Ensure at least one clause is present to avoid empty string match
     source_table_view_value: $ => choice(
@@ -1081,7 +1073,7 @@ module.exports = grammar({
         $.string_literal,
         $._quoted_identifier,
         $.const_expression,
-        $.filter_expression
+        $.simple_filter_expression
       )),
       repeat(seq(
         ',',
@@ -1091,12 +1083,12 @@ module.exports = grammar({
           $.string_literal,
           $._quoted_identifier,
           $.const_expression,
-          $.filter_expression
+          $.simple_filter_expression
         ))
       ))
     ),
 
-    filter_expression: $ => seq(
+    simple_filter_expression: $ => seq(
       kw('filter'),
       '(',
       $._filter_value_simple,
@@ -1563,7 +1555,7 @@ module.exports = grammar({
 
     source_table_property: _value_property_template(
       $ => kw('sourcetable'),
-      $ => choice($.integer, $.identifier, $._quoted_identifier)
+      $ => $._object_reference
     ),
 
     page_type_property: $ => seq(
@@ -3099,11 +3091,7 @@ module.exports = grammar({
       $._expression_property_template
     ),
 
-    page_id_value: $ => choice(
-      $.integer,
-      $.identifier,
-      prec(1, $._quoted_identifier)
-    ),
+    page_id_value: $ => $._object_reference,
 
 
     blank_zero_value: $ => $.boolean,
@@ -3281,7 +3269,7 @@ module.exports = grammar({
       ),
       // XMLport object permissions
       seq(
-        kw('xmlport'),
+        kw('xmlport', 10),
         $._standard_permission_template
       ),
       // Query object permissions
@@ -3324,7 +3312,7 @@ module.exports = grammar({
     ),
 
     access_by_permission_property: $ => seq(
-      'AccessByPermission',
+      kw('AccessByPermission'),
       '=',
       field('value', alias($.access_by_permission_value, $.value)),
       ';'
@@ -3942,16 +3930,13 @@ module.exports = grammar({
     ),
 
     tabledata_permission: $ => seq(
-      field('keyword', alias(/[Tt][Aa][Bb][Ll][Ee][Dd][Aa][Tt][Aa]/, $.tabledata_keyword)),
-      field('table_name', $._table_identifier),
+      field('keyword', alias(choice(
+        kw('tabledata'),
+        /[Tt][Aa][Bb][Ll][Ee][Dd][Aa][Tt][Aa]/  // Fallback regex for preprocessor contexts
+      ), $.tabledata_keyword)),
+      field('table_name', $._table_reference),
       '=',
       field('permission', $.permission_type)
-    ),
-
-    _table_identifier: $ => choice(
-      $.identifier,
-      $._quoted_identifier,
-      $.integer
     ),
 
 
@@ -4016,7 +4001,9 @@ module.exports = grammar({
       // Allow 'CustomActionType' to be used as an identifier in variable contexts
       alias(kw('customactiontype'), $.identifier),
       // Allow 'TableType' to be used as an identifier in variable contexts
-      alias(kw('tabletype'), $.identifier)
+      alias(kw('tabletype'), $.identifier),
+      // Allow 'DataCaptionExpression' to be used as an identifier in variable contexts
+      alias(kw('datacaptionexpression'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
@@ -4506,7 +4493,7 @@ enum_type: $ => prec(1, seq(
     )),
 
     where_condition: $ => choice(
-      $.filter_expression,  // Add filter_expression for SourceTableView
+      $.simple_filter_expression,  // Add simple_filter_expression for SourceTableView
       $.const_filter,
       $.field_reference_condition,  // Use updated field reference condition that supports upperlimit
       $.field_filter,               // Keep for backward compatibility
@@ -5111,6 +5098,26 @@ enum_type: $ => prec(1, seq(
       $.code_block
     ),
 
+    // Split if-else statement where else is inside preprocessor but body is outside
+    preproc_split_if_else: $ => seq(
+      $.preproc_if,
+      seq(
+        kw('if', 10),
+        field('condition', $._expression),
+        kw('then', 10),
+        field('then_branch', choice(
+          $.code_block,
+          $._if_then_body
+        )),
+        kw('else', 10)
+      ),
+      $.preproc_endif,
+      field('else_branch', choice(
+        $.code_block,
+        $._if_then_body
+      ))
+    ),
+
     // Procedure header without body (for split procedures)
     procedure_header: $ => seq(
       optional(field('modifier', $.procedure_modifier)), 
@@ -5519,23 +5526,28 @@ enum_type: $ => prec(1, seq(
       ))
     )),
 
-    if_statement: $ => prec.right(seq(
-      kw('if', 10),
-      field('condition', $._expression),
-      kw('then', 10),
-      field('then_branch', choice(
-        $.code_block,
-        $._if_then_body
-      )),
-      optional(seq(
-        kw('else', 10),
-        field('else_branch', choice(
+    if_statement: $ => choice(
+      // Normal if statement
+      prec.right(seq(
+        kw('if', 10),
+        field('condition', $._expression),
+        kw('then', 10),
+        field('then_branch', choice(
           $.code_block,
-          prec(1, $.if_statement),
           $._if_then_body
+        )),
+        optional(seq(
+          kw('else', 10),
+          field('else_branch', choice(
+            $.code_block,
+            prec(1, $.if_statement),
+            $._if_then_body
+          ))
         ))
-      ))
-    )),
+      )),
+      // Split if-else statement
+      $.preproc_split_if_else
+    ),
 
     // Helper rule for if statement bodies
     _if_then_body: $ => prec.right(seq(
@@ -6180,7 +6192,7 @@ enum_type: $ => prec(1, seq(
         $.identifier,
         $._quoted_identifier,
         $.string_literal,
-        $.filter_expression
+        $.simple_filter_expression
       )),
       ';'
     ),
@@ -7067,6 +7079,9 @@ enum_type: $ => prec(1, seq(
     // Extended value choice pattern (includes integers and identifiers)
     _extended_value_choice: $ => choice($.integer, $.identifier, $._quoted_identifier, $.string_literal),
 
+    // Object reference pattern (for referencing AL objects by ID or name)
+    _object_reference: $ => choice($.integer, $.identifier, $._quoted_identifier),
+
     // Centralized property template for DRY principle
     _boolean_property_template: $ => seq(
       '=',
@@ -7287,7 +7302,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     _tabledata_permission_template: $ => seq(
-      kw('tabledata'),
+      field('keyword', alias(kw('tabledata'), $.tabledata_keyword)),
       field('table_name', $._table_reference),
       '=',
       field('permission', $.permission_type)

@@ -8,9 +8,10 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,946 files (97.3%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,974 files (97.4%) parse successfully**.
 
 Recent improvements include:
+- **Preprocessor conditionals in Permissions property** - Added support for #if/#else/#endif directives within tabledata permission lists, enabling conditional compilation of permissions
 - **Comprehensive preprocessor support** - Complete support for #if/#else/#endif directives throughout AL code, including split procedures, conditional object declarations, and complex trigger patterns
 - **Views sections in page extensions** - Added support for views sections in pageextension objects with view definitions and modification patterns
 - **ExternalName property** - Added support for ExternalName property in table fields with case-insensitive matching
