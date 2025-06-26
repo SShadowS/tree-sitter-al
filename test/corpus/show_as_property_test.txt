@@ -183,4 +183,93 @@ page 50003 OpportunityList
             (show_as_property)
             (actionref_declaration
               promoted_name: (identifier)
-              action_name: (identifier))))))))
+              action_name: (identifier))))))
+
+================================================================================
+ShowAs property with Standard value
+================================================================================
+
+page 50004 TestPage
+{
+    actions
+    {
+        area(Promoted)
+        {
+            group(Category_Process)
+            {
+                Caption = 'Process';
+                ShowAs = Standard;
+
+                actionref(PromotedRefresh; Refresh) { }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (actions_section
+      (area_action_section
+        (action_group_section
+          name: (identifier)
+          (caption_property
+            (string_literal))
+          (show_as_property)
+          (actionref_declaration
+            promoted_name: (identifier)
+            action_name: (identifier)))))))
+
+================================================================================
+ShowAs property with Button value and case variations
+================================================================================
+
+page 50005 TestPage
+{
+    actions
+    {
+        area(promoted)
+        {
+            group(Group1)
+            {
+                ShowAs = button;
+            }
+            group(Group2)
+            {
+                ShowAs = BUTTON;
+            }
+            group(Group3)
+            {
+                ShowAs = standard;
+            }
+            group(Group4)
+            {
+                ShowAs = STANDARD;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (actions_section
+      (area_action_section
+        (action_group_section
+          name: (identifier)
+          (show_as_property))
+        (action_group_section
+          name: (identifier)
+          (show_as_property))
+        (action_group_section
+          name: (identifier)
+          (show_as_property))
+        (action_group_section
+          name: (identifier)
+          (show_as_property))))))

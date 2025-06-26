@@ -5988,8 +5988,9 @@ enum_type: $ => prec(1, seq(
       '=',
       field('value', choice(
         kw('splitbutton'),  // SplitButton
-        kw('menu'),                               // Menu
-        kw('button')                        // Button
+        kw('menu'),         // Menu
+        kw('button'),       // Button
+        kw('standard')      // Standard
       )),
       ';'
     ),
