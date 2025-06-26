@@ -311,6 +311,7 @@ module.exports = grammar({
       $.request_filter_heading_property,
       $.request_filter_heading_ml_property,
       $.use_temporary_property,
+      $.source_table_view_property,  // Add SourceTableView property
       $.field_validate_property,
     ),
     
