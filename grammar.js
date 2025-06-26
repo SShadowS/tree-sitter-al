@@ -5063,7 +5063,7 @@ enum_type: $ => prec(1, seq(
 
     repeat_statement: $ => seq(
       kw('repeat', 10),
-      repeat($._statement),
+      repeat($._statement_or_preprocessor),
       kw('until', 10),
       field('condition', $._expression)
     ),
