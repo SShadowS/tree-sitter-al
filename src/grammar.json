@@ -16769,17 +16769,102 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "tabledata_permission"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "tabledata_permission"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_conditional_tabledata_permissions"
+            }
+          ]
         },
         {
           "type": "REPEAT",
           "content": {
-            "type": "SEQ",
+            "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": ","
+                "type": "PREC",
+                "value": 2,
+                "content": {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": ","
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "tabledata_permission"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "PREC",
+                "value": 2,
+                "content": {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": ","
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "preproc_conditional_tabledata_permissions"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "preproc_conditional_tabledata_permissions"
+                }
+              },
+              {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "tabledata_permission"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "preproc_conditional_tabledata_permissions": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "tabledata_permission"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  }
+                ]
               },
               {
                 "type": "SYMBOL",
@@ -16787,6 +16872,52 @@
               }
             ]
           }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "tabledata_permission"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": ","
+                          }
+                        ]
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "tabledata_permission"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
         }
       ]
     },
@@ -16794,8 +16925,17 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_tabledata_keyword"
+          "type": "FIELD",
+          "name": "keyword",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "[Tt][Aa][Bb][Ll][Ee][Dd][Aa][Tt][Aa]"
+            },
+            "named": true,
+            "value": "tabledata_keyword"
+          }
         },
         {
           "type": "FIELD",
@@ -31671,13 +31811,6 @@
       "content": {
         "type": "PATTERN",
         "value": "(?i)cardpart"
-      }
-    },
-    "_tabledata_keyword": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PATTERN",
-        "value": "(?i)tabledata"
       }
     },
     "const": {

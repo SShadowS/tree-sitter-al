@@ -3908,12 +3908,36 @@ module.exports = grammar({
 
 
     tabledata_permission_list: $ => seq(
-      $.tabledata_permission,
-      repeat(seq(',', $.tabledata_permission)) // Changed optional to repeat for multiple permissions
+      choice(
+        $.tabledata_permission,
+        $.preproc_conditional_tabledata_permissions  // Allow starting with #if
+      ),
+      repeat(choice(
+        prec(2, seq(',', $.tabledata_permission)),
+        prec(2, seq(',', $.preproc_conditional_tabledata_permissions)),
+        prec(1, $.preproc_conditional_tabledata_permissions),  // Allow conditional after #endif without comma
+        prec(1, $.tabledata_permission)  // Allow entry after conditional without comma
+      ))
+    ),
+
+    preproc_conditional_tabledata_permissions: $ => seq(
+      $.preproc_if,
+      repeat(choice(
+        seq($.tabledata_permission, ','),  // Prioritize entry with comma
+        $.tabledata_permission
+      )),
+      optional(seq(
+        $.preproc_else,
+        repeat(choice(
+          seq($.tabledata_permission, ','),
+          $.tabledata_permission
+        ))
+      )),
+      $.preproc_endif
     ),
 
     tabledata_permission: $ => seq(
-      $._tabledata_keyword,
+      field('keyword', alias(/[Tt][Aa][Bb][Ll][Ee][Dd][Aa][Tt][Aa]/, $.tabledata_keyword)),
       field('table_name', $._table_identifier),
       '=',
       field('permission', $.permission_type)
@@ -7302,7 +7326,6 @@ enum_type: $ => prec(1, seq(
     _field_keyword: $ => kw('field'),
     _filter_keyword: $ => kw('filter'),
     _cardpart_keyword: $ => kw('cardpart'),
-    _tabledata_keyword: $ => kw('tabledata'),
 
     // Missing alias target rules
     const: $ => kw('const'),

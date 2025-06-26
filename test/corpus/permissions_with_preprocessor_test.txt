@@ -1,0 +1,117 @@
+================================================================================
+Table with Permissions property containing preprocessor conditionals
+================================================================================
+
+table 23 "Vendor"
+{
+    Caption = 'Vendor';
+    Permissions = TableData "Vendor Ledger Entry" = r,
+                  TableData "Price List Header" = rd,
+                  TableData "Price List Line" = rd,
+#if not CLEAN25
+                  TableData "Purchase Price" = rd,
+                  TableData "Purchase Line Discount" = rd,
+#endif
+                  TableData "Purchase Price Access" = rd,
+                  TableData "Purchase Discount Access" = rd,
+                  tabledata Language = r,
+                  tabledata "Language Selection" = r;
+    DataClassification = CustomerContent;
+
+    fields
+    {
+        field(1; "No."; Code[20])
+        {
+            Caption = 'No.';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (permissions_property
+      (tabledata_permission_list
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))
+        (preproc_conditional_tabledata_permissions
+          (preproc_if
+            condition: (identifier))
+          (tabledata_permission
+            keyword: (tabledata_keyword)
+            table_name: (quoted_identifier)
+            permission: (permission_type))
+          (tabledata_permission
+            keyword: (tabledata_keyword)
+            table_name: (quoted_identifier)
+            permission: (permission_type))
+          (preproc_endif))
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (identifier)
+          permission: (permission_type))
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))))
+    (data_classification_property
+      value: (data_classification_value))
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (caption_property
+          (string_literal))))))
+
+================================================================================
+Simple Permissions property without preprocessor
+================================================================================
+
+table 24 "Simple Vendor"
+{
+    Permissions = TableData "Vendor Ledger Entry" = r,
+                  TableData "Price List Header" = rd;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (permissions_property
+      (tabledata_permission_list
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))))))
