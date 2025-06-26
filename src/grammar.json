@@ -8510,6 +8510,34 @@
                   "type": "TOKEN",
                   "content": {
                     "type": "PATTERN",
+                    "value": "(?i)extends"
+                  }
+                },
+                {
+                  "type": "FIELD",
+                  "name": "extends_interface",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_identifier_choice"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PATTERN",
                     "value": "(?i)access"
                   }
                 },
@@ -13372,6 +13400,14 @@
               {
                 "type": "SYMBOL",
                 "name": "qualified_enum_value"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "field_access"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "member_expression"
               }
             ]
           }

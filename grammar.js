@@ -2074,6 +2074,10 @@ module.exports = grammar({
       kw('interface'),
       field('object_name', $._identifier_choice),
       optional(seq(
+        kw('extends'),
+        field('extends_interface', $._identifier_choice)
+      )),
+      optional(seq(
         kw('access'),
         '=',
         field('access_value', choice(
@@ -3093,7 +3097,9 @@ module.exports = grammar({
         $.boolean,
         $.unary_expression,
         $.comparison_expression,
-        $.qualified_enum_value
+        $.qualified_enum_value,
+        $.field_access,
+        $.member_expression
       )),
 
     page_id_value: $ => choice(

@@ -1,0 +1,75 @@
+================================================================================
+Interface with extends clause
+================================================================================
+
+interface "Cost Adjustment With Params" extends "Inventory Adjustment"
+{
+    /// <summary>
+    /// The method run inventory cost adjustment codeunit. 
+    /// </summary>
+    procedure MakeMultiLevelAdjmt(var CostAdjustmentParameter: Codeunit "Cost Adjustment Params Mgt.")
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    object_name: (quoted_identifier)
+    extends_interface: (quoted_identifier)
+    (comment)
+    (comment)
+    (comment)
+    (interface_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (codeunit_type
+              reference: (quoted_identifier))))))))
+
+================================================================================
+Interface extends with access modifier
+================================================================================
+
+interface "My Interface" extends MyBaseInterface access = Internal
+{
+    procedure DoSomething()
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    object_name: (quoted_identifier)
+    extends_interface: (identifier)
+    (interface_procedure
+      name: (identifier))))
+
+================================================================================
+Simple interface without extends
+================================================================================
+
+interface "Simple Interface"
+{
+    procedure Method1()
+    procedure Method2(Value: Integer)
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    object_name: (quoted_identifier)
+    (interface_procedure
+      name: (identifier))
+    (interface_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type)))))))

@@ -20865,6 +20865,20 @@
           }
         ]
       },
+      "extends_interface": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
       "object_name": {
         "multiple": false,
         "required": true,
@@ -39610,7 +39624,15 @@
             "named": true
           },
           {
+            "type": "field_access",
+            "named": true
+          },
+          {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "member_expression",
             "named": true
           },
           {

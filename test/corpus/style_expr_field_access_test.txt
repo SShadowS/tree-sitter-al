@@ -1,0 +1,141 @@
+================================================================================
+StyleExpr with field access
+================================================================================
+
+page 50100 "Test Page"
+{
+    layout
+    {
+        area(content)
+        {
+            field("Test Field"; Rec."Test Field")
+            {
+                StyleExpr = Rec."Response Description Style";
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (quoted_identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (style_expr_property
+            value: (field_access
+              record: (identifier)
+              field: (quoted_identifier))))))))
+
+================================================================================
+StyleExpr with member expression
+================================================================================
+
+page 50101 "Test Page 2"
+{
+    layout
+    {
+        area(content)
+        {
+            field(MyField; MyRecord.Amount)
+            {
+                StyleExpr = CurrPage.Editable;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier))
+          (style_expr_property
+            value: (member_expression
+              object: (identifier)
+              property: (identifier))))))))
+
+================================================================================
+StyleExpr with complex expressions
+================================================================================
+
+page 50102 "Test Page 3"
+{
+    layout
+    {
+        area(content)
+        {
+            field(Status; Rec.Status)
+            {
+                StyleExpr = GetStyleExpression();
+            }
+            field(Amount; Rec.Amount)
+            {
+                StyleExpr = "Total Amount" > 1000;
+            }
+            field(Type; Rec.Type)
+            {
+                StyleExpr = Rec.Type = Rec.Type::Customer;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier))
+          (style_expr_property
+            value: (call_expression
+              function: (identifier)
+              arguments: (argument_list))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier))
+          (style_expr_property
+            value: (comparison_expression
+              left: (quoted_identifier)
+              operator: (comparison_operator)
+              right: (integer))))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier))
+          (style_expr_property
+            value: (comparison_expression
+              left: (member_expression
+                object: (identifier)
+                property: (identifier))
+              operator: (comparison_operator)
+              right: (qualified_enum_value
+                enum_type: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                value: (identifier)))))))))
