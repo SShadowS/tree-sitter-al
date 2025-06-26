@@ -2414,7 +2414,8 @@ module.exports = grammar({
       'Permissions',
       '=',
       $.permission_list,
-      ';'
+      ';',
+      repeat(';')  // Allow trailing semicolons
     ),
 
     permission_list: $ => seq(

@@ -1,0 +1,79 @@
+================================================================================
+Permission Set with Trailing Semicolons
+================================================================================
+
+namespace Microsoft.Integration.MDM;
+
+permissionset 7231 "Master Data Mgt. - Read"
+{
+    Assignable = false;
+    Access = Public;
+
+    IncludedPermissionSets = "Master Data Mgt. - Objects";
+
+    Permissions = tabledata "Master Data Full Synch. R. Ln." = r,
+                  tabledata "Master Data Mgt. Coupling" = r,
+                  tabledata "Master Data Mgt. Subscriber" = r,
+                  tabledata "Master Data Management Setup" = r;
+    ;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (namespace_declaration
+    name: (namespace_name
+      (identifier)
+      (identifier)
+      (identifier)))
+  (permissionset_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (assignable_property)
+    (property_list
+      (property
+        (access_property
+          value: (value))))
+    (included_permission_sets_property
+      value: (included_permission_sets_list
+        (quoted_identifier)))
+    (permissionset_permissions
+      (permission_list
+        (permission_entry
+          object_type: (identifier)
+          object_reference: (quoted_identifier)
+          permission: (permission_type))
+        (permission_entry
+          object_type: (identifier)
+          object_reference: (quoted_identifier)
+          permission: (permission_type))
+        (permission_entry
+          object_type: (identifier)
+          object_reference: (quoted_identifier)
+          permission: (permission_type))
+        (permission_entry
+          object_type: (identifier)
+          object_reference: (quoted_identifier)
+          permission: (permission_type))))))
+
+================================================================================
+Permission Set with Multiple Trailing Semicolons
+================================================================================
+
+permissionset 7232 "Test Permission Set"
+{
+    Permissions = tabledata "Test Table" = r;;;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (permissionset_permissions
+      (permission_list
+        (permission_entry
+          object_type: (identifier)
+          object_reference: (quoted_identifier)
+          permission: (permission_type))))))
