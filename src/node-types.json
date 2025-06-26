@@ -36319,6 +36319,10 @@
           "named": true
         },
         {
+          "type": "namespace_name",
+          "named": true
+        },
+        {
           "type": "obsolete_reason_property",
           "named": true
         },
@@ -36737,10 +36741,28 @@
     "type": "report_type",
     "named": true,
     "fields": {
+      "namespace": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ".",
+            "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
       "reference": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
+          {
+            "type": ".",
+            "named": false
+          },
           {
             "type": "identifier",
             "named": true
@@ -36749,6 +36771,16 @@
             "type": "integer",
             "named": true
           },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "type_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
           {
             "type": "quoted_identifier",
             "named": true

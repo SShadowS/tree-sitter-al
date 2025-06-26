@@ -1,0 +1,78 @@
+================================================================================
+Report type with namespace-qualified reference
+================================================================================
+
+codeunit 1234 "Test Codeunit"
+{
+    procedure TestProcedure()
+    var
+        MyReport: Report Microsoft.Inventory.Reports."Certificate of Supply";
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (report_type
+                (identifier)
+                (identifier)
+                (identifier)
+                (quoted_identifier)))))
+        (code_block)))))
+
+================================================================================
+Multiple report type declarations
+================================================================================
+
+codeunit 5678 "Another Test"
+{
+    procedure AnotherProc()
+    var
+        SimpleReport: Report 1234;
+        NamedReport: Report "Sales Invoice";
+        NamespaceReport: Report System.Utilities."Integer Report";
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (quoted_identifier)
+    (procedure
+      (identifier)
+      (parameter_list)
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (report_type
+              (integer))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (report_type
+              (quoted_identifier))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (report_type
+              (namespace_name
+                (identifier)
+                (identifier))
+              (quoted_identifier)))))
+      (code_block))))

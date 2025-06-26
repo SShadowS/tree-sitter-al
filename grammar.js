@@ -150,10 +150,10 @@ module.exports = grammar({
       ';'
     ),
 
-    namespace_name: $ => seq(
+    namespace_name: $ => prec.left(seq(
       $.identifier,
       repeat(seq('.', $.identifier))
-    ),
+    )),
 
     using_statement: $ => seq(
       'using',
@@ -2227,7 +2227,10 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_choice),
       ';',
-      $._identifier_choice,
+      choice(
+        $._identifier_choice,
+        $.namespace_name
+      ),
       ')',
       '{',
       repeat(choice(
@@ -4056,9 +4059,19 @@ enum_type: $ => prec(1, seq(
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
-        $.identifier
+        $.identifier,
+        $._namespace_qualified_type_reference
       ))
     ),
+    
+    _namespace_qualified_type_reference: $ => prec(3, seq(
+      field('namespace', seq(
+        $.identifier,
+        repeat(seq('.', $.identifier))
+      )),
+      '.',
+      field('type_name', $._quoted_identifier)
+    )),
 
     xmlport_type: $ => seq(
       prec(1, kw('xmlport')),
