@@ -6444,8 +6444,41 @@
                     "type": "FIELD",
                     "name": "field_value",
                     "content": {
-                      "type": "SYMBOL",
-                      "name": "_identifier_choice"
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "_identifier_choice"
+                        },
+                        {
+                          "type": "SEQ",
+                          "members": [
+                            {
+                              "type": "TOKEN",
+                              "content": {
+                                "type": "PATTERN",
+                                "value": "(?i)filter"
+                              }
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "("
+                            },
+                            {
+                              "type": "FIELD",
+                              "name": "filter_value",
+                              "content": {
+                                "type": "SYMBOL",
+                                "name": "_identifier_choice"
+                              }
+                            },
+                            {
+                              "type": "STRING",
+                              "value": ")"
+                            }
+                          ]
+                        }
+                      ]
                     }
                   },
                   {

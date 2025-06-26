@@ -1618,7 +1618,15 @@ module.exports = grammar({
         seq(
           kw('field'),
           '(',
-          field('field_value', $._identifier_choice),
+          field('field_value', choice(
+            $._identifier_choice,
+            seq(
+              kw('filter'),
+              '(',
+              field('filter_value', $._identifier_choice),
+              ')'
+            )
+          )),
           ')'
         ),
         seq(
