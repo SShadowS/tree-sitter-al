@@ -1,0 +1,136 @@
+================================================================================
+Simple Interface Type
+================================================================================
+
+codeunit 50100 TestInterface
+{
+    procedure GetAuth(): Interface "Storage Service Authorization"
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (identifier)
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (return_type
+          (type_specification
+            (interface_type
+              (quoted_identifier))))
+        (code_block)))))
+
+================================================================================
+Namespace-Qualified Interface Type
+================================================================================
+
+codeunit 50100 TestInterface
+{
+    procedure GetAuth(): Interface System.Azure.Storage."Storage Service Authorization"
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (identifier)
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (return_type
+          (type_specification
+            (interface_type
+              (qualified_interface_reference
+                (identifier)
+                (identifier)
+                (identifier)
+                (quoted_identifier)))))
+        (code_block)))))
+
+================================================================================
+Interface Type in Variable Declaration
+================================================================================
+
+codeunit 50100 TestInterface
+{
+    var
+        Auth: Interface "My Interface";
+        ComplexAuth: Interface Microsoft.System."Complex Interface";
+        
+    procedure Test()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (identifier)
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (interface_type
+            (quoted_identifier))))
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (interface_type
+            (qualified_interface_reference
+              (identifier)
+              (identifier)
+              (quoted_identifier))))))
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (code_block)))))
+
+================================================================================
+Interface Type in Parameter
+================================================================================
+
+codeunit 50100 TestInterface
+{
+    procedure Process(Auth: Interface System.Security."Auth Provider"; Value: Integer)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (identifier)
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (parameter_list
+          (parameter
+            (name
+              (identifier))
+            (type_specification
+              (interface_type
+                (qualified_interface_reference
+                  (identifier)
+                  (identifier)
+                  (quoted_identifier)))))
+          (parameter
+            (name
+              (identifier))
+            (type_specification
+              (basic_type))))
+        (code_block)))))

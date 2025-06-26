@@ -4143,10 +4143,24 @@ option_member_list: $ => prec.left(1, choice(
 interface_type: $ => seq(
   prec(1, kw('interface')),
   field('reference', choice(
-    $._quoted_identifier,
-    $.identifier
+    prec(2, $.qualified_interface_reference),
+    prec(1, $._interface_reference)
   ))
 ),
+
+// Interface reference (simple identifier or quoted)
+_interface_reference: $ => choice(
+  $._quoted_identifier,
+  $.identifier
+),
+
+// Namespace-qualified interface reference
+qualified_interface_reference: $ => prec.right(8, seq(
+  field('namespace', $._identifier_choice),
+  repeat1(seq('.', $._identifier_choice)),
+  '.',
+  field('interface', $._quoted_identifier)
+)),
 
 controladdin_type: $ => seq(
   kw('controladdin'),
