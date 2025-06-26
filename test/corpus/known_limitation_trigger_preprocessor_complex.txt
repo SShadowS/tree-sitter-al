@@ -1,5 +1,5 @@
 ================================================================================
-Complex preprocessor conditionals in triggers (known limitation)
+Complex preprocessor conditionals in triggers
 ================================================================================
 
 table 5080 Todo
@@ -26,4 +26,63 @@ table 5080 Todo
 
 --------------------------------------------------------------------------------
 
-Note: (preproc_conditional_var_sections)
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (named_trigger
+      (preproc_conditional_var_sections
+        (preproc_if
+          condition: (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (codeunit_type
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif))
+      (code_block
+        (if_statement
+          condition: (comparison_expression
+            left: (quoted_identifier)
+            operator: (comparison_operator)
+            right: (string_literal))
+          then_branch: (code_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))
+            (preproc_conditional_statements
+              (preproc_if
+                condition: (identifier))
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list))
+              (if_statement
+                condition: (unary_expression
+                  (identifier))
+                then_branch: (assignment_expression
+                  left: (quoted_identifier)
+                  right: (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      property: (identifier))
+                    arguments: (argument_list
+                      (quoted_identifier)))))
+              (preproc_else)
+              (assignment_expression
+                left: (quoted_identifier)
+                right: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list
+                    (quoted_identifier))))
+              (preproc_endif))))))))

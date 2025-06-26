@@ -1,10 +1,10 @@
 {
   "summary": {
-    "total_definitions": 720,
-    "total_references": 767,
+    "total_definitions": 747,
+    "total_references": 804,
     "unused_count": 0,
-    "low_usage_count": 282,
-    "missing_count": 52,
+    "low_usage_count": 297,
+    "missing_count": 63,
     "excluded_rules": [
       "ERROR",
       "IMMEDIATE_TOKEN",
@@ -34,1975 +34,2080 @@
   "unused_rules": [],
   "low_usage_rules": [
     {
+      "name": "_object_body_element",
+      "line": 188,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
       "name": "_xmlport_element",
-      "line": 168,
+      "line": 225,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "xmlport_text_attribute",
-      "line": 273,
+      "line": 336,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_query_element",
-      "line": 466,
+      "line": 568,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
-      "name": "_table_filter_value",
-      "line": 929,
+      "name": "_filter_value_simple",
+      "line": 1101,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_pageextension_element",
-      "line": 1071,
+      "line": 1259,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_tableextension_element",
-      "line": 1095,
+      "line": 1283,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "addlast_action_group",
-      "line": 1191,
+      "line": 1382,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "modify_action_group",
-      "line": 1218,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "systemaction_declaration",
-      "line": 1285,
+      "line": 1409,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "cardpart_property",
-      "line": 1381,
+      "line": 1586,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "run_form_link_type_property",
-      "line": 1433,
+      "line": 1639,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "in_footer_bar_property",
-      "line": 1521,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "run_page_mode_property",
-      "line": 1526,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "run_page_on_rec_property",
-      "line": 1533,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "_assignment_operator",
-      "line": 1538,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "_colon",
-      "line": 1540,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "_controladdin_element",
       "line": 1736,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
+      "name": "run_page_mode_property",
+      "line": 1741,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "run_page_on_rec_property",
+      "line": 1748,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_colon",
+      "line": 1755,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_controladdin_element",
+      "line": 1971,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
       "name": "_entitlement_element",
-      "line": 1752,
+      "line": 1987,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "entitlement_group_name_property",
-      "line": 1786,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "reportextension_declaration",
-      "line": 1879,
+      "line": 2021,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_reportextension_element",
-      "line": 1889,
+      "line": 2124,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_report_element",
-      "line": 1903,
+      "line": 2138,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_label_element",
-      "line": 1935,
+      "line": 2170,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_rendering_layout_property",
-      "line": 1956,
+      "line": 2191,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_interface_properties",
-      "line": 2033,
+      "line": 2292,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_permissionset_element",
-      "line": 2088,
+      "line": 2350,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_permissionsetextension_element",
-      "line": 2106,
+      "line": 2368,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "dotnet_assembly_name",
-      "line": 2211,
+      "line": 2473,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "assembly_property",
-      "line": 2216,
+      "line": 2478,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_page_element",
-      "line": 2250,
+      "line": 2512,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
-      "name": "_view_properties",
-      "line": 2299,
+      "name": "modify_views",
+      "line": 2557,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "addbefore_layout_modification",
-      "line": 2378,
+      "line": 2638,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "fixed_section",
-      "line": 2474,
+      "line": 2735,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "source_expr_property",
-      "line": 2623,
+      "line": 2863,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "qualified_trigger_name",
+      "line": 2876,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_table_no_value",
-      "line": 2663,
+      "line": 2915,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "subtype_value",
-      "line": 2669,
+      "line": 2921,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "single_instance_value",
-      "line": 2682,
+      "line": 2934,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "event_subscriber_instance_value",
-      "line": 2684,
+      "line": 2936,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "test_isolation_value",
-      "line": 2690,
+      "line": 2942,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "run_page_mode_value",
-      "line": 2744,
+      "line": 2996,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "table_type_value",
-      "line": 2858,
+      "line": 3110,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "char_allowed_value",
-      "line": 2872,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "external_access_value",
-      "line": 2893,
+      "line": 3124,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "sign_displacement_value",
-      "line": 2933,
+      "line": 3180,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "unique_value",
-      "line": 2964,
+      "line": 3211,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "validate_table_relation_value",
-      "line": 2965,
+      "line": 3212,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "access_value",
-      "line": 3001,
+      "line": 3248,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "access_by_permission_value",
-      "line": 3007,
+      "line": 3254,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "auto_format_type_value",
-      "line": 3045,
+      "line": 3292,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "auto_increment_value",
-      "line": 3060,
+      "line": 3307,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "blank_numbers_value",
-      "line": 3062,
+      "line": 3309,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "table_type_property",
-      "line": 3069,
+      "line": 3316,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "sign_displacement_property",
+      "line": 3485,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "validate_table_relation_property",
+      "line": 3525,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_table_element",
-      "line": 3413,
+      "line": 3654,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_table_identifier",
-      "line": 3651,
+      "line": 3924,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_parameter_option",
-      "line": 3755,
+      "line": 4043,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "controladdin_type",
-      "line": 3834,
+      "line": 4123,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
-      "name": "report_type",
-      "line": 3867,
+      "name": "_namespace_qualified_type_reference",
+      "line": 4166,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "dictionary_type",
-      "line": 3884,
+      "line": 4192,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "fieldref_type",
-      "line": 3978,
+      "line": 4286,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_non_call_chained_expression",
-      "line": 4303,
+      "line": 4507,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_calc_formula_expression",
-      "line": 4336,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "exist_formula",
-      "line": 4516,
+      "line": 4540,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "default_namespace_property",
-      "line": 4552,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "format_evaluate_property",
-      "line": 4591,
+      "line": 4769,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "use_default_namespace_property",
-      "line": 4602,
+      "line": 4819,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
-      "name": "_procedure_name",
-      "line": 4767,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "_statement_or_preprocessor",
-      "line": 4873,
+      "name": "preproc_conditional_procedure",
+      "line": 5022,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_expression_statement",
-      "line": 4881,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "while_statement",
-      "line": 4906,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "_assignable_expression",
-      "line": 4984,
+      "line": 5171,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "enum_value_expression",
-      "line": 5151,
+      "line": 5459,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_case_expression",
-      "line": 5191,
+      "line": 5502,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_case_item",
-      "line": 5202,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "_case_pattern",
-      "line": 5220,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "time_literal",
-      "line": 5288,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "datetime_literal",
-      "line": 5294,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "duration_literal",
-      "line": 5300,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "_enum_type_reference",
-      "line": 5377,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "_enum_value_reference",
-      "line": 5383,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "_branch_statements",
-      "line": 5391,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "cuegroup_layout_property",
-      "line": 5452,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "custom_action_type_property",
-      "line": 5480,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "file_upload_action_property",
-      "line": 5499,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "file_upload_row_action_property",
-      "line": 5506,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "odata_edm_type_property",
       "line": 5513,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
-      "name": "clear_actions_property",
-      "line": 5521,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "clear_layout_property",
-      "line": 5526,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "clear_views_property",
+      "name": "_case_pattern",
       "line": 5531,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
-      "name": "importance_additional_property",
-      "line": 5549,
+      "name": "datetime_literal",
+      "line": 5605,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
-      "name": "default_rendering_layout_property",
-      "line": 5567,
+      "name": "duration_literal",
+      "line": 5611,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
-      "name": "excel_layout_property",
-      "line": 5574,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "allow_scheduling_property",
-      "line": 5596,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "preview_mode_property",
-      "line": 5601,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "show_print_status_property",
-      "line": 5612,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "transaction_type_property",
-      "line": 5617,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "execution_timeout_property",
-      "line": 5628,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "format_region_property",
-      "line": 5633,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "use_system_printer_property",
-      "line": 5640,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "maximum_dataset_size_property",
-      "line": 5645,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "enable_external_assemblies_property",
-      "line": 5657,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "enable_external_images_property",
-      "line": 5662,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "excel_layout_multiple_data_sheets_property",
-      "line": 5672,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "maximum_document_count_property",
-      "line": 5677,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "paper_source_default_page_property",
-      "line": 5682,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "paper_source_first_page_property",
+      "name": "_enum_type_reference",
       "line": 5689,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
+      "name": "_enum_value_reference",
+      "line": 5695,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "_branch_statements",
+      "line": 5703,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "addafter_fieldgroup",
+      "line": 5772,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "addbefore_fieldgroup",
+      "line": 5787,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "file_upload_action_property",
+      "line": 5859,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "file_upload_row_action_property",
+      "line": 5866,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "odata_edm_type_property",
+      "line": 5894,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "clear_actions_property",
+      "line": 5902,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "clear_layout_property",
+      "line": 5907,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "clear_views_property",
+      "line": 5912,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "importance_additional_property",
+      "line": 5930,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "default_rendering_layout_property",
+      "line": 5948,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "excel_layout_property",
+      "line": 5955,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "allow_scheduling_property",
+      "line": 5977,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "preview_mode_property",
+      "line": 5982,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "show_print_status_property",
+      "line": 5993,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "execution_timeout_property",
+      "line": 6010,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "format_region_property",
+      "line": 6015,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "use_system_printer_property",
+      "line": 6022,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "maximum_dataset_size_property",
+      "line": 6027,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "enable_external_assemblies_property",
+      "line": 6039,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "enable_external_images_property",
+      "line": 6044,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "excel_layout_multiple_data_sheets_property",
+      "line": 6054,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "maximum_document_count_property",
+      "line": 6059,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "paper_source_default_page_property",
+      "line": 6064,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
+      "name": "paper_source_first_page_property",
+      "line": 6071,
+      "grammar_refs": 1,
+      "test_refs": 0,
+      "total_refs": 1
+    },
+    {
       "name": "paper_source_last_page_property",
-      "line": 5696,
+      "line": 6078,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "pdf_font_embedding_property",
-      "line": 5704,
+      "line": 6086,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "word_merge_data_item_property",
-      "line": 5720,
+      "line": 6102,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "title_property",
-      "line": 5734,
+      "line": 6116,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "ellipsis_property",
-      "line": 5753,
+      "line": 6135,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "gesture_property",
-      "line": 5758,
+      "line": 6140,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
+      "name": "malformed_directive",
+      "line": 6272,
+      "grammar_refs": 0,
+      "test_refs": 1,
+      "total_refs": 1
+    },
+    {
       "name": "_enum_keyword",
-      "line": 5895,
+      "line": 6284,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_pagecustomization_element",
-      "line": 5965,
+      "line": 6354,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_views_modification",
-      "line": 5976,
+      "line": 6365,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "addbefore_views",
-      "line": 5998,
-      "grammar_refs": 1,
-      "test_refs": 0,
-      "total_refs": 1
-    },
-    {
-      "name": "_view_property",
-      "line": 6013,
+      "line": 6387,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_profile_element",
-      "line": 6020,
+      "line": 6413,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_validation_properties",
-      "line": 6126,
+      "line": 6519,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_data_properties",
-      "line": 6142,
+      "line": 6537,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_codeunit_properties",
-      "line": 6429,
+      "line": 6838,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_dataitem_properties",
-      "line": 6487,
+      "line": 6896,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_action_properties",
-      "line": 6545,
+      "line": 6956,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_mixed_identifier_string_property_template",
-      "line": 6607,
+      "line": 7032,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_access_level_enum_template",
-      "line": 6614,
+      "line": 7039,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_auto_always_never_enum_template",
-      "line": 6625,
+      "line": 7050,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "zeroormany_keyword",
-      "line": 6638,
+      "line": 7063,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_multiplicity_enum_template",
-      "line": 6642,
+      "line": 7067,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_query_type_enum_template",
-      "line": 6654,
+      "line": 7079,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_sql_join_type_enum_template",
-      "line": 6665,
+      "line": 7090,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_caption_full_template",
-      "line": 6687,
+      "line": 7112,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_option_caption_template",
-      "line": 6719,
+      "line": 7145,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_tooltip_template",
-      "line": 6736,
+      "line": 7163,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_system_permission_template",
-      "line": 6798,
+      "line": 7225,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_tabledata_permission_template",
-      "line": 6805,
+      "line": 7232,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_filter_keyword",
-      "line": 6848,
+      "line": 7275,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_cardpart_keyword",
-      "line": 6849,
+      "line": 7276,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_tabledata_keyword",
-      "line": 6850,
+      "line": 7277,
       "grammar_refs": 1,
       "test_refs": 0,
       "total_refs": 1
     },
     {
       "name": "_object",
-      "line": 121,
+      "line": 138,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
+      "name": "preproc_conditional_object_declaration",
+      "line": 163,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "_conditional_object_header",
+      "line": 174,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
+      "name": "xmlport_declaration",
+      "line": 217,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
       "name": "direction_value",
-      "line": 180,
+      "line": 237,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "format_value",
-      "line": 188,
+      "line": 245,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "xmlport_schema_element",
+      "line": 256,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "xmlport_field_attribute",
+      "line": 317,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "request_filter_fields_value",
-      "line": 302,
+      "line": 365,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "max_occurs_value",
-      "line": 331,
+      "line": 394,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "min_occurs_value",
-      "line": 339,
+      "line": 403,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "occurrence_value",
+      "line": 424,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "link_fields_value",
-      "line": 395,
+      "line": 471,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "enum_declaration",
-      "line": 416,
+      "line": 492,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "enumextension_declaration",
-      "line": 429,
+      "line": 506,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "query_declaration",
-      "line": 458,
+      "line": 560,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "about_title_property",
-      "line": 478,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "about_text_property",
-      "line": 483,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "delete_allowed_property",
-      "line": 505,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "insert_allowed_property",
-      "line": 508,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "modify_allowed_property",
-      "line": 511,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "source_table_temporary_property",
-      "line": 514,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "analysis_mode_enabled_property",
-      "line": 520,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "auto_split_key_property",
-      "line": 522,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "change_tracking_allowed_property",
-      "line": 524,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "delayed_insert_property",
-      "line": 526,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "links_allowed_property",
-      "line": 528,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "multiple_new_lines_property",
-      "line": 530,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "populate_all_fields_property",
-      "line": 535,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "data_caption_expression_property",
-      "line": 541,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "refresh_on_activate_property",
       "line": 581,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
+      "name": "about_text_property",
+      "line": 586,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "delete_allowed_property",
+      "line": 608,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "insert_allowed_property",
+      "line": 611,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "modify_allowed_property",
+      "line": 614,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "source_table_temporary_property",
+      "line": 617,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "analysis_mode_enabled_property",
+      "line": 623,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "auto_split_key_property",
+      "line": 625,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "change_tracking_allowed_property",
+      "line": 627,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "delayed_insert_property",
+      "line": 629,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "links_allowed_property",
+      "line": 631,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "multiple_new_lines_property",
+      "line": 633,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "populate_all_fields_property",
+      "line": 638,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "data_caption_expression_property",
+      "line": 644,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "refresh_on_activate_property",
+      "line": 684,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "order_by_list",
+      "line": 749,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
       "name": "help_link_property",
-      "line": 680,
+      "line": 784,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "is_preview_property",
-      "line": 685,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "odata_key_fields_value",
-      "line": 690,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "query_type_property",
-      "line": 707,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "order_direction",
-      "line": 743,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "filter_not_equal_expression",
-      "line": 779,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "filter_equal_expression",
       "line": 789,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
-      "name": "filter_less_than_expression",
-      "line": 823,
+      "name": "odata_key_fields_value",
+      "line": 794,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
-      "name": "filter_greater_than_expression",
-      "line": 824,
+      "name": "query_type_property",
+      "line": 811,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
-      "name": "filter_less_than_or_equal_expression",
-      "line": 825,
+      "name": "order_direction",
+      "line": 861,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
-      "name": "filter_greater_than_or_equal_expression",
-      "line": 826,
+      "name": "table_filter_value",
+      "line": 1072,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
-      "name": "_filter_value",
-      "line": 829,
-      "grammar_refs": 2,
-      "test_refs": 0,
-      "total_refs": 2
-    },
-    {
-      "name": "_filter_value_simple",
-      "line": 949,
-      "grammar_refs": 2,
-      "test_refs": 0,
+      "name": "filter_section",
+      "line": 1219,
+      "grammar_refs": 1,
+      "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "tableextension_declaration",
-      "line": 1085,
+      "line": 1273,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "_action_group",
-      "line": 1173,
+      "line": 1364,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "addfirst_action_group",
-      "line": 1182,
+      "line": 1373,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "addafter_action_group",
-      "line": 1200,
+      "line": 1391,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "addbefore_action_group",
-      "line": 1209,
+      "line": 1400,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "modify_action",
-      "line": 1232,
+      "line": 1423,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
-      "name": "_const_value",
-      "line": 1445,
+      "name": "systemaction_declaration",
+      "line": 1477,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "promoted_is_big_property",
+      "line": 1724,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
-      "name": "promoted_is_big_property",
-      "line": 1509,
+      "name": "_assignment_operator",
+      "line": 1753,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "drilldown_pageid_property",
-      "line": 1577,
+      "line": 1792,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "promoted_action_categories_property",
-      "line": 1598,
+      "line": 1813,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "codeunit_declaration",
-      "line": 1630,
+      "line": 1845,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "attributed_onrun_trigger",
-      "line": 1669,
+      "line": 1885,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "controladdin_declaration",
-      "line": 1728,
+      "line": 1963,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "interface_declaration",
-      "line": 1838,
+      "line": 2073,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "labels_section",
-      "line": 1928,
+      "line": 2163,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "summary_property",
-      "line": 1983,
+      "line": 2218,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "addbefore_dataitem",
+      "line": 2276,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "addfirst_dataitem",
+      "line": 2281,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "addlast_dataitem",
+      "line": 2286,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "permissionset_declaration",
-      "line": 2080,
+      "line": 2342,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "assignable_property",
-      "line": 2113,
+      "line": 2375,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "excluded_permission_sets_property",
-      "line": 2127,
+      "line": 2389,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "excluded_permission_sets_list",
-      "line": 2136,
+      "line": 2398,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "permission_list",
-      "line": 2145,
+      "line": 2407,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "dotnet_declaration",
-      "line": 2186,
+      "line": 2448,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "assembly_declaration",
-      "line": 2193,
+      "line": 2455,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "addfirst_layout_modification",
-      "line": 2363,
+      "line": 2623,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "addafter_layout_modification",
-      "line": 2373,
+      "line": 2633,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "movefirst_layout_modification",
-      "line": 2396,
+      "line": 2656,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "movelast_layout_modification",
-      "line": 2401,
+      "line": 2661,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "moveafter_layout_modification",
-      "line": 2406,
+      "line": 2666,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "movebefore_layout_modification",
-      "line": 2411,
+      "line": 2671,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "group_section",
-      "line": 2434,
+      "line": 2695,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "cuegroup_section",
-      "line": 2447,
+      "line": 2708,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "label_section",
-      "line": 2487,
+      "line": 2748,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "usercontrol_section",
-      "line": 2583,
+      "line": 2823,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "extended_datatype_value",
-      "line": 2710,
+      "line": 2962,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "style_value",
-      "line": 2731,
+      "line": 2983,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "lookup_property",
-      "line": 2763,
+      "line": 3015,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "blank_zero_value",
-      "line": 2854,
+      "line": 3106,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "option_caption_value",
-      "line": 2856,
+      "line": 3108,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "closing_dates_value",
-      "line": 2871,
+      "line": 3123,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "compressed_value",
-      "line": 2877,
+      "line": 3129,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "date_formula_value",
-      "line": 2878,
+      "line": 3130,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "usage_category_value",
-      "line": 2883,
+      "line": 3135,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "external_name_value",
-      "line": 2898,
+      "line": 3145,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "external_type_value",
-      "line": 2899,
+      "line": 3146,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "obsolete_reason_value",
-      "line": 2916,
+      "line": 3163,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "obsolete_state_value",
-      "line": 2917,
+      "line": 3164,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "obsolete_tag_value",
-      "line": 2922,
+      "line": 3169,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "paste_is_valid_value",
-      "line": 2932,
+      "line": 3179,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "sql_timestamp_value",
-      "line": 2958,
+      "line": 3205,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "test_table_relation_value",
+      "line": 3206,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "tool_tip_value",
-      "line": 2960,
+      "line": 3207,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "data_caption_fields_value",
-      "line": 2972,
+      "line": 3219,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "data_per_company_value",
-      "line": 2979,
+      "line": 3226,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "replicate_data_value",
-      "line": 2981,
+      "line": 3228,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "column_store_index_value",
-      "line": 2985,
+      "line": 3232,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "compression_type_value",
-      "line": 2990,
+      "line": 3237,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "inherent_permissions_value",
-      "line": 2997,
+      "line": 3244,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "inherent_entitlements_value",
-      "line": 2999,
+      "line": 3246,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "auto_increment_property",
+      "line": 3352,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "blank_numbers_property",
+      "line": 3359,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "closing_dates_property",
+      "line": 3373,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "char_allowed_property",
+      "line": 3380,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "compressed_property",
+      "line": 3387,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "date_formula_property",
+      "line": 3394,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "external_type_property",
+      "line": 3414,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "sql_timestamp_property",
+      "line": 3499,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "test_table_relation_property",
+      "line": 3506,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "option_caption_ml_property",
+      "line": 3612,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "data_classification_value",
-      "line": 3392,
+      "line": 3633,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "calc_fields_list",
+      "line": 3894,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "_unquoted_variable_name",
-      "line": 3681,
+      "line": 3954,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "interface_type",
-      "line": 3826,
+      "line": 4115,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "page_type",
-      "line": 3858,
+      "line": 4147,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
-      "name": "text_type",
-      "line": 3946,
+      "name": "list_type",
+      "line": 4184,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "code_type",
-      "line": 3955,
+      "line": 4263,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "record_type",
-      "line": 3964,
+      "line": 4272,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "recordref_type",
-      "line": 3977,
+      "line": 4285,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "codeunit_type",
-      "line": 3986,
+      "line": 4294,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "query_type",
-      "line": 3996,
+      "line": 4304,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "query_type_value",
-      "line": 4019,
+      "line": 4327,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "const_filter",
-      "line": 4245,
+      "line": 4452,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "explicit_field_ref",
-      "line": 4290,
+      "line": 4494,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "lookup_formula",
-      "line": 4354,
+      "line": 4559,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "lookup_where_conditions",
-      "line": 4373,
+      "line": 4578,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "encoding_property",
-      "line": 4557,
+      "line": 4774,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
-      "name": "maintain_sql_index_property",
-      "line": 4706,
+      "name": "format_evaluate_property",
+      "line": 4808,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
-      "name": "attribute_arguments",
-      "line": 4741,
+      "name": "field_trigger_declaration",
+      "line": 4843,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
-      "name": "_procedure_return_specification",
-      "line": 4754,
-      "grammar_refs": 2,
-      "test_refs": 0,
+      "name": "included_fields_property",
+      "line": 4909,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "preproc_split_procedure",
+      "line": 5050,
+      "grammar_refs": 1,
+      "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "clustered_property",
-      "line": 4846,
+      "line": 5131,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "while_statement",
+      "line": 5196,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "for_statement",
-      "line": 4926,
+      "line": 5216,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "foreach_statement",
+      "line": 5237,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "repeat_statement",
-      "line": 4957,
+      "line": 5251,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "exit_statement",
-      "line": 4964,
+      "line": 5258,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
+      "name": "assignment_statement",
+      "line": 5275,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
       "name": "argument_list",
-      "line": 4998,
+      "line": 5302,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "qualified_enum_value_tail",
-      "line": 5019,
+      "line": 5323,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "_if_then_body",
-      "line": 5184,
+      "line": 5492,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "case_statement",
-      "line": 5193,
+      "line": 5504,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "decimal",
-      "line": 5278,
+      "line": 5589,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "_literal_value",
-      "line": 5306,
+      "line": 5617,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "else_branch",
-      "line": 5322,
+      "line": 5633,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "flow_template_category_name_property",
+      "line": 5880,
+      "grammar_refs": 1,
+      "test_refs": 1,
+      "total_refs": 2
+    },
+    {
+      "name": "flow_environment_id_property",
+      "line": 5887,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "word_layout_property",
-      "line": 5588,
+      "line": 5969,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "max_iteration_property",
-      "line": 5787,
+      "line": 6169,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
-      "name": "addlast_views",
-      "line": 5988,
-      "grammar_refs": 1,
-      "test_refs": 1,
-      "total_refs": 2
-    },
-    {
-      "name": "addafter_views",
-      "line": 5993,
-      "grammar_refs": 1,
-      "test_refs": 1,
+      "name": "_view_property",
+      "line": 6402,
+      "grammar_refs": 2,
+      "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "_query_properties",
-      "line": 6202,
+      "line": 6602,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "_controladdin_properties",
-      "line": 6229,
+      "line": 6631,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "_entitlement_properties",
-      "line": 6236,
+      "line": 6638,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "_profile_properties",
-      "line": 6247,
+      "line": 6649,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "_report_column_properties",
-      "line": 6502,
+      "line": 6912,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "_xmlport_properties",
-      "line": 6523,
-      "grammar_refs": 2,
-      "test_refs": 0,
-      "total_refs": 2
-    },
-    {
-      "name": "_trigger_parameters",
-      "line": 6577,
+      "line": 6934,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "_identifier_property_template",
-      "line": 6601,
+      "line": 7026,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "one_keyword",
-      "line": 6639,
+      "line": 7064,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "many_keyword",
-      "line": 6640,
+      "line": 7065,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
+      "name": "_caption_string_template",
+      "line": 7110,
+      "grammar_refs": 2,
+      "test_refs": 0,
+      "total_refs": 2
+    },
+    {
       "name": "_caption_boolean_template",
-      "line": 6713,
+      "line": 7139,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "_about_template",
-      "line": 6744,
+      "line": 7171,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "_name_property_template",
-      "line": 6775,
+      "line": 7202,
       "grammar_refs": 2,
       "test_refs": 0,
       "total_refs": 2
     },
     {
       "name": "const",
-      "line": 6853,
+      "line": 7280,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "trigger_name",
-      "line": 6857,
+      "line": 7284,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
     },
     {
       "name": "trigger_type",
-      "line": 6858,
+      "line": 7285,
       "grammar_refs": 1,
       "test_refs": 1,
       "total_refs": 2
@@ -2013,7 +2118,7 @@
       "name": "assignment_compatibility_property",
       "reference_count": 1,
       "first_reference": {
-        "line": 6270,
+        "line": 6672,
         "context": "$.assignment_compatibility_property,",
         "type": "direct_reference"
       }
@@ -2022,7 +2127,7 @@
       "name": "column_span_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 3568,
+        "line": 3835,
         "context": "$.column_span_property,",
         "type": "direct_reference"
       }
@@ -2031,7 +2136,7 @@
       "name": "column_store_index_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 3539,
+        "line": 3806,
         "context": "$.column_store_index_property,",
         "type": "direct_reference"
       }
@@ -2040,7 +2145,7 @@
       "name": "compression_type_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 3540,
+        "line": 3807,
         "context": "$.compression_type_property,",
         "type": "direct_reference"
       }
@@ -2049,16 +2154,16 @@
       "name": "data_item_link_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 910,
+        "line": 1053,
         "context": "$.data_item_link_property,",
         "type": "direct_reference"
       }
     },
     {
       "name": "data_item_table_filter_property",
-      "reference_count": 1,
+      "reference_count": 2,
       "first_reference": {
-        "line": 911,
+        "line": 1054,
         "context": "$.data_item_table_filter_property,",
         "type": "direct_reference"
       }
@@ -2067,7 +2172,7 @@
       "name": "data_per_company_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 3537,
+        "line": 3804,
         "context": "$.data_per_company_property,",
         "type": "direct_reference"
       }
@@ -2076,7 +2181,7 @@
       "name": "direction_property",
       "reference_count": 1,
       "first_reference": {
-        "line": 6528,
+        "line": 6939,
         "context": "$.direction_property,",
         "type": "direct_reference"
       }
@@ -2085,8 +2190,17 @@
       "name": "empty_namespace_prefix",
       "reference_count": 1,
       "first_reference": {
-        "line": 4583,
+        "line": 4800,
         "context": "alias('\"\"', $.empty_namespace_prefix),  // Empty string for default namespace",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "error_sentinel",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 103,
+        "context": "$.error_sentinel",
         "type": "direct_reference"
       }
     },
@@ -2094,8 +2208,17 @@
       "name": "extensible_property",
       "reference_count": 1,
       "first_reference": {
-        "line": 6099,
+        "line": 6492,
         "context": "$.extensible_property,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "external_access_property",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 6552,
+        "context": "$.external_access_property,    // External access control for fields",
         "type": "direct_reference"
       }
     },
@@ -2103,7 +2226,7 @@
       "name": "format_property",
       "reference_count": 1,
       "first_reference": {
-        "line": 6530,
+        "line": 6941,
         "context": "$.format_property,",
         "type": "direct_reference"
       }
@@ -2112,8 +2235,26 @@
       "name": "importance_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 3577,
+        "line": 3844,
         "context": "$.importance_property,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "indentation_column_property",
+      "reference_count": 2,
+      "first_reference": {
+        "line": 3837,
+        "context": "$.indentation_column_property,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "indentation_controls_property",
+      "reference_count": 2,
+      "first_reference": {
+        "line": 3838,
+        "context": "$.indentation_controls_property,",
         "type": "direct_reference"
       }
     },
@@ -2121,7 +2262,7 @@
       "name": "inherent_entitlements_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 3542,
+        "line": 3809,
         "context": "$.inherent_entitlements_property,",
         "type": "direct_reference"
       }
@@ -2130,7 +2271,7 @@
       "name": "inherent_permissions_property",
       "reference_count": 3,
       "first_reference": {
-        "line": 2035,
+        "line": 2294,
         "context": "$.inherent_permissions_property,",
         "type": "direct_reference"
       }
@@ -2139,7 +2280,7 @@
       "name": "max_occurs_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 246,
+        "line": 305,
         "context": "$.max_occurs_property,",
         "type": "direct_reference"
       }
@@ -2148,7 +2289,7 @@
       "name": "min_occurs_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 247,
+        "line": 306,
         "context": "$.min_occurs_property,",
         "type": "direct_reference"
       }
@@ -2157,7 +2298,7 @@
       "name": "occurrence_property",
       "reference_count": 1,
       "first_reference": {
-        "line": 245,
+        "line": 304,
         "context": "$.occurrence_property,  // Add support for Occurrence property",
         "type": "direct_reference"
       }
@@ -2166,7 +2307,7 @@
       "name": "odata_key_fields_property",
       "reference_count": 1,
       "first_reference": {
-        "line": 6359,
+        "line": 6769,
         "context": "$.odata_key_fields_property,",
         "type": "direct_reference"
       }
@@ -2175,8 +2316,26 @@
       "name": "order_by_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 6205,
+        "line": 6606,
         "context": "$.order_by_property,           // Order by clause",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_active_region_end",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 98,
+        "context": "$.preproc_active_region_end,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_active_region_start",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 97,
+        "context": "$.preproc_active_region_start,",
         "type": "direct_reference"
       }
     },
@@ -2184,7 +2343,7 @@
       "name": "preproc_conditional_actions",
       "reference_count": 3,
       "first_reference": {
-        "line": 1114,
+        "line": 1302,
         "context": "$.preproc_conditional_actions",
         "type": "direct_reference"
       }
@@ -2193,7 +2352,7 @@
       "name": "preproc_conditional_case",
       "reference_count": 1,
       "first_reference": {
-        "line": 5204,
+        "line": 5515,
         "context": "$.preproc_conditional_case",
         "type": "direct_reference"
       }
@@ -2202,7 +2361,7 @@
       "name": "preproc_conditional_controladdin_properties",
       "reference_count": 1,
       "first_reference": {
-        "line": 1741,
+        "line": 1976,
         "context": "$.preproc_conditional_controladdin_properties",
         "type": "direct_reference"
       }
@@ -2211,26 +2370,35 @@
       "name": "preproc_conditional_entitlement_properties",
       "reference_count": 1,
       "first_reference": {
-        "line": 1755,
+        "line": 1990,
         "context": "$.preproc_conditional_entitlement_properties",
         "type": "direct_reference"
       }
     },
     {
       "name": "preproc_conditional_enum_properties",
-      "reference_count": 1,
+      "reference_count": 3,
       "first_reference": {
-        "line": 424,
-        "context": "$.preproc_conditional_enum_properties",
+        "line": 90,
+        "context": "[$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values],",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_conditional_enum_values",
+      "reference_count": 2,
+      "first_reference": {
+        "line": 90,
+        "context": "[$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values],",
         "type": "direct_reference"
       }
     },
     {
       "name": "preproc_conditional_field_properties",
-      "reference_count": 3,
+      "reference_count": 1,
       "first_reference": {
-        "line": 4120,
-        "context": "$.preproc_conditional_field_properties",
+        "line": 6707,
+        "context": "$.preproc_conditional_field_properties,",
         "type": "direct_reference"
       }
     },
@@ -2238,7 +2406,7 @@
       "name": "preproc_conditional_fieldgroups",
       "reference_count": 2,
       "first_reference": {
-        "line": 5415,
+        "line": 5728,
         "context": "$.preproc_conditional_fieldgroups",
         "type": "direct_reference"
       }
@@ -2247,7 +2415,7 @@
       "name": "preproc_conditional_fields",
       "reference_count": 1,
       "first_reference": {
-        "line": 4048,
+        "line": 4356,
         "context": "$.preproc_conditional_fields",
         "type": "direct_reference"
       }
@@ -2256,7 +2424,7 @@
       "name": "preproc_conditional_keys",
       "reference_count": 2,
       "first_reference": {
-        "line": 4659,
+        "line": 4874,
         "context": "$.preproc_conditional_keys",
         "type": "direct_reference"
       }
@@ -2265,7 +2433,7 @@
       "name": "preproc_conditional_layout",
       "reference_count": 1,
       "first_reference": {
-        "line": 2358,
+        "line": 2618,
         "context": "$.preproc_conditional_layout,",
         "type": "direct_reference"
       }
@@ -2274,7 +2442,7 @@
       "name": "preproc_conditional_object_properties",
       "reference_count": 1,
       "first_reference": {
-        "line": 1637,
+        "line": 1852,
         "context": "$.preproc_conditional_object_properties,",
         "type": "direct_reference"
       }
@@ -2283,7 +2451,7 @@
       "name": "preproc_conditional_page_properties",
       "reference_count": 1,
       "first_reference": {
-        "line": 2269,
+        "line": 2531,
         "context": "$.preproc_conditional_page_properties,",
         "type": "direct_reference"
       }
@@ -2292,7 +2460,7 @@
       "name": "preproc_conditional_permissionset_properties",
       "reference_count": 2,
       "first_reference": {
-        "line": 2092,
+        "line": 2354,
         "context": "$.preproc_conditional_permissionset_properties",
         "type": "direct_reference"
       }
@@ -2301,7 +2469,7 @@
       "name": "preproc_conditional_profile_properties",
       "reference_count": 1,
       "first_reference": {
-        "line": 6022,
+        "line": 6415,
         "context": "$.preproc_conditional_profile_properties",
         "type": "direct_reference"
       }
@@ -2310,7 +2478,7 @@
       "name": "preproc_conditional_properties",
       "reference_count": 1,
       "first_reference": {
-        "line": 2596,
+        "line": 2836,
         "context": "$.preproc_conditional_properties,",
         "type": "direct_reference"
       }
@@ -2319,7 +2487,7 @@
       "name": "preproc_conditional_query_properties",
       "reference_count": 1,
       "first_reference": {
-        "line": 471,
+        "line": 573,
         "context": "$.preproc_conditional_query_properties,",
         "type": "direct_reference"
       }
@@ -2328,8 +2496,8 @@
       "name": "preproc_conditional_report_dataitems",
       "reference_count": 2,
       "first_reference": {
-        "line": 2022,
-        "context": "$.preproc_conditional_report_dataitems",
+        "line": 2257,
+        "context": "$.preproc_conditional_report_dataitems,",
         "type": "direct_reference"
       }
     },
@@ -2337,16 +2505,16 @@
       "name": "preproc_conditional_report_properties",
       "reference_count": 1,
       "first_reference": {
-        "line": 1918,
+        "line": 2153,
         "context": "$.preproc_conditional_report_properties,",
         "type": "direct_reference"
       }
     },
     {
       "name": "preproc_conditional_statements",
-      "reference_count": 1,
+      "reference_count": 2,
       "first_reference": {
-        "line": 4875,
+        "line": 5165,
         "context": "$.preproc_conditional_statements,",
         "type": "direct_reference"
       }
@@ -2355,7 +2523,7 @@
       "name": "preproc_conditional_table_properties",
       "reference_count": 1,
       "first_reference": {
-        "line": 3432,
+        "line": 3674,
         "context": "$.preproc_conditional_table_properties,",
         "type": "direct_reference"
       }
@@ -2364,7 +2532,7 @@
       "name": "preproc_conditional_variables",
       "reference_count": 1,
       "first_reference": {
-        "line": 3676,
+        "line": 3949,
         "context": "$.preproc_conditional_variables",
         "type": "direct_reference"
       }
@@ -2373,8 +2541,44 @@
       "name": "preproc_conditional_xmlport_properties",
       "reference_count": 1,
       "first_reference": {
-        "line": 175,
+        "line": 232,
         "context": "$.preproc_conditional_xmlport_properties,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_continuation_marker",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 102,
+        "context": "$.preproc_continuation_marker,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_inactive_region_end",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 100,
+        "context": "$.preproc_inactive_region_end,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_inactive_region_start",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 99,
+        "context": "$.preproc_inactive_region_start,",
+        "type": "direct_reference"
+      }
+    },
+    {
+      "name": "preproc_split_marker",
+      "reference_count": 1,
+      "first_reference": {
+        "line": 101,
+        "context": "$.preproc_split_marker,",
         "type": "direct_reference"
       }
     },
@@ -2382,7 +2586,7 @@
       "name": "promoted_category_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 6370,
+        "line": 6780,
         "context": "$.promoted_category_property,",
         "type": "direct_reference"
       }
@@ -2391,7 +2595,7 @@
       "name": "replicate_data_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 3538,
+        "line": 3805,
         "context": "$.replicate_data_property,",
         "type": "direct_reference"
       }
@@ -2400,7 +2604,7 @@
       "name": "request_filter_fields_property",
       "reference_count": 3,
       "first_reference": {
-        "line": 251,
+        "line": 310,
         "context": "$.request_filter_fields_property,",
         "type": "direct_reference"
       }
@@ -2409,7 +2613,7 @@
       "name": "run_object_property",
       "reference_count": 1,
       "first_reference": {
-        "line": 6160,
+        "line": 6560,
         "context": "$.run_object_property,         // Action target object",
         "type": "direct_reference"
       }
@@ -2418,7 +2622,7 @@
       "name": "run_page_view_property",
       "reference_count": 1,
       "first_reference": {
-        "line": 6162,
+        "line": 6562,
         "context": "$.run_page_view_property,      // Page view/filter to apply",
         "type": "direct_reference"
       }
@@ -2427,7 +2631,7 @@
       "name": "sort_order",
       "reference_count": 1,
       "first_reference": {
-        "line": 737,
+        "line": 855,
         "context": "field('sort_order', alias($.identifier, $.sort_order)),",
         "type": "direct_reference"
       }
@@ -2436,7 +2640,7 @@
       "name": "source_table_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 3524,
+        "line": 3791,
         "context": "$.source_table_property,",
         "type": "direct_reference"
       }
@@ -2445,7 +2649,7 @@
       "name": "style_expr_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 3587,
+        "line": 3854,
         "context": "$.style_expr_property,",
         "type": "direct_reference"
       }
@@ -2454,7 +2658,7 @@
       "name": "style_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 3586,
+        "line": 3853,
         "context": "$.style_property,",
         "type": "direct_reference"
       }
@@ -2463,7 +2667,7 @@
       "name": "test_permissions_value",
       "reference_count": 1,
       "first_reference": {
-        "line": 3457,
+        "line": 3699,
         "context": "), $.test_permissions_value)),",
         "type": "direct_reference"
       }
@@ -2472,7 +2676,7 @@
       "name": "usage_category_property",
       "reference_count": 2,
       "first_reference": {
-        "line": 3527,
+        "line": 3794,
         "context": "$.usage_category_property,",
         "type": "direct_reference"
       }

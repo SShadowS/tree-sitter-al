@@ -1,5 +1,5 @@
 ================================================================================
-Preprocessor conditional with mixed var section and procedures (known limitation)
+Preprocessor conditional with mixed var section and procedures
 ================================================================================
 
 table 50000 "Known Limitation"
@@ -17,5 +17,22 @@ table 50000 "Known Limitation"
 
 --------------------------------------------------------------------------------
 
-Note: (preproc_conditional_var_sections
-  (preproc_conditional_procedures))
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (comment)
+    (preproc_conditional_mixed_content
+      (preproc_if
+        condition: (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (procedure
+        name: (name
+          (identifier))
+        (code_block))
+      (preproc_endif))))

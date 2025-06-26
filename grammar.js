@@ -88,7 +88,9 @@ module.exports = grammar({
     [$.assignment_expression, $._assignable_expression],
     [$.assignment_statement, $.assignment_expression],
     [$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values],
-    [$.source_file]
+    [$.source_file],
+    [$.preproc_conditional_procedures, $.preproc_conditional_mixed_content],
+    [$.preproc_conditional_var_sections, $.preproc_conditional_mixed_content]
   ],
 
   externals: $ => [
@@ -1871,7 +1873,8 @@ module.exports = grammar({
 
     attributed_procedure: $ => choice(
       seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.procedure),
-      $.procedure
+      $.procedure,
+      $.preproc_split_procedure
     ),
 
     attributed_trigger: $ => choice(
@@ -1900,6 +1903,25 @@ module.exports = grammar({
       optional(seq(
         $.preproc_else,
         repeat1($.var_section)
+      )),
+      $.preproc_endif
+    ),
+
+    // Handle mixed var sections and procedures in preprocessor
+    preproc_conditional_mixed_content: $ => seq(
+      $.preproc_if,
+      repeat1(choice(
+        $.var_section,
+        seq(optional($.attribute_list), $.procedure),
+        $.trigger_declaration
+      )),
+      optional(seq(
+        $.preproc_else,
+        repeat1(choice(
+          $.var_section,
+          seq(optional($.attribute_list), $.procedure),
+          $.trigger_declaration
+        ))
       )),
       $.preproc_endif
     ),
@@ -3636,6 +3658,7 @@ module.exports = grammar({
       $.fieldgroups_section,
       $.var_section,
       $.preproc_conditional_var_sections,
+      $.preproc_conditional_mixed_content,  // Add mixed content support
       
       // Table triggers
       $.named_trigger,
@@ -3685,26 +3708,51 @@ module.exports = grammar({
     ),
 
 
-    named_trigger: $ => seq(
-      $._trigger_keyword,
-      field('name', choice(
-        kw('oninsert'),
-        kw('onmodify'),
-        kw('ondelete'),
-        kw('onrename'),
-        kw('onvalidate'),
-        kw('onaftergetrecord'),
-        kw('onafterinsertevent'),
-        kw('onaftermodifyevent'),
-        kw('onafterdeleteevent'),
-        kw('onbeforeinsertevent'),
-        kw('onbeforemodifyevent'),
-        kw('onbeforedeleteevent'),
-        kw('onbeforeinsertrecord')  // XMLPort-specific trigger
-      )),
-      $._trigger_parameters,
-      optional($.var_section),
-      $.code_block
+    named_trigger: $ => choice(
+      // Regular trigger
+      seq(
+        $._trigger_keyword,
+        field('name', choice(
+          kw('oninsert'),
+          kw('onmodify'),
+          kw('ondelete'),
+          kw('onrename'),
+          kw('onvalidate'),
+          kw('onaftergetrecord'),
+          kw('onafterinsertevent'),
+          kw('onaftermodifyevent'),
+          kw('onafterdeleteevent'),
+          kw('onbeforeinsertevent'),
+          kw('onbeforemodifyevent'),
+          kw('onbeforedeleteevent'),
+          kw('onbeforeinsertrecord')  // XMLPort-specific trigger
+        )),
+        $._trigger_parameters,
+        optional($.var_section),
+        $.code_block
+      ),
+      // Trigger with preprocessor conditional var section
+      seq(
+        $._trigger_keyword,
+        field('name', choice(
+          kw('oninsert'),
+          kw('onmodify'),
+          kw('ondelete'),
+          kw('onrename'),
+          kw('onvalidate'),
+          kw('onaftergetrecord'),
+          kw('onafterinsertevent'),
+          kw('onaftermodifyevent'),
+          kw('onafterdeleteevent'),
+          kw('onbeforeinsertevent'),
+          kw('onbeforemodifyevent'),
+          kw('onbeforedeleteevent'),
+          kw('onbeforeinsertrecord')  // XMLPort-specific trigger
+        )),
+        $._trigger_parameters,
+        $.preproc_conditional_var_sections,
+        $.code_block
+      )
     ),
     
     property_list: $ => prec.left(3, seq(
@@ -4996,6 +5044,40 @@ enum_type: $ => prec(1, seq(
         $.preproc_conditional_var_sections
       )),
       $.code_block
+    ),
+
+    // Split procedure with separate headers
+    preproc_split_procedure: $ => seq(
+      $.preproc_if,
+      field('if_header', $.procedure_header),
+      $.preproc_else,
+      field('else_header', $.procedure_header),
+      $.preproc_endif,
+      optional(';'),
+      repeat($.pragma),
+      optional(choice(
+        $.var_section,
+        $.preproc_conditional_var_sections
+      )),
+      $.code_block
+    ),
+
+    // Procedure header without body (for split procedures)
+    procedure_header: $ => seq(
+      optional(field('modifier', $.procedure_modifier)), 
+      kw('procedure'),
+      field('name', $._procedure_name),
+      '(',
+      optional($.parameter_list),
+      ')',
+      optional(choice(
+        seq(
+          choice(
+            $._procedure_return_specification, // : ReturnType
+            $._procedure_named_return // ReturnValue : ReturnType
+          )
+        )
+      ))
     ),
 
     comparison_operator: $ => choice(

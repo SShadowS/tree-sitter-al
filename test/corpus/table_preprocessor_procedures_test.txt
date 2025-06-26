@@ -41,7 +41,7 @@ table 50100 "Test Table"
             length: (integer)))
         (caption_property
           (string_literal))))
-    (preproc_conditional_procedures
+    (preproc_conditional_mixed_content
       (preproc_if
         condition: (identifier))
       (attribute_list
@@ -155,7 +155,7 @@ table 50101 "VAT Amount Line"
               property: (identifier))
             arguments: (argument_list))))
       (preproc_endif))
-    (preproc_conditional_procedures
+    (preproc_conditional_mixed_content
       (preproc_if
         condition: (identifier))
       (attribute_list
@@ -302,7 +302,7 @@ table 50103 "Test Table"
             length: (integer)))
         (caption_property
           (string_literal))))
-    (preproc_conditional_procedures
+    (preproc_conditional_mixed_content
       (preproc_if
         condition: (identifier))
       (trigger_declaration

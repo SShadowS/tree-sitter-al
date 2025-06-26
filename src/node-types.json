@@ -4109,6 +4109,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_procedure",
+          "named": true
+        },
+        {
           "type": "procedure",
           "named": true
         }
@@ -25233,6 +25237,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
           "type": "var_section",
           "named": true
         }
@@ -30125,6 +30133,45 @@
     }
   },
   {
+    "type": "preproc_conditional_mixed_content",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "procedure",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_object_declaration",
     "named": true,
     "fields": {
@@ -33061,6 +33108,66 @@
     }
   },
   {
+    "type": "preproc_split_procedure",
+    "named": true,
+    "fields": {
+      "else_header": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "procedure_header",
+            "named": true
+          }
+        ]
+      },
+      "if_header": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "procedure_header",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "code_block",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preprocessor_file_conditional",
     "named": true,
     "fields": {
@@ -33398,6 +33505,66 @@
         },
         {
           "type": "var_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "procedure_header",
+    "named": true,
+    "fields": {
+      "modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "procedure_modifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "name",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "return_type",
+            "named": true
+          }
+        ]
+      },
+      "temporary": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "temporary",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "parameter_list",
+          "named": true
+        },
+        {
+          "type": "return_value",
           "named": true
         }
       ]
@@ -40964,6 +41131,10 @@
         },
         {
           "type": "permissions_property",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_mixed_content",
           "named": true
         },
         {
