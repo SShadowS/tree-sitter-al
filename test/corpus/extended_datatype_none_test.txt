@@ -1,0 +1,111 @@
+================================================================================
+ExtendedDatatype Property with None Value
+================================================================================
+
+page 50000 "Test Page"
+{
+    layout
+    {
+        area(content)
+        {
+            field(ServiceNameEdit; ServiceNameEdit)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'New Name';
+                ExtendedDatatype = None;
+                ToolTip = 'Specifies the service name.';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (page_area
+        name: (identifier)
+        (page_field
+          name: (identifier)
+          expression: (identifier)
+          (application_area_property
+            value: (identifier)
+            value: (identifier))
+          (caption_property
+            (string_literal))
+          (extended_datatype_property
+            value: (extended_datatype_value))
+          (tool_tip_property
+            value: (string_literal)))))))
+
+================================================================================
+ExtendedDatatype Property Various Values
+================================================================================
+
+page 50001 "Test Extended Datatypes"
+{
+    layout
+    {
+        area(content)
+        {
+            field(Field1; Variable1)
+            {
+                ExtendedDatatype = None;
+            }
+            field(Field2; Variable2)
+            {
+                ExtendedDatatype = PhoneNo;
+            }
+            field(Field3; Variable3)
+            {
+                ExtendedDatatype = URL;
+            }
+            field(Field4; Variable4)
+            {
+                ExtendedDatatype = Email;
+            }
+            field(Field5; Variable5)
+            {
+                extendeddatatype = barcode;  // lowercase
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (page_area
+        name: (identifier)
+        (page_field
+          name: (identifier)
+          expression: (identifier)
+          (extended_datatype_property
+            value: (extended_datatype_value)))
+        (page_field
+          name: (identifier)
+          expression: (identifier)
+          (extended_datatype_property
+            value: (extended_datatype_value)))
+        (page_field
+          name: (identifier)
+          expression: (identifier)
+          (extended_datatype_property
+            value: (extended_datatype_value)))
+        (page_field
+          name: (identifier)
+          expression: (identifier)
+          (extended_datatype_property
+            value: (extended_datatype_value)))
+        (page_field
+          name: (identifier)
+          expression: (identifier)
+          (extended_datatype_property
+            value: (extended_datatype_value)))))))

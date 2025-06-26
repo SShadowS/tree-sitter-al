@@ -2981,6 +2981,7 @@ module.exports = grammar({
 
 
     extended_datatype_value: $ => choice(
+      kw('none'),
       kw('phoneno'),
       kw('url'), 
       kw('email'),
