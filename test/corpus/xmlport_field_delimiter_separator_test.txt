@@ -1,0 +1,98 @@
+================================================================================
+XMLPort with FieldDelimiter and FieldSeparator Properties
+================================================================================
+
+namespace Microsoft.Service.Maintenance;
+
+xmlport 5901 "Import IRIS to Fault Codes"
+{
+    Caption = 'Import IRIS to Fault Codes';
+    Direction = Import;
+    FieldDelimiter = '<None>';
+    FieldSeparator = '<TAB>';
+    Format = VariableText;
+    UseRequestPage = false;
+
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement("Fault Code"; "Fault Code")
+            {
+                XmlName = 'FaultCode';
+                fieldelement(Code; "Fault Code".Code)
+                {
+                }
+                fieldelement(Description; "Fault Code".Description)
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (namespace_declaration
+    name: (namespace_name
+      (identifier)
+      (identifier)
+      (identifier)))
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (direction_property
+      value: (direction_value))
+    (field_delimiter_property
+      value: (string_literal))
+    (field_separator_property
+      value: (string_literal))
+    (format_property
+      value: (format_value))
+    (use_request_page_property
+      value: (boolean))
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          table_name: (quoted_identifier)
+          reference_name: (quoted_identifier)
+          (xml_name_property
+            value: (string_literal))
+          (xmlport_table_element
+            field_name: (identifier)
+            source: (field_access
+              record: (quoted_identifier)
+              field: (identifier)))
+          (xmlport_table_element
+            field_name: (identifier)
+            source: (field_access
+              record: (quoted_identifier)
+              field: (identifier))))))))
+
+================================================================================
+XMLPort with Various Delimiter and Separator Values
+================================================================================
+
+xmlport 50000 "Test Delimiters"
+{
+    FieldDelimiter = '"';
+    FieldSeparator = ',';
+    Format = VariableText;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (field_delimiter_property
+      value: (string_literal))
+    (field_separator_property
+      value: (string_literal))
+    (format_property
+      value: (format_value))))

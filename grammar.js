@@ -256,6 +256,10 @@ module.exports = grammar({
 
     format_property: _value_property_template($ => kw('Format', 10), $ => $.format_value),
 
+    field_delimiter_property: _value_property_template($ => kw('FieldDelimiter'), $ => $.string_literal),
+    
+    field_separator_property: _value_property_template($ => kw('FieldSeparator'), $ => $.string_literal),
+
     
     xmlport_schema_element: $ => seq(
       kw('schema'),
@@ -7046,6 +7050,8 @@ enum_type: $ => prec(1, seq(
       $.direction_property,
       $.format_evaluate_property,  // Move before format_property to avoid conflict
       $.format_property,
+      $.field_delimiter_property,
+      $.field_separator_property,
       $.table_separator_property,
       $.text_encoding_property,
       $.paste_is_valid_property,
