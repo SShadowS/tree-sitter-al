@@ -7234,6 +7234,11 @@ enum_type: $ => prec(1, seq(
             kw('comment'),
             '=',
             $.string_literal
+          ),
+          seq(
+            kw('locked'),
+            '=',
+            $.boolean
           )
         )
       )),
