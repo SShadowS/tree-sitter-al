@@ -4312,7 +4312,8 @@ enum_type: $ => prec(1, seq(
     // Use existing _table_reference rule that already handles both plain and quoted identifiers 
     _table_reference: $ => choice(
       $.integer,
-      $._identifier_choice  // Unified identifier pattern
+      $._identifier_choice,  // Unified identifier pattern
+      $.qualified_table_reference  // Namespace-qualified tables
     ),
 
     codeunit_type: $ => prec.right(10, seq(

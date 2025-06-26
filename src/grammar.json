@@ -18993,6 +18993,10 @@
         {
           "type": "SYMBOL",
           "name": "_identifier_choice"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "qualified_table_reference"
         }
       ]
     },
@@ -31546,6 +31550,26 @@
                       {
                         "type": "SYMBOL",
                         "name": "string_literal"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "TOKEN",
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "(?i)locked"
+                        }
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "="
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "boolean"
                       }
                     ]
                   }
