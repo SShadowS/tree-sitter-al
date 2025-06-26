@@ -4798,7 +4798,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     editable_property: $ => seq(
-      'Editable',
+      kw('Editable'),
       $._expression_property_template
     ),
 
