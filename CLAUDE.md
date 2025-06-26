@@ -371,6 +371,19 @@ The grammar uses these scanner tokens through:
    - Uses `preproc_conditional_mixed_content` rule
    - Handles mixed content types in preprocessor blocks
 
+4. **Split if-else statements**:
+   ```al
+   #if not CLEAN24
+       if condition then
+           statement1
+       else
+   #endif
+       statement2
+   ```
+   - Uses `preproc_split_if_else` rule
+   - Handles else keyword inside preprocessor with body outside
+   - Common pattern in Business Central codebase for version compatibility
+
 ### Adding New Scanner Features
 When adding scanner features:
 1. Update `src/scanner.c` with new token types and detection logic
@@ -606,6 +619,26 @@ extras: $ => [..., $.malformed_directive, ...],
 **Fix Pattern**:
 1. Add `$.member_expression` to the source_table choices in `xmlport_table_element`
 2. This allows both quoted and unquoted field references
+
+### 9. Preprocessor Split Constructs
+**Symptom**: Parser fails when preprocessor directives split language constructs
+```
+// Fails: else keyword inside #if but body outside
+#if not CLEAN24
+    if condition then
+        statement1
+    else
+#endif
+    statement2
+```
+
+**Root Cause**: Standard grammar rules don't handle constructs split by preprocessor directives
+
+**Fix Pattern**:
+1. Create specialized rule for the split pattern (e.g., `preproc_split_if_else`)
+2. Add to appropriate choice lists where the construct appears
+3. External scanner handles detection of split patterns
+4. See "Common Preprocessor Patterns Fixed" section for examples
 
 ### 8. Missing Property Values in Enums
 **Symptom**: Property accepts limited values but actual code uses additional valid values
