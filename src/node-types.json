@@ -30125,6 +30125,94 @@
     }
   },
   {
+    "type": "preproc_conditional_object_declaration",
+    "named": true,
+    "fields": {
+      "object_id": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "object_name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attributed_procedure",
+          "named": true
+        },
+        {
+          "type": "attributed_trigger",
+          "named": true
+        },
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "implements_clause",
+          "named": true
+        },
+        {
+          "type": "multiline_comment",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_endregion",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_region",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_object_properties",
     "named": true,
     "fields": {},
@@ -30835,6 +30923,94 @@
         },
         {
           "type": "usage_category_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_procedure",
+    "named": true,
+    "fields": {
+      "modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "procedure_modifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "name",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "return_type",
+            "named": true
+          }
+        ]
+      },
+      "temporary": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "temporary",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "code_block",
+          "named": true
+        },
+        {
+          "type": "parameter_list",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "return_value",
+          "named": true
+        },
+        {
+          "type": "var_section",
           "named": true
         }
       ]
@@ -32953,6 +33129,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_object_declaration",
+            "named": true
+          },
+          {
             "type": "preproc_conditional_using",
             "named": true
           },
@@ -33069,6 +33249,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_object_declaration",
+            "named": true
+          },
+          {
             "type": "preproc_conditional_using",
             "named": true
           },
@@ -33155,7 +33339,7 @@
       },
       "name": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "name",
@@ -33198,6 +33382,10 @@
         },
         {
           "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_procedure",
           "named": true
         },
         {
@@ -39026,6 +39214,10 @@
         },
         {
           "type": "preproc_conditional_enum_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_object_declaration",
           "named": true
         },
         {

@@ -1,5 +1,5 @@
 ================================================================================
-Preprocessor conditional splitting procedure header (known limitation)
+Preprocessor conditional splitting procedure header
 ================================================================================
 
 codeunit 50000 "Known Limitation"
@@ -19,4 +19,41 @@ codeunit 50000 "Known Limitation"
 
 --------------------------------------------------------------------------------
 
-Note: )
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (comment)
+    (preproc_conditional_procedures
+      (preproc_if
+        condition: (identifier))
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (recordref_type))))
+        (return_value
+          return_value: (identifier))
+        return_type: (return_type
+          (type_specification
+            (basic_type)))
+        (ERROR
+          (identifier)
+          (identifier)
+          (recordref_type)
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (integer))))
+      (preproc_endif))))

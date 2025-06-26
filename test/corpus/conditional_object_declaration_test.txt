@@ -1,5 +1,5 @@
 ================================================================================
-Conditional object declaration (known limitation)
+Conditional object declaration
 ================================================================================
 
 // This pattern is currently not supported by the parser
@@ -16,4 +16,21 @@ codeunit 139754 "Test" implements "Interface2"
 
 --------------------------------------------------------------------------------
 
-Note: )
+(source_file
+  (comment)
+  (comment)
+  (preproc_conditional_object_declaration
+    (preproc_if
+      condition: (identifier))
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      interface: (quoted_identifier)
+      interface: (quoted_identifier))
+    (preproc_else)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      interface: (quoted_identifier))
+    (preproc_endif)
+    (comment)))

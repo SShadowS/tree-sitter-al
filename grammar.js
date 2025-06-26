@@ -87,7 +87,18 @@ module.exports = grammar({
     [$._source_content],
     [$.assignment_expression, $._assignable_expression],
     [$.assignment_statement, $.assignment_expression],
-    [$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values]
+    [$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values],
+    [$.source_file]
+  ],
+
+  externals: $ => [
+    $.preproc_active_region_start,
+    $.preproc_active_region_end,
+    $.preproc_inactive_region_start,
+    $.preproc_inactive_region_end,
+    $.preproc_split_marker,
+    $.preproc_continuation_marker,
+    $.error_sentinel
   ],
 
   extras: $ => [new RustRegex('\\s'), $.comment, $.multiline_comment, $.pragma, $.preproc_region, $.preproc_endregion, $.malformed_directive, new RustRegex('\\uFEFF')],
@@ -96,6 +107,7 @@ module.exports = grammar({
     source_file: $ => choice(
       // Standard source file structure
       seq(
+        repeat($.pragma),  // Allow pragmas at the beginning
         optional($.namespace_declaration),
         repeat(choice($.using_statement, $.preproc_conditional_using)),
         repeat(choice($._object, $.pragma))
@@ -141,7 +153,46 @@ module.exports = grammar({
       $.permissionset_declaration,
       $.permissionsetextension_declaration,
       $.controladdin_declaration,
-      $.entitlement_declaration
+      $.entitlement_declaration,
+      $.preproc_conditional_object_declaration
+    ),
+
+    // Handle object declarations split by preprocessor
+    preproc_conditional_object_declaration: $ => seq(
+      $.preproc_if,
+      $._conditional_object_header,
+      $.preproc_else,
+      $._conditional_object_header,
+      $.preproc_endif,
+      '{',
+      repeat($._object_body_element),
+      '}'
+    ),
+
+    _conditional_object_header: $ => prec(2, seq(
+      choice(
+        kw('codeunit'),
+        kw('table'),
+        kw('page'),
+        kw('report'),
+        kw('query'),
+        kw('xmlport')
+      ),
+      field('object_id', $.integer),
+      field('object_name', $._identifier_choice),
+      optional($.implements_clause)
+    )),
+
+    _object_body_element: $ => choice(
+      $.var_section,
+      $.preproc_conditional_var_sections,
+      $.attributed_procedure,
+      $.attributed_trigger,
+      $.pragma,
+      $.preproc_region,
+      $.preproc_endregion,
+      $.comment,
+      $.multiline_comment
     ),
 
     namespace_declaration: $ => seq(
@@ -4887,24 +4938,57 @@ enum_type: $ => prec(1, seq(
 
     procedure_modifier: $ => choice(kw('local'), kw('internal'), kw('protected')),
 
-    procedure: $ => seq(
+    procedure: $ => choice(
+      // Regular procedure
+      seq(
+        optional(field('modifier', $.procedure_modifier)), 
+        kw('procedure'),
+        field('name', $._procedure_name),
+        '(',
+        optional($.parameter_list),
+        ')',
+        // Return type can be followed by optional semicolon or directly by var/begin
+        optional(choice(
+          seq(
+            choice(
+              $._procedure_return_specification, // : ReturnType
+              $._procedure_named_return // ReturnValue : ReturnType
+            ),
+            optional(';')
+          )
+        )),
+        // Optional semicolon even when there's no return type (for test procedures)
+        optional(';'),
+        repeat($.pragma),
+        optional(choice(
+          $.var_section,
+          $.preproc_conditional_var_sections
+        )),
+        $.code_block
+      ),
+      // Procedure with conditional return type
+      $.preproc_conditional_procedure
+    ),
+
+    // Handle procedure declarations with split return type syntax
+    preproc_conditional_procedure: $ => seq(
       optional(field('modifier', $.procedure_modifier)), 
       kw('procedure'),
       field('name', $._procedure_name),
       '(',
       optional($.parameter_list),
       ')',
-      // Return type can be followed by optional semicolon or directly by var/begin
-      optional(choice(
-        seq(
-          choice(
-            $._procedure_return_specification, // : ReturnType
-            $._procedure_named_return // ReturnValue : ReturnType
-          ),
-          optional(';')
-        )
-      )),
-      // Optional semicolon even when there's no return type (for test procedures)
+      $.preproc_if,
+      choice(
+        $._procedure_return_specification, // : ReturnType
+        $._procedure_named_return // ReturnValue : ReturnType
+      ),
+      $.preproc_else,
+      choice(
+        $._procedure_return_specification, // : ReturnType
+        $._procedure_named_return // ReturnValue : ReturnType
+      ),
+      $.preproc_endif,
       optional(';'),
       repeat($.pragma),
       optional(choice(
