@@ -3089,7 +3089,10 @@ module.exports = grammar({
 
     style_property: _value_property_template('Style', $ => $.style_value),
 
-    style_expr_property: _value_property_template('StyleExpr', $ => $._expression),
+    style_expr_property: $ => seq(
+      'StyleExpr',
+      $._expression_property_template
+    ),
 
     page_id_value: $ => choice(
       $.integer,
@@ -3309,7 +3312,7 @@ module.exports = grammar({
     ),
 
     table_type_property: $ => seq(
-      'TableType',
+      kw('TableType'),
       '=',
       field('value', alias($.table_type_value, $.value)),
       ';'
@@ -3982,7 +3985,9 @@ module.exports = grammar({
       // Allow 'field' to be used as an identifier in variable contexts
       alias(kw('field'), $.identifier),
       // Allow 'CustomActionType' to be used as an identifier in variable contexts
-      alias(kw('customactiontype'), $.identifier)
+      alias(kw('customactiontype'), $.identifier),
+      // Allow 'TableType' to be used as an identifier in variable contexts
+      alias(kw('tabletype'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
@@ -5855,9 +5860,15 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
-    indentation_column_property: _value_property_template($ => kw('IndentationColumn'), $ => $._expression),
+    indentation_column_property: $ => seq(
+      kw('IndentationColumn'),
+      $._expression_property_template
+    ),
 
-    indentation_controls_property: _value_property_template($ => kw('IndentationControls'), $ => $._expression),
+    indentation_controls_property: $ => seq(
+      kw('IndentationControls'),
+      $._expression_property_template
+    ),
 
     allowed_file_extensions_property: $ => seq(
       'AllowedFileExtensions',

@@ -13360,20 +13360,8 @@
           "value": "StyleExpr"
         },
         {
-          "type": "STRING",
-          "value": "="
-        },
-        {
-          "type": "FIELD",
-          "name": "value",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_expression"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": ";"
+          "type": "SYMBOL",
+          "name": "_expression_property_template"
         }
       ]
     },
@@ -14339,8 +14327,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "TableType"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)TableType"
+          }
         },
         {
           "type": "STRING",
@@ -17199,6 +17190,18 @@
             "content": {
               "type": "PATTERN",
               "value": "(?i)customactiontype"
+            }
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)tabletype"
             }
           },
           "named": true,
@@ -25981,20 +25984,8 @@
           }
         },
         {
-          "type": "STRING",
-          "value": "="
-        },
-        {
-          "type": "FIELD",
-          "name": "value",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_expression"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": ";"
+          "type": "SYMBOL",
+          "name": "_expression_property_template"
         }
       ]
     },
@@ -26009,20 +26000,8 @@
           }
         },
         {
-          "type": "STRING",
-          "value": "="
-        },
-        {
-          "type": "FIELD",
-          "name": "value",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_expression"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": ";"
+          "type": "SYMBOL",
+          "name": "_expression_property_template"
         }
       ]
     },

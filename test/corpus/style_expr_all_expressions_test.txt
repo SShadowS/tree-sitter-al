@@ -14,7 +14,7 @@ page 50103 "Complex StyleExpr Test"
             }
             field(Field2; Rec.Field2)
             {
-                StyleExpr = Status is Interface;
+                StyleExpr = Status is MyInterface;
             }
             field(Field3; Rec.Field3)
             {
@@ -46,13 +46,12 @@ page 50103 "Complex StyleExpr Test"
             object: (identifier)
             property: (identifier))
           (style_expr_property
-            value: (in_expression
-              left: (identifier)
-              operator: (in_operator)
-              right: (list_literal
+            left: (identifier)
+            operator: (in_operator)
+            right: (list_literal
+              (expression_list
                 (range_expression
                   left: (integer)
-                  operator: (range_operator)
                   right: (integer))))))
         (field_section
           control_id: (identifier)
@@ -60,24 +59,20 @@ page 50103 "Complex StyleExpr Test"
             object: (identifier)
             property: (identifier))
           (style_expr_property
-            value: (is_expression
-              left: (identifier)
-              operator: (identifier)
-              right: (type_specification
-                (identifier)))))
+            left: (identifier)
+            right: (type_specification
+              (identifier))))
         (field_section
           control_id: (identifier)
           source_or_field_name: (member_expression
             object: (identifier)
             property: (identifier))
           (style_expr_property
-            value: (as_expression
-              left: (member_expression
-                object: (identifier)
-                property: (identifier))
-              operator: (identifier)
-              right: (type_specification
-                (identifier)))))
+            left: (member_expression
+              object: (identifier)
+              property: (identifier))
+            right: (type_specification
+              (identifier))))
         (field_section
           control_id: (identifier)
           source_or_field_name: (member_expression
@@ -99,11 +94,10 @@ page 50103 "Complex StyleExpr Test"
           (style_expr_property
             value: (logical_expression
               left: (identifier)
-              operator: (logical_operator)
               right: (parenthesized_expression
                 (comparison_expression
                   left: (identifier)
                   operator: (comparison_operator)
                   right: (qualified_enum_value
                     enum_type: (identifier)
-                    value: (identifier))))))))))
+                    value: (identifier)))))))))))
