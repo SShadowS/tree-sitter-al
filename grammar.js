@@ -567,7 +567,10 @@ module.exports = grammar({
       )), // Allow string literal for value name
       ')',
       '{',
-      repeat($._enum_properties), // Use centralized enum properties
+      repeat(choice(
+        $._enum_properties, // Use centralized enum properties
+        $.preproc_conditional_enum_properties  // Allow preprocessor conditionals
+      )),
       '}'
     ),
 
