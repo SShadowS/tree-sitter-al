@@ -1234,8 +1234,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "LinkTable"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)LinkTable"
+          }
         },
         {
           "type": "SYMBOL",
@@ -1586,46 +1589,54 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_identifier_choice"
+          "type": "FIELD",
+          "name": "source_field",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_identifier_choice"
+          }
         },
         {
           "type": "STRING",
           "value": "="
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "identifier"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_quoted_identifier"
-            },
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "_field_keyword"
-                },
-                {
-                  "type": "STRING",
-                  "value": "("
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_flexible_identifier_choice"
-                },
-                {
-                  "type": "STRING",
-                  "value": ")"
-                }
-              ]
-            }
-          ]
+          "type": "FIELD",
+          "name": "target_field",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_quoted_identifier"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_field_keyword"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "("
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_flexible_identifier_choice"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": ")"
+                  }
+                ]
+              }
+            ]
+          }
         }
       ]
     },

@@ -1,0 +1,143 @@
+================================================================================
+XMLPort LinkTable case-insensitive property
+================================================================================
+
+xmlport 1405 "Import Export Workflow"
+{
+    schema
+    {
+        tableelement(Workflow; Workflow)
+        {
+            tableelement("Workflow Step"; "Workflow Step")
+            {
+                LinkFields = "Workflow Code" = field(Code);
+                LinkTable = Workflow;
+                MaxOccurs = Unbounded;
+                
+                fieldattribute(ID; "Workflow Step".ID)
+                {
+                }
+                
+                tableelement("Workflow Rule"; "Workflow Rule")
+                {
+                    LinkFields = "Workflow Code" = field("Workflow Code"), "Workflow Step ID" = field(ID);
+                    LinkTable = "Workflow Step";
+                    MinOccurs = Zero;
+                    
+                    fieldattribute(RuleID; "Workflow Rule".ID)
+                    {
+                    }
+                    fieldattribute(RuleTableNumber; "Workflow Rule"."Table ID")
+                    {
+                    }
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        source_table: (identifier)
+        (xmlport_table_element
+          name: (quoted_identifier)
+          source_table: (quoted_identifier)
+          (xmlport_table_property
+            (link_fields_property
+              value: (link_fields_value
+                (field_mapping
+                  source_field: (quoted_identifier)
+                  target_field: (identifier)))))
+          (xmlport_table_property
+            (link_table_property
+              value: (identifier)))
+          (xmlport_table_property
+            (max_occurs_property
+              value: (max_occurs_value)))
+          (xmlport_field_attribute
+            attribute_name: (identifier)
+            source_field: (member_expression
+              object: (quoted_identifier)
+              property: (identifier)))
+          (xmlport_table_element
+            name: (quoted_identifier)
+            source_table: (quoted_identifier)
+            (xmlport_table_property
+              (link_fields_property
+                value: (link_fields_value
+                  (field_mapping
+                    source_field: (quoted_identifier)
+                    target_field: (quoted_identifier))
+                  (field_mapping
+                    source_field: (quoted_identifier)
+                    target_field: (identifier)))))
+            (xmlport_table_property
+              (link_table_property
+                value: (quoted_identifier)))
+            (xmlport_table_property
+              (min_occurs_property
+                value: (min_occurs_value)))
+            (xmlport_field_attribute
+              attribute_name: (identifier)
+              source_field: (member_expression
+                object: (quoted_identifier)
+                property: (identifier)))
+            (xmlport_field_attribute
+              attribute_name: (identifier)
+              source_field: (field_access
+                record: (quoted_identifier)
+                field: (quoted_identifier)))))))))
+
+================================================================================
+XMLPort LinkTable with various case variations
+================================================================================
+
+xmlport 50000 "Test LinkTable Cases"
+{
+    schema
+    {
+        tableelement(Customer; Customer)
+        {
+            tableelement("Sales Header"; "Sales Header")  
+            {
+                linktable = Customer;
+                LinkTable = Customer;
+                LINKTABLE = Customer;
+                linkTable = Customer;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        source_table: (identifier)
+        (xmlport_table_element
+          name: (quoted_identifier)
+          source_table: (quoted_identifier)
+          (xmlport_table_property
+            (link_table_property
+              value: (identifier)))
+          (xmlport_table_property
+            (link_table_property
+              value: (identifier)))
+          (xmlport_table_property
+            (link_table_property
+              value: (identifier)))
+          (xmlport_table_property
+            (link_table_property
+              value: (identifier))))))))

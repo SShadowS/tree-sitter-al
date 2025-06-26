@@ -383,7 +383,7 @@ module.exports = grammar({
     
     // 6. LinkTable Property
     link_table_property: $ => seq(
-      'LinkTable',
+      kw('LinkTable'),
       $._identifier_property_template
     ),
     
@@ -474,9 +474,9 @@ module.exports = grammar({
     ),
     
     field_mapping: $ => seq(
-      $._identifier_choice,
+      field('source_field', $._identifier_choice),
       '=',
-      choice(
+      field('target_field', choice(
         $.identifier, 
         $._quoted_identifier,
         // Support FIELD("FieldName") syntax
@@ -486,7 +486,7 @@ module.exports = grammar({
           $._flexible_identifier_choice,
           ')'
         )
-      )
+      ))
     ),
 
     enum_declaration: $ => seq(

@@ -13061,24 +13061,47 @@
   {
     "type": "field_mapping",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        },
-        {
-          "type": "string_literal",
-          "named": true
-        }
-      ]
+    "fields": {
+      "source_field": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "target_field": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -47239,10 +47262,6 @@
   },
   {
     "type": "IsPreview",
-    "named": false
-  },
-  {
-    "type": "LinkTable",
     "named": false
   },
   {

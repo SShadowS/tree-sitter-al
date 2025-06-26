@@ -104,8 +104,8 @@ xmlport 50000 "Test XMLPort"
             (link_fields_property
               value: (link_fields_value
                 (field_mapping
-                  (quoted_identifier)
-                  (quoted_identifier)))))
+                  source_field: (quoted_identifier)
+                  target_field: (quoted_identifier)))))
           (xmlport_table_property
             (link_table_property
               value: (identifier)))

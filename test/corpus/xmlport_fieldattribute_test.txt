@@ -171,8 +171,8 @@ xmlport 50102 "Complex Export"
               (link_fields_property
                 value: (link_fields_value
                   (field_mapping
-                    (quoted_identifier)
-                    (quoted_identifier)))))
+                    source_field: (quoted_identifier)
+                    target_field: (quoted_identifier)))))
             (xmlport_field_attribute
               attribute_name: (identifier)
               source_field: (field_access
