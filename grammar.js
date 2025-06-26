@@ -152,6 +152,7 @@ module.exports = grammar({
       $.enum_declaration,
       $.enumextension_declaration, 
       $.preproc_conditional_enum_declaration,
+      $.preproc_conditional_codeunit_declaration,
       $.xmlport_declaration,
       $.interface_declaration,
       $.dotnet_declaration,
@@ -528,6 +529,39 @@ module.exports = grammar({
       )),
       '}'
     ),
+
+    preproc_conditional_codeunit_declaration: $ => prec(1, seq(
+      $.preproc_if,
+      optional($.pragma),
+      field('consequence', seq(
+        kw('codeunit'),
+        $._object_header_base,
+        optional($.implements_clause)
+      )),
+      optional($.pragma),
+      $.preproc_else,
+      field('alternative', seq(
+        kw('codeunit'),
+        $._object_header_base,
+        optional($.implements_clause)
+      )),
+      $.preproc_endif,
+      '{',
+      repeat(choice(
+        prec(4, $._codeunit_properties),
+        $.preproc_conditional_object_properties,
+        $.var_section,
+        $.preproc_conditional_var_sections,
+        $.attributed_procedure,
+        $.attributed_onrun_trigger, 
+        $.attributed_trigger,
+        $.preproc_conditional_procedures,
+        $.pragma,
+        $.preproc_region,
+        $.preproc_endregion
+      )),
+      '}'
+    )),
 
     preproc_conditional_enum_declaration: $ => prec(1, seq(
       $.preproc_if,

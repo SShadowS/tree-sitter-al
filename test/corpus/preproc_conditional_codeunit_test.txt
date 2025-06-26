@@ -1,0 +1,132 @@
+================================================================================
+Preprocessor Conditional Codeunit Declaration
+================================================================================
+
+namespace System.Security.Encryption;
+
+using System;
+
+#if not CLEAN24
+#pragma warning disable AL0432
+codeunit 1448 "DSACryptoServiceProvider Impl." implements SignatureAlgorithm, "Signature Algorithm v2"
+#pragma warning restore AL0432
+#else
+codeunit 1448 "DSACryptoServiceProvider Impl." implements "Signature Algorithm v2"
+#endif
+{
+    Access = Internal;
+    InherentEntitlements = X;
+    InherentPermissions = X;
+
+    var
+        [NonDebuggable]
+        DotNetDSACryptoServiceProvider: DotNet DSACryptoServiceProvider;
+
+    [NonDebuggable]
+    procedure GetInstance(var DotNetAsymmetricAlgorithm: DotNet AsymmetricAlgorithm)
+    begin
+        DotNetAsymmetricAlgorithm := DotNetDSACryptoServiceProvider;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (namespace_declaration
+    name: (namespace_name
+      (identifier)
+      (identifier)
+      (identifier)))
+  (using_statement
+    namespace: (namespace_name
+      (identifier)))
+  (preproc_conditional_codeunit_declaration
+    (preproc_if
+      condition: (identifier))
+    (pragma
+      content: (pragma_content))
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      (identifier)
+      (quoted_identifier))
+    (pragma
+      content: (pragma_content))
+    (preproc_else)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      (quoted_identifier))
+    (preproc_endif)
+    (access_property
+      value: (access_value))
+    (inherent_entitlements_property
+      value: (value))
+    (inherent_permissions_property
+      value: (value))
+    (var_section
+      (variable_declaration
+        attributes: (attribute_list
+          (attribute
+            name: (identifier)))
+        name: (identifier)
+        type: (type_specification
+          (dotnet_type
+            type_name: (identifier)
+            assembly_name: (identifier)))))
+    (attributed_procedure
+      attributes: (attribute_list
+        (attribute
+          name: (identifier)))
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            modifier: (parameter_modifier)
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                type_name: (identifier)
+                assembly_name: (identifier)))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (identifier)))))))
+
+================================================================================
+Simple Codeunit with Preprocessor in Implements
+================================================================================
+
+#if CLEAN25
+codeunit 50000 "Test Codeunit" implements "Interface 1"
+#else
+codeunit 50000 "Test Codeunit" implements "Interface 1", "Interface 2"
+#endif
+{
+    procedure Test()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_codeunit_declaration
+    (preproc_if
+      condition: (identifier))
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      (quoted_identifier))
+    (preproc_else)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      (quoted_identifier)
+      (quoted_identifier))
+    (preproc_endif)
+    (procedure
+      name: (name
+        (identifier))
+      (code_block))))
