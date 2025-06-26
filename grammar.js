@@ -3089,18 +3089,7 @@ module.exports = grammar({
 
     style_property: _value_property_template('Style', $ => $.style_value),
 
-    style_expr_property: _value_property_template('StyleExpr', $ => choice(
-        $.string_literal,
-        $.identifier,
-        $._quoted_identifier,
-        $.call_expression,
-        $.boolean,
-        $.unary_expression,
-        $.comparison_expression,
-        $.qualified_enum_value,
-        $.field_access,
-        $.member_expression
-      )),
+    style_expr_property: _value_property_template('StyleExpr', $ => $._expression),
 
     page_id_value: $ => choice(
       $.integer,
