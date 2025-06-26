@@ -5011,7 +5011,7 @@ enum_type: $ => prec(1, seq(
       field('condition', $._expression),
       kw('do', 10),
       field('body', choice(
-        $._statement,
+        $._statement_or_preprocessor,
         $.code_block
       ))
     )),
@@ -5021,7 +5021,7 @@ enum_type: $ => prec(1, seq(
       field('record_variable', $._expression),
       kw('do', 10),
       field('body', choice(
-        $._statement,
+        $._statement_or_preprocessor,
         $.code_block
       ))
     )),
@@ -5042,7 +5042,7 @@ enum_type: $ => prec(1, seq(
       field('end', $._expression),
       kw('do', 10),
       field('body', choice(
-        $._statement,
+        $._statement_or_preprocessor,
         $.code_block
       ))
     )),
@@ -5054,7 +5054,7 @@ enum_type: $ => prec(1, seq(
       field('iterable', $._expression),
       kw('do', 10),
       field('body', choice(
-        $._statement,
+        $._statement_or_preprocessor,
         $.code_block
       ))
     )),
@@ -5304,7 +5304,10 @@ enum_type: $ => prec(1, seq(
     // Helper rule for if statement bodies
     _if_then_body: $ => prec.right(seq(
       repeat($.pragma),
-      $._statement,
+      choice(
+        $._statement,
+        $.preproc_conditional_statements
+      ),
       repeat($.pragma)
     )),
 
@@ -5330,7 +5333,7 @@ enum_type: $ => prec(1, seq(
       $._colon,
       field('statements', choice(
         $.code_block,
-        $._statement
+        $._statement_or_preprocessor
       ))
     ),
 

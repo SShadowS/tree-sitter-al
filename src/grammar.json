@@ -21938,7 +21938,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_statement"
+                  "name": "_statement_or_preprocessor"
                 },
                 {
                   "type": "SYMBOL",
@@ -21994,7 +21994,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_statement"
+                  "name": "_statement_or_preprocessor"
                 },
                 {
                   "type": "SYMBOL",
@@ -22114,7 +22114,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_statement"
+                  "name": "_statement_or_preprocessor"
                 },
                 {
                   "type": "SYMBOL",
@@ -22189,7 +22189,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_statement"
+                  "name": "_statement_or_preprocessor"
                 },
                 {
                   "type": "SYMBOL",
@@ -23397,8 +23397,17 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "_statement"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_statement"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_statements"
+              }
+            ]
           },
           {
             "type": "REPEAT",
@@ -23519,7 +23528,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "_statement"
+                "name": "_statement_or_preprocessor"
               }
             ]
           }
