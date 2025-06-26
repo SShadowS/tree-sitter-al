@@ -53,26 +53,26 @@ codeunit 5678 "Another Test"
   (codeunit_declaration
     (integer)
     (quoted_identifier)
-    (procedure
-      (identifier)
-      (parameter_list)
-      (var_section
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (report_type
-              (integer))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (report_type
-              (quoted_identifier))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (report_type
-              (namespace_name
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (report_type
+                (integer))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (report_type
+                (quoted_identifier))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (report_type
                 (identifier)
-                (identifier))
-              (quoted_identifier)))))
-      (code_block))))
+                (identifier)
+                (quoted_identifier)))))
+        (code_block)))))

@@ -40,12 +40,12 @@ xmlport 50200 "Test FieldValidate"
             source_table: (field_access
               record: (identifier)
               field: (quoted_identifier))
-            (field_validate_property
-              value: (identifier)))
+            (xmlport_table_property
+              (field_validate_property)))
           (xmlport_table_element
             name: (identifier)
             source_table: (member_expression
               object: (identifier)
               property: (identifier))
-            (field_validate_property
-              value: (identifier))))))))
+            (xmlport_table_property
+              (field_validate_property))))))))

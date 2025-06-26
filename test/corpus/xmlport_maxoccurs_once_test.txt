@@ -34,10 +34,12 @@ xmlport 1227 "SEPA CT Export"
           name: (identifier)
           (xmlport_table_element
             name: (identifier)
-            source_table: (member_expression
-              object: (identifier)
-              property: (quoted_identifier))
-            (max_occurs_property
-              value: (max_occurs_value))
-            (min_occurs_property
-              value: (min_occurs_value))))))))
+            source_table: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            (xmlport_table_property
+              (max_occurs_property
+                value: (max_occurs_value)))
+            (xmlport_table_property
+              (min_occurs_property
+                value: (min_occurs_value)))))))))

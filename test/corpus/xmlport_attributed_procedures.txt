@@ -276,12 +276,13 @@ xmlport 50102 "Mixed Content XMLPort"
             parameter_type: (type_specification
               (basic_type))))
         (code_block)))
-    (procedure
-      modifier: (procedure_modifier)
-      name: (name
-        (identifier))
-      (code_block
-        (comment)))
+    (attributed_procedure
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (code_block
+          (comment))))
     (attributed_procedure
       (attribute_list
         (attribute
