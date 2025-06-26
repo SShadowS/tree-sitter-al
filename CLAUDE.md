@@ -260,6 +260,13 @@ The most frequent parsing failures occur when:
 4. Add property to appropriate semantic category list(s) (e.g., `_universal_properties`, `_dataitem_properties`, `_page_properties`, etc.)
 5. Property automatically becomes available in composed groups
 
+### Object-Specific Property Lists
+When adding properties, ensure they're added to the correct object-specific property list:
+- **XMLPort properties**: Add to `xmlport_table_property` choice list
+- **Query properties**: Add to `_query_properties` choice list
+- **Report properties**: Add to `_report_properties` choice list
+- Check for existing semantic categories before creating new ones
+
 ## Known Limitations
 - Standalone semicolons in object properties cause parsing failures
 - Multi-line permission declarations not fully supported
@@ -472,6 +479,40 @@ extras: $ => [..., $.malformed_directive, ...],
 ```
 2. Update references to use the visible rule
 3. Create proper node hierarchy (e.g., add `filter_expression` nodes)
+
+### 7. XMLPort Element Field References
+**Symptom**: Parser fails on fieldelement with member expressions
+```
+// Fails: fieldelement(Nm; CompanyInformation.Name)
+(ERROR
+  (member_expression ...)
+)
+```
+
+**Root Cause**: XMLPort elements expect field_access (Table."Field") but actual code uses member_expression (Table.Field)
+
+**Fix Pattern**:
+1. Add `$.member_expression` to the source_table choices in `xmlport_table_element`
+2. This allows both quoted and unquoted field references
+
+### 8. Missing Property Values in Enums
+**Symptom**: Property accepts limited values but actual code uses additional valid values
+```
+// Example: MaxOccurs = Once; fails when only 'unbounded' and integers are supported
+```
+
+**Root Cause**: Incomplete enumeration of valid property values
+
+**Fix Pattern**:
+1. Check documentation for all valid values
+2. Add missing values to the property's value choice list using `kw()`:
+```javascript
+max_occurs_value: $ => choice(
+  $.integer,
+  kw('unbounded'),
+  kw('once')  // Add missing value
+),
+```
 
 ### Quick Debugging Process
 1. **Isolate the failing construct**: Test just the problematic line
