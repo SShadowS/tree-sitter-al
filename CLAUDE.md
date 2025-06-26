@@ -222,12 +222,15 @@ Dont put comments in the parse tree, as they are not supported by tree-sitter.
 
 ### Property Development Workflow
 **Adding New Properties** (follow centralized architecture):
-1. Determine its primary semantic category (e.g., universal, display, validation, data, navigation, access). Some properties might be semantically tied to specific object types; these are still defined centrally but grouped into more specialized semantic categories.
-2. Add property definition to individual property rules section.
-3. Add the property rule to the appropriate semantic category list(s) (e.g., `_universal_properties`, `_page_properties`, `_table_properties`, `_action_properties`).
-4. Property automatically available in composed groups (`_field_properties`, `_control_properties`, etc.) that use these semantic categories.
-5. Create test cases covering the property in relevant object contexts.
-6. Test with `tree-sitter generate && tree-sitter test`.
+1. **Check documentation first**: Use the Business Central docs MCP server to verify if the property is universal or object-specific.
+   - If used across multiple object types → Add to `_universal_properties`
+   - If truly object-specific → Add to the appropriate object property list
+2. Determine its primary semantic category (e.g., universal, display, validation, data, navigation, access). Some properties might be semantically tied to specific object types; these are still defined centrally but grouped into more specialized semantic categories.
+3. Add property definition to individual property rules section.
+4. Add the property rule to the appropriate semantic category list(s) (e.g., `_universal_properties`, `_page_properties`, `_table_properties`, `_action_properties`).
+5. Property automatically available in composed groups (`_field_properties`, `_control_properties`, etc.) that use these semantic categories.
+6. Create test cases covering the property in relevant object contexts.
+7. Test with `tree-sitter generate && tree-sitter test`.
 
 **DO NOT** add new property *definitions* directly into object-specific choice lists (e.g., within a `table_properties` rule). Always define the property rule centrally and add this rule to the appropriate semantic category list(s). These centralized lists are then used to compose property sets for different objects or contexts.
 
@@ -261,11 +264,33 @@ The most frequent parsing failures occur when:
 5. Property automatically becomes available in composed groups
 
 ### Object-Specific Property Lists
-When adding properties, ensure they're added to the correct object-specific property list:
-- **XMLPort properties**: Add to `xmlport_table_property` choice list
-- **Query properties**: Add to `_query_properties` choice list
-- **Report properties**: Add to `_report_properties` choice list
-- Check for existing semantic categories before creating new ones
+When adding properties, follow this decision process:
+
+1. **First, check if the property is universal/generic**:
+   - Search the Business Central documentation to see if the property applies to multiple object types
+   - If it's used across different objects (tables, pages, reports, etc.), add it to `_universal_properties`
+   - This follows DRY principles and ensures the property is available everywhere it's needed
+
+2. **Only if object-specific, add to the appropriate list**:
+   - **XMLPort properties**: Add to `xmlport_table_property` choice list
+   - **Query properties**: Add to `_query_properties` choice list
+   - **Report properties**: Add to `_report_properties` choice list
+   - Check for existing semantic categories before creating new ones
+
+3. **Example decision process**:
+   ```javascript
+   // BAD: Adding Caption to query-specific properties
+   _query_properties: $ => choice(
+     $.caption_property,  // Don't do this - Caption is universal!
+     ...
+   )
+   
+   // GOOD: Caption is already in _universal_properties
+   _universal_properties: $ => choice(
+     $.caption_property,  // Defined once, used everywhere
+     ...
+   )
+   ```
 
 ## Known Limitations
 - Standalone semicolons in object properties cause parsing failures
