@@ -5421,6 +5421,7 @@ enum_type: $ => prec(1, seq(
         field('right', $.type_specification)
       )),
       $.logical_expression,
+      $.conditional_expression,  // Add ternary operator
       // --- Other Expression Forms ---
       // Put database_reference FIRST with highest precedence for DATABASE:: patterns
       $.database_reference,
@@ -5490,6 +5491,15 @@ enum_type: $ => prec(1, seq(
         field('right', $._expression)
       ))
     ),
+
+    // Conditional/ternary expression (? :)
+    conditional_expression: $ => prec.right(1, seq(
+      field('condition', $._expression),
+      '?',
+      field('then_value', $._expression),
+      ':',
+      field('else_value', $._expression)
+    )),
 
     // 'in' operator
     in_operator: $ => kw('in', 5),

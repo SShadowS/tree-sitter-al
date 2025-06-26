@@ -1,0 +1,228 @@
+================================================================================
+Basic Ternary Operator
+================================================================================
+
+codeunit 50100 TestTernary
+{
+    procedure TestMethod()
+    var
+        x: Integer;
+        condition: Boolean;
+    begin
+        x := condition ? 10 : 20;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (identifier)
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
+            (identifier)
+            (conditional_expression
+              (identifier)
+              (integer)
+              (integer))))))))
+
+================================================================================
+Nested Ternary Operators
+================================================================================
+
+codeunit 50100 NestedTernary
+{
+    procedure TestMethod()
+    var
+        result: Integer;
+        a, b, c: Boolean;
+    begin
+        result := a ? (b ? 1 : 2) : (c ? 3 : 4);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (identifier)
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (variable_declaration
+            (identifier)
+            (identifier)
+            (identifier)
+            (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
+            (identifier)
+            (conditional_expression
+              (identifier)
+              (parenthesized_expression
+                (conditional_expression
+                  (identifier)
+                  (integer)
+                  (integer)))
+              (parenthesized_expression
+                (conditional_expression
+                  (identifier)
+                  (integer)
+                  (integer))))))))))
+
+================================================================================
+Ternary with Complex Expressions
+================================================================================
+
+codeunit 50100 ComplexTernary
+{
+    procedure TestMethod()
+    var
+        x, y: Integer;
+        ColumnValues: array[10] of Decimal;
+        i: Integer;
+        Rec: Record Item;
+    begin
+        x := y > 0 ? y * 2 : -y;
+        ColumnValues[i] *= Rec."Show Opposite Sign" ? -1 : 1;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (identifier)
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            (identifier)
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (array_type
+                (integer)
+                (type_specification
+                  (basic_type)))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (record_type
+                (identifier)))))
+        (code_block
+          (assignment_expression
+            (identifier)
+            (conditional_expression
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (multiplicative_expression
+                (identifier)
+                (integer))
+              (unary_expression
+                (identifier))))
+          (assignment_expression
+            (subscript_expression
+              (identifier)
+              (expression_list
+                (identifier)))
+            (conditional_expression
+              (field_access
+                (identifier)
+                (quoted_identifier))
+              (integer)
+              (integer))))))))
+
+================================================================================
+Ternary in Method Calls
+================================================================================
+
+codeunit 50100 TernaryInCalls
+{
+    procedure TestMethod()
+    var
+        Enabled: Boolean;
+    begin
+        SetValue(Enabled ? 'Yes' : 'No');
+        Message('Status: %1', Enabled ? 1 : 0);
+    end;
+    
+    procedure SetValue(Val: Text) begin end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (identifier)
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type))))
+        (code_block
+          (call_expression
+            (identifier)
+            (argument_list
+              (conditional_expression
+                (identifier)
+                (string_literal)
+                (string_literal))))
+          (call_expression
+            (identifier)
+            (argument_list
+              (string_literal)
+              (conditional_expression
+                (identifier)
+                (integer)
+                (integer)))))))
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (parameter_list
+          (parameter
+            (name
+              (identifier))
+            (type_specification
+              (text_type))))
+        (code_block)))))
