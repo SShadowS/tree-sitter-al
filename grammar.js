@@ -114,8 +114,12 @@ module.exports = grammar({
         repeat(choice($.using_statement, $.preproc_conditional_using)),
         repeat(choice($._object, $.pragma))
       ),
-      // Preprocessor-wrapped source file
-      $.preprocessor_file_conditional
+      // Preprocessor-wrapped source file with optional pragmas
+      seq(
+        repeat($.pragma),  // Allow pragmas before preprocessor
+        $.preprocessor_file_conditional,
+        repeat($.pragma)   // Allow pragmas after preprocessor
+      )
     ),
 
     preprocessor_file_conditional: $ => seq(

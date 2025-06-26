@@ -63,8 +63,27 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "preprocessor_file_conditional"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "pragma"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preprocessor_file_conditional"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "pragma"
+              }
+            }
+          ]
         }
       ]
     },
