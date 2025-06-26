@@ -1930,6 +1930,17 @@
             "type": "CHOICE",
             "members": [
               {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PREC",
+                  "value": 10,
+                  "content": {
+                    "type": "STRING",
+                    "value": "\"\""
+                  }
+                }
+              },
+              {
                 "type": "SYMBOL",
                 "name": "_quoted_identifier"
               },

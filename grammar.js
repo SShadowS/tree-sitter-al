@@ -550,7 +550,12 @@ module.exports = grammar({
       '(',
       field('value_id', $.integer),
       ';',
-      field('value_name', choice($._quoted_identifier, $.identifier, $.string_literal)), // Allow string literal for value name
+      field('value_name', choice(
+        token(prec(10, '""')),  // High precedence for empty string in enum context
+        $._quoted_identifier, 
+        $.identifier, 
+        $.string_literal
+      )), // Allow string literal for value name
       ')',
       '{',
       repeat($._enum_properties), // Use centralized enum properties
