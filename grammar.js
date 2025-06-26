@@ -173,7 +173,7 @@ module.exports = grammar({
       $.xmlport_schema_element,
       $.var_section,
       $.preproc_conditional_var_sections,
-      $.procedure,
+      $.attributed_procedure,  // Support both attributed and non-attributed procedures
       $.trigger_declaration,
       $._xmlport_properties,
       $.preproc_conditional_xmlport_properties,

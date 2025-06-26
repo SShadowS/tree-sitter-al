@@ -1,0 +1,296 @@
+================================================================================
+XMLPort with IntegrationEvent attributed procedure
+================================================================================
+
+xmlport 50100 "Test XMLPort"
+{
+    Caption = 'Test XMLPort';
+    Direction = Import;
+    
+    schema
+    {
+        textelement(Root)
+        {
+            textelement(Data)
+            {
+            }
+        }
+    }
+    
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeProcessData(var DataText: Text; var IsHandled: Boolean)
+    begin
+    end;
+    
+    [IntegrationEvent(true, false)]
+    procedure OnAfterProcessData(DataText: Text)
+    begin
+        Message('Data processed: %1', DataText);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (direction_property
+      value: (direction_value))
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (identifier))))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)))))
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (text_type)))
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (basic_type))))
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)))))
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (text_type))))
+        (code_block
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)
+              (identifier))))))))
+
+================================================================================
+XMLPort with multiple attributed procedures
+================================================================================
+
+xmlport 50101 "Test XMLPort Multiple Events"
+{
+    schema
+    {
+        textelement(Root)
+        {
+        }
+    }
+    
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Test Codeunit", 'OnTestEvent', '', true, true)]
+    local procedure HandleTestEvent()
+    begin
+    end;
+    
+    [BusinessEvent(false)]
+    local procedure OnCustomBusinessEvent(CustomerNo: Code[20])
+    begin
+    end;
+    
+    [IntegrationEvent(false, false)]
+    internal procedure OnInternalEvent(var Record: Record Customer)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (quoted_identifier))
+              (string_literal)
+              (string_literal)
+              (boolean)
+              (boolean)))))
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)))))
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (code_type
+                length: (integer)))))
+        (code_block)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)))))
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        (code_block)))))
+
+================================================================================
+XMLPort with event attributes and triggers
+================================================================================
+
+xmlport 50102 "Mixed Content XMLPort"
+{
+    Direction = Export;
+    
+    schema
+    {
+        textelement(Root)
+        {
+            trigger OnBeforePassVariable()
+            begin
+                Root := 'Test';
+            end;
+        }
+    }
+    
+    trigger OnPreXmlPort()
+    begin
+        Initialize();
+    end;
+    
+    [IntegrationEvent(false, false)]
+    procedure OnBeforeExport(var IsHandled: Boolean)
+    begin
+    end;
+    
+    local procedure Initialize()
+    begin
+        // Initialize logic
+    end;
+    
+    [InternalEvent(false)]
+    local procedure OnInternalProcess()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (direction_property
+      value: (direction_value))
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (trigger_declaration
+          name: (trigger_name)
+          (code_block
+            (assignment_expression
+              left: (identifier)
+              right: (string_literal))))))
+    (trigger_declaration
+      name: (trigger_name)
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list))))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)))))
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (basic_type))))
+        (code_block)))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block
+        (comment)))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)))))
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (code_block)))))
