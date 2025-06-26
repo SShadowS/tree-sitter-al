@@ -1,0 +1,181 @@
+================================================================================
+Enum with UnknownValueImplementation property
+================================================================================
+
+namespace Microsoft.EServices.EDocument;
+
+enum 5580 "Digital Voucher Check Type" implements "Digital Voucher Check"
+{
+    Extensible = true;
+
+    DefaultImplementation = "Digital Voucher Check" = "Voucher No Check";
+    UnknownValueImplementation = "Digital Voucher Check" = "Voucher Unknown Check";
+
+    value(0; "No Check")
+    {
+        Caption = 'No Check';
+        Implementation = "Digital Voucher Check" = "Voucher No Check";
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (namespace_declaration
+    name: (namespace_name
+      (identifier)
+      (identifier)
+      (identifier)))
+  (enum_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      interface: (quoted_identifier))
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
+    (default_implementation_property
+      value: (implementation_value_list
+        (implementation_value
+          interface: (quoted_identifier)
+          implementation: (quoted_identifier))))
+    (unknown_value_implementation_property
+      value: (implementation_value_list
+        (implementation_value
+          interface: (quoted_identifier)
+          implementation: (quoted_identifier))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (quoted_identifier)
+      (caption_property
+        (string_literal))
+      (implementation_property
+        value: (implementation_value_list
+          (implementation_value
+            interface: (quoted_identifier)
+            implementation: (quoted_identifier)))))))
+
+================================================================================
+Multiple enums with UnknownValueImplementation property
+================================================================================
+
+namespace Microsoft.System.Security.Cryptography;
+
+enum 1445 "Symmetric Algorithm" implements "Symmetric Algorithm"
+{
+    Extensible = true;
+    
+    DefaultImplementation = SymmetricAlgorithm = "AesCryptoServiceProvider Impl.";
+    UnknownValueImplementation = SymmetricAlgorithm = "AesCryptoServiceProvider Impl.";
+
+    value(0; Aes)
+    {
+        Caption = 'AES';
+        Implementation = SymmetricAlgorithm = "AesCryptoServiceProvider Impl.";
+    }
+    value(1; DES)
+    {
+        Caption = 'DES';
+        Implementation = SymmetricAlgorithm = "DesCryptoServiceProvider Impl.";
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (namespace_declaration
+    name: (namespace_name
+      (identifier)
+      (identifier)
+      (identifier)
+      (identifier)))
+  (enum_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (implements_clause
+      interface: (quoted_identifier))
+    (extensible_property
+      value: (extensible_value
+        (boolean)))
+    (default_implementation_property
+      value: (implementation_value_list
+        (implementation_value
+          interface: (identifier)
+          implementation: (quoted_identifier))))
+    (unknown_value_implementation_property
+      value: (implementation_value_list
+        (implementation_value
+          interface: (identifier)
+          implementation: (quoted_identifier))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)
+      (caption_property
+        (string_literal))
+      (implementation_property
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier)))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)
+      (caption_property
+        (string_literal))
+      (implementation_property
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier)))))))
+
+================================================================================
+UnknownValueImplementation with case variations
+================================================================================
+
+enum 100 TestEnum implements ITestInterface
+{
+    unknownvalueimplementation = ITestInterface = "Default Implementation";
+    
+    value(0; Value1)
+    {
+    }
+}
+
+enum 101 TestEnum2 implements ITestInterface
+{
+    UNKNOWNVALUEIMPLEMENTATION = ITestInterface = "Default Implementation";
+    
+    value(0; Value1)
+    {
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      interface: (identifier))
+    (unknown_value_implementation_property
+      value: (implementation_value_list
+        (implementation_value
+          interface: (identifier)
+          implementation: (quoted_identifier))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier)))
+  (enum_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (implements_clause
+      interface: (identifier))
+    (unknown_value_implementation_property
+      value: (implementation_value_list
+        (implementation_value
+          interface: (identifier)
+          implementation: (quoted_identifier))))
+    (enum_value_declaration
+      value_id: (integer)
+      value_name: (identifier))))

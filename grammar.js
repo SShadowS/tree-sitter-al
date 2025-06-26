@@ -1832,6 +1832,13 @@ module.exports = grammar({
       ';'
     ),
 
+    unknown_value_implementation_property: $ => seq(
+      kw('unknownvalueimplementation'),
+      '=',
+      field('value', $.implementation_value_list),
+      ';'
+    ),
+
     table_declaration: $ => seq(
       kw('table'),
       $._object_header_base,
@@ -6741,6 +6748,7 @@ enum_type: $ => prec(1, seq(
       $.assignment_compatibility_property,
       $.implementation_property,    // Interface implementations
       $.default_implementation_property, // Default interface implementation
+      $.unknown_value_implementation_property, // Unknown value interface implementation
     ),
 
     // Composed property groups for different object contexts

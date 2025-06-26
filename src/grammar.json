@@ -7321,6 +7321,34 @@
         }
       ]
     },
+    "unknown_value_implementation_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)unknownvalueimplementation"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "implementation_value_list"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "table_declaration": {
       "type": "SEQ",
       "members": [
@@ -29933,6 +29961,10 @@
         {
           "type": "SYMBOL",
           "name": "default_implementation_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "unknown_value_implementation_property"
         }
       ]
     },
