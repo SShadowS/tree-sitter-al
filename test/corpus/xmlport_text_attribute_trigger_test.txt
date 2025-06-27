@@ -1,0 +1,110 @@
+================================================================================
+XMLPort text attribute with OnAfterAssignVariable trigger
+================================================================================
+
+xmlport 1 "Consolidation Import/Export"
+{
+    Caption = 'Consolidation Import/Export';
+    FormatEvaluate = Xml;
+
+    schema
+    {
+        textelement(subFinReport)
+        {
+            MaxOccurs = Once;
+            MinOccurs = Once;
+            textattribute(formatVersion)
+            {
+                trigger OnAfterAssignVariable()
+                begin
+                    // Test format Version against CurrentFormatVersion
+                end;
+            }
+            textattribute(subCompanyName)
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (format_evaluate_property)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_property
+          (max_occurs_property
+            value: (max_occurs_value)))
+        (xmlport_table_property
+          (min_occurs_property
+            value: (min_occurs_value)))
+        (xmlport_text_attribute
+          attribute_name: (identifier)
+          (trigger_declaration
+            name: (trigger_name)
+            (code_block
+              (comment))))
+        (xmlport_text_attribute
+          attribute_name: (identifier))))))
+
+================================================================================
+XMLPort text attribute with multiple triggers and properties
+================================================================================
+
+xmlport 50100 "Test XMLPort"
+{
+    schema
+    {
+        textelement(Root)
+        {
+            textattribute(Version)
+            {
+                Occurrence = Required;
+                
+                trigger OnAfterAssignVariable()
+                begin
+                    ValidateVersion();
+                end;
+                
+                trigger OnBeforePassVariable()
+                begin
+                    SetDefaultVersion();
+                end;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_text_attribute
+          attribute_name: (identifier)
+          (xmlport_table_property
+            (occurrence_property
+              value: (occurrence_value)))
+          (trigger_declaration
+            name: (trigger_name)
+            (code_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (trigger_declaration
+            name: (trigger_name)
+            (code_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list)))))))))

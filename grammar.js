@@ -349,7 +349,10 @@ module.exports = grammar({
       field('attribute_name', $._identifier_choice),
       ')',
       '{',
-      repeat($.xmlport_table_property),
+      repeat(choice(
+        $.xmlport_table_property,
+        $.trigger_declaration  // Support triggers in textattribute
+      )),
       '}'
     ),
     

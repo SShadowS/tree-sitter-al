@@ -1154,8 +1154,17 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "SYMBOL",
-            "name": "xmlport_table_property"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "xmlport_table_property"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "trigger_declaration"
+              }
+            ]
           }
         },
         {
