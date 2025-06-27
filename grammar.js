@@ -5831,6 +5831,12 @@ enum_type: $ => prec(1, seq(
       new RustRegex('\\d+')
     )),
 
+    biginteger: $ => token(seq(
+      optional('-'),  // Only allow negative sign
+      new RustRegex('\\d+'),
+      new RustRegex('[lL]')  // L suffix for BigInteger
+    )),
+
     time_literal: $ => token(seq(
       optional('-'),
       new RustRegex('\\d+(\\.\\d+)?'),  // Allow decimal time values like 235959.999T
@@ -5853,6 +5859,7 @@ enum_type: $ => prec(1, seq(
       $.time_literal, 
       $.datetime_literal,
       $.duration_literal,
+      $.biginteger,  // BigInteger literals with L suffix (e.g., 123L)
       $.integer,
       $.decimal,
       $.boolean,

@@ -26137,6 +26137,34 @@
         ]
       }
     },
+    "biginteger": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "-"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d+"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[lL]"
+          }
+        ]
+      }
+    },
     "time_literal": {
       "type": "TOKEN",
       "content": {
@@ -26238,6 +26266,10 @@
         {
           "type": "SYMBOL",
           "name": "duration_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "biginteger"
         },
         {
           "type": "SYMBOL",

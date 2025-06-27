@@ -1,0 +1,125 @@
+================================================================================
+BigInteger literal with L suffix
+================================================================================
+
+codeunit 50000 "Test BigInteger"
+{
+    procedure TestBigIntegerLiterals()
+    var
+        MyBigInt: BigInteger;
+    begin
+        MyBigInt := 0L;
+        MyBigInt := 123L;
+        MyBigInt := -456L;
+        MyBigInt := 9223372036854775807L; // Max Int64 value
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (biginteger))
+          (assignment_expression
+            left: (identifier)
+            right: (biginteger))
+          (assignment_expression
+            left: (identifier)
+            right: (biginteger))
+          (assignment_expression
+            left: (identifier)
+            right: (biginteger))
+          (comment))))))
+
+================================================================================
+BigInteger literal in comparison
+================================================================================
+
+codeunit 50001 "Test BigInteger Compare"
+{
+    procedure TestBigIntegerComparison()
+    var
+        Result: BigInteger;
+    begin
+        if Result = 0L then
+            Message('Zero');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (if_statement
+            condition: (comparison_expression
+              left: (identifier)
+              operator: (comparison_operator)
+              right: (biginteger))
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))))
+
+================================================================================
+BigInteger literal with lowercase l
+================================================================================
+
+codeunit 50002 "Test BigInteger Lowercase"
+{
+    procedure TestLowercaseL()
+    var
+        Value: BigInteger;
+    begin
+        Value := 42l;
+        Value := -999l;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (biginteger))
+          (assignment_expression
+            left: (identifier)
+            right: (biginteger)))))))
