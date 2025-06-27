@@ -107,18 +107,18 @@ module.exports = grammar({
 
   rules: {
     source_file: $ => choice(
+      // Preprocessor-wrapped source file with optional pragmas (higher precedence)
+      prec(2, seq(
+        repeat($.pragma),  // Allow pragmas before preprocessor
+        $.preprocessor_file_conditional,
+        repeat($.pragma)   // Allow pragmas after preprocessor
+      )),
       // Standard source file structure
       seq(
         repeat($.pragma),  // Allow pragmas at the beginning
         optional($.namespace_declaration),
         repeat(choice($.using_statement, $.preproc_conditional_using)),
-        repeat(choice($._object, $.pragma))
-      ),
-      // Preprocessor-wrapped source file with optional pragmas
-      seq(
-        repeat($.pragma),  // Allow pragmas before preprocessor
-        $.preprocessor_file_conditional,
-        repeat($.pragma)   // Allow pragmas after preprocessor
+        repeat(choice($._object, $.pragma, $.preprocessor_file_conditional))
       )
     ),
 
@@ -838,7 +838,7 @@ module.exports = grammar({
     ),
 
     is_preview_property: $ => seq(
-      'IsPreview',
+      kw('IsPreview'),
       $._boolean_property_template
     ),
     
@@ -4084,7 +4084,9 @@ module.exports = grammar({
       // Allow 'TableType' to be used as an identifier in variable contexts
       alias(kw('tabletype'), $.identifier),
       // Allow 'DataCaptionExpression' to be used as an identifier in variable contexts
-      alias(kw('datacaptionexpression'), $.identifier)
+      alias(kw('datacaptionexpression'), $.identifier),
+      // Allow 'IsPreview' to be used as an identifier in variable contexts
+      alias(kw('ispreview'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
@@ -4103,11 +4105,11 @@ module.exports = grammar({
         field('value', $._expression),
         ';'
       )),
-      // Label variable declaration with string literal value
-      prec(2, seq(
+      // Label variable declaration with string literal value and optional attributes
+      prec(5, seq(
         field('names', $._variable_name_list),
         ':',
-        field('type', alias(kw('label'), $.basic_type)),
+        field('type', $.basic_type),
         field('value', $.string_literal),
         optional(seq(
           ',',
@@ -4320,6 +4322,7 @@ enum_type: $ => prec(1, seq(
       
       // Text Types
       prec(1, kw('char')),
+      prec(10, kw('label')),  // High precedence for label type
       
       // Date/Time Types
       prec(1, kw('date')),
@@ -4334,7 +4337,6 @@ enum_type: $ => prec(1, seq(
       prec(1, kw('guid')),
       prec(1, kw('recordid')),
       prec(1, kw('variant')),
-      prec(1, kw('label')),
       prec(1, kw('dialog')),
       prec(1, kw('action')),
       prec(1, kw('blob')),

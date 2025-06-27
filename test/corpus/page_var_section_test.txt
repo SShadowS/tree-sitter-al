@@ -1,0 +1,30 @@
+================================================================================
+Page with var section containing IsPreview variable
+================================================================================
+
+page 50000 "Test Page"
+{
+    PageType = Card;
+    
+    var
+        IsPreview: Boolean;
+        LinkLbl: Label 'Test';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (quoted_identifier)
+    (page_type_property
+      (page_type))
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (basic_type)))
+      (variable_declaration
+        (identifier)
+        (basic_type)
+        (string_literal)))))
