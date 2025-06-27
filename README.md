@@ -8,9 +8,10 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,170 files (98.7%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,172 files (98.7%) parse successfully**.
 
 Recent improvements include:
+- **Report preprocessor procedures** - Added support for #if/#endif conditional blocks around procedures in report objects, fixing ERROR nodes when procedures are wrapped in preprocessor directives
 - **IsPreview keyword context handling** - Fixed conflict where IsPreview can now be used as both a property (`IsPreview = true;`) and a variable name (`var IsPreview: Boolean;`) through case-sensitive disambiguation
 - **ShowAs property Standard value** - Added support for ShowAs = Standard in page actions, completing the set of valid values (SplitButton, Menu, Button, Standard)
 - **UnknownValueImplementation property** - Added support for UnknownValueImplementation property in enum definitions for handling unknown enum values
