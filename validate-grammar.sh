@@ -72,8 +72,41 @@ else
     VALIDATION_FAILED=1
 fi
 
-# Step 3: Check for orphaned rules
-print_header "Step 3: Checking for Orphaned Rules"
+# Step 3: Check for ERROR and MISSING nodes in tests
+print_header "Step 3: Checking for ERROR/MISSING Nodes in Tests"
+echo "Scanning test files for ERROR or MISSING nodes..."
+ERROR_MISSING_FILES=()
+TEST_FILE_COUNT=0
+
+# Search for ERROR or MISSING in test corpus files
+# Look for ERROR or MISSING as parse tree nodes (not as AL code)
+# Pattern: (ERROR at start of line or after spaces, but not ERROR( which is AL function call
+for test_file in test/corpus/*.txt; do
+    if [ -f "$test_file" ]; then
+        TEST_FILE_COUNT=$((TEST_FILE_COUNT + 1))
+        # Check for (ERROR or (MISSING but not ERROR( which is AL function call
+        if grep -qE '^\s*\((ERROR|MISSING)|^\s*(ERROR|MISSING)[^(]' "$test_file"; then
+            ERROR_MISSING_FILES+=("$test_file")
+        fi
+    fi
+done
+
+if [ ${#ERROR_MISSING_FILES[@]} -eq 0 ]; then
+    print_success "No ERROR or MISSING nodes found in $TEST_FILE_COUNT test files"
+else
+    print_error "Found ERROR/MISSING nodes in ${#ERROR_MISSING_FILES[@]} test files:"
+    for file in "${ERROR_MISSING_FILES[@]}"; do
+        echo "  - $(basename "$file")"
+        # Show the first occurrence of ERROR or MISSING in each file
+        grep -n -m 1 -E '^\s*\((ERROR|MISSING)|^\s*(ERROR|MISSING)[^(]' "$file" | sed 's/^/    /'
+    done
+    VALIDATION_FAILED=1
+    echo -e "\n${YELLOW}These test files contain ERROR or MISSING nodes, indicating incomplete parsing.${NC}"
+    echo -e "${YELLOW}This is a serious issue that should be fixed.${NC}"
+fi
+
+# Step 4: Check for orphaned rules
+print_header "Step 4: Checking for Orphaned Rules"
 if [ -f "find_unused_definitions.py" ]; then
     ORPHAN_OUTPUT=$(python3 find_unused_definitions.py 2>&1)
     ORPHAN_EXIT_CODE=$?
@@ -101,8 +134,8 @@ else
     print_warning "Orphan detection script not found (find_unused_definitions.py)"
 fi
 
-# Step 4: Check for duplicate rules
-print_header "Step 4: Checking for Duplicate Rules"
+# Step 5: Check for duplicate rules
+print_header "Step 5: Checking for Duplicate Rules"
 if [ -f "analyze_duplicates.py" ]; then
     DUPLICATE_OUTPUT=$(python3 analyze_duplicates.py 2>&1)
     DUPLICATE_EXIT_CODE=$?
@@ -126,8 +159,8 @@ else
     print_warning "Duplicate detection script not found (analyze_duplicates.py)"
 fi
 
-# Step 5: Run parsing test on AL files (optional, can be slow)
-print_header "Step 5: AL File Parsing Test (Optional)"
+# Step 6: Run parsing test on AL files (optional, can be slow)
+print_header "Step 6: AL File Parsing Test (Optional)"
 if [ -f "parse-al-parallel.sh" ] && [ "$1" = "--full" ]; then
     echo "Running full AL file parsing test..."
     PARSE_OUTPUT=$(./parse-al-parallel.sh 2>&1 | tail -5)
@@ -146,8 +179,8 @@ else
     echo "Skipping AL file parsing test (use --full to include)"
 fi
 
-# Step 6: Check for common issues
-print_header "Step 6: Checking for Common Issues"
+# Step 7: Check for common issues
+print_header "Step 7: Checking for Common Issues"
 
 # Check for rules without kw() wrapper (case sensitivity issues)
 echo "Checking for potentially case-sensitive keywords..."
@@ -184,8 +217,9 @@ else
     print_error "Some validation checks failed!"
     echo -e "\n${YELLOW}Next steps:${NC}"
     echo "1. Fix any failing tests"
-    echo "2. Remove or implement orphaned rules"
-    echo "3. Consolidate duplicate rules"
-    echo "4. Use kw() for case-insensitive keywords"
+    echo "2. Remove ERROR and MISSING nodes from test files"
+    echo "3. Remove or implement orphaned rules"
+    echo "4. Consolidate duplicate rules"
+    echo "5. Use kw() for case-insensitive keywords"
     exit 1
 fi
