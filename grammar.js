@@ -3079,6 +3079,7 @@ module.exports = grammar({
     ),
 
     style_value: $ => choice(
+      seq(optional('"'), kw('none'), optional('"')),
       seq(optional('"'), kw('standard'), optional('"')),
       seq(optional('"'), kw('standardaccent'), optional('"')),
       seq(optional('"'), kw('strong'), optional('"')),
