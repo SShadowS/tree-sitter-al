@@ -3147,7 +3147,7 @@ module.exports = grammar({
     ),
 
     width_property: $ => seq(
-      'Width',
+      kw('Width'),
       $._integer_property_template
     ),
 
@@ -4107,6 +4107,8 @@ module.exports = grammar({
       alias('Style', $.identifier),
       alias('style', $.identifier),
       alias('STYLE', $.identifier),
+      // Allow the keyword 'Width' to be treated as an identifier in variable contexts
+      alias(kw('width'), $.identifier),
       // Allow common End* identifiers that conflict with 'end' keyword
       alias(kw('end'), $.identifier),
       alias(kw('endingtime'), $.identifier),

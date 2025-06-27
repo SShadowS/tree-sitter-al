@@ -13750,8 +13750,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Width"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Width"
+          }
         },
         {
           "type": "SYMBOL",
@@ -17879,6 +17882,18 @@
           "content": {
             "type": "STRING",
             "value": "STYLE"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)width"
+            }
           },
           "named": true,
           "value": "identifier"

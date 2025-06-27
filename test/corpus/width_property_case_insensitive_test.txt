@@ -1,0 +1,142 @@
+================================================================================
+Width property with lowercase
+================================================================================
+
+page 6000 "Profile Import Diagnostics"
+{
+    PageType = List;
+    
+    layout
+    {
+        area(Content)
+        {
+            repeater(Control1)
+            {
+                field(Severity; Rec.Severity)
+                {
+                    ApplicationArea = All;
+                    width = 5;
+                    ToolTip = 'Specifies the severity of this diagnostics message.';
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (layout_section
+      (area_section
+        (repeater_section
+          name: (identifier)
+          (field_section
+            control_id: (identifier)
+            source_or_field_name: (member_expression
+              object: (identifier)
+              property: (identifier))
+            (application_area_property
+              value: (identifier))
+            (width_property
+              value: (integer))
+            (tool_tip_property
+              (tool_tip_value
+                (string_literal)))))))))
+
+================================================================================
+Width property with mixed case
+================================================================================
+
+page 50100 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(Name; Name)
+            {
+                Width = 20;
+            }
+            field(Description; Description)
+            {
+                WIDTH = 50;
+            }
+            field(Amount; Amount)
+            {
+                widtH = 10;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (width_property
+            value: (integer)))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (width_property
+            value: (integer)))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (width_property
+            value: (integer)))))))
+
+================================================================================
+Width as variable name
+================================================================================
+
+codeunit 50100 "Layout Manager"
+{
+    var
+        width: Integer;
+        Height: Integer;
+        
+    procedure CalculateArea(): Integer
+    begin
+        exit(width * Height);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        return_type: (return_type
+          (type_specification
+            (basic_type)))
+        (code_block
+          (exit_statement
+            return_value: (multiplicative_expression
+              left: (identifier)
+              right: (identifier))))))))
