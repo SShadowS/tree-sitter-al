@@ -4189,6 +4189,33 @@
     }
   },
   {
+    "type": "attributed_controladdin_procedure",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "controladdin_procedure",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_attributes",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "attributed_interface_procedure",
     "named": true,
     "fields": {},
@@ -8325,6 +8352,10 @@
           "named": true
         },
         {
+          "type": "attributed_controladdin_procedure",
+          "named": true
+        },
+        {
           "type": "caption_class_property",
           "named": true
         },
@@ -8342,10 +8373,6 @@
         },
         {
           "type": "controladdin_event",
-          "named": true
-        },
-        {
-          "type": "controladdin_procedure",
           "named": true
         },
         {
@@ -30506,6 +30533,10 @@
       "types": [
         {
           "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
           "named": true
         },
         {

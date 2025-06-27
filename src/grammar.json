@@ -7758,6 +7758,27 @@
           "name": "attribute_list"
         },
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "attribute_list"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "SYMBOL",
           "name": "preproc_endif"
         }
@@ -8408,7 +8429,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "controladdin_procedure"
+          "name": "attributed_controladdin_procedure"
         },
         {
           "type": "SYMBOL",
@@ -8848,6 +8869,44 @@
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "attributed_controladdin_procedure": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "attribute_list"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_conditional_attributes"
+                }
+              ]
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "pragma"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "controladdin_procedure"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "controladdin_procedure"
         }
       ]
     },

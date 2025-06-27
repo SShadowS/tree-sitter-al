@@ -1914,6 +1914,10 @@ module.exports = grammar({
     preproc_conditional_attributes: $ => seq(
       $.preproc_if,
       $.attribute_list,
+      optional(seq(
+        $.preproc_else,
+        $.attribute_list
+      )),
       $.preproc_endif
     ),
 
@@ -2028,7 +2032,7 @@ module.exports = grammar({
     _controladdin_element: $ => choice(
       $._controladdin_properties,    // Centralized properties
       $.controladdin_event,          // ControlAddIn structural elements
-      $.controladdin_procedure,      // ControlAddIn structural elements
+      $.attributed_controladdin_procedure,  // ControlAddIn procedures (with or without attributes)
       $.property_list,               // Generic fallback
       $.preproc_conditional_controladdin_properties
     ),
@@ -2125,6 +2129,11 @@ module.exports = grammar({
       optional($.parameter_list),
       ')',
       optional(';')
+    ),
+
+    attributed_controladdin_procedure: $ => choice(
+      seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.controladdin_procedure),
+      $.controladdin_procedure
     ),
 
     interface_declaration: $ => seq(
