@@ -838,7 +838,7 @@ module.exports = grammar({
     ),
 
     is_preview_property: $ => seq(
-      kw('IsPreview'),
+      choice('IsPreview', 'ispreview', 'ISPREVIEW'),
       $._boolean_property_template
     ),
     
@@ -4069,8 +4069,10 @@ module.exports = grammar({
       alias(kw('includecaption'), $.identifier),
       // Allow the keyword 'ExcludeCaption' to be treated as an identifier in variable contexts
       alias(kw('excludecaption'), $.identifier),
-      // Allow 'IsPreview' to be used as an identifier in variable contexts
-      alias(prec(20, kw('ispreview')), $.identifier),
+      // Allow IsPreview as identifier - case-sensitive to avoid conflicts
+      alias('IsPreview', $.identifier),
+      alias('ispreview', $.identifier),
+      alias('ISPREVIEW', $.identifier),
       // Allow the keyword 'SubType' to be treated as an identifier in variable contexts
       alias(kw('subtype'), $.identifier),
       // Allow the keyword 'CuegroupLayout' to be treated as an identifier in variable contexts

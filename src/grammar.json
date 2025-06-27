@@ -3047,11 +3047,21 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)IsPreview"
-          }
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "IsPreview"
+            },
+            {
+              "type": "STRING",
+              "value": "ispreview"
+            },
+            {
+              "type": "STRING",
+              "value": "ISPREVIEW"
+            }
+          ]
         },
         {
           "type": "SYMBOL",
@@ -17635,15 +17645,26 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "PREC",
-            "value": 20,
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PATTERN",
-                "value": "(?i)ispreview"
-              }
-            }
+            "type": "STRING",
+            "value": "IsPreview"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "ispreview"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "ISPREVIEW"
           },
           "named": true,
           "value": "identifier"
