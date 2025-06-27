@@ -4103,6 +4103,10 @@ module.exports = grammar({
       alias(kw('printonlyifdetail'), $.identifier),
       // Allow the keyword 'MaxIteration' to be treated as an identifier in variable contexts
       alias(kw('maxiteration'), $.identifier),
+      // Allow the keyword 'Style' to be treated as an identifier in variable contexts
+      alias('Style', $.identifier),
+      alias('style', $.identifier),
+      alias('STYLE', $.identifier),
       // Allow common End* identifiers that conflict with 'end' keyword
       alias(kw('end'), $.identifier),
       alias(kw('endingtime'), $.identifier),
