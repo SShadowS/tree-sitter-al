@@ -8,9 +8,16 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **14,974 files (97.4%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,113 files (98.4%) parse successfully**.
 
 Recent improvements include:
+- **IsPreview keyword context handling** - Fixed conflict where IsPreview can now be used as both a property (`IsPreview = true;`) and a variable name (`var IsPreview: Boolean;`) through case-sensitive disambiguation
+- **ShowAs property Standard value** - Added support for ShowAs = Standard in page actions, completing the set of valid values (SplitButton, Menu, Button, Standard)
+- **UnknownValueImplementation property** - Added support for UnknownValueImplementation property in enum definitions for handling unknown enum values
+- **OptionCaptionML with Locked** - Extended OptionCaptionML property to support Locked attribute (e.g., `OptionCaptionML = ENU='Value',Locked=true;`)
+- **Namespace-qualified CalcFormula** - Added support for namespace-qualified table names in CalcFormula expressions (e.g., `CalcFormula = sum(Microsoft.CRM.Segment."Segment Line"."No. of Criteria Actions")`)
+- **Ternary operator support** - Added comprehensive support for conditional/ternary expressions (`condition ? trueValue : falseValue`) in AL code
+- **Namespace-qualified interface types** - Added support for namespace-qualified interface references in implements clauses and variable declarations
 - **Preprocessor conditionals in Permissions property** - Added support for #if/#else/#endif directives within tabledata permission lists, enabling conditional compilation of permissions
 - **Comprehensive preprocessor support** - Complete support for #if/#else/#endif directives throughout AL code, including split procedures, conditional object declarations, and complex trigger patterns
 - **Views sections in page extensions** - Added support for views sections in pageextension objects with view definitions and modification patterns
