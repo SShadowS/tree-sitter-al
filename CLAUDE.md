@@ -399,6 +399,7 @@ When adding scanner features:
 - Error propagation can cascade from single syntax errors
 - **Qualified enum values with quoted enum type names**: Due to tree-sitter's lexing behavior, patterns like `"Enum Type Name"::EnumValue` cannot be parsed correctly. The quoted string is lexed as a single token before the parser can recognize the `::` pattern. Use unquoted enum type names instead (e.g., `EnumTypeName::EnumValue`).
 - **WHERE clauses in deeply nested preprocessor contexts**: WHERE clauses within table relations that are inside preprocessor conditionals may not parse correctly in certain complex nesting scenarios
+- **Identifiers starting with keywords**: Variable names that start with keywords (especially 'Begin') can cause parsing failures due to case-insensitive keyword matching. For example, `BeginTotalAccNo` will fail because 'Begin' is matched as the start of a code block. Workarounds: use quoted identifiers (`"BeginTotalAccNo"`) or rename the variable
 
 ## Build Systems
 The project supports multiple build approaches:
