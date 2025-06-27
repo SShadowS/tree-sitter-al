@@ -39,8 +39,8 @@ table 50100 "Test Table"
                         (filter_less_than_expression
                           (integer)))))))
               (simple_table_relation
-                (identifier)
-                (field_ref
+                (qualified_table_reference
+                  (identifier)
                   (quoted_identifier))))))
         (empty_statement)))))
 
@@ -85,8 +85,8 @@ table 50100 "Test Table"
                         (filter_greater_than_expression
                           (integer)))))))
               (simple_table_relation
-                (identifier)
-                (field_ref
+                (qualified_table_reference
+                  (identifier)
                   (quoted_identifier))))))
         (empty_statement)))))
 
@@ -131,8 +131,8 @@ table 50100 "Test Table"
                         (filter_less_than_or_equal_expression
                           (integer)))))))
               (simple_table_relation
-                (quoted_identifier)
-                (field_ref
+                (qualified_table_reference
+                  (quoted_identifier)
                   (identifier))))))
         (empty_statement)))))
 
@@ -177,7 +177,7 @@ table 50100 "Test Table"
                         (filter_greater_than_or_equal_expression
                           (integer)))))))
               (simple_table_relation
-                (quoted_identifier)
-                (field_ref
+                (qualified_table_reference
+                  (quoted_identifier)
                   (identifier))))))
         (empty_statement)))))

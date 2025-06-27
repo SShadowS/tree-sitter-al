@@ -58,20 +58,21 @@ xmlport 5901 "Import IRIS to Fault Codes"
       (xmlport_table_element
         name: (identifier)
         (xmlport_table_element
-          table_name: (quoted_identifier)
-          reference_name: (quoted_identifier)
-          (xml_name_property
-            value: (string_literal))
+          name: (quoted_identifier)
+          source_table: (quoted_identifier)
+          (xmlport_table_property
+            (xml_name_property
+              value: (string_literal)))
           (xmlport_table_element
-            field_name: (identifier)
-            source: (field_access
-              record: (quoted_identifier)
-              field: (identifier)))
+            name: (identifier)
+            source_table: (member_expression
+              object: (quoted_identifier)
+              property: (identifier)))
           (xmlport_table_element
-            field_name: (identifier)
-            source: (field_access
-              record: (quoted_identifier)
-              field: (identifier))))))))
+            name: (identifier)
+            source_table: (member_expression
+              object: (quoted_identifier)
+              property: (identifier))))))))
 
 ================================================================================
 XMLPort with Various Delimiter and Separator Values

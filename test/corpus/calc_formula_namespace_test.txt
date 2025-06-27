@@ -26,7 +26,7 @@ table 39 "Purchase Line"
         id: (integer)
         name: (quoted_identifier)
         type: (type_specification
-          (boolean_type))
+          (basic_type))
         (caption_property
           (string_literal))
         (field_class_property
@@ -42,25 +42,18 @@ table 39 "Purchase Line"
             (where_clause
               conditions: (where_conditions
                 (where_condition
-                  (const_filter
+                  (field_filter
                     field: (field_ref
                       (quoted_identifier))
-                    condition: (filter_expression
-                      operator: (relational_operator)
-                      value: (field_expression
-                        field: (field_ref
-                          (identifier))))))
+                    value: (field_ref
+                      (identifier))))
                 (where_condition
                   (const_filter
                     field: (field_ref
                       (quoted_identifier))
-                    condition: (filter_expression
-                      operator: (relational_operator
-                        (const_expression
-                          const: (identifier)
-                          value: (qualified_identifier
-                            (identifier)
-                            (quoted_identifier))))))))))))))
+                    value: (qualified_enum_value
+                      enum_type: (identifier)
+                      value: (quoted_identifier))))))))))))
 
 ================================================================================
 CalcFormula with different namespace variations
@@ -99,7 +92,7 @@ table 50000 TestTable
         id: (integer)
         name: (identifier)
         type: (type_specification
-          (boolean_type))
+          (basic_type))
         (field_class_property
           value: (field_class_value))
         (calc_formula_property
@@ -115,16 +108,12 @@ table 50000 TestTable
                   (const_filter
                     field: (field_ref
                       (quoted_identifier))
-                    condition: (filter_expression
-                      operator: (relational_operator
-                        (const_expression
-                          const: (identifier)
-                          value: (identifier)))))))))))
+                    value: (identifier))))))))
       (field_declaration
         id: (integer)
         name: (identifier)
         type: (type_specification
-          (boolean_type))
+          (basic_type))
         (field_class_property
           value: (field_class_value))
         (calc_formula_property
@@ -137,19 +126,16 @@ table 50000 TestTable
             (where_clause
               conditions: (where_conditions
                 (where_condition
-                  (const_filter
+                  (field_filter
                     field: (field_ref
                       (quoted_identifier))
-                    condition: (filter_expression
-                      operator: (relational_operator)
-                      value: (field_expression
-                        field: (field_ref
-                          (identifier)))))))))))
+                    value: (field_ref
+                      (identifier)))))))))
       (field_declaration
         id: (integer)
         name: (identifier)
         type: (type_specification
-          (boolean_type))
+          (basic_type))
         (field_class_property
           value: (field_class_value))
         (calc_formula_property
@@ -164,14 +150,11 @@ table 50000 TestTable
             (where_clause
               conditions: (where_conditions
                 (where_condition
-                  (const_filter
+                  (field_filter
                     field: (field_ref
                       (identifier))
-                    condition: (filter_expression
-                      operator: (relational_operator)
-                      value: (field_expression
-                        field: (field_ref
-                          (identifier))))))))))))))
+                    value: (field_ref
+                      (identifier))))))))))))
 
 ================================================================================
 CalcFormula with sum and namespace tables
@@ -200,25 +183,24 @@ table 50001 TestTable2
         id: (integer)
         name: (identifier)
         type: (type_specification
-          (decimal_type))
+          (basic_type))
         (field_class_property
           value: (field_class_value))
         (calc_formula_property
           (sum_formula
-            table: (table_reference
-              (qualified_table_reference
-                namespace: (identifier)
-                part: (identifier)
-                part: (identifier)))
-            field: (identifier)
+            target: (calc_field_ref
+              (field_reference
+                object: (member_expression
+                  object: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  property: (identifier))
+                property: (identifier)))
             (where_clause
               conditions: (where_conditions
                 (where_condition
-                  (const_filter
+                  (field_filter
                     field: (field_ref
                       (quoted_identifier))
-                    condition: (filter_expression
-                      operator: (relational_operator)
-                      value: (field_expression
-                        field: (field_ref
-                          (identifier)))))))))))))
+                    value: (field_ref
+                      (identifier))))))))))))

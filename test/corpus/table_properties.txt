@@ -278,9 +278,9 @@ table 50002 "Test Field Properties"
         (table_relation_property
           relation: (table_relation_expression
             (simple_table_relation
-              table: (identifier)
-              field: (field_ref
-                (quoted_identifier)))))
+              table: (qualified_table_reference
+                namespace: (identifier)
+                part: (quoted_identifier)))))
         (empty_statement)
         (char_allowed_property
           value: (value
@@ -297,10 +297,9 @@ table 50002 "Test Field Properties"
           (option_caption_value
             (string_literal)))
         (option_caption_ml_property
-          value: (ml_value_list
-            (ml_value_pair
-              language: (identifier)
-              value: (string_literal))
-            (ml_value_pair
-              language: (identifier)
-              value: (string_literal))))))))
+          ml_values: (ml_value_pair
+            language: (identifier)
+            value: (string_literal))
+          ml_values: (ml_value_pair
+            language: (identifier)
+            value: (string_literal)))))))

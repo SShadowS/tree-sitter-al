@@ -26572,16 +26572,30 @@
     "type": "option_caption_ml_property",
     "named": true,
     "fields": {
-      "value": {
-        "multiple": false,
+      "ml_values": {
+        "multiple": true,
         "required": true,
         "types": [
           {
-            "type": "ml_value_list",
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "ml_value_pair",
             "named": true
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "boolean",
+          "named": true
+        }
+      ]
     }
   },
   {

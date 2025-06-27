@@ -3685,7 +3685,18 @@ module.exports = grammar({
 
     option_caption_ml_property: $ => seq(
       kw('optioncaptionml'),
-      $._ml_property_template
+      '=',
+      field('ml_values', seq(
+        $.ml_value_pair,
+        repeat(seq(',', $.ml_value_pair))
+      )),
+      optional(seq(
+        ',',
+        kw('locked'),
+        '=',
+        $.boolean
+      )),
+      ';'
     ),
 
     tool_tip_ml_property: $ => seq(
@@ -4058,8 +4069,12 @@ module.exports = grammar({
       alias(kw('includecaption'), $.identifier),
       // Allow the keyword 'ExcludeCaption' to be treated as an identifier in variable contexts
       alias(kw('excludecaption'), $.identifier),
+      // Allow 'IsPreview' to be used as an identifier in variable contexts
+      alias(kw('ispreview'), $.identifier),
       // Allow the keyword 'SubType' to be treated as an identifier in variable contexts
       alias(kw('subtype'), $.identifier),
+      // Allow the keyword 'CuegroupLayout' to be treated as an identifier in variable contexts
+      alias(kw('cuegrouplayout'), $.identifier),
       // Allow the keyword 'Caption' to be treated as an identifier in variable contexts
       alias(kw('caption'), $.identifier),
       // Allow the keyword 'Scope' to be treated as an identifier in variable contexts
@@ -5998,7 +6013,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     cuegroup_layout_property: $ => seq(
-      kw('CueGroupLayout'),
+      kw('CueGroupLayout', 10),
       '=',
       field('value', $._flexible_identifier_choice),
       ';'

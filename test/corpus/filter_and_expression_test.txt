@@ -29,9 +29,9 @@ table 50100 "Test Filter And"
         (table_relation_property
           relation: (table_relation_expression
             (simple_table_relation
-              table: (identifier)
-              field: (field_ref
-                (quoted_identifier))
+              table: (qualified_table_reference
+                namespace: (identifier)
+                part: (quoted_identifier))
               (where_clause
                 conditions: (where_conditions
                   (where_condition
@@ -77,9 +77,9 @@ table 50101 "Test Multiple And"
         (table_relation_property
           relation: (table_relation_expression
             (simple_table_relation
-              table: (identifier)
-              field: (field_ref
-                (quoted_identifier))
+              table: (qualified_table_reference
+                namespace: (identifier)
+                part: (quoted_identifier))
               (where_clause
                 conditions: (where_conditions
                   (where_condition
@@ -126,9 +126,9 @@ table 50102 "Test Mixed And"
         (table_relation_property
           relation: (table_relation_expression
             (simple_table_relation
-              table: (identifier)
-              field: (field_ref
-                (quoted_identifier))
+              table: (qualified_table_reference
+                namespace: (identifier)
+                part: (quoted_identifier))
               (where_clause
                 conditions: (where_conditions
                   (where_condition
@@ -174,9 +174,9 @@ table 50103 "Test And Identifiers"
         (table_relation_property
           relation: (table_relation_expression
             (simple_table_relation
-              table: (identifier)
-              field: (field_ref
-                (identifier))
+              table: (qualified_table_reference
+                namespace: (identifier)
+                part: (identifier))
               (where_clause
                 conditions: (where_conditions
                   (where_condition
@@ -221,9 +221,9 @@ table 50104 "Test Complex And"
         (table_relation_property
           relation: (table_relation_expression
             (simple_table_relation
-              table: (identifier)
-              field: (field_ref
-                (identifier))
+              table: (qualified_table_reference
+                namespace: (identifier)
+                part: (identifier))
               (where_clause
                 conditions: (where_conditions
                   (where_condition

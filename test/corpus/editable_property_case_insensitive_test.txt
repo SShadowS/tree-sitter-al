@@ -39,36 +39,39 @@ page 50000 "Test Page"
     object_id: (integer)
     object_name: (quoted_identifier)
     (layout_section
-      (page_area
-        name: (identifier)
-        (page_field
-          name: (identifier)
-          expression: (identifier)
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (application_area_property
             value: (identifier))
           (editable_property
-            value: (boolean)))
-        (page_field
-          name: (identifier)
-          expression: (identifier)
+            value: (boolean))
+          (comment))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (application_area_property
             value: (identifier))
           (editable_property
-            value: (boolean)))
-        (page_field
-          name: (identifier)
-          expression: (identifier)
+            value: (boolean))
+          (comment))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (application_area_property
             value: (identifier))
           (editable_property
-            value: (boolean)))
-        (page_field
-          name: (identifier)
-          expression: (identifier)
+            value: (boolean))
+          (comment))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (application_area_property
             value: (identifier))
           (editable_property
-            value: (boolean)))))))
+            value: (boolean))
+          (comment))))))
 
 ================================================================================
 Page Field with Mixed Case Properties
@@ -98,11 +101,10 @@ page 50001 "Profile Import Wizard"
     object_id: (integer)
     object_name: (quoted_identifier)
     (layout_section
-      (page_area
-        name: (identifier)
-        (page_field
-          name: (identifier)
-          expression: (identifier)
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (caption_property
             (string_literal))
           (editable_property
@@ -110,4 +112,5 @@ page 50001 "Profile Import Wizard"
           (application_area_property
             value: (identifier))
           (tool_tip_property
-            value: (string_literal)))))))
+            (tool_tip_value
+              (string_literal))))))))

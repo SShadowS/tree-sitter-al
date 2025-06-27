@@ -43,52 +43,51 @@ codeunit 1448 "DSACryptoServiceProvider Impl." implements "Signature Algorithm v
   (preproc_conditional_codeunit_declaration
     (preproc_if
       condition: (identifier))
-    (pragma
-      content: (pragma_content))
+    (pragma)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (implements_clause
-      (identifier)
-      (quoted_identifier))
-    (pragma
-      content: (pragma_content))
+    consequence: (implements_clause
+      interface: (identifier)
+      interface: (quoted_identifier))
+    (pragma)
     (preproc_else)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (implements_clause
-      (quoted_identifier))
+    alternative: (implements_clause
+      interface: (quoted_identifier))
     (preproc_endif)
     (access_property
-      value: (access_value))
+      value: (value))
     (inherent_entitlements_property
-      value: (value))
+      value: (inherent_entitlements_value
+        (permission_type)))
     (inherent_permissions_property
-      value: (value))
+      value: (inherent_permissions_value
+        (permission_type)))
     (var_section
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)))
       (variable_declaration
-        attributes: (attribute_list
-          (attribute
-            name: (identifier)))
         name: (identifier)
         type: (type_specification
           (dotnet_type
-            type_name: (identifier)
-            assembly_name: (identifier)))))
-    (attributed_procedure
-      attributes: (attribute_list
+            reference: (dotnet_type_name))))
+      (attribute_list
         (attribute
-          name: (identifier)))
+          attribute_name: (identifier))))
+    (attributed_procedure
       (procedure
         name: (name
           (identifier))
         (parameter_list
           (parameter
-            modifier: (parameter_modifier)
-            name: (identifier)
-            type: (type_specification
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
               (dotnet_type
-                type_name: (identifier)
-                assembly_name: (identifier)))))
+                reference: (dotnet_type_name)))))
         (code_block
           (assignment_expression
             left: (identifier)
@@ -112,21 +111,22 @@ codeunit 50000 "Test Codeunit" implements "Interface 1", "Interface 2"
 --------------------------------------------------------------------------------
 
 (source_file
-  (preproc_conditional_codeunit_declaration
+  (preproc_conditional_object_declaration
     (preproc_if
       condition: (identifier))
     object_id: (integer)
     object_name: (quoted_identifier)
     (implements_clause
-      (quoted_identifier))
+      interface: (quoted_identifier))
     (preproc_else)
     object_id: (integer)
     object_name: (quoted_identifier)
     (implements_clause
-      (quoted_identifier)
-      (quoted_identifier))
+      interface: (quoted_identifier)
+      interface: (quoted_identifier))
     (preproc_endif)
-    (procedure
-      name: (name
-        (identifier))
-      (code_block))))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (code_block)))))

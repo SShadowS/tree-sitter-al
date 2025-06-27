@@ -46,23 +46,22 @@ enum 1446 SignatureAlgorithm implements "Signature Algorithm v2"
   (preproc_conditional_enum_declaration
     (preproc_if
       condition: (identifier))
-    (pragma
-      content: (pragma_content))
+    (pragma)
     object_id: (integer)
     object_name: (identifier)
-    (implements_clause
-      (identifier)
-      (quoted_identifier))
-    (pragma
-      content: (pragma_content))
+    consequence: (implements_clause
+      interface: (identifier)
+      interface: (quoted_identifier))
+    (pragma)
     (preproc_else)
     object_id: (integer)
     object_name: (identifier)
-    (implements_clause
-      (quoted_identifier))
+    alternative: (implements_clause
+      interface: (quoted_identifier))
     (preproc_endif)
     (extensible_property
-      value: (boolean))
+      value: (extensible_value
+        (boolean)))
     (enum_value_declaration
       value_id: (integer)
       value_name: (identifier)

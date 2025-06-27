@@ -26,11 +26,10 @@ page 50000 "Test Page"
     object_id: (integer)
     object_name: (quoted_identifier)
     (layout_section
-      (page_area
-        name: (identifier)
-        (page_field
-          name: (identifier)
-          expression: (identifier)
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (application_area_property
             value: (identifier)
             value: (identifier))
@@ -39,7 +38,8 @@ page 50000 "Test Page"
           (extended_datatype_property
             value: (extended_datatype_value))
           (tool_tip_property
-            value: (string_literal)))))))
+            (tool_tip_value
+              (string_literal))))))))
 
 ================================================================================
 ExtendedDatatype Property Various Values
@@ -82,30 +82,30 @@ page 50001 "Test Extended Datatypes"
     object_id: (integer)
     object_name: (quoted_identifier)
     (layout_section
-      (page_area
-        name: (identifier)
-        (page_field
-          name: (identifier)
-          expression: (identifier)
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (extended_datatype_property
             value: (extended_datatype_value)))
-        (page_field
-          name: (identifier)
-          expression: (identifier)
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (extended_datatype_property
             value: (extended_datatype_value)))
-        (page_field
-          name: (identifier)
-          expression: (identifier)
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (extended_datatype_property
             value: (extended_datatype_value)))
-        (page_field
-          name: (identifier)
-          expression: (identifier)
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (extended_datatype_property
             value: (extended_datatype_value)))
-        (page_field
-          name: (identifier)
-          expression: (identifier)
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (extended_datatype_property
-            value: (extended_datatype_value)))))))
+            value: (extended_datatype_value))
+          (comment))))))

@@ -1,0 +1,33 @@
+================================================================================
+Minimal cuegroup with two properties
+================================================================================
+
+page 50000 Test
+{
+    layout
+    {
+        area(Content)
+        {
+            cuegroup(MyCue)
+            {
+                ShowCaption = false;
+                CuegroupLayout = Wide;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (identifier)
+    (layout_section
+      (area_section
+        (cuegroup_section
+          (identifier)
+          (show_caption_property
+            (boolean))
+          (cuegroup_layout_property
+            (identifier)))))))

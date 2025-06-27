@@ -1,5 +1,5 @@
 ================================================================================
-KNOWN ISSUE: Multiple properties in cuegroup fail after first property
+FIXED: Multiple properties in cuegroup now work correctly
 ================================================================================
 
 page 50000 "Test Multiple Cuegroup Properties"
@@ -13,14 +13,14 @@ page 50000 "Test Multiple Cuegroup Properties"
                 // First property parses correctly
                 ShowCaption = false;
                 
-                // Second property fails - parsed as ERROR
-                // CuegroupLayout = Wide;
+                // Second property now works
+                CuegroupLayout = Wide;
                 
-                // Workaround: Place properties in field sections
+                // Field sections with their own properties
                 field(TestField; 123)
                 {
                     ApplicationArea = All;
-                    CuegroupLayout = Wide;
+                    ShowCaption = true;
                 }
             }
         }
@@ -29,6 +29,25 @@ page 50000 "Test Multiple Cuegroup Properties"
 
 --------------------------------------------------------------------------------
 
-// This test documents a known parsing issue - not expected to pass
-// The grammar correctly defines cuegroup_section with repeat(choice(...))
-// but something prevents parsing multiple properties in sequence
+(source_file
+  (page_declaration
+    (integer)
+    (quoted_identifier)
+    (layout_section
+      (area_section
+        (cuegroup_section
+          (identifier)
+          (comment)
+          (show_caption_property
+            (boolean))
+          (comment)
+          (cuegroup_layout_property
+            (identifier))
+          (comment)
+          (field_section
+            (identifier)
+            (integer)
+            (application_area_property
+              (identifier))
+            (show_caption_property
+              (boolean))))))))
