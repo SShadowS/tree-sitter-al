@@ -1946,7 +1946,8 @@ module.exports = grammar({
     attributed_procedure: $ => choice(
       seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.procedure),
       $.procedure,
-      $.preproc_split_procedure
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split
     ),
 
     attributed_trigger: $ => choice(
@@ -5238,6 +5239,37 @@ enum_type: $ => prec(1, seq(
       )),
       $.code_block
     ),
+
+    // Procedure where header is complete but body is conditionally included
+    preproc_procedure_body_split: $ => prec(2, seq(
+      optional(field('modifier', $.procedure_modifier)), 
+      kw('procedure'),
+      field('name', $._procedure_name),
+      '(',
+      optional($.parameter_list),
+      ')',
+      optional(choice(
+        seq(
+          choice(
+            $._procedure_return_specification, // : ReturnType
+            $._procedure_named_return // ReturnValue : ReturnType
+          ),
+          optional(';')
+        )
+      )),
+      $.preproc_if,
+      repeat($.pragma),
+      optional($.var_section),
+      kw('begin'),
+      repeat($._statement),
+      repeat($.pragma),
+      $.preproc_else,
+      kw('begin'),
+      $.preproc_endif,
+      repeat($._statement),
+      kw('end'),
+      ';'
+    )),
 
     // Split if-else statement where else is inside preprocessor but body is outside
     preproc_split_if_else: $ => seq(

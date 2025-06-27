@@ -7894,6 +7894,10 @@
         {
           "type": "SYMBOL",
           "name": "preproc_split_procedure"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_procedure_body_split"
         }
       ]
     },
@@ -23241,6 +23245,186 @@
           "name": "code_block"
         }
       ]
+    },
+    "preproc_procedure_body_split": {
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "modifier",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "procedure_modifier"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)procedure"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_procedure_name"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "parameter_list"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_procedure_return_specification"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "_procedure_named_return"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": ";"
+                          },
+                          {
+                            "type": "BLANK"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_if"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "pragma"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "var_section"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)begin"
+            }
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_statement"
+            }
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "pragma"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_else"
+          },
+          {
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)begin"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_endif"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_statement"
+            }
+          },
+          {
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)end"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": ";"
+          }
+        ]
+      }
     },
     "preproc_split_if_else": {
       "type": "SEQ",
