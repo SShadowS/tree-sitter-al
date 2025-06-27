@@ -5343,6 +5343,31 @@ enum_type: $ => prec(1, seq(
       )
     ),
 
+    // Duration string format: [d.]hh:mm:ss[.fffffff]
+    duration_string: $ => token(
+      seq(
+        "'",
+        seq(
+          // Optional days part
+          optional(seq(
+            /\d+/,    // days
+            '.'
+          )),
+          /\d{1,2}/, // hours (1-2 digits)
+          ':',
+          /\d{2}/,   // minutes (exactly 2 digits)
+          ':',
+          /\d{2}/,   // seconds (exactly 2 digits)
+          // Optional fractional seconds
+          optional(seq(
+            '.',
+            /\d{1,7}/ // up to 7 digits
+          ))
+        ),
+        "'"
+      )
+    ),
+
     clustered_property: $ => seq(
       'Clustered',
       $._boolean_property_template
@@ -6259,8 +6284,10 @@ enum_type: $ => prec(1, seq(
     ),
 
     execution_timeout_property: $ => seq(
-      'ExecutionTimeout',
-      $._integer_property_template
+      kw('ExecutionTimeout'),
+      '=',
+      field('value', $.duration_string),
+      ';'
     ),
 
     format_region_property: $ => seq(

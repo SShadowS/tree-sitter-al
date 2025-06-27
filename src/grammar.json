@@ -23731,6 +23731,89 @@
         ]
       }
     },
+    "duration_string": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "'"
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "PATTERN",
+                        "value": "\\d+"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "."
+                      }
+                    ]
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "PATTERN",
+                "value": "\\d{1,2}"
+              },
+              {
+                "type": "STRING",
+                "value": ":"
+              },
+              {
+                "type": "PATTERN",
+                "value": "\\d{2}"
+              },
+              {
+                "type": "STRING",
+                "value": ":"
+              },
+              {
+                "type": "PATTERN",
+                "value": "\\d{2}"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": "."
+                      },
+                      {
+                        "type": "PATTERN",
+                        "value": "\\d{1,7}"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": "'"
+          }
+        ]
+      }
+    },
     "clustered_property": {
       "type": "SEQ",
       "members": [
@@ -27874,12 +27957,27 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "ExecutionTimeout"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)ExecutionTimeout"
+          }
         },
         {
-          "type": "SYMBOL",
-          "name": "_integer_property_template"
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "duration_string"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
         }
       ]
     },

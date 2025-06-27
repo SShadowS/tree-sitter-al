@@ -12454,7 +12454,7 @@
         "required": true,
         "types": [
           {
-            "type": "integer",
+            "type": "duration_string",
             "named": true
           }
         ]
@@ -50526,10 +50526,6 @@
     "named": false
   },
   {
-    "type": "ExecutionTimeout",
-    "named": false
-  },
-  {
     "type": "ExternalSchema",
     "named": false
   },
@@ -50940,6 +50936,10 @@
   },
   {
     "type": "duration_literal",
+    "named": true
+  },
+  {
+    "type": "duration_string",
     "named": true
   },
   {
