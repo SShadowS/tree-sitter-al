@@ -147,6 +147,7 @@ module.exports = grammar({
       $.page_declaration,
       $.pagecustomization_declaration,
       $.profile_declaration,
+      $.profileextension_declaration,
       $.reportextension_declaration,
       $.query_declaration,
       $.enum_declaration,
@@ -2023,6 +2024,16 @@ module.exports = grammar({
     profile_declaration: $ => seq(
       kw('profile'),
       field('object_name', $._identifier_choice),
+      '{',
+      repeat($._profile_element),
+      '}'
+    ),
+
+    profileextension_declaration: $ => seq(
+      kw('profileextension'),
+      field('object_name', $._identifier_choice),
+      kw('extends'),
+      field('base_object', $._identifier_choice),
       '{',
       repeat($._profile_element),
       '}'

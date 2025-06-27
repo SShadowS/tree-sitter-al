@@ -35445,6 +35445,10 @@
             "named": true
           },
           {
+            "type": "profileextension_declaration",
+            "named": true
+          },
+          {
             "type": "query_declaration",
             "named": true
           },
@@ -35562,6 +35566,10 @@
           },
           {
             "type": "profile_declaration",
+            "named": true
+          },
+          {
+            "type": "profileextension_declaration",
             "named": true
           },
           {
@@ -35917,6 +35925,106 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "profileextension_declaration",
+    "named": true,
+    "fields": {
+      "base_object": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "object_name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "enabled_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_profile_properties",
+          "named": true
+        },
+        {
+          "type": "profile_customizations_property",
+          "named": true
+        },
+        {
+          "type": "profile_description_property2",
+          "named": true
+        },
+        {
+          "type": "profile_rolecenter_property",
+          "named": true
+        },
+        {
+          "type": "promoted_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "visible_property",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -41733,6 +41841,10 @@
         },
         {
           "type": "profile_declaration",
+          "named": true
+        },
+        {
+          "type": "profileextension_declaration",
           "named": true
         },
         {

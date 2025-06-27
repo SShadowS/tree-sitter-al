@@ -234,6 +234,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "profileextension_declaration"
+        },
+        {
+          "type": "SYMBOL",
           "name": "reportextension_declaration"
         },
         {
@@ -8357,6 +8361,56 @@
         {
           "type": "FIELD",
           "name": "object_name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_identifier_choice"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_profile_element"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "profileextension_declaration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)profileextension"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "object_name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_identifier_choice"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)extends"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "base_object",
           "content": {
             "type": "SYMBOL",
             "name": "_identifier_choice"
