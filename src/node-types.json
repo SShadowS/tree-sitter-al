@@ -4106,6 +4106,25 @@
     }
   },
   {
+    "type": "attributed_interface_procedure",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "interface_procedure",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "attributed_onrun_trigger",
     "named": true,
     "fields": {},
@@ -21808,6 +21827,10 @@
         },
         {
           "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "attributed_interface_procedure",
           "named": true
         },
         {

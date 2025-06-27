@@ -2143,7 +2143,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._interface_properties,
-        $.interface_procedure
+        $.interface_procedure,
+        $.attributed_interface_procedure
       )),
       '}'
     ),
@@ -2159,6 +2160,11 @@ module.exports = grammar({
         $._procedure_named_return        // Named return value
       )),
       optional(';')
+    ),
+
+    attributed_interface_procedure: $ => seq(
+      $.attribute_list,
+      $.interface_procedure
     ),
 
     report_declaration: $ => seq(

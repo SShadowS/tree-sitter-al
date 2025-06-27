@@ -8956,6 +8956,10 @@
               {
                 "type": "SYMBOL",
                 "name": "interface_procedure"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "attributed_interface_procedure"
               }
             ]
           }
@@ -9049,6 +9053,19 @@
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "attributed_interface_procedure": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "attribute_list"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "interface_procedure"
         }
       ]
     },
