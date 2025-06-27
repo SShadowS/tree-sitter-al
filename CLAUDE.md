@@ -399,7 +399,6 @@ When adding scanner features:
 - Error propagation can cascade from single syntax errors
 - **Qualified enum values with quoted enum type names**: Due to tree-sitter's lexing behavior, patterns like `"Enum Type Name"::EnumValue` cannot be parsed correctly. The quoted string is lexed as a single token before the parser can recognize the `::` pattern. Use unquoted enum type names instead (e.g., `EnumTypeName::EnumValue`).
 - **WHERE clauses in deeply nested preprocessor contexts**: WHERE clauses within table relations that are inside preprocessor conditionals may not parse correctly in certain complex nesting scenarios
-- **IsPreview as variable name in page var sections**: Due to keyword conflict with the IsPreview property, using `IsPreview` as a variable name in page var sections will cause parsing failures. This is a fundamental limitation in tree-sitter's lexing behavior where the keyword token takes precedence over identifier context. Workaround: Use a different variable name or quote it (e.g., `"IsPreview"`)
 
 ## Build Systems
 The project supports multiple build approaches:
