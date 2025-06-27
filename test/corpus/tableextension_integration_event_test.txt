@@ -1,0 +1,65 @@
+================================================================================
+TableExtension with IntegrationEvent attribute
+================================================================================
+
+tableextension 8052 "Item Ext" extends Item
+{
+    fields
+    {
+        field(8052; "Custom Field"; Text[50])
+        {
+            DataClassification = CustomerContent;
+            Caption = 'Custom Field';
+        }
+    }
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeValidate(Rec: Record Item; var IsHandled: Boolean)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (tableextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (data_classification_property
+          value: (data_classification_value))
+        (caption_property
+          (string_literal))))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)))))
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (record_type
+                reference: (identifier))))
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (basic_type))))
+        (code_block)))))

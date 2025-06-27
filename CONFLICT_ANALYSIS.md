@@ -1,5 +1,28 @@
 # AL Grammar Conflict Analysis
 
+## Known Parsing Issues
+
+### 1. Complex Preprocessor Patterns in Table Extensions
+**File**: `./BC.History/SubscriptionBilling/Source/Subscription Billing/Service Objects/Table Extensions/Item.TableExt.al`
+
+**Issue**: Parser fails to correctly parse table extensions with complex preprocessor conditionals that wrap if statements where:
+- The condition check and `begin` keyword are inside `#if`
+- The actual block content is outside the preprocessor conditional
+- Multiple nested preprocessor blocks exist in procedures
+
+**Pattern**:
+```al
+#if not CLEAN25
+    if PriceCalculationMgt.IsExtendedPriceCalculationEnabled() then begin
+#endif
+        // statements here
+#if not CLEAN25
+    end;
+#endif
+```
+
+**Status**: This edge case affects a small number of files. The grammar handles simpler preprocessor patterns correctly. Further investigation needed for complex nested cases.
+
 ## Current Architecture Analysis
 
 ### Property Definition Patterns
