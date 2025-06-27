@@ -22705,8 +22705,16 @@
           "type": "FIELD",
           "name": "arguments",
           "content": {
-            "type": "SYMBOL",
-            "name": "expression_list"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expression_list"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         },
         {

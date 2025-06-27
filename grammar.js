@@ -5120,7 +5120,7 @@ enum_type: $ => prec(1, seq(
 
     attribute_arguments: $ => seq(
       '(',
-      field('arguments', $.expression_list),
+      field('arguments', optional($.expression_list)),
       ')'
     ),
 
