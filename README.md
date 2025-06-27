@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,113 files (98.4%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,170 files (98.7%) parse successfully**.
 
 Recent improvements include:
 - **IsPreview keyword context handling** - Fixed conflict where IsPreview can now be used as both a property (`IsPreview = true;`) and a variable name (`var IsPreview: Boolean;`) through case-sensitive disambiguation

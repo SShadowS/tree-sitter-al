@@ -2217,6 +2217,7 @@ module.exports = grammar({
       // Report procedures and triggers
       seq(optional($.attribute_list), $.procedure),
       seq(optional($.attribute_list), $.trigger_declaration),
+      $.preproc_conditional_procedures,
       
       // Preprocessor conditional report properties
       $.preproc_conditional_report_properties,

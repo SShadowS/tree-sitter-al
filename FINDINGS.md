@@ -1,133 +1,63 @@
-# Grammar Analysis Findings
+# Grammar Analysis Findings & Prioritized Action Plan
 
-This document outlines opportunities for consolidation and improvement within the `grammar.js` file. The analysis focuses on identifying redundant or overly specific definitions that can be generalized.
+This document outlines opportunities for consolidation and improvement within the `grammar.js` file, followed by a prioritized plan for implementation.
 
-## 1. Object Reference Consolidation
+## Prioritized Action Plan
 
-**Observation**:
-Several properties that refer to AL objects (like Tables or Pages) share a common value pattern but use different or inline rule definitions. The typical pattern for an object reference is a choice between an integer (object ID) and an identifier (object name).
+The following is a prioritized list for implementing the proposed changes, ordered from most critical and highest impact to least critical.
 
-For example:
-- `page_id_value`: `choice($.integer, $.identifier, $._quoted_identifier)`
-- `source_table_property`: The value is defined inline as `choice($.integer, $.identifier, $._quoted_identifier)`
+### Priority 1: Critical Fixes & Foundational Cleanup
+These are the most important changes to address first as they either fix direct conflicts or establish foundational patterns that will be used in subsequent steps.
 
-These rules are functionally identical but are defined separately, leading to redundancy.
+1.  **Fix Filter Expression Duplication (Finding 3):** This is the highest priority because it resolves a name collision, which can cause parsing ambiguities and makes the grammar difficult to maintain. Renaming the two `filter_expression` rules to `source_view_filter_expression` and `simple_filter_expression` is a critical fix.
+2.  **Remove Redundant `ident()` function (Finding 4):** This is a very low-effort task that immediately cleans up the code by removing an unused function.
+3.  **Create Centralized `_boolean_value` Rule (Finding 8):** This is a high-impact, low-effort change. Establishing a single `_boolean_value` rule will immediately improve consistency and is a simple, foundational step for standardizing property definitions.
+4.  **Consolidate Object References (Finding 1):** Similar to the boolean rule, creating a single `_object_reference` rule is a high-impact, low-effort task that significantly reduces redundancy for a very common pattern.
 
-**Resolution**:
-A new, centralized rule `_object_reference` should be created to represent a generic reference to any AL object.
+### Priority 2: Major Consolidations
+These changes involve larger-scale refactoring that will significantly simplify the grammar by removing duplicate structures.
 
-```javascript
-_object_reference: $ => choice($.integer, $.identifier, $._quoted_identifier),
-```
+5.  **Consolidate Permission Definitions (Finding 2):** This is a major cleanup. Unifying the `Permissions` and `AccessByPermission` rules into a single `_permission_definition` will eliminate a significant amount of redundant code and simplify the grammar's logic for handling permissions.
+6.  **Standardize Keyword Usage with `kw()` (Finding 6):** This is a widespread but important change. Consistently using the `kw()` helper function will make the grammar more robust, readable, and easier to maintain. This should be done as a focused effort across the entire file.
 
-All properties that refer to an object by its ID or name should be refactored to use this single rule. This includes:
-- `drilldown_pageid_property`
-- `lookup_pageid_property`
-- `card_page_id_property`
-- `source_table_property`
+### Priority 3: Further Refinements
+These are valuable consolidations that can be addressed after the more critical issues are resolved.
 
-This change will improve maintainability and ensure consistency across the grammar.
+7.  **Consolidate `About` Properties (Finding 7):** This is a targeted cleanup that follows the same consolidation principles. Merging the `page_about_..._ml_property` rules into more generic `about_..._ml_property` rules is a good final step for property consolidation.
+8.  **Generalize Property Templates (Finding 5):** This is the most architectural change. Replacing specific templates (e.g., `_boolean_property_template`) with the more generic `_value_property_template` is a good practice for long-term maintainability but is less urgent than the other items. It can be done last to refine the overall structure.
 
-## 2. Permission Definition Consolidation
+---
 
-**Observation**:
-The grammar defines permission structures in two different places for two different properties: `Permissions` and `AccessByPermission`. The underlying structure of these permissions is identical, but they are built from separate sets of rules.
+## Original Findings
 
-- For the `Permissions` property, the structure is defined through `permission_value`, `tabledata_permission`, and `object_permission`.
-- For the `AccessByPermission` property, the structure is defined through `access_by_permission_value` and `permission_object_type`.
+### 1. Object Reference Consolidation
+**Observation**: Several properties that refer to AL objects (like Tables or Pages) share a common value pattern but use different or inline rule definitions.
+**Resolution**: Create a new, centralized rule `_object_reference` and refactor all properties that refer to an object to use this single rule.
 
-Both boil down to the same pattern: `[type] [name] = [permissions]`, where `type` is `tabledata` or `object`.
+### 2. Permission Definition Consolidation
+**Observation**: The grammar defines permission structures in two different places for `Permissions` and `AccessByPermission` properties, despite being structurally identical.
+**Resolution**: Create a single, unified rule named `_permission_definition` and refactor both properties to use this new, consolidated rule.
 
-**Resolution**:
-A single, unified rule named `_permission_definition` should be created to capture this common pattern.
+### 3. Filter Expression Duplication
+**Observation**: The name `filter_expression` is used for two different rule definitions, creating a potential conflict.
+**Resolution**: Rename the two rules to `source_view_filter_expression` and `simple_filter_expression` to reflect their specific contexts.
 
-```javascript
-_permission_definition: $ => seq(
-  field('type', choice(kw('tabledata'), kw('object'))),
-  field('name', $._identifier_choice),
-  '=',
-  field('permissions', choice($.string_literal, $._quoted_identifier))
-),
-```
+### 4. Redundant `ident()` function
+**Observation**: The grammar defines a helper function `ident()` that is not used anywhere.
+**Resolution**: Remove the `ident()` function.
 
-Both `permission_value` (for the `Permissions` property) and `access_by_permission_value` (for the `AccessByPermission` property) should be refactored to use this new, consolidated rule. This will eliminate several redundant rules (`tabledata_permission`, `object_permission`, `permission_object_type`, `permission_set`) and simplify the grammar.
+### 5. Overly specific property templates
+**Observation**: The grammar uses overly specific templates like `_boolean_property_template`, leading to a proliferation of similar rules.
+**Resolution**: Use the generic `_value_property_template` more broadly to replace these specific templates.
 
-## 3. Filter Expression Duplication
+### 6. Inconsistent use of `kw()` for keywords
+**Observation**: The `kw()` helper function for case-insensitive keywords is not used consistently.
+**Resolution**: All keywords should be defined using the `kw()` function.
 
-**Observation**:
-The name `filter_expression` is used for two different rule definitions in the grammar, creating a potential conflict and making the grammar harder to understand.
+### 7. Consolidation of `About` properties
+**Observation**: `page_about_text_ml_property` and `page_about_title_ml_property` are separate from their consolidated non-ML counterparts.
+**Resolution**: Consolidate these ML properties into more generic `about_text_ml_property` and `about_title_ml_property` rules.
 
-1.  **Definition 1 (Source View Filter)**: Used within `source_table_view_value`, it is defined as a combination of `where_clause` and `sorting_clause`.
-    ```javascript
-    filter_expression: $ => seq(
-      choice(
-        $.where_clause,
-        $.sorting_clause,
-        seq($.where_clause, $.sorting_clause),
-        seq($.sorting_clause, $.where_clause)
-      )
-    ),
-    ```
-
-2.  **Definition 2 (Simple Filter)**: Used within `table_filter_value`, it is defined as a `filter()` function call.
-    ```javascript
-    filter_expression: $ => seq(
-      kw('filter'),
-      '(',
-      $._filter_value_simple,
-      ')'
-    ),
-    ```
-
-**Resolution**:
-These two rules should be renamed to more accurately reflect their specific contexts. This will resolve the name collision and improve the clarity of the grammar.
-
-- **Recommendation**:
-  - Rename the first definition to `source_view_filter_expression`.
-  - Rename the second definition to `simple_filter_expression`.
-
-This change will make the purpose of each rule explicit and prevent any potential parsing ambiguities.
-
-## 4. Redundant `ident()` function
-
-**Observation**:
-The grammar defines a helper function `ident()` that is not used anywhere in the file.
-
-**Resolution**:
-The `ident()` function should be removed to clean up the code.
-
-## 5. Overly specific property templates
-
-**Observation**:
-The grammar uses several templates for properties (e.g., `_boolean_property_template`, `_string_property_template`, `_identifier_property_template`). These templates are too specific and lead to a proliferation of similar-looking rules.
-
-**Resolution**:
-The generic `_value_property_template` should be used more broadly to replace these specific templates. This will require creating more generic value rules (e.g., a generic `_string_value` rule) that can be passed to the template, promoting reusability and reducing the number of rules.
-
-## 6. Inconsistent use of `kw()` for keywords
-
-**Observation**:
-The `kw()` helper function for case-insensitive keyword matching is not used consistently. Some keywords are defined using `kw()`, while others use a `choice()` of all possible case variations (e.g., `choice('IsPreview', 'ispreview', 'ISPREVIEW')`).
-
-**Resolution**:
-All keywords should be defined using the `kw()` function to ensure consistency and improve readability. This will make the grammar more robust and easier to maintain.
-
-## 7. Consolidation of `About` properties
-
-**Observation**:
-The properties `about_title_property` and `about_text_property` are defined, and comments indicate that `page_about_text_property` and `page_about_title_property` have been consolidated into them. However, there are still separate `page_about_text_ml_property` and `page_about_title_ml_property` rules.
-
-**Resolution**:
-These ML properties should be consolidated into more generic `about_text_ml_property` and `about_title_ml_property` rules if they are used in the same way across different object types. This will reduce redundancy and simplify the grammar.
-
-## 8. Lack of a centralized `_boolean_value` rule
-
-**Observation**:
-Many properties that accept a boolean value define the choice of `true` or `false` inline.
-
-**Resolution**:
-A centralized `_boolean_value` rule should be created to make the grammar more consistent and easier to maintain. This rule would be defined as:
-```javascript
-_boolean_value: $ => choice(kw('true'), kw('false')),
-```
-This would replace the current `$.boolean` token and be used in all boolean properties.
+### 8. Lack of a centralized `_boolean_value` rule
+**Observation**: Many properties that accept a boolean value define the choice of `true` or `false` inline.
+**Resolution**: Create a centralized `_boolean_value` rule (`choice(kw('true'), kw('false'))`) and use it in all boolean properties.
