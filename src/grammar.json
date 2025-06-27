@@ -17500,7 +17500,7 @@
     },
     "var_section": {
       "type": "PREC_RIGHT",
-      "value": 0,
+      "value": 10,
       "content": {
         "type": "SEQ",
         "members": [
@@ -17527,35 +17527,39 @@
             }
           },
           {
-            "type": "REPEAT",
+            "type": "PREC_RIGHT",
+            "value": 0,
             "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "comment"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "multiline_comment"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "pragma"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "variable_declaration"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_conditional_variables"
-                }
-              ]
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "comment"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "multiline_comment"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "pragma"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "variable_declaration"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_conditional_variables"
+                  }
+                ]
+              }
             }
           }
         ]
@@ -17631,10 +17635,14 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "TOKEN",
+            "type": "PREC",
+            "value": 20,
             "content": {
-              "type": "PATTERN",
-              "value": "(?i)ispreview"
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)ispreview"
+              }
             }
           },
           "named": true,
@@ -17863,18 +17871,6 @@
             "content": {
               "type": "PATTERN",
               "value": "(?i)datacaptionexpression"
-            }
-          },
-          "named": true,
-          "value": "identifier"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)ispreview"
             }
           },
           "named": true,

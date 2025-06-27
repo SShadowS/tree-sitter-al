@@ -4043,17 +4043,17 @@ module.exports = grammar({
       ';'
     ),
 
-    var_section: $ => prec.right(seq(
+    var_section: $ => prec.right(10, seq(
       optional(kw('protected')),
       kw('var'),
-      repeat(choice(
+      prec.right(repeat(choice(
         $.comment,
         $.multiline_comment,
         $.attribute_list,
         $.pragma,
         $.variable_declaration,
         $.preproc_conditional_variables
-      ))
+      )))
     )),
 
     // Helper rule for unquoted variable names (allows certain keywords as identifiers)
@@ -4070,7 +4070,7 @@ module.exports = grammar({
       // Allow the keyword 'ExcludeCaption' to be treated as an identifier in variable contexts
       alias(kw('excludecaption'), $.identifier),
       // Allow 'IsPreview' to be used as an identifier in variable contexts
-      alias(kw('ispreview'), $.identifier),
+      alias(prec(20, kw('ispreview')), $.identifier),
       // Allow the keyword 'SubType' to be treated as an identifier in variable contexts
       alias(kw('subtype'), $.identifier),
       // Allow the keyword 'CuegroupLayout' to be treated as an identifier in variable contexts
@@ -4101,9 +4101,7 @@ module.exports = grammar({
       // Allow 'TableType' to be used as an identifier in variable contexts
       alias(kw('tabletype'), $.identifier),
       // Allow 'DataCaptionExpression' to be used as an identifier in variable contexts
-      alias(kw('datacaptionexpression'), $.identifier),
-      // Allow 'IsPreview' to be used as an identifier in variable contexts
-      alias(kw('ispreview'), $.identifier)
+      alias(kw('datacaptionexpression'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
