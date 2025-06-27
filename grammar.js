@@ -1858,10 +1858,15 @@ module.exports = grammar({
       ';'
     ),
 
-    implementation_value_list: $ => seq(
-      $.implementation_value,
-      repeat(seq(',', $.implementation_value))
-    ),
+    implementation_value_list: $ => prec.right(repeat1(
+      choice(
+        $.implementation_value,
+        ',',
+        $.preproc_if,
+        $.preproc_endif,
+        $.preproc_else
+      )
+    )),
 
     default_implementation_property: $ => seq(
       kw('defaultimplementation'),
