@@ -1675,7 +1675,8 @@ module.exports = grammar({
         kw('report'),
         kw('codeunit'),
         kw('table'),
-        kw('xmlport')
+        kw('xmlport'),
+        kw('query')
       ),
       field('object_ref', choice(
         $.integer, 
