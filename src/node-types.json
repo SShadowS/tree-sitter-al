@@ -7043,6 +7043,18 @@
           "named": true
         },
         {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
           "type": "option_caption_property",
           "named": true
         },
@@ -9857,6 +9869,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_dataitem_content",
+          "named": true
+        },
+        {
           "type": "sql_join_type_property",
           "named": true
         }
@@ -11922,6 +11938,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_enum_properties",
+          "named": true
+        },
+        {
           "type": "scope_property",
           "named": true
         },
@@ -13711,6 +13731,22 @@
     }
   },
   {
+    "type": "field_delimiter_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "field_filter",
     "named": true,
     "fields": {
@@ -15089,6 +15125,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "field_separator_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -29640,6 +29692,334 @@
     }
   },
   {
+    "type": "preproc_conditional_codeunit_declaration",
+    "named": true,
+    "fields": {
+      "alternative": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "implements_clause",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "consequence": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "implements_clause",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "object_id": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "object_name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "about_text_property",
+          "named": true
+        },
+        {
+          "type": "about_title_property",
+          "named": true
+        },
+        {
+          "type": "access_by_permission_property",
+          "named": true
+        },
+        {
+          "type": "access_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_ml_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "attributed_onrun_trigger",
+          "named": true
+        },
+        {
+          "type": "attributed_procedure",
+          "named": true
+        },
+        {
+          "type": "attributed_trigger",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "card_page_id_property",
+          "named": true
+        },
+        {
+          "type": "context_sensitive_help_page_property",
+          "named": true
+        },
+        {
+          "type": "data_access_intent_property",
+          "named": true
+        },
+        {
+          "type": "data_per_company_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "drilldown_pageid_property",
+          "named": true
+        },
+        {
+          "type": "event_subscriber_instance_property",
+          "named": true
+        },
+        {
+          "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "help_link_property",
+          "named": true
+        },
+        {
+          "type": "inherent_entitlements_property",
+          "named": true
+        },
+        {
+          "type": "inherent_permissions_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_property",
+          "named": true
+        },
+        {
+          "type": "lookup_pageid_property",
+          "named": true
+        },
+        {
+          "type": "navigation_page_id_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "page_type_property",
+          "named": true
+        },
+        {
+          "type": "permissions_property",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_object_properties",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_procedures",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_endregion",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_region",
+          "named": true
+        },
+        {
+          "type": "processing_only_property",
+          "named": true
+        },
+        {
+          "type": "replicate_data_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
+          "type": "run_object_property",
+          "named": true
+        },
+        {
+          "type": "run_page_link_property",
+          "named": true
+        },
+        {
+          "type": "run_page_view_property",
+          "named": true
+        },
+        {
+          "type": "scope_property",
+          "named": true
+        },
+        {
+          "type": "shortcut_key_property",
+          "named": true
+        },
+        {
+          "type": "single_instance_property",
+          "named": true
+        },
+        {
+          "type": "source_table_property",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "table_no_property",
+          "named": true
+        },
+        {
+          "type": "table_type_property",
+          "named": true
+        },
+        {
+          "type": "test_isolation_property",
+          "named": true
+        },
+        {
+          "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
+          "named": true
+        },
+        {
+          "type": "use_request_page_property",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_controladdin_properties",
     "named": true,
     "fields": {},
@@ -29757,6 +30137,61 @@
         },
         {
           "type": "usage_category_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_dataitem_content",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "column_section",
+          "named": true
+        },
+        {
+          "type": "data_item_link_property",
+          "named": true
+        },
+        {
+          "type": "data_item_table_filter_property",
+          "named": true
+        },
+        {
+          "type": "dataitem_section",
+          "named": true
+        },
+        {
+          "type": "filter_section",
+          "named": true
+        },
+        {
+          "type": "filters_property",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_dataitem_content",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "sql_join_type_property",
           "named": true
         }
       ]
@@ -32722,6 +33157,185 @@
     }
   },
   {
+    "type": "preproc_conditional_report_dataitem_content",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "about_text_property",
+          "named": true
+        },
+        {
+          "type": "about_title_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_ml_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "attribute_list",
+          "named": true
+        },
+        {
+          "type": "calc_fields_property",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "context_sensitive_help_page_property",
+          "named": true
+        },
+        {
+          "type": "data_access_intent_property",
+          "named": true
+        },
+        {
+          "type": "data_item_link_property",
+          "named": true
+        },
+        {
+          "type": "data_item_link_reference_property",
+          "named": true
+        },
+        {
+          "type": "data_item_table_filter_property",
+          "named": true
+        },
+        {
+          "type": "data_item_table_view_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "help_link_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_property",
+          "named": true
+        },
+        {
+          "type": "max_iteration_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_report_dataitem_content",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "print_only_if_detail_property",
+          "named": true
+        },
+        {
+          "type": "report_column_section",
+          "named": true
+        },
+        {
+          "type": "report_dataitem_section",
+          "named": true
+        },
+        {
+          "type": "request_filter_fields_property",
+          "named": true
+        },
+        {
+          "type": "request_filter_heading_property",
+          "named": true
+        },
+        {
+          "type": "scope_property",
+          "named": true
+        },
+        {
+          "type": "sql_join_type_property",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
+          "named": true
+        },
+        {
+          "type": "use_temporary_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_report_dataitems",
     "named": true,
     "fields": {},
@@ -33848,6 +34462,14 @@
           "named": true
         },
         {
+          "type": "field_delimiter_property",
+          "named": true
+        },
+        {
+          "type": "field_separator_property",
+          "named": true
+        },
+        {
           "type": "format_evaluate_property",
           "named": true
         },
@@ -34785,6 +35407,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_codeunit_declaration",
+            "named": true
+          },
+          {
             "type": "preproc_conditional_enum_declaration",
             "named": true
           },
@@ -34902,6 +35528,10 @@
           },
           {
             "type": "pragma",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_codeunit_declaration",
             "named": true
           },
           {
@@ -38173,6 +38803,18 @@
           "named": true
         },
         {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
           "type": "option_caption_property",
           "named": true
         },
@@ -38312,6 +38954,10 @@
         },
         {
           "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_report_dataitem_content",
           "named": true
         },
         {
@@ -41045,6 +41691,10 @@
         },
         {
           "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_codeunit_declaration",
           "named": true
         },
         {
@@ -47384,6 +48034,14 @@
           "named": true
         },
         {
+          "type": "field_delimiter_property",
+          "named": true
+        },
+        {
+          "type": "field_separator_property",
+          "named": true
+        },
+        {
           "type": "format_evaluate_property",
           "named": true
         },
@@ -48196,10 +48854,6 @@
   },
   {
     "type": "DrillDown",
-    "named": false
-  },
-  {
-    "type": "Editable",
     "named": false
   },
   {

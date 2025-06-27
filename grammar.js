@@ -1090,16 +1090,29 @@ module.exports = grammar({
       field('table_name', $._identifier_choice),
       ')',
       '{',
-      repeat(choice(
-        $.column_section,
-        $.dataitem_section,
-        $.data_item_link_property,
-        $.data_item_table_filter_property,
-        $.sql_join_type_property,
-        $.filters_property,
-        $.filter_section
-      )),
+      repeat($._dataitem_content_element),
       '}'
+    ),
+
+    _dataitem_content_element: $ => choice(
+      $.column_section,
+      $.dataitem_section,
+      $.data_item_link_property,
+      $.data_item_table_filter_property,
+      $.sql_join_type_property,
+      $.filters_property,
+      $.filter_section,
+      $.preproc_conditional_dataitem_content
+    ),
+
+    preproc_conditional_dataitem_content: $ => seq(
+      $.preproc_if,
+      repeat($._dataitem_content_element),
+      optional(seq(
+        $.preproc_else,
+        repeat($._dataitem_content_element)
+      )),
+      $.preproc_endif
     ),
 
     data_item_link_property: _value_property_template(
@@ -2360,13 +2373,26 @@ module.exports = grammar({
       ),
       ')',
       '{',
-      repeat(choice(
-        $.report_column_section, 
-        $.report_dataitem_section,
-        $._dataitem_properties,
-        seq(optional($.attribute_list), $.trigger_declaration)
-      )),
+      repeat($._report_dataitem_content_element),
       '}'
+    ),
+
+    _report_dataitem_content_element: $ => choice(
+      $.report_column_section, 
+      $.report_dataitem_section,
+      $._dataitem_properties,
+      seq(optional($.attribute_list), $.trigger_declaration),
+      $.preproc_conditional_report_dataitem_content
+    ),
+
+    preproc_conditional_report_dataitem_content: $ => seq(
+      $.preproc_if,
+      repeat($._report_dataitem_content_element),
+      optional(seq(
+        $.preproc_else,
+        repeat($._report_dataitem_content_element)
+      )),
+      $.preproc_endif
     ),
 
     report_column_section: $ => seq(
@@ -7072,6 +7098,11 @@ enum_type: $ => prec(1, seq(
       // Option-specific properties
       $.option_caption_property,
       $.option_members_property,
+      
+      // Obsolete properties (for backwards compatibility)
+      $.obsolete_state_property,
+      $.obsolete_reason_property,
+      $.obsolete_tag_property,
     ),
 
     // =============================================================================
