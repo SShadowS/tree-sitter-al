@@ -1,0 +1,211 @@
+================================================================================
+Table trigger with semicolon after parameters
+================================================================================
+
+table 50100 "Sales Forecast"
+{
+    fields
+    {
+        field(1; "Item No."; Code[20])
+        {
+        }
+        field(2; Date; Date)
+        {
+        }
+        field(3; Quantity; Decimal)
+        {
+        }
+    }
+
+    keys
+    {
+        key(Key1; "Item No.", Date)
+        {
+        }
+    }
+
+    trigger OnInsert();
+    begin
+        UpdateVariance()
+    end;
+
+    trigger OnModify();
+    begin
+        UpdateVariance()
+    end;
+
+    trigger OnDelete()
+    begin
+        ClearForecast();
+    end;
+
+    procedure UpdateVariance()
+    begin
+        Quantity := Quantity + 1;
+    end;
+
+    procedure ClearForecast()
+    begin
+        Quantity := 0;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer))))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))
+    (keys
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (quoted_identifier)
+          (identifier))))
+    (named_trigger
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list))))
+    (named_trigger
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list))))
+    (named_trigger
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (additive_expression
+            left: (identifier)
+            right: (integer)))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (integer))))))
+
+================================================================================
+Table trigger with var section and semicolon
+================================================================================
+
+table 50101 "Custom Table"
+{
+    fields
+    {
+        field(1; "No."; Code[20])
+        {
+        }
+    }
+
+    trigger OnInsert();
+    var
+        RecRef: RecordRef;
+    begin
+        RecRef.GetTable(Rec);
+        Message('Inserted: %1', RecRef.RecordId);
+    end;
+
+    trigger OnModify()
+    var
+        xRecRef: RecordRef;
+        RecRef: RecordRef;
+    begin
+        xRecRef.GetTable(xRec);
+        RecRef.GetTable(Rec);
+        Message('Modified from %1 to %2', xRecRef.RecordId, RecRef.RecordId);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))))
+    (named_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (recordref_type))))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (identifier)))
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)
+            (member_expression
+              object: (identifier)
+              property: (identifier))))))
+    (named_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (recordref_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (recordref_type))))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (identifier)))
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (identifier)))
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)
+            (member_expression
+              object: (identifier)
+              property: (identifier))
+            (member_expression
+              object: (identifier)
+              property: (identifier))))))))

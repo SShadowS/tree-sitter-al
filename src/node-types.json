@@ -15871,6 +15871,22 @@
         {
           "type": "filter_range_expression",
           "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
         }
       ]
     }
@@ -15906,7 +15922,7 @@
     "named": true,
     "fields": {
       "value": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
@@ -15924,10 +15940,6 @@
           {
             "type": "string_literal",
             "named": true
-          },
-          {
-            "type": "|",
-            "named": false
           }
         ]
       }
@@ -16186,6 +16198,34 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "filter_equal_expression",
+          "named": true
+        },
+        {
+          "type": "filter_greater_than_expression",
+          "named": true
+        },
+        {
+          "type": "filter_greater_than_or_equal_expression",
+          "named": true
+        },
+        {
+          "type": "filter_less_than_expression",
+          "named": true
+        },
+        {
+          "type": "filter_less_than_or_equal_expression",
+          "named": true
+        },
+        {
+          "type": "filter_not_equal_expression",
+          "named": true
+        },
+        {
+          "type": "filter_range_expression",
+          "named": true
+        },
         {
           "type": "identifier",
           "named": true

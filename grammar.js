@@ -941,35 +941,19 @@ module.exports = grammar({
       ')'
     ),
 
-    filter_or_expression: $ => prec(8, seq(
-      $._extended_value_choice,
+    filter_or_expression: $ => prec.left(8, seq(
+      $._filter_base_value,
       repeat1(seq(
         '|',
-        $._extended_value_choice
+        $._filter_base_value
       ))
     )),
 
-    filter_and_expression: $ => prec(9, seq(
-      choice(
-        $.filter_not_equal_expression,
-        $.filter_equal_expression,
-        $.filter_less_than_expression,
-        $.filter_greater_than_expression,
-        $.filter_less_than_or_equal_expression,
-        $.filter_greater_than_or_equal_expression,
-        $.filter_range_expression
-      ),
+    filter_and_expression: $ => prec.left(9, seq(
+      $._filter_base_value,
       repeat1(seq(
         '&',
-        choice(
-          $.filter_not_equal_expression,
-          $.filter_equal_expression,
-          $.filter_less_than_expression,
-          $.filter_greater_than_expression,
-          $.filter_less_than_or_equal_expression,
-          $.filter_greater_than_or_equal_expression,
-          $.filter_range_expression
-        )
+        $._filter_base_value
       ))
     )),
 
@@ -986,23 +970,6 @@ module.exports = grammar({
     filter_equal_expression: $ => seq(
       '=',
       field('value', choice(
-        seq(
-          choice(
-            $.string_literal,
-            $.integer,
-            $._quoted_identifier,
-            $.identifier
-          ),
-          repeat(seq(
-            '|',
-            choice(
-              $.string_literal,
-              $.integer,
-              $._quoted_identifier,
-              $.identifier
-            )
-          ))
-        ),
         $.string_literal,
         $.integer,
         $._quoted_identifier,
@@ -1023,9 +990,7 @@ module.exports = grammar({
     filter_greater_than_or_equal_expression: $ => _comparison_filter_template($, '>='),
 
     // Unified filter value pattern - used in all FILTER() contexts
-    _filter_value: $ => choice(
-      $.filter_and_expression,
-      $.filter_or_expression,
+    _filter_base_value: $ => choice(
       $.filter_not_equal_expression, 
       $.filter_equal_expression,
       $.filter_less_than_expression,
@@ -1037,6 +1002,12 @@ module.exports = grammar({
       $._quoted_identifier,
       $.integer,
       $.string_literal
+    ),
+
+    _filter_value: $ => choice(
+      $.filter_and_expression,
+      $.filter_or_expression,
+      $._filter_base_value
     ),
 
     const_expression: $ => seq(
@@ -3834,6 +3805,7 @@ module.exports = grammar({
           kw('onbeforeinsertrecord')  // XMLPort-specific trigger
         )),
         $._trigger_parameters,
+        optional(';'),  // Allow optional semicolon after trigger declaration
         optional($.var_section),
         $.code_block
       ),
@@ -3856,6 +3828,7 @@ module.exports = grammar({
           kw('onbeforeinsertrecord')  // XMLPort-specific trigger
         )),
         $._trigger_parameters,
+        optional(';'),  // Allow optional semicolon after trigger declaration
         $.preproc_conditional_var_sections,
         $.code_block
       )

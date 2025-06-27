@@ -94,11 +94,11 @@ query 50101 "Column Filter Test"
           field_name: (identifier)
           (column_filter_property
             field_name: (identifier)
-            (ERROR
+            filter_expression: (filter_or_expression
               (filter_less_than_expression
-                value: (integer)))
-            filter_expression: (filter_greater_than_expression
-              value: (integer))))))))
+                value: (integer))
+              (filter_greater_than_expression
+                value: (integer)))))))))
 
 ================================================================================
 Query with case-insensitive ColumnFilter
