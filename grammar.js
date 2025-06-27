@@ -2811,7 +2811,8 @@ module.exports = grammar({
       repeat(choice(
         $._page_properties,
         $.field_section,
-        $.actions_section
+        $.actions_section,
+        $.cuegroup_section
       )),
       '}'
     ),

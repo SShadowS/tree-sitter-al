@@ -23,34 +23,34 @@ codeunit 50100 "Test Foreach"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-      name: (name
-        (identifier))
-      (var_section
-        (variable_declaration
-          name: (quoted_identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (dictionary_type
-              (type_specification
-                (text_type))
-              (type_specification
-                (text_type))))))
-      (code_block
-        (foreach_statement
-          variable: (quoted_identifier)
-          iterable: (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list))
-          body: (code_block
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (quoted_identifier)))))))))))
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (dictionary_type
+                (type_specification
+                  (text_type))
+                (type_specification
+                  (text_type))))))
+        (code_block
+          (foreach_statement
+            variable: (quoted_identifier)
+            iterable: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))
+            body: (code_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (quoted_identifier))))))))))
 
 ================================================================================
 Foreach with unquoted identifier (existing support)
@@ -75,22 +75,22 @@ codeunit 50101 "Test Foreach Standard"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-      name: (name
-        (identifier))
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier)))))
-      (code_block
-        (foreach_statement
-          variable: (identifier)
-          iterable: (identifier)
-          body: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier))))))))
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        (code_block
+          (foreach_statement
+            variable: (identifier)
+            iterable: (identifier)
+            body: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))))))
 
 ================================================================================
 Foreach with complex dictionary operations
@@ -124,110 +124,106 @@ codeunit 50102 "Dictionary Operations"
     object_name: (quoted_identifier)
     (attributed_procedure
       (procedure
-      name: (name
-        (identifier))
-      parameters: (parameter_list
-        (parameter
-          parameter_name: (name
-            (identifier))
-          parameter_type: (type_specification
-            (generic_type
-              base_type: (identifier)
-              arguments: (type_arguments
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (dictionary_type
+                (type_specification
+                  (text_type))
+                (type_specification
+                  (text_type)))))
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (dictionary_type
                 (type_specification
                   (text_type))
                 (type_specification
                   (text_type))))))
-        (parameter
-          parameter_name: (name
-            (identifier))
-          parameter_type: (type_specification
-            (generic_type
-              base_type: (identifier)
-              arguments: (type_arguments
-                (type_specification
-                  (text_type))
-                (type_specification
-                  (text_type))))))))
-      (var_section
-        (variable_declaration
-          name: (quoted_identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      (code_block
-        (if_statement
-          condition: (comparison_expression
-            left: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list))
-            operator: (comparison_operator)
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list)))
-          then_branch: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier)
-              (call_expression
+        (var_section
+          (variable_declaration
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (code_block
+          (if_statement
+            condition: (comparison_expression
+              left: (call_expression
                 function: (member_expression
                   object: (identifier)
                   property: (identifier))
                 arguments: (argument_list))
-              (call_expression
+              operator: (comparison_operator)
+              right: (call_expression
                 function: (member_expression
                   object: (identifier)
                   property: (identifier))
-                arguments: (argument_list)))))
-        (foreach_statement
-          variable: (quoted_identifier)
-          iterable: (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list))
-          body: (code_block
-            (if_statement
-              condition: (unary_expression
+                arguments: (argument_list)))
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)
                 (call_expression
                   function: (member_expression
                     object: (identifier)
                     property: (identifier))
-                  arguments: (argument_list
-                    (quoted_identifier)
-                    (identifier))))
-              then_branch: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)
-                  (quoted_identifier))))
-            (call_expression
+                  arguments: (argument_list))
+                (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list)))))
+          (foreach_statement
+            variable: (quoted_identifier)
+            iterable: (call_expression
               function: (member_expression
                 object: (identifier)
                 property: (identifier))
-              arguments: (argument_list
-                (quoted_identifier)
-                (identifier)))
-            (if_statement
-              condition: (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (identifier))
-              then_branch: (call_expression
-                function: (identifier)
+              arguments: (argument_list))
+            body: (code_block
+              (if_statement
+                condition: (unary_expression
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      property: (identifier))
+                    arguments: (argument_list
+                      (quoted_identifier)
+                      (identifier))))
+                then_branch: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (quoted_identifier))))
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
                 arguments: (argument_list
-                  (identifier)
                   (quoted_identifier)
-                  (identifier)
-                  (identifier))))))))))
+                  (identifier)))
+              (if_statement
+                condition: (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (identifier))
+                then_branch: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (quoted_identifier)
+                    (identifier)
+                    (identifier)))))))))))

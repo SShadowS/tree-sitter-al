@@ -1,0 +1,240 @@
+================================================================================
+Nested cuegroup in page
+================================================================================
+
+page 6127 "E-Document Activities"
+{
+    PageType = CardPart;
+    RefreshOnActivate = true;
+
+    layout
+    {
+        area(Content)
+        {
+            cuegroup("EDocument Activities")
+            {
+                ShowCaption = false;
+                cuegroup("OutgoingEDocument")
+                {
+                    Caption = 'Outgoing E-Document';
+
+                    field(OutgoingEDocumentProcessedCount; OutgoingEDocumentProcessedCount)
+                    {
+                        ApplicationArea = Basic, Suite;
+                        Caption = 'Processed';
+                        ToolTip = 'Specifies the number of processed e-document';
+                    }
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (refresh_on_activate_property
+      value: (boolean))
+    (layout_section
+      (area_section
+        (cuegroup_section
+          name: (quoted_identifier)
+          (show_caption_property
+            value: (boolean))
+          (cuegroup_section
+            name: (quoted_identifier)
+            (caption_property
+              (string_literal))
+            (field_section
+              control_id: (identifier)
+              source_or_field_name: (identifier)
+              (application_area_property
+                value: (identifier)
+                value: (identifier))
+              (caption_property
+                (string_literal))
+              (tool_tip_property
+                (tool_tip_value
+                  (string_literal))))))))))
+
+================================================================================
+Multiple nested cuegroups
+================================================================================
+
+page 50100 "Dashboard"
+{
+    PageType = CardPart;
+
+    layout
+    {
+        area(Content)
+        {
+            cuegroup("Sales Activities")
+            {
+                Caption = 'Sales';
+                
+                cuegroup("Open Documents")
+                {
+                    Caption = 'Open';
+                    
+                    field(OpenQuotes; OpenQuotes)
+                    {
+                        ApplicationArea = All;
+                        Caption = 'Quotes';
+                    }
+                    
+                    field(OpenOrders; OpenOrders)
+                    {
+                        ApplicationArea = All;
+                        Caption = 'Orders';
+                    }
+                }
+                
+                cuegroup("Posted Documents")
+                {
+                    Caption = 'Posted';
+                    
+                    field(PostedInvoices; PostedInvoices)
+                    {
+                        ApplicationArea = All;
+                        Caption = 'Invoices';
+                    }
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (layout_section
+      (area_section
+        (cuegroup_section
+          name: (quoted_identifier)
+          (caption_property
+            (string_literal))
+          (cuegroup_section
+            name: (quoted_identifier)
+            (caption_property
+              (string_literal))
+            (field_section
+              control_id: (identifier)
+              source_or_field_name: (identifier)
+              (application_area_property
+                value: (identifier))
+              (caption_property
+                (string_literal)))
+            (field_section
+              control_id: (identifier)
+              source_or_field_name: (identifier)
+              (application_area_property
+                value: (identifier))
+              (caption_property
+                (string_literal))))
+          (cuegroup_section
+            name: (quoted_identifier)
+            (caption_property
+              (string_literal))
+            (field_section
+              control_id: (identifier)
+              source_or_field_name: (identifier)
+              (application_area_property
+                value: (identifier))
+              (caption_property
+                (string_literal)))))))))
+
+================================================================================
+Cuegroup with properties and nested cuegroups
+================================================================================
+
+page 50101 "Activity Cues"
+{
+    PageType = CardPart;
+    SourceTable = "Activities Cue";
+
+    layout
+    {
+        area(Content)
+        {
+            cuegroup(Control1)
+            {
+                CuegroupLayout = Wide;
+                ShowCaption = false;
+                
+                cuegroup("Sales Group")
+                {
+                    Caption = 'Sales';
+                    
+                    field(SalesThis; Rec."Sales This Month")
+                    {
+                        ApplicationArea = Basic, Suite;
+                        DrillDownPageId = "Sales Invoice List";
+                        ToolTip = 'Specifies sales invoices this month';
+                    }
+                }
+                
+                field(OverdueSales; Rec."Overdue Sales Documents")
+                {
+                    ApplicationArea = Basic, Suite;
+                    ToolTip = 'Specifies overdue sales documents';
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property)
+    (source_table_property
+      value: (quoted_identifier))
+    (layout_section
+      (area_section
+        (cuegroup_section
+          name: (identifier)
+          (cuegroup_layout_property
+            value: (identifier))
+          (show_caption_property
+            value: (boolean))
+          (cuegroup_section
+            name: (quoted_identifier)
+            (caption_property
+              (string_literal))
+            (field_section
+              control_id: (identifier)
+              source_or_field_name: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              (application_area_property
+                value: (identifier)
+                value: (identifier))
+              (drilldown_pageid_property
+                value: (value
+                  (quoted_identifier)))
+              (tool_tip_property
+                (tool_tip_value
+                  (string_literal)))))
+          (field_section
+            control_id: (identifier)
+            source_or_field_name: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            (application_area_property
+              value: (identifier)
+              value: (identifier))
+            (tool_tip_property
+              (tool_tip_value
+                (string_literal)))))))))
