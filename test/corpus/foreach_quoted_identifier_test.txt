@@ -1,0 +1,233 @@
+================================================================================
+Foreach statement with quoted identifier variable
+================================================================================
+
+codeunit 50100 "Test Foreach"
+{
+    procedure TestForeachQuoted()
+    var
+        "Key": Text;
+        Dict: Dictionary of [Text, Text];
+    begin
+        foreach "Key" in Dict.Keys() do begin
+            Message("Key");
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (quoted_identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dictionary_type
+              (type_specification
+                (text_type))
+              (type_specification
+                (text_type))))))
+      (code_block
+        (foreach_statement
+          variable: (quoted_identifier)
+          iterable: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list))
+          body: (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (quoted_identifier)))))))))))
+
+================================================================================
+Foreach with unquoted identifier (existing support)
+================================================================================
+
+codeunit 50101 "Test Foreach Standard"
+{
+    procedure TestForeachStandard()
+    var
+        Item: Record Item;
+    begin
+        foreach Item in Items do
+            ProcessItem(Item);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (foreach_statement
+          variable: (identifier)
+          iterable: (identifier)
+          body: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))))))
+
+================================================================================
+Foreach with complex dictionary operations
+================================================================================
+
+codeunit 50102 "Dictionary Operations"
+{
+    procedure AreEqual(Expected: Dictionary of [Text, Text]; Actual: Dictionary of [Text, Text])
+    var
+        "Key": Text;
+        ExpectedValue: Text;
+        ActualValue: Text;
+    begin
+        if Expected.Count() <> Actual.Count() then
+            Error(DictionaryDifferentSizeErr, Expected.Count(), Actual.Count());
+        foreach "Key" in Expected.Keys() do begin
+            if not Actual.Get("Key", ActualValue) then
+                Error(MissingKeyErr, "Key");
+            Expected.Get("Key", ExpectedValue);
+            if ExpectedValue <> ActualValue then
+                Error(DifferentKeyValueErr, "Key", ExpectedValue, ActualValue);
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+      name: (name
+        (identifier))
+      parameters: (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (generic_type
+              base_type: (identifier)
+              arguments: (type_arguments
+                (type_specification
+                  (text_type))
+                (type_specification
+                  (text_type))))))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (generic_type
+              base_type: (identifier)
+              arguments: (type_arguments
+                (type_specification
+                  (text_type))
+                (type_specification
+                  (text_type))))))))
+      (var_section
+        (variable_declaration
+          name: (quoted_identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (if_statement
+          condition: (comparison_expression
+            left: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))
+            operator: (comparison_operator)
+            right: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list)))
+          then_branch: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list))
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list)))))
+        (foreach_statement
+          variable: (quoted_identifier)
+          iterable: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list))
+          body: (code_block
+            (if_statement
+              condition: (unary_expression
+                (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list
+                    (quoted_identifier)
+                    (identifier))))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (quoted_identifier))))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)
+                (identifier)))
+            (if_statement
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (identifier))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (quoted_identifier)
+                  (identifier)
+                  (identifier))))))))))

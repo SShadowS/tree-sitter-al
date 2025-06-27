@@ -5422,7 +5422,7 @@ enum_type: $ => prec(1, seq(
 
     foreach_statement: $ => prec.right(seq(
       kw('foreach', 10),
-      field('variable', $.identifier),
+      field('variable', choice($.identifier, $._quoted_identifier)),
       prec(2, kw('in')),
       field('iterable', $._expression),
       kw('do', 10),
