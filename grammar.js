@@ -2601,6 +2601,7 @@ module.exports = grammar({
       $.preproc_conditional_var_sections, // Support preprocessor conditional var sections
       $.trigger_declaration,
       $.preproc_conditional_procedures,  // Support preprocessor conditional procedures
+      $.preproc_conditional_mixed_content,  // Support mixed trigger and var sections in preprocessor
       
       // Region directives for code organization
       $.preproc_region,
