@@ -1514,6 +1514,7 @@ module.exports = grammar({
         $._action_property,
         $.trigger_declaration,
         $.var_section,
+        $.preproc_conditional_action_properties,
         ';'
       )),
       '}'
@@ -1546,6 +1547,7 @@ module.exports = grammar({
         $._action_property,
         $.trigger_declaration,
         $.var_section,
+        $.preproc_conditional_action_properties,
         ';'
       )),
       '}'
@@ -2781,7 +2783,8 @@ module.exports = grammar({
         kw('promptoptions'),
         kw('prompt'),
         kw('prompting'),
-        kw('systemactions')
+        kw('systemactions'),
+        kw('processing')
       )),
       ')',
       '{',
@@ -6436,6 +6439,12 @@ enum_type: $ => prec(1, seq(
         $.action_group_section,
         $.area_action_section,
         $.separator_action
+      )),
+
+    // Preprocessor conditional rules for action properties
+    preproc_conditional_action_properties: _preproc_conditional_block_template($ => choice(
+        $._action_property,
+        ';'
       )),
 
     // Preprocessor conditional rules for variable declarations

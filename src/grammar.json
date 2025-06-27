@@ -6025,6 +6025,10 @@
                 "name": "var_section"
               },
               {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_action_properties"
+              },
+              {
                 "type": "STRING",
                 "value": ";"
               }
@@ -6155,6 +6159,10 @@
               {
                 "type": "SYMBOL",
                 "name": "var_section"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_action_properties"
               },
               {
                 "type": "STRING",
@@ -11853,6 +11861,13 @@
                 "content": {
                   "type": "PATTERN",
                   "value": "(?i)systemactions"
+                }
+              },
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "(?i)processing"
                 }
               }
             ]
@@ -28929,6 +28944,68 @@
                       {
                         "type": "SYMBOL",
                         "name": "separator_action"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_action_properties": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_action_property"
+              },
+              {
+                "type": "STRING",
+                "value": ";"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_action_property"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": ";"
                       }
                     ]
                   }

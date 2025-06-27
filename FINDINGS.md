@@ -87,3 +87,47 @@ These two rules should be renamed to more accurately reflect their specific cont
   - Rename the second definition to `simple_filter_expression`.
 
 This change will make the purpose of each rule explicit and prevent any potential parsing ambiguities.
+
+## 4. Redundant `ident()` function
+
+**Observation**:
+The grammar defines a helper function `ident()` that is not used anywhere in the file.
+
+**Resolution**:
+The `ident()` function should be removed to clean up the code.
+
+## 5. Overly specific property templates
+
+**Observation**:
+The grammar uses several templates for properties (e.g., `_boolean_property_template`, `_string_property_template`, `_identifier_property_template`). These templates are too specific and lead to a proliferation of similar-looking rules.
+
+**Resolution**:
+The generic `_value_property_template` should be used more broadly to replace these specific templates. This will require creating more generic value rules (e.g., a generic `_string_value` rule) that can be passed to the template, promoting reusability and reducing the number of rules.
+
+## 6. Inconsistent use of `kw()` for keywords
+
+**Observation**:
+The `kw()` helper function for case-insensitive keyword matching is not used consistently. Some keywords are defined using `kw()`, while others use a `choice()` of all possible case variations (e.g., `choice('IsPreview', 'ispreview', 'ISPREVIEW')`).
+
+**Resolution**:
+All keywords should be defined using the `kw()` function to ensure consistency and improve readability. This will make the grammar more robust and easier to maintain.
+
+## 7. Consolidation of `About` properties
+
+**Observation**:
+The properties `about_title_property` and `about_text_property` are defined, and comments indicate that `page_about_text_property` and `page_about_title_property` have been consolidated into them. However, there are still separate `page_about_text_ml_property` and `page_about_title_ml_property` rules.
+
+**Resolution**:
+These ML properties should be consolidated into more generic `about_text_ml_property` and `about_title_ml_property` rules if they are used in the same way across different object types. This will reduce redundancy and simplify the grammar.
+
+## 8. Lack of a centralized `_boolean_value` rule
+
+**Observation**:
+Many properties that accept a boolean value define the choice of `true` or `false` inline.
+
+**Resolution**:
+A centralized `_boolean_value` rule should be created to make the grammar more consistent and easier to maintain. This rule would be defined as:
+```javascript
+_boolean_value: $ => choice(kw('true'), kw('false')),
+```
+This would replace the current `$.boolean` token and be used in all boolean properties.
