@@ -24,7 +24,8 @@ permissionset 50000 "TEST-PERMSET"
       (property
         (access_property
           value: (value))))
-    (assignable_property)
+    (assignable_property
+      value: (boolean))
     (property_list
       (property
         (caption_property
@@ -69,7 +70,8 @@ permissionset 50001 "SINGLE-INCLUDE"
       (property
         (access_property
           value: (value))))
-    (assignable_property)
+    (assignable_property
+      value: (boolean))
     (included_permission_sets_property
       value: (included_permission_sets_list
         (quoted_identifier)))
@@ -133,7 +135,8 @@ permissionset 50003 "BASIC-ONLY"
   (permissionset_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (assignable_property)
+    (assignable_property
+      value: (boolean))
     (property_list
       (property
         (caption_property

@@ -29,7 +29,8 @@ permissionset 7231 "Master Data Mgt. - Read"
   (permissionset_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (assignable_property)
+    (assignable_property
+      value: (boolean))
     (property_list
       (property
         (access_property

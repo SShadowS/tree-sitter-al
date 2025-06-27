@@ -215,7 +215,7 @@ module.exports = grammar({
     )),
 
     using_statement: $ => seq(
-      'using',
+      kw('using'),
       field('namespace', $.namespace_name),
       ';'
     ),
@@ -645,17 +645,17 @@ module.exports = grammar({
 
     // CONSOLIDATED: page_about_text_property → about_text_property
 
-    // Page-specific version of AboutTextML
-    page_about_text_ml_property: $ => seq(
-      'AboutTextML',
+    // Generic multi-language version of AboutText
+    about_text_ml_property: $ => seq(
+      kw('AboutTextML'),
       $._ml_property_template
     ),
 
     // CONSOLIDATED: page_about_title_property → about_title_property
 
-    // Page-specific version of AboutTitleML
-    page_about_title_ml_property: $ => seq(
-      'AboutTitleML',
+    // Generic multi-language version of AboutTitle
+    about_title_ml_property: $ => seq(
+      kw('AboutTitleML'),
       $._ml_property_template
     ),
 
@@ -1650,9 +1650,7 @@ module.exports = grammar({
         kw('query')
       ),
       field('object_ref', choice(
-        $.integer, 
-        $.identifier, 
-        $._quoted_identifier,
+        $._object_reference,
         $.member_expression  // Support fully qualified names like Microsoft.Manufacturing.StandardCost."Standard Cost Worksheet Names"
       ))
     ),
@@ -2458,7 +2456,7 @@ module.exports = grammar({
     assignable_property: $ => seq(
       'Assignable',
       '=',
-      choice(kw('true'), kw('false')),
+      field('value', $._boolean_value),
       ';'
     ),
 
@@ -2998,11 +2996,7 @@ module.exports = grammar({
     ),
 
     // Property value types for specific properties
-    _table_no_value: $ => choice(
-      $.integer,
-      $.identifier,
-      $._quoted_identifier
-    ),
+    _table_no_value: $ => $._object_reference,
 
     subtype_value: $ => choice(
       // Codeunit SubType values
@@ -3017,7 +3011,7 @@ module.exports = grammar({
       $.identifier  // Allow any identifier to be future-proof
     ),
 
-    single_instance_value: $ => $.boolean,
+    single_instance_value: $ => $._boolean_value,
 
     event_subscriber_instance_value: $ => choice(
       kw('manual'),
@@ -3181,7 +3175,7 @@ module.exports = grammar({
     page_id_value: $ => $._object_reference,
 
 
-    blank_zero_value: $ => $.boolean,
+    blank_zero_value: $ => $._boolean_value,
 
     option_caption_value: $ => $.string_literal,
 
@@ -3198,13 +3192,13 @@ module.exports = grammar({
       kw('masterdataintegration')
     ),
 
-    closing_dates_value: $ => $.boolean,
+    closing_dates_value: $ => $._boolean_value,
     char_allowed_value: $ => choice(
       $.string_literal,     // 'AZ', '0-9', etc.
       $.boolean,           // true/false (legacy?)
       $.identifier         // Variable reference
     ),
-    compressed_value: $ => $.boolean,
+    compressed_value: $ => $._boolean_value,
     date_formula_value: $ => choice(
       $.string_literal,
       $.boolean,
@@ -3236,8 +3230,8 @@ module.exports = grammar({
       kw('Boolean'),
       kw('Picklist')
     ),
-    not_blank_value: $ => $.boolean,
-    numeric_value: $ => $.boolean,
+    not_blank_value: $ => $._boolean_value,
+    numeric_value: $ => $._boolean_value,
     obsolete_reason_value: $ => $.string_literal,
     obsolete_state_value: $ => choice(
       kw('pending'),
@@ -3284,7 +3278,13 @@ module.exports = grammar({
     test_table_relation_value: $ => $.boolean,
     tool_tip_value: $ => seq(
       $.string_literal,
-      optional(seq(',', kw('comment'), '=', $.string_literal))
+      repeat(seq(
+        ',',
+        choice(
+          seq(kw('comment'), '=', $.string_literal),
+          seq(kw('locked'), '=', $.boolean)
+        )
+      ))
     ),
     unique_value: $ => $.boolean,
     validate_table_relation_value: $ => $.boolean,
@@ -5358,6 +5358,9 @@ enum_type: $ => prec(1, seq(
       prec(1, kw('false'))
     ),
 
+    // Centralized boolean value rule for property definitions
+    _boolean_value: $ => $.boolean,
+
     grid_layout_value: $ => choice(
       kw('rows'),
       kw('columns')
@@ -5904,6 +5907,7 @@ enum_type: $ => prec(1, seq(
         $._enum_type_reference,
         $.identifier,
         $._quoted_identifier,
+        $.member_expression,
         $.field_access,
         $.subscript_expression,
         $._chained_expression
@@ -6720,6 +6724,8 @@ enum_type: $ => prec(1, seq(
       // Help and documentation properties
       $.about_title_property,
       $.about_text_property,
+      $.about_title_ml_property,
+      $.about_text_ml_property,
       $.context_sensitive_help_page_property,
       $.additional_search_terms_property,
       $.additional_search_terms_ml_property,
@@ -6940,8 +6946,7 @@ enum_type: $ => prec(1, seq(
       $.data_classification_property,
       $.title_property,
       $.extended_datatype_property,
-      $.page_about_title_ml_property,
-      $.page_about_text_ml_property,
+      // AboutTitleML and AboutTextML are now in _universal_properties
       $.odata_edm_type_property,
       $.drill_down_property,
       $.image_property,              // Image property for field icons
@@ -6987,8 +6992,7 @@ enum_type: $ => prec(1, seq(
       
       // Page UI properties
       $.image_property,
-      $.page_about_text_ml_property,
-      $.page_about_title_ml_property,
+      // AboutTextML and AboutTitleML are now in _universal_properties
       
       // Page workflow properties
       $.prompt_mode_property,
@@ -7215,8 +7219,7 @@ enum_type: $ => prec(1, seq(
       $._access_properties,       // access_by_permission
       
       // Action-specific properties only
-      $.page_about_title_ml_property,
-      $.page_about_text_ml_property,
+      // AboutTitleML and AboutTextML are now in _universal_properties
       $.allowed_file_extensions_property,
       $.allow_multiple_files_property,
       $.custom_action_type_property,
@@ -7271,7 +7274,7 @@ enum_type: $ => prec(1, seq(
     // Centralized property template for DRY principle
     _boolean_property_template: $ => seq(
       '=',
-      field('value', $.boolean),
+      field('value', $._boolean_value),
       ';'
     ),
 
@@ -7396,7 +7399,7 @@ enum_type: $ => prec(1, seq(
 
     _caption_boolean_template: $ => seq(
       '=',
-      field('value', $.boolean),
+      field('value', $._boolean_value),
       ';'
     ),
 

@@ -394,7 +394,8 @@ permissionset 50006 "Test Permission Set"
     (preproc_conditional_permissionset_properties
       (preproc_if
         condition: (identifier))
-      (assignable_property)
+      (assignable_property
+        value: (boolean))
       (property_list
         (property
           (caption_property

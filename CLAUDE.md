@@ -659,6 +659,30 @@ max_occurs_value: $ => choice(
 ),
 ```
 
+### 9. Object-Specific Properties That Should Be Universal
+**Symptom**: Properties with object-specific prefixes (e.g., `page_about_text_ml_property`) that are actually used across multiple object types
+```
+// BAD: Separate definitions for same property
+page_about_text_ml_property: $ => seq(...)
+report_about_text_ml_property: $ => seq(...)
+```
+
+**Root Cause**: Properties were initially added for specific objects but are actually universal
+
+**Fix Pattern**:
+1. Create generic property without object prefix:
+```javascript
+// GOOD: Single universal definition
+about_text_ml_property: $ => seq(
+  kw('AboutTextML'),
+  $._ml_property_template
+),
+```
+2. Add to `_universal_properties` list
+3. Remove object-specific versions from property lists (they'll inherit from universal)
+4. Update test expectations to use generic node names
+5. Delete deprecated object-specific rules if no longer referenced
+
 ### Quick Debugging Process
 1. **Isolate the failing construct**: Test just the problematic line
 2. **Test in minimal context**: Wrap in simplest valid AL structure
