@@ -1,0 +1,197 @@
+================================================================================
+DataItemTableFilter with equals operator
+================================================================================
+
+query 500 "Item By Lot No Filter"
+{
+    QueryType = Normal;
+    DataAccessIntent = ReadOnly;
+
+    elements
+    {
+        dataitem(ItemLedgerEntry; "Item Ledger Entry")
+        {
+            DataItemTableFilter = "Lot No." = filter(<> ''), Open = filter(= true);
+            
+            filter(Item_No; "Item No.")
+            { }
+            filter(Location_Code; "Location Code")
+            { }
+            
+            column(Lot_No; "Lot No.")
+            { }
+            column(Remaining_Quantity; "Remaining Quantity")
+            {
+                ColumnFilter = Remaining_Quantity = filter(<> 0);
+                Method = Sum;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (query_type_property)
+    (data_access_intent_property
+      value: (identifier))
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (data_item_table_filter_property
+          value: (table_filter_value
+            field: (quoted_identifier)
+            filter: (simple_filter_expression
+              (string_literal))
+            field: (identifier)
+            filter: (simple_filter_expression
+              (boolean))))
+        (filter_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (filter_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier)
+          (column_filter_property
+            field_name: (identifier)
+            filter_expression: (filter_not_equal_expression
+              value: (integer)))
+          (generic_property
+            name: (identifier)
+            value: (identifier)))))))
+
+================================================================================
+DataItemTableFilter with various filter expressions
+================================================================================
+
+query 501 "Complex Filters"
+{
+    elements
+    {
+        dataitem(Customer; Customer)
+        {
+            DataItemTableFilter = Balance = filter(> 1000), Blocked = filter(= false);
+            
+            column(No; "No.")
+            { }
+        }
+        
+        dataitem(Item; Item)
+        {
+            DataItemTableFilter = Type = filter(= 'Inventory'), "Unit Cost" = filter(<= 100);
+            
+            column(No; "No.")
+            { }
+        }
+        
+        dataitem(SalesLine; "Sales Line")
+        {
+            DataItemTableFilter = Type = filter(= Item), Quantity = filter(>= 1);
+            
+            column(Document_No; "Document No.")
+            { }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (data_item_table_filter_property
+          value: (table_filter_value
+            field: (identifier)
+            filter: (simple_filter_expression
+              (integer))
+            field: (identifier)
+            filter: (simple_filter_expression
+              (boolean))))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier)))
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (data_item_table_filter_property
+          value: (table_filter_value
+            field: (identifier)
+            filter: (simple_filter_expression
+              (string_literal))
+            field: (quoted_identifier)
+            filter: (simple_filter_expression
+              (integer))))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier)))
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (data_item_table_filter_property
+          value: (table_filter_value
+            field: (identifier)
+            filter: (simple_filter_expression
+              (identifier))
+            field: (identifier)
+            filter: (simple_filter_expression
+              (integer))))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))))
+
+================================================================================
+DataItemTableFilter with single equals filter
+================================================================================
+
+query 502 "Simple Equals Filter"
+{
+    elements
+    {
+        dataitem(Vendor; Vendor)
+        {
+            DataItemTableFilter = Blocked = filter(= true);
+            
+            column(No; "No.")
+            { }
+            column(Name; Name)
+            { }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (data_item_table_filter_property
+          value: (table_filter_value
+            field: (identifier)
+            filter: (simple_filter_expression
+              (boolean))))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (identifier))))))
