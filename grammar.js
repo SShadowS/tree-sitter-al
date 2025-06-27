@@ -1172,7 +1172,9 @@ module.exports = grammar({
           '|',
           choice($.string_literal, $.identifier, $._quoted_identifier)
         ))
-      )
+      ),
+      // Support for range expressions
+      $.filter_range_expression
     ),
 
     data_item_link_value: $ => seq(
