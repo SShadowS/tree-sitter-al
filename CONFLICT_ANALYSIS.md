@@ -2,7 +2,45 @@
 
 ## Known Parsing Issues
 
-### 1. Complex Preprocessor Patterns in Table Extensions
+### 1. Complex Preprocessor Split Area/Group Structures
+**File**: `./BC.History/BaseApp/Source/Base Application/System/RapidStart/RapidStartServicesRC.Page.al`
+
+**Issue**: Parser fails when preprocessor conditionals split area/group content with closing braces in different conditional branches.
+
+**Pattern**:
+```al
+area(rolecenter)
+{
+#if not CLEAN24
+    group(Control2) { ... }
+}  // Closing brace for area in one branch
+#else
+    part(Activities; ...) { ... }
+}  // Different closing brace for area in else branch
+#endif
+}  // Parser expects this but it's already closed above
+```
+
+**Impact**: Rare pattern affecting very few files. This represents extreme preprocessor usage that fundamentally changes the structure of the code.
+
+### 2. Method Calls on Enum Values
+**File**: `./BC.History/EssentialBusinessHeadlines/Source/Essential Business Headlines/src/pages/HeadlineDetails.Page.al`
+
+**Issue**: Parser fails to parse method calls on qualified enum values like `SalesLine.Type::Item.AsInteger()`.
+
+**Pattern**:
+```al
+case ProductType of
+    SalesLine.Type::Item.AsInteger():
+        // statements
+end;
+```
+
+**Root Cause**: The enum_value_expression has high precedence (13) which prevents it from being used as the object of a member expression. The parser successfully parses `SalesLine.Type::Item` but then creates an ERROR node when it encounters `.AsInteger()`.
+
+**Impact**: Affects case statements and assignments where enum values have method calls. This is a moderately common pattern in Business Central for converting enum values to integers.
+
+### 3. Complex Preprocessor Patterns in Table Extensions
 **File**: `./BC.History/SubscriptionBilling/Source/Subscription Billing/Service Objects/Table Extensions/Item.TableExt.al`
 
 **Issue**: Parser fails to correctly parse table extensions with complex preprocessor conditionals that wrap if statements where:

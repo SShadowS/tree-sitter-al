@@ -5504,11 +5504,13 @@ enum_type: $ => prec(1, seq(
     // Unified call expression rule
 // Unified call expression rule
     call_expression: $ => prec(12, seq( // Increased precedence to 12 (higher than member_expression)
-      // Function can be an identifier, member access, or field access
+      // Function can be an identifier, member access, field access, or qualified enum value
       field('function', choice(
         $.identifier,
         $.member_expression,
-        $.field_access
+        $.field_access,
+        $.qualified_enum_value,
+        $.enum_value_expression
       )),
       field('arguments', $.argument_list)
     )),
@@ -5780,6 +5782,7 @@ enum_type: $ => prec(1, seq(
       $.database_reference, // Allow DATABASE::"Table Name" patterns
       $._chained_expression, // Allow member expressions like Value.IsInteger
       $.unary_expression, // Allow NOT expressions in case patterns
+      $.call_expression, // Allow method calls like SalesLine.Type::Item.AsInteger()
       // Complex parenthesized expressions for CASE TRUE OF patterns
       prec(12, $.parenthesized_expression),
       // Boolean expressions for CASE TRUE OF patterns  

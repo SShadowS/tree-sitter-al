@@ -4804,6 +4804,10 @@
         "required": true,
         "types": [
           {
+            "type": "enum_value_expression",
+            "named": true
+          },
+          {
             "type": "field_access",
             "named": true
           },
@@ -4813,6 +4817,10 @@
           },
           {
             "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
             "named": true
           }
         ]
