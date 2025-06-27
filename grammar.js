@@ -2168,10 +2168,15 @@ module.exports = grammar({
       optional($.parameter_list),
       ')',
       optional(choice(
-        seq(':', field('return_type', $.type_specification)), // Simple return type
+        $._interface_return_specification,
         $._procedure_named_return        // Named return value
       )),
       optional(';')
+    ),
+    
+    _interface_return_specification: $ => seq(
+      ':',
+      field('return_type', $.return_type)
     ),
 
     attributed_interface_procedure: $ => seq(
@@ -3058,7 +3063,8 @@ module.exports = grammar({
       kw('duration'),
       kw('masked'),
       kw('richcontent'),
-      kw('barcode')
+      kw('barcode'),
+      kw('person')
     ),
 
     // Values for the first 5 missing Page Field Properties

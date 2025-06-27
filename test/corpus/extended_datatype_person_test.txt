@@ -1,0 +1,118 @@
+================================================================================
+ExtendedDatatype with Person value
+================================================================================
+
+table 50000 "Test Table"
+{
+    fields
+    {
+        field(1; MyMedia; Media)
+        {
+            ExtendedDatatype = Person;
+        }
+        field(2; MyMediaSet; MediaSet)
+        {
+            ExtendedDatatype = Person;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (extended_datatype_property
+          value: (extended_datatype_value)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (extended_datatype_property
+          value: (extended_datatype_value))))))
+
+================================================================================
+ExtendedDatatype with other valid values
+================================================================================
+
+table 50001 "Test Table 2"
+{
+    fields
+    {
+        field(1; MyPhone; Text[30])
+        {
+            ExtendedDatatype = PhoneNo;
+        }
+        field(2; MyEmail; Text[80])
+        {
+            ExtendedDatatype = Email;
+        }
+        field(3; MyURL; Text[250])
+        {
+            ExtendedDatatype = URL;
+        }
+        field(4; MyRatio; Decimal)
+        {
+            ExtendedDatatype = Ratio;
+        }
+        field(5; MyMasked; Text[50])
+        {
+            ExtendedDatatype = Masked;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (extended_datatype_property
+          value: (extended_datatype_value)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (extended_datatype_property
+          value: (extended_datatype_value)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (extended_datatype_property
+          value: (extended_datatype_value)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (extended_datatype_property
+          value: (extended_datatype_value)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (extended_datatype_property
+          value: (extended_datatype_value))))))

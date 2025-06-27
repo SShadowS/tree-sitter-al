@@ -9082,21 +9082,8 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": ":"
-                    },
-                    {
-                      "type": "FIELD",
-                      "name": "return_type",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "type_specification"
-                      }
-                    }
-                  ]
+                  "type": "SYMBOL",
+                  "name": "_interface_return_specification"
                 },
                 {
                   "type": "SYMBOL",
@@ -9120,6 +9107,23 @@
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "_interface_return_specification": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "return_type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "return_type"
+          }
         }
       ]
     },
@@ -13098,6 +13102,13 @@
           "content": {
             "type": "PATTERN",
             "value": "(?i)barcode"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)person"
           }
         }
       ]

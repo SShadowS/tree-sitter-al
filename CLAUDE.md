@@ -399,6 +399,7 @@ When adding scanner features:
 - Error propagation can cascade from single syntax errors
 - **Qualified enum values with quoted enum type names**: Due to tree-sitter's lexing behavior, patterns like `"Enum Type Name"::EnumValue` cannot be parsed correctly. The quoted string is lexed as a single token before the parser can recognize the `::` pattern. Use unquoted enum type names instead (e.g., `EnumTypeName::EnumValue`).
 - **WHERE clauses in deeply nested preprocessor contexts**: WHERE clauses within table relations that are inside preprocessor conditionals may not parse correctly in certain complex nesting scenarios
+- **Interface return types with length specifications**: Due to tree-sitter's LR parser limitations, interface procedures with return types that include length specifications (e.g., `Code[50]`, `Text[100]`) create ERROR nodes. The parser reduces the type early before seeing the length specification. This works correctly in regular procedures and parameters but fails specifically for interface return types. Use type definitions without length specifications in interface return types as a workaround.
 
 ## Build Systems
 The project supports multiple build approaches:
