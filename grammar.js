@@ -5062,6 +5062,22 @@ enum_type: $ => prec(1, seq(
       $.preproc_conditional_keys
     )),
 
+    preproc_conditional_key_properties: _preproc_conditional_block_template($ => choice(
+      $.clustered_property,
+      $.enabled_property,
+      $.unique_property,
+      $.included_fields_property,
+      $.maintain_sift_index_property,
+      $.maintain_sql_index_property,
+      $.sql_index_property,
+      $.sum_index_fields_property,
+      $.obsolete_reason_property,
+      $.obsolete_state_property,
+      $.obsolete_tag_property,
+      $.property,
+      $.preproc_conditional_key_properties
+    )),
+
     key_declaration: $ => seq(
       kw('key'),
       '(',
@@ -5080,6 +5096,10 @@ enum_type: $ => prec(1, seq(
           $.maintain_sql_index_property,
           $.sql_index_property,
           $.sum_index_fields_property,
+          $.obsolete_reason_property,
+          $.obsolete_state_property,
+          $.obsolete_tag_property,
+          $.preproc_conditional_key_properties,
           $.property
         )),
         '}'
