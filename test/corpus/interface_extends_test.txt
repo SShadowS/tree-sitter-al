@@ -36,7 +36,7 @@ Interface extends with access modifier
 
 interface "My Interface" extends MyBaseInterface access = Internal
 {
-    procedure DoSomething()
+    procedure DoSomething();
 }
 
 --------------------------------------------------------------------------------
@@ -54,8 +54,8 @@ Simple interface without extends
 
 interface "Simple Interface"
 {
-    procedure Method1()
-    procedure Method2(Value: Integer)
+    procedure Method1();
+    procedure Method2(Value: Integer);
 }
 
 --------------------------------------------------------------------------------

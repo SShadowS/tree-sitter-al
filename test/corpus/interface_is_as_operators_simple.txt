@@ -4,7 +4,7 @@ Simple 'is' operator test
 
 codeunit 50100 Test
 {
-    procedure TestIs()
+    procedure TestIs();
     begin
         if Shape is IShape then
             Message('test');
@@ -37,7 +37,7 @@ Simple 'as' operator test
 
 codeunit 50101 Test2
 {
-    procedure TestAs()
+    procedure TestAs();
     begin
         Result := Shape as IDrawable;
     end;
@@ -66,7 +66,7 @@ Mixed operators test
 
 codeunit 50102 Test3
 {
-    procedure TestMixed()
+    procedure TestMixed();
     begin
         if (Obj is IShape) and (Obj is IDrawable) then
             Result := Obj as IShape;

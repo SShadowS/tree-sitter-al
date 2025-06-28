@@ -2171,7 +2171,7 @@ module.exports = grammar({
         $._interface_return_specification,
         $._procedure_named_return        // Named return value
       )),
-      optional(';')
+      ';'
     ),
     
     _interface_return_specification: $ => seq(
