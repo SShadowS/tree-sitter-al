@@ -8376,6 +8376,10 @@
           "named": true
         },
         {
+          "type": "controladdin_procedure",
+          "named": true
+        },
+        {
           "type": "controladdin_property",
           "named": true
         },
@@ -8416,7 +8420,7 @@
           "named": true
         },
         {
-          "type": "preproc_conditional_controladdin_properties",
+          "type": "preproc_conditional_controladdin_elements",
           "named": true
         },
         {
@@ -30918,7 +30922,7 @@
     }
   },
   {
-    "type": "preproc_conditional_controladdin_properties",
+    "type": "preproc_conditional_controladdin_elements",
     "named": true,
     "fields": {},
     "children": {
@@ -30954,6 +30958,10 @@
           "named": true
         },
         {
+          "type": "attributed_controladdin_procedure",
+          "named": true
+        },
+        {
           "type": "caption_class_property",
           "named": true
         },
@@ -30967,6 +30975,14 @@
         },
         {
           "type": "context_sensitive_help_page_property",
+          "named": true
+        },
+        {
+          "type": "controladdin_event",
+          "named": true
+        },
+        {
+          "type": "controladdin_procedure",
           "named": true
         },
         {
@@ -35593,27 +35609,34 @@
     "named": true,
     "fields": {
       "condition": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "NOT",
-            "named": false
-          },
-          {
-            "type": "Not",
-            "named": false
-          },
           {
             "type": "identifier",
             "named": true
           },
           {
-            "type": "not",
-            "named": false
+            "type": "preproc_not_expression",
+            "named": true
           }
         ]
       }
+    }
+  },
+  {
+    "type": "preproc_not_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
     }
   },
   {

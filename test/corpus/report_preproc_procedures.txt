@@ -37,7 +37,8 @@ report 1111 TestReport
         (identifier)))
     (preproc_conditional_procedures
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (attribute_list
         (attribute
           attribute_name: (identifier)
@@ -121,7 +122,8 @@ report 50000 "Complex Report"
       (preproc_endif))
     (preproc_conditional_procedures
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (attribute_list
         (attribute
           attribute_name: (identifier)

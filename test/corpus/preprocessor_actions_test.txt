@@ -153,7 +153,8 @@ pageextension 50002 ComplexActions extends "Item List"
       (area_action_section
         (preproc_conditional_actions
           (preproc_if
-            condition: (identifier))
+            condition: (preproc_not_expression
+              (identifier)))
           (action_group_section
             name: (identifier)
             (caption_property
@@ -207,7 +208,8 @@ page 50003 MixedCase
     (actions_section
       (preproc_conditional_actions
         (preproc_if
-          condition: (identifier))
+          condition: (preproc_not_expression
+            (identifier)))
         (area_action_section
           (action_declaration
             name: (identifier)

@@ -51,7 +51,8 @@ table 23 "Vendor"
           permission: (permission_type))
         (preproc_conditional_tabledata_permissions
           (preproc_if
-            condition: (identifier))
+            condition: (preproc_not_expression
+              (identifier)))
           (tabledata_permission
             keyword: (tabledata_keyword)
             table_name: (quoted_identifier)

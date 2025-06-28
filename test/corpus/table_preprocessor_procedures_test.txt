@@ -43,7 +43,8 @@ table 50100 "Test Table"
           (string_literal))))
     (preproc_conditional_mixed_content
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (attribute_list
         (attribute
           attribute_name: (identifier)
@@ -110,7 +111,8 @@ table 50101 "VAT Amount Line"
     object_name: (quoted_identifier)
     (preproc_conditional_procedures
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (attribute_list
         (attribute
           attribute_name: (identifier)
@@ -157,7 +159,8 @@ table 50101 "VAT Amount Line"
       (preproc_endif))
     (preproc_conditional_mixed_content
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (attribute_list
         (attribute
           attribute_name: (identifier)
@@ -304,7 +307,8 @@ table 50103 "Test Table"
           (string_literal))))
     (preproc_conditional_mixed_content
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (trigger_declaration
         name: (trigger_name)
         (code_block
@@ -352,7 +356,8 @@ table 50104 "Test Table"
     object_name: (quoted_identifier)
     (preproc_conditional_procedures
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (procedure
         name: (name
           (identifier))

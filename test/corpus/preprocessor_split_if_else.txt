@@ -98,7 +98,8 @@ codeunit 50001 "Multiple Split If-Else"
           (if_statement
             (preproc_split_if_else
               (preproc_if
-                condition: (identifier))
+                condition: (preproc_not_expression
+                  (identifier)))
               condition: (unary_expression
                 (field_access
                   record: (identifier)
@@ -137,7 +138,8 @@ codeunit 50001 "Multiple Split If-Else"
           (if_statement
             (preproc_split_if_else
               (preproc_if
-                condition: (identifier))
+                condition: (preproc_not_expression
+                  (identifier)))
               condition: (call_expression
                 function: (member_expression
                   object: (identifier)

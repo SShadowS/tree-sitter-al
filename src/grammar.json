@@ -8429,6 +8429,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "controladdin_procedure"
+        },
+        {
+          "type": "SYMBOL",
           "name": "attributed_controladdin_procedure"
         },
         {
@@ -8437,7 +8441,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "preproc_conditional_controladdin_properties"
+          "name": "preproc_conditional_controladdin_elements"
         }
       ]
     },
@@ -8873,36 +8877,27 @@
       ]
     },
     "attributed_controladdin_procedure": {
-      "type": "CHOICE",
+      "type": "SEQ",
       "members": [
         {
-          "type": "SEQ",
+          "type": "CHOICE",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_conditional_attributes"
-                }
-              ]
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "SYMBOL",
-                "name": "pragma"
-              }
+              "type": "SYMBOL",
+              "name": "attribute_list"
             },
             {
               "type": "SYMBOL",
-              "name": "controladdin_procedure"
+              "name": "preproc_conditional_attributes"
             }
           ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pragma"
+          }
         },
         {
           "type": "SYMBOL",
@@ -29138,6 +29133,92 @@
         }
       ]
     },
+    "preproc_conditional_controladdin_elements": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_controladdin_properties"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "controladdin_event"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "controladdin_procedure"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "attributed_controladdin_procedure"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "property_list"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_controladdin_properties"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "controladdin_event"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "controladdin_procedure"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "attributed_controladdin_procedure"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "property_list"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
     "preproc_conditional_entitlement_properties": {
       "type": "SEQ",
       "members": [
@@ -29623,33 +29704,37 @@
                 "name": "identifier"
               },
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": "not"
-                      },
-                      {
-                        "type": "STRING",
-                        "value": "NOT"
-                      },
-                      {
-                        "type": "STRING",
-                        "value": "Not"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "identifier"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "preproc_not_expression"
               }
             ]
           }
+        }
+      ]
+    },
+    "preproc_not_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "not"
+            },
+            {
+              "type": "STRING",
+              "value": "NOT"
+            },
+            {
+              "type": "STRING",
+              "value": "Not"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
         }
       ]
     },

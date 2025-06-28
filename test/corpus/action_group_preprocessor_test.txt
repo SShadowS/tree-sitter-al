@@ -42,7 +42,8 @@ page 50000 "Extension Management"
             (string_literal))
           (preproc_conditional_actions
             (preproc_if
-              condition: (identifier))
+              condition: (preproc_not_expression
+                (identifier)))
             (pragma)
             (actionref_declaration
               promoted_name: (quoted_identifier)

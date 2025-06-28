@@ -48,7 +48,8 @@ permissionset 301 "No. Series - Read"
           permission: (permission_type))
         (preproc_conditional_permissions
           (preproc_if
-            condition: (identifier))
+            condition: (preproc_not_expression
+              (identifier)))
           (pragma)
           (permission_entry
             object_type: (identifier)
@@ -151,7 +152,8 @@ permissionset 50300 "Complex Permissions"
           permission: (permission_type))
         (preproc_conditional_permissions
           (preproc_if
-            condition: (identifier))
+            condition: (preproc_not_expression
+              (identifier)))
           (pragma)
           (pragma)
           (permission_entry
@@ -195,7 +197,8 @@ permissionset 50400 "Pragma Heavy Permissions"
       (permission_list
         (preproc_conditional_permissions
           (preproc_if
-            condition: (identifier))
+            condition: (preproc_not_expression
+              (identifier)))
           (pragma)
           (permission_entry
             object_type: (identifier)

@@ -26,7 +26,8 @@ page 50000 "Test Page"
     (page_type_property)
     (preproc_conditional_mixed_content
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (trigger_declaration
         name: (trigger_name)
         (code_block
@@ -117,7 +118,8 @@ page 30114 "Shpfy Order Attributes"
                 (string_literal))))
           (preproc_conditional_layout
             (preproc_if
-              condition: (identifier))
+              condition: (preproc_not_expression
+                (identifier)))
             (field_section
               control_id: (identifier)
               source_or_field_name: (member_expression
@@ -131,7 +133,8 @@ page 30114 "Shpfy Order Attributes"
             (preproc_endif)))))
     (preproc_conditional_mixed_content
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (trigger_declaration
         name: (trigger_name)
         (var_section
@@ -251,7 +254,8 @@ page 50001 "Complex Page"
             value: (identifier)))))
     (preproc_conditional_mixed_content
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (trigger_declaration
         name: (trigger_name)
         (var_section

@@ -53,7 +53,8 @@ enum 50100 "Payment Transaction Type"
         (string_literal)))
     (preproc_conditional_enum_values
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)

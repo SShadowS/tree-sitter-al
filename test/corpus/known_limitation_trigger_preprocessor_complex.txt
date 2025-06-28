@@ -33,7 +33,8 @@ table 5080 Todo
     (named_trigger
       (preproc_conditional_var_sections
         (preproc_if
-          condition: (identifier))
+          condition: (preproc_not_expression
+            (identifier)))
         (var_section
           (variable_declaration
             name: (identifier)
@@ -59,7 +60,8 @@ table 5080 Todo
               arguments: (argument_list))
             (preproc_conditional_statements
               (preproc_if
-                condition: (identifier))
+                condition: (preproc_not_expression
+                  (identifier)))
               (call_expression
                 function: (member_expression
                   object: (identifier)

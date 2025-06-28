@@ -52,7 +52,8 @@ enum 264 "Intrastat Source Type"
 (source_file
   (preprocessor_file_conditional
     condition: (preproc_if
-      condition: (identifier))
+      condition: (preproc_not_expression
+        (identifier)))
     consequence: (namespace_declaration
       name: (namespace_name
         (identifier)

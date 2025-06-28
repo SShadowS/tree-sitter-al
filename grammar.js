@@ -2032,9 +2032,10 @@ module.exports = grammar({
     _controladdin_element: $ => choice(
       $._controladdin_properties,    // Centralized properties
       $.controladdin_event,          // ControlAddIn structural elements
-      $.attributed_controladdin_procedure,  // ControlAddIn procedures (with or without attributes)
+      $.controladdin_procedure,      // ControlAddIn procedures without attributes
+      $.attributed_controladdin_procedure,  // ControlAddIn procedures with attributes
       $.property_list,               // Generic fallback
-      $.preproc_conditional_controladdin_properties
+      $.preproc_conditional_controladdin_elements
     ),
 
     entitlement_declaration: $ => seq(
@@ -2131,8 +2132,9 @@ module.exports = grammar({
       optional(';')
     ),
 
-    attributed_controladdin_procedure: $ => choice(
-      seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.controladdin_procedure),
+    attributed_controladdin_procedure: $ => seq(
+      choice($.attribute_list, $.preproc_conditional_attributes), 
+      repeat($.pragma), 
       $.controladdin_procedure
     ),
 
@@ -6502,6 +6504,14 @@ enum_type: $ => prec(1, seq(
     // Preprocessor conditional rules for controladdin properties
     preproc_conditional_controladdin_properties: _preproc_conditional_block_template($ => choice($._controladdin_properties, $.property_list)),
 
+    preproc_conditional_controladdin_elements: _preproc_conditional_block_template($ => choice(
+      $._controladdin_properties,
+      $.controladdin_event,
+      $.controladdin_procedure,
+      $.attributed_controladdin_procedure,
+      $.property_list
+    )),
+
     preproc_conditional_entitlement_properties: _preproc_conditional_block_template($ => choice($._entitlement_properties, $.property_list)),
 
     // Preprocessor conditional rules for profile properties
@@ -6543,8 +6553,13 @@ enum_type: $ => prec(1, seq(
       choice('#if', '#IF', '#If'),
       field('condition', choice(
         $.identifier,
-        seq(choice('not', 'NOT', 'Not'), $.identifier)
+        $.preproc_not_expression
       ))
+    ),
+
+    preproc_not_expression: $ => seq(
+      choice('not', 'NOT', 'Not'),
+      $.identifier
     ),
 
     preproc_else: $ => choice('#else', '#ELSE', '#Else'),

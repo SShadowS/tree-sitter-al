@@ -35,7 +35,8 @@ report 50100 "Test Report"
           name: (trigger_name)
           (preproc_conditional_var_sections
             (preproc_if
-              condition: (identifier))
+              condition: (preproc_not_expression
+                (identifier)))
             (var_section
               (variable_declaration
                 name: (identifier)
@@ -156,7 +157,8 @@ page 50100 "Test Page"
       name: (trigger_name)
       (preproc_conditional_var_sections
         (preproc_if
-          condition: (identifier))
+          condition: (preproc_not_expression
+            (identifier)))
         (var_section
           (variable_declaration
             name: (identifier)
