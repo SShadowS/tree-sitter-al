@@ -6636,8 +6636,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Image"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Image"
+          }
         },
         {
           "type": "SYMBOL",

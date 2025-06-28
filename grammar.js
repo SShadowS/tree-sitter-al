@@ -1648,7 +1648,7 @@ module.exports = grammar({
     ),
 
     image_property: $ => seq(
-      'Image',
+      kw('Image'),
       $._mixed_identifier_string_property_template
     ),
 
