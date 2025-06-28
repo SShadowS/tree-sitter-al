@@ -1,0 +1,341 @@
+================================================================================
+Case statement with preprocessor conditional in else branch
+================================================================================
+
+codeunit 50000 "Test Case Else"
+{
+    procedure UpdateDimension(GlobalDimCodeNo: Integer; NewDimValue: Code[20])
+    var
+        WorkCenter: Record "Work Center";
+#if not CLEAN26
+        DefaultDimension: Record "Default Dimension";
+#endif
+    begin
+        case GlobalDimCodeNo of
+            1:
+                WorkCenter."Global Dimension 1 Code" := NewDimValue;
+            2:
+                WorkCenter."Global Dimension 2 Code" := NewDimValue;
+            else
+#if CLEAN26
+                OnUpdateWorkCenterGlobalDimCodeCaseElse(GlobalDimCodeNo, WorkCenterNo, NewDimValue);
+#else
+                begin
+                    DefaultDimension.RunOnUpdateWorkCenterGlobalDimCodeCaseElse(GlobalDimCodeNo, WorkCenterNo, NewDimValue);
+                    OnUpdateWorkCenterGlobalDimCodeCaseElse(GlobalDimCodeNo, WorkCenterNo, NewDimValue);
+                end;
+#endif
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (basic_type)))
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (code_type
+                length: (integer)))))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (preproc_conditional_variables
+            (preproc_if
+              condition: (preproc_not_expression
+                (identifier)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))
+            (preproc_endif)))
+        (code_block
+          (case_statement
+            expression: (identifier)
+            (case_branch
+              pattern: (integer)
+              statements: (assignment_expression
+                left: (field_access
+                  record: (identifier)
+                  field: (quoted_identifier))
+                right: (identifier)))
+            (case_branch
+              pattern: (integer)
+              statements: (assignment_expression
+                left: (field_access
+                  record: (identifier)
+                  field: (quoted_identifier))
+                right: (identifier)))
+            (else_branch
+              statements: (preproc_conditional_statements
+                (preproc_if
+                  condition: (identifier))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (identifier)
+                    (identifier)))
+                (preproc_else)
+                (identifier)
+                (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list
+                    (identifier)
+                    (identifier)
+                    (identifier)))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (identifier)
+                    (identifier)))
+                (identifier)
+                (preproc_endif)))))))))
+
+================================================================================
+Simple case with preprocessor in else
+================================================================================
+
+codeunit 50001 "Simple Case Test"
+{
+    procedure TestCase(Value: Integer)
+    begin
+        case Value of
+            1:
+                Message('One');
+            2:
+                Message('Two');
+            else
+#if CLEAN26
+                Message('Other - Clean');
+#else
+                Message('Other - Legacy');
+#endif
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (integer)
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (case_branch
+            pattern: (integer)
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (else_branch
+            statements: (preproc_conditional_statements
+              (preproc_if
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_else)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif))))))))
+
+================================================================================
+Nested case with multiple preprocessor conditions
+================================================================================
+
+codeunit 50002 "Nested Case Test"
+{
+    procedure ComplexCase(Type: Integer; SubType: Integer)
+    begin
+        case Type of
+            1:
+                case SubType of
+                    10:
+                        Process10();
+                    20:
+                        Process20();
+                    else
+#if FEATURE1
+                        ProcessFeature1();
+#elif FEATURE2
+                        ProcessFeature2();
+#else
+                        ProcessDefault();
+#endif
+                end;
+            else
+#if not CLEAN26
+                begin
+                    LegacyProcess();
+                    LogActivity();
+                end;
+#else
+                NewProcess();
+#endif
+        end;
+    end;
+    
+    local procedure Process10() begin end;
+    local procedure Process20() begin end;
+    local procedure ProcessFeature1() begin end;
+    local procedure ProcessFeature2() begin end;
+    local procedure ProcessDefault() begin end;
+    local procedure LegacyProcess() begin end;
+    local procedure LogActivity() begin end;
+    local procedure NewProcess() begin end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (integer)
+            statements: (case_statement
+              expression: (identifier)
+              (case_branch
+                pattern: (integer)
+                statements: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (case_branch
+                pattern: (integer)
+                statements: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (else_branch
+                statements: (preproc_conditional_statements
+                  (preproc_if
+                    condition: (identifier))
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))
+                  (preproc_elif
+                    condition: (identifier))
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))
+                  (preproc_else)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))
+                  (preproc_endif)))))
+          (else_branch
+            statements: (preproc_conditional_statements
+              (preproc_if
+                condition: (unary_expression
+                  operator: (unary_operator)
+                  operand: (identifier)))
+              (code_block
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (preproc_else)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (preproc_endif))))))
+    (procedure
+      procedure_modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      procedure_modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      procedure_modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      procedure_modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      procedure_modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      procedure_modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      procedure_modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      procedure_modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))))

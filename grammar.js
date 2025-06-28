@@ -6062,7 +6062,8 @@ enum_type: $ => prec(1, seq(
 
     _branch_statements: $ => choice(
       $._statement,
-      $.code_block
+      $.code_block,
+      $.preproc_conditional_statements
     ),
 
     fieldgroup_declaration: $ => seq(
