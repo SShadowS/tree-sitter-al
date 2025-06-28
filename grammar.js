@@ -5780,7 +5780,7 @@ enum_type: $ => prec(1, seq(
       kw('case', 10),
       field('expression', $._case_expression),
       kw('of', 10),
-      repeat1($._case_item),
+      repeat($._case_item),
       optional($.else_branch),
       kw('end')
     )),
