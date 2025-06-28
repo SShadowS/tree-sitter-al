@@ -1,0 +1,182 @@
+================================================================================
+Page customization with layout section
+================================================================================
+
+pagecustomization "Business Manager Evaluation RC" customizes "Business Manager Role Center"
+{
+    layout
+    {
+        modify(Control9)
+        {
+            Visible = false;
+        }
+
+        modify("User Tasks Activities")
+        {
+            Visible = false;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pagecustomization_declaration
+    object_name: (quoted_identifier)
+    target_page: (quoted_identifier)
+    (layout_section
+      (modify_layout_modification
+        target: (identifier)
+        (visible_property
+          value: (boolean)))
+      (modify_layout_modification
+        target: (quoted_identifier)
+        (visible_property
+          value: (boolean))))))
+
+================================================================================
+Page customization with actions section
+================================================================================
+
+pagecustomization "My Page Customization" customizes "Customer List"
+{
+    actions
+    {
+        modify(NewSalesOrder)
+        {
+            Visible = false;
+        }
+        
+        addafter(Customer)
+        {
+            action(MyNewAction)
+            {
+                Caption = 'My Action';
+                ApplicationArea = All;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pagecustomization_declaration
+    object_name: (quoted_identifier)
+    target_page: (quoted_identifier)
+    (actions_section
+      (modify_action
+        target: (identifier)
+        (visible_property
+          value: (boolean)))
+      (addafter_action_group
+        target: (identifier)
+        (action_declaration
+          name: (identifier)
+          (caption_property
+            (string_literal))
+          (application_area_property
+            value: (identifier)))))))
+
+================================================================================
+Page customization with layout and actions sections
+================================================================================
+
+namespace Microsoft.Finance.RoleCenters;
+
+pagecustomization "Business Manager Evaluation RC" customizes "Business Manager Role Center"
+{
+    layout
+    {
+        modify(Control9)
+        {
+            Visible = false;
+        }
+
+        modify(Emails)
+        {
+            Visible = false;
+        }
+
+        modify("Favorite Accounts")
+        {
+            Visible = false;
+        }
+    }
+
+    actions
+    {
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (namespace_declaration
+    name: (namespace_name
+      (identifier)
+      (identifier)
+      (identifier)))
+  (pagecustomization_declaration
+    object_name: (quoted_identifier)
+    target_page: (quoted_identifier)
+    (layout_section
+      (modify_layout_modification
+        target: (identifier)
+        (visible_property
+          value: (boolean)))
+      (modify_layout_modification
+        target: (identifier)
+        (visible_property
+          value: (boolean)))
+      (modify_layout_modification
+        target: (quoted_identifier)
+        (visible_property
+          value: (boolean))))
+    (actions_section)))
+
+================================================================================
+Page customization with views section
+================================================================================
+
+pagecustomization "Sales Order Processor Views" customizes "Sales Order List"
+{
+    views
+    {
+        addfirst
+        {
+            view(PendingOrders)
+            {
+                Caption = 'Pending Orders';
+                OrderBy = ascending("Document Date");
+                Filters = where(Status = const(Open));
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pagecustomization_declaration
+    object_name: (quoted_identifier)
+    target_page: (quoted_identifier)
+    (views_customization_section
+      (addfirst_views
+        (view_definition
+          name: (identifier)
+          (view_caption_property
+            value: (string_literal))
+          (view_order_by_property
+            value: (sorting_clause
+              (sorting_element
+                sort_order: (sort_order)
+                field: (quoted_identifier))))
+          (view_filters_property
+            value: (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (identifier))
+                    value: (identifier)))))))))))

@@ -6651,7 +6651,9 @@ enum_type: $ => prec(1, seq(
 
     // Page customization elements
     _pagecustomization_element: $ => choice(
-      $.views_customization_section
+      $.views_customization_section,
+      $.layout_section,
+      $.actions_section
     ),
 
     views_customization_section: $ => seq(
