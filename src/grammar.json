@@ -146,58 +146,95 @@
       ]
     },
     "_source_content": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "pragma"
-          }
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "pragma"
+              }
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "namespace_declaration"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "using_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_conditional_using"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "REPEAT1",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_object"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "pragma"
+                  }
+                ]
+              }
+            }
+          ]
         },
         {
-          "type": "CHOICE",
+          "type": "SEQ",
           "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "pragma"
+              }
+            },
             {
               "type": "SYMBOL",
               "name": "namespace_declaration"
             },
             {
-              "type": "BLANK"
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "using_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_conditional_using"
+                  }
+                ]
+              }
             }
           ]
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "using_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_conditional_using"
-              }
-            ]
-          }
-        },
-        {
-          "type": "REPEAT1",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_object"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "pragma"
-              }
-            ]
-          }
         }
       ]
     },

@@ -684,6 +684,76 @@ about_text_ml_property: $ => seq(
 4. Update test expectations to use generic node names
 5. Delete deprecated object-specific rules if no longer referenced
 
+### 10. Operators Parsed as Identifiers
+**Symptom**: Mathematical operators like `div` and `mod` parsed as identifiers instead of operators
+```
+// Fails: A := 10 div 2;
+(assignment_expression
+  left: (identifier)  // A
+  right: (integer))   // 10
+(identifier)          // div - parsed as separate identifier!
+(integer)             // 2
+```
+
+**Root Cause**: Using `kw()` for operators creates tokens that conflict with identifier tokens
+
+**Fix Pattern**:
+1. Check if logical operators have similar issues and use same pattern:
+```javascript
+// BAD: Using kw() for operators
+field('operator', choice('*', '/', kw('div'), kw('mod'))),
+
+// GOOD: Using choice() for case variations
+field('operator', choice('*', '/', 
+  choice('div', 'DIV', 'Div'), 
+  choice('mod', 'MOD', 'Mod')
+)),
+```
+2. Look for comments warning about this pattern (e.g., "logical operators must use choice()")
+3. Test with expressions in various contexts (assignments, case statements)
+
+### 11. Preprocessor Conditionals in Property Blocks
+**Symptom**: Parser reports MISSING "}" when preprocessor directives appear inside property blocks
+```
+// Fails: Key with conditional obsolete properties
+key(Key1; Field)
+{
+    Clustered = false;
+#if CLEAN26
+    ObsoleteState = Removed;
+#else
+    ObsoleteState = Pending;
+#endif
+}  // MISSING "}" error here
+```
+
+**Root Cause**: Property block rules don't include preprocessor conditional choices
+
+**Fix Pattern**:
+1. Create a preprocessor conditional rule for the specific property context:
+```javascript
+preproc_conditional_key_properties: _preproc_conditional_block_template($ => choice(
+  $.clustered_property,
+  $.enabled_property,
+  $.obsolete_reason_property,
+  $.obsolete_state_property,
+  $.obsolete_tag_property,
+  // ... other properties
+  $.preproc_conditional_key_properties  // Allow nesting
+)),
+```
+2. Add the new rule to the property block's choice list:
+```javascript
+repeat(choice(
+  $.clustered_property,
+  $.enabled_property,
+  // ... other properties
+  $.preproc_conditional_key_properties,  // Add this
+  $.property
+)),
+```
+3. Test with nested preprocessor blocks and mixed property types
+
 ### Quick Debugging Process
 1. **Isolate the failing construct**: Test just the problematic line
 2. **Test in minimal context**: Wrap in simplest valid AL structure

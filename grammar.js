@@ -132,11 +132,20 @@ module.exports = grammar({
       $.preproc_endif
     ),
 
-    _source_content: $ => seq(
-      repeat($.pragma),  // Allow pragmas before namespace
-      optional($.namespace_declaration),
-      repeat(choice($.using_statement, $.preproc_conditional_using)),
-      repeat1(choice($._object, $.pragma))  // At least one object or pragma required
+    _source_content: $ => choice(
+      // Case 1: Has at least one object or pragma
+      seq(
+        repeat($.pragma),
+        optional($.namespace_declaration),
+        repeat(choice($.using_statement, $.preproc_conditional_using)),
+        repeat1(choice($._object, $.pragma))
+      ),
+      // Case 2: Only has namespace declaration (no objects)
+      seq(
+        repeat($.pragma),
+        $.namespace_declaration,
+        repeat(choice($.using_statement, $.preproc_conditional_using))
+      )
     ),
 
     _object: $ => choice(
