@@ -32,8 +32,9 @@ interface "Legacy Interface"
             (identifier))
           parameter_type: (type_specification
             (text_type))))
-      return_type: (type_specification
-        (text_type)))))
+      return_type: (return_type
+        (type_specification
+          (text_type))))))
 
 ==================
 Interface with access and inherent permissions
@@ -90,8 +91,9 @@ interface "User Interface"
             (identifier))
           parameter_type: (type_specification
             (text_type))))
-      return_type: (type_specification
-        (basic_type)))
+      return_type: (return_type
+        (type_specification
+          (basic_type))))
     (interface_procedure
       name: (identifier)
       (parameter_list
@@ -100,5 +102,6 @@ interface "User Interface"
             (identifier))
           parameter_type: (type_specification
             (basic_type))))
-      return_type: (type_specification
-        (basic_type)))))
+      return_type: (return_type
+        (type_specification
+          (basic_type))))))

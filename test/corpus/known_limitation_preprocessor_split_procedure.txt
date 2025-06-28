@@ -27,7 +27,8 @@ codeunit 50000 "Known Limitation"
     (attributed_procedure
       (preproc_split_procedure
         (preproc_if
-          condition: (identifier))
+          condition: (preproc_not_expression
+            (identifier)))
         if_header: (procedure_header
           modifier: (procedure_modifier)
           name: (name

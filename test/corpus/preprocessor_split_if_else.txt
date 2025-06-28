@@ -36,7 +36,8 @@ codeunit 50000 "Test Split If-Else"
           (if_statement
             (preproc_split_if_else
               (preproc_if
-                condition: (identifier))
+                condition: (preproc_not_expression
+                  (identifier)))
               condition: (boolean)
               then_branch: (assignment_expression
                 left: (identifier)

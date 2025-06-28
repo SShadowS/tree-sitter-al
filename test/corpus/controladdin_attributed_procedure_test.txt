@@ -108,15 +108,14 @@ controladdin "Test Control"
           attribute_name: (identifier)))
       (controladdin_procedure
         name: (identifier)))
-    (attributed_controladdin_procedure
-      (controladdin_procedure
-        name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))))
+    (controladdin_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type)))))
     (attributed_controladdin_procedure
       (attribute_list
         (attribute
@@ -305,27 +304,26 @@ controladdin "Microsoft.Dynamics.Nav.Client.PowerBIManagement"
               (identifier))
             parameter_type: (type_specification
               (text_type))))))
-    (attributed_controladdin_procedure
-      (controladdin_procedure
-        name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type))))))))
+    (controladdin_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))))))

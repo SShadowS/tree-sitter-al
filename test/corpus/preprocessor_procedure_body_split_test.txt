@@ -38,7 +38,8 @@ codeunit 134 "No. Series Setup Impl."
               (record_type
                 reference: (quoted_identifier)))))
         (preproc_if
-          condition: (identifier))
+          condition: (preproc_not_expression
+            (identifier)))
         (pragma)
         (var_section
           (variable_declaration

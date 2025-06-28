@@ -108,8 +108,9 @@ interface IDocumentService
               (identifier))
             parameter_type: (type_specification
               (basic_type))))
-        return_type: (type_specification
-          (basic_type))))
+        return_type: (return_type
+          (type_specification
+            (basic_type)))))
     (attributed_interface_procedure
       (attribute_list
         (attribute
@@ -152,9 +153,10 @@ interface IDocumentService
             (identifier))
           parameter_type: (type_specification
             (basic_type))))
-      return_type: (type_specification
-        (enum_type
-          enum_name: (quoted_identifier))))))
+      return_type: (return_type
+        (type_specification
+          (enum_type
+            enum_name: (quoted_identifier)))))))
 
 ================================================================================
 Interface with mixed attributed and non-attributed procedures
@@ -212,8 +214,9 @@ interface IPaymentProvider
             parameter_type: (type_specification
               (code_type
                 length: (integer)))))
-        return_type: (type_specification
-          (basic_type))))
+        return_type: (return_type
+          (type_specification
+            (basic_type)))))
     (interface_procedure
       name: (identifier)
       (parameter_list
@@ -234,8 +237,9 @@ interface IPaymentProvider
             (identifier))
           parameter_type: (type_specification
             (basic_type))))
-      return_type: (type_specification
-        (basic_type)))
+      return_type: (return_type
+        (type_specification
+          (basic_type))))
     (attributed_interface_procedure
       (attribute_list
         (attribute

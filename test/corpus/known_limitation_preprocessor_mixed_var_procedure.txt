@@ -24,7 +24,8 @@ table 50000 "Known Limitation"
     (comment)
     (preproc_conditional_mixed_content
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (var_section
         (variable_declaration
           name: (identifier)

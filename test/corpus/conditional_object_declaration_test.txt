@@ -21,7 +21,8 @@ codeunit 139754 "Test" implements "Interface2"
   (comment)
   (preproc_conditional_object_declaration
     (preproc_if
-      condition: (identifier))
+      condition: (preproc_not_expression
+        (identifier)))
     object_id: (integer)
     object_name: (quoted_identifier)
     (implements_clause

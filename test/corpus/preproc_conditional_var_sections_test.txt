@@ -24,7 +24,8 @@ codeunit 6466 "Serv. Page Management"
     object_name: (quoted_identifier)
     (preproc_conditional_var_sections
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (var_section
         (variable_declaration
           name: (identifier)
@@ -155,7 +156,8 @@ table 50001 "Test Table"
       value: (data_classification_value))
     (preproc_conditional_mixed_content
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (var_section
         (variable_declaration
           name: (identifier)
@@ -208,7 +210,8 @@ report 50001 "Test Report"
       value: (usage_category_value))
     (preproc_conditional_var_sections
       (preproc_if
-        condition: (identifier))
+        condition: (preproc_not_expression
+          (identifier)))
       (var_section
         (variable_declaration
           name: (identifier)

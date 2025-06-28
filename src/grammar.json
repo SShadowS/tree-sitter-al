@@ -9129,8 +9129,16 @@
           ]
         },
         {
-          "type": "STRING",
-          "value": ";"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ";"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     },
@@ -29387,6 +29395,10 @@
               {
                 "type": "SYMBOL",
                 "name": "property_list"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_controladdin_elements"
               }
             ]
           }
@@ -29425,6 +29437,10 @@
                       {
                         "type": "SYMBOL",
                         "name": "property_list"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "preproc_conditional_controladdin_elements"
                       }
                     ]
                   }

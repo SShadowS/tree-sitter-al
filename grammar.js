@@ -2182,7 +2182,7 @@ module.exports = grammar({
         $._interface_return_specification,
         $._procedure_named_return        // Named return value
       )),
-      ';'
+      optional(';')
     ),
     
     _interface_return_specification: $ => seq(
@@ -6538,7 +6538,8 @@ enum_type: $ => prec(1, seq(
       $.controladdin_event,
       $.controladdin_procedure,
       $.attributed_controladdin_procedure,
-      $.property_list
+      $.property_list,
+      $.preproc_conditional_controladdin_elements  // Allow nesting
     )),
 
     preproc_conditional_entitlement_properties: _preproc_conditional_block_template($ => choice($._entitlement_properties, $.property_list)),

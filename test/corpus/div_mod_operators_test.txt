@@ -68,7 +68,6 @@ codeunit 50100 TestMod
             left: (identifier)
             right: (multiplicative_expression
               left: (integer)
-              operator: (identifier)
               right: (integer))))))))
 
 ================================================================================
@@ -109,19 +108,16 @@ codeunit 50100 TestDivCases
             left: (identifier)
             right: (multiplicative_expression
               left: (integer)
-              operator: (identifier)
               right: (integer)))
           (assignment_expression
             left: (identifier)
             right: (multiplicative_expression
               left: (integer)
-              operator: (identifier)
               right: (integer)))
           (assignment_expression
             left: (identifier)
             right: (multiplicative_expression
               left: (integer)
-              operator: (identifier)
               right: (integer))))))))
 
 ================================================================================
@@ -162,19 +158,16 @@ codeunit 50100 TestModCases
             left: (identifier)
             right: (multiplicative_expression
               left: (integer)
-              operator: (identifier)
               right: (integer)))
           (assignment_expression
             left: (identifier)
             right: (multiplicative_expression
               left: (integer)
-              operator: (identifier)
               right: (integer)))
           (assignment_expression
             left: (identifier)
             right: (multiplicative_expression
               left: (integer)
-              operator: (identifier)
               right: (integer))))))))
 
 ================================================================================
@@ -218,7 +211,6 @@ codeunit 50100 TestDivInCase
                 left: (identifier)
                 right: (multiplicative_expression
                   left: (integer)
-                  operator: (identifier)
                   right: (integer))))))))))
 
 ================================================================================
@@ -260,33 +252,25 @@ codeunit 50100 TestComplexDivMod
                 left: (parenthesized_expression
                   (multiplicative_expression
                     left: (integer)
-                    operator: (identifier)
                     right: (integer)))
-                operator: (char_literal)
                 right: (integer))
-              operator: (char_literal)
               right: (parenthesized_expression
                 (multiplicative_expression
                   left: (integer)
-                  operator: (identifier)
                   right: (integer)))))
           (assignment_expression
             left: (identifier)
             right: (multiplicative_expression
               left: (multiplicative_expression
                 left: (integer)
-                operator: (identifier)
                 right: (integer))
-              operator: (char_literal)
               right: (integer)))
           (assignment_expression
             left: (identifier)
             right: (multiplicative_expression
               left: (multiplicative_expression
                 left: (integer)
-                operator: (identifier)
                 right: (integer))
-              operator: (identifier)
               right: (integer))))))))
 
 ================================================================================
@@ -326,74 +310,66 @@ table 50100 TestTable
         name: (identifier)
         type: (type_specification
           (basic_type))))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
-        (code_block
-          (case_statement
-            expression: (boolean)
-            (case_branch
-              pattern: (logical_expression
-                left: (unary_expression
-                  (call_expression
-                    function: (member_expression
-                      object: (identifier)
-                      property: (identifier))
-                    arguments: (argument_list)))
-                operator: (identifier)
-                right: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    property: (identifier))
-                  arguments: (argument_list)))
-              statements: (assignment_expression
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (case_statement
+          expression: (boolean)
+          (case_branch
+            left: (unary_expression
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list)))
+            right: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))
+            statements: (assignment_expression
+              left: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              right: (multiplicative_expression
                 left: (field_access
                   record: (identifier)
                   field: (quoted_identifier))
-                right: (multiplicative_expression
-                  left: (field_access
-                    record: (identifier)
-                    field: (quoted_identifier))
-                  operator: (identifier)
-                  right: (integer))))
-            (case_branch
-              pattern: (logical_expression
-                left: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    property: (identifier))
-                  arguments: (argument_list))
-                operator: (identifier)
-                right: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    property: (identifier))
-                  arguments: (argument_list)))
-              statements: (assignment_expression
-                left: (field_access
-                  record: (identifier)
-                  field: (quoted_identifier))
-                right: (multiplicative_expression
-                  left: (parenthesized_expression
-                    (additive_expression
-                      left: (field_access
-                        record: (identifier)
-                        field: (quoted_identifier))
-                      operator: (char_literal)
-                      right: (field_access
-                        record: (identifier)
-                        field: (quoted_identifier))))
-                  operator: (identifier)
-                  right: (integer))))))))))
+                right: (integer))))
+          (case_branch
+            left: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))
+            right: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))
+            statements: (assignment_expression
+              left: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              right: (multiplicative_expression
+                left: (parenthesized_expression
+                  (additive_expression
+                    left: (field_access
+                      record: (identifier)
+                      field: (quoted_identifier))
+                    right: (field_access
+                      record: (identifier)
+                      field: (quoted_identifier))))
+                right: (integer)))))))))

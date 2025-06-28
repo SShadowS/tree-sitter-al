@@ -28,7 +28,8 @@ codeunit 123 "Test Codeunit"
       (identifier)))
   (preproc_conditional_using
     (preproc_if
-      condition: (identifier))
+      condition: (preproc_not_expression
+        (identifier)))
     (using_statement
       namespace: (namespace_name
         (identifier)

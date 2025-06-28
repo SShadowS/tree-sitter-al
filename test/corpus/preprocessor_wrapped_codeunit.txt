@@ -16,7 +16,8 @@ codeunit 50000 "Test Codeunit"
 (source_file
   (preprocessor_file_conditional
     (preproc_if
-      (identifier))
+      (preproc_not_expression
+        (identifier)))
     (codeunit_declaration
       (integer)
       (quoted_identifier)

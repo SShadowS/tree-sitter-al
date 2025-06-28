@@ -37,7 +37,8 @@ pageextension 50000 MyPageExt extends "Customer List"
     (actions_section
       (preproc_conditional_actions
         (preproc_if
-          condition: (identifier))
+          condition: (preproc_not_expression
+            (identifier)))
         (addbefore_action_group
           target: (identifier)
           (actionref_declaration

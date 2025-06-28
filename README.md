@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,160 files (98.7%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,122 files (98.4%) parse successfully**.
 
 Recent improvements include:
 - **Report preprocessor procedures** - Added support for #if/#endif conditional blocks around procedures in report objects, fixing ERROR nodes when procedures are wrapped in preprocessor directives

@@ -42,7 +42,8 @@ codeunit 1448 "DSACryptoServiceProvider Impl." implements "Signature Algorithm v
       (identifier)))
   (preproc_conditional_codeunit_declaration
     (preproc_if
-      condition: (identifier))
+      condition: (preproc_not_expression
+        (identifier)))
     (pragma)
     object_id: (integer)
     object_name: (quoted_identifier)

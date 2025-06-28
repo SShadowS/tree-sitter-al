@@ -120,8 +120,7 @@ interface "Complex Interface"
     (interface_procedure
       name: (identifier)
       (return_value
-        (name
-          (identifier)))
+        return_value: (identifier))
       return_type: (return_type
         (type_specification
           (code_type
@@ -129,8 +128,7 @@ interface "Complex Interface"
     (interface_procedure
       name: (identifier)
       (return_value
-        (name
-          (identifier)))
+        return_value: (identifier))
       return_type: (return_type
         (type_specification
           (text_type
@@ -144,8 +142,7 @@ interface "Complex Interface"
           parameter_type: (type_specification
             (basic_type))))
       (return_value
-        (name
-          (identifier)))
+        return_value: (identifier))
       return_type: (return_type
         (type_specification
           (basic_type))))))
@@ -189,12 +186,12 @@ interface "Type Examples"
       name: (identifier)
       return_type: (return_type
         (type_specification
-          (basic_type))))
+          (option_type))))
     (interface_procedure
       name: (identifier)
       return_type: (return_type
         (type_specification
-          (basic_type))))))
+          (identifier))))))
 
 ================================================================================
 Real-world ReminderAction interface

@@ -47,9 +47,8 @@ controladdin "Test Label"
       value: (integer))
     (controladdin_event
       name: (identifier))
-    (attributed_controladdin_procedure
-      (controladdin_procedure
-        name: (identifier)))))
+    (controladdin_procedure
+      name: (identifier))))
 
 ================================================================================
 ControlAddIn with ObsoleteState Removed
@@ -118,9 +117,8 @@ controladdin SimpleObsolete
     (controladdin_property
       name: (identifier)
       value: (integer))
-    (attributed_controladdin_procedure
-      (controladdin_procedure
-        name: (identifier)))))
+    (controladdin_procedure
+      name: (identifier))))
 
 ================================================================================
 ControlAddIn with case variations of obsolete state
@@ -209,12 +207,11 @@ controladdin "Mixed Properties"
             (identifier))
           parameter_type: (type_specification
             (text_type)))))
-    (attributed_controladdin_procedure
-      (controladdin_procedure
-        name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))))))
+    (controladdin_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type)))))))

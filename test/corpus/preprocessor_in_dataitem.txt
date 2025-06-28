@@ -41,7 +41,8 @@ report 50000 "Test Report"
           (quoted_identifier))
         (preproc_conditional_report_dataitem_content
           (preproc_if
-            (identifier))
+            (preproc_not_expression
+              (identifier)))
           (report_column_section
             (identifier)
             (string_literal)
