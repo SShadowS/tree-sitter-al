@@ -112,11 +112,15 @@ xmlport 50100 "Customer Export"
         (xmlport_table_element
           name: (identifier)
           source_table: (identifier)
-          (calc_fields_property
-            fields: (calc_fields_list
-              (quoted_identifier)
-              (quoted_identifier)
-              (quoted_identifier)))
+          (xmlport_table_property
+            (calc_fields_property
+              fields: (calc_fields_list
+                (calc_field
+                  (quoted_identifier))
+                (calc_field
+                  (quoted_identifier))
+                (calc_field
+                  (quoted_identifier)))))
           (xmlport_table_element
             name: (identifier)
             source_table: (field_access

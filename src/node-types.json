@@ -16122,50 +16122,8 @@
         "required": true,
         "types": [
           {
-            "type": "ONACTION",
-            "named": false
-          },
-          {
-            "type": "OnAction",
-            "named": false
-          },
-          {
-            "type": "onaction",
-            "named": false
-          }
-        ]
-      },
-      "parameter": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": ":",
-            "named": false
-          },
-          {
-            "type": "FileUpload",
-            "named": false
-          },
-          {
-            "type": "List",
-            "named": false
-          },
-          {
-            "type": "[",
-            "named": false
-          },
-          {
-            "type": "]",
-            "named": false
-          },
-          {
-            "type": "identifier",
+            "type": "trigger_name",
             "named": true
-          },
-          {
-            "type": "of",
-            "named": false
           }
         ]
       }
@@ -16176,6 +16134,10 @@
       "types": [
         {
           "type": "code_block",
+          "named": true
+        },
+        {
+          "type": "parameter_list",
           "named": true
         },
         {
@@ -30394,6 +30356,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -30573,6 +30539,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -30632,6 +30602,10 @@
       "types": [
         {
           "type": "case_branch",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
           "named": true
         },
         {
@@ -31094,6 +31068,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -31293,6 +31271,10 @@
         },
         {
           "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
           "named": true
         },
         {
@@ -31699,6 +31681,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -31751,6 +31737,10 @@
       "types": [
         {
           "type": "enum_value_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
           "named": true
         },
         {
@@ -32089,6 +32079,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -32248,6 +32242,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -32276,6 +32274,10 @@
         },
         {
           "type": "modify_field_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
           "named": true
         },
         {
@@ -32338,6 +32340,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -32382,6 +32388,10 @@
         },
         {
           "type": "preproc_conditional_keys",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
           "named": true
         },
         {
@@ -32485,6 +32495,10 @@
         },
         {
           "type": "preproc_conditional_layout",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
           "named": true
         },
         {
@@ -32649,6 +32663,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
         {
           "type": "preproc_else",
           "named": true
@@ -32978,6 +32996,10 @@
         },
         {
           "type": "populate_all_fields_property",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
           "named": true
         },
         {
@@ -33323,6 +33345,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -33526,6 +33552,10 @@
         },
         {
           "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
           "named": true
         },
         {
@@ -33884,6 +33914,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -34207,6 +34241,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -34461,6 +34499,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -34665,6 +34707,10 @@
         },
         {
           "type": "permissions_property",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
           "named": true
         },
         {
@@ -35038,6 +35084,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -35277,6 +35327,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -35496,6 +35550,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -35528,6 +35586,10 @@
       "types": [
         {
           "type": "named_trigger",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
           "named": true
         },
         {
@@ -35734,6 +35796,10 @@
           "named": true
         },
         {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
           "type": "preproc_else",
           "named": true
         },
@@ -35790,6 +35856,26 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "preproc_elif",
+    "named": true,
+    "fields": {
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "preproc_not_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -50994,11 +51080,19 @@
     "named": false
   },
   {
+    "type": "#ELIF",
+    "named": false
+  },
+  {
     "type": "#ELSE",
     "named": false
   },
   {
     "type": "#ENDIF",
+    "named": false
+  },
+  {
+    "type": "#Elif",
     "named": false
   },
   {
@@ -51015,6 +51109,10 @@
   },
   {
     "type": "#If",
+    "named": false
+  },
+  {
+    "type": "#elif",
     "named": false
   },
   {
@@ -51322,10 +51420,6 @@
     "named": false
   },
   {
-    "type": "FileUpload",
-    "named": false
-  },
-  {
     "type": "FileUploadAction",
     "named": false
   },
@@ -51398,10 +51492,6 @@
     "named": false
   },
   {
-    "type": "List",
-    "named": false
-  },
-  {
     "type": "Lookup",
     "named": false
   },
@@ -51450,10 +51540,6 @@
     "named": false
   },
   {
-    "type": "ONACTION",
-    "named": false
-  },
-  {
     "type": "OPTIMIZEFORTEXTSEARCH",
     "named": false
   },
@@ -51471,10 +51557,6 @@
   },
   {
     "type": "ObsoleteTag",
-    "named": false
-  },
-  {
-    "type": "OnAction",
     "named": false
   },
   {
@@ -51786,14 +51868,6 @@
   },
   {
     "type": "not",
-    "named": false
-  },
-  {
-    "type": "of",
-    "named": false
-  },
-  {
-    "type": "onaction",
     "named": false
   },
   {

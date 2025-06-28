@@ -37,7 +37,15 @@ page 50006 TestPage
             value: (identifier)
             value: (identifier))
           (fileuploadaction_trigger
-            parameter: (identifier)
+            name: (trigger_name)
+            (parameter_list
+              (parameter
+                parameter_name: (name
+                  (identifier))
+                parameter_type: (type_specification
+                  (list_type
+                    (type_specification
+                      (identifier))))))
             (code_block)))))))
 
 ================================================================================
@@ -104,7 +112,15 @@ page 50007 TestPage
           (enabled_property
             value: (boolean))
           (fileuploadaction_trigger
-            parameter: (identifier)
+            name: (trigger_name)
+            (parameter_list
+              (parameter
+                parameter_name: (name
+                  (identifier))
+                parameter_type: (type_specification
+                  (list_type
+                    (type_specification
+                      (identifier))))))
             (var_section
               (variable_declaration
                 name: (identifier)
@@ -163,12 +179,28 @@ page 50008 TestPage
         (fileuploadaction_declaration
           name: (identifier)
           (fileuploadaction_trigger
-            parameter: (identifier)
+            name: (trigger_name)
+            (parameter_list
+              (parameter
+                parameter_name: (name
+                  (identifier))
+                parameter_type: (type_specification
+                  (list_type
+                    (type_specification
+                      (identifier))))))
             (code_block)))
         (fileuploadaction_declaration
           name: (identifier)
           (fileuploadaction_trigger
-            parameter: (identifier)
+            name: (trigger_name)
+            (parameter_list
+              (parameter
+                parameter_name: (name
+                  (identifier))
+                parameter_type: (type_specification
+                  (list_type
+                    (type_specification
+                      (identifier))))))
             (code_block)))))))
 
 ================================================================================
@@ -222,7 +254,15 @@ page 50009 TestPage
           (allow_multiple_files_property
             value: (boolean))
           (fileuploadaction_trigger
-            parameter: (identifier)
+            name: (trigger_name)
+            (parameter_list
+              (parameter
+                parameter_name: (name
+                  (identifier))
+                parameter_type: (type_specification
+                  (list_type
+                    (type_specification
+                      (identifier))))))
             (var_section
               (variable_declaration
                 name: (identifier)
@@ -317,5 +357,13 @@ page 50010 TestPage
             value: (obsolete_tag_value
               (string_literal)))
           (fileuploadaction_trigger
-            parameter: (identifier)
+            name: (trigger_name)
+            (parameter_list
+              (parameter
+                parameter_name: (name
+                  (identifier))
+                parameter_type: (type_specification
+                  (list_type
+                    (type_specification
+                      (identifier))))))
             (code_block)))))))

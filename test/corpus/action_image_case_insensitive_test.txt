@@ -92,23 +92,22 @@ page 50101 "Test Actions"
     object_name: (quoted_identifier)
     (actions_section
       (area_action_section
-        area_type: (action_area_type)
         (action_declaration
-          action_name: (identifier)
+          name: (identifier)
           (image_property
-            (identifier)))
+            value: (identifier)))
         (action_declaration
-          action_name: (identifier)
+          name: (identifier)
           (image_property
-            (identifier)))
+            value: (identifier)))
         (action_declaration
-          action_name: (identifier)
+          name: (identifier)
           (image_property
-            (identifier)))
+            value: (identifier)))
         (action_declaration
-          action_name: (identifier)
+          name: (identifier)
           (image_property
-            (identifier)))))))
+            value: (identifier)))))))
 
 ================================================================================
 Action group with image property
@@ -202,19 +201,18 @@ page 50103 "File Upload"
     object_name: (quoted_identifier)
     (actions_section
       (area_action_section
-        area_type: (action_area_type)
-        (file_upload_action_declaration
-          action_name: (identifier)
+        (fileuploadaction_declaration
+          name: (identifier)
           (caption_property
             (string_literal))
           (tool_tip_property
-            tool_tip_value: (tool_tip_value
+            (tool_tip_value
               (string_literal)))
           (image_property
-            (identifier))
+            value: (identifier))
           (allowed_file_extensions_property
-            (string_literal))
-          (trigger_declaration
+            value: (string_literal))
+          (fileuploadaction_trigger
             name: (trigger_name)
             (parameter_list
               (parameter
@@ -226,7 +224,7 @@ page 50103 "File Upload"
                 parameter_name: (name
                   (identifier))
                 parameter_type: (type_specification
-                  (basic_type))))
+                  (text_type))))
             (code_block
               (call_expression
                 function: (identifier)

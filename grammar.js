@@ -69,6 +69,10 @@ function _preproc_conditional_block_template(content_rule, use_repeat1 = false) 
   return $ => seq(
     $.preproc_if,
     repeater(content_rule($)),
+    repeat(seq(
+      $.preproc_elif,
+      repeater(content_rule($))
+    )),
     optional(seq(
       $.preproc_else,
       repeater(content_rule($))
@@ -1571,21 +1575,9 @@ module.exports = grammar({
 
     fileuploadaction_trigger: $ => seq(
       kw('trigger'),
-      field('name', choice(
-        'OnAction',
-        'onaction',
-        'ONACTION'
-      )),
+      field('name', alias(kw('OnAction'), $.trigger_name)),
       '(',
-      field('parameter', seq(
-        $.identifier,
-        ':',
-        'List',
-        'of',
-        '[',
-        'FileUpload',
-        ']'
-      )),
+      optional($.parameter_list),
       ')',
       optional($.var_section),
       $.code_block
@@ -6649,6 +6641,14 @@ enum_type: $ => prec(1, seq(
     ),
 
     preproc_else: $ => choice('#else', '#ELSE', '#Else'),
+
+    preproc_elif: $ => seq(
+      choice('#elif', '#ELIF', '#Elif'),
+      field('condition', choice(
+        $.identifier,
+        $.preproc_not_expression
+      ))
+    ),
 
     preproc_endif: $ => choice('#endif', '#ENDIF', '#Endif'),
 

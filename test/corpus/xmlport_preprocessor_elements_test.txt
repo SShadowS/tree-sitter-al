@@ -169,8 +169,8 @@ xmlport 50101 "Import Data"
               source_table: (field_access
                 record: (identifier)
                 field: (quoted_identifier))
-              (named_trigger
-                trigger_name: (identifier)
+              (trigger_declaration
+                name: (trigger_name)
                 (code_block
                   (call_expression
                     function: (identifier)
@@ -238,8 +238,8 @@ xmlport 50102 "Complex Export"
               (preproc_conditional_xmlport_elements
                 (preproc_if
                   condition: (identifier))
-                (named_trigger
-                  trigger_name: (identifier)
+                (trigger_declaration
+                  name: (trigger_name)
                   (code_block
                     (comment)))
                 (preproc_endif)))
