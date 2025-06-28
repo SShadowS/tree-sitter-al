@@ -35671,6 +35671,10 @@
           "named": true
         },
         {
+          "type": "preserve_whitespace_property",
+          "named": true
+        },
+        {
           "type": "scope_property",
           "named": true
         },
@@ -37124,6 +37128,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "preserve_whitespace_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -49933,6 +49953,10 @@
         },
         {
           "type": "preproc_conditional_xmlport_properties",
+          "named": true
+        },
+        {
+          "type": "preserve_whitespace_property",
           "named": true
         },
         {

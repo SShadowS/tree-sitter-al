@@ -22072,6 +22072,22 @@
         }
       ]
     },
+    "preserve_whitespace_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)preservewhitespace"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_boolean_property_template"
+        }
+      ]
+    },
     "table_separator_property": {
       "type": "SEQ",
       "members": [
@@ -32315,6 +32331,10 @@
         {
           "type": "SYMBOL",
           "name": "use_default_namespace_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preserve_whitespace_property"
         }
       ]
     },

@@ -4993,6 +4993,11 @@ enum_type: $ => prec(1, seq(
       $._boolean_property_template
     ),
 
+    preserve_whitespace_property: $ => seq(
+      kw('preservewhitespace'),
+      $._boolean_property_template
+    ),
+
     table_separator_property: $ => seq(
       kw('TableSeparator'),
       '=',
@@ -7310,6 +7315,7 @@ enum_type: $ => prec(1, seq(
       $.encoding_property,
       $.namespaces_property,
       $.use_default_namespace_property,
+      $.preserve_whitespace_property,
     ),
 
     // Action property group - leverages centralized categories  
