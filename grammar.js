@@ -4134,6 +4134,8 @@ module.exports = grammar({
       alias('STYLE', $.identifier),
       // Allow the keyword 'Width' to be treated as an identifier in variable contexts
       alias(kw('width'), $.identifier),
+      // Allow the keyword 'Height' to be treated as an identifier in variable contexts
+      alias(kw('height'), $.identifier),
       // Allow common End* identifiers that conflict with 'end' keyword
       alias(kw('end'), $.identifier),
       alias(kw('endingtime'), $.identifier),
@@ -4152,7 +4154,9 @@ module.exports = grammar({
       // Allow 'DataCaptionExpression' to be used as an identifier in variable contexts
       alias(kw('datacaptionexpression'), $.identifier),
       // Allow 'Enum' to be used as an identifier in variable contexts
-      alias(kw('enum'), $.identifier)
+      alias(kw('enum'), $.identifier),
+      // Allow 'ReadOnly' to be used as an identifier in variable contexts
+      alias(kw('readonly'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
