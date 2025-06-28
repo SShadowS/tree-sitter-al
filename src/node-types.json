@@ -35515,6 +35515,53 @@
     }
   },
   {
+    "type": "preproc_conditional_xmlport_elements",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "named_trigger",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
+          "named": true
+        },
+        {
+          "type": "xmlport_field_attribute",
+          "named": true
+        },
+        {
+          "type": "xmlport_table_element",
+          "named": true
+        },
+        {
+          "type": "xmlport_table_property",
+          "named": true
+        },
+        {
+          "type": "xmlport_text_attribute",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_xmlport_properties",
     "named": true,
     "fields": {},
@@ -50599,6 +50646,10 @@
       "required": false,
       "types": [
         {
+          "type": "preproc_conditional_xmlport_elements",
+          "named": true
+        },
+        {
           "type": "xmlport_table_element",
           "named": true
         }
@@ -50652,6 +50703,10 @@
       "types": [
         {
           "type": "named_trigger",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_xmlport_elements",
           "named": true
         },
         {

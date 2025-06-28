@@ -277,7 +277,10 @@ module.exports = grammar({
     xmlport_schema_element: $ => seq(
       kw('schema'),
       '{',
-      repeat($.xmlport_table_element),
+      repeat(choice(
+        $.xmlport_table_element,
+        $.preproc_conditional_xmlport_elements
+      )),
       '}'
     ),
     
@@ -306,7 +309,8 @@ module.exports = grammar({
         $.xmlport_field_attribute,
         $.xmlport_text_attribute,
         $.named_trigger,  // Allow triggers in XMLport table elements
-        $.trigger_declaration  // Also support regular trigger declarations
+        $.trigger_declaration,  // Also support regular trigger declarations
+        $.preproc_conditional_xmlport_elements  // Support preprocessor conditionals
       )),
       '}'
     ),
@@ -6582,6 +6586,16 @@ enum_type: $ => prec(1, seq(
 
     // Preprocessor conditional rules for profile properties
     preproc_conditional_profile_properties: _preproc_conditional_block_template($ => $._profile_properties),
+    
+    // Preprocessor conditional rules for XMLPort table elements
+    preproc_conditional_xmlport_elements: _preproc_conditional_block_template($ => choice(
+      $.xmlport_table_property,
+      $.xmlport_table_element,
+      $.xmlport_field_attribute,
+      $.xmlport_text_attribute,
+      $.named_trigger,
+      $.trigger_declaration
+    )),
 
     // Preprocessor conditional rules for actions
     preproc_conditional_actions: _preproc_conditional_block_template($ => choice(

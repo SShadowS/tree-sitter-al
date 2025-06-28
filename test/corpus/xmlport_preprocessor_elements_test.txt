@@ -1,0 +1,251 @@
+================================================================================
+XMLPort with preprocessor conditionals in table elements
+================================================================================
+
+xmlport 50100 "Export Item Data"
+{
+    Direction = Export;
+    Format = Xml;
+    
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(Item; Item)
+            {
+                fieldelement(No; Item."No.")
+                {
+                }
+                fieldelement(Description; Item.Description)
+                {
+                }
+#if not CLEAN25
+                fieldelement(ServiceItemGroup; Item."Service Item Group")
+                {
+                }
+#endif
+                fieldelement(ItemTrackingCode; Item."Item Tracking Code")
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (direction_property
+      value: (direction_value))
+    (format_property
+      value: (format_value))
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (identifier)
+          source_table: (identifier)
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (field_access
+              record: (identifier)
+              field: (quoted_identifier)))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (member_expression
+              object: (identifier)
+              property: (identifier)))
+          (preproc_conditional_xmlport_elements
+            (preproc_if
+              condition: (preproc_not_expression
+                (identifier)))
+            (xmlport_table_element
+              name: (identifier)
+              source_table: (field_access
+                record: (identifier)
+                field: (quoted_identifier)))
+            (preproc_endif))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (field_access
+              record: (identifier)
+              field: (quoted_identifier))))))))
+
+================================================================================
+XMLPort with multiple preprocessor conditionals
+================================================================================
+
+xmlport 50101 "Import Data"
+{
+    schema
+    {
+        textelement(Root)
+        {
+#if BC21
+            tableelement(Customer; Customer)
+            {
+                fieldelement(No; Customer."No.") { }
+                fieldelement(Name; Customer.Name) { }
+            }
+#else
+            tableelement(Cust; Customer)
+            {
+                fieldelement(Number; Customer."No.") { }
+                fieldelement(CustomerName; Customer.Name) { }
+            }
+#endif
+            
+            tableelement(Item; Item)
+            {
+#if not CLEAN24
+                fieldelement(OldField; Item."Old Field")
+                {
+                    trigger OnAfterInitField()
+                    begin
+                        Message('Legacy field');
+                    end;
+                }
+#endif
+                fieldelement(ItemNo; Item."No.")
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (preproc_conditional_xmlport_elements
+          (preproc_if
+            condition: (identifier))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (identifier)
+            (xmlport_table_element
+              name: (identifier)
+              source_table: (field_access
+                record: (identifier)
+                field: (quoted_identifier)))
+            (xmlport_table_element
+              name: (identifier)
+              source_table: (member_expression
+                object: (identifier)
+                property: (identifier))))
+          (preproc_else)
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (identifier)
+            (xmlport_table_element
+              name: (identifier)
+              source_table: (field_access
+                record: (identifier)
+                field: (quoted_identifier)))
+            (xmlport_table_element
+              name: (identifier)
+              source_table: (member_expression
+                object: (identifier)
+                property: (identifier))))
+          (preproc_endif))
+        (xmlport_table_element
+          name: (identifier)
+          source_table: (identifier)
+          (preproc_conditional_xmlport_elements
+            (preproc_if
+              condition: (preproc_not_expression
+                (identifier)))
+            (xmlport_table_element
+              name: (identifier)
+              source_table: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              (named_trigger
+                trigger_name: (identifier)
+                (code_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal))))))
+            (preproc_endif))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (field_access
+              record: (identifier)
+              field: (quoted_identifier))))))))
+
+================================================================================
+XMLPort with nested preprocessor conditionals
+================================================================================
+
+xmlport 50102 "Complex Export"
+{
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(SalesHeader; "Sales Header")
+            {
+#if not CLEAN23
+                fieldelement(DocumentType; SalesHeader."Document Type")
+                {
+#if LOCALAPP
+                    trigger OnBeforePassField()
+                    begin
+                        // Local app specific handling
+                    end;
+#endif
+                }
+#endif
+                fieldelement(No; SalesHeader."No.")
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (identifier)
+          source_table: (quoted_identifier)
+          (preproc_conditional_xmlport_elements
+            (preproc_if
+              condition: (preproc_not_expression
+                (identifier)))
+            (xmlport_table_element
+              name: (identifier)
+              source_table: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              (preproc_conditional_xmlport_elements
+                (preproc_if
+                  condition: (identifier))
+                (named_trigger
+                  trigger_name: (identifier)
+                  (code_block
+                    (comment)))
+                (preproc_endif)))
+            (preproc_endif))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (field_access
+              record: (identifier)
+              field: (quoted_identifier))))))))

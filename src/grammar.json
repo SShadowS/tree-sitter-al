@@ -880,8 +880,17 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "SYMBOL",
-            "name": "xmlport_table_element"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "xmlport_table_element"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_xmlport_elements"
+              }
+            ]
           }
         },
         {
@@ -1009,6 +1018,10 @@
               {
                 "type": "SYMBOL",
                 "name": "trigger_declaration"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_xmlport_elements"
               }
             ]
           }
@@ -29728,6 +29741,100 @@
                   "content": {
                     "type": "SYMBOL",
                     "name": "_profile_properties"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_xmlport_elements": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "xmlport_table_property"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "xmlport_table_element"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "xmlport_field_attribute"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "xmlport_text_attribute"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "named_trigger"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "trigger_declaration"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "xmlport_table_property"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "xmlport_table_element"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "xmlport_field_attribute"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "xmlport_text_attribute"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "named_trigger"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "trigger_declaration"
+                      }
+                    ]
                   }
                 }
               ]
