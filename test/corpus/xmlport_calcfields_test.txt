@@ -1,0 +1,229 @@
+================================================================================
+XMLPort with CalcFields property
+================================================================================
+
+xmlport 130401 "CAL Test Results"
+{
+    Caption = 'CAL Test Results';
+    Encoding = UTF8;
+
+    schema
+    {
+        textelement(TestSuites)
+        {
+            tableelement("test suite"; "CAL Test Suite")
+            {
+                CalcFields = "Tests to Execute";
+                MinOccurs = Zero;
+                XmlName = 'TestSuite';
+                
+                fieldelement(Name; "Test Suite".Name)
+                {
+                }
+                fieldelement(Description; "Test Suite".Description)
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (encoding_property)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (quoted_identifier)
+          source_table: (quoted_identifier)
+          (xmlport_table_property
+            (calc_fields_property
+              fields: (calc_fields_list
+                (calc_field
+                  (quoted_identifier)))))
+          (xmlport_table_property
+            (min_occurs_property
+              value: (min_occurs_value)))
+          (xmlport_table_property
+            (xml_name_property
+              value: (string_literal)))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (member_expression
+              object: (quoted_identifier)
+              property: (identifier)))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (member_expression
+              object: (quoted_identifier)
+              property: (identifier))))))))
+
+================================================================================
+XMLPort with multiple CalcFields
+================================================================================
+
+xmlport 50100 "Customer Export"
+{
+    Direction = Export;
+    
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(Customer; Customer)
+            {
+                CalcFields = "Balance (LCY)", "Sales (LCY)", "Profit (LCY)";
+                
+                fieldelement(No; Customer."No.")
+                {
+                }
+                fieldelement(Name; Customer.Name)
+                {
+                }
+                fieldelement(Balance; Customer."Balance (LCY)")
+                {
+                }
+                fieldelement(Sales; Customer."Sales (LCY)")
+                {
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (direction_property
+      value: (direction_value))
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (identifier)
+          source_table: (identifier)
+          (calc_fields_property
+            fields: (calc_fields_list
+              (quoted_identifier)
+              (quoted_identifier)
+              (quoted_identifier)))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (field_access
+              record: (identifier)
+              field: (quoted_identifier)))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (member_expression
+              object: (identifier)
+              property: (identifier)))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (field_access
+              record: (identifier)
+              field: (quoted_identifier)))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (field_access
+              record: (identifier)
+              field: (quoted_identifier))))))))
+
+================================================================================
+XMLPort with CalcFields and LinkFields
+================================================================================
+
+xmlport 50101 "Sales Analysis"
+{
+    schema
+    {
+        textelement(SalesData)
+        {
+            tableelement(SalesHeader; "Sales Header")
+            {
+                fieldelement(No; SalesHeader."No.")
+                {
+                }
+                
+                tableelement(SalesLine; "Sales Line")
+                {
+                    LinkFields = "Document Type" = field("Document Type"), "Document No." = field("No.");
+                    LinkTable = SalesHeader;
+                    CalcFields = "Amount Including VAT";
+                    
+                    fieldelement(LineNo; SalesLine."Line No.")
+                    {
+                    }
+                    fieldelement(ItemNo; SalesLine."No.")
+                    {
+                    }
+                    fieldelement(Amount; SalesLine."Amount Including VAT")
+                    {
+                    }
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        name: (identifier)
+        (xmlport_table_element
+          name: (identifier)
+          source_table: (quoted_identifier)
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (field_access
+              record: (identifier)
+              field: (quoted_identifier)))
+          (xmlport_table_element
+            name: (identifier)
+            source_table: (quoted_identifier)
+            (xmlport_table_property
+              (link_fields_property
+                value: (link_fields_value
+                  (field_mapping
+                    source_field: (quoted_identifier)
+                    target_field: (quoted_identifier))
+                  (field_mapping
+                    source_field: (quoted_identifier)
+                    target_field: (quoted_identifier)))))
+            (xmlport_table_property
+              (link_table_property
+                value: (identifier)))
+            (xmlport_table_property
+              (calc_fields_property
+                fields: (calc_fields_list
+                  (calc_field
+                    (quoted_identifier)))))
+            (xmlport_table_element
+              name: (identifier)
+              source_table: (field_access
+                record: (identifier)
+                field: (quoted_identifier)))
+            (xmlport_table_element
+              name: (identifier)
+              source_table: (field_access
+                record: (identifier)
+                field: (quoted_identifier)))
+            (xmlport_table_element
+              name: (identifier)
+              source_table: (field_access
+                record: (identifier)
+                field: (quoted_identifier)))))))))

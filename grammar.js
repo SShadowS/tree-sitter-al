@@ -322,6 +322,7 @@ module.exports = grammar({
       $.auto_replace_property,
       $.auto_save_property, 
       $.auto_update_property,
+      $.calc_fields_property,  // Add CalcFields property
       $.link_fields_property,
       $.external_schema_property,
       $.link_table_property,
@@ -4005,7 +4006,7 @@ module.exports = grammar({
     ),
 
     calc_fields_property: $ => seq(
-      'CalcFields',
+      kw('CalcFields'),
       '=',
       field('fields', $.calc_fields_list),
       ';'
