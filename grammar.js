@@ -5332,6 +5332,27 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
+    // Handle complex preprocessor pattern where if-else is fragmented across multiple #if blocks
+    // Pattern: normal if-else with "end else begin", then #endif, else body, then #if wrapping "end;", then #endif
+    preproc_fragmented_if_else: $ => prec(20, seq(
+      // Normal if statement up to "end else begin"
+      kw('if', 10),
+      field('condition', $._expression),
+      kw('then', 10),
+      field('then_branch', $.code_block),
+      kw('else', 10),
+      kw('begin', 10),
+      // Then a preprocessor endif that closes some earlier #if
+      $.preproc_endif,
+      // The else body statements
+      field('else_body', repeat($._statement_or_preprocessor)),
+      // Then a preprocessor if that wraps just the closing end;
+      $.preproc_if,
+      kw('end'),
+      optional(';'),
+      $.preproc_endif
+    )),
+
 
     // Procedure header without body (for split procedures)
     procedure_header: $ => seq(
@@ -5803,7 +5824,9 @@ enum_type: $ => prec(1, seq(
         ))
       )),
       // Split if-else statement
-      $.preproc_split_if_else
+      $.preproc_split_if_else,
+      // Fragmented if-else statement (complex preprocessor pattern)
+      $.preproc_fragmented_if_else
     ),
 
     // Helper rule for if statement bodies
