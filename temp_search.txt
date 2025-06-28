@@ -1,0 +1,6 @@
+// Looking for where identifier appears in _expression
+
+39:      $.identifier,
+40:      // Allow 'End' to be used as identifier in expressions
+41:      alias(kw('end'), $.identifier),
+42:      $._quoted_identifier,

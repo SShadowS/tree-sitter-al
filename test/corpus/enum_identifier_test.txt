@@ -1,0 +1,154 @@
+==========================================
+Enum as identifier in expressions
+==========================================
+
+table 1234 "Test Table"
+{
+    procedure TestEnumIdentifier()
+    var
+        Enum: DotNet Enum;
+        MyEnum: Integer;
+    begin
+        // Test enum as identifier in various contexts
+        MyEnum := Enum;
+        Message(Format(Enum));
+        if Enum = 5 then
+            exit;
+            
+        // Test member access
+        MyEnum := Enum.Parse();
+        
+        // Test as function argument
+        ProcessEnum(Enum);
+        
+        // Test in complex expressions
+        MyEnum := 1 + Enum * 2;
+    end;
+    
+    procedure ProcessEnum(E: Integer)
+    begin
+    end;
+}
+
+---
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              reference: (dotnet_type_name))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (comment)
+        (assignment_expression
+          left: (identifier)
+          right: (identifier))
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))
+        (if_statement
+          condition: (comparison_expression
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (integer))
+          then_branch: (exit_statement))
+        (comment)
+        (assignment_expression
+          left: (identifier)
+          right: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list)))
+        (comment)
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (identifier)))
+        (comment)
+        (assignment_expression
+          left: (identifier)
+          right: (additive_expression
+            left: (integer)
+            right: (multiplicative_expression
+              left: (identifier)
+              right: (integer))))))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (code_block))))
+
+==========================================
+Enum type reference still works
+==========================================
+
+codeunit 50100 "Test Enum Types"
+{
+    procedure TestEnumTypes()
+    var
+        DocType: Enum "Sales Document Type";
+        MyValue: Integer;
+    begin
+        // Enum type references should still work
+        MyValue := enum::"Sales Document Type"::Order.AsInteger();
+        DocType := enum::TestEnum::Value1;
+    end;
+}
+
+---
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (enum_type
+                enum_name: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (comment)
+          (assignment_expression
+            left: (identifier)
+            right: (call_expression
+              function: (member_expression
+                object: (enum_keyword_qualified_value
+                  enum_type: (quoted_identifier)
+                  value: (identifier))
+                property: (identifier))
+              arguments: (argument_list)))
+          (assignment_expression
+            left: (identifier)
+            right: (enum_keyword_qualified_value
+              enum_type: (identifier)
+              value: (identifier))))))))

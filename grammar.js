@@ -4142,7 +4142,9 @@ module.exports = grammar({
       // Allow 'TableType' to be used as an identifier in variable contexts
       alias(kw('tabletype'), $.identifier),
       // Allow 'DataCaptionExpression' to be used as an identifier in variable contexts
-      alias(kw('datacaptionexpression'), $.identifier)
+      alias(kw('datacaptionexpression'), $.identifier),
+      // Allow 'Enum' to be used as an identifier in variable contexts
+      alias(kw('enum'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
@@ -5656,6 +5658,8 @@ enum_type: $ => prec(1, seq(
       // Method chains (put this first among non-binary expressions for higher precedence)
       $.call_expression, // (prec 12)
       $.enum_keyword_qualified_value, // (prec 9)
+      // Add high precedence for 'enum' as identifier to prevent conflict with enum_type_reference
+      prec(20, alias(kw('enum'), $.identifier)),
       $.enum_type_reference, // (prec 8)
       $.field_access,  // (prec 12)
       $.member_expression, // (prec 11)
@@ -7356,7 +7360,9 @@ enum_type: $ => prec(1, seq(
       alias(kw('enddata'), $.identifier),
       alias(kw('endpoint'), $.identifier),
       alias(kw('enddate'), $.identifier),
-      alias(kw('endtime'), $.identifier)
+      alias(kw('endtime'), $.identifier),
+      // Allow 'enum' to be used as an identifier in expression contexts
+      alias(kw('enum'), $.identifier)
     )),
 
     // Flexible identifier choice pattern (includes string literals)
