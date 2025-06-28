@@ -1332,6 +1332,7 @@ module.exports = grammar({
       $.attributed_procedure,  // Support attributed procedures like [IntegrationEvent(false, false)]
       $.var_section,
       $.attributed_trigger,    // Support attributed triggers as well
+      $.preproc_conditional_procedures,  // Support preprocessor conditional procedures
       $._table_properties     // Centralized table properties
     ),
 

@@ -1,0 +1,80 @@
+==================
+Table extension with preprocessor conditional procedures
+==================
+
+tableextension 123 "Test Extension" extends Item
+{
+#if not CLEAN25
+    [Obsolete('Replaced by new method', '25.0')]
+    procedure OldMethod()
+    begin
+        Message('Old implementation');
+    end;
+#endif
+
+#if not CLEAN25
+    [Obsolete('Another obsolete method', '25.0')]
+    [IntegrationEvent(false, false)]
+    procedure OnBeforeValidateField(var Rec: Record Item)
+    begin
+    end;
+#endif
+}
+
+---
+
+(source_file
+  (tableextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (identifier)
+    (preproc_conditional_procedures
+      (preproc_if
+        condition: (preproc_not_expression
+          (identifier)))
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (string_literal)
+              (string_literal)))))
+      (procedure
+        name: (name
+          (identifier))
+        (code_block
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))))
+      (preproc_endif))
+    (preproc_conditional_procedures
+      (preproc_if
+        condition: (preproc_not_expression
+          (identifier)))
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (string_literal)
+              (string_literal))))
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)))))
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        (code_block))
+      (preproc_endif))))
