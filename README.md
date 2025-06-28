@@ -8,7 +8,7 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,172 files (98.7%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,160 files (98.7%) parse successfully**.
 
 Recent improvements include:
 - **Report preprocessor procedures** - Added support for #if/#endif conditional blocks around procedures in report objects, fixing ERROR nodes when procedures are wrapped in preprocessor directives
@@ -67,6 +67,11 @@ Recent improvements include:
 - **Empty option members** - Enhanced option types to support consecutive commas for empty members (e.g., `Option = 'Value1,,Value3';`)
 - **ShowMandatory property expressions** - Enhanced ShowMandatory property to accept complex expressions like `NOT IsSaaSProd` instead of just boolean literals
 - **RecordID case variation** - Added support for `RecordID` type with uppercase ID, complementing existing case variations
+- **BigInteger literals** - Added support for BigInteger literals with L suffix (e.g., `0L`, `123L`, `-456L`)
+- **Empty attribute arguments** - Fixed parsing of attributes with empty parentheses (e.g., `[TryFunction()]`)
+- **ExecutionTimeout duration strings** - Added support for duration string format in ExecutionTimeout property (e.g., `'12:00:00'`, `'1.23:45:56.7890123'`)
+- **ControlAddin attributed procedures** - Added support for attributes on ControlAddin procedures (e.g., `[Obsolete(...)]` on event procedures)
+- **ExtendedDatatype Person value** - Added support for Person value in ExtendedDatatype property, used with Media and MediaSet fields
 - **Preprocessor conditionals in table relations** - Enhanced table relations to support preprocessor conditionals with semicolons in conditional branches (e.g., `#if BC24 IF (...) Table1; #else IF (...) Table2; #endif`)
 - **Pragma directive support in code blocks** - Added support for `#pragma warning disable/restore` directives within procedure code blocks
 - **Namespace-qualified record types** - Added support for namespace-qualified table references in record variable declarations (e.g., `Record Microsoft.Foundation.UOM."Unit of Measure"`)
