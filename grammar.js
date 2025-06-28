@@ -5651,7 +5651,7 @@ enum_type: $ => prec(1, seq(
 
     multiplicative_expression: $ => prec.left(7, seq(
       field('left', $._expression),
-      field('operator', choice('*', '/', kw('div'), kw('mod'))),
+      field('operator', choice('*', '/', choice('div', 'DIV', 'Div'), choice('mod', 'MOD', 'Mod'))),
       field('right', $._expression)
     )),
 

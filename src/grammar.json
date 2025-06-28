@@ -25119,18 +25119,38 @@
                   "value": "/"
                 },
                 {
-                  "type": "TOKEN",
-                  "content": {
-                    "type": "PATTERN",
-                    "value": "(?i)div"
-                  }
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "div"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "DIV"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "Div"
+                    }
+                  ]
                 },
                 {
-                  "type": "TOKEN",
-                  "content": {
-                    "type": "PATTERN",
-                    "value": "(?i)mod"
-                  }
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "mod"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "MOD"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "Mod"
+                    }
+                  ]
                 }
               ]
             }
