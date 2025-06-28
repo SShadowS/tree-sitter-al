@@ -10229,6 +10229,22 @@
     }
   },
   {
+    "type": "default_fields_validation_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "default_implementation_property",
     "named": true,
     "fields": {
@@ -35559,6 +35575,10 @@
           "named": true
         },
         {
+          "type": "default_fields_validation_property",
+          "named": true
+        },
+        {
           "type": "default_namespace_property",
           "named": true
         },
@@ -49845,6 +49865,10 @@
         },
         {
           "type": "data_access_intent_property",
+          "named": true
+        },
+        {
+          "type": "default_fields_validation_property",
           "named": true
         },
         {

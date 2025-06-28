@@ -1,0 +1,68 @@
+================================================================================
+Complex preprocessor pattern with if-else-begin split
+================================================================================
+
+codeunit 50000 "Complex Preprocessor If-Else"
+{
+    procedure TestComplexPreproc()
+    var
+        x: Integer;
+    begin
+        // This pattern where 'end else begin' is inside #if/#endif
+        // and the closing 'end;' is wrapped in another #if/#endif
+        // is not currently supported
+#if not CLEAN24
+        if x = 1 then begin
+            x := 2;
+        end else begin
+#endif
+            x := 3;
+#if not CLEAN24
+        end;
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (comment)
+          (comment)
+          (comment)
+          (if_statement
+            (preproc_split_if_else
+              (preproc_if
+                condition: (preproc_not_expression
+                  (identifier)))
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              then_branch: (code_block
+                (assignment_expression
+                  left: (identifier)
+                  right: (integer)))
+              (ERROR)
+              (preproc_endif)
+              else_branch: (assignment_expression
+                left: (identifier)
+                right: (integer))))
+          (preproc_conditional_statements
+            (preproc_if
+              condition: (preproc_not_expression
+                (identifier)))
+            (identifier)
+            (preproc_endif)))))))

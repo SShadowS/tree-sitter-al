@@ -271,6 +271,8 @@ module.exports = grammar({
     
     field_separator_property: _value_property_template($ => kw('FieldSeparator'), $ => $.string_literal),
 
+    default_fields_validation_property: $ => seq(kw('DefaultFieldsValidation'), $._boolean_property_template),
+
     
     xmlport_schema_element: $ => seq(
       kw('schema'),
@@ -5330,6 +5332,7 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
+
     // Procedure header without body (for split procedures)
     procedure_header: $ => seq(
       optional(field('modifier', $.procedure_modifier)), 
@@ -7302,6 +7305,7 @@ enum_type: $ => prec(1, seq(
       $.format_property,
       $.field_delimiter_property,
       $.field_separator_property,
+      $.default_fields_validation_property,
       $.table_separator_property,
       $.text_encoding_property,
       $.paste_is_valid_property,

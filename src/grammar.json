@@ -847,6 +847,22 @@
         }
       ]
     },
+    "default_fields_validation_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)DefaultFieldsValidation"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_boolean_property_template"
+        }
+      ]
+    },
     "xmlport_schema_element": {
       "type": "SEQ",
       "members": [
@@ -32279,6 +32295,10 @@
         {
           "type": "SYMBOL",
           "name": "field_separator_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "default_fields_validation_property"
         },
         {
           "type": "SYMBOL",
