@@ -2317,6 +2317,7 @@ module.exports = grammar({
     _rendering_layout_property: $ => choice(
       $.rendering_type_property,
       $.layout_file_property,
+      $.mime_type_property,
       $.summary_property,
       $._universal_properties  // includes caption_property
     ),
@@ -2336,6 +2337,13 @@ module.exports = grammar({
 
     layout_file_property: $ => seq(
       kw('LayoutFile'),
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    mime_type_property: $ => seq(
+      kw('MimeType'),
       '=',
       field('value', $.string_literal),
       ';'
@@ -6335,6 +6343,27 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
+    flow_caption_property: $ => seq(
+      kw('FlowCaption'),
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    flow_id_property: $ => seq(
+      kw('FlowId'),
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
+    flow_template_id_property: $ => seq(
+      kw('FlowTemplateId'),
+      '=',
+      field('value', $.string_literal),
+      ';'
+    ),
+
     odata_edm_type_property: $ => seq(
       'ODataEDMType',
       '=',
@@ -7481,6 +7510,9 @@ enum_type: $ => prec(1, seq(
       $.file_upload_row_action_property,
       $.flow_template_category_name_property,
       $.flow_environment_id_property,
+      $.flow_caption_property,
+      $.flow_id_property,
+      $.flow_template_id_property,
       $.gesture_property,
       $.image_property,
       $.in_footer_bar_property,

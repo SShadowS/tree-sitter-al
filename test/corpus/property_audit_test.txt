@@ -1,0 +1,74 @@
+================================================================================
+Flow properties test - new properties added in property audit
+================================================================================
+
+page 50100 TestFlowProperties
+{
+    actions
+    {
+        area(Processing)
+        {
+            customaction(TestFlowAction)
+            {
+                FlowCaption = 'Test Flow Action';
+                FlowId = 'abc123-def456-ghi789';
+                FlowTemplateId = 'template-xyz789';
+                FlowEnvironmentId = 'prod-environment';
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (actions_section
+      (area_action_section
+        (customaction_declaration
+          name: (identifier)
+          (flow_caption_property
+            value: (string_literal))
+          (flow_id_property
+            value: (string_literal))
+          (flow_template_id_property
+            value: (string_literal))
+          (flow_environment_id_property
+            value: (string_literal)))))))
+
+================================================================================
+Report layout MimeType property test
+================================================================================
+
+report 50200 TestReportLayout
+{
+    rendering
+    {
+        layout(TestLayout)
+        {
+            Type = RDLC;
+            LayoutFile = './layouts/TestReport.rdl';
+            MimeType = 'application/xml';
+            Caption = 'Test Layout';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (rendering_section
+      (rendering_layout
+        name: (identifier)
+        (rendering_type_property)
+        (layout_file_property
+          value: (string_literal))
+        (mime_type_property
+          value: (string_literal))
+        (caption_property
+          (string_literal))))))

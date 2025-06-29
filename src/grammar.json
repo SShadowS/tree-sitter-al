@@ -9735,6 +9735,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "mime_type_property"
+        },
+        {
+          "type": "SYMBOL",
           "name": "summary_property"
         },
         {
@@ -9812,6 +9816,34 @@
           "content": {
             "type": "PATTERN",
             "value": "(?i)LayoutFile"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "mime_type_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)MimeType"
           }
         },
         {
@@ -28660,6 +28692,90 @@
         }
       ]
     },
+    "flow_caption_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)FlowCaption"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "flow_id_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)FlowId"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "flow_template_id_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)FlowTemplateId"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "odata_edm_type_property": {
       "type": "SEQ",
       "members": [
@@ -33945,6 +34061,18 @@
         {
           "type": "SYMBOL",
           "name": "flow_environment_id_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "flow_caption_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "flow_id_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "flow_template_id_property"
         },
         {
           "type": "SYMBOL",
