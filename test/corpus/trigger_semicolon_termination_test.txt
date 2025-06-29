@@ -28,7 +28,8 @@ codeunit 50000 "Install Codeunit"
     object_id: (integer)
     object_name: (quoted_identifier)
     (subtype_property
-      value: (value))
+      value: (value
+        (identifier)))
     (attributed_trigger
       (trigger_declaration
         name: (trigger_name)

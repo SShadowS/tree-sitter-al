@@ -9129,8 +9129,12 @@
         {
           "type": "TOKEN",
           "content": {
-            "type": "PATTERN",
-            "value": "(?i)interface"
+            "type": "PREC",
+            "value": 10,
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)interface"
+            }
           }
         },
         {
@@ -25349,10 +25353,10 @@
             }
           },
           {
-            "type": "PREC",
-            "value": 2,
+            "type": "TOKEN",
             "content": {
-              "type": "TOKEN",
+              "type": "PREC",
+              "value": 10,
               "content": {
                 "type": "PATTERN",
                 "value": "(?i)in"

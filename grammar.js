@@ -2179,7 +2179,7 @@ module.exports = grammar({
     ),
 
     interface_declaration: $ => seq(
-      kw('interface'),
+      kw('interface', 10),
       field('object_name', $._identifier_choice),
       optional(seq(
         kw('extends'),
@@ -5642,7 +5642,7 @@ enum_type: $ => prec(1, seq(
     foreach_statement: $ => prec.right(seq(
       kw('foreach', 10),
       field('variable', choice($.identifier, $._quoted_identifier)),
-      prec(2, kw('in')),
+      kw('in', 10),
       field('iterable', $._expression),
       kw('do', 10),
       field('body', choice(
