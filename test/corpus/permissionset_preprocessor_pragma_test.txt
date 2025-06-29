@@ -27,10 +27,8 @@ permissionset 301 "No. Series - Read"
   (permissionset_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property_list
-      (property
-        (access_property
-          value: (value))))
+    (access_property
+      value: (value))
     (assignable_property
       value: (boolean))
     (included_permission_sets_property

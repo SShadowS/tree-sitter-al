@@ -198,10 +198,8 @@ permissionset 50005 "Sample Permissions"
   (permissionset_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property_list
-      (property
-        (access_property
-          value: (value))))
+    (access_property
+      value: (value))
     (assignable_property
       value: (boolean))
     (permissionset_permissions

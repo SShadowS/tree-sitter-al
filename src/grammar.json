@@ -10374,12 +10374,12 @@
           "name": "_permissionset_properties"
         },
         {
-          "type": "SYMBOL",
-          "name": "permissionset_permissions"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "property_list"
+          "type": "PREC",
+          "value": 2,
+          "content": {
+            "type": "SYMBOL",
+            "name": "permissionset_permissions"
+          }
         },
         {
           "type": "SYMBOL",
@@ -10453,8 +10453,12 @@
           "name": "_permissionset_properties"
         },
         {
-          "type": "SYMBOL",
-          "name": "permissionset_permissions"
+          "type": "PREC",
+          "value": 2,
+          "content": {
+            "type": "SYMBOL",
+            "name": "permissionset_permissions"
+          }
         },
         {
           "type": "SYMBOL",
@@ -10559,8 +10563,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Permissions"
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)Permissions"
+          }
         },
         {
           "type": "STRING",
@@ -10740,54 +10747,75 @@
       ]
     },
     "permission_entry": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "object_type",
-          "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "object_type",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "TOKEN",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "(?i)tabledata"
+                    }
+                  },
+                  "named": true,
+                  "value": "identifier"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "object_reference",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_quoted_identifier"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "integer"
+                },
+                {
+                  "type": "STRING",
+                  "value": "*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "="
+          },
+          {
+            "type": "FIELD",
+            "name": "permission",
+            "content": {
+              "type": "SYMBOL",
+              "name": "permission_type"
+            }
           }
-        },
-        {
-          "type": "FIELD",
-          "name": "object_reference",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_quoted_identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "integer"
-              },
-              {
-                "type": "STRING",
-                "value": "*"
-              }
-            ]
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "="
-        },
-        {
-          "type": "FIELD",
-          "name": "permission",
-          "content": {
-            "type": "SYMBOL",
-            "name": "permission_type"
-          }
-        }
-      ]
+        ]
+      }
     },
     "dotnet_declaration": {
       "type": "SEQ",
@@ -17010,10 +17038,6 @@
           {
             "type": "SYMBOL",
             "name": "promoted_action_categories_property"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "permissions_property"
           },
           {
             "type": "SYMBOL",
@@ -29930,17 +29954,8 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_permissionset_properties"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "property_list"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_permissionset_properties"
           }
         },
         {
@@ -29955,17 +29970,8 @@
               {
                 "type": "REPEAT",
                 "content": {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "_permissionset_properties"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "property_list"
-                    }
-                  ]
+                  "type": "SYMBOL",
+                  "name": "_permissionset_properties"
                 }
               }
             ]
@@ -29984,17 +29990,8 @@
                 {
                   "type": "REPEAT",
                   "content": {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "_permissionset_properties"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "property_list"
-                      }
-                    ]
+                    "type": "SYMBOL",
+                    "name": "_permissionset_properties"
                   }
                 }
               ]
@@ -32414,10 +32411,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "permissions_property"
-        },
-        {
-          "type": "SYMBOL",
           "name": "inherent_permissions_property"
         },
         {
@@ -32835,6 +32828,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "permissions_property"
+        },
+        {
+          "type": "SYMBOL",
           "name": "multiplicity_property"
         },
         {
@@ -33076,6 +33073,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "permissions_property"
+        },
+        {
+          "type": "SYMBOL",
           "name": "data_caption_fields_property"
         },
         {
@@ -33146,6 +33147,10 @@
         {
           "type": "SYMBOL",
           "name": "test_isolation_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "permissions_property"
         }
       ]
     },
@@ -34879,6 +34884,14 @@
     ],
     [
       "interface_procedure"
+    ],
+    [
+      "preproc_conditional_permissions",
+      "preproc_conditional_tabledata_permissions"
+    ],
+    [
+      "permission_entry",
+      "_identifier_choice"
     ]
   ],
   "precedences": [],

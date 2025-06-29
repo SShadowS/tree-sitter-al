@@ -24,16 +24,12 @@ permissionset 50100 "Test Permission Set"
   (permissionset_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property_list
-      (property
-        (access_property
-          value: (value))))
+    (access_property
+      value: (value))
     (assignable_property
       value: (boolean))
-    (property_list
-      (property
-        (caption_property
-          (string_literal))))
+    (caption_property
+      (string_literal))
     (permissionset_permissions
       (permission_list
         (permission_entry

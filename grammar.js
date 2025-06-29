@@ -96,6 +96,8 @@ module.exports = grammar({
     [$.preproc_conditional_procedures, $.preproc_conditional_mixed_content],
     [$.preproc_conditional_var_sections, $.preproc_conditional_mixed_content],
     [$.interface_procedure],
+    [$.preproc_conditional_permissions, $.preproc_conditional_tabledata_permissions],
+    [$.permission_entry, $._identifier_choice],
   ],
 
   externals: $ => [
@@ -2458,8 +2460,7 @@ module.exports = grammar({
 
     _permissionset_element: $ => choice(
       $._permissionset_properties,   // Centralized properties
-      $.permissionset_permissions,   // PermissionSet structural elements
-      $.property_list,               // Generic fallback
+      prec(2, $.permissionset_permissions),   // PermissionSet structural elements - higher precedence
       $.preproc_conditional_permissionset_properties
     ),
 
@@ -2476,7 +2477,7 @@ module.exports = grammar({
 
     _permissionsetextension_element: $ => choice(
       $._permissionset_properties,   // Reuse permissionset properties
-      $.permissionset_permissions,   // PermissionSet structural elements
+      prec(2, $.permissionset_permissions),   // PermissionSet structural elements - higher precedence
       $.property_list,               // Generic fallback
       $.preproc_conditional_permissionset_properties
     ),
@@ -2507,7 +2508,7 @@ module.exports = grammar({
     excluded_permission_sets_list: $ => $._identifier_choice_list,
 
     permissionset_permissions: $ => seq(
-      'Permissions',
+      kw('Permissions'),
       '=',
       $.permission_list,
       ';',
@@ -2543,8 +2544,11 @@ module.exports = grammar({
       $.preproc_endif
     ),
 
-    permission_entry: $ => seq(
-      field('object_type', $.identifier),
+    permission_entry: $ => prec(2, seq(
+      field('object_type', choice(
+        $.identifier,
+        alias(kw('tabledata'), $.identifier)  // Allow tabledata as object type
+      )),
       field('object_reference', choice(
         $._quoted_identifier,
         $.identifier,
@@ -2553,7 +2557,7 @@ module.exports = grammar({
       )),
       '=',
       field('permission', $.permission_type)
-    ),
+    )),
 
     dotnet_declaration: $ => seq(
       kw('dotnet'),
@@ -3896,7 +3900,7 @@ module.exports = grammar({
       $.lookup_pageid_property,
       $.card_page_id_property,
       $.promoted_action_categories_property,
-      $.permissions_property,
+      // $.permissions_property, // Removed - only for table/page contexts
       $.test_permissions_property,
       $.table_relation_property,
       $.field_class_property,
@@ -6587,7 +6591,7 @@ enum_type: $ => prec(1, seq(
     preproc_conditional_enum_values: _preproc_conditional_block_template($ => $.enum_value_declaration),
 
     // Preprocessor conditional rules for permissionset properties
-    preproc_conditional_permissionset_properties: _preproc_conditional_block_template($ => choice($._permissionset_properties, $.property_list)),
+    preproc_conditional_permissionset_properties: _preproc_conditional_block_template($ => $._permissionset_properties),
 
     // Preprocessor conditional rules for controladdin properties
     preproc_conditional_controladdin_properties: _preproc_conditional_block_template($ => choice($._controladdin_properties, $.property_list)),
@@ -6993,12 +6997,12 @@ enum_type: $ => prec(1, seq(
     // Access control properties
     _access_properties: $ => choice(
       $.access_property,             // Access level
-      $.permissions_property,        // Permission definitions
       $.inherent_permissions_property, // Built-in permissions
       $.inherent_entitlements_property, // Built-in entitlements
       $.test_permissions_property,   // Test environment permissions
       $.access_by_permission_property, // General access by permission (used in actions)
       // Note: Pages use access_by_permission_page_property; other objects use access_by_permission_property
+      // Note: permissions_property removed - it's for table/page tabledata permissions only
     ),
 
     // Object-specific properties that are unique to specific object types
@@ -7141,6 +7145,7 @@ enum_type: $ => prec(1, seq(
       $._access_properties,
       $._navigation_properties,
       $._object_specific_properties,
+      $.permissions_property,        // Page-level tabledata permissions
       
       // API properties needed in parts
       $.multiplicity_property,
@@ -7232,6 +7237,7 @@ enum_type: $ => prec(1, seq(
       $._access_properties,
       $._navigation_properties,
       $._object_specific_properties,
+      $.permissions_property,        // Table-level tabledata permissions
       
       // Table-specific data management properties
       $.data_caption_fields_property,
@@ -7266,7 +7272,8 @@ enum_type: $ => prec(1, seq(
       $._object_specific_properties,
       
       // Additional codeunit-specific properties not in other groups
-      $.test_isolation_property
+      $.test_isolation_property,
+      $.permissions_property  // Tabledata permissions for codeunit
     ),
 
     // Composed property group for report-level properties
