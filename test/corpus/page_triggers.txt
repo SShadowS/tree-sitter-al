@@ -177,7 +177,8 @@ page 50000 "Test Page Triggers"
       (code_block
         (if_statement
           condition: (unary_expression
-            (identifier))
+            operator: (unary_operator)
+            operand: (identifier))
           then_branch: (exit_statement
             return_value: (boolean)))
         (exit_statement

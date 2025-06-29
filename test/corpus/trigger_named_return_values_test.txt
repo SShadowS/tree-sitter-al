@@ -209,7 +209,8 @@ page 50102 "Test Page"
         (assignment_expression
           left: (quoted_identifier)
           right: (unary_expression
-            (call_expression
+            operator: (unary_operator)
+            operand: (call_expression
               function: (identifier)
               arguments: (argument_list))))))))
 

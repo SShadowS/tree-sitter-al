@@ -96,8 +96,8 @@ module.exports = grammar({
     [$.preproc_conditional_procedures, $.preproc_conditional_mixed_content],
     [$.preproc_conditional_var_sections, $.preproc_conditional_mixed_content],
     [$.interface_procedure],
-    [$.preproc_conditional_permissions, $.preproc_conditional_tabledata_permissions],
-    [$.permission_entry, $._identifier_choice],
+    [$.preproc_conditional_layout, $.preproc_conditional_group_content],
+    [$.preproc_conditional_group_content, $.preproc_conditional_properties],
   ],
 
   externals: $ => [
@@ -2816,7 +2816,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._page_properties,
-        $._layout_element
+        $._layout_element,
+        $.preproc_conditional_group_content
       )),
       '}'
     ),
@@ -2831,7 +2832,8 @@ module.exports = grammar({
         $._page_properties,
         $.field_section,
         $.actions_section,
-        $.cuegroup_section
+        $.cuegroup_section,
+        $.preproc_conditional_group_content
       )),
       '}'
     ),
@@ -2844,7 +2846,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._page_properties,
-        $._layout_element
+        $._layout_element,
+        $.preproc_conditional_group_content
       )),
       '}'
     ),
@@ -2857,7 +2860,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._page_properties,
-        $._layout_element
+        $._layout_element,
+        $.preproc_conditional_group_content
       )),
       '}'
     ),
@@ -2883,7 +2887,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._page_properties,
-        $._layout_element
+        $._layout_element,
+        $.preproc_conditional_group_content
       )),
       '}'
     ),
@@ -2917,7 +2922,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._page_properties,
-        $.empty_statement
+        $.empty_statement,
+        $.preproc_conditional_group_content
       )),
       '}'
     ),
@@ -2932,7 +2938,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._page_properties,
-        $.empty_statement
+        $.empty_statement,
+        $.preproc_conditional_group_content
       )),
       '}'
     ),
@@ -2951,6 +2958,7 @@ module.exports = grammar({
         $.var_section,
         $.code_block,
         $.preproc_conditional_properties,
+        $.preproc_conditional_group_content,
         $.pragma
       )),
       '}'
@@ -5377,7 +5385,7 @@ enum_type: $ => prec(1, seq(
       // Then a preprocessor endif that closes some earlier #if
       $.preproc_endif,
       // The else body statements
-      field('else_body', repeat($._statement_or_preprocessor)),
+      repeat($._statement_or_preprocessor),
       // Then a preprocessor if that wraps just the closing end;
       $.preproc_if,
       kw('end'),
@@ -5692,8 +5700,8 @@ enum_type: $ => prec(1, seq(
 
     unary_expression: $ => prec.right(7, seq( // Keep at 7 but verify context
       // WARNING: 'not' must use choice() instead of kw() to avoid precedence conflicts
-      choice('+', '-', choice('not', 'NOT', 'Not')),
-      $._expression
+      field('operator', alias(choice('+', '-', choice('not', 'NOT', 'Not')), $.unary_operator)),
+      field('operand', $._expression)
     )),
 
     _expression: $ => choice(
@@ -6103,7 +6111,7 @@ enum_type: $ => prec(1, seq(
       kw('fieldgroup'),
       '(',
       field('group_type', $.identifier),
-      token(';'),
+      ';',
       field('fields', $.fieldgroup_list),
       ')',
       optional(seq(
@@ -6578,6 +6586,12 @@ enum_type: $ => prec(1, seq(
 
     // Preprocessor conditional rules for layout sections
     preproc_conditional_layout: _preproc_conditional_block_template($ => $._layout_element),
+
+    // Preprocessor conditional rules for group content (properties or layout elements)
+    preproc_conditional_group_content: _preproc_conditional_block_template($ => choice(
+      $._page_properties,
+      $._layout_element
+    )),
 
     // Preprocessor conditional rules for properties
     preproc_conditional_properties: _preproc_conditional_block_template($ => $._page_properties),

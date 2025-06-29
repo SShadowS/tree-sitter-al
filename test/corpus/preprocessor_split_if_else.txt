@@ -102,7 +102,8 @@ codeunit 50001 "Multiple Split If-Else"
                 condition: (preproc_not_expression
                   (identifier)))
               condition: (unary_expression
-                (field_access
+                operator: (unary_operator)
+                operand: (field_access
                   record: (identifier)
                   field: (quoted_identifier)))
               then_branch: (assignment_expression

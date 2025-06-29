@@ -121,7 +121,8 @@ table 50012 "Test Table"
           expression: (boolean)
           (case_branch
             pattern: (unary_expression
-              (identifier))
+              operator: (unary_operator)
+              operand: (identifier))
             statements: (call_expression
               function: (identifier)
               arguments: (argument_list

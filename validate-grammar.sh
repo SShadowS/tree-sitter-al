@@ -68,7 +68,15 @@ if [ $TEST_EXIT_CODE -eq 0 ]; then
     fi
 else
     print_error "Some tests failed"
-    echo "$TEST_OUTPUT" | grep -E '✗|FAIL|ERROR' | head -10
+    # Show summary of failures
+    echo "$TEST_OUTPUT" | grep -E "failures:|failed parses:" || true
+    echo ""
+    # Show which tests failed
+    echo "Failed tests:"
+    echo "$TEST_OUTPUT" | grep -B1 "✗" | grep -E "^\s*[0-9]+\.|^[a-zA-Z_]+" | head -20
+    echo ""
+    # Show the last line with statistics
+    echo "$TEST_OUTPUT" | tail -1
     VALIDATION_FAILED=1
 fi
 

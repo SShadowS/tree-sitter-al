@@ -196,7 +196,8 @@ codeunit 50102 "Dictionary Operations"
             body: (code_block
               (if_statement
                 condition: (unary_expression
-                  (call_expression
+                  operator: (unary_operator)
+                  operand: (call_expression
                     function: (member_expression
                       object: (identifier)
                       property: (identifier))

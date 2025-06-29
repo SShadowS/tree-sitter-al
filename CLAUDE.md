@@ -401,6 +401,7 @@ When adding scanner features:
 - **WHERE clauses in deeply nested preprocessor contexts**: WHERE clauses within table relations that are inside preprocessor conditionals may not parse correctly in certain complex nesting scenarios
 - **Interface return types with length specifications**: Due to tree-sitter's LR parser limitations, interface procedures with return types that include length specifications (e.g., `Code[50]`, `Text[100]`) create ERROR nodes. The parser reduces the type early before seeing the length specification. This works correctly in regular procedures and parameters but fails specifically for interface return types. Use type definitions without length specifications in interface return types as a workaround.
 - **Property names as variable names in page var sections**: Due to parsing ambiguity, certain property names (particularly `Width`) cannot be used as variable names in var sections within pages. The parser incorrectly tries to parse them as page properties instead of variable identifiers. This works correctly in other object types (tables, codeunits). Workaround: Use quoted identifiers (e.g., `"Width": Decimal;`) or different variable names.
+- **Complex preprocessor patterns with fragmented if-else**: Patterns where preprocessor directives create fragmented if-else structures with additional code following the fragmented block can cause parsing errors. The `preproc_fragmented_if_else` rule can interfere with normal preprocessor nesting in these cases.
 
 ## Build Systems
 The project supports multiple build approaches:
@@ -422,6 +423,7 @@ The project supports multiple build approaches:
 Claude has access to comprehensive documentation through docs-mcp:
 - **Tree-sitter documentation**: Complete tree-sitter grammar development guide, API reference, and best practices
 - **Business Central AL Language reference**: Official Microsoft documentation for AL syntax, objects, properties, and language constructs
+If it fails, use the Microsoft.docs.mcp instead to get information on documentation.
 
 ### Using the `search_docs` Tool
 You can use the `search_docs` tool to find specific information within these documentation sets. Here's how it works:
@@ -766,4 +768,78 @@ repeat(choice(
 ### When to Update Tests vs Fix Grammar
 - **Update tests**: When grammar correctly parses the construct but tree structure has evolved
 - **Fix grammar**: When ERROR or MISSING nodes appear, or functionality is broken
-- **Document as limitation**: Only for genuinely complex cases (e.g., preprocessor splitting constructs)
+
+# Using Gemini CLI for Large Codebase Analysis
+
+When analyzing large codebases or multiple files that might exceed context limits, use the Gemini CLI with its massive
+context window. Use `gemini -p` to leverage Google Gemini's large context capacity.
+
+## File and Directory Inclusion Syntax
+
+Use the `@` syntax to include files and directories in your Gemini prompts. The paths should be relative to WHERE you run the
+  gemini command:
+
+### Examples:
+
+**Single file analysis:**
+gemini -p "@src/main.py Explain this file's purpose and structure"
+
+Multiple files:
+gemini -p "@package.json @src/index.js Analyze the dependencies used in the code"
+
+Entire directory:
+gemini -p "@src/ Summarize the architecture of this codebase"
+
+Multiple directories:
+gemini -p "@src/ @tests/ Analyze test coverage for the source code"
+
+Current directory and subdirectories:
+gemini -p "@./ Give me an overview of this entire project"
+
+# Or use --all_files flag:
+gemini --all_files -p "Analyze the project structure and dependencies"
+
+Implementation Verification Examples
+
+Check if a feature is implemented:
+gemini -p "@src/ @lib/ Has dark mode been implemented in this codebase? Show me the relevant files and functions"
+
+Verify authentication implementation:
+gemini -p "@src/ @middleware/ Is JWT authentication implemented? List all auth-related endpoints and middleware"
+
+Check for specific patterns:
+gemini -p "@src/ Are there any React hooks that handle WebSocket connections? List them with file paths"
+
+Verify error handling:
+gemini -p "@src/ @api/ Is proper error handling implemented for all API endpoints? Show examples of try-catch blocks"
+
+Check for rate limiting:
+gemini -p "@backend/ @middleware/ Is rate limiting implemented for the API? Show the implementation details"
+
+Verify caching strategy:
+gemini -p "@src/ @lib/ @services/ Is Redis caching implemented? List all cache-related functions and their usage"
+
+Check for specific security measures:
+gemini -p "@src/ @api/ Are SQL injection protections implemented? Show how user inputs are sanitized"
+
+Verify test coverage for features:
+gemini -p "@src/payment/ @tests/ Is the payment processing module fully tested? List all test cases"
+
+When to Use Gemini CLI
+
+Use gemini -p when:
+- Analyzing entire codebases or large directories
+- Comparing multiple large files
+- Need to understand project-wide patterns or architecture
+- Current context window is insufficient for the task
+- Working with files totaling more than 100KB
+- Verifying if specific features, patterns, or security measures are implemented
+- Checking for the presence of certain coding patterns across the entire codebase
+
+Important Notes
+
+- Paths in @ syntax are relative to your current working directory when invoking gemini
+- The CLI will include file contents directly in the context
+- No need for --yolo flag for read-only analysis
+- Gemini's context window can handle entire codebases that would overflow Claude's context
+- When checking implementations, be specific about what you're looking for to get accurate results

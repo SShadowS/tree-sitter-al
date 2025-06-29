@@ -55,7 +55,8 @@ reportextension 99000858 "Mfg. Get Demand To Reserve" extends "Get Demand To Res
             (code_block
               (if_statement
                 condition: (unary_expression
-                  (identifier))
+                  operator: (unary_operator)
+                  operand: (identifier))
                 then_branch: (call_expression
                   function: (member_expression
                     object: (identifier)

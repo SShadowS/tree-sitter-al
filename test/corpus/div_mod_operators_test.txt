@@ -329,7 +329,8 @@ table 50100 TestTable
           expression: (boolean)
           (case_branch
             left: (unary_expression
-              (call_expression
+              operator: (unary_operator)
+              operand: (call_expression
                 function: (member_expression
                   object: (identifier)
                   property: (identifier))

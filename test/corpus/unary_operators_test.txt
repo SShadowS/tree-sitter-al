@@ -43,19 +43,23 @@ codeunit 123 "Test"
           (assignment_expression
             left: (identifier)
             right: (unary_expression
-              (integer)))
+              operator: (unary_operator)
+              operand: (integer)))
           (assignment_expression
             left: (identifier)
             right: (integer))
           (assignment_expression
             left: (identifier)
             right: (unary_expression
-              (boolean)))
+              operator: (unary_operator)
+              operand: (boolean)))
           (assignment_expression
             left: (identifier)
             right: (unary_expression
-              (boolean)))
+              operator: (unary_operator)
+              operand: (boolean)))
           (assignment_expression
             left: (identifier)
             right: (unary_expression
-              (boolean))))))))
+              operator: (unary_operator)
+              operand: (boolean))))))))

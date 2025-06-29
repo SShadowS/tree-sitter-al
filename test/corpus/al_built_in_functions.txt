@@ -135,7 +135,8 @@ codeunit 50000 "AL Built-in Functions Test"
           (comment)
           (if_statement
             condition: (unary_expression
-              (member_expression
+              operator: (unary_operator)
+              operand: (member_expression
                 object: (identifier)
                 property: (identifier)))
             then_branch: (call_expression

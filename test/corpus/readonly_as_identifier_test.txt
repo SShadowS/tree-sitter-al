@@ -250,7 +250,8 @@ page 50102 "Advanced Viewer"
               (assignment_expression
                 left: (identifier)
                 right: (unary_expression
-                  (call_expression
+                  operator: (unary_operator)
+                  operand: (call_expression
                     function: (identifier)
                     arguments: (argument_list))))
               (call_expression
@@ -283,7 +284,8 @@ page 50102 "Advanced Viewer"
       (code_block
         (exit_statement
           return_value: (unary_expression
-            (identifier)))))
+            operator: (unary_operator)
+            operand: (identifier)))))
     (procedure
       modifier: (procedure_modifier)
       name: (name

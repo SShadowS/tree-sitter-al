@@ -39,7 +39,8 @@ page 12345 TestPage
             value: (style_value))
           (style_expr_property
             value: (unary_expression
-              (identifier)))
+              operator: (unary_operator)
+              operand: (identifier)))
           (tool_tip_property
             (tool_tip_value
               (string_literal))))))))
@@ -75,7 +76,8 @@ page 23456 LowerCasePage
           source_or_field_name: (identifier)
           (style_expr_property
             value: (unary_expression
-              (identifier))))))))
+              operator: (unary_operator)
+              operand: (identifier))))))))
 
 ================================================================================
 StyleExpr with minus unary expression
@@ -108,7 +110,8 @@ page 34567 MinusPage
           source_or_field_name: (identifier)
           (style_expr_property
             value: (unary_expression
-              (identifier))))))))
+              operator: (unary_operator)
+              operand: (identifier))))))))
 
 ================================================================================
 StyleExpr with boolean literal (existing functionality)

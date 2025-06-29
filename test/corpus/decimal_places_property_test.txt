@@ -131,7 +131,8 @@ page 242 "Consolidate Wizard"
               (code_block
                 (if_statement
                   condition: (unary_expression
-                    (member_expression
+                    operator: (unary_operator)
+                    operand: (member_expression
                       object: (identifier)
                       property: (identifier)))
                   then_branch: (call_expression

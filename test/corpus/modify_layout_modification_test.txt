@@ -45,7 +45,8 @@ pageextension 123 "Test Extension" extends "Test Page"
           value: (boolean))
         (editable_property
           value: (unary_expression
-            (identifier))))
+            operator: (unary_operator)
+            operand: (identifier))))
       (addafter_layout_modification
         target: (quoted_identifier)
         (field_section
