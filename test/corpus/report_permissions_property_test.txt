@@ -1,0 +1,164 @@
+================================================================================
+Report with Permissions property - single tabledata
+================================================================================
+
+report 6213 "Simple Report"
+{
+    Permissions = tabledata "Sales Header" = r;
+    
+    dataset
+    {
+        dataitem(Customer; Customer)
+        {
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (permissions_property
+      (tabledata_permission_list
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))))
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)))))
+
+================================================================================
+Report with Permissions property - multiple tabledata entries
+================================================================================
+
+report 6214 "Complex Report"
+{
+    Permissions = tabledata "Sustainability Ledger Entry" = ri,
+                  tabledata "Customer" = r,
+                  tabledata "Sales Header" = rimd;
+    
+    dataset
+    {
+        dataitem(Customer; Customer)
+        {
+            column(No; "No.")
+            {
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (permissions_property
+      (tabledata_permission_list
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))))
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (identifier)
+        (report_column_section
+          name: (identifier)
+          source: (quoted_identifier))))))
+
+================================================================================
+Report with mixed properties including Permissions
+================================================================================
+
+report 6215 "Sustainability Report"
+{
+    Caption = 'Carbon Emission Report';
+    UsageCategory = Tasks;
+    ApplicationArea = Basic, Suite;
+    ProcessingOnly = true;
+    Permissions = tabledata "Sustainability Ledger Entry" = ri;
+    
+    dataset
+    {
+        dataitem("Sustainability Ledger Entry"; "Sustainability Ledger Entry")
+        {
+            RequestFilterFields = "Posting Date", "Account No.";
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (usage_category_property
+      value: (usage_category_value))
+    (application_area_property
+      value: (identifier)
+      value: (identifier))
+    (processing_only_property)
+    (permissions_property
+      (tabledata_permission_list
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))))
+    (dataset_section
+      (report_dataitem_section
+        name: (quoted_identifier)
+        (quoted_identifier)
+        (request_filter_fields_property
+          value: (request_filter_fields_value
+            (quoted_identifier)
+            (quoted_identifier)))))))
+
+================================================================================
+Report with Permissions property - case variations
+================================================================================
+
+report 6216 "Case Test Report"
+{
+    permissions = TABLEDATA "Test Table" = RiMd;
+    
+    dataset
+    {
+        dataitem(Test; "Test Table")
+        {
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (permissions_property
+      (tabledata_permission_list
+        (tabledata_permission
+          keyword: (tabledata_keyword)
+          table_name: (quoted_identifier)
+          permission: (permission_type))))
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        (quoted_identifier)))))

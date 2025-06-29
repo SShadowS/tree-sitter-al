@@ -7350,6 +7350,7 @@ enum_type: $ => prec(1, seq(
       $._universal_properties,
       $._access_properties,
       $._object_specific_properties,
+      $.permissions_property,        // Report-level tabledata permissions
       
       // Report-specific properties
       
