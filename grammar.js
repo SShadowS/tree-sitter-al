@@ -4175,6 +4175,10 @@ module.exports = grammar({
       alias('Style', $.identifier),
       alias('style', $.identifier),
       alias('STYLE', $.identifier),
+      // Allow the keyword 'StyleExpr' to be treated as an identifier in variable contexts
+      alias('StyleExpr', $.identifier),
+      alias('styleexpr', $.identifier),
+      alias('STYLEEXPR', $.identifier),
       // Allow the keyword 'Width' to be treated as an identifier in variable contexts
       alias(kw('width'), $.identifier),
       // Allow the keyword 'Height' to be treated as an identifier in variable contexts
