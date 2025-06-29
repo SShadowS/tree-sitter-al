@@ -73,7 +73,7 @@ else
     echo ""
     # Show which tests failed
     echo "Failed tests:"
-    echo "$TEST_OUTPUT" | grep -B1 "✗" | grep -E "^\s*[0-9]+\.|^[a-zA-Z_]+" | head -20
+    echo "$TEST_OUTPUT" | grep -B1 "✗" | head -20
     echo ""
     # Show the last line with statistics
     echo "$TEST_OUTPUT" | tail -1

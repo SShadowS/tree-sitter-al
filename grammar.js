@@ -4180,7 +4180,9 @@ module.exports = grammar({
       // Allow 'Enum' to be used as an identifier in variable contexts
       alias(kw('enum'), $.identifier),
       // Allow 'ReadOnly' to be used as an identifier in variable contexts
-      alias(kw('readonly'), $.identifier)
+      alias(kw('readonly'), $.identifier),
+      // Allow 'ApiVersion' to be used as an identifier in variable contexts
+      alias(kw('apiversion'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
