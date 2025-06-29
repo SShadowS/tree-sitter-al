@@ -5169,7 +5169,7 @@ enum_type: $ => prec(1, seq(
     key_declaration: $ => seq(
       kw('key'),
       '(',
-      field('name', alias($.identifier, $.name)),
+      field('name', alias(choice($.identifier, $._quoted_identifier), $.name)),
       ';',
       field('fields', $.key_field_list),
       ')',

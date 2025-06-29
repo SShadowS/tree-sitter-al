@@ -1,0 +1,295 @@
+================================================================================
+Table with quoted identifier in key name
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; "No."; Code[20])
+        {
+            Caption = 'No.';
+        }
+        field(2; "Description"; Text[100])
+        {
+            Caption = 'Description';
+        }
+    }
+    
+    keys
+    {
+        key("Key 1"; "No.")
+        {
+            Clustered = true;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (caption_property
+          (string_literal)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (caption_property
+          (string_literal))))
+    (keys
+      (key_declaration
+        name: (name
+          (quoted_identifier))
+        fields: (key_field_list
+          (quoted_identifier))
+        (clustered_property
+          value: (boolean))))))
+
+================================================================================
+Table with multiple keys using quoted and unquoted identifiers
+================================================================================
+
+table 361 "Analysis by Dim. Parameters"
+{
+    fields
+    {
+        field(1; "Analysis View Code"; Code[10])
+        {
+            Caption = 'Analysis View Code';
+            TableRelation = "Analysis View";
+        }
+        field(2; "Customer No."; Code[20])
+        {
+            Caption = 'Customer No.';
+        }
+    }
+    
+    keys
+    {
+        key("Key 1"; "Analysis View Code")
+        {
+            Clustered = true;
+        }
+        key(Key2; "Customer No.", "Analysis View Code")
+        {
+            Unique = true;
+        }
+        key("Secondary Key"; "Customer No.")
+        {
+            Enabled = false;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (caption_property
+          (string_literal))
+        (table_relation_property
+          relation: (table_relation_expression
+            (simple_table_relation
+              table: (quoted_identifier))))
+        (empty_statement))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (caption_property
+          (string_literal))))
+    (keys
+      (key_declaration
+        name: (name
+          (quoted_identifier))
+        fields: (key_field_list
+          (quoted_identifier))
+        (clustered_property
+          value: (boolean)))
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (quoted_identifier)
+          (quoted_identifier))
+        (unique_property
+          value: (boolean)))
+      (key_declaration
+        name: (name
+          (quoted_identifier))
+        fields: (key_field_list
+          (quoted_identifier))
+        (enabled_property
+          value: (boolean))))))
+
+================================================================================
+Key with spaces and special characters in quoted name
+================================================================================
+
+table 50101 "Complex Key Names"
+{
+    fields
+    {
+        field(1; ID; Integer)
+        {
+            Caption = 'ID';
+        }
+        field(2; Code; Code[10])
+        {
+            Caption = 'Code';
+        }
+    }
+    
+    keys
+    {
+        key("Primary Key - Main"; ID)
+        {
+            Clustered = true;
+        }
+        key("Code & ID"; Code, ID)
+        {
+        }
+        key("Special/Characters!"; ID)
+        {
+            Unique = true;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (caption_property
+          (string_literal)))
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (caption_property
+          (string_literal))))
+    (keys
+      (key_declaration
+        name: (name
+          (quoted_identifier))
+        fields: (key_field_list
+          (identifier))
+        (clustered_property
+          value: (boolean)))
+      (key_declaration
+        name: (name
+          (quoted_identifier))
+        fields: (key_field_list
+          (identifier)
+          (identifier)))
+      (key_declaration
+        name: (name
+          (quoted_identifier))
+        fields: (key_field_list
+          (identifier))
+        (unique_property
+          value: (boolean))))))
+
+================================================================================
+Key with preprocessor conditionals
+================================================================================
+
+table 50102 "Test Preprocessor Keys"
+{
+    fields
+    {
+        field(1; "Entry No."; Integer)
+        {
+            Caption = 'Entry No.';
+        }
+    }
+    
+    keys
+    {
+        key("Main Key"; "Entry No.")
+        {
+            Clustered = true;
+#if CLEAN26
+            ObsoleteState = Removed;
+            ObsoleteReason = 'Replaced by new key structure';
+#else
+            ObsoleteState = Pending;
+            ObsoleteReason = 'Will be removed in next version';
+#endif
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (caption_property
+          (string_literal))))
+    (keys
+      (key_declaration
+        name: (name
+          (quoted_identifier))
+        fields: (key_field_list
+          (quoted_identifier))
+        (clustered_property
+          value: (boolean))
+        (preproc_conditional_key_properties
+          (preproc_if
+            condition: (identifier))
+          (property
+            (obsolete_state_property
+              value: (obsolete_state_value)))
+          (property
+            (obsolete_reason_property
+              value: (obsolete_reason_value
+                (string_literal))))
+          (preproc_else)
+          (property
+            (obsolete_state_property
+              value: (obsolete_state_value)))
+          (property
+            (obsolete_reason_property
+              value: (obsolete_reason_value
+                (string_literal))))
+          (preproc_endif))))))

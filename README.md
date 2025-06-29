@@ -8,9 +8,13 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,122 files (98.4%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,154 files (98.6%) parse successfully**.
 
 Recent improvements include:
+- **Date/time literals in filter expressions** - Added support for date literals (0D, 20240101D), time literals (120000T), and datetime literals (0DT) in CalcFormula filter expressions, with proper precedence to avoid parsing conflicts
+- **StyleExpr as contextual keyword** - Fixed StyleExpr to be usable as a variable name in var sections, resolving parsing errors in page-level variable declarations
+- **TestHttpRequestPolicy property** - Added support for TestHttpRequestPolicy property in codeunit declarations with BlockOutboundRequests value
+- **ApiVersion as contextual keyword** - Added ApiVersion to the list of keywords that can be used as variable names, fixing parsing errors in var sections
 - **Report preprocessor procedures** - Added support for #if/#endif conditional blocks around procedures in report objects, fixing ERROR nodes when procedures are wrapped in preprocessor directives
 - **IsPreview keyword context handling** - Fixed conflict where IsPreview can now be used as both a property (`IsPreview = true;`) and a variable name (`var IsPreview: Boolean;`) through case-sensitive disambiguation
 - **ShowAs property Standard value** - Added support for ShowAs = Standard in page actions, completing the set of valid values (SplitButton, Menu, Button, Standard)
