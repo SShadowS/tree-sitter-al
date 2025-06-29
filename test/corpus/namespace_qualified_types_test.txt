@@ -1,0 +1,196 @@
+================================================================================
+Page parameter with namespace-qualified reference
+================================================================================
+
+codeunit 50100 "Library Item Tracking"
+{
+    procedure CreateItemTrackingLines(var ItemTrackingLines: Page Microsoft.Inventory.Tracking."Item Tracking Lines")
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (page_type
+                reference: (namespace_qualified_reference
+                  namespace: (identifier)
+                  segment: (identifier)
+                  segment: (identifier)
+                  segment: (quoted_identifier))))))
+        (code_block)))))
+
+================================================================================
+Codeunit parameter with namespace qualification
+================================================================================
+
+codeunit 50101 "Test Codeunit"
+{
+    procedure Test(LibraryUtility: Codeunit Microsoft.Test.Utilities."Library - Utility")
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (codeunit_type
+                reference: (namespace_qualified_reference
+                  namespace: (identifier)
+                  segment: (identifier)
+                  segment: (identifier)
+                  segment: (quoted_identifier))))))
+        (code_block)))))
+
+================================================================================
+XMLPort with namespace qualification
+================================================================================
+
+codeunit 50102 "Import Handler"
+{
+    procedure ImportData(var DataImport: XMLport System.IO.Xml."Data Import")
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (xmlport_type
+                reference: (namespace_qualified_reference
+                  namespace: (identifier)
+                  segment: (identifier)
+                  segment: (identifier)
+                  segment: (quoted_identifier))))))
+        (code_block)))))
+
+================================================================================
+TestPage with simple namespace
+================================================================================
+
+codeunit 50103 "Page Test"
+{
+    procedure TestCustomerCard(var CustomerCard: TestPage Customer.Card)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (testpage_type
+                reference: (namespace_qualified_reference
+                  namespace: (identifier)
+                  segment: (identifier))))))
+        (code_block)))))
+
+================================================================================
+Mixed namespace qualified and regular types
+================================================================================
+
+codeunit 50104 "Mixed Types"
+{
+    procedure ProcessMultiple(
+        var Page1: Page "Customer List";
+        var Page2: Page Microsoft.Sales."Customer Card";
+        Report1: Report 101;
+        Codeunit1: Codeunit System.Utilities.Math)
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (page_type
+                reference: (quoted_identifier))))
+          (parameter
+            modifier: (modifier)
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (page_type
+                reference: (namespace_qualified_reference
+                  namespace: (identifier)
+                  segment: (identifier)
+                  segment: (quoted_identifier)))))
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (report_type
+                reference: (integer))))
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (codeunit_type
+                reference: (namespace_qualified_reference
+                  namespace: (identifier)
+                  segment: (identifier)
+                  segment: (identifier))))))
+        (code_block)))))

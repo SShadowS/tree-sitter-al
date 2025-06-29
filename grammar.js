@@ -4339,7 +4339,8 @@ enum_type: $ => prec(1, seq(
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
-        $.identifier
+        $.identifier,
+        $.namespace_qualified_reference  // Support Microsoft.Inventory.Tracking."Item Tracking Lines"
       ))
     ),
 
@@ -4367,7 +4368,8 @@ enum_type: $ => prec(1, seq(
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
-        $.identifier
+        $.identifier,
+        $.namespace_qualified_reference
       ))
     ),
 
@@ -4494,7 +4496,8 @@ enum_type: $ => prec(1, seq(
         $.integer,
         $._quoted_identifier,
         $.identifier,
-        $.member_expression
+        $.member_expression,
+        $.namespace_qualified_reference
       ))
     )),
 
@@ -4508,7 +4511,8 @@ enum_type: $ => prec(1, seq(
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
-        $.identifier
+        $.identifier,
+        $.namespace_qualified_reference
       ))
     ),
 
@@ -4517,7 +4521,8 @@ enum_type: $ => prec(1, seq(
       field('reference', choice(
         $.integer,
         $._quoted_identifier,
-        $.identifier
+        $.identifier,
+        $.namespace_qualified_reference
       ))
     ),
 
@@ -5429,6 +5434,17 @@ enum_type: $ => prec(1, seq(
       ))),
       $.quoted_identifier
     ),
+
+    // Namespace-qualified reference for type specifications
+    // Examples: Microsoft.Inventory.Tracking."Item Tracking Lines"
+    //          System.DateTime
+    namespace_qualified_reference: $ => prec.left(2, seq(
+      field('namespace', $._identifier_choice),
+      repeat1(seq(
+        '.',
+        field('segment', $._identifier_choice)
+      ))
+    )),
 
     string_literal: $ => token(
       choice(

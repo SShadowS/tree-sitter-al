@@ -19136,6 +19136,10 @@
               {
                 "type": "SYMBOL",
                 "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "namespace_qualified_reference"
               }
             ]
           }
@@ -19264,6 +19268,10 @@
               {
                 "type": "SYMBOL",
                 "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "namespace_qualified_reference"
               }
             ]
           }
@@ -19998,6 +20006,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "member_expression"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "namespace_qualified_reference"
                 }
               ]
             }
@@ -20060,6 +20072,10 @@
               {
                 "type": "SYMBOL",
                 "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "namespace_qualified_reference"
               }
             ]
           }
@@ -20097,6 +20113,10 @@
               {
                 "type": "SYMBOL",
                 "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "namespace_qualified_reference"
               }
             ]
           }
@@ -24355,6 +24375,43 @@
       },
       "named": true,
       "value": "quoted_identifier"
+    },
+    "namespace_qualified_reference": {
+      "type": "PREC_LEFT",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "namespace",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_identifier_choice"
+            }
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "."
+                },
+                {
+                  "type": "FIELD",
+                  "name": "segment",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_identifier_choice"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
     },
     "string_literal": {
       "type": "TOKEN",
