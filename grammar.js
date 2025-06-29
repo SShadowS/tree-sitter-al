@@ -3936,7 +3936,6 @@ module.exports = grammar({
       $.lookup_pageid_property,
       $.card_page_id_property,
       $.promoted_action_categories_property,
-      // $.permissions_property, // Removed - only for table/page contexts
       $.test_permissions_property,
       $.table_relation_property,
       $.field_class_property,
@@ -7069,7 +7068,7 @@ enum_type: $ => prec(1, seq(
       $.test_permissions_property,   // Test environment permissions
       $.access_by_permission_property, // General access by permission (used in actions)
       // Note: Pages use access_by_permission_page_property; other objects use access_by_permission_property
-      // Note: permissions_property removed - it's for table/page tabledata permissions only
+      // Note: permissions_property is added to specific objects that support tabledata permissions
     ),
 
     // Object-specific properties that are unique to specific object types
@@ -7096,6 +7095,7 @@ enum_type: $ => prec(1, seq(
 
     // Query-specific properties that are unique to query objects
     _query_properties: $ => choice(
+      $.permissions_property,        // Query-level tabledata permissions
       $.query_type_property,         // Query type (Normal, API, Filter)
       $.read_state_property,         // Read state (ReadCommitted, ReadUncommitted)
       $.query_category_property,     // Query categorization
@@ -7337,11 +7337,11 @@ enum_type: $ => prec(1, seq(
       $._access_properties,
       $._navigation_properties,
       $._object_specific_properties,
+      $.permissions_property,        // Codeunit-level tabledata permissions
       
       // Additional codeunit-specific properties not in other groups
       $.test_isolation_property,
-      $.test_http_request_policy_property,
-      $.permissions_property  // Tabledata permissions for codeunit
+      $.test_http_request_policy_property
     ),
 
     // Composed property group for report-level properties
@@ -7439,6 +7439,7 @@ enum_type: $ => prec(1, seq(
     _xmlport_properties: $ => choice(
       $._universal_properties,    // caption, application_area, tool_tip, obsolete_*, description
       $._access_properties,       // inherent_permissions, inherent_entitlements, access
+      $.permissions_property,     // XMLPort-level tabledata permissions
       
       // XMLPort-specific properties only
       $.direction_property,
