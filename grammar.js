@@ -1844,6 +1844,13 @@ module.exports = grammar({
       ';'
     ),
 
+    test_http_request_policy_property: $ => seq(
+      kw('testhttprequestpolicy'),
+      '=',
+      field('value', alias(kw('blockoutboundrequests'), $.value)),
+      ';'
+    ),
+
     drilldown_pageid_property: $ => seq(
       kw('drilldownpageid'),
       '=', 
@@ -7314,6 +7321,7 @@ enum_type: $ => prec(1, seq(
       
       // Additional codeunit-specific properties not in other groups
       $.test_isolation_property,
+      $.test_http_request_policy_property,
       $.permissions_property  // Tabledata permissions for codeunit
     ),
 

@@ -1,0 +1,94 @@
+================================================================================
+Test codeunit with TestHttpRequestPolicy property
+================================================================================
+
+codeunit 50100 "Test Http Client"
+{
+    Subtype = Test;
+    TestHttpRequestPolicy = BlockOutboundRequests;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (subtype_property
+      value: (value))
+    (test_http_request_policy_property
+      value: (value))))
+
+================================================================================
+Test codeunit with multiple test properties
+================================================================================
+
+codeunit 50101 "Advanced Test"
+{
+    Subtype = Test;
+    TestIsolation = Codeunit;
+    TestHttpRequestPolicy = BlockOutboundRequests;
+    
+    var
+        Assert: Codeunit "Library Assert";
+    
+    procedure TestMethod()
+    begin
+        Assert.IsTrue(true, 'Test should pass');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (subtype_property
+      value: (value))
+    (test_isolation_property
+      value: (value))
+    (test_http_request_policy_property
+      value: (value))
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (codeunit_type
+            reference: (quoted_identifier)))))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (code_block
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (boolean)
+              (string_literal))))))))
+
+================================================================================
+Test codeunit with case variations
+================================================================================
+
+codeunit 50102 "Case Test"
+{
+    Subtype = Test;
+    testhttprequestpolicy = blockoutboundrequests;
+    TESTHTTPREQUESTPOLICY = BLOCKOUTBOUNDREQUESTS;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (subtype_property
+      value: (value))
+    (test_http_request_policy_property
+      value: (value))
+    (test_http_request_policy_property
+      value: (value))))

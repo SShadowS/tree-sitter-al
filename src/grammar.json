@@ -7498,6 +7498,42 @@
         }
       ]
     },
+    "test_http_request_policy_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)testhttprequestpolicy"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)blockoutboundrequests"
+              }
+            },
+            "named": true,
+            "value": "value"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "drilldown_pageid_property": {
       "type": "SEQ",
       "members": [
@@ -33395,6 +33431,10 @@
         {
           "type": "SYMBOL",
           "name": "test_isolation_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "test_http_request_policy_property"
         },
         {
           "type": "SYMBOL",

@@ -7000,6 +7000,10 @@
           "named": true
         },
         {
+          "type": "test_http_request_policy_property",
+          "named": true
+        },
+        {
           "type": "test_isolation_property",
           "named": true
         },
@@ -30941,6 +30945,10 @@
           "named": true
         },
         {
+          "type": "test_http_request_policy_property",
+          "named": true
+        },
+        {
           "type": "test_isolation_property",
           "named": true
         },
@@ -47325,6 +47333,22 @@
     "type": "temporary",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "test_http_request_policy_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "value",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "test_isolation_property",
