@@ -1,0 +1,120 @@
+================================================================================
+XMLPort textattribute with TextType property
+================================================================================
+
+xmlport 1501 "Test XMLPort"
+{
+    schema
+    {
+        textelement(Root)
+        {
+            textattribute(EventConditions)
+            {
+                Occurrence = Optional;
+                TextType = BigText;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (integer)
+    (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        (identifier)
+        (xmlport_text_attribute
+          (identifier)
+          (xmlport_table_property
+            (occurrence_property
+              (occurrence_value)))
+          (xmlport_table_property
+            (text_type_property
+              (text_type_value))))))))
+
+================================================================================
+XMLPort textattribute with TextType = Text
+================================================================================
+
+xmlport 50100 "Simple XMLPort"
+{
+    schema
+    {
+        textelement(Data)
+        {
+            textattribute(Name)
+            {
+                TextType = Text;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (integer)
+    (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        (identifier)
+        (xmlport_text_attribute
+          (identifier)
+          (xmlport_table_property
+            (text_type_property
+              (text_type_value))))))))
+
+================================================================================
+XMLPort textattribute with multiple properties including TextType
+================================================================================
+
+xmlport 50101 "Complex XMLPort"
+{
+    schema
+    {
+        textelement(Root)
+        {
+            tableelement(Customer; Customer)
+            {
+                textattribute(Info)
+                {
+                    Caption = 'Customer Information';
+                    Occurrence = Required;
+                    TextType = BigText;
+                    XmlName = 'CustomerInfo';
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (xmlport_declaration
+    (integer)
+    (quoted_identifier)
+    (xmlport_schema_element
+      (xmlport_table_element
+        (identifier)
+        (xmlport_table_element
+          (identifier)
+          (identifier)
+          (xmlport_text_attribute
+            (identifier)
+            (xmlport_table_property
+              (caption_property
+                (string_literal)))
+            (xmlport_table_property
+              (occurrence_property
+                (occurrence_value)))
+            (xmlport_table_property
+              (text_type_property
+                (text_type_value)))
+            (xmlport_table_property
+              (xml_name_property
+                (string_literal)))))))))

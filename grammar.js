@@ -346,6 +346,7 @@ module.exports = grammar({
       $.use_temporary_property,
       $.source_table_view_property,  // Add SourceTableView property
       $.field_validate_property,
+      $.text_type_property,  // Add TextType property for textattribute
     ),
     
     xmlport_field_attribute: $ => seq(
@@ -464,6 +465,14 @@ module.exports = grammar({
     ),
     
     occurrence_property: _value_property_template($ => kw('Occurrence'), $ => $.occurrence_value),
+    
+    // TextType Property (for XMLPort text attributes)
+    text_type_value: $ => choice(
+      kw('Text'),
+      kw('BigText')
+    ),
+    
+    text_type_property: _value_property_template($ => kw('TextType'), $ => $.text_type_value),
     
     // 10. NamespacePrefix Property
     namespace_prefix_property: $ => seq(

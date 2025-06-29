@@ -47478,6 +47478,27 @@
     }
   },
   {
+    "type": "text_type_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "text_type_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "text_type_value",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "title_property",
     "named": true,
     "fields": {
@@ -51561,6 +51582,10 @@
         },
         {
           "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "text_type_property",
           "named": true
         },
         {
