@@ -1,0 +1,198 @@
+================================================================================
+Date literal in filter expressions - undefined date
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; Acquired; Boolean)
+        {
+            CalcFormula = exist("FA Book" where("Date" = filter(<> 0D)));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (exist_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (filter_not_equal_expression
+                        value: (date_literal)))))))))))))
+
+================================================================================
+Date literal in filter expressions - specific date
+================================================================================
+
+table 50101 "Date Filter Test"
+{
+    fields
+    {
+        field(1; StartDate; Date)
+        {
+            CalcFormula = exist("Calendar Entry" where("Date" = filter(>= 20240101D)));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (exist_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (filter_greater_than_or_equal_expression
+                        value: (date_literal)))))))))))))
+
+================================================================================
+Date literals in various filter contexts
+================================================================================
+
+table 50102 "Complex Date Filters"
+{
+    fields
+    {
+        field(1; DateRange; Boolean)
+        {
+            CalcFormula = exist("Entry" where(
+                "Start Date" = filter(20240101D .. 20241231D),
+                "End Date" = filter(> 0D),
+                "Posted Date" = filter(= 19990101d)));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (exist_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (filter_range_expression
+                        start: (date_literal)
+                        end: (date_literal)))))
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (filter_greater_than_expression
+                        value: (date_literal)))))
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (filter_equal_expression
+                        value: (date_literal)))))))))))))
+
+================================================================================
+Date literal with time and datetime literals
+================================================================================
+
+table 50103 "Mixed Date Time Filters"
+{
+    fields
+    {
+        field(1; Mixed; Boolean)
+        {
+            CalcFormula = exist("Log" where(
+                "Date" = filter(<> 0D),
+                "Time" = filter(> 120000T),
+                "DateTime" = filter(<= 0DT)));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (exist_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (filter_not_equal_expression
+                        value: (date_literal)))))
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (filter_greater_than_expression
+                        value: (time_literal)))))
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (filter_less_than_or_equal_expression
+                        value: (datetime_literal)))))))))))))

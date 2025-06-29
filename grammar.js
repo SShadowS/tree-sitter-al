@@ -57,6 +57,9 @@ function _comparison_filter_template($, operator) {
     field('value', choice(
       $.string_literal,
       $.integer,
+      $.date_literal,
+      $.time_literal,
+      $.datetime_literal,
       $._quoted_identifier,
       $.identifier
     ))
@@ -994,6 +997,9 @@ module.exports = grammar({
       field('value', choice(
         $.string_literal,
         $.integer,
+        $.date_literal,
+        $.time_literal,
+        $.datetime_literal,
         $._quoted_identifier,
         $.identifier
       ))
@@ -1004,6 +1010,9 @@ module.exports = grammar({
       field('value', choice(
         $.string_literal,
         $.integer,
+        $.date_literal,
+        $.time_literal,
+        $.datetime_literal,
         $._quoted_identifier,
         $.identifier
       ))
@@ -1033,7 +1042,10 @@ module.exports = grammar({
       $.identifier,
       $._quoted_identifier,
       $.integer,
-      $.string_literal
+      $.string_literal,
+      $.date_literal,
+      $.time_literal,
+      $.datetime_literal
     ),
 
     _filter_value: $ => choice(
@@ -6019,22 +6031,25 @@ enum_type: $ => prec(1, seq(
       new RustRegex('[tT]')
     )),
 
-    datetime_literal: $ => token(seq(
+    datetime_literal: $ => token(prec(3, seq(
       optional('-'),
       new RustRegex('\\d+'),
-      kw('dt')
-    )),
+      new RustRegex('[dD][tT]')
+    ))),
 
-    duration_literal: $ => token(seq(
+    date_literal: $ => token(prec(2, seq(
       optional('-'),
-      new RustRegex('\\d+'),
+      new RustRegex('\\d{1,8}'),  // Can be 0 for undefined date or yyyymmdd
       new RustRegex('[dD]')
-    )),
+    ))),
+
+    // Duration in AL is just a number representing milliseconds
+    // It doesn't have a special suffix, so we handle it as an integer in context
 
     _literal_value: $ => choice(
       $.time_literal, 
       $.datetime_literal,
-      $.duration_literal,
+      $.date_literal,
       $.biginteger,  // BigInteger literals with L suffix (e.g., 123L)
       $.integer,
       $.decimal,
@@ -7500,7 +7515,15 @@ enum_type: $ => prec(1, seq(
     _flexible_identifier_choice: $ => choice($.identifier, $._quoted_identifier, $.string_literal),
 
     // Extended value choice pattern (includes integers and identifiers)
-    _extended_value_choice: $ => choice($.integer, $.identifier, $._quoted_identifier, $.string_literal),
+    _extended_value_choice: $ => choice(
+      $.integer, 
+      $.identifier, 
+      $._quoted_identifier, 
+      $.string_literal,
+      $.date_literal,
+      $.time_literal,
+      $.datetime_literal
+    ),
 
     // Object reference pattern (for referencing AL objects by ID or name)
     _object_reference: $ => choice($.integer, $.identifier, $._quoted_identifier),

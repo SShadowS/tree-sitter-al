@@ -3676,6 +3676,18 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "date_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "time_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "datetime_literal"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "_quoted_identifier"
               },
               {
@@ -3707,6 +3719,18 @@
               {
                 "type": "SYMBOL",
                 "name": "integer"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "date_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "time_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "datetime_literal"
               },
               {
                 "type": "SYMBOL",
@@ -3785,6 +3809,18 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "date_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "time_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "datetime_literal"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "_quoted_identifier"
               },
               {
@@ -3816,6 +3852,18 @@
               {
                 "type": "SYMBOL",
                 "name": "integer"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "date_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "time_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "datetime_literal"
               },
               {
                 "type": "SYMBOL",
@@ -3853,6 +3901,18 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "date_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "time_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "datetime_literal"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "_quoted_identifier"
               },
               {
@@ -3884,6 +3944,18 @@
               {
                 "type": "SYMBOL",
                 "name": "integer"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "date_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "time_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "datetime_literal"
               },
               {
                 "type": "SYMBOL",
@@ -3944,6 +4016,18 @@
         {
           "type": "SYMBOL",
           "name": "string_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "date_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "time_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "datetime_literal"
         }
       ]
     },
@@ -27241,60 +27325,65 @@
     "datetime_literal": {
       "type": "TOKEN",
       "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "-"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\d+"
-          },
-          {
-            "type": "TOKEN",
-            "content": {
+        "type": "PREC",
+        "value": 3,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "-"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
               "type": "PATTERN",
-              "value": "(?i)dt"
+              "value": "\\d+"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[dD][tT]"
             }
-          }
-        ]
+          ]
+        }
       }
     },
-    "duration_literal": {
+    "date_literal": {
       "type": "TOKEN",
       "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "-"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\d+"
-          },
-          {
-            "type": "PATTERN",
-            "value": "[dD]"
-          }
-        ]
+        "type": "PREC",
+        "value": 2,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "-"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "PATTERN",
+              "value": "\\d{1,8}"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[dD]"
+            }
+          ]
+        }
       }
     },
     "_literal_value": {
@@ -27310,7 +27399,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "duration_literal"
+          "name": "date_literal"
         },
         {
           "type": "SYMBOL",
@@ -34022,6 +34111,18 @@
         {
           "type": "SYMBOL",
           "name": "string_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "date_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "time_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "datetime_literal"
         }
       ]
     },
