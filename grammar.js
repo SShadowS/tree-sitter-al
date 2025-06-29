@@ -94,7 +94,8 @@ module.exports = grammar({
     [$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values],
     [$.source_file],
     [$.preproc_conditional_procedures, $.preproc_conditional_mixed_content],
-    [$.preproc_conditional_var_sections, $.preproc_conditional_mixed_content]
+    [$.preproc_conditional_var_sections, $.preproc_conditional_mixed_content],
+    [$.interface_procedure],
   ],
 
   externals: $ => [
@@ -2179,16 +2180,18 @@ module.exports = grammar({
       optional($.parameter_list),
       ')',
       optional(choice(
-        $._interface_return_specification,
-        $._procedure_named_return        // Named return value
+        // Named return (Identifier : Type) - higher precedence to prefer shift when identifier follows
+        prec(11, $._procedure_named_return),
+        // Anonymous return (: Type)
+        $._interface_return_specification
       )),
       optional(';')
     ),
     
-    _interface_return_specification: $ => seq(
+    _interface_return_specification: $ => prec(50, seq(
       ':',
       field('return_type', $.return_type)
-    ),
+    )),
 
     attributed_interface_procedure: $ => seq(
       $.attribute_list,
@@ -3132,7 +3135,7 @@ module.exports = grammar({
     ),
     
     multi_line_property: $ => seq(
-      'MultiLine',
+      kw('multiline'),
       $._boolean_property_template
     ),
     
@@ -3156,7 +3159,7 @@ module.exports = grammar({
     ),
 
     width_property: $ => seq(
-      kw('Width'),
+      kw('width'),
       $._integer_property_template
     ),
 
@@ -4068,11 +4071,18 @@ module.exports = grammar({
 
 
     decimal_places_property: $ => seq(
-      'DecimalPlaces',
+      kw('DecimalPlaces'),
       '=',
-      field('precision', $.integer),
-      ':',
-      field('scale', $.integer),
+      choice(
+        // Simple format: DecimalPlaces = 2;
+        field('value', $.integer),
+        // Complex format: DecimalPlaces = 2:5;
+        seq(
+          field('precision', $.integer),
+          ':',
+          field('scale', $.integer)
+        )
+      ),
       ';'
     ),
 
@@ -4084,7 +4094,8 @@ module.exports = grammar({
         $.multiline_comment,
         $.attribute_list,
         $.pragma,
-        $.variable_declaration,
+        // Higher precedence for variable declarations to prefer staying in var_section
+        prec(20, $.variable_declaration),
         $.preproc_conditional_variables
       )))
     )),
@@ -4229,10 +4240,12 @@ module.exports = grammar({
     ),
 
 type_specification: $ => choice(
-  $.array_type,
+  prec(2, $.array_type),
+  prec(2, $.list_type),
+  prec(2, $.dictionary_type),
+  prec(1, $.text_type),
+  prec(1, $.code_type),
   $.basic_type,
-  $.text_type,
-  $.code_type,
   $.record_type,
   $.recordref_type,
   $.fieldref_type,
@@ -4243,8 +4256,6 @@ type_specification: $ => choice(
   $.report_type,
   $.xmlport_type,
   $.dotnet_type,
-  $.list_type,
-  $.dictionary_type,
   $.page_type,
   $.enum_type,
   $.option_type,
@@ -4426,23 +4437,29 @@ enum_type: $ => prec(1, seq(
       prec(1, kw('xmlattributecollection'))
     ),
 
-    text_type: $ => prec.left(10, seq(
-      kw('text'),
-      optional(seq(
+    text_type: $ => choice(
+      // Text[100] - higher precedence to prefer shift when '[' follows
+      prec(11, seq(
+        kw('text'),
         '[',
         field('length', $.integer),
         ']'
-      ))
-    )),
+      )),
+      // Plain "Text" - lower precedence
+      prec(10, kw('text'))
+    ),
 
-    code_type: $ => prec.left(10, seq(
-      kw('code'),
-      optional(seq(
+    code_type: $ => choice(
+      // Code[20] - higher precedence to prefer shift when '[' follows
+      prec(11, seq(
+        kw('code'),
         '[',
         field('length', $.integer),
         ']'
-      ))
-    )),
+      )),
+      // Plain "Code" - lower precedence
+      prec(10, kw('code'))
+    ),
 
     record_type: $ => prec.right(seq(
       prec(1, kw('record')),
@@ -5187,7 +5204,11 @@ enum_type: $ => prec(1, seq(
       repeat(seq(',', $._expression))
     ),
 
-    return_value: $ => field('return_value', $._identifier_choice),
+    return_value: $ => field('return_value', choice(
+      $._identifier_choice,
+      // Allow Description as a return value name
+      alias(kw('description'), $.identifier)
+    )),
 
     _procedure_return_specification: $ => seq(
       ':',

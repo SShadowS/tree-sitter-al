@@ -37,21 +37,22 @@ page 50100 "Text Viewer"
     (page_type_property)
     (layout_section
       (area_section
-        (page_field
-          field_name: (identifier)
-          source_expression: (identifier)
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
           (application_area_property
             value: (identifier))
-          (multi_line_property))))
+          (multi_line_property
+            value: (boolean)))))
     (var_section
       (variable_declaration
         name: (identifier)
         type: (type_specification
-          (basic_type)))
+          (text_type)))
       (variable_declaration
         name: (identifier)
         type: (type_specification
-          (basic_type)))
+          (text_type)))
       (variable_declaration
         name: (identifier)
         type: (type_specification
@@ -103,80 +104,83 @@ codeunit 50101 "ReadOnly Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      name: (name
-        (identifier))
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_expression
-          left: (identifier)
-          right: (boolean))
-        (assignment_expression
-          left: (identifier)
-          right: (integer))
-        (assignment_expression
-          left: (identifier)
-          right: (string_literal))
-        (assignment_expression
-          left: (identifier)
-          right: (decimal))
-        (if_statement
-          condition: (identifier)
-          then_statement: (call_expression
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (boolean))
+          (assignment_expression
+            left: (identifier)
+            right: (integer))
+          (assignment_expression
+            left: (identifier)
+            right: (string_literal))
+          (assignment_expression
+            left: (identifier)
+            right: (decimal))
+          (if_statement
+            condition: (identifier)
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)
+                (identifier)))))))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (basic_type)))
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (basic_type))))
+        (code_block
+          (if_statement
+            condition: (identifier)
+            then_branch: (exit_statement))
+          (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)
               (identifier))))))
-    (procedure
-      name: (name
-        (identifier))
-      (parameter_list
-        (parameter
-          parameter_name: (name
-            (identifier))
-          parameter_type: (type_specification
-            (basic_type)))
-        (parameter
-          parameter_name: (name
-            (identifier))
-          parameter_type: (type_specification
-            (basic_type))))
-      (code_block
-        (if_statement
-          condition: (identifier)
-          then_statement: (exit_statement))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (identifier)))))
-    (procedure
-      procedure_modifier: (procedure_modifier)
-      name: (name
-        (identifier))
-      (parameter_list
-        (parameter
-          parameter_name: (name
-            (identifier))
-          parameter_type: (type_specification
-            (basic_type))))
-      (code_block
-        (comment)))))
+    (attributed_procedure
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (basic_type))))
+        (code_block
+          (comment))))))
 
 ================================================================================
 ReadOnly with usercontrol
@@ -226,9 +230,9 @@ page 50102 "Advanced Viewer"
     object_name: (quoted_identifier)
     (layout_section
       (area_section
-        (usercontrol_declaration
-          control_name: (identifier)
-          control_type: (identifier)
+        (usercontrol_section
+          control_id: (identifier)
+          addin_name: (identifier)
           (trigger_declaration
             name: (trigger_name)
             (parameter_list
@@ -236,7 +240,7 @@ page 50102 "Advanced Viewer"
                 parameter_name: (name
                   (identifier))
                 parameter_type: (type_specification
-                  (basic_type))))
+                  (text_type))))
             (var_section
               (variable_declaration
                 name: (identifier)
@@ -246,8 +250,7 @@ page 50102 "Advanced Viewer"
               (assignment_expression
                 left: (identifier)
                 right: (unary_expression
-                  operator: (unary_operator)
-                  operand: (call_expression
+                  (call_expression
                     function: (identifier)
                     arguments: (argument_list))))
               (call_expression
@@ -265,13 +268,13 @@ page 50102 "Advanced Viewer"
       (variable_declaration
         name: (identifier)
         type: (type_specification
-          (basic_type)))
+          (text_type)))
       (variable_declaration
         name: (identifier)
         type: (type_specification
           (basic_type))))
     (procedure
-      procedure_modifier: (procedure_modifier)
+      modifier: (procedure_modifier)
       name: (name
         (identifier))
       return_type: (return_type
@@ -279,11 +282,10 @@ page 50102 "Advanced Viewer"
           (basic_type)))
       (code_block
         (exit_statement
-          (unary_expression
-            operator: (unary_operator)
-            operand: (identifier)))))
+          return_value: (unary_expression
+            (identifier)))))
     (procedure
-      procedure_modifier: (procedure_modifier)
+      modifier: (procedure_modifier)
       name: (name
         (identifier))
       (parameter_list
@@ -294,14 +296,14 @@ page 50102 "Advanced Viewer"
             (basic_type))))
       return_type: (return_type
         (type_specification
-          (basic_type)))
+          (text_type)))
       (code_block
         (if_statement
           condition: (identifier)
-          then_statement: (exit_statement
-            (string_literal)))
+          then_branch: (exit_statement
+            return_value: (string_literal)))
         (exit_statement
-          (string_literal))))))
+          return_value: (string_literal))))))
 
 ================================================================================
 ReadOnly as enum value reference
@@ -332,82 +334,11 @@ table 50103 "Permission Settings"
   (table_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (table_fields_section
-      (table_field
-        field_number: (integer)
-        field_name: (quoted_identifier)
-        field_type: (type_specification
-          (enum_type
-            enum_name: (quoted_identifier)))
-        (caption_property
-          (string_literal))))
-    (procedure
-      name: (name
-        (identifier))
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_expression
-          left: (quoted_identifier)
-          right: (qualified_enum_value
-            enum_type: (quoted_identifier)
-            value: (identifier)))
-        (assignment_expression
-          left: (identifier)
-          right: (comparison_expression
-            left: (quoted_identifier)
-            operator: (comparison_operator)
-            right: (qualified_enum_value
-              enum_type: (quoted_identifier)
-              value: (identifier)))))))
-
-================================================================================
-Height and Width as variable names
-================================================================================
-
-page 50104 "Size Settings"
-{
-    Caption = 'Size Settings';
-    PageType = Card;
-    
-    layout
-    {
-        area(content)
-        {
-            field(HeightField; Height)
-            {
-                ApplicationArea = All;
-                Caption = 'Height';
-            }
-            field(WidthField; Width)
-            {
-                ApplicationArea = All;
-                Caption = 'Width';
-            }
-        }
-    }
-    
-    var
-        Height: Decimal;
-        Width: Decimal;
-        ReadOnly: Text;
-        AutoResize: Boolean;
-}
-
---------------------------------------------------------------------------------
-
-(source_file
-  (table_declaration
-    object_id: (integer)
-    object_name: (quoted_identifier)
-    (table_fields_section
-      (table_field
-        field_number: (integer)
-        field_name: (quoted_identifier)
-        field_type: (type_specification
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
           (enum_type
             enum_name: (quoted_identifier)))
         (caption_property
@@ -434,3 +365,79 @@ page 50104 "Size Settings"
             right: (qualified_enum_value
               enum_type: (quoted_identifier)
               value: (identifier))))))))
+
+================================================================================
+Height and Width as variable names with workaround
+================================================================================
+
+page 50104 "Size Settings"
+{
+    Caption = 'Size Settings';
+    PageType = Card;
+    
+    layout
+    {
+        area(content)
+        {
+            field(HeightField; Height)
+            {
+                ApplicationArea = All;
+                Caption = 'Height';
+            }
+            field(WidthField; "Width")
+            {
+                ApplicationArea = All;
+                Caption = 'Width';
+            }
+        }
+    }
+    
+    var
+        Height: Decimal;
+        "Width": Decimal;
+        ReadOnly: Text;
+        AutoResize: Boolean;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (page_type_property)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (identifier)
+          (application_area_property
+            value: (identifier))
+          (caption_property
+            (string_literal)))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (quoted_identifier)
+          (application_area_property
+            value: (identifier))
+          (caption_property
+            (string_literal)))))
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))
+      (variable_declaration
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (text_type)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))))

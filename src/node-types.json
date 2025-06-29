@@ -10208,7 +10208,7 @@
     "fields": {
       "precision": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "integer",
@@ -10218,7 +10218,17 @@
       },
       "scale": {
         "multiple": false,
-        "required": true,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
         "types": [
           {
             "type": "integer",
@@ -51364,10 +51374,6 @@
     "named": false
   },
   {
-    "type": "DecimalPlaces",
-    "named": false
-  },
-  {
     "type": "DefaultRenderingLayout",
     "named": false
   },
@@ -51509,10 +51515,6 @@
   },
   {
     "type": "Mod",
-    "named": false
-  },
-  {
-    "type": "MultiLine",
     "named": false
   },
   {

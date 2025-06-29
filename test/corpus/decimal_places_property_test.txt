@@ -1,0 +1,200 @@
+================================================================================
+DecimalPlaces property with simple format
+================================================================================
+
+page 50100 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(Amount; Rec.Amount)
+            {
+                DecimalPlaces = 2;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier))
+          (decimal_places_property
+            value: (integer)))))))
+
+================================================================================
+DecimalPlaces property with complex format
+================================================================================
+
+page 50101 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(Percentage; Rec.Percentage)
+            {
+                DecimalPlaces = 2:5;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier))
+          (decimal_places_property
+            precision: (integer)
+            scale: (integer)))))))
+
+================================================================================
+DecimalPlaces property in repeater field
+================================================================================
+
+page 242 "Consolidate Wizard"
+{
+    layout
+    {
+        area(Content)
+        {
+            repeater(CurrencyBusinessUnits)
+            {
+                field(AverageCurrencyFactor; Rec."Income Currency Factor")
+                {
+                    ApplicationArea = Basic, Suite;
+                    Caption = 'Average Currency Factor';
+                    ToolTip = 'Specifies the exchange rate to use for balance sheet accounts.';
+                    AutoFormatType = 0;
+                    DecimalPlaces = 2;
+                    
+                    trigger OnDrillDown()
+                    begin
+                        if not Rec.Consolidate then
+                            Error(BusinessUnitNotSelectedForConsolidationErr);
+                        UpdateBusinessUnitCurrencyFactors();
+                    end;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (repeater_section
+          name: (identifier)
+          (field_section
+            control_id: (identifier)
+            source_or_field_name: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            (application_area_property
+              value: (identifier)
+              value: (identifier))
+            (caption_property
+              (string_literal))
+            (tool_tip_property
+              (tool_tip_value
+                (string_literal)))
+            (auto_format_type_property
+              value: (value))
+            (decimal_places_property
+              value: (integer))
+            (field_trigger_declaration
+              type: (trigger_type)
+              (code_block
+                (if_statement
+                  condition: (unary_expression
+                    (member_expression
+                      object: (identifier)
+                      property: (identifier)))
+                  then_branch: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (identifier))))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))))))))))
+
+================================================================================
+DecimalPlaces with mixed formats in same page
+================================================================================
+
+page 50102 "Test Page"
+{
+    layout
+    {
+        area(Content)
+        {
+            field(SimpleFormat; Rec.Value1)
+            {
+                DecimalPlaces = 3;
+            }
+            field(ComplexFormat; Rec.Value2)
+            {
+                DecimalPlaces = 1:4;
+            }
+            field(CaseVariation; Rec.Value3)
+            {
+                DecimalPlaces = 5;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (layout_section
+      (area_section
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier))
+          (decimal_places_property
+            value: (integer)))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier))
+          (decimal_places_property
+            precision: (integer)
+            scale: (integer)))
+        (field_section
+          control_id: (identifier)
+          source_or_field_name: (member_expression
+            object: (identifier)
+            property: (identifier))
+          (decimal_places_property
+            value: (integer)))))))
