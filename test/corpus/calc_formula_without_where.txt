@@ -1,0 +1,228 @@
+================================================================================
+CalcFormula without WHERE clause
+================================================================================
+
+table 50100 "Test CalcFormula"
+{
+    fields
+    {
+        field(1; "Sum Field"; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = sum("Test Table"."Amount Field");
+        }
+        field(2; "Average Field"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = average("Sales Line".Amount);
+        }
+        field(3; "Min Field"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = min("Item Ledger Entry"."Unit Cost");
+        }
+        field(4; "Max Field"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = max("Value Entry"."Cost Amount (Actual)");
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (field_class_property
+          value: (field_class_value))
+        (calc_formula_property
+          (sum_formula
+            target: (calc_field_ref
+              (field_reference
+                record: (quoted_identifier)
+                field: (quoted_identifier))))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (field_class_property
+          value: (field_class_value))
+        (calc_formula_property
+          (average_formula
+            target: (calc_field_ref
+              (field_reference
+                object: (quoted_identifier)
+                property: (identifier))))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (field_class_property
+          value: (field_class_value))
+        (calc_formula_property
+          (min_formula
+            target: (calc_field_ref
+              (field_reference
+                record: (quoted_identifier)
+                field: (quoted_identifier))))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (field_class_property
+          value: (field_class_value))
+        (calc_formula_property
+          (max_formula
+            target: (calc_field_ref
+              (field_reference
+                record: (quoted_identifier)
+                field: (quoted_identifier)))))))))
+
+================================================================================
+CalcFormula with space in table name without WHERE
+================================================================================
+
+table 50101 "Test CalcFormula Space"
+{
+    fields
+    {
+        field(1; FlowField; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = sum("Test Table C"."Integer Field");
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))
+        (field_class_property
+          value: (field_class_value))
+        (calc_formula_property
+          (sum_formula
+            target: (calc_field_ref
+              (field_reference
+                record: (quoted_identifier)
+                field: (quoted_identifier)))))))))
+
+================================================================================
+Mixed CalcFormula with and without WHERE clause
+================================================================================
+
+table 50102 "Mixed CalcFormula"
+{
+    fields
+    {
+        field(1; "Total Amount"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = sum("Sales Line".Amount where("Document Type" = const(Invoice)));
+        }
+        field(2; "All Amounts"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = sum("Sales Line".Amount);
+        }
+        field(3; "Count All"; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count("Customer");
+        }
+        field(4; "Count Filtered"; Integer)
+        {
+            FieldClass = FlowField;
+            CalcFormula = count("Customer" where(Blocked = const(false)));
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (field_class_property
+          value: (field_class_value))
+        (calc_formula_property
+          (sum_formula
+            target: (calc_field_ref
+              (field_reference
+                object: (quoted_identifier)
+                property: (identifier)))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (identifier))))))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (field_class_property
+          value: (field_class_value))
+        (calc_formula_property
+          (sum_formula
+            target: (calc_field_ref
+              (field_reference
+                object: (quoted_identifier)
+                property: (identifier))))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (field_class_property
+          value: (field_class_value))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (quoted_identifier)))))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (field_class_property
+          value: (field_class_value))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (quoted_identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (const_filter
+                    field: (field_ref
+                      (identifier))
+                    value: (boolean)))))))))))

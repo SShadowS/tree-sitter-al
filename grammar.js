@@ -5055,7 +5055,7 @@ enum_type: $ => prec(1, seq(
       kw('sum'),
       '(',
       field('target', $.calc_field_ref),
-      $.where_clause,
+      optional($.where_clause),
       ')'
     ),
 
@@ -5063,7 +5063,7 @@ enum_type: $ => prec(1, seq(
       kw('average'),
       '(',
       field('target', $.calc_field_ref),
-      $.where_clause,
+      optional($.where_clause),
       ')'
     ),
 
@@ -5071,7 +5071,7 @@ enum_type: $ => prec(1, seq(
       kw('min'),
       '(',
       field('target', $.calc_field_ref),
-      $.where_clause,
+      optional($.where_clause),
       ')'
     ),
 
@@ -5079,7 +5079,7 @@ enum_type: $ => prec(1, seq(
       kw('max'),
       '(',
       field('target', $.calc_field_ref),
-      $.where_clause,
+      optional($.where_clause),
       ')'
     ),
 
