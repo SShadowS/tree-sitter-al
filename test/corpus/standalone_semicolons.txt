@@ -1,0 +1,88 @@
+================================================================================
+Standalone semicolons in table properties
+================================================================================
+
+table 50000 "Test Table"
+{
+    Caption = 'Test Table';
+    DataPerCompany = true;
+    ; // Standalone semicolon
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (caption_property
+      (string_literal))
+    (data_per_company_property
+      value: (data_per_company_value
+        (boolean)))
+    (empty_statement)
+    (comment)))
+
+================================================================================
+Standalone semicolons in field properties
+================================================================================
+
+table 50001 "Test Table 2"
+{
+    fields
+    {
+        field(1; Code; Code[20])
+        {
+            Caption = 'Code';
+            ;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (caption_property
+          (string_literal))
+        (empty_statement)))))
+
+================================================================================
+Standalone semicolons in key properties
+================================================================================
+
+table 50002 "Test Table 3"
+{
+    keys
+    {
+        key(PK; Code)
+        {
+            Clustered = true;
+            ;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (keys
+      (key_declaration
+        name: (name)
+        fields: (key_field_list
+          (identifier))
+        (clustered_property
+          value: (boolean))
+        (empty_statement)))))

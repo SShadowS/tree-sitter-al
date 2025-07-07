@@ -3898,6 +3898,9 @@ module.exports = grammar({
       // Preprocessor conditional table properties
       $.preproc_conditional_table_properties,
       
+      // Allow standalone semicolons (empty statements)
+      $.empty_statement,
+      
       // Region directives for code organization
       $.preproc_region,
       $.preproc_endregion
@@ -5227,7 +5230,24 @@ enum_type: $ => prec(1, seq(
       $.preproc_conditional_keys
     )),
 
-    preproc_conditional_key_properties: _preproc_conditional_block_template($ => choice(
+    preproc_conditional_key_properties: _preproc_conditional_block_template($ => $._key_properties),
+
+    key_declaration: $ => seq(
+      kw('key'),
+      '(',
+      field('name', alias(choice($.identifier, $._quoted_identifier), $.name)),
+      ';',
+      field('fields', $.key_field_list),
+      ')',
+      optional(seq(
+        '{',
+        repeat($._key_properties),
+        '}'
+      ))
+    ),
+    
+    // Composed property group for key properties
+    _key_properties: $ => choice(
       $.clustered_property,
       $.enabled_property,
       $.unique_property,
@@ -5239,36 +5259,9 @@ enum_type: $ => prec(1, seq(
       $.obsolete_reason_property,
       $.obsolete_state_property,
       $.obsolete_tag_property,
+      $.preproc_conditional_key_properties,
       $.property,
-      $.preproc_conditional_key_properties
-    )),
-
-    key_declaration: $ => seq(
-      kw('key'),
-      '(',
-      field('name', alias(choice($.identifier, $._quoted_identifier), $.name)),
-      ';',
-      field('fields', $.key_field_list),
-      ')',
-      optional(seq(
-        '{',
-        repeat(choice(
-          $.clustered_property,
-          $.enabled_property,
-          $.unique_property,
-          $.included_fields_property,
-          $.maintain_sift_index_property,
-          $.maintain_sql_index_property,
-          $.sql_index_property,
-          $.sum_index_fields_property,
-          $.obsolete_reason_property,
-          $.obsolete_state_property,
-          $.obsolete_tag_property,
-          $.preproc_conditional_key_properties,
-          $.property
-        )),
-        '}'
-      ))
+      $.empty_statement  // Allow standalone semicolons
     ),
 
     // Key property rules

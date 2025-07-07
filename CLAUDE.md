@@ -393,7 +393,6 @@ When adding scanner features:
 5. Test thoroughly with edge cases
 
 ## Known Limitations
-- Standalone semicolons in object properties cause parsing failures
 - Multi-line permission declarations not fully supported
 - Some report-specific constructs and advanced codeunit patterns
 - Error propagation can cascade from single syntax errors
