@@ -6023,7 +6023,10 @@ enum_type: $ => prec(1, seq(
       field('expression', $._case_expression),
       kw('of', 10),
       repeat($._case_item),
-      optional($.else_branch),
+      optional(choice(
+        $.else_branch,
+        $.preproc_conditional_else_branch
+      )),
       kw('end')
     )),
 
@@ -6042,6 +6045,9 @@ enum_type: $ => prec(1, seq(
     ),
 
     preproc_conditional_case: _preproc_conditional_block_template($ => $.case_branch, true),
+    
+    // Preprocessor conditional else branch for case statements
+    preproc_conditional_else_branch: _preproc_conditional_block_template($ => $.else_branch, true),
 
     // _case_pattern now directly handles single or multiple patterns
     // Updated to handle pragmas that may split pattern lists

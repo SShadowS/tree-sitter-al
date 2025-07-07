@@ -1,0 +1,137 @@
+================================================================================
+Case statement with preprocessor conditional else branch
+================================================================================
+
+page 50100 TestPage
+{
+    procedure TestCase()
+    begin
+        case RecordType of
+            RecordType::Customer:
+                ProcessCustomer();
+#if not CLEAN25
+            else
+                ProcessExtension();
+#endif
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (code_block
+          (case_statement
+            expression: (identifier)
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              statements: (call_expression
+                function: (identifier)
+                arguments: (argument_list)))
+            (preproc_conditional_else_branch
+              (preproc_if
+                condition: (preproc_not_expression
+                  (identifier)))
+              (else_branch
+                statements: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (preproc_endif))))))))
+
+================================================================================
+Complex case with multiple branches and preprocessor else
+================================================================================
+
+codeunit 50100 TestCodeunit
+{
+    procedure LookupEntries()
+    var
+#if not CLEAN25
+        SalesLine: Record Microsoft.Sales.Document."Sales Line";
+#endif
+        IsHandled: Boolean;
+    begin
+        case TableNo of
+            Database::"Item Ledger Entry":
+                begin
+                    Message('Item');
+                end;
+            Database::"Customer Ledger Entry":
+                Message('Customer');
+#if not CLEAN25
+            else
+                OnLookupExtensionTable(TableNo, SalesLine);
+#endif
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (preproc_conditional_variables
+            (preproc_if
+              condition: (preproc_not_expression
+                (identifier)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (qualified_table_reference
+                    namespace: (identifier)
+                    part: (identifier)
+                    part: (identifier)
+                    part: (quoted_identifier)))))
+            (preproc_endif))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (case_statement
+            expression: (identifier)
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (quoted_identifier))
+              statements: (code_block
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))))
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (quoted_identifier))
+              statements: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (preproc_conditional_else_branch
+              (preproc_if
+                condition: (preproc_not_expression
+                  (identifier)))
+              (else_branch
+                statements: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (identifier))))
+              (preproc_endif))))))))

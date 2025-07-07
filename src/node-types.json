@@ -6347,6 +6347,10 @@
         {
           "type": "preproc_conditional_case",
           "named": true
+        },
+        {
+          "type": "preproc_conditional_else_branch",
+          "named": true
         }
       ]
     }
@@ -31580,6 +31584,37 @@
         },
         {
           "type": "sql_join_type_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_else_branch",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "else_branch",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
           "named": true
         }
       ]
