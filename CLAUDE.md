@@ -463,6 +463,8 @@ Use these resources to:
 - Use `./validate-grammar.sh` for comprehensive validation including orphan and duplicate detection
 
 ## Contextual Keywords Pattern
+
+### Standard Pattern (Default)
 When AL keywords can be used as both properties and variable names (contextual keywords), they must be handled consistently:
 
 1. **In property definitions**: Use `kw('keyword')` for case-insensitive matching
@@ -479,7 +481,44 @@ alias(kw('subtype'), $.identifier),  // Correct - case-insensitive
 // NOT: alias('SubType', $.identifier), alias('subtype', $.identifier), etc.
 ```
 
-This ensures keywords work correctly in both property and identifier contexts with any case variation.
+### Contextual Property Pattern (Exceptions)
+Some property names conflict with common variable names and cannot be resolved using the standard kw() pattern due to lexer-level tokenization. For these specific cases ONLY:
+
+**Current contextual properties:**
+- `TableType` - Used as enum variable in Opportunities.Page.al
+- `Style`/`StyleExpr` - Common variable names for UI styling  
+- `IsPreview` - Used for preview state tracking
+
+**Pattern:**
+1. Property definition uses literal strings with all case variations
+2. _unquoted_variable_name includes all case variations as aliases
+
+```javascript
+// Property definition
+table_type_property: $ => seq(
+  field('name', alias(
+    choice('TableType', 'tabletype', 'TABLETYPE', 'Tabletype'),
+    'TableType'
+  )),
+  '=',
+  field('value', alias($.table_type_value, $.value)),
+  ';'
+),
+
+// In _unquoted_variable_name
+alias('TableType', $.identifier),
+alias('tabletype', $.identifier),
+alias('TABLETYPE', $.identifier),
+alias('Tabletype', $.identifier),
+```
+
+**When to apply this pattern:**
+1. Only when actual parsing failures occur in production files
+2. Property name is a common English word likely to be used as variable
+3. Standard kw() pattern causes unresolvable conflicts
+4. Document the specific file/context where the conflict occurred
+
+**DO NOT** apply this pattern preemptively. It violates DRY principles and should only be used when necessary.
 
 ## Common Test Failure Patterns and Fixes
 

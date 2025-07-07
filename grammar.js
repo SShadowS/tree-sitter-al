@@ -18,6 +18,22 @@ function kw(word, precedence = null) {
   return precedence !== null ? token(prec(precedence, regex)) : token(regex);
 }
 
+// Helper for properties that can also be used as variable names
+// This pattern is used when a property name conflicts with variable usage
+// Only apply to properties that cause actual parsing failures in production
+// IMPORTANT: This violates the normal kw() pattern but is necessary for
+// certain property names that are commonly used as variable names.
+// 
+// Current contextual properties:
+// - TableType: Used as enum variable in Opportunities.Page.al
+// - Style/StyleExpr: Common variable names for UI styling
+// - IsPreview: Used for preview state tracking
+// 
+// When to add new ones:
+// 1. Only when actual parsing failures occur in production files
+// 2. Property name is a common English word likely to be used as variable
+// 3. Document the specific file/context where the conflict occurred
+
 // Template functions for modification patterns (addfirst/addlast/addafter/addbefore)
 function _modification_with_target_template(keyword, content_repeater) {
   return $ => seq(
