@@ -36745,6 +36745,37 @@
     }
   },
   {
+    "type": "preproc_conditional_where_condition",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "where_condition",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_xmlport_elements",
     "named": true,
     "fields": {},
@@ -50657,6 +50688,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "preproc_conditional_where_condition",
+          "named": true
+        },
         {
           "type": "where_condition",
           "named": true

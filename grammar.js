@@ -4810,8 +4810,22 @@ enum_type: $ => prec(1, seq(
     ),
 
     where_conditions: $ => seq(
+      $._where_condition_element,
+      repeat(seq(
+        optional(','),
+        $._where_condition_element
+      )),
+      optional(',')
+    ),
+    
+    _where_condition_element: $ => choice(
       $.where_condition,
-      repeat(seq(',', $.where_condition))
+      $.preproc_conditional_where_condition
+    ),
+    
+    // Preprocessor template that allows where conditions with optional trailing commas
+    preproc_conditional_where_condition: _preproc_conditional_block_template($ => 
+      seq($.where_condition, optional(','))
     ),
 
 

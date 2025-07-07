@@ -1,0 +1,70 @@
+================================================================================
+CalcFormula with preprocessor directives in where clause
+================================================================================
+
+table 50000 "Test Table"
+{
+    fields
+    {
+        field(1; "Available Resources"; Integer)
+        {
+            CalcFormula = count(Resource where("Qty. on Order (Job)" = filter(0),
+                                                "Qty. Quoted (Job)" = filter(0),
+#if not CLEAN25
+                                                "Qty. on Service Order" = filter(0),
+#endif
+                                                "Date Filter" = field("Date Filter")));
+            FieldClass = FlowField;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (basic_type))
+        (calc_formula_property
+          (count_formula
+            table: (table_reference
+              (identifier))
+            (where_clause
+              conditions: (where_conditions
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (integer))))
+                (where_condition
+                  (filter_condition
+                    field: (field_ref
+                      (quoted_identifier))
+                    filter: (filter_expression_function
+                      value: (integer))))
+                (preproc_conditional_where_condition
+                  (preproc_if
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (where_condition
+                    (filter_condition
+                      field: (field_ref
+                        (quoted_identifier))
+                      filter: (filter_expression_function
+                        value: (integer))))
+                  (preproc_endif))
+                (where_condition
+                  (field_filter
+                    field: (field_ref
+                      (quoted_identifier))
+                    value: (field_ref
+                      (quoted_identifier))))))))
+        (field_class_property
+          value: (field_class_value))))))
