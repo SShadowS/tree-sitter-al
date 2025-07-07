@@ -805,8 +805,11 @@ module.exports = grammar({
     ),
 
     additional_search_terms_property: $ => seq(
-      'AdditionalSearchTerms',
-      $._string_property_template
+      kw('AdditionalSearchTerms'),
+      '=',
+      field('value', $.string_literal),
+      optional(seq(',', kw('Locked'), '=', field('locked', $.boolean))),
+      ';'
     ),
 
     additional_search_terms_ml_property: $ => seq(
@@ -3083,12 +3086,28 @@ module.exports = grammar({
     sub_page_link_property: $ => seq(
       kw('SubPageLink'),
       '=',
-      seq(
-        $.run_page_link_value,
-        repeat(seq(',', $.run_page_link_value))
-      ),
+      $._sub_page_link_list,
       ';'
     ),
+
+    _sub_page_link_list: $ => seq(
+      $._sub_page_link_item,
+      repeat(seq(
+        optional(','),
+        $._sub_page_link_item
+      )),
+      optional(',')
+    ),
+
+    _sub_page_link_item: $ => choice(
+      $.run_page_link_value,
+      $.preproc_conditional_sub_page_link
+    ),
+
+    preproc_conditional_sub_page_link: _preproc_conditional_block_template($ => seq(
+      $.run_page_link_value,
+      optional(',')
+    )),
 
     sub_page_view_property: $ => seq(
       'SubPageView',

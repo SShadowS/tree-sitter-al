@@ -1,0 +1,93 @@
+================================================================================
+AdditionalSearchTerms property with Locked attribute
+================================================================================
+
+page 50000 "AppSource Product List"
+{
+    AdditionalSearchTerms = 'Extension,Extensions,Marketplace,Management', Locked = true;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (additional_search_terms_property
+      value: (string_literal)
+      locked: (boolean))))
+
+================================================================================
+AdditionalSearchTerms property without Locked
+================================================================================
+
+page 50001 "Simple Search Page"
+{
+    AdditionalSearchTerms = 'Test,Sample,Demo';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (additional_search_terms_property
+      value: (string_literal))))
+
+================================================================================
+AdditionalSearchTerms with Locked = false
+================================================================================
+
+page 50002 "Translatable Search Page"
+{
+    AdditionalSearchTerms = 'Localized,Terms', Locked = false;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (additional_search_terms_property
+      value: (string_literal)
+      locked: (boolean))))
+
+================================================================================
+AdditionalSearchTerms with empty string and Locked
+================================================================================
+
+page 50003 "Empty Search Terms"
+{
+    AdditionalSearchTerms = '', Locked = true;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (additional_search_terms_property
+      value: (string_literal)
+      locked: (boolean))))
+
+================================================================================
+AdditionalSearchTerms case insensitive
+================================================================================
+
+page 50004 "Case Test"
+{
+    additionalsearchterms = 'lowercase test', locked = true;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (additional_search_terms_property
+      value: (string_literal)
+      locked: (boolean))))

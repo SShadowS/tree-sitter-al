@@ -2131,6 +2131,16 @@
     "type": "additional_search_terms_property",
     "named": true,
     "fields": {
+      "locked": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "boolean",
+            "named": true
+          }
+        ]
+      },
       "value": {
         "multiple": false,
         "required": true,
@@ -36909,6 +36919,37 @@
     }
   },
   {
+    "type": "preproc_conditional_sub_page_link",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "run_page_link_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_table_properties",
     "named": true,
     "fields": {},
@@ -46911,8 +46952,12 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
+        {
+          "type": "preproc_conditional_sub_page_link",
+          "named": true
+        },
         {
           "type": "run_page_link_value",
           "named": true
@@ -53694,10 +53739,6 @@
   },
   {
     "type": "AND",
-    "named": false
-  },
-  {
-    "type": "AdditionalSearchTerms",
     "named": false
   },
   {
