@@ -392,20 +392,6 @@ When adding scanner features:
 4. Update build files (binding.gyp, bindings/rust/build.rs) if needed
 5. Test thoroughly with edge cases
 
-## Known Limitations
-
-**IMPORTANT**: We no longer add new known limitations. Instead, we fix the grammar to support all valid AL patterns, even if it requires using the external scanner or complex grammar changes.
-
-- Multi-line permission declarations not fully supported
-- Some report-specific constructs and advanced codeunit patterns
-- Error propagation can cascade from single syntax errors
-- **Qualified enum values with quoted enum type names**: Due to tree-sitter's lexing behavior, patterns like `"Enum Type Name"::EnumValue` cannot be parsed correctly. The quoted string is lexed as a single token before the parser can recognize the `::` pattern. Use unquoted enum type names instead (e.g., `EnumTypeName::EnumValue`).
-- **WHERE clauses in deeply nested preprocessor contexts**: WHERE clauses within table relations that are inside preprocessor conditionals may not parse correctly in certain complex nesting scenarios
-- **Interface return types with length specifications**: Due to tree-sitter's LR parser limitations, interface procedures with return types that include length specifications (e.g., `Code[50]`, `Text[100]`) create ERROR nodes. The parser reduces the type early before seeing the length specification. This works correctly in regular procedures and parameters but fails specifically for interface return types. Use type definitions without length specifications in interface return types as a workaround.
-- **Property names as variable names in page var sections**: Due to parsing ambiguity, certain property names (particularly `Width`) cannot be used as variable names in var sections within pages. The parser incorrectly tries to parse them as page properties instead of variable identifiers. This works correctly in other object types (tables, codeunits). Workaround: Use quoted identifiers (e.g., `"Width": Decimal;`) or different variable names.
-- **Complex preprocessor patterns with fragmented if-else**: Patterns where preprocessor directives create fragmented if-else structures with additional code following the fragmented block can cause parsing errors. The `preproc_fragmented_if_else` rule can interfere with normal preprocessor nesting in these cases.
-- **For loops with qualified enum values containing spaces**: Due to tree-sitter's tokenization, patterns like `for Type := Type::" " to Type::"Item" do` fail to parse correctly when the enum value contains spaces. The parser misinterprets the token boundaries. This works correctly with non-space values (e.g., `Type::A`). Workaround: Use integer loop variables or avoid spaces in enum values.
-- **Fieldgroup declarations inside preprocessor conditionals**: The parser fails to recognize `fieldgroup` declarations when they appear inside `#if/#else/#endif` blocks within a `fieldgroups` section. This is due to a lexical state issue where the `fieldgroup` keyword is not recognized inside preprocessor contexts. Workaround: Move fieldgroup declarations outside of preprocessor conditionals or use conditional compilation at the table level instead.
 
 ## Build Systems
 The project supports multiple build approaches:
