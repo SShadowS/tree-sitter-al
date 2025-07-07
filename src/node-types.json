@@ -47535,6 +47535,16 @@
     "type": "table_type_property",
     "named": true,
     "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "TableType",
+            "named": false
+          }
+        ]
+      },
       "value": {
         "multiple": false,
         "required": true,
@@ -52946,6 +52956,10 @@
   },
   {
     "type": "TableRelation",
+    "named": false
+  },
+  {
+    "type": "TableType",
     "named": false
   },
   {

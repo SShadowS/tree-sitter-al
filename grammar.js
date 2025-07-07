@@ -3509,7 +3509,10 @@ module.exports = grammar({
     ),
 
     table_type_property: $ => seq(
-      kw('TableType'),
+      field('name', alias(
+        choice('TableType', 'tabletype', 'TABLETYPE', 'Tabletype'),
+        'TableType'
+      )),
       '=',
       field('value', alias($.table_type_value, $.value)),
       ';'
@@ -4243,7 +4246,10 @@ module.exports = grammar({
       // Allow 'CustomActionType' to be used as an identifier in variable contexts
       alias(kw('customactiontype'), $.identifier),
       // Allow 'TableType' to be used as an identifier in variable contexts
-      alias(kw('tabletype'), $.identifier),
+      alias('TableType', $.identifier),
+      alias('tabletype', $.identifier),
+      alias('TABLETYPE', $.identifier),
+      alias('Tabletype', $.identifier),
       // Allow 'DataCaptionExpression' to be used as an identifier in variable contexts
       alias(kw('datacaptionexpression'), $.identifier),
       // Allow 'Enum' to be used as an identifier in variable contexts
@@ -7179,24 +7185,33 @@ enum_type: $ => prec(1, seq(
 
     // Object-specific properties that are unique to specific object types
     // These only make sense in particular contexts and cannot be universally applied
-    _object_specific_properties: $ => choice(
-      // Page-specific
+    _page_specific_properties: $ => choice(
       $.page_type_property,          // Page type (List, Card, etc.)
       $.source_table_property,       // Source table reference
-      
-      // Codeunit-specific
+    ),
+
+    _codeunit_specific_properties: $ => choice(
       $.table_no_property,           // Associated table
       $.single_instance_property,    // Singleton pattern
       $.event_subscriber_instance_property, // Event handling
-      
-      // Table-specific
+    ),
+    
+    _table_specific_properties: $ => choice(
       $.table_type_property,         // Table type (Normal, Temporary, etc.)
       $.data_per_company_property,   // Multi-tenancy support
       $.replicate_data_property,     // Replication settings
-      
-      // Report-specific
+    ),
+    
+    _report_specific_properties: $ => choice(
       $.processing_only_property,    // Processing-only report
       $.use_request_page_property,   // Request page usage
+    ),
+    
+    _object_specific_properties: $ => choice(
+      $._page_specific_properties,
+      $._codeunit_specific_properties,
+      $._table_specific_properties,
+      $._report_specific_properties,
     ),
 
     // Query-specific properties that are unique to query objects

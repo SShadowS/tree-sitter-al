@@ -15459,10 +15459,33 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
+          "type": "FIELD",
+          "name": "name",
           "content": {
-            "type": "PATTERN",
-            "value": "(?i)TableType"
+            "type": "ALIAS",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "TableType"
+                },
+                {
+                  "type": "STRING",
+                  "value": "tabletype"
+                },
+                {
+                  "type": "STRING",
+                  "value": "TABLETYPE"
+                },
+                {
+                  "type": "STRING",
+                  "value": "Tabletype"
+                }
+              ]
+            },
+            "named": false,
+            "value": "TableType"
           }
         },
         {
@@ -18710,11 +18733,35 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)tabletype"
-            }
+            "type": "STRING",
+            "value": "TableType"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "tabletype"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "TABLETYPE"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "Tabletype"
           },
           "named": true,
           "value": "identifier"
@@ -33420,7 +33467,7 @@
         }
       ]
     },
-    "_object_specific_properties": {
+    "_page_specific_properties": {
       "type": "CHOICE",
       "members": [
         {
@@ -33430,7 +33477,12 @@
         {
           "type": "SYMBOL",
           "name": "source_table_property"
-        },
+        }
+      ]
+    },
+    "_codeunit_specific_properties": {
+      "type": "CHOICE",
+      "members": [
         {
           "type": "SYMBOL",
           "name": "table_no_property"
@@ -33442,7 +33494,12 @@
         {
           "type": "SYMBOL",
           "name": "event_subscriber_instance_property"
-        },
+        }
+      ]
+    },
+    "_table_specific_properties": {
+      "type": "CHOICE",
+      "members": [
         {
           "type": "SYMBOL",
           "name": "table_type_property"
@@ -33454,7 +33511,12 @@
         {
           "type": "SYMBOL",
           "name": "replicate_data_property"
-        },
+        }
+      ]
+    },
+    "_report_specific_properties": {
+      "type": "CHOICE",
+      "members": [
         {
           "type": "SYMBOL",
           "name": "processing_only_property"
@@ -33462,6 +33524,27 @@
         {
           "type": "SYMBOL",
           "name": "use_request_page_property"
+        }
+      ]
+    },
+    "_object_specific_properties": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_page_specific_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_codeunit_specific_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_table_specific_properties"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_report_specific_properties"
         }
       ]
     },
