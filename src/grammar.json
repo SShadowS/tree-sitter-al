@@ -3739,6 +3739,10 @@
               {
                 "type": "SYMBOL",
                 "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "object_type_qualified_reference"
               }
             ]
           }
@@ -4028,6 +4032,10 @@
         {
           "type": "SYMBOL",
           "name": "datetime_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "object_type_qualified_reference"
         }
       ]
     },
@@ -28024,6 +28032,78 @@
           {
             "type": "FIELD",
             "name": "table_name",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_identifier_choice"
+            }
+          }
+        ]
+      }
+    },
+    "object_type_qualified_reference": {
+      "type": "PREC",
+      "value": 300,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "object_type",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "(?i)report"
+                  }
+                },
+                {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "(?i)page"
+                  }
+                },
+                {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "(?i)codeunit"
+                  }
+                },
+                {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "(?i)table"
+                  }
+                },
+                {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "(?i)xmlport"
+                  }
+                },
+                {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "(?i)query"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "::"
+          },
+          {
+            "type": "FIELD",
+            "name": "object_name",
             "content": {
               "type": "SYMBOL",
               "name": "_identifier_choice"

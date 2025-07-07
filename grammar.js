@@ -1030,7 +1030,8 @@ module.exports = grammar({
         $.time_literal,
         $.datetime_literal,
         $._quoted_identifier,
-        $.identifier
+        $.identifier,
+        $.object_type_qualified_reference  // Support for Report::"Report Name" patterns
       ))
     ),
 
@@ -1061,7 +1062,8 @@ module.exports = grammar({
       $.string_literal,
       $.date_literal,
       $.time_literal,
-      $.datetime_literal
+      $.datetime_literal,
+      $.object_type_qualified_reference  // Support for Report::"Report Name" patterns
     ),
 
     _filter_value: $ => choice(
@@ -6174,6 +6176,20 @@ enum_type: $ => prec(1, seq(
       field('keyword', alias(kw('database'), 'database')),
       '::',
       field('table_name', $._identifier_choice)
+    )),
+
+    // Object type qualified references (Report::"Report Name", Page::"Page Name", etc.)
+    object_type_qualified_reference: $ => prec(300, seq(  // High precedence for object type patterns
+      field('object_type', choice(
+        kw('report'),
+        kw('page'),
+        kw('codeunit'),
+        kw('table'),
+        kw('xmlport'),
+        kw('query')
+      )),
+      '::',
+      field('object_name', $._identifier_choice)
     )),
 
     // Rule for expressions using Enum keyword with double qualification (Enum::"Type"::"Value")
