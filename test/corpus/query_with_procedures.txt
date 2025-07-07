@@ -1,0 +1,353 @@
+================================================================================
+Query with internal procedure
+================================================================================
+
+query 100 "Test Query"
+{
+    QueryType = Normal;
+    Caption = 'Test Query';
+
+    elements
+    {
+        dataitem(Item; Item)
+        {
+            column(ItemNo; "No.")
+            {
+            }
+            column(Description; Description)
+            {
+            }
+        }
+    }
+
+    internal procedure SetFilter(FilterValue: Text)
+    begin
+        CurrQuery.SetFilter(ItemNo, FilterValue);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (query_type_property)
+    (property_list
+      (property
+        (caption_property
+          (string_literal))))
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (identifier))))
+    (attributed_procedure
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (text_type))))
+        (code_block
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (identifier)
+              (identifier))))))))
+
+================================================================================
+Query with multiple procedures and tracking filter
+================================================================================
+
+query 7308 CalcOutstandQtyOnWhseActLine
+{
+    QueryType = Normal;
+    Access = Internal;
+    DataAccessIntent = ReadOnly;
+    Caption = 'Calc. Outstand. Qty. on Whse. Act. Line based on Cross-Dock', Locked = true;
+
+    elements
+    {
+        dataitem(WarehActLine; "Warehouse Activity Line")
+        {
+            DataItemTableFilter = "Activity Type" = const(true), "Breakbulk No." = filter(<> 0 | '');
+            SqlJoinType = InnerJoin;
+
+            filter(Filter_No_; "No.")
+            {
+            }
+
+            column(Filter_Item_No_; "Item No.")
+            {
+            }
+            column(LineNo_; "Line No.")
+            {
+            }
+            column(SourceLineNo_; "Source Line No.")
+            {
+            }
+
+            dataitem(WhseActivityLineToCheck; "Warehouse Activity Line")
+            {
+                DataItemLink = "Activity Type" = WarehActLine."Activity Type",
+                              "No." = WarehActLine."No.",
+                              "Bin Code" = WarehActLine."Bin Code",
+                              "Item No." = WarehActLine."Item No.",
+                              "Unit of Measure Code" = WarehActLine."Unit of Measure Code";
+                DataItemTableFilter = "Action Type" = const(1);
+                SqlJoinType = InnerJoin;
+
+                filter(Filter_Lot_No_; "Lot No.")
+                {
+                }
+                filter(Serial_No_; "Serial No.")
+                {
+                }
+                filter(Package_No_; "Package No.")
+                {
+                }
+                filter(LineNo2_; "Line No.")
+                {
+                }
+                filter(Variant_Code; "Variant Code")
+                {
+                }
+
+                column(SumOutstandingQtyBase; "Qty. Outstanding (Base)")
+                {
+                    Method = Sum;
+                }
+            }
+        }
+    }
+
+    internal procedure SetTrackingFilterFromItemTrackingSetupIfNotBlankIfRequired(WhseItemTrackingSetup: Record "Item Tracking Setup")
+    begin
+        if WhseItemTrackingSetup."Serial No." <> '' then
+            if WhseItemTrackingSetup."Serial No. Required" then
+                CurrQuery.SetRange(Serial_No_, WhseItemTrackingSetup."Serial No.")
+            else
+                CurrQuery.SetFilter(Serial_No_, '%1|%2', WhseItemTrackingSetup."Serial No.", '');
+
+        if WhseItemTrackingSetup."Lot No." <> '' then
+            if WhseItemTrackingSetup."Lot No. Required" then
+                CurrQuery.SetRange(Filter_Lot_No_, WhseItemTrackingSetup."Lot No.")
+            else
+                CurrQuery.SetFilter(Filter_Lot_No_, '%1|%2', WhseItemTrackingSetup."Lot No.", '');
+
+        if WhseItemTrackingSetup."Package No." <> '' then
+            if WhseItemTrackingSetup."Package No. Required" then
+                CurrQuery.SetRange(Package_No_, WhseItemTrackingSetup."Package No.")
+            else
+                CurrQuery.SetFilter(Package_No_, '%1|%2', WhseItemTrackingSetup."Package No.", '');
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (query_type_property)
+    (property_list
+      (property
+        (access_property
+          value: (value))))
+    (data_access_intent_property)
+    (property_list
+      (property
+        (caption_property
+          (string_literal)
+          (boolean))))
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (data_item_table_filter_property
+          value: (table_filter_value
+            field: (quoted_identifier)
+            filter: (const_expression
+              (boolean))
+            field: (quoted_identifier)
+            filter: (simple_filter_expression
+              (integer)
+              (string_literal))))
+        (sql_join_type_property)
+        (filter_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (dataitem_section
+          name: (identifier)
+          table_name: (quoted_identifier)
+          (data_item_link_property
+            value: (data_item_link_value
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)
+              field: (quoted_identifier)
+              linked_field: (identifier)
+              linked_field_name: (quoted_identifier)))
+          (data_item_table_filter_property
+            value: (table_filter_value
+              field: (quoted_identifier)
+              filter: (const_expression
+                (integer))))
+          (sql_join_type_property)
+          (filter_section
+            name: (identifier)
+            field_name: (quoted_identifier))
+          (filter_section
+            name: (identifier)
+            field_name: (quoted_identifier))
+          (filter_section
+            name: (identifier)
+            field_name: (quoted_identifier))
+          (filter_section
+            name: (identifier)
+            field_name: (quoted_identifier))
+          (filter_section
+            name: (identifier)
+            field_name: (quoted_identifier))
+          (column_section
+            name: (identifier)
+            field_name: (quoted_identifier)
+            (generic_property
+              name: (identifier)
+              value: (identifier))))))
+    (attributed_procedure
+      (procedure
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (code_block
+          (if_statement
+            condition: (comparison_expression
+              left: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              operator: (comparison_operator)
+              right: (string_literal))
+            then_branch: (if_statement
+              condition: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              then_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (field_access
+                    record: (identifier)
+                    field: (quoted_identifier))))
+              else_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (string_literal)
+                  (field_access
+                    record: (identifier)
+                    field: (quoted_identifier))
+                  (string_literal)))))
+          (if_statement
+            condition: (comparison_expression
+              left: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              operator: (comparison_operator)
+              right: (string_literal))
+            then_branch: (if_statement
+              condition: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              then_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (field_access
+                    record: (identifier)
+                    field: (quoted_identifier))))
+              else_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (string_literal)
+                  (field_access
+                    record: (identifier)
+                    field: (quoted_identifier))
+                  (string_literal)))))
+          (if_statement
+            condition: (comparison_expression
+              left: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              operator: (comparison_operator)
+              right: (string_literal))
+            then_branch: (if_statement
+              condition: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              then_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (field_access
+                    record: (identifier)
+                    field: (quoted_identifier))))
+              else_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (string_literal)
+                  (field_access
+                    record: (identifier)
+                    field: (quoted_identifier))
+                  (string_literal))))))))))

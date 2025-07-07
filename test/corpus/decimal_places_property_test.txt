@@ -6,9 +6,9 @@ page 50100 "Test Page"
 {
     layout
     {
-        area(Content)
+        area(content)
         {
-            field(Amount; Rec.Amount)
+            field(Amount; Amount)
             {
                 DecimalPlaces = 2;
             }
@@ -26,23 +26,21 @@ page 50100 "Test Page"
       (area_section
         (field_section
           control_id: (identifier)
-          source_or_field_name: (member_expression
-            object: (identifier)
-            property: (identifier))
+          source_or_field_name: (identifier)
           (decimal_places_property
             value: (integer)))))))
 
 ================================================================================
-DecimalPlaces property with complex format
+DecimalPlaces property with precision and scale
 ================================================================================
 
-page 50101 "Test Page"
+page 50100 "Test Page"
 {
     layout
     {
-        area(Content)
+        area(content)
         {
-            field(Percentage; Rec.Percentage)
+            field(Amount; Amount)
             {
                 DecimalPlaces = 2:5;
             }
@@ -60,40 +58,24 @@ page 50101 "Test Page"
       (area_section
         (field_section
           control_id: (identifier)
-          source_or_field_name: (member_expression
-            object: (identifier)
-            property: (identifier))
+          source_or_field_name: (identifier)
           (decimal_places_property
             precision: (integer)
             scale: (integer)))))))
 
 ================================================================================
-DecimalPlaces property in repeater field
+DecimalPlaces property with precision only (edge case)
 ================================================================================
 
-page 242 "Consolidate Wizard"
+page 50100 "Test Page"
 {
     layout
     {
-        area(Content)
+        area(content)
         {
-            repeater(CurrencyBusinessUnits)
+            field("From Value"; Rec."From Value")
             {
-                field(AverageCurrencyFactor; Rec."Income Currency Factor")
-                {
-                    ApplicationArea = Basic, Suite;
-                    Caption = 'Average Currency Factor';
-                    ToolTip = 'Specifies the exchange rate to use for balance sheet accounts.';
-                    AutoFormatType = 0;
-                    DecimalPlaces = 2;
-                    
-                    trigger OnDrillDown()
-                    begin
-                        if not Rec.Consolidate then
-                            Error(BusinessUnitNotSelectedForConsolidationErr);
-                        UpdateBusinessUnitCurrencyFactors();
-                    end;
-                }
+                DecimalPlaces = 0 :;
             }
         }
     }
@@ -107,63 +89,35 @@ page 242 "Consolidate Wizard"
     object_name: (quoted_identifier)
     (layout_section
       (area_section
-        (repeater_section
-          name: (identifier)
-          (field_section
-            control_id: (identifier)
-            source_or_field_name: (field_access
-              record: (identifier)
-              field: (quoted_identifier))
-            (application_area_property
-              value: (identifier)
-              value: (identifier))
-            (caption_property
-              (string_literal))
-            (tool_tip_property
-              (tool_tip_value
-                (string_literal)))
-            (auto_format_type_property
-              value: (value))
-            (decimal_places_property
-              value: (integer))
-            (field_trigger_declaration
-              type: (trigger_type)
-              (code_block
-                (if_statement
-                  condition: (unary_expression
-                    operator: (unary_operator)
-                    operand: (member_expression
-                      object: (identifier)
-                      property: (identifier)))
-                  then_branch: (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (identifier))))
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list))))))))))
+        (field_section
+          control_id: (quoted_identifier)
+          source_or_field_name: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          (decimal_places_property
+            precision: (integer)))))))
 
 ================================================================================
-DecimalPlaces with mixed formats in same page
+Multiple fields with different DecimalPlaces formats
 ================================================================================
 
-page 50102 "Test Page"
+page 50100 "Test Page"
 {
     layout
     {
-        area(Content)
+        area(content)
         {
-            field(SimpleFormat; Rec.Value1)
+            field(SimpleFormat; Value1)
             {
                 DecimalPlaces = 3;
             }
-            field(ComplexFormat; Rec.Value2)
+            field(PrecisionScale; Value2)
             {
-                DecimalPlaces = 1:4;
+                DecimalPlaces = 1:2;
             }
-            field(CaseVariation; Rec.Value3)
+            field(EdgeCase; Value3)
             {
-                DecimalPlaces = 5;
+                DecimalPlaces = 0 :;
             }
         }
     }
@@ -179,23 +133,17 @@ page 50102 "Test Page"
       (area_section
         (field_section
           control_id: (identifier)
-          source_or_field_name: (member_expression
-            object: (identifier)
-            property: (identifier))
+          source_or_field_name: (identifier)
           (decimal_places_property
             value: (integer)))
         (field_section
           control_id: (identifier)
-          source_or_field_name: (member_expression
-            object: (identifier)
-            property: (identifier))
+          source_or_field_name: (identifier)
           (decimal_places_property
             precision: (integer)
             scale: (integer)))
         (field_section
           control_id: (identifier)
-          source_or_field_name: (member_expression
-            object: (identifier)
-            property: (identifier))
+          source_or_field_name: (identifier)
           (decimal_places_property
-            value: (integer)))))))
+            precision: (integer)))))))

@@ -51,7 +51,7 @@ enum 50100 "Payment Transaction Type"
       value_name: (identifier)
       (caption_property
         (string_literal)))
-    (preproc_conditional_enum_values
+    (preproc_conditional_enum_content
       (preproc_if
         condition: (preproc_not_expression
           (identifier)))
@@ -114,7 +114,7 @@ enum 50101 "Test Enum"
       value_name: (identifier)
       (caption_property
         (string_literal)))
-    (preproc_conditional_enum_values
+    (preproc_conditional_enum_content
       (preproc_if
         condition: (identifier))
       (enum_value_declaration

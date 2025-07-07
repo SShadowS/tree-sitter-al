@@ -1,23 +1,23 @@
 ================================================================================
-Report extension with addafter dataitem
+Report extension with add and modify in dataset
 ================================================================================
 
-reportextension 99000858 "Mfg. Get Demand To Reserve" extends "Get Demand To Reserve"
+reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
 {
     dataset
     {
-        addafter(TransferOrderLine)
+        add(Header)
         {
-            dataitem(ProdOrderComponent; "Prod. Order Component")
+            column(RecurringBilling; "Recurring Billing")
             {
-                DataItemTableView = sorting(Status, "Prod. Order No.")
-                                    where(Status = const(Released));
-                trigger OnPreDataItem()
-                begin
-                    if not Filter then
-                        CurrReport.Break();
-                end;
             }
+        }
+        modify(Header)
+        {
+            trigger OnAfterAfterGetRecord()
+            begin
+                ProcessContractBilling();
+            end;
         }
     }
 }
@@ -30,136 +30,174 @@ reportextension 99000858 "Mfg. Get Demand To Reserve" extends "Get Demand To Res
     object_name: (quoted_identifier)
     base_object: (quoted_identifier)
     (dataset_section
+      (add_dataitem
+        target: (identifier)
+        (report_column_section
+          name: (identifier)
+          source: (quoted_identifier)))
+      (modify_dataitem
+        target: (identifier)
+        (trigger_declaration
+          name: (trigger_name)
+          (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))))))))
+
+================================================================================
+Report extension with rendering section
+================================================================================
+
+reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
+{
+    rendering
+    {
+        layout("SalesInvoiceContract.rdlc")
+        {
+            Type = RDLC;
+            LayoutFile = './Layouts/SalesInvoiceContract.rdlc';
+            Caption = 'Sales Invoice Contract (RDLC)';
+            Summary = 'Contract billing details layout.';
+        }
+        layout("SalesInvoiceContract.docx")
+        {
+            Type = Word;
+            LayoutFile = './Layouts/SalesInvoiceContract.docx';
+            Caption = 'Sales Invoice Contract (Word)';
+            Summary = 'Simple contract layout for editing.';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (rendering_section
+      (rendering_layout
+        name: (quoted_identifier)
+        (rendering_type_property)
+        (layout_file_property
+          value: (string_literal))
+        (caption_property
+          (string_literal))
+        (summary_property
+          value: (string_literal)))
+      (rendering_layout
+        name: (quoted_identifier)
+        (rendering_type_property)
+        (layout_file_property
+          value: (string_literal))
+        (caption_property
+          (string_literal))
+        (summary_property
+          value: (string_literal))))))
+
+================================================================================
+Report extension with complex dataset modifications
+================================================================================
+
+reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
+{
+    dataset
+    {
+        add(Line)
+        {
+            column(ContractLineNo; "Contract Line No.")
+            {
+            }
+            column(ContractNo; "Contract No.")
+            {
+            }
+        }
+        addafter(ReportTotalsLine)
+        {
+            dataitem(ContractDetails; Integer)
+            {
+                MaxIteration = 1;
+                DataItemTableView = sorting(Number);
+                
+                column(ContractNo; ContractBuffer."Contract No.") { }
+                column(StartDate; ContractBuffer."Start Date") { }
+            }
+        }
+        modify(Header)
+        {
+            trigger OnAfterGetRecord()
+            begin
+                CalcContractDetails();
+            end;
+        }
+    }
+    
+    var
+        ContractBuffer: Record "Contract Buffer" temporary;
+        
+    procedure CalcContractDetails()
+    begin
+        // Implementation
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (dataset_section
+      (add_dataitem
+        target: (identifier)
+        (report_column_section
+          name: (identifier)
+          source: (quoted_identifier))
+        (report_column_section
+          name: (identifier)
+          source: (quoted_identifier)))
       (addafter_dataitem
         target: (identifier)
         (report_dataitem_section
           name: (identifier)
-          (quoted_identifier)
+          (identifier)
+          (max_iteration_property
+            value: (integer))
           (data_item_table_view_property
             value: (source_table_view_value
               (sorting_clause
                 fields: (field_reference_list
                   (field_reference
-                    (identifier))
-                  (field_reference
-                    (quoted_identifier))))
-              (where_clause
-                conditions: (where_conditions
-                  (where_condition
-                    (const_filter
-                      field: (field_ref
-                        (identifier))
-                      value: (identifier)))))))
-          (trigger_declaration
-            name: (trigger_name)
-            (code_block
-              (if_statement
-                condition: (unary_expression
-                  operator: (unary_operator)
-                  operand: (identifier))
-                then_branch: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    property: (identifier))
-                  arguments: (argument_list))))))))))
-
-================================================================================
-Report extension with multiple dataset modifications
-================================================================================
-
-reportextension 50100 "Extended Report" extends "Base Report"
-{
-    dataset
-    {
-        addfirst
-        {
-            dataitem(Header; "Sales Header")
-            {
-                RequestFilterFields = "No.";
-            }
-        }
-        
-        addafter(Customer)
-        {
-            dataitem(SalesLine; "Sales Line")
-            {
-                DataItemLink = "Document No." = field("No.");
-            }
-        }
-        
-        addlast
-        {
-            dataitem(Footer; "Custom Footer")
-            {
-                MaxIteration = 1;
-            }
-        }
-    }
-}
-
---------------------------------------------------------------------------------
-
-(source_file
-  (reportextension_declaration
-    object_id: (integer)
-    object_name: (quoted_identifier)
-    base_object: (quoted_identifier)
-    (dataset_section
-      (addfirst_dataitem
-        (report_dataitem_section
-          name: (identifier)
-          (quoted_identifier)
-          (request_filter_fields_property
-            value: (request_filter_fields_value
-              (quoted_identifier)))))
-      (addafter_dataitem
+                    (identifier))))))
+          (report_column_section
+            name: (identifier)
+            source: (field_access
+              record: (identifier)
+              field: (quoted_identifier)))
+          (report_column_section
+            name: (identifier)
+            source: (field_access
+              record: (identifier)
+              field: (quoted_identifier)))))
+      (modify_dataitem
         target: (identifier)
-        (report_dataitem_section
-          name: (identifier)
-          (quoted_identifier)
-          (data_item_link_property
-            value: (data_item_link_value
-              field: (quoted_identifier)
-              linked_field_name: (quoted_identifier)))))
-      (addlast_dataitem
-        (report_dataitem_section
-          name: (identifier)
-          (quoted_identifier)
-          (max_iteration_property
-            value: (integer)))))))
-
-================================================================================
-Report extension with addbefore dataitem
-================================================================================
-
-reportextension 50101 "Another Extension" extends "Some Report"
-{
-    dataset
-    {
-        addbefore(LastDataItem)
-        {
-            dataitem(NewItem; Item)
-            {
-                CalcFields = Inventory;
-            }
-        }
-    }
-}
-
---------------------------------------------------------------------------------
-
-(source_file
-  (reportextension_declaration
-    object_id: (integer)
-    object_name: (quoted_identifier)
-    base_object: (quoted_identifier)
-    (dataset_section
-      (addbefore_dataitem
-        target: (identifier)
-        (report_dataitem_section
-          name: (identifier)
-          (identifier)
-          (calc_fields_property
-            fields: (calc_fields_list
-              (calc_field
-                (identifier)))))))))
+        (trigger_declaration
+          name: (trigger_name)
+          (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))))))
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (record_type
+            reference: (quoted_identifier)))
+        temporary: (temporary)))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (comment)))))

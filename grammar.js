@@ -546,8 +546,7 @@ module.exports = grammar({
       repeat(choice(
         $._enum_properties, 
         $.enum_value_declaration,
-        $.preproc_conditional_enum_properties,
-        $.preproc_conditional_enum_values  // Support conditional enum values
+        $.preproc_conditional_enum_content  // Support mixed content in conditional blocks (properties and/or values)
       )),
       '}'
     ),
@@ -622,7 +621,7 @@ module.exports = grammar({
       repeat(choice(
         $._enum_properties, 
         $.enum_value_declaration,
-        $.preproc_conditional_enum_properties
+        $.preproc_conditional_enum_content  // Allow mixed content blocks (properties and values)
       )),
       '}'
     )),
@@ -662,6 +661,7 @@ module.exports = grammar({
       $.property_list,               // generic property container
       $.preproc_conditional_query_properties,
       $.trigger_declaration,         // triggers like OnBeforeOpen
+      $.attributed_procedure,        // procedures with attributes (internal, etc.)
       
       // Region directives for code organization
       $.preproc_region,
@@ -1183,6 +1183,15 @@ module.exports = grammar({
       seq(
         choice('=', '>', '<', '>=', '<=', '<>'),
         choice($.integer, $.identifier, $._quoted_identifier, $.string_literal, $.boolean)
+      ),
+      // Support for comparison operators with pipe-separated alternatives
+      seq(
+        choice('=', '>', '<', '>=', '<=', '<>'),
+        choice($.integer, $.identifier, $._quoted_identifier, $.string_literal, $.boolean),
+        repeat1(seq(
+          '|',
+          choice($.string_literal, $.identifier, $._quoted_identifier, $.integer, $.boolean)
+        ))
       ),
       // Support for pipe-separated values
       seq(
@@ -2250,6 +2259,7 @@ module.exports = grammar({
       // Report extension can modify dataset, requestpage, etc.
       $.dataset_section,
       $.requestpage_section,
+      $.rendering_section,
       $._report_properties,
       $.var_section,
       $.preproc_conditional_var_sections,
@@ -2389,10 +2399,12 @@ module.exports = grammar({
       repeat(choice(
         $.report_dataitem_section,
         $.preproc_conditional_report_dataitems,
+        $.add_dataitem,
         $.addafter_dataitem,
         $.addbefore_dataitem,
         $.addfirst_dataitem,
-        $.addlast_dataitem
+        $.addlast_dataitem,
+        $.modify_dataitem  // Support modify in report extensions
       )),
       '}'
     ),
@@ -2401,6 +2413,19 @@ module.exports = grammar({
       $.report_dataitem_section,
       $.preproc_conditional_report_dataitems
     )),
+
+    add_dataitem: $ => seq(
+      kw('add'),
+      '(',
+      field('target', $._identifier_choice),
+      ')',
+      '{',
+      repeat(choice(
+        $.report_column_section,
+        $.preproc_conditional_report_columns
+      )),
+      '}'
+    ),
 
     addafter_dataitem: $ => _modification_with_target_template(
       'addafter',
@@ -2421,6 +2446,20 @@ module.exports = grammar({
       'addlast',
       $.report_dataitem_section
     )($),
+
+    modify_dataitem: $ => seq(
+      kw('modify'),
+      '(',
+      field('target', $._identifier_choice),
+      ')',
+      '{',
+      repeat(choice(
+        $.trigger_declaration,         // OnAfterAfterGetRecord and other triggers
+        $.report_column_section,        // column definitions
+        $.preproc_conditional_report_columns
+      )),
+      '}'
+    ),
 
     // Interface-specific properties
     _interface_properties: $ => choice(
@@ -4123,11 +4162,11 @@ module.exports = grammar({
       choice(
         // Simple format: DecimalPlaces = 2;
         field('value', $.integer),
-        // Complex format: DecimalPlaces = 2:5;
+        // Complex format: DecimalPlaces = 2:5; or DecimalPlaces = 0 :;
         seq(
           field('precision', $.integer),
           ':',
-          field('scale', $.integer)
+          optional(field('scale', $.integer))
         )
       ),
       ';'
@@ -4326,6 +4365,11 @@ option_type: $ => prec.right(1, seq(
 
 // Helper for comma-separated list of option members  
 option_member_list: $ => prec.left(1, choice(
+  // List starting with empty string ""
+  seq(
+    '""',
+    repeat(seq(',', optional($.option_member)))
+  ),
   // List with at least one member
   seq(
     $.option_member,
@@ -5108,7 +5152,7 @@ enum_type: $ => prec(1, seq(
     option_member: $ => choice(
       $.identifier,
       $._quoted_identifier,
-      $.string_literal 
+      $.string_literal
     ),
 
     option_caption_property: $ => seq(
@@ -6673,6 +6717,9 @@ enum_type: $ => prec(1, seq(
     // Preprocessor conditional rules for report properties
     preproc_conditional_report_properties: _preproc_conditional_block_template($ => $._report_properties),
 
+    // Preprocessor conditional rules for report columns
+    preproc_conditional_report_columns: _preproc_conditional_block_template($ => $.report_column_section),
+
     // Preprocessor conditional rules for xmlport properties
     preproc_conditional_xmlport_properties: _preproc_conditional_block_template($ => $._xmlport_properties),
 
@@ -6684,6 +6731,30 @@ enum_type: $ => prec(1, seq(
 
     // Preprocessor conditional rules for enum values
     preproc_conditional_enum_values: _preproc_conditional_block_template($ => $.enum_value_declaration),
+
+    // Preprocessor conditional rules for mixed enum content (properties and values together)
+    preproc_conditional_enum_content: $ => seq(
+      $.preproc_if,
+      repeat(choice(
+        $._enum_properties,
+        $.enum_value_declaration
+      )),
+      repeat(seq(
+        $.preproc_elif,
+        repeat(choice(
+          $._enum_properties,
+          $.enum_value_declaration
+        ))
+      )),
+      optional(seq(
+        $.preproc_else,
+        repeat(choice(
+          $._enum_properties,
+          $.enum_value_declaration
+        ))
+      )),
+      $.preproc_endif
+    ),
 
     // Preprocessor conditional rules for permissionset properties
     preproc_conditional_permissionset_properties: _preproc_conditional_block_template($ => $._permissionset_properties),
@@ -6737,7 +6808,8 @@ enum_type: $ => prec(1, seq(
         $.multiline_comment,
         $.attribute_list,
         $.pragma,
-        $.procedure  // Allow procedures inside preprocessor conditionals in var sections
+        $.procedure,  // Allow procedures inside preprocessor conditionals in var sections
+        $.var_section  // Allow nested var sections (including protected var) inside preprocessor conditionals
       )),
 
     preproc_conditional_field_properties: _preproc_conditional_block_template($ => $._field_properties),
