@@ -8,9 +8,10 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 ### Parser Status
 
-Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,154 files (98.6%) parse successfully**.
+Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,266 files (99.4%) parse successfully**.
 
 Recent improvements include:
+- **Standalone semicolons in object properties** - Added support for empty statements (standalone semicolons) in table, field, and key property blocks, improving compatibility with existing AL code patterns
 - **Date/time literals in filter expressions** - Added support for date literals (0D, 20240101D), time literals (120000T), and datetime literals (0DT) in CalcFormula filter expressions, with proper precedence to avoid parsing conflicts
 - **StyleExpr as contextual keyword** - Fixed StyleExpr to be usable as a variable name in var sections, resolving parsing errors in page-level variable declarations
 - **TestHttpRequestPolicy property** - Added support for TestHttpRequestPolicy property in codeunit declarations with BlockOutboundRequests value
