@@ -4298,8 +4298,17 @@
           "type": "FIELD",
           "name": "table_name",
           "content": {
-            "type": "SYMBOL",
-            "name": "_identifier_choice"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_identifier_choice"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "qualified_table_reference"
+              }
+            ]
           }
         },
         {
@@ -10479,56 +10488,152 @@
       ]
     },
     "addfirst_dataitem": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)addfirst"
-          }
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)addfirst"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "FIELD",
+              "name": "target",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_identifier_choice"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            },
+            {
+              "type": "STRING",
+              "value": "{"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "report_dataitem_section"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "}"
+            }
+          ]
         },
         {
-          "type": "STRING",
-          "value": "{"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "report_dataitem_section"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "}"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)addfirst"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "{"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "report_dataitem_section"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "}"
+            }
+          ]
         }
       ]
     },
     "addlast_dataitem": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)addlast"
-          }
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)addlast"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "FIELD",
+              "name": "target",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_identifier_choice"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            },
+            {
+              "type": "STRING",
+              "value": "{"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "report_dataitem_section"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "}"
+            }
+          ]
         },
         {
-          "type": "STRING",
-          "value": "{"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "report_dataitem_section"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "}"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)addlast"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "{"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "report_dataitem_section"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "}"
+            }
+          ]
         }
       ]
     },
@@ -10629,17 +10734,21 @@
           "value": ";"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_identifier_choice"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "namespace_name"
-            }
-          ]
+          "type": "FIELD",
+          "name": "table_name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_identifier_choice"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "qualified_table_reference"
+              }
+            ]
+          }
         },
         {
           "type": "STRING",
@@ -20628,18 +20737,14 @@
       }
     },
     "qualified_table_reference": {
-      "type": "PREC_RIGHT",
-      "value": 8,
+      "type": "PREC_LEFT",
+      "value": 0,
       "content": {
         "type": "SEQ",
         "members": [
           {
-            "type": "FIELD",
-            "name": "namespace",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_identifier_choice"
-            }
+            "type": "SYMBOL",
+            "name": "identifier"
           },
           {
             "type": "REPEAT1",
@@ -20651,15 +20756,32 @@
                   "value": "."
                 },
                 {
-                  "type": "FIELD",
-                  "name": "part",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_identifier_choice"
-                  }
+                  "type": "SYMBOL",
+                  "name": "identifier"
                 }
               ]
             }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "."
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_quoted_identifier"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         ]
       }

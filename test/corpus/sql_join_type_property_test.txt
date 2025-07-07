@@ -190,13 +190,13 @@ report 50003 "Sales Report"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (report_column_section
           name: (identifier)
           source: (quoted_identifier))
         (report_dataitem_section
           name: (identifier)
-          (quoted_identifier)
+          table_name: (quoted_identifier)
           (data_item_link_property
             value: (data_item_link_value
               field: (quoted_identifier)

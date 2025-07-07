@@ -1,0 +1,205 @@
+================================================================================
+Report extension with addfirst dataitem with target
+================================================================================
+
+reportextension 123 "My Report Extension" extends "Standard Sales Quote"
+{
+    dataset
+    {
+        addfirst(Line)
+        {
+            dataitem(ServiceCommitmentHeaderForSalesLine; "Integer")
+            {
+                DataItemTableView = sorting(Number) where(Number = const(1));
+                column(Description; Description) { }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (dataset_section
+      (addfirst_dataitem
+        target: (identifier)
+        (report_dataitem_section
+          name: (identifier)
+          table_name: (quoted_identifier)
+          (data_item_table_view_property
+            value: (source_table_view_value
+              (sorting_clause
+                fields: (field_reference_list
+                  (field_reference
+                    (identifier))))
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (identifier))
+                      value: (integer)))))))
+          (report_column_section
+            name: (identifier)
+            source: (identifier)))))))
+
+================================================================================
+Report extension with addlast dataitem with target
+================================================================================
+
+reportextension 124 "Another Extension" extends "Sales Invoice"
+{
+    dataset
+    {
+        addlast(Header)
+        {
+            dataitem(ExtendedInfo; "My Table")
+            {
+                column(ExtraField; "Extra Field") { }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (dataset_section
+      (addlast_dataitem
+        target: (identifier)
+        (report_dataitem_section
+          name: (identifier)
+          table_name: (quoted_identifier)
+          (report_column_section
+            name: (identifier)
+            source: (quoted_identifier)))))))
+
+================================================================================
+Report extension with addfirst dataitem without target (backwards compatibility)
+================================================================================
+
+reportextension 125 "Legacy Extension" extends "Customer List"
+{
+    dataset
+    {
+        addfirst
+        {
+            dataitem(NewData; Customer)
+            {
+                column(No; "No.") { }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (dataset_section
+      (addfirst_dataitem
+        (report_dataitem_section
+          name: (identifier)
+          table_name: (identifier)
+          (report_column_section
+            name: (identifier)
+            source: (quoted_identifier)))))))
+
+================================================================================
+Report extension with modify and multiple modifications
+================================================================================
+
+reportextension 126 "Complex Extension" extends "Sales Report"
+{
+    dataset
+    {
+        modify(Header)
+        {
+            trigger OnAfterAfterGetRecord()
+            begin
+                Message('Modified');
+            end;
+        }
+        
+        addfirst(Line)
+        {
+            dataitem(PreLineInfo; "Integer")
+            {
+                DataItemTableView = where(Number = const(1));
+                column(Info; 'Pre-line info') { }
+            }
+        }
+        
+        addlast(Line)
+        {
+            dataitem(PostLineInfo; "Integer")
+            {
+                DataItemTableView = where(Number = const(1));
+                column(Info; 'Post-line info') { }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reportextension_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    base_object: (quoted_identifier)
+    (dataset_section
+      (modify_dataitem
+        target: (identifier)
+        (trigger_declaration
+          name: (trigger_name)
+          (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))))
+      (addfirst_dataitem
+        target: (identifier)
+        (report_dataitem_section
+          name: (identifier)
+          table_name: (quoted_identifier)
+          (data_item_table_view_property
+            value: (source_table_view_value
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (identifier))
+                      value: (integer)))))))
+          (report_column_section
+            name: (identifier)
+            source: (string_literal))))
+      (addlast_dataitem
+        target: (identifier)
+        (report_dataitem_section
+          name: (identifier)
+          table_name: (quoted_identifier)
+          (data_item_table_view_property
+            value: (source_table_view_value
+              (where_clause
+                conditions: (where_conditions
+                  (where_condition
+                    (const_filter
+                      field: (field_ref
+                        (identifier))
+                      value: (integer)))))))
+          (report_column_section
+            name: (identifier)
+            source: (string_literal)))))))

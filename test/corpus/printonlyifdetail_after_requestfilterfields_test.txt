@@ -27,7 +27,7 @@ report 50000 "Test Report"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (request_filter_fields_property
           value: (request_filter_fields_value
             (quoted_identifier)
@@ -80,7 +80,7 @@ report 50001 "Complex Report"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (data_item_table_view_property
           value: (source_table_view_value
             (sorting_clause
@@ -110,7 +110,7 @@ report 50001 "Complex Report"
             value: (boolean)))
         (report_dataitem_section
           name: (identifier)
-          (quoted_identifier)
+          table_name: (quoted_identifier)
           (data_item_link_property
             value: (data_item_link_value
               field: (quoted_identifier)
@@ -150,7 +150,7 @@ report 50002 "Edge Case Report"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (quoted_identifier)
+        table_name: (quoted_identifier)
         (request_filter_fields_property
           value: (request_filter_fields_value
             (identifier)

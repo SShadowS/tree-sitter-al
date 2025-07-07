@@ -2466,15 +2466,27 @@ module.exports = grammar({
       $.report_dataitem_section
     )($),
 
-    addfirst_dataitem: $ => _modification_without_target_template(
-      'addfirst',
-      $.report_dataitem_section
-    )($),
+    addfirst_dataitem: $ => choice(
+      _modification_with_target_template(
+        'addfirst',
+        $.report_dataitem_section
+      )($),
+      _modification_without_target_template(
+        'addfirst',
+        $.report_dataitem_section
+      )($)
+    ),
 
-    addlast_dataitem: $ => _modification_without_target_template(
-      'addlast',
-      $.report_dataitem_section
-    )($),
+    addlast_dataitem: $ => choice(
+      _modification_with_target_template(
+        'addlast',
+        $.report_dataitem_section
+      )($),
+      _modification_without_target_template(
+        'addlast',
+        $.report_dataitem_section
+      )($)
+    ),
 
     modify_dataitem: $ => seq(
       kw('modify'),

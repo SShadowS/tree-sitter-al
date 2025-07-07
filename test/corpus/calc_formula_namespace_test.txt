@@ -35,10 +35,10 @@ table 39 "Purchase Line"
           (exist_formula
             table: (table_reference
               (qualified_table_reference
-                namespace: (identifier)
-                part: (identifier)
-                part: (identifier)
-                part: (quoted_identifier)))
+                (identifier)
+                (identifier)
+                (identifier)
+                (quoted_identifier)))
             (where_clause
               conditions: (where_conditions
                 (where_condition
@@ -99,9 +99,9 @@ table 50000 TestTable
           (exist_formula
             table: (table_reference
               (qualified_table_reference
-                namespace: (identifier)
-                part: (identifier)
-                part: (quoted_identifier)))
+                (identifier)
+                (identifier)
+                (quoted_identifier)))
             (where_clause
               conditions: (where_conditions
                 (where_condition
@@ -120,9 +120,9 @@ table 50000 TestTable
           (exist_formula
             table: (table_reference
               (qualified_table_reference
-                namespace: (identifier)
-                part: (identifier)
-                part: (identifier)))
+                (identifier)
+                (identifier)
+                (identifier)))
             (where_clause
               conditions: (where_conditions
                 (where_condition
@@ -142,11 +142,11 @@ table 50000 TestTable
           (exist_formula
             table: (table_reference
               (qualified_table_reference
-                namespace: (identifier)
-                part: (identifier)
-                part: (identifier)
-                part: (identifier)
-                part: (identifier)))
+                (identifier)
+                (identifier)
+                (identifier)
+                (identifier)
+                (identifier)))
             (where_clause
               conditions: (where_conditions
                 (where_condition

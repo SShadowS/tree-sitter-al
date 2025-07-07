@@ -33,7 +33,7 @@ report 50000 "Test Report"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (report_column_section
           name: (identifier)
           source: (identifier))))))
@@ -70,7 +70,7 @@ report 50001 "No Request Page Report"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (report_column_section
           name: (identifier)
           source: (quoted_identifier))))))
@@ -105,7 +105,7 @@ report 50002 "Simple Report"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (report_column_section
           name: (identifier)
           source: (identifier))))))
@@ -168,7 +168,7 @@ report 50003 "Complex Report"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (report_column_section
           name: (identifier)
           source: (quoted_identifier))
@@ -211,7 +211,7 @@ report 50004 "Case Test"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (quoted_identifier)
+        table_name: (quoted_identifier)
         (report_column_section
           name: (identifier)
           source: (quoted_identifier))))))

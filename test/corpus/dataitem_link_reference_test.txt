@@ -22,7 +22,7 @@ report 50100 TestReport
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (data_item_link_reference_property
           value: (identifier))))))
 
@@ -50,7 +50,7 @@ report 50101 TestReport
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (quoted_identifier)
+        table_name: (quoted_identifier)
         (data_item_link_reference_property
           value: (quoted_identifier))))))
 
@@ -82,12 +82,12 @@ report 50102 TestReport
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (data_item_link_reference_property
           value: (identifier)))
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (data_item_link_reference_property
           value: (identifier))))))
 
@@ -117,7 +117,7 @@ report 50103 TestReport
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (quoted_identifier)
+        table_name: (quoted_identifier)
         (data_item_table_view_property
           value: (source_table_view_value
             (sorting_clause

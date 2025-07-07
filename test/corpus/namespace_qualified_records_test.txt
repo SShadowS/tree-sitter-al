@@ -33,28 +33,28 @@ codeunit 123 "Test Codeunit"
             type: (type_specification
               (record_type
                 reference: (qualified_table_reference
-                  namespace: (identifier)
-                  part: (identifier)
-                  part: (identifier)
-                  part: (quoted_identifier)))))
+                  (identifier)
+                  (identifier)
+                  (identifier)
+                  (quoted_identifier)))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (record_type
                 reference: (qualified_table_reference
-                  namespace: (identifier)
-                  part: (identifier)
-                  part: (identifier)
-                  part: (identifier)))))
+                  (identifier)
+                  (identifier)
+                  (identifier)
+                  (identifier)))))
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (record_type
                 reference: (qualified_table_reference
-                  namespace: (identifier)
-                  part: (identifier)
-                  part: (identifier)
-                  part: (identifier))))))
+                  (identifier)
+                  (identifier)
+                  (identifier)
+                  (identifier))))))
         (code_block
           (call_expression
             function: (member_expression

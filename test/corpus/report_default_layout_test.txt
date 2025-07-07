@@ -56,7 +56,7 @@ report 50100 "Sales Report"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (report_column_section
           name: (identifier)
           source: (identifier))))))
@@ -154,7 +154,7 @@ report 1004 "Close Inventory Period - Test"
     (dataset_section
       (report_dataitem_section
         name: (quoted_identifier)
-        (quoted_identifier)
+        table_name: (quoted_identifier)
         (data_item_table_view_property
           value: (source_table_view_value
             (sorting_clause

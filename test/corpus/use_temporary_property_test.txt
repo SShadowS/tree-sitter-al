@@ -23,7 +23,7 @@ report 50100 "Test Report"
     (dataset_section
       (report_dataitem_section
         name: (quoted_identifier)
-        (quoted_identifier)
+        table_name: (quoted_identifier)
         (data_item_table_view_property
           value: (source_table_view_value
             (sorting_clause
@@ -60,7 +60,7 @@ report 50101 "Another Report"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (use_temporary_property
           value: (boolean))
         (request_filter_fields_property
@@ -141,7 +141,7 @@ report 50102 "Complex Report"
     (dataset_section
       (report_dataitem_section
         name: (quoted_identifier)
-        (quoted_identifier)
+        table_name: (quoted_identifier)
         (data_item_table_view_property
           value: (source_table_view_value
             (sorting_clause
@@ -193,16 +193,16 @@ report 50103 "Case Test"
     (dataset_section
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (use_temporary_property
           value: (boolean)))
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (use_temporary_property
           value: (boolean)))
       (report_dataitem_section
         name: (identifier)
-        (identifier)
+        table_name: (identifier)
         (use_temporary_property
           value: (boolean))))))
