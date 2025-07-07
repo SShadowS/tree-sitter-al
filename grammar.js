@@ -4273,7 +4273,11 @@ module.exports = grammar({
       // Allow 'ReadOnly' to be used as an identifier in variable contexts
       alias(kw('readonly'), $.identifier),
       // Allow 'ApiVersion' to be used as an identifier in variable contexts
-      alias(kw('apiversion'), $.identifier)
+      alias(kw('apiversion'), $.identifier),
+      // Allow 'Filters' to be used as an identifier in variable contexts
+      alias('Filters', $.identifier),
+      alias('filters', $.identifier),
+      alias('FILTERS', $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
@@ -6665,8 +6669,14 @@ enum_type: $ => prec(1, seq(
       $._boolean_property_template
     ),
 
+    // Contextual Property Pattern exception: Uses literal strings instead of kw()
+    // to avoid lexer conflicts when used as variable names in var sections.
+    // All case variations must also be added to _unquoted_variable_name.
     filters_property: $ => seq(
-      'Filters',
+      field('name', alias(
+        choice('Filters', 'filters', 'FILTERS'),
+        'Filters'
+      )),
       '=',
       field('value', choice(
         $.identifier,

@@ -1,0 +1,290 @@
+================================================================================
+Filters as variable name in page var section
+================================================================================
+
+page 50000 TestPage
+{
+    var
+        Filters: Text;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (identifier)
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (text_type))))))
+
+================================================================================
+filters (lowercase) as variable name
+================================================================================
+
+page 50001 TestPage
+{
+    var
+        filters: Text[100];
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (identifier)
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (text_type
+            (integer)))))))
+
+================================================================================
+FILTERS (uppercase) as variable name
+================================================================================
+
+page 50002 TestPage
+{
+    var
+        FILTERS: Record Customer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (identifier)
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (record_type
+            (identifier)))))))
+
+================================================================================
+Filters property in page repeater control
+================================================================================
+
+page 50003 TestPage
+{
+    layout
+    {
+        area(content)
+        {
+            repeater(Group)
+            {
+                field(Name; Rec.Name)
+                {
+                    ApplicationArea = All;
+                }
+                field(Filters; Filters)
+                {
+                    Caption = 'Conditions';
+                    Editable = false;
+                }
+            }
+        }
+    }
+    
+    var
+        Filters: Text;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (identifier)
+    (layout_section
+      (area_section
+        (repeater_section
+          (identifier)
+          (field_section
+            (identifier)
+            (member_expression
+              (identifier)
+              (identifier))
+            (application_area_property
+              (identifier)))
+          (field_section
+            (identifier)
+            (identifier)
+            (caption_property
+              (string_literal))
+            (editable_property
+              (boolean))))))
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (text_type))))))
+
+================================================================================
+Filters property in query dataitem
+================================================================================
+
+query 50000 TestQuery
+{
+    elements
+    {
+        dataitem(Customer; Customer)
+        {
+            Filters = 'Balance (LCY)=FILTER(>0)';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (integer)
+    (identifier)
+    (elements_section
+      (dataitem_section
+        (identifier)
+        (identifier)
+        (filters_property
+          (string_literal))))))
+
+================================================================================
+Complex page with Filters as field and variable (from MyNotifications.Page.al)
+================================================================================
+
+page 1518 "My Notifications"
+{
+    PageType = List;
+    
+    layout
+    {
+        area(content)
+        {
+            repeater(Group)
+            {
+                field(Enabled; Rec.Enabled)
+                {
+                    trigger OnValidate()
+                    begin
+                        if Rec.Enabled <> xRec.Enabled then begin
+                            Filters := Rec.GetFiltersAsDisplayText();
+                            CurrPage.Update();
+                        end;
+                    end;
+                }
+                field(Filters; Filters)
+                {
+                    Caption = 'Conditions';
+                    Editable = false;
+                    
+                    trigger OnDrillDown()
+                    begin
+                        if Rec.OpenFilterSettings() then begin
+                            Filters := Rec.GetFiltersAsDisplayText();
+                            CurrPage.Update();
+                        end;
+                    end;
+                }
+            }
+        }
+    }
+    
+    trigger OnAfterGetRecord()
+    begin
+        Filters := Rec.GetFiltersAsDisplayText();
+    end;
+    
+    var
+        Filters: Text;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (quoted_identifier)
+    (page_type_property)
+    (layout_section
+      (area_section
+        (repeater_section
+          (identifier)
+          (field_section
+            (identifier)
+            (member_expression
+              (identifier)
+              (identifier))
+            (field_trigger_declaration
+              (trigger_type)
+              (code_block
+                (if_statement
+                  (comparison_expression
+                    (member_expression
+                      (identifier)
+                      (identifier))
+                    (comparison_operator)
+                    (member_expression
+                      (identifier)
+                      (identifier)))
+                  (code_block
+                    (assignment_expression
+                      (identifier)
+                      (call_expression
+                        (member_expression
+                          (identifier)
+                          (identifier))
+                        (argument_list)))
+                    (call_expression
+                      (member_expression
+                        (identifier)
+                        (identifier))
+                      (argument_list)))))))
+          (field_section
+            (identifier)
+            (identifier)
+            (caption_property
+              (string_literal))
+            (editable_property
+              (boolean))
+            (field_trigger_declaration
+              (trigger_type)
+              (code_block
+                (if_statement
+                  (call_expression
+                    (member_expression
+                      (identifier)
+                      (identifier))
+                    (argument_list))
+                  (code_block
+                    (assignment_expression
+                      (identifier)
+                      (call_expression
+                        (member_expression
+                          (identifier)
+                          (identifier))
+                        (argument_list)))
+                    (call_expression
+                      (member_expression
+                        (identifier)
+                        (identifier))
+                      (argument_list))))))))))
+    (trigger_declaration
+      (trigger_name)
+      (code_block
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (argument_list)))))
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (text_type))))))

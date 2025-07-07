@@ -488,6 +488,7 @@ Some property names conflict with common variable names and cannot be resolved u
 - `TableType` - Used as enum variable in Opportunities.Page.al
 - `Style`/`StyleExpr` - Common variable names for UI styling  
 - `IsPreview` - Used for preview state tracking
+- `Filters` - Used as variable name in MyNotifications.Page.al
 
 **Pattern:**
 1. Property definition uses literal strings with all case variations

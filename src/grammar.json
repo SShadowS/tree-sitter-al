@@ -18813,6 +18813,33 @@
           },
           "named": true,
           "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "Filters"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "filters"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "FILTERS"
+          },
+          "named": true,
+          "value": "identifier"
         }
       ]
     },
@@ -29905,8 +29932,30 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "Filters"
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "Filters"
+                },
+                {
+                  "type": "STRING",
+                  "value": "filters"
+                },
+                {
+                  "type": "STRING",
+                  "value": "FILTERS"
+                }
+              ]
+            },
+            "named": false,
+            "value": "Filters"
+          }
         },
         {
           "type": "STRING",
