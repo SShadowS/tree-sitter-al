@@ -40,6 +40,7 @@ codeunit 50000 "Test For Loop"
                 record: (identifier)
                 field: (quoted_identifier))
               value: (identifier))
+            direction: (to)
             end: (qualified_enum_value
               enum_type: (field_access
                 record: (identifier)
@@ -85,6 +86,7 @@ codeunit 50001 "Test Member Loop"
               object: (identifier)
               property: (identifier))
             start: (integer)
+            direction: (to)
             end: (member_expression
               object: (identifier)
               property: (identifier))
