@@ -1197,18 +1197,21 @@ module.exports = grammar({
       $._quoted_identifier,
       $.integer,
       $.boolean,
+      $.date_literal,
+      $.time_literal,
+      $.datetime_literal,
       // Support for comparison operators (including equals)
       seq(
         choice('=', '>', '<', '>=', '<=', '<>'),
-        choice($.integer, $.identifier, $._quoted_identifier, $.string_literal, $.boolean)
+        choice($.integer, $.identifier, $._quoted_identifier, $.string_literal, $.boolean, $.date_literal, $.time_literal, $.datetime_literal)
       ),
       // Support for comparison operators with pipe-separated alternatives
       seq(
         choice('=', '>', '<', '>=', '<=', '<>'),
-        choice($.integer, $.identifier, $._quoted_identifier, $.string_literal, $.boolean),
+        choice($.integer, $.identifier, $._quoted_identifier, $.string_literal, $.boolean, $.date_literal, $.time_literal, $.datetime_literal),
         repeat1(seq(
           '|',
-          choice($.string_literal, $.identifier, $._quoted_identifier, $.integer, $.boolean)
+          choice($.string_literal, $.identifier, $._quoted_identifier, $.integer, $.boolean, $.date_literal, $.time_literal, $.datetime_literal)
         ))
       ),
       // Support for pipe-separated values
