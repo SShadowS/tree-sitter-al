@@ -1,0 +1,65 @@
+================================================================================
+Page var section with Visible as variable name
+================================================================================
+
+page 50100 TestPage
+{
+    var
+        RevQtyFilter: Boolean;
+        Visible: Boolean;
+        ShowRec: Boolean;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))))
+
+================================================================================
+Page with Visible property and Visible variable
+================================================================================
+
+page 50100 TestPage
+{
+    Caption = 'Test Page';
+    Visible = true;
+    
+    var
+        Visible: Boolean;
+        IsVisible: Boolean;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (caption_property
+      (string_literal))
+    (visible_property
+      (boolean))
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))))

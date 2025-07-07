@@ -1789,7 +1789,10 @@ module.exports = grammar({
     ),
 
     visible_property: $ => seq(
-      kw('visible'),
+      field('name', alias(
+        choice('Visible', 'visible', 'VISIBLE'),
+        'Visible'
+      )),
       $._expression_property_template
     ),
 
@@ -4280,7 +4283,11 @@ module.exports = grammar({
       // Allow 'Filters' to be used as an identifier in variable contexts
       alias('Filters', $.identifier),
       alias('filters', $.identifier),
-      alias('FILTERS', $.identifier)
+      alias('FILTERS', $.identifier),
+      // Allow 'Visible' to be used as an identifier in variable contexts
+      alias('Visible', $.identifier),
+      alias('visible', $.identifier),
+      alias('VISIBLE', $.identifier)
     ),
 
     // Helper rule for comma-separated variable names

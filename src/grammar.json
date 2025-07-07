@@ -7278,10 +7278,29 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
+          "type": "FIELD",
+          "name": "name",
           "content": {
-            "type": "PATTERN",
-            "value": "(?i)visible"
+            "type": "ALIAS",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "Visible"
+                },
+                {
+                  "type": "STRING",
+                  "value": "visible"
+                },
+                {
+                  "type": "STRING",
+                  "value": "VISIBLE"
+                }
+              ]
+            },
+            "named": false,
+            "value": "Visible"
           }
         },
         {
@@ -18841,6 +18860,33 @@
           "content": {
             "type": "STRING",
             "value": "FILTERS"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "Visible"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "visible"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "VISIBLE"
           },
           "named": true,
           "value": "identifier"
