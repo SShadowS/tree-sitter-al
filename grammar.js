@@ -678,6 +678,8 @@ module.exports = grammar({
       $.preproc_conditional_query_properties,
       $.trigger_declaration,         // triggers like OnBeforeOpen
       $.attributed_procedure,        // procedures with attributes (internal, etc.)
+      $.var_section,                 // var section for global variables
+      $.preproc_conditional_var_sections,  // conditional var sections
       
       // Region directives for code organization
       $.preproc_region,

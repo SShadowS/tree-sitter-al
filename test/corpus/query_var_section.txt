@@ -1,0 +1,297 @@
+================================================================================
+Query with var section
+================================================================================
+
+query 50100 "Test Query Var"
+{
+    elements
+    {
+        dataitem(Customer; Customer)
+        {
+            column(No; "No.")
+            {
+            }
+        }
+    }
+
+    var
+        MyLabel: Label 'Test Label';
+        MyInteger: Integer;
+
+    procedure TestMethod()
+    begin
+        MyInteger := 5;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (basic_type)
+        value: (string_literal))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (integer)))))))
+
+================================================================================
+Query with var section and global label
+================================================================================
+
+query 5506 "Email Related Record"
+{
+    Access = Internal;
+    QueryType = API;
+    
+    elements
+    {
+        dataitem(EmailOutbox; "Email Outbox")
+        {
+            column(MessageId; "Message Id")
+            {
+            }
+            filter(Connector; Connector)
+            {
+            }
+        }
+    }
+
+    var
+        InvalidNumberOdIDsPerFilterErr: Label 'Expected to have more than 0 email message ID per filter.';
+
+    procedure GetEmailMessageIdFilters(): List of [Text]
+    begin
+        exit(GetEmailMessageIdFilters(100));
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property_list
+      (property
+        (access_property
+          value: (value))))
+    (query_type_property)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (quoted_identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))
+        (filter_section
+          name: (identifier)
+          field_name: (identifier))))
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (basic_type)
+        value: (string_literal)))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        return_type: (return_type
+          (type_specification
+            (list_type
+              (type_specification
+                (text_type)))))
+        (code_block
+          (exit_statement
+            return_value: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer)))))))))
+
+================================================================================
+Query with conditional var section
+================================================================================
+
+query 50101 "Query with Conditional Var"
+{
+    elements
+    {
+        dataitem(Item; Item)
+        {
+            column(No; "No.")
+            {
+            }
+        }
+    }
+
+#if CLEAN25
+    var
+        NewVariable: Text[100];
+#else
+    var
+        OldVariable: Code[20];
+#endif
+
+    procedure GetValue(): Text
+    begin
+#if CLEAN25
+        exit(NewVariable);
+#else
+        exit(OldVariable);
+#endif
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))
+    (preproc_conditional_var_sections
+      (preproc_if
+        condition: (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type
+              length: (integer)))))
+      (preproc_else)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (code_type
+              length: (integer)))))
+      (preproc_endif))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        return_type: (return_type
+          (type_specification
+            (text_type)))
+        (code_block
+          (preproc_conditional_statements
+            (preproc_if
+              condition: (identifier))
+            (exit_statement
+              return_value: (identifier))
+            (preproc_else)
+            (exit_statement
+              return_value: (identifier))
+            (preproc_endif)))))))
+
+================================================================================
+Query with mixed global and local var sections
+================================================================================
+
+query 50102 "Mixed Var Query"
+{
+    elements
+    {
+        dataitem(Vendor; Vendor)
+        {
+            column(No; "No.")
+            {
+            }
+        }
+    }
+
+    var
+        GlobalText: Text;
+        GlobalCounter: Integer;
+
+    procedure ProcessData()
+    var
+        LocalVendor: Record Vendor;
+        LocalText: Text[50];
+    begin
+        GlobalCounter += 1;
+        LocalText := GlobalText;
+    end;
+
+    trigger OnBeforeOpen()
+    begin
+        GlobalCounter := 0;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (text_type)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (integer))
+          (assignment_expression
+            left: (identifier)
+            right: (identifier)))))
+    (trigger_declaration
+      name: (trigger_name)
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (integer))))))
