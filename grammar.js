@@ -4956,12 +4956,12 @@ enum_type: $ => prec(1, seq(
     _lookup_field_function: $ => prec(100, seq(
       kw('field'),
       '(',
-      field('value', prec(105, choice(
+      field('value', alias(prec(105, choice(
         $.identifier,
         $._quoted_identifier,
         $.member_expression,
         $.field_access
-      ))),
+      )), $.field_ref)),
       ')'
     )),
 

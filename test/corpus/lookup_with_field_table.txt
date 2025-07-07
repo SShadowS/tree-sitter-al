@@ -35,11 +35,13 @@ table 50004 "Approval Workflow Wizard"
               (quoted_identifier))
             (lookup_where_conditions
               (lookup_where_condition
-                (identifier)
-                (identifier))
+                (field_ref
+                  (identifier))
+                (field_ref))
               (lookup_where_condition
-                (quoted_identifier)
-                (identifier)))))
+                (field_ref
+                  (quoted_identifier))
+                (field_ref)))))
         (field_class_property
           (field_class_value))))))
 
@@ -118,8 +120,9 @@ table 1234 "Test"
               (quoted_identifier))
             (lookup_where_conditions
               (lookup_where_condition
-                (identifier)
-                (identifier)))))
+                (field_ref
+                  (identifier))
+                (field_ref)))))
         (field_class_property
           (field_class_value)))
       (comment)
@@ -136,11 +139,13 @@ table 1234 "Test"
               (identifier))
             (lookup_where_conditions
               (lookup_where_condition
-                (identifier)
-                (identifier))
+                (field_ref
+                  (identifier))
+                (field_ref))
               (lookup_where_condition
-                (identifier)
-                (identifier)))))
+                (field_ref
+                  (identifier))
+                (field_ref)))))
         (field_class_property
           (field_class_value)))
       (comment)
@@ -157,13 +162,16 @@ table 1234 "Test"
               (quoted_identifier))
             (lookup_where_conditions
               (lookup_where_condition
-                (identifier)
-                (identifier))
+                (field_ref
+                  (identifier))
+                (field_ref))
               (lookup_where_condition
-                (quoted_identifier)
-                (identifier))
+                (field_ref
+                  (quoted_identifier))
+                (field_ref))
               (lookup_where_condition
-                (identifier)
+                (field_ref
+                  (identifier))
                 (identifier)))))
         (field_class_property
           (field_class_value))))))
