@@ -24826,6 +24826,71 @@
         }
       ]
     },
+    "preproc_split_if": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 10,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "(?i)if"
+                }
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "condition",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_expression"
+              }
+            },
+            {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 10,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "(?i)then"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        },
+        {
+          "type": "FIELD",
+          "name": "then_branch",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "code_block"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_if_then_body"
+              }
+            ]
+          }
+        }
+      ]
+    },
     "preproc_fragmented_if_else": {
       "type": "PREC",
       "value": 20,
@@ -27204,6 +27269,10 @@
         {
           "type": "SYMBOL",
           "name": "preproc_split_if_else"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_split_if"
         },
         {
           "type": "SYMBOL",

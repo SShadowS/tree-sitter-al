@@ -5505,6 +5505,21 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
+    // Split if statement where condition is inside preprocessor but body is outside
+    preproc_split_if: $ => seq(
+      $.preproc_if,
+      seq(
+        kw('if', 10),
+        field('condition', $._expression),
+        kw('then', 10)
+      ),
+      $.preproc_endif,
+      field('then_branch', choice(
+        $.code_block,
+        $._if_then_body
+      ))
+    ),
+
     // Handle complex preprocessor pattern where if-else is fragmented across multiple #if blocks
     // Pattern: normal if-else with "end else begin", then #endif, else body, then #if wrapping "end;", then #endif
     preproc_fragmented_if_else: $ => prec(20, seq(
@@ -6009,6 +6024,8 @@ enum_type: $ => prec(1, seq(
       )),
       // Split if-else statement
       $.preproc_split_if_else,
+      // Split if statement (condition in preprocessor, body outside)
+      $.preproc_split_if,
       // Fragmented if-else statement (complex preprocessor pattern)
       $.preproc_fragmented_if_else
     ),
