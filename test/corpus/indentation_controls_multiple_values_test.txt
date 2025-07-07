@@ -1,0 +1,225 @@
+================================================================================
+IndentationControls with single value
+================================================================================
+
+page 50000 "Test Page"
+{
+    PageType = List;
+    SourceTable = "Test Table";
+    
+    layout
+    {
+        area(Content)
+        {
+            repeater(TestRepeater)
+            {
+                IndentationControls = MyField;
+                
+                field(MyField; Rec.MyField)
+                {
+                    ApplicationArea = All;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (quoted_identifier)
+    (page_type_property)
+    (source_table_property
+      (quoted_identifier))
+    (layout_section
+      (area_section
+        (repeater_section
+          (identifier)
+          (indentation_controls_property
+            (identifier))
+          (field_section
+            (identifier)
+            (member_expression
+              (identifier)
+              (identifier))
+            (application_area_property
+              (identifier))))))))
+
+================================================================================
+IndentationControls with multiple values
+================================================================================
+
+page 50001 "Permission Set Tree"
+{
+    PageType = List;
+    SourceTable = "Permission Set";
+    
+    layout
+    {
+        area(Content)
+        {
+            repeater(PermissionSets)
+            {
+                TreeInitialState = CollapseAll;
+                IndentationColumn = Rec.Indent;
+                IndentationControls = "Related Role ID As Text", "Related Scope";
+                ShowAsTree = true;
+                
+                field("Related Role ID As Text"; Rec."Related Role ID As Text")
+                {
+                    ApplicationArea = All;
+                }
+                
+                field("Related Scope"; Rec."Related Scope")
+                {
+                    ApplicationArea = All;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (quoted_identifier)
+    (page_type_property)
+    (source_table_property
+      (quoted_identifier))
+    (layout_section
+      (area_section
+        (repeater_section
+          (identifier)
+          (tree_initial_state_property)
+          (indentation_column_property
+            (member_expression
+              (identifier)
+              (identifier)))
+          (indentation_controls_property
+            (quoted_identifier)
+            (quoted_identifier))
+          (show_as_tree_property
+            (boolean))
+          (field_section
+            (quoted_identifier)
+            (field_access
+              (identifier)
+              (quoted_identifier))
+            (application_area_property
+              (identifier)))
+          (field_section
+            (quoted_identifier)
+            (field_access
+              (identifier)
+              (quoted_identifier))
+            (application_area_property
+              (identifier))))))))
+
+================================================================================
+IndentationControls with multiple quoted and unquoted identifiers
+================================================================================
+
+page 50002 "Mixed Identifiers"
+{
+    PageType = List;
+    SourceTable = TestTable;
+    
+    layout
+    {
+        area(Content)
+        {
+            repeater(TestRepeater)
+            {
+                IndentationControls = Field1, "Field 2", Field3;
+                
+                field(Field1; Rec.Field1)
+                {
+                    ApplicationArea = All;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (quoted_identifier)
+    (page_type_property)
+    (source_table_property
+      (identifier))
+    (layout_section
+      (area_section
+        (repeater_section
+          (identifier)
+          (indentation_controls_property
+            (identifier)
+            (quoted_identifier)
+            (identifier))
+          (field_section
+            (identifier)
+            (member_expression
+              (identifier)
+              (identifier))
+            (application_area_property
+              (identifier))))))))
+
+================================================================================
+IndentationControls with expressions
+================================================================================
+
+page 50003 "Expression Controls"
+{
+    PageType = List;
+    SourceTable = TestTable;
+    
+    layout
+    {
+        area(Content)
+        {
+            repeater(TestRepeater)
+            {
+                IndentationControls = Rec."Field Name", GetControlName();
+                
+                field(TestField; Rec.TestField)
+                {
+                    ApplicationArea = All;
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (quoted_identifier)
+    (page_type_property)
+    (source_table_property
+      (identifier))
+    (layout_section
+      (area_section
+        (repeater_section
+          (identifier)
+          (indentation_controls_property
+            (field_access
+              (identifier)
+              (quoted_identifier))
+            (call_expression
+              (identifier)
+              (argument_list)))
+          (field_section
+            (identifier)
+            (member_expression
+              (identifier)
+              (identifier))
+            (application_area_property
+              (identifier))))))))

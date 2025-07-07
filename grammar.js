@@ -6337,7 +6337,12 @@ enum_type: $ => prec(1, seq(
 
     indentation_controls_property: $ => seq(
       kw('IndentationControls'),
-      $._expression_property_template
+      '=',
+      field('value', choice(
+        $._expression,
+        seq($._expression, repeat(seq(',', $._expression)))
+      )),
+      ';'
     ),
 
     allowed_file_extensions_property: $ => seq(
