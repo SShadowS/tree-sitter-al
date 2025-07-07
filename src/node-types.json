@@ -50889,11 +50889,19 @@
           "named": true
         },
         {
+          "type": "integer",
+          "named": true
+        },
+        {
           "type": "quoted_identifier",
           "named": true
         },
         {
           "type": "string_literal",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
           "named": true
         }
       ]
@@ -54150,10 +54158,6 @@
   },
   {
     "type": "ValidateTableRelation",
-    "named": false
-  },
-  {
-    "type": "ValuesAllowed",
     "named": false
   },
   {
