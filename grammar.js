@@ -1843,7 +1843,7 @@ module.exports = grammar({
     ),
 
     _assignment_operator: $ => token(choice(':=', '+=', '-=', '*=', '/=')),
-    _double__colon: $ => token(prec(10, '::')), // Increase precedence of :: to bind tighter
+    _double__colon: $ => token(prec(10, '::')), // Moderate precedence
     _colon: $ => ':',
 
     table_no_property: $ => seq(
@@ -5712,8 +5712,8 @@ enum_type: $ => prec(1, seq(
       ':=',
       field('start', $._expression),
       field('direction', choice(
-        prec(2, kw('to')),
-        kw('downto', 10)
+        prec(2, alias(kw('to'), $.to)),
+        alias(kw('downto', 10), $.downto)
       )),
       field('end', $._expression),
       kw('do', 10),
@@ -5852,7 +5852,7 @@ enum_type: $ => prec(1, seq(
       // Put database_reference FIRST with highest precedence for DATABASE:: patterns
       $.database_reference,
       // Put qualified_enum_value with high precedence
-      prec(150, $.qualified_enum_value), // (prec 150) - high precedence
+      prec(50, $.qualified_enum_value), // (prec 50) - moderate precedence
       // Method chains (put this first among non-binary expressions for higher precedence)
       $.call_expression, // (prec 12)
       $.enum_keyword_qualified_value, // (prec 9)
@@ -6188,7 +6188,7 @@ enum_type: $ => prec(1, seq(
       ))
     )),
 
-    qualified_enum_value: $ => prec.left(100, seq( // Much higher precedence to ensure it's considered first
+    qualified_enum_value: $ => prec.left(50, seq(
       field('enum_type', choice(
         $._enum_type_reference,
         $.identifier,

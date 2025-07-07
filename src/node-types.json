@@ -17923,6 +17923,20 @@
           }
         ]
       },
+      "direction": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "downto",
+            "named": true
+          },
+          {
+            "type": "to",
+            "named": true
+          }
+        ]
+      },
       "end": {
         "multiple": true,
         "required": true,
@@ -53125,6 +53139,10 @@
     "named": false
   },
   {
+    "type": "downto",
+    "named": true
+  },
+  {
     "type": "duration_string",
     "named": true
   },
@@ -53239,6 +53257,10 @@
   },
   {
     "type": "time_literal",
+    "named": true
+  },
+  {
+    "type": "to",
     "named": true
   },
   {

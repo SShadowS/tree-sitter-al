@@ -1,0 +1,106 @@
+================================================================================
+For loop with qualified enum values containing spaces
+================================================================================
+
+codeunit 50000 "Test For Loop"
+{
+    procedure TestForLoopWithQualifiedEnum()
+    var
+        Type: Option " ","G/L Account",Item,Resource,"Fixed Asset","Charge (Item)";
+    begin
+        // For loop with qualified enum values
+        for Type := Type::" " to Type::"Charge (Item)" do begin
+            // Process each type
+        end;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier)))))))
+        (code_block
+          (comment)
+          (for_statement
+            variable: (identifier)
+            start: (qualified_enum_value
+              enum_type: (identifier)
+              value: (quoted_identifier))
+            direction: (to)
+            end: (qualified_enum_value
+              enum_type: (identifier)
+              value: (quoted_identifier))
+            body: (code_block
+              (comment))))))))
+
+================================================================================
+Simple for loop with qualified enum
+================================================================================
+
+codeunit 50001 "Simple Test"
+{
+    procedure SimpleForLoop()
+    var
+        Type: Option A,B,C;
+    begin
+        for Type := Type::A to Type::C do;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))
+        (code_block
+          (for_statement
+            variable: (identifier)
+            start: (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier))
+            direction: (to)
+            end: (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier))
+            body: (empty_statement)))))))
