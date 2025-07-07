@@ -1,0 +1,169 @@
+================================================================================
+Lookup formula with Field table and multiple where conditions
+================================================================================
+
+table 50004 "Approval Workflow Wizard"
+{
+    fields
+    {
+        field(11; "Field Caption"; Text[250])
+        {
+            CalcFormula = lookup(Field."Field Caption" where(TableNo = field(TableNo),
+                                                              "No." = field(Field)));
+            FieldClass = FlowField;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (integer)
+    (quoted_identifier)
+    (fields
+      (field_declaration
+        (integer)
+        (quoted_identifier)
+        (type_specification
+          (text_type
+            (integer)))
+        (calc_formula_property
+          (lookup_formula
+            (field_access
+              (identifier)
+              (quoted_identifier))
+            (lookup_where_conditions
+              (lookup_where_condition
+                (identifier)
+                (identifier))
+              (lookup_where_condition
+                (quoted_identifier)
+                (identifier)))))
+        (field_class_property
+          (field_class_value))))))
+
+================================================================================
+Lookup with Field table - various patterns
+================================================================================
+
+table 1234 "Test"
+{
+    fields
+    {
+        // Simple lookup without where
+        field(1; F1; Text[250])
+        {
+            CalcFormula = lookup(Field."Field Caption");
+            FieldClass = FlowField;
+        }
+        
+        // Lookup with single where condition
+        field(2; F2; Text[250])
+        {
+            CalcFormula = lookup(Field."Field Caption" where(TableNo = field(TableNo)));
+            FieldClass = FlowField;
+        }
+        
+        // Lookup with unquoted field access
+        field(3; F3; Text[250])
+        {
+            CalcFormula = lookup(Field.FieldName where(A = field(B), C = field(D)));
+            FieldClass = FlowField;
+        }
+        
+        // Complex lookup with Field argument
+        field(4; F4; Text[250])
+        {
+            CalcFormula = lookup(Field."Complex Caption" where(TableNo = field(TableNo), 
+                                                               "No." = field(Field),
+                                                               Type = filter(Customer)));
+            FieldClass = FlowField;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (integer)
+    (quoted_identifier)
+    (fields
+      (comment)
+      (field_declaration
+        (integer)
+        (identifier)
+        (type_specification
+          (text_type
+            (integer)))
+        (calc_formula_property
+          (lookup_formula
+            (field_access
+              (identifier)
+              (quoted_identifier))))
+        (field_class_property
+          (field_class_value)))
+      (comment)
+      (field_declaration
+        (integer)
+        (identifier)
+        (type_specification
+          (text_type
+            (integer)))
+        (calc_formula_property
+          (lookup_formula
+            (field_access
+              (identifier)
+              (quoted_identifier))
+            (lookup_where_conditions
+              (lookup_where_condition
+                (identifier)
+                (identifier)))))
+        (field_class_property
+          (field_class_value)))
+      (comment)
+      (field_declaration
+        (integer)
+        (identifier)
+        (type_specification
+          (text_type
+            (integer)))
+        (calc_formula_property
+          (lookup_formula
+            (member_expression
+              (identifier)
+              (identifier))
+            (lookup_where_conditions
+              (lookup_where_condition
+                (identifier)
+                (identifier))
+              (lookup_where_condition
+                (identifier)
+                (identifier)))))
+        (field_class_property
+          (field_class_value)))
+      (comment)
+      (field_declaration
+        (integer)
+        (identifier)
+        (type_specification
+          (text_type
+            (integer)))
+        (calc_formula_property
+          (lookup_formula
+            (field_access
+              (identifier)
+              (quoted_identifier))
+            (lookup_where_conditions
+              (lookup_where_condition
+                (identifier)
+                (identifier))
+              (lookup_where_condition
+                (quoted_identifier)
+                (identifier))
+              (lookup_where_condition
+                (identifier)
+                (identifier)))))
+        (field_class_property
+          (field_class_value))))))

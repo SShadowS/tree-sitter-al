@@ -23848,9 +23848,49 @@
         ]
       },
       "filter_value": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
+          {
+            "type": "<",
+            "named": false
+          },
+          {
+            "type": "<=",
+            "named": false
+          },
+          {
+            "type": "<>",
+            "named": false
+          },
+          {
+            "type": "=",
+            "named": false
+          },
+          {
+            "type": ">",
+            "named": false
+          },
+          {
+            "type": ">=",
+            "named": false
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "filter_range_expression",
+            "named": true
+          },
           {
             "type": "identifier",
             "named": true
@@ -23866,6 +23906,14 @@
           {
             "type": "string_literal",
             "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "|",
+            "named": false
           }
         ]
       },
@@ -23884,7 +23932,7 @@
         "required": false,
         "types": [
           {
-            "type": "field_ref",
+            "type": "field_access",
             "named": true
           },
           {
@@ -23893,6 +23941,10 @@
           },
           {
             "type": "integer",
+            "named": true
+          },
+          {
+            "type": "member_expression",
             "named": true
           },
           {

@@ -4906,51 +4906,41 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
-    lookup_formula: $ => prec(8, seq(
+    lookup_formula: $ => prec(25, seq(
       kw('lookup'),
       '(',
       field('target', choice(
-        prec(12, $.member_expression),
-        prec(13, $.field_access),
-        prec(8, $._quoted_identifier),
-        prec(5, $.identifier)
+        prec(30, $.field_access),
+        prec(28, $.member_expression),
+        prec(26, $._quoted_identifier),
+        prec(24, $.identifier)
       )),
-      optional(seq(
+      optional(prec(35, seq(
         kw('where'),
         '(',
         $.lookup_where_conditions,
         ')'
-      )),
+      ))),
       ')'
     )),
 
 
-    lookup_where_conditions: $ => seq(
+    lookup_where_conditions: $ => prec.left(15, seq(
       $.lookup_where_condition,
-      repeat(seq(',', $.lookup_where_condition))
-    ),
+      repeat(prec.left(16, seq(',', $.lookup_where_condition)))
+    )),
 
-    lookup_where_condition: $ => seq(
-      field('field', $.field_ref),
+    lookup_where_condition: $ => prec.left(10, seq(
+      field('field', prec(15, $.field_ref)),
       '=',
       choice(
-        // field("No.") - extract just the field_ref part
-        seq(
-          kw('field'),
-          '(',
-          field('value', $.field_ref),
-          ')'
-        ),
+        // field("No.") - special handling for field() function
+        $._lookup_field_function,
         // filter(value) pattern
         seq(
           kw('filter'),
           '(',
-          field('filter_value', choice(
-            $.identifier,
-            $._quoted_identifier,
-            $.string_literal,
-            $.integer
-          )),
+          field('filter_value', $._filter_value_simple),
           ')'
         ),
         seq(
@@ -4960,7 +4950,20 @@ enum_type: $ => prec(1, seq(
           ')'
         )
       )
-    ),
+    )),
+    
+    // Special rule for field() function in lookup context with very high precedence
+    _lookup_field_function: $ => prec(100, seq(
+      kw('field'),
+      '(',
+      field('value', prec(105, choice(
+        $.identifier,
+        $._quoted_identifier,
+        $.member_expression,
+        $.field_access
+      ))),
+      ')'
+    )),
 
     // Rule for calc formula WHERE conditions with higher precedence to resolve conflicts
     // === Unified WHERE Condition Types ===

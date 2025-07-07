@@ -393,6 +393,9 @@ When adding scanner features:
 5. Test thoroughly with edge cases
 
 ## Known Limitations
+
+**IMPORTANT**: We no longer add new known limitations. Instead, we fix the grammar to support all valid AL patterns, even if it requires using the external scanner or complex grammar changes.
+
 - Multi-line permission declarations not fully supported
 - Some report-specific constructs and advanced codeunit patterns
 - Error propagation can cascade from single syntax errors
