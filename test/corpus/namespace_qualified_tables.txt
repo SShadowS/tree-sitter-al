@@ -1,0 +1,127 @@
+================================================================================
+Query with namespace-qualified table
+================================================================================
+
+query 123 "Test Query"
+{
+    elements
+    {
+        dataitem(DimSetEntry; Microsoft.Finance.Dimension."Dimension Set Entry")
+        {
+            column(dimensionSetID; "Dimension Set ID") { }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (qualified_table_reference
+          (identifier)
+          (identifier)
+          (identifier)
+          (quoted_identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))))
+
+================================================================================
+Query with multiple namespace levels
+================================================================================
+
+query 124 "Multi Level Namespace"
+{
+    elements
+    {
+        dataitem(Item; Microsoft.Inventory.Item.Item)
+        {
+            column(No; "No.") { }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (qualified_table_reference
+          (identifier)
+          (identifier)
+          (identifier)
+          (identifier))
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))))
+
+================================================================================
+Query with simple table name (backwards compatibility)
+================================================================================
+
+query 125 "Simple Table"
+{
+    elements
+    {
+        dataitem(Customer; Customer)
+        {
+            column(No; "No.") { }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (quoted_identifier))))))
+
+================================================================================
+Report with namespace-qualified dataitem
+================================================================================
+
+report 126 "Test Report"
+{
+    dataset
+    {
+        dataitem(Entry; Microsoft.Finance.Dimension."Dimension Set Entry")
+        {
+            column(DimensionSetID; "Dimension Set ID") { }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (dataset_section
+      (report_dataitem_section
+        name: (identifier)
+        table_name: (qualified_table_reference
+          (identifier)
+          (identifier)
+          (identifier)
+          (quoted_identifier))
+        (report_column_section
+          name: (identifier)
+          source: (quoted_identifier))))))

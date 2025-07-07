@@ -1126,7 +1126,10 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_choice),
       ';',
-      field('table_name', $._identifier_choice),
+      field('table_name', choice(
+        $._identifier_choice,
+        $.qualified_table_reference
+      )),
       ')',
       '{',
       repeat($._dataitem_content_element),
@@ -2499,10 +2502,10 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_choice),
       ';',
-      choice(
+      field('table_name', choice(
         $._identifier_choice,
-        $.namespace_name
-      ),
+        $.qualified_table_reference
+      )),
       ')',
       '{',
       repeat($._report_dataitem_content_element),
@@ -7744,6 +7747,13 @@ enum_type: $ => prec(1, seq(
 
     // Object reference pattern (for referencing AL objects by ID or name)
     _object_reference: $ => choice($.integer, $.identifier, $._quoted_identifier),
+
+    // Qualified table reference pattern (for namespace-qualified table names)
+    qualified_table_reference: $ => prec.left(seq(
+      $.identifier,
+      repeat1(seq('.', $.identifier)),
+      optional(seq('.', $._quoted_identifier))
+    )),
 
     // Centralized property template for DRY principle
     _boolean_property_template: $ => seq(
