@@ -4376,6 +4376,10 @@
           "named": true
         },
         {
+          "type": "preproc_attributed_split_procedure",
+          "named": true
+        },
+        {
           "type": "preproc_conditional_attributes",
           "named": true
         },
@@ -31130,6 +31134,70 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "preproc_attributed_split_procedure",
+    "named": true,
+    "fields": {
+      "else_header": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "procedure_header",
+            "named": true
+          }
+        ]
+      },
+      "if_branch": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "attribute_list",
+            "named": true
+          },
+          {
+            "type": "procedure_header",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "code_block",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        }
+      ]
     }
   },
   {

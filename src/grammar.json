@@ -8284,6 +8284,10 @@
         {
           "type": "SYMBOL",
           "name": "preproc_procedure_body_split"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_attributed_split_procedure"
         }
       ]
     },
@@ -24882,6 +24886,92 @@
           "content": {
             "type": "SYMBOL",
             "name": "procedure_header"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_else"
+        },
+        {
+          "type": "FIELD",
+          "name": "else_header",
+          "content": {
+            "type": "SYMBOL",
+            "name": "procedure_header"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ";"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pragma"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "var_section"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_conditional_var_sections"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "code_block"
+        }
+      ]
+    },
+    "preproc_attributed_split_procedure": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "FIELD",
+          "name": "if_branch",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "attribute_list"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "procedure_header"
+              }
+            ]
           }
         },
         {

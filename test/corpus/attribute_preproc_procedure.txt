@@ -1,0 +1,262 @@
+================================================================================
+Var section followed by attributed procedure in preprocessor
+================================================================================
+
+table 50000 "Test"
+{
+    var
+        GlobalVar: Record "Test Record";
+        Helper: Codeunit "Test Helper";
+
+#if not CLEAN24
+    [Obsolete('Field length will be increased', '24.0')]
+    procedure TestProc(Param: Text[30]) Result: Text
+#else
+    procedure TestProc(Param: Text[50]) Result: Text
+#endif
+    var
+        LocalVar: Text;
+    begin
+        Result := Param;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (var_section
+      (global_var_declaration
+        var_name: (identifier)
+        var_type: (type_specification
+          (record_type
+            reference: (quoted_identifier))))
+      (global_var_declaration
+        var_name: (identifier)
+        var_type: (type_specification
+          (codeunit_type
+            reference: (quoted_identifier)))))
+    (preproc_conditional_mixed_content
+      (preproc_if
+        condition: (preproc_not_expression
+          (identifier)))
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (string_literal)
+              (string_literal)))))
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (text_type
+                length: (integer)))))
+        (return_value
+          return_value: (identifier))
+        return_type: (return_type
+          (type_specification
+            (basic_type)))
+        (var_section
+          (var_declaration
+            var_name: (identifier)
+            var_type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (identifier))))
+      (preproc_else)
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (text_type
+                length: (integer)))))
+        (return_value
+          return_value: (identifier))
+        return_type: (return_type
+          (type_specification
+            (basic_type)))
+        (var_section
+          (var_declaration
+            var_name: (identifier)
+            var_type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (identifier))))
+      (preproc_endif))))
+
+================================================================================
+Multiple attributes in preprocessor branch
+================================================================================
+
+table 50000 "Test Table"
+{
+    fields
+    {
+        field(1; "No."; Code[20]) { }
+    }
+
+#if not CLEAN24
+    [Obsolete('Use new method', '24.0')]
+    [Scope('OnPrem')]
+    procedure OldMethod(Value: Integer): Boolean
+#else
+    procedure NewMethod(Value: Integer): Boolean
+#endif
+    begin
+        exit(true);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))))
+    (preproc_conditional_procedures
+      (preproc_if
+        condition: (preproc_not_expression
+          (identifier)))
+      (attributed_procedure
+        (attribute_list
+          (attribute
+            attribute_name: (identifier)
+            (attribute_arguments
+              arguments: (expression_list
+                (string_literal)
+                (string_literal))))
+          (attribute
+            attribute_name: (identifier)
+            (attribute_arguments
+              arguments: (expression_list
+                (string_literal)))))
+        (procedure
+          name: (name
+            (identifier))
+          (parameter_list
+            (parameter
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (basic_type))))
+          return_type: (return_type
+            (type_specification
+              (basic_type)))))
+      (preproc_else)
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+                (basic_type))))
+        return_type: (return_type
+          (type_specification
+            (basic_type))))
+      (preproc_endif)
+      (code_block
+        (exit_statement
+          (boolean))))))
+
+================================================================================
+Attribute with split procedure header
+================================================================================
+
+codeunit 50001 "Test Split"
+{
+#if not CLEAN24
+    [Obsolete('Parameter type will change', '24.0')]
+    procedure ProcessData(Data: Text[30]): Boolean
+#else
+    procedure ProcessData(Data: Text[50]): Boolean
+#endif
+    var
+        Result: Boolean;
+    begin
+        Result := true;
+        exit(Result);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (preproc_conditional_procedures
+      (preproc_if
+        condition: (preproc_not_expression
+          (identifier)))
+      (attributed_procedure
+        (attribute_list
+          (attribute
+            attribute_name: (identifier)
+            (attribute_arguments
+              arguments: (expression_list
+                (string_literal)
+                (string_literal)))))
+        (procedure
+          name: (name
+            (identifier))
+          (parameter_list
+            (parameter
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (text_type
+                  length: (integer)))))
+          return_type: (return_type
+            (type_specification
+              (basic_type)))))
+      (preproc_else)
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (text_type
+                length: (integer)))))
+        return_type: (return_type
+          (type_specification
+            (basic_type))))
+      (preproc_endif)
+      (var_section
+        (var_declaration
+          var_name: (identifier)
+          var_type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (boolean))
+        (exit_statement
+          (identifier))))))

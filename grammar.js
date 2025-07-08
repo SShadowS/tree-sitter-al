@@ -2006,7 +2006,8 @@ module.exports = grammar({
       seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.procedure),
       $.procedure,
       $.preproc_split_procedure,
-      $.preproc_procedure_body_split
+      $.preproc_procedure_body_split,
+      $.preproc_attributed_split_procedure
     ),
 
     attributed_trigger: $ => choice(
@@ -5486,6 +5487,25 @@ enum_type: $ => prec(1, seq(
     preproc_split_procedure: $ => seq(
       $.preproc_if,
       field('if_header', $.procedure_header),
+      $.preproc_else,
+      field('else_header', $.procedure_header),
+      $.preproc_endif,
+      optional(';'),
+      repeat($.pragma),
+      optional(choice(
+        $.var_section,
+        $.preproc_conditional_var_sections
+      )),
+      $.code_block
+    ),
+
+    // Split procedure where one branch has attributes
+    preproc_attributed_split_procedure: $ => seq(
+      $.preproc_if,
+      field('if_branch', seq(
+        $.attribute_list,
+        $.procedure_header
+      )),
       $.preproc_else,
       field('else_header', $.procedure_header),
       $.preproc_endif,
