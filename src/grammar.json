@@ -28922,8 +28922,12 @@
         {
           "type": "TOKEN",
           "content": {
-            "type": "PATTERN",
-            "value": "(?i)fieldgroup"
+            "type": "PREC",
+            "value": 10,
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)fieldgroup"
+            }
           }
         },
         {
@@ -28963,6 +28967,22 @@
                 {
                   "type": "STRING",
                   "value": "{"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "caption_property"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "property"
+                      }
+                    ]
+                  }
                 },
                 {
                   "type": "STRING",

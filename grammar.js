@@ -6325,7 +6325,7 @@ enum_type: $ => prec(1, seq(
     ),
 
     fieldgroup_declaration: $ => seq(
-      kw('fieldgroup'),
+      kw('fieldgroup', 10),
       '(',
       field('group_type', $.identifier),
       ';',
@@ -6333,7 +6333,10 @@ enum_type: $ => prec(1, seq(
       ')',
       optional(seq(
         '{',
-        // (Leave empty or add fieldgroup properties in the future)
+        repeat(choice(
+          $.caption_property,
+          $.property
+        )),
         '}'
       ))
     ),
