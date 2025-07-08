@@ -25491,6 +25491,174 @@
         ]
       }
     },
+    "preproc_variant_condition_if": {
+      "type": "PREC",
+      "value": 25,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "preproc_if"
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PREC",
+                  "value": 10,
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "(?i)if"
+                  }
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "condition_if",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                }
+              },
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PREC",
+                  "value": 10,
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "(?i)then"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_elif"
+                },
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "TOKEN",
+                      "content": {
+                        "type": "PREC",
+                        "value": 10,
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "(?i)if"
+                        }
+                      }
+                    },
+                    {
+                      "type": "FIELD",
+                      "name": "condition_elif",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_expression"
+                      }
+                    },
+                    {
+                      "type": "TOKEN",
+                      "content": {
+                        "type": "PREC",
+                        "value": 10,
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "(?i)then"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_else"
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "TOKEN",
+                        "content": {
+                          "type": "PREC",
+                          "value": 10,
+                          "content": {
+                            "type": "PATTERN",
+                            "value": "(?i)if"
+                          }
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "condition_else",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_expression"
+                        }
+                      },
+                      {
+                        "type": "TOKEN",
+                        "content": {
+                          "type": "PREC",
+                          "value": 10,
+                          "content": {
+                            "type": "PATTERN",
+                            "value": "(?i)then"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_endif"
+          },
+          {
+            "type": "FIELD",
+            "name": "shared_body",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "code_block"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_if_then_body"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
     "procedure_header": {
       "type": "SEQ",
       "members": [
@@ -27841,6 +28009,10 @@
         {
           "type": "SYMBOL",
           "name": "preproc_fragmented_if_else"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_variant_condition_if"
         }
       ]
     },

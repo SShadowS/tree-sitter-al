@@ -5618,6 +5618,42 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     )),
 
+    // Handle if statements where the condition varies by preprocessor but body is shared
+    // Pattern: #if CONDITION1 \n if (expr1) then \n #else \n if (expr2) then \n #endif \n shared_body
+    preproc_variant_condition_if: $ => prec(25, seq(
+      $.preproc_if,
+      // First variant: if (condition1) then
+      seq(
+        kw('if', 10),
+        field('condition_if', $._expression),
+        kw('then', 10)
+      ),
+      // Can have multiple elif branches with different conditions
+      repeat(seq(
+        $.preproc_elif,
+        seq(
+          kw('if', 10),
+          field('condition_elif', $._expression),
+          kw('then', 10)
+        )
+      )),
+      // Else branch with different condition
+      optional(seq(
+        $.preproc_else,
+        seq(
+          kw('if', 10),
+          field('condition_else', $._expression),
+          kw('then', 10)
+        )
+      )),
+      $.preproc_endif,
+      // Shared body after preprocessor
+      field('shared_body', choice(
+        $.code_block,
+        $._if_then_body
+      ))
+    )),
+
 
     // Procedure header without body (for split procedures)
     procedure_header: $ => seq(
@@ -6108,7 +6144,9 @@ enum_type: $ => prec(1, seq(
       // Split if statement (condition in preprocessor, body outside)
       $.preproc_split_if,
       // Fragmented if-else statement (complex preprocessor pattern)
-      $.preproc_fragmented_if_else
+      $.preproc_fragmented_if_else,
+      // If statement with variant conditions but shared body
+      $.preproc_variant_condition_if
     ),
 
     // Helper rule for if statement bodies
