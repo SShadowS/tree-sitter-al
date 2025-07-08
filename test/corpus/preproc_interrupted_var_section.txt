@@ -1,0 +1,273 @@
+================================================================================
+Preprocessor interrupting var section with procedure
+================================================================================
+
+table 50000 "Test Table"
+{
+    var
+        GlobalVar1: Record "Test Record";
+        GlobalVar2: Codeunit "Test Helper";
+
+#if not CLEAN24
+    [Obsolete('Parameter will change', '24.0')]
+    procedure TestProc(Param: Text[30]) Result: Text
+#else
+    procedure TestProc(Param: Text[50]) Result: Text
+#endif
+    var
+        LocalVar: Text;
+    begin
+        Result := Param;
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (var_section
+      (global_var_declaration
+        var_name: (identifier)
+        var_type: (type_specification
+          (record_type
+            reference: (quoted_identifier))))
+      (global_var_declaration
+        var_name: (identifier)
+        var_type: (type_specification
+          (codeunit_type
+            reference: (quoted_identifier)))))
+    (attributed_procedure
+      (preproc_attributed_split_procedure
+        (preproc_if
+          condition: (preproc_not_expression
+            (identifier)))
+        if_branch: (attribute_list
+          (attribute
+            attribute_name: (identifier)
+            (attribute_arguments
+              arguments: (expression_list
+                (string_literal)
+                (string_literal)))))
+        if_branch: (procedure_header
+          name: (name
+            (identifier))
+          (parameter_list
+            (parameter
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (text_type
+                  length: (integer)))))
+          (return_value
+            return_value: (identifier))
+          return_type: (return_type
+            (type_specification
+              (basic_type))))
+        (preproc_else)
+        else_header: (procedure_header
+          name: (name
+            (identifier))
+          (parameter_list
+            (parameter
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (text_type
+                  length: (integer)))))
+          (return_value
+            return_value: (identifier))
+          return_type: (return_type
+            (type_specification
+              (basic_type))))
+        (preproc_endif)
+        (var_section
+          (var_declaration
+            var_name: (identifier)
+            var_type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (identifier)))))))
+
+================================================================================
+Multiple var sections with preprocessor procedure between
+================================================================================
+
+table 50001 "Complex Test"
+{
+    var
+        Setup: Record "Setup";
+    
+#if CLEAN25
+    procedure NewMethod(): Boolean
+#else
+    [Obsolete('Use NewMethod', '25.0')]
+    procedure OldMethod(): Boolean
+#endif
+    var
+        Result: Boolean;
+    begin
+        Result := true;
+        exit(Result);
+    end;
+    
+    var
+        Helper: Codeunit "Helper";
+        
+    procedure AnotherProc()
+    begin
+        // Do something
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (var_section
+      (global_var_declaration
+        var_name: (identifier)
+        var_type: (type_specification
+          (record_type
+            reference: (quoted_identifier)))))
+    (attributed_procedure
+      (preproc_attributed_split_procedure
+        (preproc_if
+          condition: (identifier))
+        if_branch: (procedure_header
+          name: (name
+            (identifier))
+          return_type: (return_type
+            (type_specification
+              (basic_type))))
+        (preproc_else)
+        else_header: (attribute_list
+          (attribute
+            attribute_name: (identifier)
+            (attribute_arguments
+              arguments: (expression_list
+                (string_literal)
+                (string_literal)))))
+        else_header: (procedure_header
+          name: (name
+            (identifier))
+          return_type: (return_type
+            (type_specification
+              (basic_type))))
+        (preproc_endif)
+        (var_section
+          (var_declaration
+            var_name: (identifier)
+            var_type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (boolean))
+          (exit_statement
+            (identifier)))))
+    (var_section
+      (global_var_declaration
+        var_name: (identifier)
+        var_type: (type_specification
+          (codeunit_type
+            reference: (quoted_identifier)))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block))))
+
+================================================================================
+Var section with preprocessor containing only attribute and procedure start
+================================================================================
+
+table 50002 "Edge Case Test"
+{
+    fields
+    {
+        field(1; "No."; Code[20]) { }
+    }
+    
+    var
+        Counter: Integer;
+
+#if not CLEAN24
+    [Obsolete('Will be removed', '24.0')]
+    procedure OldProc(Value: Decimal): Decimal
+#else
+    procedure NewProc(Value: Decimal; Factor: Decimal): Decimal
+#endif
+    begin
+        exit(Value);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))))
+    (var_section
+      (global_var_declaration
+        var_name: (identifier)
+        var_type: (type_specification
+          (basic_type))))
+    (attributed_procedure
+      (preproc_attributed_split_procedure
+        (preproc_if
+          condition: (preproc_not_expression
+            (identifier)))
+        if_branch: (attribute_list
+          (attribute
+            attribute_name: (identifier)
+            (attribute_arguments
+              arguments: (expression_list
+                (string_literal)
+                (string_literal)))))
+        if_branch: (procedure_header
+          name: (name
+            (identifier))
+          (parameter_list
+            (parameter
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (basic_type))))
+          return_type: (return_type
+            (type_specification
+              (basic_type))))
+        (preproc_else)
+        else_header: (procedure_header
+          name: (name
+            (identifier))
+          (parameter_list
+            (parameter
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (basic_type)))
+            (parameter
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (basic_type))))
+          return_type: (return_type
+            (type_specification
+              (basic_type))))
+        (preproc_endif)
+        (code_block
+          (exit_statement
+            (identifier)))))))

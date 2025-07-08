@@ -6044,6 +6044,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_if_statement",
+            "named": true
+          },
+          {
             "type": "preproc_conditional_statements",
             "named": true
           },
@@ -6799,6 +6803,10 @@
         },
         {
           "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_if_statement",
           "named": true
         },
         {
@@ -18387,6 +18395,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_if_statement",
+            "named": true
+          },
+          {
             "type": "preproc_conditional_statements",
             "named": true
           },
@@ -19010,6 +19022,10 @@
           },
           {
             "type": "pragma",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_if_statement",
             "named": true
           },
           {
@@ -31141,9 +31157,13 @@
     "named": true,
     "fields": {
       "else_header": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
+          {
+            "type": "attribute_list",
+            "named": true
+          },
           {
             "type": "procedure_header",
             "named": true
@@ -34117,6 +34137,37 @@
         },
         {
           "type": "width_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_conditional_if_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "if_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
           "named": true
         }
       ]
@@ -37427,6 +37478,10 @@
           "named": true
         },
         {
+          "type": "attributed_procedure",
+          "named": true
+        },
+        {
           "type": "comment",
           "named": true
         },
@@ -37452,10 +37507,6 @@
         },
         {
           "type": "preproc_if",
-          "named": true
-        },
-        {
-          "type": "procedure",
           "named": true
         },
         {
@@ -38221,6 +38272,10 @@
         },
         {
           "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_if_statement",
           "named": true
         },
         {
@@ -42529,6 +42584,10 @@
         },
         {
           "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_if_statement",
           "named": true
         },
         {
@@ -48400,7 +48459,7 @@
           "named": true
         },
         {
-          "type": "attribute_list",
+          "type": "attributed_procedure",
           "named": true
         },
         {
@@ -48585,10 +48644,6 @@
         },
         {
           "type": "preproc_region",
-          "named": true
-        },
-        {
-          "type": "procedure",
           "named": true
         },
         {
@@ -52084,6 +52139,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_if_statement",
+            "named": true
+          },
+          {
             "type": "preproc_conditional_statements",
             "named": true
           },
@@ -52565,6 +52624,10 @@
           },
           {
             "type": "pragma",
+            "named": true
+          },
+          {
+            "type": "preproc_conditional_if_statement",
             "named": true
           },
           {

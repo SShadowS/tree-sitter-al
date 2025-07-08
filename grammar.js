@@ -117,6 +117,10 @@ module.exports = grammar({
     [$.interface_procedure],
     [$.preproc_conditional_layout, $.preproc_conditional_group_content],
     [$.preproc_conditional_group_content, $.preproc_conditional_properties],
+    [$.preproc_split_procedure, $.preproc_attributed_split_procedure],
+    [$.attributed_procedure, $.preproc_conditional_variables],
+    [$.preproc_conditional_if_statement, $._statement],
+    [$.preproc_conditional_statements, $.preproc_conditional_if_statement],
   ],
 
   externals: $ => [
@@ -3942,7 +3946,7 @@ module.exports = grammar({
       $.named_trigger,
       
       // Procedures
-      seq(optional($.attribute_list), $.procedure),
+      $.attributed_procedure,  // Use attributed_procedure to handle all procedure patterns
       $.preproc_conditional_procedures,
       
       // All table properties now centralized
@@ -5502,12 +5506,21 @@ enum_type: $ => prec(1, seq(
     // Split procedure where one branch has attributes
     preproc_attributed_split_procedure: $ => seq(
       $.preproc_if,
-      field('if_branch', seq(
-        $.attribute_list,
+      field('if_branch', choice(
+        seq(
+          $.attribute_list,
+          $.procedure_header
+        ),
         $.procedure_header
       )),
       $.preproc_else,
-      field('else_header', $.procedure_header),
+      field('else_header', choice(
+        seq(
+          $.attribute_list,
+          $.procedure_header
+        ),
+        $.procedure_header
+      )),
       $.preproc_endif,
       optional(';'),
       repeat($.pragma),
@@ -5746,6 +5759,7 @@ enum_type: $ => prec(1, seq(
     _statement_or_preprocessor: $ => choice(
       $._statement,
       $.preproc_conditional_statements,
+      $.preproc_conditional_if_statement,
       $.pragma
     ),
 
@@ -5755,6 +5769,9 @@ enum_type: $ => prec(1, seq(
 
     // Rule for empty statements (standalone semicolons)
     empty_statement: $ => ';',
+
+    // Preprocessor conditional if statement where entire if structures vary
+    preproc_conditional_if_statement: $ => prec(10, _preproc_conditional_block_template($ => $.if_statement)($)),
 
     _statement: $ => prec.right(seq(
       choice(
@@ -6971,7 +6988,7 @@ enum_type: $ => prec(1, seq(
         $.multiline_comment,
         $.attribute_list,
         $.pragma,
-        $.procedure,  // Allow procedures inside preprocessor conditionals in var sections
+        $.attributed_procedure,  // Allow attributed procedures inside preprocessor conditionals in var sections
         $.var_section  // Allow nested var sections (including protected var) inside preprocessor conditionals
       )),
 

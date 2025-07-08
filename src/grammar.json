@@ -17412,25 +17412,8 @@
             "name": "named_trigger"
           },
           {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "attribute_list"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              },
-              {
-                "type": "SYMBOL",
-                "name": "procedure"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "attributed_procedure"
           },
           {
             "type": "SYMBOL",
@@ -24961,11 +24944,20 @@
           "type": "FIELD",
           "name": "if_branch",
           "content": {
-            "type": "SEQ",
+            "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "attribute_list"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "procedure_header"
+                  }
+                ]
               },
               {
                 "type": "SYMBOL",
@@ -24982,8 +24974,26 @@
           "type": "FIELD",
           "name": "else_header",
           "content": {
-            "type": "SYMBOL",
-            "name": "procedure_header"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "procedure_header"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "procedure_header"
+              }
+            ]
           }
         },
         {
@@ -25987,6 +25997,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "preproc_conditional_if_statement"
+        },
+        {
+          "type": "SYMBOL",
           "name": "pragma"
         }
       ]
@@ -26061,6 +26075,73 @@
     "empty_statement": {
       "type": "STRING",
       "value": ";"
+    },
+    "preproc_conditional_if_statement": {
+      "type": "PREC",
+      "value": 10,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "preproc_if"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "if_statement"
+            }
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_elif"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "if_statement"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_else"
+                  },
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "if_statement"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_endif"
+          }
+        ]
+      }
     },
     "_statement": {
       "type": "PREC_RIGHT",
@@ -32718,7 +32799,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "procedure"
+                "name": "attributed_procedure"
               },
               {
                 "type": "SYMBOL",
@@ -32763,7 +32844,7 @@
                     },
                     {
                       "type": "SYMBOL",
-                      "name": "procedure"
+                      "name": "attributed_procedure"
                     },
                     {
                       "type": "SYMBOL",
@@ -32812,7 +32893,7 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "procedure"
+                        "name": "attributed_procedure"
                       },
                       {
                         "type": "SYMBOL",
@@ -36922,6 +37003,22 @@
     [
       "preproc_conditional_group_content",
       "preproc_conditional_properties"
+    ],
+    [
+      "preproc_split_procedure",
+      "preproc_attributed_split_procedure"
+    ],
+    [
+      "attributed_procedure",
+      "preproc_conditional_variables"
+    ],
+    [
+      "preproc_conditional_if_statement",
+      "_statement"
+    ],
+    [
+      "preproc_conditional_statements",
+      "preproc_conditional_if_statement"
     ]
   ],
   "precedences": [],
