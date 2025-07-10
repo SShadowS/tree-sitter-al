@@ -28,77 +28,69 @@ table 50000 "Test"
     object_id: (integer)
     object_name: (quoted_identifier)
     (var_section
-      (global_var_declaration
-        var_name: (identifier)
-        var_type: (type_specification
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
           (record_type
             reference: (quoted_identifier))))
-      (global_var_declaration
-        var_name: (identifier)
-        var_type: (type_specification
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
           (codeunit_type
             reference: (quoted_identifier)))))
-    (preproc_conditional_mixed_content
-      (preproc_if
-        condition: (preproc_not_expression
-          (identifier)))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (string_literal)
-              (string_literal)))))
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type
-                length: (integer)))))
-        (return_value
-          return_value: (identifier))
-        return_type: (return_type
-          (type_specification
-            (basic_type)))
+    (attributed_procedure
+      (preproc_attributed_split_procedure
+        (preproc_if
+          condition: (preproc_not_expression
+            (identifier)))
+        if_branch: (attribute_list
+          (attribute
+            attribute_name: (identifier)
+            (attribute_arguments
+              arguments: (expression_list
+                (string_literal)
+                (string_literal)))))
+        if_branch: (procedure_header
+          name: (name
+            (identifier))
+          (parameter_list
+            (parameter
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (text_type
+                  length: (integer)))))
+          (return_value
+            return_value: (identifier))
+          return_type: (return_type
+            (type_specification
+              (text_type))))
+        (preproc_else)
+        else_header: (procedure_header
+          name: (name
+            (identifier))
+          (parameter_list
+            (parameter
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (text_type
+                  length: (integer)))))
+          (return_value
+            return_value: (identifier))
+          return_type: (return_type
+            (type_specification
+              (text_type))))
+        (preproc_endif)
         (var_section
-          (var_declaration
-            var_name: (identifier)
-            var_type: (type_specification
-              (basic_type))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
         (code_block
           (assignment_expression
             left: (identifier)
-            right: (identifier))))
-      (preproc_else)
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type
-                length: (integer)))))
-        (return_value
-          return_value: (identifier))
-        return_type: (return_type
-          (type_specification
-            (basic_type)))
-        (var_section
-          (var_declaration
-            var_name: (identifier)
-            var_type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (identifier))))
-      (preproc_endif))))
+            right: (identifier)))))))
 
 ================================================================================
 Multiple attributes in preprocessor branch
@@ -108,18 +100,20 @@ table 50000 "Test Table"
 {
     fields
     {
-        field(1; "No."; Code[20]) { }
+        field(1; "ID"; Integer) { }
     }
 
-#if not CLEAN24
-    [Obsolete('Use new method', '24.0')]
+#if CLEAN24
+    [NonDebuggable]
     [Scope('OnPrem')]
-    procedure OldMethod(Value: Integer): Boolean
+    [Obsolete('Use new version', '24.0')]
+    procedure TestProcNew()
 #else
-    procedure NewMethod(Value: Integer): Boolean
+    [Scope('Cloud')]
+    procedure TestProcOld()
 #endif
     begin
-        exit(true);
+        Message('Test');
     end;
 }
 
@@ -134,129 +128,117 @@ table 50000 "Test Table"
         id: (integer)
         name: (quoted_identifier)
         type: (type_specification
-          (code_type
-            length: (integer)))))
-    (preproc_conditional_procedures
-      (preproc_if
-        condition: (preproc_not_expression
-          (identifier)))
-      (attributed_procedure
-        (attribute_list
+          (basic_type))))
+    (attributed_procedure
+      (preproc_attributed_split_procedure
+        (preproc_if
+          condition: (identifier))
+        if_branch: (attribute_list
+          (attribute
+            attribute_name: (identifier))
           (attribute
             attribute_name: (identifier)
             (attribute_arguments
               arguments: (expression_list
-                (string_literal)
                 (string_literal))))
           (attribute
             attribute_name: (identifier)
             (attribute_arguments
               arguments: (expression_list
+                (string_literal)
                 (string_literal)))))
-        (procedure
+        if_branch: (procedure_header
           name: (name
-            (identifier))
-          (parameter_list
-            (parameter
-              parameter_name: (name
-                (identifier))
-              parameter_type: (type_specification
-                (basic_type))))
-          return_type: (return_type
-            (type_specification
-              (basic_type)))))
-      (preproc_else)
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-                (basic_type))))
-        return_type: (return_type
-          (type_specification
-            (basic_type))))
-      (preproc_endif)
-      (code_block
-        (exit_statement
-          (boolean))))))
+            (identifier)))
+        (preproc_else)
+        else_header: (attribute_list
+          (attribute
+            attribute_name: (identifier)
+            (attribute_arguments
+              arguments: (expression_list
+                (string_literal)))))
+        else_header: (procedure_header
+          name: (name
+            (identifier)))
+        (preproc_endif)
+        (code_block
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))))
 
 ================================================================================
 Attribute with split procedure header
 ================================================================================
 
-codeunit 50001 "Test Split"
+table 50000 "Test"
 {
-#if not CLEAN24
-    [Obsolete('Parameter type will change', '24.0')]
-    procedure ProcessData(Data: Text[30]): Boolean
-#else
-    procedure ProcessData(Data: Text[50]): Boolean
-#endif
     var
-        Result: Boolean;
+        Config: Record "Config";
+
+    [BusinessEvent(false, false)]
+#if CLEAN25
+    procedure OnBeforeAction(var Rec: Record "Test"; var IsHandled: Boolean)
+#else  
+    procedure OnBeforeAction(var Rec: Record "Test")
+#endif
     begin
-        Result := true;
-        exit(Result);
+        // Event
     end;
 }
 
 --------------------------------------------------------------------------------
 
 (source_file
-  (codeunit_declaration
+  (table_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (preproc_conditional_procedures
-      (preproc_if
-        condition: (preproc_not_expression
-          (identifier)))
-      (attributed_procedure
-        (attribute_list
-          (attribute
-            attribute_name: (identifier)
-            (attribute_arguments
-              arguments: (expression_list
-                (string_literal)
-                (string_literal)))))
-        (procedure
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (record_type
+            reference: (quoted_identifier)))))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)))))
+      (preproc_split_procedure
+        (preproc_if
+          condition: (identifier))
+        if_header: (procedure_header
           name: (name
             (identifier))
           (parameter_list
             (parameter
+              modifier: (modifier)
               parameter_name: (name
                 (identifier))
               parameter_type: (type_specification
-                (text_type
-                  length: (integer)))))
-          return_type: (return_type
-            (type_specification
-              (basic_type)))))
-      (preproc_else)
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type
-                length: (integer)))))
-        return_type: (return_type
-          (type_specification
-            (basic_type))))
-      (preproc_endif)
-      (var_section
-        (var_declaration
-          var_name: (identifier)
-          var_type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_expression
-          left: (identifier)
-          right: (boolean))
-        (exit_statement
-          (identifier))))))
+                (record_type
+                  reference: (quoted_identifier))))
+            (parameter
+              modifier: (modifier)
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (basic_type)))))
+        (preproc_else)
+        else_header: (procedure_header
+          name: (name
+            (identifier))
+          (parameter_list
+            (parameter
+              modifier: (modifier)
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))))
+        (preproc_endif)
+        (code_block
+          (comment))))))

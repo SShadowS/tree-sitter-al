@@ -25,17 +25,17 @@ codeunit 50000 "Test Split If"
           (identifier))
         (code_block
           (if_statement
-            (preproc_split_if
+            (preproc_variant_condition_if
               (preproc_if
                 condition: (preproc_not_expression
                   (identifier)))
-              condition: (call_expression
+              condition_if: (call_expression
                 function: (identifier)
                 arguments: (argument_list
                   (identifier)
                   (identifier)))
               (preproc_endif)
-              then_branch: (call_expression
+              shared_body: (call_expression
                 function: (identifier)
                 arguments: (argument_list
                   (identifier)
@@ -140,11 +140,11 @@ codeunit 50001 "Multiple Split If"
               arguments: (argument_list))
             then_branch: (exit_statement))
           (if_statement
-            (preproc_split_if
+            (preproc_variant_condition_if
               (preproc_if
                 condition: (preproc_not_expression
                   (identifier)))
-              condition: (call_expression
+              condition_if: (call_expression
                 function: (identifier)
                 arguments: (argument_list
                   (member_expression
@@ -154,7 +154,7 @@ codeunit 50001 "Multiple Split If"
                     object: (identifier)
                     property: (identifier))))
               (preproc_endif)
-              then_branch: (call_expression
+              shared_body: (call_expression
                 function: (identifier)
                 arguments: (argument_list
                   (identifier)
@@ -172,14 +172,14 @@ codeunit 50001 "Multiple Split If"
                     object: (identifier)
                     property: (identifier))))))
           (if_statement
-            (preproc_split_if
+            (preproc_variant_condition_if
               (preproc_if
                 condition: (preproc_not_expression
                   (identifier)))
-              condition: (call_expression
+              condition_if: (call_expression
                 function: (identifier)
                 arguments: (argument_list))
               (preproc_endif)
-              then_branch: (call_expression
+              shared_body: (call_expression
                 function: (identifier)
                 arguments: (argument_list)))))))))

@@ -36,68 +36,70 @@ table 1234 "Test Table"
   (table_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      name: (name
-        (identifier))
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (dotnet_type
-              reference: (dotnet_type_name))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (comment)
-        (assignment_expression
-          left: (identifier)
-          right: (identifier))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (identifier)))))
-        (if_statement
-          condition: (comparison_expression
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                reference: (dotnet_type_name))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (comment)
+          (assignment_expression
             left: (identifier)
-            operator: (comparison_operator)
-            right: (integer))
-          then_branch: (exit_statement))
-        (comment)
-        (assignment_expression
-          left: (identifier)
-          right: (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list)))
-        (comment)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (identifier)))
-        (comment)
-        (assignment_expression
-          left: (identifier)
-          right: (additive_expression
-            left: (integer)
-            right: (multiplicative_expression
+            right: (identifier))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)))))
+          (if_statement
+            condition: (comparison_expression
               left: (identifier)
-              right: (integer))))))
-    (procedure
-      name: (name
-        (identifier))
-      (parameter_list
-        (parameter
-          parameter_name: (name
-            (identifier))
-          parameter_type: (type_specification
-            (basic_type))))
-      (code_block))))
+              operator: (comparison_operator)
+              right: (integer))
+            then_branch: (exit_statement))
+          (comment)
+          (assignment_expression
+            left: (identifier)
+            right: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list)))
+          (comment)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)))
+          (comment)
+          (assignment_expression
+            left: (identifier)
+            right: (additive_expression
+              left: (integer)
+              right: (multiplicative_expression
+                left: (identifier)
+                right: (integer)))))))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (basic_type))))
+        (code_block)))))
 
 ==========================================
 Enum type reference still works

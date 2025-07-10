@@ -61,14 +61,15 @@ table 50100 "Test Table"
             arguments: (argument_list
               (string_literal)))))
       (preproc_endif))
-    (procedure
-      name: (name
-        (identifier))
-      (code_block
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))))))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (code_block
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))))
 
 ================================================================================
 Table with multiple preprocessor conditional procedures
@@ -193,14 +194,15 @@ table 50101 "VAT Amount Line"
             function: (identifier)
             arguments: (argument_list))))
       (preproc_endif))
-    (procedure
-      name: (name
-        (identifier))
-      (code_block
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))))))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (code_block
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))))
 
 ================================================================================
 Table with preprocessor else branch procedures

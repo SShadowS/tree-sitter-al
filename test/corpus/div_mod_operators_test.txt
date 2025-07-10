@@ -310,67 +310,68 @@ table 50100 TestTable
         name: (identifier)
         type: (type_specification
           (basic_type))))
-    (procedure
-      name: (name
-        (identifier))
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier)))))
-      (code_block
-        (case_statement
-          expression: (boolean)
-          (case_branch
-            left: (unary_expression
-              operator: (unary_operator)
-              operand: (call_expression
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (code_block
+          (case_statement
+            expression: (boolean)
+            (case_branch
+              left: (unary_expression
+                operator: (unary_operator)
+                operand: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list)))
+              right: (call_expression
                 function: (member_expression
                   object: (identifier)
                   property: (identifier))
-                arguments: (argument_list)))
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list))
-            statements: (assignment_expression
-              left: (field_access
-                record: (identifier)
-                field: (quoted_identifier))
-              right: (multiplicative_expression
+                arguments: (argument_list))
+              statements: (assignment_expression
                 left: (field_access
                   record: (identifier)
                   field: (quoted_identifier))
-                right: (integer))))
-          (case_branch
-            left: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list))
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list))
-            statements: (assignment_expression
-              left: (field_access
-                record: (identifier)
-                field: (quoted_identifier))
-              right: (multiplicative_expression
-                left: (parenthesized_expression
-                  (additive_expression
-                    left: (field_access
-                      record: (identifier)
-                      field: (quoted_identifier))
-                    right: (field_access
-                      record: (identifier)
-                      field: (quoted_identifier))))
-                right: (integer)))))))))
+                right: (multiplicative_expression
+                  left: (field_access
+                    record: (identifier)
+                    field: (quoted_identifier))
+                  right: (integer))))
+            (case_branch
+              left: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list))
+              right: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list))
+              statements: (assignment_expression
+                left: (field_access
+                  record: (identifier)
+                  field: (quoted_identifier))
+                right: (multiplicative_expression
+                  left: (parenthesized_expression
+                    (additive_expression
+                      left: (field_access
+                        record: (identifier)
+                        field: (quoted_identifier))
+                      right: (field_access
+                        record: (identifier)
+                        field: (quoted_identifier))))
+                  right: (integer))))))))))

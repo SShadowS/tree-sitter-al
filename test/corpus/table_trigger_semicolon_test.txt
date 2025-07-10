@@ -94,22 +94,24 @@ table 50100 "Sales Forecast"
         (call_expression
           function: (identifier)
           arguments: (argument_list))))
-    (procedure
-      name: (name
-        (identifier))
-      (code_block
-        (assignment_expression
-          left: (identifier)
-          right: (additive_expression
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (code_block
+          (assignment_expression
             left: (identifier)
-            right: (integer)))))
-    (procedure
-      name: (name
-        (identifier))
-      (code_block
-        (assignment_expression
-          left: (identifier)
-          right: (integer))))))
+            right: (additive_expression
+              left: (identifier)
+              right: (integer))))))
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (code_block
+          (assignment_expression
+            left: (identifier)
+            right: (integer)))))))
 
 ================================================================================
 Table trigger with var section and semicolon

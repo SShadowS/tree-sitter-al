@@ -4426,6 +4426,32 @@
     }
   },
   {
+    "type": "attributed_variable_declaration",
+    "named": true,
+    "fields": {
+      "attributes": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "attribute_list",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "variable_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "auto_calc_field_property",
     "named": true,
     "fields": {
@@ -37478,11 +37504,7 @@
       "required": true,
       "types": [
         {
-          "type": "attribute_list",
-          "named": true
-        },
-        {
-          "type": "attributed_procedure",
+          "type": "attributed_variable_declaration",
           "named": true
         },
         {
@@ -51844,7 +51866,7 @@
       "required": false,
       "types": [
         {
-          "type": "attribute_list",
+          "type": "attributed_variable_declaration",
           "named": true
         },
         {

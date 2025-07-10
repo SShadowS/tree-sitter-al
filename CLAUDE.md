@@ -12,7 +12,6 @@ This is a tree-sitter parser for the AL (Application Language) programming langu
 - All tests pass including preprocessor patterns and edge cases
 - Grammar improvements completed through 20+ iterations
 - Recent major achievement: Comprehensive preprocessor support via external scanner
-- Previous "known limitations" now fixed: preprocessor split procedures, conditional object declarations, mixed var/procedure sections
 
 ## Development Commands
 
@@ -153,15 +152,6 @@ The grammar follows DRY principles extensively to minimize duplication and impro
 - **Reusable Patterns**: Common constructs are defined as separate rules and referenced wherever needed
 This approach ensures consistency, reduces errors, and makes the grammar easier to maintain and extend.
 
-### Language Bindings
-Multi-language support via dedicated binding directories:
-- `bindings/c/` - C headers and pkg-config
-- `bindings/node/` - Node.js native addon
-- `bindings/python/` - Python extension module
-- `bindings/rust/` - Rust crate
-- `bindings/go/` - Go module
-- `bindings/swift/` - Swift package
-
 ## Testing Approach
 
 ### Test File Format
@@ -192,7 +182,7 @@ Dont put comments in the parse tree, as they are not supported by tree-sitter.
 
 ### Test Management Guidelines
 - **Never delete a test file** - correct the issue affecting the test instead
-- **Updating multiple tests**: Use `tree-sitter test -u` if all files parse WITHOUT errors and you need to update many test expectations after parser output changes
+- **Updating multiple tests**: Use `tree-sitter test -u` if any files parse WITHOUT errors and you need to update many test expectations after parser output changes
 
 ## Grammar Development Guidelines
 
@@ -238,6 +228,7 @@ Dont put comments in the parse tree, as they are not supported by tree-sitter.
 1. Study AL construct syntax and semantics
 2. Check existing patterns in grammar.js for reuse
 3. Add grammar rules to appropriate section
+   1. Modify external scanner if needed (src/scanner.c)
 4. Create comprehensive test cases
 5. Test with `tree-sitter generate && tree-sitter test`
 6. Debug with `tree-sitter parse --debug`
@@ -451,6 +442,7 @@ Use these resources to:
 - A common fix is adding properties to the $._universal_properties list
 - When doing changes to grammar, lookup the property, type, field and so on in the documentation so you know what the given item is defined and supports
 - Use `./validate-grammar.sh` for comprehensive validation including orphan and duplicate detection
+- See KNOWN_LIMITATIONS.md for documented parser limitations, especially the var section/attributed procedure conflict
 
 ## Contextual Keywords Pattern
 

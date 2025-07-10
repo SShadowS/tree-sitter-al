@@ -1,0 +1,75 @@
+================================================================================
+Test attribute preproc split procedure
+================================================================================
+
+table 50000 "Test"
+{
+    var
+        Config: Record "Config";
+
+    [BusinessEvent(false, false)]
+#if CLEAN25
+    procedure OnBeforeAction(var Rec: Record "Test"; var IsHandled: Boolean)
+#else  
+    procedure OnBeforeAction(var Rec: Record "Test")
+#endif
+    begin
+        // Event
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (record_type
+            reference: (quoted_identifier)))))
+    (attributed_procedure
+      (attribute_list
+        (attribute
+          attribute_name: (identifier)
+          (attribute_arguments
+            arguments: (expression_list
+              (boolean)
+              (boolean)))))
+      (preproc_split_procedure
+        (preproc_if
+          condition: (identifier))
+        if_header: (procedure_header
+          name: (name
+            (identifier))
+          (parameter_list
+            (parameter
+              modifier: (modifier)
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))
+            (parameter
+              modifier: (modifier)
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (basic_type)))))
+        (preproc_else)
+        else_header: (procedure_header
+          name: (name
+            (identifier))
+          (parameter_list
+            (parameter
+              modifier: (modifier)
+              parameter_name: (name
+                (identifier))
+              parameter_type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))))
+        (preproc_endif)
+        (code_block
+          (comment))))))

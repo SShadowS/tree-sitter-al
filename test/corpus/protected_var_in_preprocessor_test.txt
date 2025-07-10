@@ -39,10 +39,11 @@ table 50000 "Test Table"
               (record_type
                 (identifier)))))
         (preproc_endif)))
-    (procedure
-      (name
-        (identifier))
-      (code_block))))
+    (attributed_procedure
+      (procedure
+        (name
+          (identifier))
+        (code_block)))))
 
 ================================================================================
 Nested protected var sections with multiple variables

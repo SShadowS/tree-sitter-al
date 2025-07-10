@@ -345,28 +345,29 @@ table 50103 "Permission Settings"
             enum_name: (quoted_identifier)))
         (caption_property
           (string_literal))))
-    (procedure
-      name: (name
-        (identifier))
-      (var_section
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (assignment_expression
-          left: (quoted_identifier)
-          right: (qualified_enum_value
-            enum_type: (quoted_identifier)
-            value: (identifier)))
-        (assignment_expression
-          left: (identifier)
-          right: (comparison_expression
+    (attributed_procedure
+      (procedure
+        name: (name
+          (identifier))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (code_block
+          (assignment_expression
             left: (quoted_identifier)
-            operator: (comparison_operator)
             right: (qualified_enum_value
               enum_type: (quoted_identifier)
-              value: (identifier))))))))
+              value: (identifier)))
+          (assignment_expression
+            left: (identifier)
+            right: (comparison_expression
+              left: (quoted_identifier)
+              operator: (comparison_operator)
+              right: (qualified_enum_value
+                enum_type: (quoted_identifier)
+                value: (identifier)))))))))
 
 ================================================================================
 Height and Width as variable names with workaround

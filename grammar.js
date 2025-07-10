@@ -2011,7 +2011,13 @@ module.exports = grammar({
       $.procedure,
       $.preproc_split_procedure,
       $.preproc_procedure_body_split,
-      $.preproc_attributed_split_procedure
+      $.preproc_attributed_split_procedure,
+      // Handle attributes before preprocessor-split procedure
+      seq(
+        $.attribute_list,
+        repeat($.pragma),
+        $.preproc_split_procedure
+      )
     ),
 
     attributed_trigger: $ => choice(
@@ -4254,16 +4260,27 @@ module.exports = grammar({
     var_section: $ => prec.right(10, seq(
       optional(kw('protected')),
       kw('var'),
+      // Var section body - only allows variable-related content
       prec.right(repeat(choice(
         $.comment,
         $.multiline_comment,
-        $.attribute_list,
         $.pragma,
-        // Higher precedence for variable declarations to prefer staying in var_section
-        prec(20, $.variable_declaration),
-        $.preproc_conditional_variables
+        $._var_declaration_with_optional_attribute,
+        $.preproc_conditional_variables  // Re-added - needed for valid patterns
       )))
     )),
+
+    // Variable declaration that can optionally have attributes (only valid inside var sections)
+    _var_declaration_with_optional_attribute: $ => choice(
+      $.variable_declaration,
+      $.attributed_variable_declaration
+    ),
+
+    // Variable declaration with attributes (e.g., [RunOnClient])
+    attributed_variable_declaration: $ => seq(
+      field('attributes', $.attribute_list),
+      $.variable_declaration
+    ),
 
     // Helper rule for unquoted variable names (allows certain keywords as identifiers)
     _unquoted_variable_name: $ => choice(
@@ -7021,12 +7038,10 @@ enum_type: $ => prec(1, seq(
 
     // Preprocessor conditional rules for variable declarations
     preproc_conditional_variables: _preproc_conditional_block_template($ => choice(
-        $.variable_declaration,
+        $._var_declaration_with_optional_attribute,
         $.comment,
         $.multiline_comment,
-        $.attribute_list,
         $.pragma,
-        $.attributed_procedure,  // Allow attributed procedures inside preprocessor conditionals in var sections
         $.var_section  // Allow nested var sections (including protected var) inside preprocessor conditionals
       )),
 

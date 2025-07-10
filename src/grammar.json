@@ -8288,6 +8288,26 @@
         {
           "type": "SYMBOL",
           "name": "preproc_attributed_split_procedure"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "attribute_list"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "pragma"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "preproc_split_procedure"
+            }
+          ]
         }
       ]
     },
@@ -18743,19 +18763,11 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "attribute_list"
-                  },
-                  {
-                    "type": "SYMBOL",
                     "name": "pragma"
                   },
                   {
-                    "type": "PREC",
-                    "value": 20,
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "variable_declaration"
-                    }
+                    "type": "SYMBOL",
+                    "name": "_var_declaration_with_optional_attribute"
                   },
                   {
                     "type": "SYMBOL",
@@ -18767,6 +18779,36 @@
           }
         ]
       }
+    },
+    "_var_declaration_with_optional_attribute": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "variable_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "attributed_variable_declaration"
+        }
+      ]
+    },
+    "attributed_variable_declaration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "attributes",
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_list"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "variable_declaration"
+        }
+      ]
     },
     "_unquoted_variable_name": {
       "type": "CHOICE",
@@ -32951,7 +32993,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "variable_declaration"
+                "name": "_var_declaration_with_optional_attribute"
               },
               {
                 "type": "SYMBOL",
@@ -32963,15 +33005,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "attribute_list"
-              },
-              {
-                "type": "SYMBOL",
                 "name": "pragma"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "attributed_procedure"
               },
               {
                 "type": "SYMBOL",
@@ -32996,7 +33030,7 @@
                   "members": [
                     {
                       "type": "SYMBOL",
-                      "name": "variable_declaration"
+                      "name": "_var_declaration_with_optional_attribute"
                     },
                     {
                       "type": "SYMBOL",
@@ -33008,15 +33042,7 @@
                     },
                     {
                       "type": "SYMBOL",
-                      "name": "attribute_list"
-                    },
-                    {
-                      "type": "SYMBOL",
                       "name": "pragma"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "attributed_procedure"
                     },
                     {
                       "type": "SYMBOL",
@@ -33045,7 +33071,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "variable_declaration"
+                        "name": "_var_declaration_with_optional_attribute"
                       },
                       {
                         "type": "SYMBOL",
@@ -33057,15 +33083,7 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "attribute_list"
-                      },
-                      {
-                        "type": "SYMBOL",
                         "name": "pragma"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "attributed_procedure"
                       },
                       {
                         "type": "SYMBOL",
