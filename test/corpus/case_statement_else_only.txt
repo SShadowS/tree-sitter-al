@@ -21,22 +21,21 @@ codeunit 50000 Test
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
-        (code_block
-          (case_statement
-            expression: (identifier)
-            (else_branch
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list)))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (else_branch
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list))))))))
 
 ================================================================================
 Case statement with else branch and multiple statements
@@ -68,66 +67,65 @@ codeunit 50001 Test
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                reference: (dotnet_type_name))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                reference: (dotnet_type_name))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
-        (code_block
-          (assignment_expression
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              reference: (dotnet_type_name))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              reference: (dotnet_type_name))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (call_expression
+            function: (member_expression
+              object: (member_expression
+                object: (identifier)
+                property: (identifier))
+              property: (identifier))
+            arguments: (argument_list
+              (integer))))
+        (if_statement
+          condition: (call_expression
+            function: (member_expression
+              object: (member_expression
+                object: (identifier)
+                property: (identifier))
+              property: (identifier))
+            arguments: (argument_list
+              (string_literal)))
+          then_branch: (assignment_expression
             left: (identifier)
             right: (call_expression
               function: (member_expression
-                object: (member_expression
-                  object: (identifier)
-                  property: (identifier))
+                object: (identifier)
                 property: (identifier))
               arguments: (argument_list
-                (integer))))
-          (if_statement
-            condition: (call_expression
-              function: (member_expression
-                object: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                property: (identifier))
+                (string_literal)))))
+        (case_statement
+          expression: (identifier)
+          (else_branch
+            statements: (call_expression
+              function: (identifier)
               arguments: (argument_list
-                (string_literal)))
-            then_branch: (assignment_expression
-              left: (identifier)
-              right: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list
-                  (string_literal)))))
-          (case_statement
-            expression: (identifier)
-            (else_branch
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)
-                  (identifier)
-                  (identifier))))))))))
+                (identifier)
+                (identifier)
+                (identifier)))))))))
 
 ================================================================================
 Case statement with normal branches and else
@@ -156,30 +154,29 @@ codeunit 50002 Test
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
-        (code_block
-          (case_statement
-            expression: (identifier)
-            (case_branch
-              pattern: (string_literal)
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list)))
-            (case_branch
-              pattern: (string_literal)
-              pattern: (string_literal)
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list)))
-            (else_branch
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list)))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (string_literal)
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (case_branch
+            pattern: (string_literal)
+            pattern: (string_literal)
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          (else_branch
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list))))))))

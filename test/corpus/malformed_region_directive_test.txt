@@ -45,9 +45,8 @@ codeunit 50100 "Test"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block)))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block))
     (preproc_endregion)))

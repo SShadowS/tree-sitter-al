@@ -133,50 +133,49 @@ codeunit 50200 "Database References"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (comment)
-          (assignment_expression
-            left: (identifier)
-            right: (qualified_enum_value
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (comment)
+        (assignment_expression
+          left: (identifier)
+          right: (qualified_enum_value
+            enum_type: (identifier)
+            value: (quoted_identifier)))
+        (comment)
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (qualified_enum_value
               enum_type: (identifier)
-              value: (quoted_identifier)))
-          (comment)
-          (case_statement
-            expression: (identifier)
-            (case_branch
-              pattern: (qualified_enum_value
-                enum_type: (identifier)
-                value: (identifier))
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal))))
-            (case_branch
-              pattern: (qualified_enum_value
-                enum_type: (identifier)
-                value: (quoted_identifier))
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal)))))
-          (comment)
-          (if_statement
-            condition: (comparison_expression
-              left: (identifier)
-              operator: (comparison_operator)
-              right: (qualified_enum_value
-                enum_type: (identifier)
-                value: (identifier)))
-            then_branch: (call_expression
+              value: (identifier))
+            statements: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal))))
+          (case_branch
+            pattern: (qualified_enum_value
+              enum_type: (identifier)
+              value: (quoted_identifier))
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))
+        (comment)
+        (if_statement
+          condition: (comparison_expression
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier)))
+          then_branch: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))))

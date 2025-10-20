@@ -23,34 +23,33 @@ codeunit 50200 TestWhileSingle
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (while_statement
-            condition: (comparison_expression
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (while_statement
+          condition: (comparison_expression
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (integer))
+          body: (preproc_conditional_statements
+            (preproc_if
+              condition: (identifier))
+            (assignment_expression
               left: (identifier)
-              operator: (comparison_operator)
               right: (integer))
-            body: (preproc_conditional_statements
-              (preproc_if
-                condition: (identifier))
-              (assignment_expression
+            (preproc_else)
+            (assignment_expression
+              left: (identifier)
+              right: (additive_expression
                 left: (identifier)
-                right: (integer))
-              (preproc_else)
-              (assignment_expression
-                left: (identifier)
-                right: (additive_expression
-                  left: (identifier)
-                  right: (integer)))
-              (preproc_endif))))))))
+                right: (integer)))
+            (preproc_endif)))))))
 
 ================================================================================
 Preprocessor in for single statement
@@ -77,34 +76,33 @@ codeunit 50201 TestForSingle
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (for_statement
-            variable: (identifier)
-            start: (integer)
-            direction: (to)
-            end: (integer)
-            body: (preproc_conditional_statements
-              (preproc_if
-                condition: (identifier))
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)))
-              (preproc_else)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)))
-              (preproc_endif))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (for_statement
+          variable: (identifier)
+          start: (integer)
+          direction: (to)
+          end: (integer)
+          body: (preproc_conditional_statements
+            (preproc_if
+              condition: (identifier))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))
+            (preproc_else)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))
+            (preproc_endif)))))))
 
 ================================================================================
 Preprocessor in foreach single statement
@@ -132,38 +130,37 @@ codeunit 50202 TestForeachSingle
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (list_type
-                (type_specification
-                  (basic_type)))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (foreach_statement
-            variable: (identifier)
-            iterable: (identifier)
-            body: (preproc_conditional_statements
-              (preproc_if
-                condition: (identifier))
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)))
-              (preproc_else)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)))
-              (preproc_endif))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (list_type
+              (type_specification
+                (basic_type)))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (foreach_statement
+          variable: (identifier)
+          iterable: (identifier)
+          body: (preproc_conditional_statements
+            (preproc_if
+              condition: (identifier))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))
+            (preproc_else)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))
+            (preproc_endif)))))))
 
 ================================================================================
 Preprocessor in with single statement
@@ -190,34 +187,33 @@ codeunit 50203 TestWithSingle
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
-        (code_block
-          (with_statement
-            record_variable: (identifier)
-            body: (preproc_conditional_statements
-              (preproc_if
-                condition: (identifier))
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)
-                  (boolean)))
-              (preproc_else)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)
-                  (boolean)))
-              (preproc_endif))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (with_statement
+          record_variable: (identifier)
+          body: (preproc_conditional_statements
+            (preproc_if
+              condition: (identifier))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)
+                (boolean)))
+            (preproc_else)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)
+                (boolean)))
+            (preproc_endif)))))))
 
 ================================================================================
 Preprocessor in if single statement
@@ -244,34 +240,33 @@ codeunit 50204 TestIfSingle
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (if_statement
-            condition: (comparison_expression
-              left: (identifier)
-              operator: (comparison_operator)
-              right: (integer))
-            then_branch: (preproc_conditional_statements
-              (preproc_if
-                condition: (identifier))
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal)))
-              (preproc_else)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal)))
-              (preproc_endif))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (if_statement
+          condition: (comparison_expression
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (integer))
+          then_branch: (preproc_conditional_statements
+            (preproc_if
+              condition: (identifier))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))
+            (preproc_else)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))
+            (preproc_endif)))))))
 
 ================================================================================
 Preprocessor in case single statement
@@ -302,36 +297,35 @@ codeunit 50205 TestCaseSingle
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (case_statement
-            expression: (identifier)
-            (case_branch
-              pattern: (integer)
-              statements: (preproc_conditional_statements
-                (preproc_if
-                  condition: (identifier))
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal)))
-                (preproc_else)
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal)))
-                (preproc_endif)))
-            (case_branch
-              pattern: (integer)
-              statements: (call_expression
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (integer)
+            statements: (preproc_conditional_statements
+              (preproc_if
+                condition: (identifier))
+              (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))))))
+                  (string_literal)))
+              (preproc_else)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif)))
+          (case_branch
+            pattern: (integer)
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))))

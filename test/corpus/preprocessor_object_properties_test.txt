@@ -90,13 +90,12 @@ codeunit 50000 "Mixed Properties"
       (preproc_endif))
     (test_isolation_property
       value: (value))
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))))))
+    (onrun_trigger
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))
 
 ================================================================================
 Table with preprocessor conditional properties

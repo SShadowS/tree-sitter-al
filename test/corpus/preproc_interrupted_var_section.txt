@@ -43,8 +43,8 @@ table 50000 "Test Table"
         (preproc_if
           condition: (preproc_not_expression
             (identifier)))
-        if_branch: (attribute_list
-          (attribute
+        if_branch: (attribute_list_for_procedure
+          (attribute_for_procedure_token
             attribute_name: (identifier)
             (attribute_arguments
               arguments: (expression_list
@@ -146,8 +146,8 @@ table 50001 "Complex Test"
             (type_specification
               (basic_type))))
         (preproc_else)
-        else_header: (attribute_list
-          (attribute
+        else_header: (attribute_list_for_procedure
+          (attribute_for_procedure_token
             attribute_name: (identifier)
             (attribute_arguments
               arguments: (expression_list
@@ -232,8 +232,8 @@ table 50002 "Edge Case Test"
         (preproc_if
           condition: (preproc_not_expression
             (identifier)))
-        if_branch: (attribute_list
-          (attribute
+        if_branch: (attribute_list_for_procedure
+          (attribute_for_procedure_token
             attribute_name: (identifier)
             (attribute_arguments
               arguments: (expression_list

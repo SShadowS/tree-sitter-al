@@ -43,41 +43,40 @@ codeunit 50100 "XMLport Example"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (xmlport_type
-                reference: (quoted_identifier)))))
-        (code_block
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (integer)
-              (integer)))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list
-              (identifier)))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (xmlport_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (quoted_identifier)
+            (integer)
+            (integer)))
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (identifier)))
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list))))))
 
 ================================================================================
 XMLport type with integer reference

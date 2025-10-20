@@ -15,37 +15,36 @@ interface "E-Document Integration"
 (source_file
   (interface_declaration
     object_name: (quoted_identifier)
-    (attributed_interface_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (string_literal)
-              (string_literal)))))
-      (interface_procedure
+    (attribute_item
+      attribute: (attribute_content
         name: (identifier)
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (codeunit_type
-                reference: (quoted_identifier))))
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))))
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (string_literal)
+            (string_literal)))))
+    (interface_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (codeunit_type
+              reference: (quoted_identifier))))
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type)))))
     (interface_procedure
       name: (identifier)
       (parameter_list
@@ -92,59 +91,56 @@ interface IDocumentService
 (source_file
   (interface_declaration
     object_name: (identifier)
-    (attributed_interface_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (string_literal)
-              (string_literal)))))
-      (interface_procedure
+    (attribute_item
+      attribute: (attribute_content
         name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))
-        return_type: (return_type
-          (type_specification
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (string_literal)
+            (string_literal)))))
+    (interface_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      return_type: (return_type
+        (type_specification
+          (basic_type))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (string_literal)
+            (string_literal)))))
+    (interface_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (record_type
+              reference: (identifier))))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (boolean)
+            (boolean)))))
+    (interface_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
             (basic_type)))))
-    (attributed_interface_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (string_literal)
-              (string_literal)))))
-      (interface_procedure
-        name: (identifier)
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (record_type
-                reference: (identifier)))))))
-    (attributed_interface_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (boolean)
-              (boolean)))))
-      (interface_procedure
-        name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))))
     (interface_procedure
       name: (identifier)
       (parameter_list
@@ -192,31 +188,30 @@ interface IPaymentProvider
           parameter_type: (type_specification
             (record_type
               reference: (quoted_identifier))))))
-    (attributed_interface_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (string_literal)
-              (string_literal)))))
-      (interface_procedure
+    (attribute_item
+      attribute: (attribute_content
         name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (code_type
-                length: (integer)))))
-        return_type: (return_type
-          (type_specification
-            (basic_type)))))
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (string_literal)
+            (string_literal)))))
+    (interface_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (code_type
+              length: (integer)))))
+      return_type: (return_type
+        (type_specification
+          (basic_type))))
     (interface_procedure
       name: (identifier)
       (parameter_list
@@ -240,27 +235,26 @@ interface IPaymentProvider
       return_type: (return_type
         (type_specification
           (basic_type))))
-    (attributed_interface_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (boolean)))))
-      (interface_procedure
+    (attribute_item
+      attribute: (attribute_content
         name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (enum_type
-                enum_name: (quoted_identifier)))))))
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (boolean)))))
+    (interface_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (enum_type
+              enum_name: (quoted_identifier))))))
     (interface_procedure
       name: (identifier)
       (parameter_list

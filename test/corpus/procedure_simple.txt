@@ -29,45 +29,44 @@ codeunit 50000 "AL Built-in Functions Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
-        (code_block
-          (comment)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (string_literal)
-              (string_literal)))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list
-              (identifier)
-              (string_literal)))
-          (if_statement
-            condition: (member_expression
-              object: (identifier)
-              property: (identifier))
-            then_branch: (repeat_statement
-              (comment)
-              condition: (comparison_expression
-                left: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                operator: (comparison_operator)
-                right: (integer)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (comment)
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (quoted_identifier)
+            (string_literal)
+            (string_literal)))
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (identifier)
+            (string_literal)))
+        (if_statement
+          condition: (member_expression
+            object: (identifier)
+            property: (identifier))
+          then_branch: (repeat_statement
+            (comment)
+            condition: (comparison_expression
+              left: (member_expression
+                object: (identifier)
+                property: (identifier))
+              operator: (comparison_operator)
+              right: (integer))))))
     (var_section
       (variable_declaration
         name: (identifier)

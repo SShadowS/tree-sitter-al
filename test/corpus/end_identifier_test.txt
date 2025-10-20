@@ -20,23 +20,22 @@ codeunit 50100 "End Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (time_literal))
-          (assignment_expression
-            left: (identifier)
-            right: (time_literal)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (time_literal))
+        (assignment_expression
+          left: (identifier)
+          right: (time_literal))))))

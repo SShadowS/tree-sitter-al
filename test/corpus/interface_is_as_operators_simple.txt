@@ -17,19 +17,18 @@ codeunit 50100 Test
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block
-          (if_statement
-            left: (identifier)
-            right: (type_specification
-              (identifier))
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (if_statement
+          left: (identifier)
+          right: (type_specification
+            (identifier))
+          then_branch: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))))
 
 ================================================================================
 Simple 'as' operator test
@@ -49,16 +48,15 @@ codeunit 50101 Test2
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            left: (identifier)
-            right: (type_specification
-              (identifier))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          left: (identifier)
+          right: (type_specification
+            (identifier)))))))
 
 ================================================================================
 Mixed operators test
@@ -79,23 +77,22 @@ codeunit 50102 Test3
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block
-          (if_statement
-            condition: (logical_expression
-              left: (parenthesized_expression
-                left: (identifier)
-                right: (type_specification
-                  (identifier)))
-              right: (parenthesized_expression
-                left: (identifier)
-                right: (type_specification
-                  (identifier))))
-            then_branch: (assignment_expression
-              left: (identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (if_statement
+          condition: (logical_expression
+            left: (parenthesized_expression
               left: (identifier)
               right: (type_specification
-                (identifier)))))))))
+                (identifier)))
+            right: (parenthesized_expression
+              left: (identifier)
+              right: (type_specification
+                (identifier))))
+          then_branch: (assignment_expression
+            left: (identifier)
+            left: (identifier)
+            right: (type_specification
+              (identifier))))))))

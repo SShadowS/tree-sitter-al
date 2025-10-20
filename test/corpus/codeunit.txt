@@ -21,33 +21,31 @@ codeunit 50100 "My Test Codeunit"
   (codeunit_declaration
     (integer)
     (quoted_identifier)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block
-          (call_expression
-            (identifier)
-            (argument_list
-              (string_literal))))))
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (parameter_list
-          (parameter
-            (name
-              (identifier))
-            (type_specification
-              (basic_type)))
-          (parameter
-            (name
-              (identifier))
-            (type_specification
-              (basic_type))))
-        (return_type
+    (onrun_trigger
+      (code_block
+        (call_expression
+          (identifier)
+          (argument_list
+            (string_literal)))))
+    (procedure
+      (name
+        (identifier))
+      (parameter_list
+        (parameter
+          (name
+            (identifier))
           (type_specification
             (basic_type)))
-        (code_block
-          (exit_statement
-            (additive_expression
-              (identifier)
-              (identifier))))))))
+        (parameter
+          (name
+            (identifier))
+          (type_specification
+            (basic_type))))
+      (return_type
+        (type_specification
+          (basic_type)))
+      (code_block
+        (exit_statement
+          (additive_expression
+            (identifier)
+            (identifier)))))))

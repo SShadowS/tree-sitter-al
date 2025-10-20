@@ -464,6 +464,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "attribute_item"
+        },
+        {
+          "type": "SYMBOL",
           "name": "var_section"
         },
         {
@@ -472,11 +476,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "attributed_procedure"
+          "name": "procedure"
         },
         {
           "type": "SYMBOL",
-          "name": "attributed_trigger"
+          "name": "trigger_declaration"
         },
         {
           "type": "SYMBOL",
@@ -613,6 +617,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "attribute_item"
+        },
+        {
+          "type": "SYMBOL",
           "name": "xmlport_schema_element"
         },
         {
@@ -624,20 +632,8 @@
           "name": "preproc_conditional_var_sections"
         },
         {
-          "type": "PREC_DYNAMIC",
-          "value": 2,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attributed_procedure"
-          }
-        },
-        {
-          "type": "PREC_DYNAMIC",
-          "value": 1,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attribute_item"
-          }
+          "type": "SYMBOL",
+          "name": "procedure"
         },
         {
           "type": "SYMBOL",
@@ -2123,6 +2119,10 @@
               "type": "CHOICE",
               "members": [
                 {
+                  "type": "SYMBOL",
+                  "name": "attribute_item"
+                },
+                {
                   "type": "PREC",
                   "value": 4,
                   "content": {
@@ -2144,15 +2144,15 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "attributed_procedure"
+                  "name": "procedure"
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "attributed_onrun_trigger"
+                  "name": "onrun_trigger"
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "attributed_trigger"
+                  "name": "trigger_declaration"
                 },
                 {
                   "type": "SYMBOL",
@@ -2441,6 +2441,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "attribute_item"
+        },
+        {
+          "type": "SYMBOL",
           "name": "_universal_properties"
         },
         {
@@ -2464,20 +2468,8 @@
           "name": "trigger_declaration"
         },
         {
-          "type": "PREC_DYNAMIC",
-          "value": 2,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attributed_procedure"
-          }
-        },
-        {
-          "type": "PREC_DYNAMIC",
-          "value": 1,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attribute_item"
-          }
+          "type": "SYMBOL",
+          "name": "procedure"
         },
         {
           "type": "SYMBOL",
@@ -5478,6 +5470,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "attribute_item"
+        },
+        {
+          "type": "SYMBOL",
           "name": "layout_section"
         },
         {
@@ -5505,37 +5501,8 @@
           "name": "trigger_declaration"
         },
         {
-          "type": "PREC_DYNAMIC",
-          "value": 2,
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "attribute_list"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              },
-              {
-                "type": "SYMBOL",
-                "name": "procedure"
-              }
-            ]
-          }
-        },
-        {
-          "type": "PREC_DYNAMIC",
-          "value": 1,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attribute_item"
-          }
+          "type": "SYMBOL",
+          "name": "procedure"
         },
         {
           "type": "SYMBOL",
@@ -5602,6 +5569,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "attribute_item"
+        },
+        {
+          "type": "SYMBOL",
           "name": "fields"
         },
         {
@@ -5617,28 +5588,12 @@
           "name": "fieldgroups_section"
         },
         {
-          "type": "PREC_DYNAMIC",
-          "value": 2,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attributed_procedure"
-          }
+          "type": "SYMBOL",
+          "name": "procedure"
         },
         {
-          "type": "PREC_DYNAMIC",
-          "value": 2,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attributed_trigger"
-          }
-        },
-        {
-          "type": "PREC_DYNAMIC",
-          "value": 1,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attribute_item"
-          }
+          "type": "SYMBOL",
+          "name": "trigger_declaration"
         },
         {
           "type": "SYMBOL",
@@ -8199,6 +8154,10 @@
             "type": "CHOICE",
             "members": [
               {
+                "type": "SYMBOL",
+                "name": "attribute_item"
+              },
+              {
                 "type": "PREC",
                 "value": 4,
                 "content": {
@@ -8219,36 +8178,16 @@
                 "name": "preproc_conditional_var_sections"
               },
               {
-                "type": "PREC_DYNAMIC",
-                "value": 2,
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "attributed_procedure"
-                }
+                "type": "SYMBOL",
+                "name": "procedure"
               },
               {
-                "type": "PREC_DYNAMIC",
-                "value": 2,
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "attributed_onrun_trigger"
-                }
+                "type": "SYMBOL",
+                "name": "onrun_trigger"
               },
               {
-                "type": "PREC_DYNAMIC",
-                "value": 2,
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "attributed_trigger"
-                }
-              },
-              {
-                "type": "PREC_DYNAMIC",
-                "value": 1,
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "attribute_item"
-                }
+                "type": "SYMBOL",
+                "name": "trigger_declaration"
               },
               {
                 "type": "SYMBOL",
@@ -9023,6 +8962,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "attribute_item"
+        },
+        {
+          "type": "SYMBOL",
           "name": "_controladdin_properties"
         },
         {
@@ -9032,22 +8975,6 @@
         {
           "type": "SYMBOL",
           "name": "controladdin_procedure"
-        },
-        {
-          "type": "PREC_DYNAMIC",
-          "value": 2,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attributed_controladdin_procedure"
-          }
-        },
-        {
-          "type": "PREC_DYNAMIC",
-          "value": 1,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attribute_item"
-          }
         },
         {
           "type": "SYMBOL",
@@ -9635,27 +9562,15 @@
             "members": [
               {
                 "type": "SYMBOL",
+                "name": "attribute_item"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "_interface_properties"
               },
               {
                 "type": "SYMBOL",
                 "name": "interface_procedure"
-              },
-              {
-                "type": "PREC_DYNAMIC",
-                "value": 2,
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "attributed_interface_procedure"
-                }
-              },
-              {
-                "type": "PREC_DYNAMIC",
-                "value": 1,
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "attribute_item"
-                }
               }
             ]
           }
@@ -9863,6 +9778,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "attribute_item"
+        },
+        {
+          "type": "SYMBOL",
           "name": "dataset_section"
         },
         {
@@ -9886,62 +9805,12 @@
           "name": "preproc_conditional_var_sections"
         },
         {
-          "type": "PREC_DYNAMIC",
-          "value": 2,
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "attribute_list"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              },
-              {
-                "type": "SYMBOL",
-                "name": "procedure"
-              }
-            ]
-          }
+          "type": "SYMBOL",
+          "name": "procedure"
         },
         {
-          "type": "PREC_DYNAMIC",
-          "value": 2,
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "attribute_list"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              },
-              {
-                "type": "SYMBOL",
-                "name": "trigger_declaration"
-              }
-            ]
-          }
-        },
-        {
-          "type": "PREC_DYNAMIC",
-          "value": 1,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attribute_item"
-          }
+          "type": "SYMBOL",
+          "name": "trigger_declaration"
         },
         {
           "type": "SYMBOL",
@@ -9960,6 +9829,10 @@
     "_report_element": {
       "type": "CHOICE",
       "members": [
+        {
+          "type": "SYMBOL",
+          "name": "attribute_item"
+        },
         {
           "type": "SYMBOL",
           "name": "dataset_section"
@@ -9989,62 +9862,12 @@
           "name": "preproc_conditional_var_sections"
         },
         {
-          "type": "PREC_DYNAMIC",
-          "value": 2,
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "attribute_list"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              },
-              {
-                "type": "SYMBOL",
-                "name": "procedure"
-              }
-            ]
-          }
+          "type": "SYMBOL",
+          "name": "procedure"
         },
         {
-          "type": "PREC_DYNAMIC",
-          "value": 2,
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "attribute_list"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              },
-              {
-                "type": "SYMBOL",
-                "name": "trigger_declaration"
-              }
-            ]
-          }
-        },
-        {
-          "type": "PREC_DYNAMIC",
-          "value": 1,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attribute_item"
-          }
+          "type": "SYMBOL",
+          "name": "trigger_declaration"
         },
         {
           "type": "SYMBOL",
@@ -12058,6 +11881,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "attribute_item"
+        },
+        {
+          "type": "SYMBOL",
           "name": "layout_section"
         },
         {
@@ -12069,37 +11896,8 @@
           "name": "views_section"
         },
         {
-          "type": "PREC_DYNAMIC",
-          "value": 2,
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "attribute_list"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              },
-              {
-                "type": "SYMBOL",
-                "name": "procedure"
-              }
-            ]
-          }
-        },
-        {
-          "type": "PREC_DYNAMIC",
-          "value": 1,
-          "content": {
-            "type": "SYMBOL",
-            "name": "attribute_item"
-          }
+          "type": "SYMBOL",
+          "name": "procedure"
         },
         {
           "type": "SYMBOL",
@@ -17602,6 +17400,10 @@
         "members": [
           {
             "type": "SYMBOL",
+            "name": "attribute_item"
+          },
+          {
+            "type": "SYMBOL",
             "name": "fields"
           },
           {
@@ -17629,20 +17431,8 @@
             "name": "named_trigger"
           },
           {
-            "type": "PREC_DYNAMIC",
-            "value": 2,
-            "content": {
-              "type": "SYMBOL",
-              "name": "attributed_procedure"
-            }
-          },
-          {
-            "type": "PREC_DYNAMIC",
-            "value": 1,
-            "content": {
-              "type": "SYMBOL",
-              "name": "attribute_item"
-            }
+            "type": "SYMBOL",
+            "name": "procedure"
           },
           {
             "type": "SYMBOL",
@@ -32607,6 +32397,10 @@
             "members": [
               {
                 "type": "SYMBOL",
+                "name": "attribute_item"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "_controladdin_properties"
               },
               {
@@ -32616,10 +32410,6 @@
               {
                 "type": "SYMBOL",
                 "name": "controladdin_procedure"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "attributed_controladdin_procedure"
               },
               {
                 "type": "SYMBOL",
@@ -32648,6 +32438,10 @@
                   "members": [
                     {
                       "type": "SYMBOL",
+                      "name": "attribute_item"
+                    },
+                    {
+                      "type": "SYMBOL",
                       "name": "_controladdin_properties"
                     },
                     {
@@ -32657,10 +32451,6 @@
                     {
                       "type": "SYMBOL",
                       "name": "controladdin_procedure"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "attributed_controladdin_procedure"
                     },
                     {
                       "type": "SYMBOL",
@@ -32693,6 +32483,10 @@
                     "members": [
                       {
                         "type": "SYMBOL",
+                        "name": "attribute_item"
+                      },
+                      {
+                        "type": "SYMBOL",
                         "name": "_controladdin_properties"
                       },
                       {
@@ -32702,10 +32496,6 @@
                       {
                         "type": "SYMBOL",
                         "name": "controladdin_procedure"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "attributed_controladdin_procedure"
                       },
                       {
                         "type": "SYMBOL",

@@ -13,37 +13,36 @@ controladdin "Microsoft.Dynamics.Nav.Client.PowerBIManagement"
 (source_file
   (controladdin_declaration
     object_name: (quoted_identifier)
-    (attributed_controladdin_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (string_literal)
-              (string_literal)))))
-      (controladdin_procedure
+    (attribute_item
+      attribute: (attribute_content
         name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type))))))))
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (string_literal)
+            (string_literal)))))
+    (controladdin_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))))))
 
 ================================================================================
 ControlAddin with multiple attributed procedures
@@ -86,28 +85,26 @@ controladdin "Test Control"
     (controladdin_property
       name: (identifier)
       value: (integer))
-    (attributed_controladdin_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (string_literal)
-              (string_literal)))))
-      (controladdin_procedure
+    (attribute_item
+      attribute: (attribute_content
         name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type))))))
-    (attributed_controladdin_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)))
-      (controladdin_procedure
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (string_literal)
+            (string_literal)))))
+    (controladdin_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))))
+    (attribute_item
+      attribute: (attribute_content
         name: (identifier)))
+    (controladdin_procedure
+      name: (identifier))
     (controladdin_procedure
       name: (identifier)
       (parameter_list
@@ -116,29 +113,29 @@ controladdin "Test Control"
             (identifier))
           parameter_type: (type_specification
             (basic_type)))))
-    (attributed_controladdin_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier))
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (string_literal)
-              (string_literal)))))
-      (controladdin_procedure
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
+    (attribute_item
+      attribute: (attribute_content
         name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))))))
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (string_literal)
+            (string_literal)))))
+    (controladdin_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type)))))))
 
 ================================================================================
 ControlAddin with preprocessor conditional attributes
@@ -159,34 +156,33 @@ controladdin "Conditional Control"
 (source_file
   (controladdin_declaration
     object_name: (quoted_identifier)
-    (attributed_controladdin_procedure
-      (preproc_conditional_attributes
-        (preproc_if
-          condition: (identifier))
-        (attribute_list
-          (attribute
-            attribute_name: (identifier)
-            (attribute_arguments
-              arguments: (expression_list
-                (string_literal)
-                (string_literal)))))
-        (preproc_else)
-        (attribute_list
-          (attribute
-            attribute_name: (identifier)
-            (attribute_arguments
-              arguments: (expression_list
-                (string_literal)
-                (string_literal)))))
-        (preproc_endif))
-      (controladdin_procedure
-        name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type))))))))
+    (preproc_conditional_controladdin_elements
+      (preproc_if
+        condition: (identifier))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            arguments: (expression_list
+              (string_literal)
+              (string_literal)))))
+      (preproc_else)
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            arguments: (expression_list
+              (string_literal)
+              (string_literal)))))
+      (preproc_endif))
+    (controladdin_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))))))
 
 ================================================================================
 Real-world ControlAddin with Obsolete procedures
@@ -273,37 +269,36 @@ controladdin "Microsoft.Dynamics.Nav.Client.PowerBIManagement"
             (identifier))
           parameter_type: (type_specification
             (text_type)))))
-    (attributed_controladdin_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (string_literal)
-              (string_literal)))))
-      (controladdin_procedure
+    (attribute_item
+      attribute: (attribute_content
         name: (identifier)
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type))))))
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (string_literal)
+            (string_literal)))))
+    (controladdin_procedure
+      name: (identifier)
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type)))))
     (controladdin_procedure
       name: (identifier)
       (parameter_list

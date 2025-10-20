@@ -37,29 +37,28 @@ tableextension 8052 "Item Ext" extends Item
           value: (data_classification_value))
         (caption_property
           (string_literal))))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (boolean)
-              (boolean)))))
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (record_type
-                reference: (identifier))))
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))
-        (code_block)))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (boolean)
+            (boolean)))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (record_type
+              reference: (identifier))))
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (code_block))))

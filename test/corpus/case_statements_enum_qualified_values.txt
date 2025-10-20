@@ -27,37 +27,36 @@ codeunit 123 TestCodeunit
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (enum_type
-                enum_name: (quoted_identifier)))))
-        (code_block
-          (case_statement
-            expression: (identifier)
-            (case_branch
-              pattern: (enum_keyword_qualified_value
-                enum_type: (quoted_identifier)
-                value: (identifier))
-              statements: (code_block
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal)))))
-            (case_branch
-              pattern: (enum_keyword_qualified_value
-                enum_type: (quoted_identifier)
-                value: (identifier))
-              statements: (code_block
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal)))))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (enum_type
+              enum_name: (quoted_identifier)))))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (enum_keyword_qualified_value
+              enum_type: (quoted_identifier)
+              value: (identifier))
+            statements: (code_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))))
+          (case_branch
+            pattern: (enum_keyword_qualified_value
+              enum_type: (quoted_identifier)
+              value: (identifier))
+            statements: (code_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))))))))
 
 ================================================================================
 Simple enum case pattern test
@@ -82,24 +81,23 @@ codeunit 124 SimpleTest
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (enum_type
-                enum_name: (quoted_identifier)))))
-        (code_block
-          (case_statement
-            expression: (identifier)
-            (case_branch
-              pattern: (enum_keyword_qualified_value
-                enum_type: (quoted_identifier)
-                value: (identifier))
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal))))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (enum_type
+              enum_name: (quoted_identifier)))))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (enum_keyword_qualified_value
+              enum_type: (quoted_identifier)
+              value: (identifier))
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))))

@@ -151,83 +151,81 @@ codeunit 50100 "RunObject Examples"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block)))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
-        (code_block
-          (comment)
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (string_literal))
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (integer))
-          (comment)
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (string_literal))
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (integer))
-          (comment)
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (string_literal))
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (integer))
-          (comment)
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (string_literal))
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (integer))
-          (comment)
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (string_literal))
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (integer))
-          (comment)
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (string_literal))
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (integer)))))))
+    (onrun_trigger
+      (code_block))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (comment)
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (string_literal))
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (integer))
+        (comment)
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (string_literal))
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (integer))
+        (comment)
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (string_literal))
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (integer))
+        (comment)
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (string_literal))
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (integer))
+        (comment)
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (string_literal))
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (integer))
+        (comment)
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (string_literal))
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (integer))))))

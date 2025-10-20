@@ -107,26 +107,25 @@ table 50100 "My Test Table"
           (identifier)
           (argument_list
             (string_literal)))))
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (parameter_list
-          (parameter
-            (name
-              (identifier))
-            (type_specification
-              (text_type))))
-        (return_type
+    (procedure
+      (name
+        (identifier))
+      (parameter_list
+        (parameter
+          (name
+            (identifier))
           (type_specification
-            (basic_type)))
-        (code_block
-          (if_statement
-            (comparison_expression
-              (identifier)
-              (comparison_operator)
-              (string_literal))
-            (exit_statement
-              (boolean))
-            (exit_statement
-              (boolean))))))))
+            (text_type))))
+      (return_type
+        (type_specification
+          (basic_type)))
+      (code_block
+        (if_statement
+          (comparison_expression
+            (identifier)
+            (comparison_operator)
+            (string_literal))
+          (exit_statement
+            (boolean))
+          (exit_statement
+            (boolean)))))))

@@ -21,29 +21,28 @@ codeunit 50000 "Test BigInteger"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (biginteger))
-          (assignment_expression
-            left: (identifier)
-            right: (biginteger))
-          (assignment_expression
-            left: (identifier)
-            right: (biginteger))
-          (assignment_expression
-            left: (identifier)
-            right: (biginteger))
-          (comment))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (biginteger))
+        (assignment_expression
+          left: (identifier)
+          right: (biginteger))
+        (assignment_expression
+          left: (identifier)
+          right: (biginteger))
+        (assignment_expression
+          left: (identifier)
+          right: (biginteger))
+        (comment)))))
 
 ================================================================================
 BigInteger literal in comparison
@@ -66,25 +65,24 @@ codeunit 50001 "Test BigInteger Compare"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (if_statement
-            condition: (comparison_expression
-              left: (identifier)
-              operator: (comparison_operator)
-              right: (biginteger))
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (if_statement
+          condition: (comparison_expression
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (biginteger))
+          then_branch: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))))
 
 ================================================================================
 BigInteger literal with lowercase l
@@ -107,19 +105,18 @@ codeunit 50002 "Test BigInteger Lowercase"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (biginteger))
-          (assignment_expression
-            left: (identifier)
-            right: (biginteger)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (biginteger))
+        (assignment_expression
+          left: (identifier)
+          right: (biginteger))))))

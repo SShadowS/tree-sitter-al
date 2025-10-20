@@ -19,26 +19,25 @@ codeunit 50100 TestTernary
   (codeunit_declaration
     (integer)
     (identifier)
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (var_section
-          (variable_declaration
+    (procedure
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          (identifier)
+          (conditional_expression
             (identifier)
-            (type_specification
-              (basic_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            (identifier)
-            (conditional_expression
-              (identifier)
-              (integer)
-              (integer))))))))
+            (integer)
+            (integer)))))))
 
 ================================================================================
 Nested Ternary Operators
@@ -61,36 +60,35 @@ codeunit 50100 NestedTernary
   (codeunit_declaration
     (integer)
     (identifier)
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (var_section
-          (variable_declaration
+    (procedure
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (identifier)
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          (identifier)
+          (conditional_expression
             (identifier)
-            (type_specification
-              (basic_type)))
-          (variable_declaration
-            (identifier)
-            (identifier)
-            (identifier)
-            (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            (identifier)
-            (conditional_expression
-              (identifier)
-              (parenthesized_expression
-                (conditional_expression
-                  (identifier)
-                  (integer)
-                  (integer)))
-              (parenthesized_expression
-                (conditional_expression
-                  (identifier)
-                  (integer)
-                  (integer))))))))))
+            (parenthesized_expression
+              (conditional_expression
+                (identifier)
+                (integer)
+                (integer)))
+            (parenthesized_expression
+              (conditional_expression
+                (identifier)
+                (integer)
+                (integer)))))))))
 
 ================================================================================
 Ternary with Complex Expressions
@@ -116,57 +114,56 @@ codeunit 50100 ComplexTernary
   (codeunit_declaration
     (integer)
     (identifier)
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            (identifier)
-            (identifier)
-            (type_specification
-              (basic_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (array_type
-                (integer)
-                (type_specification
-                  (basic_type)))))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (record_type
-                (identifier)))))
-        (code_block
-          (assignment_expression
-            (identifier)
-            (conditional_expression
-              (comparison_expression
-                (identifier)
-                (comparison_operator)
-                (integer))
-              (multiplicative_expression
-                (identifier)
-                (integer))
-              (unary_expression
-                (unary_operator)
-                (identifier))))
-          (assignment_expression
-            (subscript_expression
-              (identifier)
-              (expression_list
-                (identifier)))
-            (conditional_expression
-              (field_access
-                (identifier)
-                (quoted_identifier))
+    (procedure
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (array_type
               (integer)
-              (integer))))))))
+              (type_specification
+                (basic_type)))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (record_type
+              (identifier)))))
+      (code_block
+        (assignment_expression
+          (identifier)
+          (conditional_expression
+            (comparison_expression
+              (identifier)
+              (comparison_operator)
+              (integer))
+            (multiplicative_expression
+              (identifier)
+              (integer))
+            (unary_expression
+              (unary_operator)
+              (identifier))))
+        (assignment_expression
+          (subscript_expression
+            (identifier)
+            (expression_list
+              (identifier)))
+          (conditional_expression
+            (field_access
+              (identifier)
+              (quoted_identifier))
+            (integer)
+            (integer)))))))
 
 ================================================================================
 Ternary in Method Calls
@@ -191,39 +188,37 @@ codeunit 50100 TernaryInCalls
   (codeunit_declaration
     (integer)
     (identifier)
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type))))
-        (code_block
-          (call_expression
-            (identifier)
-            (argument_list
-              (conditional_expression
-                (identifier)
-                (string_literal)
-                (string_literal))))
-          (call_expression
-            (identifier)
-            (argument_list
+    (procedure
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (call_expression
+          (identifier)
+          (argument_list
+            (conditional_expression
+              (identifier)
               (string_literal)
-              (conditional_expression
-                (identifier)
-                (integer)
-                (integer)))))))
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (parameter_list
-          (parameter
-            (name
-              (identifier))
-            (type_specification
-              (text_type))))
-        (code_block)))))
+              (string_literal))))
+        (call_expression
+          (identifier)
+          (argument_list
+            (string_literal)
+            (conditional_expression
+              (identifier)
+              (integer)
+              (integer))))))
+    (procedure
+      (name
+        (identifier))
+      (parameter_list
+        (parameter
+          (name
+            (identifier))
+          (type_specification
+            (text_type))))
+      (code_block))))

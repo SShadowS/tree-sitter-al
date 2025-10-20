@@ -20,43 +20,42 @@ codeunit 50100 "Test"
   (codeunit_declaration
     (integer)
     (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (var_section
-          (variable_declaration
+    (procedure
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (array_type
+              (integer)
+              (type_specification
+                (enum_type
+                  (quoted_identifier)))))))
+      (code_block
+        (comment)
+        (assignment_expression
+          (subscript_expression
             (identifier)
-            (type_specification
-              (array_type
-                (integer)
-                (type_specification
-                  (enum_type
-                    (quoted_identifier)))))))
-        (code_block
-          (comment)
-          (assignment_expression
+            (expression_list
+              (integer)))
+          (qualified_enum_value
             (subscript_expression
               (identifier)
               (expression_list
                 (integer)))
-            (qualified_enum_value
-              (subscript_expression
-                (identifier)
-                (expression_list
-                  (integer)))
-              (identifier)))
-          (assignment_expression
+            (identifier)))
+        (assignment_expression
+          (subscript_expression
+            (identifier)
+            (expression_list
+              (integer)))
+          (qualified_enum_value
             (subscript_expression
               (identifier)
               (expression_list
                 (integer)))
-            (qualified_enum_value
-              (subscript_expression
-                (identifier)
-                (expression_list
-                  (integer)))
-              (quoted_identifier))))))))
+            (quoted_identifier)))))))
 
 ================================================================================
 Correct enum assignment without spaces
@@ -80,40 +79,39 @@ codeunit 50101 "Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (array_type
-                sizes: (integer)
-                (type_specification
-                  (enum_type
-                    enum_name: (quoted_identifier)))))))
-        (code_block
-          (comment)
-          (assignment_expression
-            left: (subscript_expression
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (array_type
+              sizes: (integer)
+              (type_specification
+                (enum_type
+                  enum_name: (quoted_identifier)))))))
+      (code_block
+        (comment)
+        (assignment_expression
+          left: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              (integer)))
+          right: (qualified_enum_value
+            enum_type: (subscript_expression
               array: (identifier)
               indices: (expression_list
                 (integer)))
-            right: (qualified_enum_value
-              enum_type: (subscript_expression
-                array: (identifier)
-                indices: (expression_list
-                  (integer)))
-              value: (identifier)))
-          (assignment_expression
-            left: (subscript_expression
+            value: (identifier)))
+        (assignment_expression
+          left: (subscript_expression
+            array: (identifier)
+            indices: (expression_list
+              (integer)))
+          right: (qualified_enum_value
+            enum_type: (subscript_expression
               array: (identifier)
               indices: (expression_list
                 (integer)))
-            right: (qualified_enum_value
-              enum_type: (subscript_expression
-                array: (identifier)
-                indices: (expression_list
-                  (integer)))
-              value: (quoted_identifier))))))))
+            value: (quoted_identifier)))))))

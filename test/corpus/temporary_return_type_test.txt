@@ -19,18 +19,17 @@ codeunit 50100 "Prepare Sales Line For Copying"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        return_type: (return_type
-          (type_specification
-            (record_type
-              reference: (quoted_identifier))))
-        temporary: (temporary)
-        (code_block
-          (exit_statement
-            return_value: (identifier)))))
+    (procedure
+      name: (name
+        (identifier))
+      return_type: (return_type
+        (type_specification
+          (record_type
+            reference: (quoted_identifier))))
+      temporary: (temporary)
+      (code_block
+        (exit_statement
+          return_value: (identifier))))
     (var_section
       (variable_declaration
         name: (identifier)
@@ -59,33 +58,32 @@ codeunit 50200 "Temporary Record Handler"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (return_value
-          return_value: (identifier))
-        return_type: (return_type
-          (type_specification
-            (record_type
-              reference: (identifier))))
-        temporary: (temporary)
-        (code_block
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list))
-          (assignment_expression
-            left: (field_access
-              record: (identifier)
-              field: (quoted_identifier))
-            right: (string_literal))
-          (assignment_expression
-            left: (member_expression
-              object: (identifier)
-              property: (identifier))
-            right: (string_literal)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (return_value
+        return_value: (identifier))
+      return_type: (return_type
+        (type_specification
+          (record_type
+            reference: (identifier))))
+      temporary: (temporary)
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list))
+        (assignment_expression
+          left: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          right: (string_literal))
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (string_literal))))))
 
 ================================================================================
 Procedure with temporary parameter and return
@@ -109,46 +107,45 @@ codeunit 50300 "Temp Record Processor"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))
-            temporary: (temporary)))
-        return_type: (return_type
-          (type_specification
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
             (record_type
-              reference: (quoted_identifier))))
-        temporary: (temporary)
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))
-            temporary: (temporary)))
-        (code_block
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list))
-          (assignment_expression
-            left: (field_access
-              record: (identifier)
-              field: (quoted_identifier))
-            right: (field_access
-              record: (identifier)
-              field: (quoted_identifier)))
-          (exit_statement
-            return_value: (identifier)))))))
+              reference: (quoted_identifier)))
+          temporary: (temporary)))
+      return_type: (return_type
+        (type_specification
+          (record_type
+            reference: (quoted_identifier))))
+      temporary: (temporary)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier)))
+          temporary: (temporary)))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list))
+        (assignment_expression
+          left: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          right: (field_access
+            record: (identifier)
+            field: (quoted_identifier)))
+        (exit_statement
+          return_value: (identifier))))))
 
 ================================================================================
 Case variations of temporary keyword
@@ -175,33 +172,30 @@ codeunit 50400 "Case Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        return_type: (return_type
-          (type_specification
-            (record_type
-              reference: (identifier))))
-        temporary: (temporary)
-        (code_block)))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        return_type: (return_type
-          (type_specification
-            (record_type
-              reference: (identifier))))
-        temporary: (temporary)
-        (code_block)))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        return_type: (return_type
-          (type_specification
-            (record_type
-              reference: (identifier))))
-        temporary: (temporary)
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      return_type: (return_type
+        (type_specification
+          (record_type
+            reference: (identifier))))
+      temporary: (temporary)
+      (code_block))
+    (procedure
+      name: (name
+        (identifier))
+      return_type: (return_type
+        (type_specification
+          (record_type
+            reference: (identifier))))
+      temporary: (temporary)
+      (code_block))
+    (procedure
+      name: (name
+        (identifier))
+      return_type: (return_type
+        (type_specification
+          (record_type
+            reference: (identifier))))
+      temporary: (temporary)
+      (code_block))))

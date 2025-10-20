@@ -23,31 +23,30 @@ codeunit 50000 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (preproc_conditional_var_sections
-          (preproc_if
-            condition: (preproc_not_expression
-              (identifier)))
-          (var_section
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (basic_type))))
-          (preproc_else)
-          (var_section
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (text_type))))
-          (preproc_endif))
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (preproc_conditional_var_sections
+        (preproc_if
+          condition: (preproc_not_expression
+            (identifier)))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (preproc_endif))
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))
 
 ==================
 Procedure with simple preprocessor var section
@@ -71,20 +70,19 @@ codeunit 50001 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (preproc_conditional_var_sections
-          (preproc_if
-            condition: (preproc_not_expression
-              (identifier)))
-          (var_section
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (basic_type))))
-          (preproc_endif))
-        (code_block
-          (exit_statement))))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (preproc_conditional_var_sections
+        (preproc_if
+          condition: (preproc_not_expression
+            (identifier)))
+        (var_section
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif))
+      (code_block
+        (exit_statement)))))

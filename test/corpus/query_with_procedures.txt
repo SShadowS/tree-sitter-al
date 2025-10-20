@@ -47,25 +47,24 @@ query 100 "Test Query"
         (column_section
           name: (identifier)
           field_name: (identifier))))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type))))
-        (code_block
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list
-              (identifier)
-              (identifier))))))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type))))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (identifier)
+            (identifier)))))))
 
 ================================================================================
 Query with multiple procedures and tracking filter
@@ -245,109 +244,108 @@ query 7308 CalcOutstandQtyOnWhseActLine
             (generic_property
               name: (identifier)
               value: (identifier))))))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
-        (code_block
-          (if_statement
-            condition: (comparison_expression
-              left: (field_access
-                record: (identifier)
-                field: (quoted_identifier))
-              operator: (comparison_operator)
-              right: (string_literal))
-            then_branch: (if_statement
-              condition: (field_access
-                record: (identifier)
-                field: (quoted_identifier))
-              then_branch: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (field_access
-                    record: (identifier)
-                    field: (quoted_identifier))))
-              else_branch: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (string_literal)
-                  (field_access
-                    record: (identifier)
-                    field: (quoted_identifier))
-                  (string_literal)))))
-          (if_statement
-            condition: (comparison_expression
-              left: (field_access
-                record: (identifier)
-                field: (quoted_identifier))
-              operator: (comparison_operator)
-              right: (string_literal))
-            then_branch: (if_statement
-              condition: (field_access
-                record: (identifier)
-                field: (quoted_identifier))
-              then_branch: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (field_access
-                    record: (identifier)
-                    field: (quoted_identifier))))
-              else_branch: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (string_literal)
-                  (field_access
-                    record: (identifier)
-                    field: (quoted_identifier))
-                  (string_literal)))))
-          (if_statement
-            condition: (comparison_expression
-              left: (field_access
-                record: (identifier)
-                field: (quoted_identifier))
-              operator: (comparison_operator)
-              right: (string_literal))
-            then_branch: (if_statement
-              condition: (field_access
-                record: (identifier)
-                field: (quoted_identifier))
-              then_branch: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (field_access
-                    record: (identifier)
-                    field: (quoted_identifier))))
-              else_branch: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (string_literal)
-                  (field_access
-                    record: (identifier)
-                    field: (quoted_identifier))
-                  (string_literal))))))))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (record_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (if_statement
+          condition: (comparison_expression
+            left: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            operator: (comparison_operator)
+            right: (string_literal))
+          then_branch: (if_statement
+            condition: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            then_branch: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (identifier)
+                (field_access
+                  record: (identifier)
+                  field: (quoted_identifier))))
+            else_branch: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (identifier)
+                (string_literal)
+                (field_access
+                  record: (identifier)
+                  field: (quoted_identifier))
+                (string_literal)))))
+        (if_statement
+          condition: (comparison_expression
+            left: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            operator: (comparison_operator)
+            right: (string_literal))
+          then_branch: (if_statement
+            condition: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            then_branch: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (identifier)
+                (field_access
+                  record: (identifier)
+                  field: (quoted_identifier))))
+            else_branch: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (identifier)
+                (string_literal)
+                (field_access
+                  record: (identifier)
+                  field: (quoted_identifier))
+                (string_literal)))))
+        (if_statement
+          condition: (comparison_expression
+            left: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            operator: (comparison_operator)
+            right: (string_literal))
+          then_branch: (if_statement
+            condition: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            then_branch: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (identifier)
+                (field_access
+                  record: (identifier)
+                  field: (quoted_identifier))))
+            else_branch: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list
+                (identifier)
+                (string_literal)
+                (field_access
+                  record: (identifier)
+                  field: (quoted_identifier))
+                (string_literal)))))))))

@@ -39,35 +39,33 @@ tableextension 50003 "Attributed Triggers Extension" extends Item
             length: (integer)))
         (caption_property
           (string_literal))))
-    (attributed_trigger
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (boolean)
-              (boolean)))))
-      (trigger_declaration
-        name: (trigger_name)
-        (code_block)))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (string_literal)
-              (string_literal)))))
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (record_type
-                reference: (identifier)))))
-        (code_block)))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (boolean)
+            (boolean)))))
+    (trigger_declaration
+      name: (trigger_name)
+      (code_block))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (string_literal)
+            (string_literal)))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block))))

@@ -23,14 +23,13 @@ codeunit 50100 "Test Codeunit"
     object_id: (integer)
     object_name: (quoted_identifier)
     (multiline_comment)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block
-          (multiline_comment)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))))))
+    (onrun_trigger
+      (code_block
+        (multiline_comment)
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))
 
 ================================================================================
 Multiline comment with special characters
@@ -93,22 +92,21 @@ codeunit 50101 "Comment Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
-          (multiline_comment)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
-          (multiline_comment)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))
+        (multiline_comment)
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))
+        (multiline_comment)
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))

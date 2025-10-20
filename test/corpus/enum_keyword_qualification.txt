@@ -22,29 +22,20 @@ codeunit 50120 "Enum Keyword Qualification Test"
   (codeunit_declaration
     (integer)
     (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        (procedure_modifier)
-        (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (codeunit_type
-                (quoted_identifier)))))
-        (code_block
-          (if_statement
-            (unary_expression
-              (unary_operator)
-              (call_expression
-                (member_expression
-                  (identifier)
-                  (identifier))
-                (argument_list
-                  (enum_keyword_qualified_value
-                    (quoted_identifier)
-                    (quoted_identifier)))))
+    (procedure
+      (procedure_modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (codeunit_type
+              (quoted_identifier)))))
+      (code_block
+        (if_statement
+          (unary_expression
+            (unary_operator)
             (call_expression
               (member_expression
                 (identifier)
@@ -52,11 +43,19 @@ codeunit 50120 "Enum Keyword Qualification Test"
               (argument_list
                 (enum_keyword_qualified_value
                   (quoted_identifier)
-                  (quoted_identifier))
-                (identifier))))
-          (assignment_expression
-            (identifier)
-            (integer))
-          (assignment_expression
-            (identifier)
-            (decimal)))))))
+                  (quoted_identifier)))))
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (argument_list
+              (enum_keyword_qualified_value
+                (quoted_identifier)
+                (quoted_identifier))
+              (identifier))))
+        (assignment_expression
+          (identifier)
+          (integer))
+        (assignment_expression
+          (identifier)
+          (decimal))))))

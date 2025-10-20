@@ -4329,149 +4329,6 @@
     }
   },
   {
-    "type": "attributed_controladdin_procedure",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_list",
-          "named": true
-        },
-        {
-          "type": "controladdin_procedure",
-          "named": true
-        },
-        {
-          "type": "pragma",
-          "named": true
-        },
-        {
-          "type": "preproc_conditional_attributes",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attributed_interface_procedure",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_list",
-          "named": true
-        },
-        {
-          "type": "interface_procedure",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attributed_onrun_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_list",
-          "named": true
-        },
-        {
-          "type": "onrun_trigger",
-          "named": true
-        },
-        {
-          "type": "pragma",
-          "named": true
-        },
-        {
-          "type": "preproc_conditional_attributes",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attributed_procedure",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_list",
-          "named": true
-        },
-        {
-          "type": "pragma",
-          "named": true
-        },
-        {
-          "type": "preproc_attributed_split_procedure",
-          "named": true
-        },
-        {
-          "type": "preproc_conditional_attributes",
-          "named": true
-        },
-        {
-          "type": "preproc_procedure_body_split",
-          "named": true
-        },
-        {
-          "type": "preproc_split_procedure",
-          "named": true
-        },
-        {
-          "type": "preproc_var_terminator",
-          "named": true
-        },
-        {
-          "type": "procedure",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attributed_trigger",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_list",
-          "named": true
-        },
-        {
-          "type": "pragma",
-          "named": true
-        },
-        {
-          "type": "preproc_conditional_attributes",
-          "named": true
-        },
-        {
-          "type": "trigger_declaration",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "attributed_variable_declaration",
     "named": true,
     "fields": {
@@ -7018,18 +6875,6 @@
           "named": true
         },
         {
-          "type": "attributed_onrun_trigger",
-          "named": true
-        },
-        {
-          "type": "attributed_procedure",
-          "named": true
-        },
-        {
-          "type": "attributed_trigger",
-          "named": true
-        },
-        {
           "type": "caption_class_property",
           "named": true
         },
@@ -7118,6 +6963,10 @@
           "named": true
         },
         {
+          "type": "onrun_trigger",
+          "named": true
+        },
+        {
           "type": "page_type_property",
           "named": true
         },
@@ -7147,6 +6996,10 @@
         },
         {
           "type": "preproc_region",
+          "named": true
+        },
+        {
+          "type": "procedure",
           "named": true
         },
         {
@@ -7219,6 +7072,10 @@
         },
         {
           "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
           "named": true
         },
         {
@@ -8567,10 +8424,6 @@
         },
         {
           "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "attributed_controladdin_procedure",
           "named": true
         },
         {
@@ -23167,10 +23020,6 @@
           "named": true
         },
         {
-          "type": "attributed_interface_procedure",
-          "named": true
-        },
-        {
           "type": "caption_class_property",
           "named": true
         },
@@ -28592,10 +28441,6 @@
           "named": true
         },
         {
-          "type": "attribute_list",
-          "named": true
-        },
-        {
           "type": "auto_split_key_property",
           "named": true
         },
@@ -29310,10 +29155,6 @@
         },
         {
           "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "attribute_list",
           "named": true
         },
         {
@@ -31249,74 +31090,6 @@
     }
   },
   {
-    "type": "preproc_attributed_split_procedure",
-    "named": true,
-    "fields": {
-      "else_header": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "attribute_list",
-            "named": true
-          },
-          {
-            "type": "procedure_header",
-            "named": true
-          }
-        ]
-      },
-      "if_branch": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "attribute_list",
-            "named": true
-          },
-          {
-            "type": "procedure_header",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "pragma",
-          "named": true
-        },
-        {
-          "type": "preproc_conditional_var_sections",
-          "named": true
-        },
-        {
-          "type": "preproc_else",
-          "named": true
-        },
-        {
-          "type": "preproc_endif",
-          "named": true
-        },
-        {
-          "type": "preproc_if",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "preproc_conditional_action_properties",
     "named": true,
     "fields": {},
@@ -31747,33 +31520,6 @@
     }
   },
   {
-    "type": "preproc_conditional_attributes",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_list",
-          "named": true
-        },
-        {
-          "type": "preproc_else",
-          "named": true
-        },
-        {
-          "type": "preproc_endif",
-          "named": true
-        },
-        {
-          "type": "preproc_if",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "preproc_conditional_case",
     "named": true,
     "fields": {},
@@ -31918,15 +31664,7 @@
           "named": true
         },
         {
-          "type": "attributed_onrun_trigger",
-          "named": true
-        },
-        {
-          "type": "attributed_procedure",
-          "named": true
-        },
-        {
-          "type": "attributed_trigger",
+          "type": "attribute_item",
           "named": true
         },
         {
@@ -32014,6 +31752,10 @@
           "named": true
         },
         {
+          "type": "onrun_trigger",
+          "named": true
+        },
+        {
           "type": "page_type_property",
           "named": true
         },
@@ -32055,6 +31797,10 @@
         },
         {
           "type": "preproc_region",
+          "named": true
+        },
+        {
+          "type": "procedure",
           "named": true
         },
         {
@@ -32130,6 +31876,10 @@
           "named": true
         },
         {
+          "type": "trigger_declaration",
+          "named": true
+        },
+        {
           "type": "usage_category_property",
           "named": true
         },
@@ -32181,7 +31931,7 @@
           "named": true
         },
         {
-          "type": "attributed_controladdin_procedure",
+          "type": "attribute_item",
           "named": true
         },
         {
@@ -34579,11 +34329,7 @@
       "required": true,
       "types": [
         {
-          "type": "attributed_procedure",
-          "named": true
-        },
-        {
-          "type": "attributed_trigger",
+          "type": "attribute_item",
           "named": true
         },
         {
@@ -34624,6 +34370,14 @@
         },
         {
           "type": "preproc_region",
+          "named": true
+        },
+        {
+          "type": "procedure",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
           "named": true
         },
         {
@@ -38461,388 +38215,6 @@
     }
   },
   {
-    "type": "preproc_procedure_body_split",
-    "named": true,
-    "fields": {
-      "left": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
-            "type": "biginteger",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "comparison_expression",
-            "named": true
-          },
-          {
-            "type": "conditional_expression",
-            "named": true
-          },
-          {
-            "type": "database_reference",
-            "named": true
-          },
-          {
-            "type": "date_literal",
-            "named": true
-          },
-          {
-            "type": "datetime_literal",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "enum_keyword_qualified_value",
-            "named": true
-          },
-          {
-            "type": "enum_type_reference",
-            "named": true
-          },
-          {
-            "type": "field_access",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "in_operator",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "logical_expression",
-            "named": true
-          },
-          {
-            "type": "member_expression",
-            "named": true
-          },
-          {
-            "type": "multiplicative_expression",
-            "named": true
-          },
-          {
-            "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "qualified_enum_value",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "range_expression",
-            "named": true
-          },
-          {
-            "type": "string_literal",
-            "named": true
-          },
-          {
-            "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "time_literal",
-            "named": true
-          },
-          {
-            "type": "type_specification",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "modifier": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "procedure_modifier",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "name",
-            "named": true
-          }
-        ]
-      },
-      "operator": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "in_operator",
-            "named": true
-          }
-        ]
-      },
-      "return_type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "return_type",
-            "named": true
-          }
-        ]
-      },
-      "right": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "type_specification",
-            "named": true
-          }
-        ]
-      },
-      "temporary": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "temporary",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "additive_expression",
-          "named": true
-        },
-        {
-          "type": "asserterror_statement",
-          "named": true
-        },
-        {
-          "type": "assignment_expression",
-          "named": true
-        },
-        {
-          "type": "assignment_statement",
-          "named": true
-        },
-        {
-          "type": "biginteger",
-          "named": true
-        },
-        {
-          "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "call_expression",
-          "named": true
-        },
-        {
-          "type": "case_statement",
-          "named": true
-        },
-        {
-          "type": "comparison_expression",
-          "named": true
-        },
-        {
-          "type": "conditional_expression",
-          "named": true
-        },
-        {
-          "type": "database_reference",
-          "named": true
-        },
-        {
-          "type": "date_literal",
-          "named": true
-        },
-        {
-          "type": "datetime_literal",
-          "named": true
-        },
-        {
-          "type": "decimal",
-          "named": true
-        },
-        {
-          "type": "empty_statement",
-          "named": true
-        },
-        {
-          "type": "enum_keyword_qualified_value",
-          "named": true
-        },
-        {
-          "type": "enum_type_reference",
-          "named": true
-        },
-        {
-          "type": "exit_statement",
-          "named": true
-        },
-        {
-          "type": "field_access",
-          "named": true
-        },
-        {
-          "type": "for_statement",
-          "named": true
-        },
-        {
-          "type": "foreach_statement",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "if_statement",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "logical_expression",
-          "named": true
-        },
-        {
-          "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "multiplicative_expression",
-          "named": true
-        },
-        {
-          "type": "parameter_list",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
-          "named": true
-        },
-        {
-          "type": "pragma",
-          "named": true
-        },
-        {
-          "type": "preproc_else",
-          "named": true
-        },
-        {
-          "type": "preproc_endif",
-          "named": true
-        },
-        {
-          "type": "preproc_if",
-          "named": true
-        },
-        {
-          "type": "qualified_enum_value",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        },
-        {
-          "type": "range_expression",
-          "named": true
-        },
-        {
-          "type": "repeat_statement",
-          "named": true
-        },
-        {
-          "type": "return_value",
-          "named": true
-        },
-        {
-          "type": "string_literal",
-          "named": true
-        },
-        {
-          "type": "subscript_expression",
-          "named": true
-        },
-        {
-          "type": "time_literal",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        },
-        {
-          "type": "while_statement",
-          "named": true
-        },
-        {
-          "type": "with_statement",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "preproc_split_if",
     "named": true,
     "fields": {
@@ -39993,66 +39365,6 @@
     }
   },
   {
-    "type": "preproc_split_procedure",
-    "named": true,
-    "fields": {
-      "else_header": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "procedure_header",
-            "named": true
-          }
-        ]
-      },
-      "if_header": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "procedure_header",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "pragma",
-          "named": true
-        },
-        {
-          "type": "preproc_conditional_var_sections",
-          "named": true
-        },
-        {
-          "type": "preproc_else",
-          "named": true
-        },
-        {
-          "type": "preproc_endif",
-          "named": true
-        },
-        {
-          "type": "preproc_if",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "preproc_variant_condition_if",
     "named": true,
     "fields": {
@@ -41170,66 +40482,6 @@
     }
   },
   {
-    "type": "procedure_header",
-    "named": true,
-    "fields": {
-      "modifier": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "procedure_modifier",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "name",
-            "named": true
-          }
-        ]
-      },
-      "return_type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "return_type",
-            "named": true
-          }
-        ]
-      },
-      "temporary": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "temporary",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "parameter_list",
-          "named": true
-        },
-        {
-          "type": "return_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "procedure_modifier",
     "named": true,
     "fields": {}
@@ -42276,10 +41528,6 @@
           "named": true
         },
         {
-          "type": "attributed_procedure",
-          "named": true
-        },
-        {
           "type": "caption_class_property",
           "named": true
         },
@@ -42381,6 +41629,10 @@
         },
         {
           "type": "preproc_region",
+          "named": true
+        },
+        {
+          "type": "procedure",
           "named": true
         },
         {
@@ -44748,10 +44000,6 @@
           "named": true
         },
         {
-          "type": "attribute_list",
-          "named": true
-        },
-        {
           "type": "caption_class_property",
           "named": true
         },
@@ -45167,10 +44415,6 @@
         },
         {
           "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "attribute_list",
           "named": true
         },
         {
@@ -49309,10 +48553,6 @@
           "named": true
         },
         {
-          "type": "attributed_procedure",
-          "named": true
-        },
-        {
           "type": "caption_class_property",
           "named": true
         },
@@ -49494,6 +48734,10 @@
         },
         {
           "type": "preproc_region",
+          "named": true
+        },
+        {
+          "type": "procedure",
           "named": true
         },
         {
@@ -49896,14 +49140,6 @@
           "named": true
         },
         {
-          "type": "attributed_procedure",
-          "named": true
-        },
-        {
-          "type": "attributed_trigger",
-          "named": true
-        },
-        {
           "type": "caption_class_property",
           "named": true
         },
@@ -50064,6 +49300,10 @@
           "named": true
         },
         {
+          "type": "procedure",
+          "named": true
+        },
+        {
           "type": "processing_only_property",
           "named": true
         },
@@ -50125,6 +49365,10 @@
         },
         {
           "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
           "named": true
         },
         {
@@ -53950,10 +53194,6 @@
           "named": true
         },
         {
-          "type": "attributed_procedure",
-          "named": true
-        },
-        {
           "type": "caption_class_property",
           "named": true
         },
@@ -54087,6 +53327,10 @@
         },
         {
           "type": "preserve_whitespace_property",
+          "named": true
+        },
+        {
+          "type": "procedure",
           "named": true
         },
         {
@@ -55368,10 +54612,6 @@
     "type": "preproc_region",
     "named": true,
     "extra": true
-  },
-  {
-    "type": "preproc_var_terminator",
-    "named": true
   },
   {
     "type": "quoted_identifier",

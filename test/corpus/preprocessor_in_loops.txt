@@ -30,75 +30,74 @@ codeunit 50100 TestPreprocessor
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (preproc_conditional_variables
+          (preproc_if
+            condition: (preproc_not_expression
+              (identifier)))
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (record_type
                 reference: (quoted_identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (preproc_conditional_variables
+          (preproc_endif)))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (quoted_identifier)
+            (quoted_identifier)))
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list))
+        (repeat_statement
+          (assignment_expression
+            left: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            right: (field_access
+              record: (identifier)
+              field: (quoted_identifier)))
+          (preproc_conditional_statements
             (preproc_if
               condition: (preproc_not_expression
                 (identifier)))
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (record_type
-                  reference: (quoted_identifier))))
-            (preproc_endif)))
-        (code_block
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (quoted_identifier)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)
+                (identifier)))
+            (preproc_endif))
           (call_expression
             function: (member_expression
               object: (identifier)
               property: (identifier))
             arguments: (argument_list))
-          (repeat_statement
-            (assignment_expression
-              left: (field_access
-                record: (identifier)
-                field: (quoted_identifier))
-              right: (field_access
-                record: (identifier)
-                field: (quoted_identifier)))
-            (preproc_conditional_statements
-              (preproc_if
-                condition: (preproc_not_expression
-                  (identifier)))
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)
-                  (identifier)))
-              (preproc_endif))
-            (call_expression
+          condition: (comparison_expression
+            left: (call_expression
               function: (member_expression
                 object: (identifier)
                 property: (identifier))
               arguments: (argument_list))
-            condition: (comparison_expression
-              left: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list))
-              operator: (comparison_operator)
-              right: (integer))))))))
+            operator: (comparison_operator)
+            right: (integer)))))))
 
 ================================================================================
 Preprocessor directives in while loop
@@ -126,40 +125,39 @@ codeunit 50101 TestWhilePreprocessor
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
-        (code_block
-          (while_statement
-            condition: (comparison_expression
-              left: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list))
-              operator: (comparison_operator)
-              right: (integer))
-            body: (code_block
-              (preproc_conditional_statements
-                (preproc_if
-                  condition: (identifier))
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier)))
-                (preproc_else)
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier)))
-                (preproc_endif)))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (while_statement
+          condition: (comparison_expression
+            left: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))
+            operator: (comparison_operator)
+            right: (integer))
+          body: (code_block
+            (preproc_conditional_statements
+              (preproc_if
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)))
+              (preproc_else)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)))
+              (preproc_endif))))))))
 
 ================================================================================
 Preprocessor directives in for loop
@@ -186,33 +184,32 @@ codeunit 50102 TestForPreprocessor
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (for_statement
-            variable: (identifier)
-            start: (integer)
-            direction: (to)
-            end: (integer)
-            body: (code_block
-              (preproc_conditional_statements
-                (preproc_if
-                  condition: (preproc_not_expression
-                    (identifier)))
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal)
-                    (identifier)))
-                (preproc_endif))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (for_statement
+          variable: (identifier)
+          start: (integer)
+          direction: (to)
+          end: (integer)
+          body: (code_block
+            (preproc_conditional_statements
+              (preproc_if
+                condition: (preproc_not_expression
+                  (identifier)))
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (identifier))))))))))
+                  (string_literal)
+                  (identifier)))
+              (preproc_endif))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))))))

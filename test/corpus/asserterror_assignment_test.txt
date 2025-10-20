@@ -33,81 +33,79 @@ codeunit 50100 "Test Asserterror Assignment"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                length: (integer))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                length: (integer))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                length: (integer)))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (string_literal))
-          (assignment_expression
-            left: (identifier)
-            right: (string_literal))
-          (comment)
-          (asserterror_statement
-            body: (assignment_expression
-              left: (identifier)
-              right: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)
-                  (identifier)))))
-          (comment)
-          (if_statement
-            condition: (comparison_expression
-              left: (call_expression
-                function: (identifier)
-                arguments: (argument_list))
-              operator: (comparison_operator)
-              right: (string_literal))
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))))))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (code_type
-                length: (integer))))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (code_type
-                length: (integer)))))
-        return_type: (return_type
-          (type_specification
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
             (code_type
               length: (integer))))
-        (code_block
-          (call_expression
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (code_type
+              length: (integer))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (code_type
+              length: (integer)))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (string_literal))
+        (assignment_expression
+          left: (identifier)
+          right: (string_literal))
+        (comment)
+        (asserterror_statement
+          body: (assignment_expression
+            left: (identifier)
+            right: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)
+                (identifier)))))
+        (comment)
+        (if_statement
+          condition: (comparison_expression
+            left: (call_expression
+              function: (identifier)
+              arguments: (argument_list))
+            operator: (comparison_operator)
+            right: (string_literal))
+          then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))))
+              (string_literal))))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (code_type
+              length: (integer))))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (code_type
+              length: (integer)))))
+      return_type: (return_type
+        (type_specification
+          (code_type
+            length: (integer))))
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))
 
 ================================================================================
 Multiple asserterror assignment patterns
@@ -150,98 +148,95 @@ codeunit 50200 "Complex Asserterror Tests"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
-        (code_block
-          (comment)
-          (asserterror_statement
-            body: (assignment_expression
-              left: (identifier)
-              right: (multiplicative_expression
-                left: (integer)
-                right: (integer))))
-          (comment)
-          (asserterror_statement
-            body: (assignment_expression
-              left: (identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (comment)
+        (asserterror_statement
+          body: (assignment_expression
+            left: (identifier)
+            right: (multiplicative_expression
+              left: (integer)
+              right: (integer))))
+        (comment)
+        (asserterror_statement
+          body: (assignment_expression
+            left: (identifier)
+            right: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))))
+        (comment)
+        (asserterror_statement
+          body: (assignment_expression
+            left: (identifier)
+            right: (multiplicative_expression
+              left: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)))
               right: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list))))
-          (comment)
-          (asserterror_statement
-            body: (assignment_expression
-              left: (identifier)
-              right: (multiplicative_expression
-                left: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (integer)))
-                right: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (integer)))))))))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))
-        return_type: (return_type
-          (type_specification
-            (basic_type)))
-        (code_block
-          (if_statement
-            condition: (comparison_expression
-              left: (identifier)
-              operator: (comparison_operator)
-              right: (integer))
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (exit_statement
-            return_value: (multiplicative_expression
-              left: (identifier)
-              right: (integer))))))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))
-        return_type: (return_type
-          (type_specification
-            (basic_type)))
-        (code_block
-          (exit_statement
-            return_value: (multiplicative_expression
-              left: (identifier)
-              right: (integer))))))))
+                function: (identifier)
+                arguments: (argument_list
+                  (integer))))))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      return_type: (return_type
+        (type_specification
+          (basic_type)))
+      (code_block
+        (if_statement
+          condition: (comparison_expression
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (integer))
+          then_branch: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))
+        (exit_statement
+          return_value: (multiplicative_expression
+            left: (identifier)
+            right: (integer)))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      return_type: (return_type
+        (type_specification
+          (basic_type)))
+      (code_block
+        (exit_statement
+          return_value: (multiplicative_expression
+            left: (identifier)
+            right: (integer)))))))

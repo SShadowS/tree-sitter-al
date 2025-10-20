@@ -58,10 +58,10 @@ pageextension 6085592 "CDC General Ledger Entries" extends "General Ledger Entri
           arguments: (argument_list
             (quoted_identifier)
             (identifier)))))
-    (attribute_list
-      (attribute
-        attribute_name: (identifier)
-        (attribute_arguments
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
           arguments: (expression_list
             (boolean)
             (boolean)))))
@@ -110,10 +110,10 @@ pageextension 54321 "Test Page Extension" extends "Test Base Page"
     object_id: (integer)
     object_name: (quoted_identifier)
     base_object: (quoted_identifier)
-    (attribute_list
-      (attribute
-        attribute_name: (identifier)
-        (attribute_arguments
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
           arguments: (expression_list
             (qualified_enum_value
               enum_type: (identifier)

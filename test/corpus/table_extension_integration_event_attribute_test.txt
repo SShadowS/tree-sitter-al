@@ -27,70 +27,67 @@ tableextension 50001 "Test Extension" extends "Test Table"
     object_id: (integer)
     object_name: (quoted_identifier)
     base_object: (quoted_identifier)
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (boolean)
-              (boolean)))))
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
-        (code_block)))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (boolean)
-              (boolean)))))
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (record_type
-                reference: (identifier)))))
-        (code_block)))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (boolean)
-              (boolean)
-              (boolean)))))
-      (procedure
-        name: (name
-          (identifier))
-        (code_block)))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (boolean)
+            (boolean)))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (record_type
+              reference: (quoted_identifier)))))
+      (code_block))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (boolean)
+            (boolean)))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (boolean)
+            (boolean)
+            (boolean)))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block))))

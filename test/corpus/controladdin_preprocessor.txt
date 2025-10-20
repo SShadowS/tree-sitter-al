@@ -63,22 +63,21 @@ controladdin PowerBIManagement
       (preproc_if
         condition: (preproc_not_expression
           (identifier)))
-      (attributed_controladdin_procedure
-        (attribute_list
-          (attribute
-            attribute_name: (identifier)
-            (attribute_arguments
-              arguments: (expression_list
-                (string_literal)
-                (string_literal)))))
-        (controladdin_procedure
+      (attribute_item
+        attribute: (attribute_content
           name: (identifier)
-          (parameter_list
-            (parameter
-              parameter_name: (name
-                (identifier))
-              parameter_type: (type_specification
-                (text_type))))))
+          arguments: (attribute_arguments
+            arguments: (expression_list
+              (string_literal)
+              (string_literal)))))
+      (controladdin_procedure
+        name: (identifier)
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (text_type)))))
       (preproc_endif))
     (preproc_conditional_controladdin_elements
       (preproc_if
@@ -201,32 +200,31 @@ controladdin PowerBIManagement
       (preproc_if
         condition: (preproc_not_expression
           (identifier)))
-      (attributed_controladdin_procedure
-        (attribute_list
-          (attribute
-            attribute_name: (identifier)
-            (attribute_arguments
-              arguments: (expression_list
-                (string_literal)
-                (string_literal)))))
-        (controladdin_procedure
+      (attribute_item
+        attribute: (attribute_content
           name: (identifier)
-          (parameter_list
-            (parameter
-              parameter_name: (name
-                (identifier))
-              parameter_type: (type_specification
-                (text_type)))
-            (parameter
-              parameter_name: (name
-                (identifier))
-              parameter_type: (type_specification
-                (text_type)))
-            (parameter
-              parameter_name: (name
-                (identifier))
-              parameter_type: (type_specification
-                (text_type))))))
+          arguments: (attribute_arguments
+            arguments: (expression_list
+              (string_literal)
+              (string_literal)))))
+      (controladdin_procedure
+        name: (identifier)
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (text_type)))
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (text_type)))
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (text_type)))))
       (controladdin_procedure
         name: (identifier)
         (parameter_list

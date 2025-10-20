@@ -46,93 +46,89 @@ codeunit 50000 "TestRequestPage Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)))
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (testrequestpage_type
-                reference: (quoted_identifier)))))
-        (code_block)))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)))
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (testrequestpage_type
-                reference: (identifier)))))
-        (code_block)))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)))
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (testrequestpage_type
-                reference: (integer)))))
-        (code_block)))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)))
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (testrequestpage_type
-                reference: (quoted_identifier)))))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list
-              (identifier))))))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier))
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (string_literal)))))
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (testrequestpage_type
-                reference: (quoted_identifier)))))
-        (code_block)))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (testrequestpage_type
+              reference: (quoted_identifier)))))
+      (code_block))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (testrequestpage_type
+              reference: (identifier)))))
+      (code_block))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (testrequestpage_type
+              reference: (integer)))))
+      (code_block))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (testrequestpage_type
+              reference: (quoted_identifier)))))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (identifier)))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (string_literal)))))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (testrequestpage_type
+              reference: (quoted_identifier)))))
+      (code_block))))

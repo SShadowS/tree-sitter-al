@@ -15,15 +15,14 @@ codeunit 50100 TestInterface
   (codeunit_declaration
     (integer)
     (identifier)
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (return_type
-          (type_specification
-            (interface_type
-              (quoted_identifier))))
-        (code_block)))))
+    (procedure
+      (name
+        (identifier))
+      (return_type
+        (type_specification
+          (interface_type
+            (quoted_identifier))))
+      (code_block))))
 
 ================================================================================
 Namespace-Qualified Interface Type
@@ -42,19 +41,18 @@ codeunit 50100 TestInterface
   (codeunit_declaration
     (integer)
     (identifier)
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (return_type
-          (type_specification
-            (interface_type
-              (qualified_interface_reference
-                (identifier)
-                (identifier)
-                (identifier)
-                (quoted_identifier)))))
-        (code_block)))))
+    (procedure
+      (name
+        (identifier))
+      (return_type
+        (type_specification
+          (interface_type
+            (qualified_interface_reference
+              (identifier)
+              (identifier)
+              (identifier)
+              (quoted_identifier)))))
+      (code_block))))
 
 ================================================================================
 Interface Type in Variable Declaration
@@ -91,11 +89,10 @@ codeunit 50100 TestInterface
               (identifier)
               (identifier)
               (quoted_identifier))))))
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (code_block)))))
+    (procedure
+      (name
+        (identifier))
+      (code_block))))
 
 ================================================================================
 Interface Type in Parameter
@@ -114,23 +111,22 @@ codeunit 50100 TestInterface
   (codeunit_declaration
     (integer)
     (identifier)
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (parameter_list
-          (parameter
-            (name
-              (identifier))
-            (type_specification
-              (interface_type
-                (qualified_interface_reference
-                  (identifier)
-                  (identifier)
-                  (quoted_identifier)))))
-          (parameter
-            (name
-              (identifier))
-            (type_specification
-              (basic_type))))
-        (code_block)))))
+    (procedure
+      (name
+        (identifier))
+      (parameter_list
+        (parameter
+          (name
+            (identifier))
+          (type_specification
+            (interface_type
+              (qualified_interface_reference
+                (identifier)
+                (identifier)
+                (quoted_identifier)))))
+        (parameter
+          (name
+            (identifier))
+          (type_specification
+            (basic_type))))
+      (code_block))))

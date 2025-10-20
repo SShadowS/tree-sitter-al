@@ -238,10 +238,11 @@ module.exports = grammar({
     )),
 
     _object_body_element: $ => choice(
+      $.attribute_item,
       $.var_section,
       $.preproc_conditional_var_sections,
-      $.attributed_procedure,
-      $.attributed_trigger,
+      $.procedure,
+      $.trigger_declaration,
       $.pragma,
       $.preproc_region,
       $.preproc_endregion,
@@ -275,11 +276,11 @@ module.exports = grammar({
     ),
     
     _xmlport_element: $ => choice(
+      $.attribute_item,
       $.xmlport_schema_element,
       $.var_section,
       $.preproc_conditional_var_sections,
-      prec.dynamic(2, $.attributed_procedure),  // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(1, $.attribute_item),        // Phase 2: Lower priority for new Rust-style attributes
+      $.procedure,
       $.trigger_declaration,
       $._xmlport_properties,
       $.preproc_conditional_xmlport_properties,
@@ -614,13 +615,14 @@ module.exports = grammar({
       $.preproc_endif,
       '{',
       repeat(choice(
+        $.attribute_item,
         prec(4, $._codeunit_properties),
         $.preproc_conditional_object_properties,
         $.var_section,
         $.preproc_conditional_var_sections,
-        $.attributed_procedure,
-        $.attributed_onrun_trigger, 
-        $.attributed_trigger,
+        $.procedure,
+        $.onrun_trigger,
+        $.trigger_declaration,
         $.preproc_conditional_procedures,
         $.pragma,
         $.preproc_region,
@@ -683,14 +685,14 @@ module.exports = grammar({
     ),
 
     _query_element: $ => choice(
+      $.attribute_item,
       $._universal_properties,       // caption, description, application_area, etc.
       $._query_properties,           // query-specific properties
       $.elements_section,            // dataitem and column definitions
       $.property_list,               // generic property container
       $.preproc_conditional_query_properties,
       $.trigger_declaration,         // triggers like OnBeforeOpen
-      prec.dynamic(2, $.attributed_procedure),        // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(1, $.attribute_item),              // Phase 2: Lower priority for new Rust-style attributes
+      $.procedure,
       $.var_section,                 // var section for global variables
       $.preproc_conditional_var_sections,  // conditional var sections
 
@@ -1385,6 +1387,7 @@ module.exports = grammar({
     ),
 
     _pageextension_element: $ => choice(
+      $.attribute_item,
       $.layout_section,
       $.actions_section,
       $.views_section,  // Support views section in page extensions
@@ -1392,8 +1395,7 @@ module.exports = grammar({
       $.var_section,
       $.preproc_conditional_var_sections,
       $.trigger_declaration,
-      prec.dynamic(2, seq(optional($.attribute_list), $.procedure)),  // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(1, $.attribute_item),              // Phase 2: Lower priority for new Rust-style attributes
+      $.procedure,
       $.preproc_region,
       $.preproc_endregion,
       $.pragma
@@ -1410,13 +1412,13 @@ module.exports = grammar({
     ),
 
     _tableextension_element: $ => choice(
+      $.attribute_item,
       $.fields,
       $.modify_field_declaration,  // Add direct modify field support
       $.keys,
       $.fieldgroups_section,
-      prec.dynamic(2, $.attributed_procedure),  // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(2, $.attributed_trigger),    // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(1, $.attribute_item),              // Phase 2: Lower priority for new Rust-style attributes
+      $.procedure,
+      $.trigger_declaration,
       $.var_section,
       $.preproc_conditional_procedures,  // Support preprocessor conditional procedures
       $._table_properties     // Centralized table properties
@@ -1990,14 +1992,14 @@ module.exports = grammar({
       optional($.implements_clause),
       '{',
       repeat(choice(
+        $.attribute_item,
         prec(4, $._codeunit_properties), // Use individual properties
         $.preproc_conditional_object_properties,
         $.var_section,
         $.preproc_conditional_var_sections,
-        prec.dynamic(2, $.attributed_procedure),  // Phase 2: Prefer legacy attributed pattern
-        prec.dynamic(2, $.attributed_onrun_trigger),  // Phase 2: Prefer legacy attributed pattern
-        prec.dynamic(2, $.attributed_trigger),  // Phase 2: Prefer legacy attributed pattern
-        prec.dynamic(1, $.attribute_item),            // Phase 2: Lower priority for new Rust-style attributes
+        $.procedure,
+        $.onrun_trigger,
+        $.trigger_declaration,
         $.preproc_conditional_procedures,
         $.pragma,
 
@@ -2144,11 +2146,10 @@ module.exports = grammar({
     ),
 
     _controladdin_element: $ => choice(
+      $.attribute_item,
       $._controladdin_properties,    // Centralized properties
       $.controladdin_event,          // ControlAddIn structural elements
       $.controladdin_procedure,      // ControlAddIn procedures without attributes
-      prec.dynamic(2, $.attributed_controladdin_procedure),  // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(1, $.attribute_item),              // Phase 2: Lower priority for new Rust-style attributes
       $.property_list,               // Generic fallback
       $.preproc_conditional_controladdin_elements
     ),
@@ -2271,10 +2272,9 @@ module.exports = grammar({
       )),
       '{',
       repeat(choice(
+        $.attribute_item,
         $._interface_properties,
-        $.interface_procedure,
-        prec.dynamic(2, $.attributed_interface_procedure),  // Phase 2: Prefer legacy attributed pattern
-        prec.dynamic(1, $.attribute_item),            // Phase 2: Lower priority for new Rust-style attributes
+        $.interface_procedure
       )),
       '}'
     ),
@@ -2324,21 +2324,22 @@ module.exports = grammar({
 
     _reportextension_element: $ => choice(
       // Report extension can modify dataset, requestpage, etc.
+      $.attribute_item,
       $.dataset_section,
       $.requestpage_section,
       $.rendering_section,
       $._report_properties,
       $.var_section,
       $.preproc_conditional_var_sections,
-      prec.dynamic(2, seq(optional($.attribute_list), $.procedure)),  // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(2, seq(optional($.attribute_list), $.trigger_declaration)),  // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(1, $.attribute_item),              // Phase 2: Lower priority for new Rust-style attributes
+      $.procedure,
+      $.trigger_declaration,
       $.preproc_region,
       $.preproc_endregion,
       $.pragma
     ),
 
     _report_element: $ => choice(
+      $.attribute_item,
       // Structural report elements (not properties)
       $.dataset_section,
       $.labels_section,
@@ -2349,9 +2350,8 @@ module.exports = grammar({
       $.preproc_conditional_var_sections,
 
       // Report procedures and triggers
-      prec.dynamic(2, seq(optional($.attribute_list), $.procedure)),  // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(2, seq(optional($.attribute_list), $.trigger_declaration)),  // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(1, $.attribute_item),              // Phase 2: Lower priority for new Rust-style attributes
+      $.procedure,
+      $.trigger_declaration,
       $.preproc_conditional_procedures,
 
       // Preprocessor conditional report properties
@@ -2780,12 +2780,12 @@ module.exports = grammar({
     )),
 
     _page_element: $ => choice(
+      $.attribute_item,
       // Structural page elements (not properties)
       $.layout_section,
       $.actions_section,
       $.views_section,  // Support page views section
-      prec.dynamic(2, seq(optional($.attribute_list), $.procedure)),  // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(1, $.attribute_item),              // Phase 2: Lower priority for new Rust-style attributes
+      $.procedure,
       $.var_section,
       $.preproc_conditional_var_sections, // Support preprocessor conditional var sections
       $.trigger_declaration,
@@ -3967,6 +3967,7 @@ module.exports = grammar({
 
 
     _table_element: $ => prec(1, choice(
+      $.attribute_item,
       // Structural table elements (not properties)
       $.fields,  // Fields section should be primary
       $.keys,
@@ -3979,8 +3980,7 @@ module.exports = grammar({
       $.named_trigger,
 
       // Procedures
-      prec.dynamic(2, $.attributed_procedure),  // Phase 2: Prefer legacy attributed pattern
-      prec.dynamic(1, $.attribute_item),              // Phase 2: Lower priority for new Rust-style attributes
+      $.procedure,
       $.preproc_conditional_procedures,
 
       // All table properties now centralized
@@ -7041,10 +7041,10 @@ enum_type: $ => prec(1, seq(
     preproc_conditional_controladdin_properties: _preproc_conditional_block_template($ => choice($._controladdin_properties, $.property_list)),
 
     preproc_conditional_controladdin_elements: _preproc_conditional_block_template($ => choice(
+      $.attribute_item,
       $._controladdin_properties,
       $.controladdin_event,
       $.controladdin_procedure,
-      $.attributed_controladdin_procedure,
       $.property_list,
       $.preproc_conditional_controladdin_elements  // Allow nesting
     )),

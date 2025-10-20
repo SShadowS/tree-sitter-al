@@ -34,13 +34,12 @@ codeunit 50100 "Permission Test"
           keyword: (tabledata_keyword)
           table_name: (identifier)
           permission: (permission_type))))
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))))))
+    (onrun_trigger
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))
 
 ================================================================================
 Report with TestPermissions property
@@ -152,12 +151,11 @@ codeunit 50101 "Non Restricted Test"
     object_name: (quoted_identifier)
     (test_permissions_property
       value: (test_permissions_value))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))

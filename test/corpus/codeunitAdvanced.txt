@@ -96,29 +96,28 @@ codeunit 50100 MyCodeunit
   (codeunit_declaration
     (integer)
     (identifier)
-    (attributed_procedure
-      (procedure
-        (procedure_modifier)
-        (name
-          (identifier))
-        (parameter_list
-          (parameter
-            (name
-              (identifier))
-            (type_specification
-              (basic_type)))
-          (parameter
-            (modifier)
-            (name
-              (identifier))
-            (type_specification
-              (text_type))))
-        (return_type
+    (procedure
+      (procedure_modifier)
+      (name
+        (identifier))
+      (parameter_list
+        (parameter
+          (name
+            (identifier))
           (type_specification
             (basic_type)))
-        (code_block
-          (exit_statement
-            (boolean)))))))
+        (parameter
+          (modifier)
+          (name
+            (identifier))
+          (type_specification
+            (text_type))))
+      (return_type
+        (type_specification
+          (basic_type)))
+      (code_block
+        (exit_statement
+          (boolean))))))
 
 ==================
 Basic Trigger
@@ -136,13 +135,12 @@ codeunit 50100 MyCodeunit
   (codeunit_declaration
     (integer)
     (identifier)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block
-          (call_expression
-            (identifier)
-            (argument_list
-              (string_literal))))))))
+    (onrun_trigger
+      (code_block
+        (call_expression
+          (identifier)
+          (argument_list
+            (string_literal)))))))
 
 ==================
 Procedure With Var Section
@@ -164,37 +162,36 @@ codeunit 50100 MyCodeunit
   (codeunit_declaration
     (integer)
     (identifier)
-    (attributed_procedure
-      (procedure
-        (procedure_modifier)
-        (name
-          (identifier))
-        (parameter_list
-          (parameter
-            (name
-              (identifier))
-            (type_specification
-              (code_type
-                (integer)))))
-        (var_section
-          (variable_declaration
+    (procedure
+      (procedure_modifier)
+      (name
+        (identifier))
+      (parameter_list
+        (parameter
+          (name
+            (identifier))
+          (type_specification
+            (code_type
+              (integer)))))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (record_type
+              (identifier))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (call_expression
+          (member_expression
             (identifier)
-            (type_specification
-              (record_type
-                (identifier))))
-          (variable_declaration
+            (identifier))
+          (argument_list
+            (identifier)))
+        (assignment_expression
+          (identifier)
+          (field_access
             (identifier)
-            (type_specification
-              (basic_type))))
-        (code_block
-          (call_expression
-            (member_expression
-              (identifier)
-              (identifier))
-            (argument_list
-              (identifier)))
-          (assignment_expression
-            (identifier)
-            (field_access
-              (identifier)
-              (quoted_identifier))))))))
+            (quoted_identifier)))))))

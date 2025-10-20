@@ -24,42 +24,41 @@ codeunit 123 "Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (unary_expression
-              operator: (unary_operator)
-              operand: (integer)))
-          (assignment_expression
-            left: (identifier)
-            right: (integer))
-          (assignment_expression
-            left: (identifier)
-            right: (unary_expression
-              operator: (unary_operator)
-              operand: (boolean)))
-          (assignment_expression
-            left: (identifier)
-            right: (unary_expression
-              operator: (unary_operator)
-              operand: (boolean)))
-          (assignment_expression
-            left: (identifier)
-            right: (unary_expression
-              operator: (unary_operator)
-              operand: (boolean))))))))
+    (onrun_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (unary_expression
+            operator: (unary_operator)
+            operand: (integer)))
+        (assignment_expression
+          left: (identifier)
+          right: (integer))
+        (assignment_expression
+          left: (identifier)
+          right: (unary_expression
+            operator: (unary_operator)
+            operand: (boolean)))
+        (assignment_expression
+          left: (identifier)
+          right: (unary_expression
+            operator: (unary_operator)
+            operand: (boolean)))
+        (assignment_expression
+          left: (identifier)
+          right: (unary_expression
+            operator: (unary_operator)
+            operand: (boolean)))))))

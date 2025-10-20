@@ -21,10 +21,9 @@ codeunit 50000 "Pragma Test"
     object_id: (integer)
     object_name: (quoted_identifier)
     (pragma)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (pragma)
-        (code_block
-          (comment))))))
+    (procedure
+      name: (name
+        (identifier))
+      (pragma)
+      (code_block
+        (comment)))))

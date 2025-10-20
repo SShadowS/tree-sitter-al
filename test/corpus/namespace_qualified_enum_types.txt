@@ -163,11 +163,10 @@ codeunit 126 TestCodeunit
               (identifier)
               (identifier)
               (quoted_identifier))))))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block))))
 
 ================================================================================
 Namespace-qualified enum in procedure parameter
@@ -186,19 +185,18 @@ codeunit 127 ParamTest
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (enum_type
-                enum_name: (namespace_qualified_enum_name
-                  (identifier)
-                  (identifier)
-                  (identifier)
-                  (quoted_identifier))))))
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (enum_type
+              enum_name: (namespace_qualified_enum_name
+                (identifier)
+                (identifier)
+                (identifier)
+                (quoted_identifier))))))
+      (code_block))))

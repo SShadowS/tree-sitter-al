@@ -34,85 +34,84 @@ codeunit 123 "Character Validation Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (for_statement
-            variable: (identifier)
-            start: (integer)
-            direction: (to)
-            end: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (identifier)))
-            body: (code_block
-              (case_statement
-                expression: (boolean)
-                (case_branch
-                  left: (subscript_expression
-                    array: (identifier)
-                    indices: (expression_list
-                      (identifier)))
-                  operator: (in_operator)
-                  right: (list_literal
-                    (expression_list
-                      (range_expression
-                        left: (string_literal)
-                        right: (string_literal))))
-                  statements: (assignment_expression
-                    left: (identifier)
-                    right: (boolean)))
-                (case_branch
-                  left: (subscript_expression
-                    array: (identifier)
-                    indices: (expression_list
-                      (identifier)))
-                  operator: (in_operator)
-                  right: (list_literal
-                    (expression_list
-                      (range_expression
-                        left: (string_literal)
-                        right: (string_literal))))
-                  statements: (assignment_expression
-                    left: (identifier)
-                    right: (boolean)))
-                (case_branch
-                  left: (subscript_expression
-                    array: (identifier)
-                    indices: (expression_list
-                      (identifier)))
-                  operator: (in_operator)
-                  right: (list_literal
-                    (expression_list
-                      (range_expression
-                        left: (string_literal)
-                        right: (string_literal))))
-                  statements: (assignment_expression
-                    left: (identifier)
-                    right: (boolean)))
-                (else_branch
-                  statements: (code_block
-                    (comment)))))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (for_statement
+          variable: (identifier)
+          start: (integer)
+          direction: (to)
+          end: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)))
+          body: (code_block
+            (case_statement
+              expression: (boolean)
+              (case_branch
+                left: (subscript_expression
+                  array: (identifier)
+                  indices: (expression_list
+                    (identifier)))
+                operator: (in_operator)
+                right: (list_literal
+                  (expression_list
+                    (range_expression
+                      left: (string_literal)
+                      right: (string_literal))))
+                statements: (assignment_expression
+                  left: (identifier)
+                  right: (boolean)))
+              (case_branch
+                left: (subscript_expression
+                  array: (identifier)
+                  indices: (expression_list
+                    (identifier)))
+                operator: (in_operator)
+                right: (list_literal
+                  (expression_list
+                    (range_expression
+                      left: (string_literal)
+                      right: (string_literal))))
+                statements: (assignment_expression
+                  left: (identifier)
+                  right: (boolean)))
+              (case_branch
+                left: (subscript_expression
+                  array: (identifier)
+                  indices: (expression_list
+                    (identifier)))
+                operator: (in_operator)
+                right: (list_literal
+                  (expression_list
+                    (range_expression
+                      left: (string_literal)
+                      right: (string_literal))))
+                statements: (assignment_expression
+                  left: (identifier)
+                  right: (boolean)))
+              (else_branch
+                statements: (code_block
+                  (comment))))))))))

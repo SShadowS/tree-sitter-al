@@ -31,90 +31,88 @@ codeunit 50100 "Test Codeunit"
     object_name: (quoted_identifier)
     (event_subscriber_instance_property
       value: (value))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (qualified_enum_value
-                enum_type: (identifier)
-                value: (identifier))
-              (qualified_enum_value
-                enum_type: (identifier)
-                value: (quoted_identifier))
-              (string_literal)
-              (string_literal)
-              (boolean)
-              (boolean)))))
-      (pragma)
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type
-                length: (integer))))
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (identifier))
-          (assignment_expression
-            left: (identifier)
-            right: (parenthesized_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (string_literal)))))))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (qualified_enum_value
-                enum_type: (identifier)
-                value: (identifier))
-              (qualified_enum_value
-                enum_type: (identifier)
-                value: (quoted_identifier))
-              (string_literal)
-              (string_literal)
-              (boolean)
-              (boolean)))))
-      (pragma)
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type)))
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (identifier))
-          (assignment_expression
-            left: (identifier)
-            right: (boolean)))))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier))
+            (qualified_enum_value
+              enum_type: (identifier)
+              value: (quoted_identifier))
+            (string_literal)
+            (string_literal)
+            (boolean)
+            (boolean)))))
+    (pragma)
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type
+              length: (integer))))
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (identifier))
+        (assignment_expression
+          left: (identifier)
+          right: (parenthesized_expression
+            (comparison_expression
+              left: (identifier)
+              operator: (comparison_operator)
+              right: (string_literal))))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier))
+            (qualified_enum_value
+              enum_type: (identifier)
+              value: (quoted_identifier))
+            (string_literal)
+            (string_literal)
+            (boolean)
+            (boolean)))))
+    (pragma)
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type)))
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (identifier))
+        (assignment_expression
+          left: (identifier)
+          right: (boolean))))))

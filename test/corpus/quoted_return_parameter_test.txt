@@ -21,31 +21,29 @@ codeunit 50000 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (return_value
-          return_value: (quoted_identifier))
-        return_type: (return_type
-          (type_specification
-            (text_type
-              length: (integer))))
-        (code_block
-          (exit_statement
-            return_value: (string_literal)))))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (return_value
-          return_value: (quoted_identifier))
-        return_type: (return_type
-          (type_specification
-            (basic_type)))
-        (code_block
-          (exit_statement
-            return_value: (decimal)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (return_value
+        return_value: (quoted_identifier))
+      return_type: (return_type
+        (type_specification
+          (text_type
+            length: (integer))))
+      (code_block
+        (exit_statement
+          return_value: (string_literal))))
+    (procedure
+      name: (name
+        (identifier))
+      (return_value
+        return_value: (quoted_identifier))
+      return_type: (return_type
+        (type_specification
+          (basic_type)))
+      (code_block
+        (exit_statement
+          return_value: (decimal))))))
 
 ================================================================================
 Procedure with unquoted return parameter name
@@ -65,15 +63,14 @@ codeunit 50001 "Another Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (return_value
-          return_value: (identifier))
-        return_type: (return_type
-          (type_specification
-            (basic_type)))
-        (code_block
-          (exit_statement
-            return_value: (integer)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (return_value
+        return_value: (identifier))
+      return_type: (return_type
+        (type_specification
+          (basic_type)))
+      (code_block
+        (exit_statement
+          return_value: (integer))))))

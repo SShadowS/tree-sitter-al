@@ -20,28 +20,27 @@ codeunit 50000 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (additive_expression
-              left: (additive_expression
-                left: (identifier)
-                right: (string_literal))
-              right: (identifier))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (additive_expression
+            left: (additive_expression
+              left: (identifier)
+              right: (string_literal))
+            right: (identifier)))))))

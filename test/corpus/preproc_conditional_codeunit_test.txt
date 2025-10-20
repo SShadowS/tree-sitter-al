@@ -66,18 +66,19 @@ codeunit 1448 "DSACryptoServiceProvider Impl." implements "Signature Algorithm v
       value: (inherent_permissions_value
         (permission_type)))
     (var_section
+      (attributed_variable_declaration
+        attributes: (attribute_list
+          (attribute
+            attribute_name: (identifier)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              reference: (dotnet_type_name))))))
+    (attributed_procedure
       (attribute_list
         (attribute
           attribute_name: (identifier)))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (dotnet_type
-            reference: (dotnet_type_name))))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier))))
-    (attributed_procedure
       (procedure
         name: (name
           (identifier))
@@ -126,8 +127,7 @@ codeunit 50000 "Test Codeunit" implements "Interface 1", "Interface 2"
       interface: (quoted_identifier)
       interface: (quoted_identifier))
     (preproc_endif)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block))))

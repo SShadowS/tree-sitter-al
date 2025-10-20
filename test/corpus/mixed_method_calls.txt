@@ -34,46 +34,45 @@ codeunit 50100 MyCodeunit
         (identifier)
         (type_specification
           (basic_type))))
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block
-          (call_expression
+    (onrun_trigger
+      (code_block
+        (call_expression
+          (identifier)
+          (argument_list
+            (string_literal)))
+        (call_expression
+          (member_expression
             (identifier)
-            (argument_list
-              (string_literal)))
+            (identifier))
+          (argument_list
+            (string_literal)))
+        (assignment_expression
+          (identifier)
+          (integer))
+        (call_expression
+          (identifier)
+          (argument_list
+            (string_literal)
+            (identifier)))
+        (call_expression
+          (member_expression
+            (identifier)
+            (identifier))
+          (argument_list
+            (quoted_identifier)
+            (string_literal)
+            (string_literal)))
+        (if_statement
           (call_expression
             (member_expression
               (identifier)
               (identifier))
-            (argument_list
-              (string_literal)))
-          (assignment_expression
-            (identifier)
-            (integer))
-          (call_expression
-            (identifier)
-            (argument_list
-              (string_literal)
-              (identifier)))
-          (call_expression
-            (member_expression
-              (identifier)
-              (identifier))
-            (argument_list
-              (quoted_identifier)
-              (string_literal)
-              (string_literal)))
-          (if_statement
+            (argument_list))
+          (code_block
             (call_expression
-              (member_expression
-                (identifier)
-                (identifier))
-              (argument_list))
-            (code_block
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal))))))))))
+              (identifier)
+              (argument_list
+                (string_literal)))))))))
 
 ==================
 Complex Parameter Calls
@@ -104,30 +103,29 @@ codeunit 50100 MyCodeunit
         (type_specification
           (record_type
             (identifier)))))
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block
+    (onrun_trigger
+      (code_block
+        (call_expression
+          (identifier)
+          (argument_list
+            (string_literal)
+            (field_access
+              (identifier)
+              (quoted_identifier))
+            (field_access
+              (identifier)
+              (quoted_identifier))))
+        (if_statement
           (call_expression
-            (identifier)
+            (member_expression
+              (identifier)
+              (identifier))
             (argument_list
-              (string_literal)
-              (field_access
-                (identifier)
-                (quoted_identifier))
               (field_access
                 (identifier)
                 (quoted_identifier))))
-          (if_statement
+          (code_block
             (call_expression
-              (member_expression
-                (identifier)
-                (identifier))
+              (identifier)
               (argument_list
-                (field_access
-                  (identifier)
-                  (quoted_identifier))))
-            (code_block
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal))))))))))
+                (string_literal)))))))))

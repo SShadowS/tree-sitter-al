@@ -40,36 +40,35 @@ codeunit 50100 "Enum Variable Test"
         name: (identifier)
         type: (type_specification
           (basic_type))))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                reference: (dotnet_type_name))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (string_literal))
-          (assignment_expression
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier)))
-                (string_literal)))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              reference: (dotnet_type_name))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (string_literal))
+        (assignment_expression
+          left: (identifier)
+          right: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)))
+              (string_literal))))))))
 
 ================================================================================
 Enum in complex DotNet scenarios
@@ -95,78 +94,77 @@ codeunit 50101 "X509 Certificate Handler"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)))
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (dotnet_type
-                reference: (dotnet_type_name))))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (enum_type
-                enum_name: (quoted_identifier))))
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (text_type))))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                reference: (dotnet_type_name))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                reference: (dotnet_type_name))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                reference: (dotnet_type_name)))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier)))
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier))))))
-          (assignment_expression
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list
-                (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    property: (identifier))
-                  arguments: (argument_list
-                    (identifier)))))))))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (dotnet_type
+              reference: (dotnet_type_name))))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (enum_type
+              enum_name: (quoted_identifier))))
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (text_type))))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              reference: (dotnet_type_name))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              reference: (dotnet_type_name))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              reference: (dotnet_type_name)))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier))))))
+        (assignment_expression
+          left: (identifier)
+          right: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier))))))))))
 
 ================================================================================
 Enum case variations as identifiers
@@ -215,30 +213,29 @@ codeunit 50102 "Case Test"
         name: (identifier)
         type: (type_specification
           (basic_type))))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                length: (integer))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (option_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (integer))
-          (assignment_expression
-            left: (identifier)
-            right: (string_literal))
-          (assignment_expression
-            left: (identifier)
-            right: (boolean))
-          (assignment_expression
-            left: (identifier)
-            right: (decimal)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (code_type
+              length: (integer))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (option_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (integer))
+        (assignment_expression
+          left: (identifier)
+          right: (string_literal))
+        (assignment_expression
+          left: (identifier)
+          right: (boolean))
+        (assignment_expression
+          left: (identifier)
+          right: (decimal))))))

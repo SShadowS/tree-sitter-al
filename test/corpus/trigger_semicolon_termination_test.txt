@@ -30,38 +30,36 @@ codeunit 50000 "Install Codeunit"
     (subtype_property
       value: (value
         (identifier)))
-    (attributed_trigger
-      (trigger_declaration
-        name: (trigger_name)
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (codeunit_type
-                reference: (quoted_identifier)))))
-        (code_block
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list)))))
-    (attributed_trigger
-      (trigger_declaration
-        name: (trigger_name)
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (codeunit_type
-                reference: (quoted_identifier)))))
-        (code_block
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list
-              (string_literal)
-              (string_literal))))))))
+    (trigger_declaration
+      name: (trigger_name)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (codeunit_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list))))
+    (trigger_declaration
+      name: (trigger_name)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (codeunit_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (string_literal)
+            (string_literal)))))))
 
 ================================================================================
 Trigger without semicolon (backward compatibility)
@@ -83,14 +81,13 @@ codeunit 50001 "Normal Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (string_literal)))))))
+    (onrun_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (string_literal))))))
