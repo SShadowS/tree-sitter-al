@@ -573,8 +573,8 @@ module.exports = grammar({
       optional($.implements_clause),
       '{',
       repeat(choice(
-        $._enum_properties, 
-        $.enum_value_declaration,
+        $._enum_properties,
+        seq(repeat($.attribute_item), $.enum_value_declaration),
         $.preproc_conditional_enum_content  // Support mixed content in conditional blocks (properties and/or values)
       )),
       '}'
@@ -587,7 +587,7 @@ module.exports = grammar({
       field('base_object', $._identifier_choice),
       '{',
       repeat(choice(
-        $.enum_value_declaration,
+        seq(repeat($.attribute_item), $.enum_value_declaration),
         $.preproc_if,
         $.preproc_else,
         $.preproc_endif,
@@ -4780,8 +4780,8 @@ enum_type: $ => prec(1, seq(
       kw('fields'),
       '{',
       repeat(choice(
-        $.field_declaration, 
-        $.modify_field_declaration,
+        seq(repeat($.attribute_item), $.field_declaration),
+        seq(repeat($.attribute_item), $.modify_field_declaration),
         $.preproc_conditional_fields
       )),
       '}'
@@ -5743,8 +5743,8 @@ enum_type: $ => prec(1, seq(
     ),
 
     parameter_list: $ => seq(
-      $.parameter,
-      repeat(seq(';', $.parameter))
+      seq(repeat($.attribute_item), $.parameter),
+      repeat(seq(';', seq(repeat($.attribute_item), $.parameter)))
     ),
 
     modifier: $ => kw('var'),

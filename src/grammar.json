@@ -1916,8 +1916,20 @@
                 "name": "_enum_properties"
               },
               {
-                "type": "SYMBOL",
-                "name": "enum_value_declaration"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "attribute_item"
+                    }
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "enum_value_declaration"
+                  }
+                ]
               },
               {
                 "type": "SYMBOL",
@@ -1971,8 +1983,20 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "enum_value_declaration"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "attribute_item"
+                    }
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "enum_value_declaration"
+                  }
+                ]
               },
               {
                 "type": "SYMBOL",
@@ -21369,12 +21393,36 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "field_declaration"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "attribute_item"
+                    }
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "field_declaration"
+                  }
+                ]
               },
               {
-                "type": "SYMBOL",
-                "name": "modify_field_declaration"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "attribute_item"
+                    }
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "modify_field_declaration"
+                  }
+                ]
               },
               {
                 "type": "SYMBOL",
@@ -25870,8 +25918,20 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "parameter"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "attribute_item"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "parameter"
+            }
+          ]
         },
         {
           "type": "REPEAT",
@@ -25883,8 +25943,20 @@
                 "value": ";"
               },
               {
-                "type": "SYMBOL",
-                "name": "parameter"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "attribute_item"
+                    }
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "parameter"
+                  }
+                ]
               }
             ]
           }
