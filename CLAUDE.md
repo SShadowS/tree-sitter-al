@@ -1,867 +1,367 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-## Project Overview
+**Current Status**: 97.3% production file success rate (14,946/15,358), 851 tests passing, comprehensive preprocessor support
 
-This is a tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central. The project provides grammar definitions to enable syntax highlighting, code analysis, and language tooling support.
+## Quick Reference
 
-**Current status**: 
-- Production files: 97.3% success rate (14,946 out of 15,358 production AL files from BC.History parse successfully)
-- Test suite: 851 tests passing (run `tree-sitter test` to verify)
-- All tests pass including preprocessor patterns and edge cases
-- Grammar improvements completed through 20+ iterations
-- Recent major achievement: Comprehensive preprocessor support via external scanner
-
-## Development Commands
-
-### Core Grammar Development
+**Essential Commands:**
 ```bash
-# Comprehensive validation (recommended - runs all checks)
-./validate-grammar.sh        # Quick validation
-./validate-grammar.sh --full # Include AL file parsing test
+# Validation (run before completing any task)
+./validate-grammar.sh        # Quick: generation, tests, orphan/duplicate detection
+./validate-grammar.sh --full # Full: includes production AL file parsing
 
-# Individual commands:
-# Generate parser from grammar.js changes
-tree-sitter generate
-
-# Build native parser
-tree-sitter build
-
-# Test grammar changes
-tree-sitter test
-
-# Test specific patterns
-tree-sitter test -i "table"
-tree-sitter test -i "page_action"
-
-# Advanced testing options
-tree-sitter test -i "regex_pattern"          # Include tests matching regex
-tree-sitter test -e "regex_pattern"          # Exclude tests matching regex
-tree-sitter test --file-name "filename.txt"  # Run tests from specific file
-tree-sitter test -u                          # Update test expectations
-tree-sitter test -d                          # Show parsing debug log
-tree-sitter test --debug-build               # Compile parser in debug mode
-tree-sitter test -D                          # Generate debug graphs (log.html)
-tree-sitter test --wasm                      # Use WebAssembly parser
-tree-sitter test --show-fields               # Force show fields in diffs
-tree-sitter test --stat all                  # Show parsing statistics
-tree-sitter test -r                          # Force rebuild parser
-tree-sitter test --overview-only             # Show only pass-fail overview
-
-# Combined development cycle
-tree-sitter generate && tree-sitter test
+# Standard development cycle
+tree-sitter generate         # Generate parser from grammar.js
+tree-sitter test            # Run test suite
+tree-sitter test -u         # Update test expectations (only if no ERRORs)
+tree-sitter parse file.al -d > debug.log 2>&1  # Debug specific files
+python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
+tree-sitter playground      # Interactive web-based testing
 ```
 
-### Grammar Validation Script
-The `validate-grammar.sh` script provides comprehensive validation in a single command:
+**Common Test Options:**
+- `-i "pattern"` - Include tests matching pattern
+- `-e "pattern"` - Exclude tests matching pattern
+- `--file-name "test.txt"` - Run specific test file
+- `-d` - Show debug log
+- `-D` - Generate debug graphs (log.html)
 
-**Features:**
-- **Parser generation and build** - Ensures grammar compiles correctly
-- **Test suite execution** - Runs all tests and reports pass/fail statistics
-- **Orphan rule detection** - Finds unused grammar rules using `find_unused_definitions.py`
-- **Duplicate rule detection** - Identifies duplicate definitions using `analyze_duplicates.py`
-- **AL file parsing test** (optional) - Tests against real Business Central files with `--full` flag
-- **Common issue detection** - Checks for case-sensitive keywords and TODO comments
-- **Colored output** - Clear visual feedback with success/warning/error indicators
+## Architecture
 
-**Usage:**
-```bash
-# Quick validation (recommended for regular development)
-./validate-grammar.sh
+**Core Files:**
+- `grammar.js` - Main grammar definition (never edit `src/parser.c`, auto-generated)
+- `src/scanner.c` - External scanner for complex preprocessor patterns
+- `test/corpus/` - Test suite with AL code and expected parse trees
 
-# Full validation including AL file parsing test
-./validate-grammar.sh --full
+**DRY Architecture:**
+- **Properties**: Defined once, organized into semantic categories (`_universal_properties`, `_page_properties`, etc.)
+- **Templates**: Reusable patterns for modifications, properties, etc.
+- **Composition**: Property groups composed from semantic categories
+
+## Attribute Handling
+
+**Architecture:** Attributes are first-class statements (Rust/C# pattern).
+
+**How it works:**
+- Attributes appear as `attribute_item` nodes in the parse tree
+- They are siblings to declarations, not nested within them
+- Preprocessor directives can appear between attributes and declarations
+- Semantic analysis (post-parse) associates attributes with following declarations
+
+**Valid patterns:**
+
+```al
+// Multiple attributes before a procedure
+[Scope('OnPrem')]
+[IntegrationEvent(false, false)]
+procedure MyEvent() begin end;
+
+// Attribute before preprocessor directive (✅ NOW WORKS!)
+[Obsolete('Use NewVersion', '24.0')]
+#if not CLEAN24
+procedure OldVersion() begin end;
+#endif
+
+// Attributes on table fields
+table 50100 MyTable
+{
+    fields
+    {
+        [ExternalName('ID')]
+        field(1; "No."; Code[20]) { }
+    }
+}
+
+// Attributes on parameters
+procedure Test([Mandatory] Param: Integer) begin end;
+
+// Attributes on enum values
+enum 50100 Status
+{
+    [Caption('Active')]
+    value(0; Active) { }
+}
 ```
 
-The script exits with status 0 if all checks pass, or 1 if any issues are found.
+**Migration for Tooling:**
 
-### Interactive Development
-```bash
-# Web-based playground for testing
-tree-sitter playground
-
-# Parse and debug specific AL code
-tree-sitter parse path/to/file.al --debug
-echo "table 123 Test {}" | tree-sitter parse --debug # Remember to always encapsulate AL code in a codeunit or table definition
-
-# Advanced parsing options
-tree-sitter parse file.al --paths paths_file.txt     # Parse files from paths file
-tree-sitter parse file.al -d pretty                  # Debug with pretty output
-tree-sitter parse file.al --debug-build              # Use debug build parser
-tree-sitter parse file.al -D                         # Generate debug graphs
-tree-sitter parse file.al --dot                      # Output as graphviz dot
-tree-sitter parse file.al -x                         # Output as XML
-tree-sitter parse file.al -c                         # Output as pretty CST
-tree-sitter parse file.al -s                         # Show statistics
-tree-sitter parse file.al -t                         # Measure execution time
-tree-sitter parse file.al -j                         # JSON output
-tree-sitter parse file.al -n 5                       # Parse specific test number
-tree-sitter parse file.al -r                         # Force rebuild parser
-tree-sitter parse file.al --no-ranges                # Omit ranges in output
+OLD parse tree structure:
+```
+(attributed_procedure
+  (attribute_list
+    (attribute ...))
+  (procedure ...))
 ```
 
-### Building Language Bindings
-```bash
-# WebAssembly build
-tree-sitter build --wasm
-
-# Node.js bindings
-npm run build
-npm start  # Builds WASM and starts playground
-
-# Language-specific builds
-make all        # C static/shared libraries
-cargo build     # Rust crate
-python setup.py build  # Python extension
+NEW parse tree structure:
+```
+(object_body
+  (attribute_item
+    attribute: (attribute_content ...))
+  (procedure ...))
 ```
 
-### Package Management
-```bash
-# Node.js dependencies
-npm install
-npm test  # Runs Node.js binding tests
+Attributes are now separate nodes at the same level as declarations, requiring semantic binding in post-parse analysis.
 
-# Alternative build systems
-make test     # Run tests via Makefile
-cmake --build build --target test  # CMake
+## Testing
+
+**Test Format** (`test/corpus/*.txt`):
 ```
-
-## Architecture Overview
-
-### Core Files Structure
-- **`grammar.js`**: Main grammar definition file - the heart of the parser
-- **`src/parser.c`**: Auto-generated C parser code (never edit manually)
-- **`src/grammar.json`**: Compiled grammar representation
-- **`test/corpus/`**: Comprehensive test suite with AL examples and expected parse trees
-
-### Grammar Organization
-The grammar is monolithic in `grammar.js` but logically organized into sections:
-- Object definitions (table, page, codeunit, enum, etc.)
-- Extension objects (tableextension, pageextension)
-- Statements and expressions
-- Built-in functions and operators
-- Property definitions
-- Trigger and procedure handling
-
-### DRY (Don't Repeat Yourself) Principle
-The grammar follows DRY principles extensively to minimize duplication and improve maintainability:
-- **Centralized Property Definitions**: Properties are defined once and reused across all relevant contexts through semantic category lists
-- **Template Functions**: Common patterns like modifications use template functions to avoid repetition
-- **Semantic Categories**: Properties are organized into logical groups (`_universal_properties`, `_display_properties`, `_validation_properties`, etc.) that can be composed for different object types
-- **Reusable Patterns**: Common constructs are defined as separate rules and referenced wherever needed
-This approach ensures consistency, reduces errors, and makes the grammar easier to maintain and extend.
-
-## Testing Approach
-
-### Test File Format
-Tests in `test/corpus/` follow tree-sitter standard format:
-```
-================================================================================
+========================================================================
 Test Description
-================================================================================
-
-[AL source code to test]
-
---------------------------------------------------------------------------------
-
-(expected_parse_tree)
+========================================================================
+[AL source code]
+------------------------------------------------------------------------
+(expected_parse_tree)  // No comments allowed in parse trees
 ```
-Dont put comments in the parse tree, as they are not supported by tree-sitter.
 
-### Test Categories
-- **Object types**: `table.txt`, `codeunit.txt`, `page_*.txt`
-- **Language features**: `procedure_*.txt`, `case_statements*.txt`
-- **Built-in functions**: `built_in_functions_*.txt` (comprehensive coverage)
-- **Advanced constructs**: `interface_test.txt`, `controladdin_test.txt`
+**Guidelines:**
+- Never delete test files - fix the underlying issue instead
+- Use `tree-sitter test -u` only if no ERROR/MISSING nodes exist
+- Create tests for each new grammar feature
 
-### Adding New Tests
-1. Create `.txt` file in `test/corpus/`
-2. Use `tree-sitter parse` to generate expected parse tree
-3. Run `tree-sitter test` to validate
+## Grammar Development
 
-### Test Management Guidelines
-- **Never delete a test file** - correct the issue affecting the test instead
-- **Updating multiple tests**: Use `tree-sitter test -u` if any files parse WITHOUT errors and you need to update many test expectations after parser output changes
-
-## Grammar Development Guidelines
-
-### Naming Conventions
-- Use snake_case for grammar rule names
-- Keep rule definitions simple and readable
-- Comment complex or non-obvious rules
-
-### Key Patterns
-- Handle operator precedence with `prec.left`, `prec.right`, `prec`
-- Avoid left recursion (tree-sitter doesn't support it)
-- Use error recovery strategies for graceful error handling
+### Core Principles
+- **DRY**: Always check for existing patterns before creating new ones
+- **snake_case** for rule names
+- Use `prec.left/right/prec` for precedence; avoid left recursion
 - Leverage `choice`, `seq`, `optional`, `repeat` combinators
-- **Apply DRY Principle**: Always look for existing patterns before creating new ones. Properties should be defined once in semantic categories and reused everywhere appropriate
 
-### Helper Functions
-- **`kw(word, precedence = null)`**: Creates case-insensitive keywords using RustRegex
-  - Example: `kw('table')` matches 'table', 'Table', 'TABLE', etc.
-  - Optional precedence: `kw('dotnet', 100)` for high-precedence keywords
-  - Use for most AL keywords to ensure case-insensitive parsing
-  - **EXCEPTIONS**: Do NOT use kw() for logical operators (not, and, or, xor) as they conflict with expression parsing
-
-### Template Functions
-- **`_modification_with_target_template(keyword, content_repeater)`**: For patterns like `addafter(target) { content }`
-- **`_modification_without_target_template(keyword, content_repeater)`**: For patterns like `addfirst { content }`
-- These templates reduce duplication for modification patterns
+### Key Functions
+- **`kw('word', precedence?)`** - Case-insensitive keywords (e.g., `kw('table')` matches Table/TABLE/table)
+  - **Exception**: Don't use for logical operators (not/and/or/xor) - they conflict with expressions
+  - Use explicit choice variants for operators: `choice('div', 'DIV', 'Div')`
 
 ### Property Development Workflow
-**Adding New Properties** (follow centralized architecture):
-1. **Check documentation first**: Use the Business Central docs MCP server to verify if the property is universal or object-specific.
-   - If used across multiple object types → Add to `_universal_properties`
-   - If truly object-specific → Add to the appropriate object property list
-2. Determine its primary semantic category (e.g., universal, display, validation, data, navigation, access). Some properties might be semantically tied to specific object types; these are still defined centrally but grouped into more specialized semantic categories.
-3. Add property definition to individual property rules section.
-4. Add the property rule to the appropriate semantic category list(s) (e.g., `_universal_properties`, `_page_properties`, `_table_properties`, `_action_properties`).
-5. Property automatically available in composed groups (`_field_properties`, `_control_properties`, etc.) that use these semantic categories.
-6. Create test cases covering the property in relevant object contexts.
-7. Test with `tree-sitter generate && tree-sitter test`.
-
-**DO NOT** add new property *definitions* directly into object-specific choice lists (e.g., within a `table_properties` rule). Always define the property rule centrally and add this rule to the appropriate semantic category list(s). These centralized lists are then used to compose property sets for different objects or contexts.
-
-### General Development Workflow
-1. Study AL construct syntax and semantics
-2. Check existing patterns in grammar.js for reuse
-3. Add grammar rules to appropriate section
-   1. Modify external scanner if needed (src/scanner.c)
-4. Create comprehensive test cases
-5. Test with `tree-sitter generate && tree-sitter test`
-6. Debug with `tree-sitter parse --debug`
-
-## Common Parsing Issues and Fixes
-
-### Root Cause Patterns
-The most frequent parsing failures occur when:
-1. **Properties exist but aren't accessible in the right context**
-   - Property is defined but not included in the appropriate property group (semantic category list).
-   - Property needs to be added to relevant semantic property categories (e.g., `_page_properties` for page contexts, `_dataitem_properties` for dataitem contexts, or `_universal_properties` if broadly applicable).
-
-2. **Properties need case variations and proper field wrappers**
-   - AL is case-insensitive but parser needs explicit case variations
-   - Properties should use `field('value', ...)` wrappers for consistency
-
-### Fix Pattern
-1. Check if property rule exists in grammar.js
-2. Use `kw()` function for case-insensitive keywords: `kw('PropertyName')`
-   - For high-precedence keywords: `kw('PropertyName', 10)`
-   - Replaces old pattern: `choice('PropertyName', 'propertyname', 'PROPERTYNAME')`
-3. Wrap value in field: `field('value', $.property_value)`
-4. Add property to appropriate semantic category list(s) (e.g., `_universal_properties`, `_dataitem_properties`, `_page_properties`, etc.)
-5. Property automatically becomes available in composed groups
-
-### Object-Specific Property Lists
-When adding properties, follow this decision process:
-
-1. **First, check if the property is universal/generic**:
-   - Search the Business Central documentation to see if the property applies to multiple object types
-   - If it's used across different objects (tables, pages, reports, etc.), add it to `_universal_properties`
-   - This follows DRY principles and ensures the property is available everywhere it's needed
-
-2. **Only if object-specific, add to the appropriate list**:
-   - **XMLPort properties**: Add to `xmlport_table_property` choice list
-   - **Query properties**: Add to `_query_properties` choice list
-   - **Report properties**: Add to `_report_properties` choice list
-   - Check for existing semantic categories before creating new ones
-
-3. **Example decision process**:
-   ```javascript
-   // BAD: Adding Caption to query-specific properties
-   _query_properties: $ => choice(
-     $.caption_property,  // Don't do this - Caption is universal!
-     ...
-   )
-   
-   // GOOD: Caption is already in _universal_properties
-   _universal_properties: $ => choice(
-     $.caption_property,  // Defined once, used everywhere
-     ...
-   )
-   ```
-
-## External Scanner and Preprocessor Handling
-
-The parser uses an external scanner (src/scanner.c) to handle complex preprocessor patterns that cannot be expressed in the JavaScript grammar alone.
-
-### When to Use External Scanner
-External scanners are needed when:
-1. **Lexical lookahead is required** - Need to examine upcoming tokens to make parsing decisions
-2. **State tracking across tokens** - Need to maintain state between different parts of the parse
-3. **Complex token patterns** - Patterns that depend on context or preceding tokens
-
-### Preprocessor Support Implementation
-The external scanner implements comprehensive preprocessor support by:
-
-1. **Tracking preprocessor state** - Maintains a stack of preprocessor contexts
-2. **Detecting split constructs** - Identifies when preprocessor directives split AL language constructs
-3. **Emitting special tokens** - Produces tokens like `PREPROC_SPLIT_MARKER` that the grammar uses
-
-### Key Scanner Tokens
-```c
-enum TokenType {
-    PREPROC_ACTIVE_REGION_START,    // Start of #if active region
-    PREPROC_ACTIVE_REGION_END,      // End of active region
-    PREPROC_INACTIVE_REGION_START,  // Start of inactive region
-    PREPROC_INACTIVE_REGION_END,    // End of inactive region
-    PREPROC_SPLIT_MARKER,           // Marks split constructs
-    PREPROC_CONTINUATION_MARKER,    // Marks continuations
-    ERROR_SENTINEL                  // Error handling
-};
-```
-
-### Grammar Integration
-The grammar uses these scanner tokens through:
-
-1. **externals array** - Declares scanner tokens in grammar.js
-2. **Special rules** - Rules like `preproc_split_procedure` that handle split constructs
-3. **Conditional parsing** - Different parse paths based on preprocessor context
-
-### Common Preprocessor Patterns Fixed
-
-1. **Split procedure headers**:
-   ```al
-   #if not CLEAN26
-       procedure Test() Result: Integer
-   #else
-       procedure Test(): Integer
-   #endif
-   ```
-   - Uses `preproc_split_procedure` rule
-   - Scanner detects the split pattern
-   - Grammar handles both branches
-
-2. **Conditional object declarations**:
-   ```al
-   #if CLEAN26
-   table 50000 MyTable
-   #else
-   table 50000 "My Table"
-   #endif
-   {
-       // fields...
-   }
-   ```
-   - Uses `preproc_conditional_object_declaration` rule
-   - Allows different object headers in branches
-
-3. **Mixed var/procedure sections**:
-   ```al
-   #if not CLEAN25
-       var
-           Item: Record Item;
-       
-       procedure CalcPrice()
-       begin
-       end;
-   #endif
-   ```
-   - Uses `preproc_conditional_mixed_content` rule
-   - Handles mixed content types in preprocessor blocks
-
-4. **Split if-else statements**:
-   ```al
-   #if not CLEAN24
-       if condition then
-           statement1
-       else
-   #endif
-       statement2
-   ```
-   - Uses `preproc_split_if_else` rule
-   - Handles else keyword inside preprocessor with body outside
-   - Common pattern in Business Central codebase for version compatibility
-
-### Adding New Scanner Features
-When adding scanner features:
-1. Update `src/scanner.c` with new token types and detection logic
-2. Add tokens to `externals` array in grammar.js
-3. Create grammar rules that use the new tokens
-4. Update build files (binding.gyp, bindings/rust/build.rs) if needed
-5. Test thoroughly with edge cases
-
-
-## Build Systems
-The project supports multiple build approaches:
-- **tree-sitter CLI**: Primary development tool
-- **Makefile**: Unix/Linux static and shared libraries
-- **CMake**: Cross-platform with automatic parser generation
-- **Node.js**: npm scripts with WebAssembly support
-- **Language-specific**: Cargo, setup.py, etc.
-
-## Development Tips
-- Always run `tree-sitter generate` after grammar changes
-- Use `tree-sitter playground` for interactive testing
-- Test grammar changes with real AL code samples
-- Check parsing success rate with production AL files
-- Monitor for conflicts and ambiguities during development
-- Use 'rg' instead of 'grep' for faster searching in large codebases
-
-## Available Documentation
-Claude has access to comprehensive documentation through docs-mcp:
-- **Tree-sitter documentation**: Complete tree-sitter grammar development guide, API reference, and best practices
-- **Business Central AL Language reference**: Official Microsoft documentation for AL syntax, objects, properties, and language constructs
-If it fails, use the Microsoft.docs.mcp instead to get information on documentation.
-
-### Using the `search_docs` Tool
-You can use the `search_docs` tool to find specific information within these documentation sets. Here's how it works:
-
-```
-search_docs (docs-mcp) [read-only]
-
-Full name: mcp__docs-mcp__search_docs
-
-Description:
-Search up-to-date documentation for a library or package. Examples:
-
-- {library: "business-central", query: "page properties"} -> matches latest version of AL Language documentation
-- {library: "business-central", version: "10.0", query: "report dataitem"} -> matches AL Language 10.0 or earlier
-- {library: "tree-sitter", query: "grammar syntax"} -> matches latest Tree-sitter documentation
-- {library: "tree-sitter", version: "0.20.x", query: "choice function"} -> any Tree-sitter 0.20.x version
-
-NOTE: Keep number of search words low. Use very specific keywords to narrow results, like max 3 words.
-
-Parameters:
-  • library (required): string - Library name.
-  • version: string - Library version (exact or X-Range, optional).
-  • query (required): string - Documentation search query.
-  • limit: number - Maximum number of results.
-```
-
-Use these resources to:
-- Understand tree-sitter grammar patterns and capabilities
-- Reference official AL language syntax and semantics
-- Find examples of proper grammar construction
-- Verify AL property names, types, and contexts
-
-## Memories
-- At the end always run this before saying a change is complete: `./validate-grammar.sh` (or `tree-sitter generate && tree-sitter test`)
-- A common fix is adding properties to the $._universal_properties list
-- When doing changes to grammar, lookup the property, type, field and so on in the documentation so you know what the given item is defined and supports
-- Use `./validate-grammar.sh` for comprehensive validation including orphan and duplicate detection
-- See KNOWN_LIMITATIONS.md for documented parser limitations, especially the var section/attributed procedure conflict
-
-## Contextual Keywords Pattern
-
-### Standard Pattern (Default)
-When AL keywords can be used as both properties and variable names (contextual keywords), they must be handled consistently:
-
-1. **In property definitions**: Use `kw('keyword')` for case-insensitive matching
-2. **In _unquoted_variable_name**: Also use `alias(kw('keyword'), $.identifier)` 
-3. **Never use case-sensitive patterns** like `alias('Keyword', $.identifier)`
-
-Example of correct pattern:
-```javascript
-// In property definition
-subtype_property: $ => _value_property_template(kw('subtype'), $.value),
-
-// In _unquoted_variable_name
-alias(kw('subtype'), $.identifier),  // Correct - case-insensitive
-// NOT: alias('SubType', $.identifier), alias('subtype', $.identifier), etc.
-```
-
-### Contextual Property Pattern (Exceptions)
-Some property names conflict with common variable names and cannot be resolved using the standard kw() pattern due to lexer-level tokenization. For these specific cases ONLY:
-
-**Current contextual properties:**
-- `TableType` - Used as enum variable in Opportunities.Page.al
-- `Style`/`StyleExpr` - Common variable names for UI styling  
-- `IsPreview` - Used for preview state tracking
-- `Filters` - Used as variable name in MyNotifications.Page.al
-
-**Pattern:**
-1. Property definition uses literal strings with all case variations
-2. _unquoted_variable_name includes all case variations as aliases
-
-```javascript
-// Property definition
-table_type_property: $ => seq(
-  field('name', alias(
-    choice('TableType', 'tabletype', 'TABLETYPE', 'Tabletype'),
-    'TableType'
-  )),
-  '=',
-  field('value', alias($.table_type_value, $.value)),
-  ';'
-),
-
-// In _unquoted_variable_name
-alias('TableType', $.identifier),
-alias('tabletype', $.identifier),
-alias('TABLETYPE', $.identifier),
-alias('Tabletype', $.identifier),
-```
-
-**When to apply this pattern:**
-1. Only when actual parsing failures occur in production files
-2. Property name is a common English word likely to be used as variable
-3. Standard kw() pattern causes unresolvable conflicts
-4. Document the specific file/context where the conflict occurred
-
-**DO NOT** apply this pattern preemptively. It violates DRY principles and should only be used when necessary.
-
-## Common Test Failure Patterns and Fixes
-
-When fixing failing tests, these patterns occur frequently and have established solutions:
-
-### 1. Property Not Recognized in Context
-**Symptom**: Parser creates ERROR nodes where a property should be recognized
-```
-(ERROR
-  (identifier)  // Property name like "CustomActionType"
-  (identifier)  // Property value
-)
-```
-
-**Root Cause**: Property exists but isn't included in the appropriate property list for that context
-
-**Fix Pattern**:
-1. Find where the property is used (e.g., in `customaction_declaration`)
-2. Identify which property list is used (e.g., `_action_properties`)
-3. Add the property to that list:
-```javascript
-_action_properties: $ => choice(
-  $._universal_properties,
-  $.custom_action_type_property,  // Add this line
-  // ... other properties
-),
-```
-
-### 2. Case-Sensitive Keywords Causing Parser State Issues
-**Symptom**: Property works in isolation but fails when other properties precede it
-```
-// Works: CustomActionType = Flow;
-// Fails: Visible = true; CustomActionType = Flow;
-```
-
-**Root Cause**: Parser state conflict after certain properties, often due to case-sensitive token matching
-
-**Fix Pattern**:
-1. Ensure property uses `kw()` function with precedence if needed:
-```javascript
-custom_action_type_property: $ => seq(
-  kw('CustomActionType', 10),  // Add precedence
-  '=',
-  field('value', $._identifier_choice),
-  ';'
-),
-```
-2. Add the keyword to `_unquoted_variable_name` as a contextual keyword:
-```javascript
-alias(kw('customactiontype'), $.identifier),
-```
-
-### 3. Structural Mismatches in Test Expectations
-**Symptom**: Parser works correctly but test shows differences in node structure
-```
-// Actual: assignment_expression
-// Expected: assignment_statement
-```
-
-**Root Cause**: Grammar evolution has changed the parse tree structure
-
-**Fix Pattern**:
-1. If the current parsing is semantically correct, update test expectations:
-```bash
-tree-sitter test --file-name "test_file.txt" -u
-```
-2. Only do this if there are no ERROR or MISSING nodes
-
-### 4. Missing Value Type Support
-**Symptom**: Complex expressions not parsing in specific contexts
-```
-// Example: SalesLineType[1]::Resource fails
-(ERROR
-  (qualified_enum_value_tail
-    (identifier))
-)
-```
-
-**Root Cause**: Grammar rule doesn't accept all valid value types
-
-**Fix Pattern**:
-1. Find the rule that should match (e.g., `qualified_enum_value`)
-2. Add missing value types to choices:
-```javascript
-field('enum_type', choice(
-  $._enum_type_reference,
-  $.identifier,
-  $._quoted_identifier,
-  $.field_access,
-  $.subscript_expression,  // Add this
-  $._chained_expression
-)),
-```
-
-### 5. Malformed Syntax Handling
-**Symptom**: Invalid syntax causes complete parsing failure
-```
-// Example: "# Region" with space causes ERROR
-```
-
-**Root Cause**: Parser expects strict syntax and doesn't handle common mistakes
-
-**Fix Pattern**:
-1. Add a catch-all rule for malformed constructs:
-```javascript
-malformed_directive: $ => new RustRegex('# [A-Za-z][^\\n\\r]*'),
-```
-2. Include in extras to treat as ignorable:
-```javascript
-extras: $ => [..., $.malformed_directive, ...],
-```
-
-### 6. Hidden Rules Preventing Expected Structure
-**Symptom**: Expected nodes don't appear in parse tree
-```
-// Missing: table_filter_value node
-```
-
-**Root Cause**: Using hidden rules (prefixed with `_`) that don't create nodes
-
-**Fix Pattern**:
-1. Change hidden rule to visible by removing underscore:
-```javascript
-// Change: _table_filter_value
-// To: table_filter_value
-```
-2. Update references to use the visible rule
-3. Create proper node hierarchy (e.g., add `filter_expression` nodes)
-
-### 7. XMLPort Element Field References
-**Symptom**: Parser fails on fieldelement with member expressions
-```
-// Fails: fieldelement(Nm; CompanyInformation.Name)
-(ERROR
-  (member_expression ...)
-)
-```
-
-**Root Cause**: XMLPort elements expect field_access (Table."Field") but actual code uses member_expression (Table.Field)
-
-**Fix Pattern**:
-1. Add `$.member_expression` to the source_table choices in `xmlport_table_element`
-2. This allows both quoted and unquoted field references
-
-### 9. Preprocessor Split Constructs
-**Symptom**: Parser fails when preprocessor directives split language constructs
-```
-// Fails: else keyword inside #if but body outside
-#if not CLEAN24
-    if condition then
-        statement1
-    else
+1. **Check documentation** - Verify if property is universal or object-specific
+2. **Define property rule** - Add to individual property rules section
+3. **Add to semantic category** - `_universal_properties`, `_page_properties`, `_action_properties`, etc.
+4. **Create tests** - Cover property in relevant contexts
+5. **Validate** - Run `./validate-grammar.sh`
+
+**Critical**: Never add property definitions directly to object-specific choice lists. Define centrally, then add to semantic categories.
+
+### Development Workflow
+1. Study AL construct (use Business Central docs MCP)
+2. Check for existing patterns in grammar.js
+3. Add/modify rules (update `src/scanner.c` if needed for preprocessor patterns)
+4. Create tests
+5. Run `./validate-grammar.sh`
+
+## Common Issues
+
+**Most frequent failures:**
+1. **Property not accessible in context** - Defined but not added to appropriate semantic category list
+2. **Case-sensitivity** - Missing `kw()` wrapper or precedence
+3. **Missing value types** - Rule doesn't accept all valid value types
+
+**Standard fix pattern:**
+1. Verify property exists in grammar.js
+2. Use `kw('PropertyName', precedence?)` for case-insensitivity
+3. Wrap value: `field('value', $.property_value)`
+4. Add to semantic category: `_universal_properties`, `_page_properties`, etc.
+5. Run `./validate-grammar.sh`
+
+## Known Limitations
+
+~~**Preprocessor + Attributed Procedures**~~ **✅ FIXED in v2.0 (Rust-Style Attribute Refactor)**
+
+The main limitation where attributes before preprocessor directives caused parse failures has been **RESOLVED**.
+
+**Now supported:**
+```al
+[Attribute]
+#if CONDITION
+procedure Proc()
 #endif
-    statement2
+begin
+end;
 ```
 
-**Root Cause**: Standard grammar rules don't handle constructs split by preprocessor directives
+This pattern now parses correctly! Attributes are treated as first-class statements that can appear before preprocessor directives.
 
-**Fix Pattern**:
-1. Create specialized rule for the split pattern (e.g., `preproc_split_if_else`)
-2. Add to appropriate choice lists where the construct appears
-3. External scanner handles detection of split patterns
-4. See "Common Preprocessor Patterns Fixed" section for examples
+**Historical context:** This limitation affected 8 tests and was caused by Tree-sitter's literal tokens taking precedence over scanner tokens. The Rust-style refactor (treating attributes as statements rather than embedded modifiers) completely solved this issue.
 
-### 8. Missing Property Values in Enums
-**Symptom**: Property accepts limited values but actual code uses additional valid values
-```
-// Example: MaxOccurs = Once; fails when only 'unbounded' and integers are supported
-```
+**Unsupported patterns after refactor:**
 
-**Root Cause**: Incomplete enumeration of valid property values
-
-**Fix Pattern**:
-1. Check documentation for all valid values
-2. Add missing values to the property's value choice list using `kw()`:
-```javascript
-max_occurs_value: $ => choice(
-  $.integer,
-  kw('unbounded'),
-  kw('once')  // Add missing value
-),
-```
-
-### 9. Object-Specific Properties That Should Be Universal
-**Symptom**: Properties with object-specific prefixes (e.g., `page_about_text_ml_property`) that are actually used across multiple object types
-```
-// BAD: Separate definitions for same property
-page_about_text_ml_property: $ => seq(...)
-report_about_text_ml_property: $ => seq(...)
-```
-
-**Root Cause**: Properties were initially added for specific objects but are actually universal
-
-**Fix Pattern**:
-1. Create generic property without object prefix:
-```javascript
-// GOOD: Single universal definition
-about_text_ml_property: $ => seq(
-  kw('AboutTextML'),
-  $._ml_property_template
-),
-```
-2. Add to `_universal_properties` list
-3. Remove object-specific versions from property lists (they'll inherit from universal)
-4. Update test expectations to use generic node names
-5. Delete deprecated object-specific rules if no longer referenced
-
-### 10. Operators Parsed as Identifiers
-**Symptom**: Mathematical operators like `div` and `mod` parsed as identifiers instead of operators
-```
-// Fails: A := 10 div 2;
-(assignment_expression
-  left: (identifier)  // A
-  right: (integer))   // 10
-(identifier)          // div - parsed as separate identifier!
-(integer)             // 2
-```
-
-**Root Cause**: Using `kw()` for operators creates tokens that conflict with identifier tokens
-
-**Fix Pattern**:
-1. Check if logical operators have similar issues and use same pattern:
-```javascript
-// BAD: Using kw() for operators
-field('operator', choice('*', '/', kw('div'), kw('mod'))),
-
-// GOOD: Using choice() for case variations
-field('operator', choice('*', '/', 
-  choice('div', 'DIV', 'Div'), 
-  choice('mod', 'MOD', 'Mod')
-)),
-```
-2. Look for comments warning about this pattern (e.g., "logical operators must use choice()")
-3. Test with expressions in various contexts (assignments, case statements)
-
-### 11. Preprocessor Conditionals in Property Blocks
-**Symptom**: Parser reports MISSING "}" when preprocessor directives appear inside property blocks
-```
-// Fails: Key with conditional obsolete properties
-key(Key1; Field)
-{
-    Clustered = false;
-#if CLEAN26
-    ObsoleteState = Removed;
+Attributes INSIDE preprocessor branches with different attributes per branch are no longer supported:
+```al
+// ❌ NO LONGER SUPPORTED
+#if CONDITION
+[Attr1]
+procedure Proc()
 #else
-    ObsoleteState = Pending;
+[Attr2]
+procedure Proc()
 #endif
-}  // MISSING "}" error here
 ```
 
-**Root Cause**: Property block rules don't include preprocessor conditional choices
+**Migration:** Place attributes outside preprocessor blocks:
+```al
+// ✅ SUPPORTED
+[Attribute]
+#if CONDITION
+procedure Proc()
+#endif
+```
 
-**Fix Pattern**:
-1. Create a preprocessor conditional rule for the specific property context:
+See `PHASE4_UNSUPPORTED_PATTERNS.md` for details on intentionally unsupported patterns.
+
+## Debugging Parse Failures
+
+When tests fail with ERROR/MISSING nodes and the issue isn't obvious, use the parsing debug tools to identify the exact problem.
+
+**Quick Usage:**
+```bash
+# 1. Extract failing test to a file
+cat test/corpus/failing_test.txt | sed -n '5,19p' > /tmp/test.al
+
+# 2. Parse with debug output
+tree-sitter parse /tmp/test.al -d > /tmp/debug.log 2>&1
+
+# 3. Analyze with bug finder (shows exact issues with source context)
+python parse_bug_finder.py /tmp/test.al /tmp/debug.log
+```
+
+**What you get:**
+- Exact line/column of parsing bugs
+- Source code context (5 lines around each issue)
+- Bug types: ERROR nodes, error recovery, skipped tokens
+- Parser state and recovery depth
+- Specific recommendations for fixes
+
+**Example output:**
+```
+BUG #1: error_recovery
+Location: Line 6, Column 34
+Description: Parser needed error recovery at depth 2
+
+Source context:
+       4 |         Config: Record "Config";
+       5 |
+>>>    6 |     [BusinessEvent(false, false)]
+                                           ^
+       7 | #if CLEAN25
+Parser state: 2854
+Recovery depth: 2
+```
+
+**When to use:**
+- Test has ERROR or MISSING nodes in output
+- `tree-sitter test -u` refuses to update due to errors
+- Grammar changes cause unexpected test failures
+- Need to understand why parser takes wrong path
+
+**Available tools:**
+- `parse_bug_finder.py` - Recommended: Correlates bugs with source code
+- `parse_debug_analyzer.py` - Advanced: Full parse flow analysis
+- See `PARSING_DEBUG_TOOLS.md` for complete documentation
+
+## External Scanner (Preprocessor Support)
+
+The external scanner (`src/scanner.c`) handles complex preprocessor patterns that can't be expressed in JavaScript grammar alone.
+
+**Use cases:** Lexical lookahead, state tracking, context-dependent patterns
+
+**Scanner tokens:** `PREPROC_ACTIVE/INACTIVE_REGION_START/END`, `PREPROC_SPLIT_MARKER`, `PREPROC_CONTINUATION_MARKER`
+
+**Common patterns handled:**
+- Split procedure headers (return type in different #if branches)
+- Conditional object declarations (name variations across branches)
+- Mixed var/procedure sections in preprocessor blocks
+- Split if-else statements (else inside #if, body outside)
+- Preprocessor conditionals in property blocks
+
+**Adding scanner features:**
+1. Update `src/scanner.c` with new token types/logic
+2. Add tokens to `externals` array in grammar.js
+3. Create grammar rules using the tokens
+4. Test with edge cases
+
+**CRITICAL - Scanner Token Integration:**
+When integrating scanner tokens to resolve ambiguities, placement in grammar is crucial:
+- ✅ **DO**: Place tokens as alternatives in `choice()` where parser needs to decide
+- ❌ **DON'T**: Place tokens in `optional()` after `repeat()` - corrupts parser decisions
+- **Rule**: Token should be at the decision point, not after structural boundaries
+
+See `SCANNER_TOKEN_INTEGRATION_LESSONS.md` for detailed case study, debugging techniques, and common pitfalls when integrating external scanner tokens. Essential reading before modifying scanner or adding new scanner tokens.
+
+## Documentation Resources
+
+**Available via MCP:**
+- **business-central** - AL Language syntax, objects, properties
+- **tree-sitter** - Grammar development guide, API reference
+
+**Usage:** Use `search_docs` tool with library name and concise query (max 3 words):
+- `{library: "business-central", query: "page properties"}`
+- `{library: "tree-sitter", query: "grammar syntax"}`
+
+**Best practices:**
+- Always verify property/type definitions in documentation before adding to grammar
+- Common fix: Adding properties to `_universal_properties` list
+- Always run `./validate-grammar.sh` before completing any task
+- Use `rg` instead of `grep` for faster codebase searches
+
+## Contextual Keywords
+
+Keywords that can be both properties and variables require special handling:
+
+**Standard pattern (preferred):**
 ```javascript
-preproc_conditional_key_properties: _preproc_conditional_block_template($ => choice(
-  $.clustered_property,
-  $.enabled_property,
-  $.obsolete_reason_property,
-  $.obsolete_state_property,
-  $.obsolete_tag_property,
-  // ... other properties
-  $.preproc_conditional_key_properties  // Allow nesting
-)),
+// Property: Use kw()
+subtype_property: $ => _value_property_template(kw('subtype'), $.value),
+// Variable: Also use kw()
+alias(kw('subtype'), $.identifier),
 ```
-2. Add the new rule to the property block's choice list:
+
+**Exception pattern (only when kw() causes conflicts):**
+
+Apply only when production files fail due to lexer conflicts. Current exceptions:
+- `TableType`, `Style`/`StyleExpr`, `IsPreview`, `Filters`
+
 ```javascript
-repeat(choice(
-  $.clustered_property,
-  $.enabled_property,
-  // ... other properties
-  $.preproc_conditional_key_properties,  // Add this
-  $.property
-)),
+// Property: All case variations
+choice('TableType', 'tabletype', 'TABLETYPE', 'Tabletype')
+// Variable: All case variations as aliases
+alias('TableType', $.identifier), alias('tabletype', $.identifier), ...
 ```
-3. Test with nested preprocessor blocks and mixed property types
 
-### Quick Debugging Process
-1. **Isolate the failing construct**: Test just the problematic line
-2. **Test in minimal context**: Wrap in simplest valid AL structure
-3. **Check if property/rule exists**: Search grammar.js
-4. **Verify accessibility**: Check if included in relevant property lists
-5. **Test with precedence**: Add precedence if parser state issues
-6. **Update test expectations**: Use `-u` flag if parsing is correct
+**Use exception pattern only when:**
+- Actual parsing failures occur in production
+- Property name is common variable name
+- Standard kw() causes unresolvable conflicts
+- Document specific file/context
 
-### When to Update Tests vs Fix Grammar
-- **Update tests**: When grammar correctly parses the construct but tree structure has evolved
-- **Fix grammar**: When ERROR or MISSING nodes appear, or functionality is broken
+## Test Failure Patterns (Quick Reference)
 
-# Using Gemini CLI for Large Codebase Analysis
+**Debugging process:**
+1. Isolate failing construct, test in minimal context
+2. Check if property/rule exists in grammar.js
+3. Verify inclusion in relevant semantic categories
+4. Test with precedence if parser state issues
+5. **If still unclear, use `parse_bug_finder.py` to analyze debug output** (see "Debugging Parse Failures" section)
+6. Update expectations (`-u`) only if no ERROR/MISSING nodes
 
-When analyzing large codebases or multiple files that might exceed context limits, use the Gemini CLI with its massive
-context window. Use `gemini -p` to leverage Google Gemini's large context capacity.
+**Common patterns:**
 
-## File and Directory Inclusion Syntax
+| Pattern | Symptom | Fix |
+|---------|---------|-----|
+| **Property not accessible** | ERROR nodes for property | Add property to semantic category list (`_action_properties`, etc.) |
+| **Case-sensitivity** | Works alone, fails after other properties | Add `kw('Property', precedence)` + contextual keyword alias |
+| **Structural mismatch** | Different node structure | Update tests with `-u` if parsing is correct (no ERRORs) |
+| **Missing value types** | Complex expressions fail | Add missing types to rule's choice list (e.g., `$.subscript_expression`) |
+| **Malformed syntax** | Invalid syntax crashes parser | Add catch-all rule, include in `extras` array |
+| **Hidden rules** | Expected nodes missing | Remove `_` prefix to make rule visible |
+| **XMLPort field refs** | Member expressions fail | Add `$.member_expression` to source_table choices |
+| **Preprocessor splits** | Constructs split by #if fail | Create `preproc_split_*` rule, add to choice lists |
+| **Missing enum values** | Valid values rejected | Add missing values using `kw()` |
+| **Object-specific duplicates** | Same property with prefixes | Create generic property, add to `_universal_properties` |
+| **Operators as identifiers** | `div`/`mod` parsed as identifiers | Use `choice('div', 'DIV', 'Div')` not `kw('div')` |
+| **Preprocessor in blocks** | MISSING "}" with #if in blocks | Create `preproc_conditional_*_properties` rule |
 
-Use the `@` syntax to include files and directories in your Gemini prompts. The paths should be relative to WHERE you run the
-  gemini command:
-
-### Examples:
-
-**Single file analysis:**
-gemini -p "@src/main.py Explain this file's purpose and structure"
-
-Multiple files:
-gemini -p "@package.json @src/index.js Analyze the dependencies used in the code"
-
-Entire directory:
-gemini -p "@src/ Summarize the architecture of this codebase"
-
-Multiple directories:
-gemini -p "@src/ @tests/ Analyze test coverage for the source code"
-
-Current directory and subdirectories:
-gemini -p "@./ Give me an overview of this entire project"
-
-# Or use --all_files flag:
-gemini --all_files -p "Analyze the project structure and dependencies"
-
-Implementation Verification Examples
-
-Check if a feature is implemented:
-gemini -p "@src/ @lib/ Has dark mode been implemented in this codebase? Show me the relevant files and functions"
-
-Verify authentication implementation:
-gemini -p "@src/ @middleware/ Is JWT authentication implemented? List all auth-related endpoints and middleware"
-
-Check for specific patterns:
-gemini -p "@src/ Are there any React hooks that handle WebSocket connections? List them with file paths"
-
-Verify error handling:
-gemini -p "@src/ @api/ Is proper error handling implemented for all API endpoints? Show examples of try-catch blocks"
-
-Check for rate limiting:
-gemini -p "@backend/ @middleware/ Is rate limiting implemented for the API? Show the implementation details"
-
-Verify caching strategy:
-gemini -p "@src/ @lib/ @services/ Is Redis caching implemented? List all cache-related functions and their usage"
-
-Check for specific security measures:
-gemini -p "@src/ @api/ Are SQL injection protections implemented? Show how user inputs are sanitized"
-
-Verify test coverage for features:
-gemini -p "@src/payment/ @tests/ Is the payment processing module fully tested? List all test cases"
-
-When to Use Gemini CLI
-
-Use gemini -p when:
-- Analyzing entire codebases or large directories
-- Comparing multiple large files
-- Need to understand project-wide patterns or architecture
-- Current context window is insufficient for the task
-- Working with files totaling more than 100KB
-- Verifying if specific features, patterns, or security measures are implemented
-- Checking for the presence of certain coding patterns across the entire codebase
-
-Important Notes
-
-- Paths in @ syntax are relative to your current working directory when invoking gemini
-- The CLI will include file contents directly in the context
-- No need for --yolo flag for read-only analysis
-- Gemini's context window can handle entire codebases that would overflow Claude's context
-- When checking implementations, be specific about what you're looking for to get accurate results
+**When to update vs fix:**
+- **Update tests**: Grammar correct, tree structure evolved
+- **Fix grammar**: ERROR/MISSING nodes present

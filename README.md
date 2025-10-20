@@ -10,6 +10,16 @@ This project provides a complete grammar definition for parsing AL (Application 
 
 Based on analysis of 15,358 AL files from the comprehensive Business Central production codebase, **15,266 files (99.4%) parse successfully**.
 
+## Recent Changes
+
+### v2.0.0 - Rust-Style Attribute Refactor (Breaking Change)
+- **✅ FIXED:** Attributes before preprocessor directives now work correctly (`[Attr] #if COND procedure Proc() #endif`)
+- **BREAKING:** Attributes are now first-class statements (parse tree structure changed)
+- **IMPROVED:** Cleaner grammar, better maintainability, consistent with Rust/C# patterns
+- **NEW:** Attributes supported on fields, parameters, and enum values
+- See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) for upgrade instructions
+- See [PHASE4_UNSUPPORTED_PATTERNS.md](PHASE4_UNSUPPORTED_PATTERNS.md) for intentionally unsupported patterns
+
 Recent improvements include:
 - **Standalone semicolons in object properties** - Added support for empty statements (standalone semicolons) in table, field, and key property blocks, improving compatibility with existing AL code patterns
 - **Date/time literals in filter expressions** - Added support for date literals (0D, 20240101D), time literals (120000T), and datetime literals (0DT) in CalcFormula filter expressions, with proper precedence to avoid parsing conflicts
