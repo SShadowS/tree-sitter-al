@@ -4272,6 +4272,48 @@
     }
   },
   {
+    "type": "attribute_content",
+    "named": true,
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute_arguments",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "attribute_item",
+    "named": true,
+    "fields": {
+      "attribute": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "attribute_content",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "attribute_list",
     "named": true,
     "fields": {},
@@ -6972,6 +7014,10 @@
           "named": true
         },
         {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
           "type": "attributed_onrun_trigger",
           "named": true
         },
@@ -8517,6 +8563,10 @@
         },
         {
           "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "attribute_item",
           "named": true
         },
         {
@@ -23113,6 +23163,10 @@
           "named": true
         },
         {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
           "type": "attributed_interface_procedure",
           "named": true
         },
@@ -28534,6 +28588,10 @@
           "named": true
         },
         {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
           "type": "attribute_list",
           "named": true
         },
@@ -29248,6 +29306,10 @@
         },
         {
           "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "attribute_item",
           "named": true
         },
         {
@@ -42210,6 +42272,10 @@
           "named": true
         },
         {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
           "type": "attributed_procedure",
           "named": true
         },
@@ -44678,6 +44744,10 @@
           "named": true
         },
         {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
           "type": "attribute_list",
           "named": true
         },
@@ -45093,6 +45163,10 @@
         },
         {
           "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "attribute_item",
           "named": true
         },
         {
@@ -49231,6 +49305,10 @@
           "named": true
         },
         {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
           "type": "attributed_procedure",
           "named": true
         },
@@ -49811,6 +49889,10 @@
         },
         {
           "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "attribute_item",
           "named": true
         },
         {
@@ -53861,6 +53943,10 @@
         },
         {
           "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "attribute_item",
           "named": true
         },
         {

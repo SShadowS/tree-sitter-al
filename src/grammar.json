@@ -624,8 +624,20 @@
           "name": "preproc_conditional_var_sections"
         },
         {
-          "type": "SYMBOL",
-          "name": "attributed_procedure"
+          "type": "PREC_DYNAMIC",
+          "value": 2,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attributed_procedure"
+          }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_item"
+          }
         },
         {
           "type": "SYMBOL",
@@ -2452,8 +2464,20 @@
           "name": "trigger_declaration"
         },
         {
-          "type": "SYMBOL",
-          "name": "attributed_procedure"
+          "type": "PREC_DYNAMIC",
+          "value": 2,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attributed_procedure"
+          }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_item"
+          }
         },
         {
           "type": "SYMBOL",
@@ -5481,25 +5505,37 @@
           "name": "trigger_declaration"
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            {
-              "type": "SYMBOL",
-              "name": "procedure"
-            }
-          ]
+          "type": "PREC_DYNAMIC",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "procedure"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_item"
+          }
         },
         {
           "type": "SYMBOL",
@@ -5581,16 +5617,32 @@
           "name": "fieldgroups_section"
         },
         {
-          "type": "SYMBOL",
-          "name": "attributed_procedure"
+          "type": "PREC_DYNAMIC",
+          "value": 2,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attributed_procedure"
+          }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 2,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attributed_trigger"
+          }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_item"
+          }
         },
         {
           "type": "SYMBOL",
           "name": "var_section"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "attributed_trigger"
         },
         {
           "type": "SYMBOL",
@@ -8167,16 +8219,36 @@
                 "name": "preproc_conditional_var_sections"
               },
               {
-                "type": "SYMBOL",
-                "name": "attributed_procedure"
+                "type": "PREC_DYNAMIC",
+                "value": 2,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "attributed_procedure"
+                }
               },
               {
-                "type": "SYMBOL",
-                "name": "attributed_onrun_trigger"
+                "type": "PREC_DYNAMIC",
+                "value": 2,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "attributed_onrun_trigger"
+                }
               },
               {
-                "type": "SYMBOL",
-                "name": "attributed_trigger"
+                "type": "PREC_DYNAMIC",
+                "value": 2,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "attributed_trigger"
+                }
+              },
+              {
+                "type": "PREC_DYNAMIC",
+                "value": 1,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "attribute_item"
+                }
               },
               {
                 "type": "SYMBOL",
@@ -8242,187 +8314,199 @@
       ]
     },
     "attributed_procedure": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "preproc_var_terminator"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "preproc_var_terminator"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "attribute_list"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "preproc_conditional_attributes"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "REPEAT",
+                    "content": {
                       "type": "SYMBOL",
-                      "name": "attribute_list"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "preproc_conditional_attributes"
+                      "name": "pragma"
                     }
-                  ]
-                },
-                {
-                  "type": "REPEAT",
-                  "content": {
+                  },
+                  {
                     "type": "SYMBOL",
-                    "name": "pragma"
+                    "name": "procedure"
                   }
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "procedure"
-                }
-              ]
-            },
-            {
-              "type": "SYMBOL",
-              "name": "procedure"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "preproc_split_procedure"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "preproc_procedure_body_split"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "preproc_attributed_split_procedure"
-            },
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "REPEAT",
-                  "content": {
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "procedure"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_split_procedure"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_procedure_body_split"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_attributed_split_procedure"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
                     "type": "SYMBOL",
-                    "name": "pragma"
-                  }
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_split_procedure"
-                }
-              ]
-            },
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "REPEAT",
-                  "content": {
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "pragma"
+                    }
+                  },
+                  {
                     "type": "SYMBOL",
-                    "name": "pragma"
+                    "name": "preproc_split_procedure"
                   }
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_attributed_split_procedure"
-                }
-              ]
-            }
-          ]
-        }
-      ]
+                ]
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "pragma"
+                    }
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_attributed_split_procedure"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
     "attributed_trigger": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_conditional_attributes"
+                  }
+                ]
+              },
+              {
+                "type": "REPEAT",
+                "content": {
                   "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_conditional_attributes"
+                  "name": "pragma"
                 }
-              ]
-            },
-            {
-              "type": "REPEAT",
-              "content": {
+              },
+              {
                 "type": "SYMBOL",
-                "name": "pragma"
+                "name": "trigger_declaration"
               }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "trigger_declaration"
-            }
-          ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "trigger_declaration"
-        }
-      ]
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "trigger_declaration"
+          }
+        ]
+      }
     },
     "attributed_onrun_trigger": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_conditional_attributes"
+                  }
+                ]
+              },
+              {
+                "type": "REPEAT",
+                "content": {
                   "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_conditional_attributes"
+                  "name": "pragma"
                 }
-              ]
-            },
-            {
-              "type": "REPEAT",
-              "content": {
+              },
+              {
                 "type": "SYMBOL",
-                "name": "pragma"
+                "name": "onrun_trigger"
               }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "onrun_trigger"
-            }
-          ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "onrun_trigger"
-        }
-      ]
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "onrun_trigger"
+          }
+        ]
+      }
     },
     "preproc_conditional_procedures": {
       "type": "SEQ",
@@ -8950,8 +9034,20 @@
           "name": "controladdin_procedure"
         },
         {
-          "type": "SYMBOL",
-          "name": "attributed_controladdin_procedure"
+          "type": "PREC_DYNAMIC",
+          "value": 2,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attributed_controladdin_procedure"
+          }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_item"
+          }
         },
         {
           "type": "SYMBOL",
@@ -9395,33 +9491,37 @@
       ]
     },
     "attributed_controladdin_procedure": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "attribute_list"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_attributes"
+              }
+            ]
+          },
+          {
+            "type": "REPEAT",
+            "content": {
               "type": "SYMBOL",
-              "name": "attribute_list"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "preproc_conditional_attributes"
+              "name": "pragma"
             }
-          ]
-        },
-        {
-          "type": "REPEAT",
-          "content": {
+          },
+          {
             "type": "SYMBOL",
-            "name": "pragma"
+            "name": "controladdin_procedure"
           }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "controladdin_procedure"
-        }
-      ]
+        ]
+      }
     },
     "interface_declaration": {
       "type": "SEQ",
@@ -9542,8 +9642,20 @@
                 "name": "interface_procedure"
               },
               {
-                "type": "SYMBOL",
-                "name": "attributed_interface_procedure"
+                "type": "PREC_DYNAMIC",
+                "value": 2,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "attributed_interface_procedure"
+                }
+              },
+              {
+                "type": "PREC_DYNAMIC",
+                "value": 1,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "attribute_item"
+                }
               }
             ]
           }
@@ -9653,17 +9765,21 @@
       }
     },
     "attributed_interface_procedure": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "attribute_list"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "interface_procedure"
-        }
-      ]
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "attribute_list"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "interface_procedure"
+          }
+        ]
+      }
     },
     "report_declaration": {
       "type": "SEQ",
@@ -9770,46 +9886,62 @@
           "name": "preproc_conditional_var_sections"
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            {
-              "type": "SYMBOL",
-              "name": "procedure"
-            }
-          ]
+          "type": "PREC_DYNAMIC",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "procedure"
+              }
+            ]
+          }
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            {
-              "type": "SYMBOL",
-              "name": "trigger_declaration"
-            }
-          ]
+          "type": "PREC_DYNAMIC",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "trigger_declaration"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_item"
+          }
         },
         {
           "type": "SYMBOL",
@@ -9857,46 +9989,62 @@
           "name": "preproc_conditional_var_sections"
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            {
-              "type": "SYMBOL",
-              "name": "procedure"
-            }
-          ]
+          "type": "PREC_DYNAMIC",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "procedure"
+              }
+            ]
+          }
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            {
-              "type": "SYMBOL",
-              "name": "trigger_declaration"
-            }
-          ]
+          "type": "PREC_DYNAMIC",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "trigger_declaration"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_item"
+          }
         },
         {
           "type": "SYMBOL",
@@ -11921,25 +12069,37 @@
           "name": "views_section"
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            {
-              "type": "SYMBOL",
-              "name": "procedure"
-            }
-          ]
+          "type": "PREC_DYNAMIC",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_list"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "procedure"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_DYNAMIC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_item"
+          }
         },
         {
           "type": "SYMBOL",
@@ -17469,8 +17629,20 @@
             "name": "named_trigger"
           },
           {
-            "type": "SYMBOL",
-            "name": "attributed_procedure"
+            "type": "PREC_DYNAMIC",
+            "value": 2,
+            "content": {
+              "type": "SYMBOL",
+              "name": "attributed_procedure"
+            }
+          },
+          {
+            "type": "PREC_DYNAMIC",
+            "value": 1,
+            "content": {
+              "type": "SYMBOL",
+              "name": "attribute_item"
+            }
           },
           {
             "type": "SYMBOL",
@@ -37288,6 +37460,10 @@
     [
       "preproc_conditional_statements",
       "preproc_conditional_if_statement"
+    ],
+    [
+      "attribute_content",
+      "attribute"
     ]
   ],
   "precedences": [],
