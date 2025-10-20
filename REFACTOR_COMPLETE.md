@@ -125,20 +125,24 @@ d216cb2 Phase 0: Preparation & Safety Net
 - **PHASE6_STATUS.md** - Cleanup status and remaining work
 - **README.md** - v2.0.0 changelog
 
-## Deprecated Rules (Left for Future Cleanup)
+## Deprecated Rules Cleanup ✅ COMPLETE
 
-The following rules are defined but no longer referenced (dead code):
-- `attributed_procedure`
-- `attributed_trigger`
-- `attributed_onrun_trigger`
-- `attributed_controladdin_procedure`
-- `attributed_interface_procedure`
-- `attributed_variable_declaration`
-- `preproc_conditional_attributes`
-- `preproc_attributed_split_procedure`
-- `attribute_list` (may be used by deprecated rules)
+All deprecated rules have been successfully removed with GPT-5's help:
+- ✅ `attributed_procedure` - REMOVED
+- ✅ `attributed_trigger` - REMOVED
+- ✅ `attributed_onrun_trigger` - REMOVED
+- ✅ `attributed_controladdin_procedure` - REMOVED
+- ✅ `attributed_interface_procedure` - REMOVED
+- ✅ `attributed_variable_declaration` - REMOVED
+- ✅ `preproc_conditional_attributes` - REMOVED
+- ✅ `preproc_attributed_split_procedure` - REMOVED
+- ✅ `attribute_list` - REMOVED
 
-**Status:** Can be safely removed in future cleanup PR (doesn't affect parsing)
+**Cleanup Results:**
+- Grammar size: 8223 → 8138 lines (85 lines removed)
+- Conflicts removed: 2 entries from conflicts array
+- Query file updated: `queries/bad_delete.scm` migrated to Rust-style
+- Test status: 12 failures (maintained, no regressions)
 
 ## Next Steps
 
