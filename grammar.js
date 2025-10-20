@@ -130,10 +130,16 @@ module.exports = grammar({
     $.preproc_inactive_region_end,
     $.preproc_split_marker,
     $.preproc_continuation_marker,
-    $.error_sentinel
+    $.error_sentinel,
+    $.preproc_var_terminator,
+    $.attribute_for_variable,
+    $.attribute_for_procedure
   ],
 
-  extras: $ => [new RustRegex('\\s'), $.comment, $.multiline_comment, $.pragma, $.preproc_region, $.preproc_endregion, $.malformed_directive, new RustRegex('\\uFEFF')],
+  // Extras: whitespace, comments, and ignorable preprocessor directives
+  // #if/#else/#elif/#endif are literals (structural)
+  // #region/#pragma/#endregion are regex patterns (structurally insignificant)
+  extras: $ => [new RustRegex('\\s'), $.comment, $.multiline_comment, $.pragma, $.preproc_region, $.preproc_endregion, new RustRegex('\\uFEFF')],
 
   rules: {
     source_file: $ => choice(
@@ -2006,17 +2012,27 @@ module.exports = grammar({
       $.preproc_endif
     ),
 
-    attributed_procedure: $ => choice(
-      seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.procedure),
-      $.procedure,
-      $.preproc_split_procedure,
-      $.preproc_procedure_body_split,
-      $.preproc_attributed_split_procedure,
-      // Handle attributes before preprocessor-split procedure
-      seq(
-        $.attribute_list,
-        repeat($.pragma),
-        $.preproc_split_procedure
+    attributed_procedure: $ => seq(
+      // Optional terminator signals end of preceding var_section
+      optional($.preproc_var_terminator),
+      choice(
+        seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.procedure),
+        $.procedure,
+        $.preproc_split_procedure,
+        $.preproc_procedure_body_split,
+        $.preproc_attributed_split_procedure,
+        // Handle attributes before preprocessor-split procedure
+        seq(
+          $.attribute_list,
+          repeat($.pragma),
+          $.preproc_split_procedure
+        ),
+        // Handle attributes before preprocessor block containing complete procedure
+        seq(
+          $.attribute_list,
+          repeat($.pragma),
+          $.preproc_attributed_split_procedure
+        )
       )
     ),
 
@@ -4260,13 +4276,12 @@ module.exports = grammar({
     var_section: $ => prec.right(10, seq(
       optional(kw('protected')),
       kw('var'),
-      // Var section body - only allows variable-related content
       prec.right(repeat(choice(
         $.comment,
         $.multiline_comment,
         $.pragma,
         $._var_declaration_with_optional_attribute,
-        $.preproc_conditional_variables  // Re-added - needed for valid patterns
+        $.preproc_conditional_variables  // #if with variables inside
       )))
     )),
 
@@ -5400,12 +5415,28 @@ enum_type: $ => prec(1, seq(
       repeat(seq(',', $._identifier_choice))
     ),
 
+    // NEW: Attribute as a statement (Rust-style refactor - Phase 1)
+    // This allows attributes to be peers with declarations, not embedded within them
+    attribute_item: $ => seq(
+      '[',
+      field('attribute', $.attribute_content),
+      ']'
+    ),
+
+    // NEW: Attribute content (shared structure)
+    attribute_content: $ => seq(
+      field('name', $.identifier),
+      optional(field('arguments', $.attribute_arguments))
+    ),
+
+    // LEGACY: Keep for backward compatibility during migration
+    // Will be deprecated after Phase 4-6
     attribute_list: $ => prec.left(repeat1($.attribute)),
 
     attribute: $ => seq(
-      '[', 
-      field('attribute_name', $.identifier), 
-      optional($.attribute_arguments), 
+      '[',
+      field('attribute_name', $.identifier),
+      optional($.attribute_arguments),
       ']'
     ),
 
@@ -7087,14 +7118,11 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     )),
 
+    pragma: $ => new RustRegex('#pragma[^\\n\\r]*'),
+
     preproc_region: $ => new RustRegex('#\\s*region[^\\n\\r]*', 'i'),
 
     preproc_endregion: $ => new RustRegex('#endregion[^\\n\\r]*'),
-
-    pragma: $ => new RustRegex('#pragma[^\\n]*'), // Match lines starting with #pragma specifically
-
-    // Handle malformed preprocessor directives (like "# Region" with space)
-    malformed_directive: $ => new RustRegex('# [A-Za-z][^\\n\\r]*'),
 
     comment: $ => token(seq('//', new RustRegex('[^\\n\\r]*'))),
 
