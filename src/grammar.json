@@ -6287,25 +6287,12 @@
                   "name": "_action_property"
                 },
                 {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "attribute_list"
-                        },
-                        {
-                          "type": "BLANK"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "trigger_declaration"
-                    }
-                  ]
+                  "type": "SYMBOL",
+                  "name": "attribute_item"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "trigger_declaration"
                 },
                 {
                   "type": "STRING",
@@ -8481,36 +8468,23 @@
         {
           "type": "REPEAT1",
           "content": {
-            "type": "SEQ",
+            "type": "CHOICE",
             "members": [
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "attribute_list"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "attribute_item"
               },
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "procedure"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "onrun_trigger"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "trigger_declaration"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "procedure"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "onrun_trigger"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "trigger_declaration"
               }
             ]
           }
@@ -8528,36 +8502,23 @@
                 {
                   "type": "REPEAT1",
                   "content": {
-                    "type": "SEQ",
+                    "type": "CHOICE",
                     "members": [
                       {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "attribute_list"
-                          },
-                          {
-                            "type": "BLANK"
-                          }
-                        ]
+                        "type": "SYMBOL",
+                        "name": "attribute_item"
                       },
                       {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "procedure"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "onrun_trigger"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "trigger_declaration"
-                          }
-                        ]
+                        "type": "SYMBOL",
+                        "name": "procedure"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "onrun_trigger"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "trigger_declaration"
                       }
                     ]
                   }
@@ -8636,25 +8597,12 @@
                 "name": "var_section"
               },
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "attribute_list"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "procedure"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "attribute_item"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "procedure"
               },
               {
                 "type": "SYMBOL",
@@ -8683,25 +8631,12 @@
                         "name": "var_section"
                       },
                       {
-                        "type": "SEQ",
-                        "members": [
-                          {
-                            "type": "CHOICE",
-                            "members": [
-                              {
-                                "type": "SYMBOL",
-                                "name": "attribute_list"
-                              },
-                              {
-                                "type": "BLANK"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "procedure"
-                          }
-                        ]
+                        "type": "SYMBOL",
+                        "name": "attribute_item"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "procedure"
                       },
                       {
                         "type": "SYMBOL",
@@ -9331,18 +9266,6 @@
     "controladdin_event": {
       "type": "SEQ",
       "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "attribute_list"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
         {
           "type": "STRING",
           "value": "event"
@@ -10894,25 +10817,12 @@
           "name": "_dataitem_properties"
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_list"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            {
-              "type": "SYMBOL",
-              "name": "trigger_declaration"
-            }
-          ]
+          "type": "SYMBOL",
+          "name": "attribute_item"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "trigger_declaration"
         },
         {
           "type": "SYMBOL",
@@ -12505,25 +12415,12 @@
                 "name": "_page_properties"
               },
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "attribute_list"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "trigger_declaration"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "attribute_item"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "trigger_declaration"
               }
             ]
           }
@@ -21581,25 +21478,12 @@
                 "name": "_field_properties"
               },
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "attribute_list"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "trigger_declaration"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "attribute_item"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "trigger_declaration"
               }
             ]
           }

@@ -1561,7 +1561,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._action_property,
-        seq(optional($.attribute_list), $.trigger_declaration),
+        $.attribute_item,
+        $.trigger_declaration,
         ';'
       )),
       '}'
@@ -2056,10 +2057,10 @@ module.exports = grammar({
 
     preproc_conditional_procedures: $ => seq(
       $.preproc_if,
-      repeat1(seq(optional($.attribute_list), choice($.procedure, $.onrun_trigger, $.trigger_declaration))),
+      repeat1(choice($.attribute_item, $.procedure, $.onrun_trigger, $.trigger_declaration)),
       optional(seq(
         $.preproc_else,
-        repeat1(seq(optional($.attribute_list), choice($.procedure, $.onrun_trigger, $.trigger_declaration)))
+        repeat1(choice($.attribute_item, $.procedure, $.onrun_trigger, $.trigger_declaration))
       )),
       $.preproc_endif
     ),
@@ -2079,14 +2080,16 @@ module.exports = grammar({
       $.preproc_if,
       repeat1(choice(
         $.var_section,
-        seq(optional($.attribute_list), $.procedure),
+        $.attribute_item,
+        $.procedure,
         $.trigger_declaration
       )),
       optional(seq(
         $.preproc_else,
         repeat1(choice(
           $.var_section,
-          seq(optional($.attribute_list), $.procedure),
+          $.attribute_item,
+          $.procedure,
           $.trigger_declaration
         ))
       )),
@@ -2230,7 +2233,6 @@ module.exports = grammar({
     ),
 
     controladdin_event: $ => seq(
-      optional($.attribute_list),
       'event',
       field('name', $.identifier),
       '(',
@@ -2565,10 +2567,11 @@ module.exports = grammar({
     ),
 
     _report_dataitem_content_element: $ => choice(
-      $.report_column_section, 
+      $.report_column_section,
       $.report_dataitem_section,
       $._dataitem_properties,
-      seq(optional($.attribute_list), $.trigger_declaration),
+      $.attribute_item,
+      $.trigger_declaration,
       $.preproc_conditional_report_dataitem_content
     ),
 
@@ -2920,7 +2923,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._page_properties,
-        seq(optional($.attribute_list), $.trigger_declaration)
+        $.attribute_item,
+        $.trigger_declaration
       )),
       '}'
     ),
@@ -4818,7 +4822,8 @@ enum_type: $ => prec(1, seq(
       '{',
       repeat(choice(
         $._field_properties,
-        seq(optional($.attribute_list), $.trigger_declaration)
+        $.attribute_item,
+        $.trigger_declaration
       )),
       '}'
     ),
