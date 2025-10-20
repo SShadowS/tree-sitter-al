@@ -59,15 +59,14 @@ dotnet
       name: (name
         (identifier))
       (var_section
-        (attributed_variable_declaration
-          attributes: (attribute_list
-            (attribute
-              attribute_name: (identifier)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                reference: (dotnet_type_name))))))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              reference: (dotnet_type_name)))))
       (code_block
         (comment))))
   (dotnet_declaration

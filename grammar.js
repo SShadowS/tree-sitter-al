@@ -117,8 +117,6 @@ module.exports = grammar({
     [$.interface_procedure],
     [$.preproc_conditional_layout, $.preproc_conditional_group_content],
     [$.preproc_conditional_group_content, $.preproc_conditional_properties],
-    [$.preproc_split_procedure, $.preproc_attributed_split_procedure],
-    [$.attributed_procedure, $.preproc_conditional_variables],
     [$.preproc_conditional_if_statement, $._statement],
     [$.preproc_conditional_statements, $.preproc_conditional_if_statement],
     [$.attribute_content, $.attribute],  // Phase 2: Allow both Rust-style and legacy attributes during migration
@@ -2011,49 +2009,9 @@ module.exports = grammar({
       '}'
     ),
 
-    preproc_conditional_attributes: $ => seq(
-      $.preproc_if,
-      $.attribute_list,
-      optional(seq(
-        $.preproc_else,
-        $.attribute_list
-      )),
-      $.preproc_endif
-    ),
 
-    attributed_procedure: $ => prec(2, seq(  // Phase 2: Higher precedence to prefer legacy pattern during migration
-      // Optional terminator signals end of preceding var_section
-      optional($.preproc_var_terminator),
-      choice(
-        seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.procedure),
-        $.procedure,
-        $.preproc_split_procedure,
-        $.preproc_procedure_body_split,
-        $.preproc_attributed_split_procedure,
-        // Handle attributes before preprocessor-split procedure
-        seq(
-          $.attribute_list,
-          repeat($.pragma),
-          $.preproc_split_procedure
-        ),
-        // Handle attributes before preprocessor block containing complete procedure
-        seq(
-          $.attribute_list,
-          repeat($.pragma),
-          $.preproc_attributed_split_procedure
-        )
-      )
-    )),
 
-    attributed_trigger: $ => prec(2, choice(  // Phase 2: Higher precedence to prefer legacy pattern during migration
-      seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.trigger_declaration),
-      $.trigger_declaration
-    )),
 
-    attributed_onrun_trigger: $ => prec(2, choice(  // Phase 2: Higher precedence to prefer legacy pattern during migration
-      seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.onrun_trigger),
-      $.onrun_trigger
-    )),
 
     preproc_conditional_procedures: $ => seq(
       $.preproc_if,
@@ -2250,11 +2208,6 @@ module.exports = grammar({
       optional(';')
     ),
 
-    attributed_controladdin_procedure: $ => prec(2, seq(  // Phase 2: Higher precedence to prefer legacy pattern during migration
-      choice($.attribute_list, $.preproc_conditional_attributes),
-      repeat($.pragma),
-      $.controladdin_procedure
-    )),
 
     interface_declaration: $ => seq(
       kw('interface', 10),
@@ -2301,10 +2254,6 @@ module.exports = grammar({
       field('return_type', $.return_type)
     )),
 
-    attributed_interface_procedure: $ => prec(2, seq(  // Phase 2: Higher precedence to prefer legacy pattern during migration
-      $.attribute_list,
-      $.interface_procedure
-    )),
 
     report_declaration: $ => seq(
       kw('report'),
@@ -4296,22 +4245,15 @@ module.exports = grammar({
         $.comment,
         $.multiline_comment,
         $.pragma,
-        $._var_declaration_with_optional_attribute,
+        $.attribute_item,
+        $.variable_declaration,
         $.preproc_conditional_variables  // #if with variables inside
       )))
     )),
 
-    // Variable declaration that can optionally have attributes (only valid inside var sections)
-    _var_declaration_with_optional_attribute: $ => choice(
-      $.variable_declaration,
-      $.attributed_variable_declaration
-    ),
+    _var_declaration_with_optional_attribute: $ => $.variable_declaration,
 
     // Variable declaration with attributes (e.g., [RunOnClient])
-    attributed_variable_declaration: $ => seq(
-      field('attributes', $.attribute_list),
-      $.variable_declaration
-    ),
 
     // Helper rule for unquoted variable names (allows certain keywords as identifiers)
     _unquoted_variable_name: $ => choice(
@@ -5448,7 +5390,6 @@ enum_type: $ => prec(1, seq(
 
     // LEGACY: Keep for backward compatibility during migration
     // Will be deprecated after Phase 4-6
-    attribute_list: $ => prec.left(repeat1($.attribute)),
 
     attribute: $ => seq(
       '[',
@@ -5568,33 +5509,6 @@ enum_type: $ => prec(1, seq(
       $.code_block
     ),
 
-    // Split procedure where one branch has attributes
-    preproc_attributed_split_procedure: $ => seq(
-      $.preproc_if,
-      field('if_branch', choice(
-        seq(
-          $.attribute_list,
-          $.procedure_header
-        ),
-        $.procedure_header
-      )),
-      $.preproc_else,
-      field('else_header', choice(
-        seq(
-          $.attribute_list,
-          $.procedure_header
-        ),
-        $.procedure_header
-      )),
-      $.preproc_endif,
-      optional(';'),
-      repeat($.pragma),
-      optional(choice(
-        $.var_section,
-        $.preproc_conditional_var_sections
-      )),
-      $.code_block
-    ),
 
     // Procedure where header is complete but body is conditionally included
     preproc_procedure_body_split: $ => prec(2, seq(
@@ -7086,7 +7000,8 @@ enum_type: $ => prec(1, seq(
 
     // Preprocessor conditional rules for variable declarations
     preproc_conditional_variables: _preproc_conditional_block_template($ => choice(
-        $._var_declaration_with_optional_attribute,
+        $.attribute_item,
+        $.variable_declaration,
         $.comment,
         $.multiline_comment,
         $.pragma,
