@@ -26,6 +26,13 @@ function kw_with_eq(word, precedence = null) {
   return precedence !== null ? token(prec(precedence, regex)) : token(regex);
 }
 
+// Helper for object type keywords followed by :: (Table::, Report::, etc.)
+// This prevents standalone 'Table' from matching as keyword when it should be identifier
+function kw_with_coloncolon(word, precedence = null) {
+  const regex = new RustRegex(`(?i)${word}[\\t\\f\\r ]*::`);
+  return precedence !== null ? token(prec(precedence, regex)) : token(regex);
+}
+
 // Helper for properties that can also be used as variable names
 // This pattern is used when a property name conflicts with variable usage
 // Only apply to properties that cause actual parsing failures in production
@@ -6384,16 +6391,16 @@ enum_type: $ => prec(1, seq(
     )),
 
     // Object type qualified references (Report::"Report Name", Page::"Page Name", etc.)
+    // Uses kw_with_coloncolon to prevent standalone keywords from matching (e.g., filter(Table) should work)
     object_type_qualified_reference: $ => prec(300, seq(  // High precedence for object type patterns
-      field('object_type', choice(
-        kw('report'),
-        kw('page'),
-        kw('codeunit'),
-        kw('table'),
-        kw('xmlport'),
-        kw('query')
-      )),
-      '::',
+      choice(
+        kw_with_coloncolon('report'),
+        kw_with_coloncolon('page'),
+        kw_with_coloncolon('codeunit'),
+        kw_with_coloncolon('table'),
+        kw_with_coloncolon('xmlport'),
+        kw_with_coloncolon('query')
+      ),
       field('object_name', $._identifier_choice)
     )),
 

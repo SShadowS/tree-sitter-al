@@ -39,7 +39,7 @@ table 50100 "IC Setup"
                       (field_ref
                         (quoted_identifier))
                       (filter_expression_function
-                        (enum_member_access
+                        (qualified_enum_value
                           (quoted_identifier)
                           (identifier))))))))))
         (empty_statement)))))
@@ -169,10 +169,10 @@ table 50103 "Integration Setup"
                         (identifier))
                       (filter_expression_function
                         (filter_or_expression
-                          (enum_member_access
+                          (qualified_enum_value
                             (quoted_identifier)
                             (identifier))
-                          (enum_member_access
+                          (qualified_enum_value
                             (quoted_identifier)
                             (identifier)))))))))))
         (empty_statement)))))
