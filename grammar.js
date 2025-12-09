@@ -129,6 +129,8 @@ module.exports = grammar({
     [$.attribute_content, $.attribute],  // Phase 2: Allow both Rust-style and legacy attributes during migration
     [$.preproc_conditional_procedures, $.preproc_conditional_mixed_content, $.preproc_split_procedure],  // Attributes in preproc branches
     [$.preproc_conditional_procedures, $.preproc_split_procedure],  // Attributes conflict - exact
+    [$._expression, $._extended_value_choice],  // Filter expression range ambiguity
+    [$._literal_value, $._extended_value_choice],  // Filter expression literal range ambiguity
   ],
 
   externals: $ => [
