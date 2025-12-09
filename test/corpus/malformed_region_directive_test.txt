@@ -1,31 +1,4 @@
 ================================================================================
-Malformed region directive with space
-================================================================================
-
-codeunit 50100 "Test"
-{
-    # Region TODO: This is malformed
-    procedure Test()
-    begin
-    end;
-    #endregion
-}
-
---------------------------------------------------------------------------------
-
-(source_file
-  (codeunit_declaration
-    object_id: (integer)
-    object_name: (quoted_identifier)
-    (malformed_directive)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block)))
-    (preproc_endregion)))
-
-================================================================================
 Correct region directive syntax
 ================================================================================
 

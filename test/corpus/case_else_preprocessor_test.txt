@@ -56,6 +56,7 @@ codeunit 50000 "Test Case Else"
           type: (type_specification
             (record_type
               reference: (quoted_identifier))))
+        (preproc_var_continuation)
         (preproc_conditional_variables
           (preproc_if
             condition: (preproc_not_expression

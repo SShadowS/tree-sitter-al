@@ -71,13 +71,13 @@ The tree-sitter-al grammar has been successfully refactored to treat attributes 
 
 ### Test Status
 - **Before refactor:** 13 failures (8 baseline + 5 core limitation)
-- **After refactor:** 12 failures (1 baseline + 11 known/intentional)
-- **Net improvement:** 1 fewer failure, **CORE LIMITATION FIXED** ✅
+- **After refactor:** 11 failures (1 baseline + 10 known/intentional)
+- **Net improvement:** 2 fewer failures, **CORE LIMITATION FIXED** ✅
 
 ### Failure Breakdown
 1. **Baseline (1):** Malformed region directive with space (pre-existing)
 2. **Intentionally unsupported (7):** Patterns from PHASE4_UNSUPPORTED_PATTERNS.md
-3. **Complex edge cases (4):** Preprocessor + var section edge cases
+3. **Complex edge cases (3):** Preprocessor + var section edge cases
 
 ### Architecture Changes
 

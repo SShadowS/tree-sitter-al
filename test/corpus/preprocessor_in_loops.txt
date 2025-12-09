@@ -44,6 +44,7 @@ codeunit 50100 TestPreprocessor
           type: (type_specification
             (record_type
               reference: (quoted_identifier))))
+        (preproc_var_continuation)
         (preproc_conditional_variables
           (preproc_if
             condition: (preproc_not_expression

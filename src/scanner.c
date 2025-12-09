@@ -22,13 +22,20 @@ enum TokenType {
     ERROR_SENTINEL,                   // 6 - Error recovery token
     PREPROC_VAR_TERMINATOR,           // 7 - Detects var section terminators in preprocessor
     ATTRIBUTE_FOR_VARIABLE,           // 8 - Distinguishes [attr] for variable
-    ATTRIBUTE_FOR_PROCEDURE           // 9 - Distinguishes [attr] for procedure
+    ATTRIBUTE_FOR_PROCEDURE,          // 9 - Distinguishes [attr] for procedure
+    PREPROC_VAR_CONTINUATION          // 10 - Signals #if contains ONLY variables, continue var_section
 };
 
 // Keywords that can terminate a var section
+// When #if contains these, don't emit continuation (exit var_section)
+// Note: We only check for code constructs (procedure, trigger), not var/protected var
+// because #if containing var could be either:
+// - A new var section (when #if is at object body level)
+// - Continuation of variables (when #if is inside existing var_section)
+// The grammar's conflict resolution handles this ambiguity
 static const char* VAR_TERMINATORS[] = {
     "procedure", "trigger", "onrun",
-    "table", "page", "codeunit", "report", 
+    "table", "page", "codeunit", "report",
     "query", "xmlport", "enum", "interface",
     "fields", "keys", "fieldgroups",
     NULL  // Sentinel
@@ -506,7 +513,8 @@ static bool match_directive_ci(TSLexer *lexer, const char *directive) {
 }
 
 // Forward declarations
-static bool scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer);
+// Returns: 1 = found terminator (procedures), 0 = is #if but no terminator, -1 = not at #if
+static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer);
 static bool scan_split_procedure_marker(Scanner *scanner, TSLexer *lexer);
 static bool scan_attribute_for_procedure(Scanner *scanner, TSLexer *lexer);
 
@@ -526,12 +534,13 @@ bool tree_sitter_al_external_scanner_scan(
             first_call = false;
         }
 
-        // Debug: print scanner state when at '#'
-        if (lexer->lookahead == '#') {
-            fprintf(stderr, "SCANNER at '#': valid: VAR_TERM=%d SPLIT=%d ATTR_PROC=%d\n",
+        // Debug: print when VAR tokens are valid
+        if (valid_symbols[PREPROC_VAR_TERMINATOR] || valid_symbols[PREPROC_VAR_CONTINUATION]) {
+            fprintf(stderr, "SCANNER: VAR tokens - TERM=%d CONT=%d at '%c'(0x%02x)\n",
                     valid_symbols[PREPROC_VAR_TERMINATOR],
-                    valid_symbols[PREPROC_SPLIT_MARKER],
-                    valid_symbols[ATTRIBUTE_FOR_PROCEDURE]);
+                    valid_symbols[PREPROC_VAR_CONTINUATION],
+                    (lexer->lookahead >= 32 && lexer->lookahead < 127) ? (char)lexer->lookahead : '?',
+                    lexer->lookahead);
             fflush(stderr);
         }
     }
@@ -558,21 +567,53 @@ bool tree_sitter_al_external_scanner_scan(
         // fprintf(stderr, "  -> Not an attribute for procedure\n");
     }
 
-    // Check for var terminator in preprocessor blocks
-    // CRITICAL: Only check if lookahead is already '#' - don't advance to look for it!
-    // The internal lexer will position us at '#' if that's the next token.
-    if (valid_symbols[PREPROC_VAR_TERMINATOR] && lexer->lookahead == '#') {
-        // Mark current position as token end (zero-width token)
+    // Check for var terminator/continuation in preprocessor blocks
+    // Skip whitespace to find potential '#' - this helps when parser is at newline/space
+    if (valid_symbols[PREPROC_VAR_TERMINATOR] || valid_symbols[PREPROC_VAR_CONTINUATION]) {
+        if (SCANNER_DEBUG) {
+            fprintf(stderr, "SCANNER: VAR check - TERM=%d CONT=%d at '%c'\n",
+                    valid_symbols[PREPROC_VAR_TERMINATOR],
+                    valid_symbols[PREPROC_VAR_CONTINUATION],
+                    (lexer->lookahead >= 32 && lexer->lookahead < 127) ? (char)lexer->lookahead : '?');
+            fflush(stderr);
+        }
+        // Mark current position as token start (zero-width token)
         lexer->mark_end(lexer);
 
-        if (SCANNER_DEBUG) fprintf(stderr, "SCANNER: Checking for PREPROC_VAR_TERMINATOR at #...\n");
-        if (scan_var_terminator_in_preproc(scanner, lexer)) {
-            if (SCANNER_DEBUG) fprintf(stderr, "SCANNER: ✓ Emitting PREPROC_VAR_TERMINATOR!\n");
-            // Emit zero-width terminator BEFORE the #if
-            lexer->result_symbol = PREPROC_VAR_TERMINATOR;
-            return true;
+        // Skip whitespace to see if there's a '#' ahead
+        int skipped = 0;
+        while (iswspace(lexer->lookahead)) {
+            skipped++;
+            lexer->advance(lexer, true);
         }
-        if (SCANNER_DEBUG) fprintf(stderr, "SCANNER: ✗ No terminator (contains vars)\n");
+
+        if (SCANNER_DEBUG && skipped > 0) {
+            fprintf(stderr, "SCANNER: Skipped %d whitespace, now at '%c'(0x%02x)\n",
+                    skipped,
+                    (lexer->lookahead >= 32 && lexer->lookahead < 127) ? (char)lexer->lookahead : '?',
+                    lexer->lookahead);
+            fflush(stderr);
+        }
+
+        if (lexer->lookahead == '#') {
+            if (SCANNER_DEBUG) fprintf(stderr, "SCANNER: Checking for procedures in #if...\n");
+            // Returns: 1 = found terminator (procedures), 0 = is #if but no terminator, -1 = not at #if
+            int result = scan_var_terminator_in_preproc(scanner, lexer);
+            if (result == 1) {
+                // #if contains procedures - return FALSE to let parser exit var_section naturally
+                if (SCANNER_DEBUG) fprintf(stderr, "SCANNER: Found procedures, returning false (exit var_section)\n");
+                // Don't emit any token, just let normal parsing handle it
+                // This allows attributed_procedure and other rules to match
+            } else if (result == 0 && valid_symbols[PREPROC_VAR_CONTINUATION]) {
+                // Is #if with only variables - emit continuation marker
+                // This forces the parser to continue var_section with preproc_conditional_variables
+                if (SCANNER_DEBUG) fprintf(stderr, "SCANNER: ✓ Emitting PREPROC_VAR_CONTINUATION (has vars only)!\n");
+                lexer->result_symbol = PREPROC_VAR_CONTINUATION;
+                return true;
+            }
+            // result == -1: Not at #if (e.g., #endif, #else) - don't emit anything
+        }
+        // Reset if we didn't find a terminator - DON'T return, let other checks run
     }
 
     return false;
@@ -590,23 +631,25 @@ static bool scan_split_procedure_marker(Scanner *scanner, TSLexer *lexer) {
     // Mark the token start - don't consume anything
     lexer->mark_end(lexer);
 
-    // If we're at #, skip past the directive
-    if (lexer->lookahead == '#') {
-        lexer->advance(lexer, false);
-
-        // Must be followed by 'if', 'ifdef', or 'ifndef'
-        if (!match_keyword_ci(lexer, "if") &&
-            !match_keyword_ci(lexer, "ifdef") &&
-            !match_keyword_ci(lexer, "ifndef")) {
-            // fprintf(stderr, "    scan_split_procedure_marker: not if/ifdef/ifndef, returning false\n");
-            return false;
-        }
-
-        // fprintf(stderr, "    scan_split_procedure_marker: found #if, skipping to EOL\n");
-        skip_to_eol(lexer);
+    // Must start with # to be a split procedure marker
+    if (lexer->lookahead != '#') {
+        return false;  // Not at #, can't be a split procedure marker
     }
 
-    // Otherwise, we're already past #if, so just look ahead from here
+    lexer->advance(lexer, false);
+
+    // Must be followed by 'if', 'ifdef', or 'ifndef'
+    if (!match_keyword_ci(lexer, "if") &&
+        !match_keyword_ci(lexer, "ifdef") &&
+        !match_keyword_ci(lexer, "ifndef")) {
+        // fprintf(stderr, "    scan_split_procedure_marker: not if/ifdef/ifndef, returning false\n");
+        return false;
+    }
+
+    // fprintf(stderr, "    scan_split_procedure_marker: found #if, skipping to EOL\n");
+    skip_to_eol(lexer);
+
+    // Now look ahead to see what's in the branch
     // fprintf(stderr, "    scan_split_procedure_marker: looking ahead for procedure...\n");
 
     // Now look ahead to see what's in the branch
@@ -807,7 +850,8 @@ static bool scan_attribute_for_procedure(Scanner *scanner, TSLexer *lexer) {
 // Scan for var section terminators inside preprocessor blocks
 // NOTE: Caller must call lexer->mark_end() before calling this function
 // to establish the zero-width token position.
-static bool scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
+// Returns: 1 = found terminator (procedures), 0 = is #if but no terminator, -1 = not at #if
+static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
     if (SCANNER_DEBUG) {
         fprintf(stderr, "  -> scan_var_terminator_in_preproc: Starting scan\n");
         fflush(stderr);
@@ -819,20 +863,34 @@ static bool scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
     // Lookahead only - caller already marked token position
     // Check if this is #if
     if (lexer->lookahead != '#') {
-        fprintf(stderr, "    -> Not #, returning false\n");
-        return false;
+        fprintf(stderr, "    -> Not #, returning -1\n");
+        return -1;  // Not at # at all
     }
 
     // Peek ahead without consuming
     lexer->advance(lexer, false);
+
+    if (SCANNER_DEBUG) {
+        fprintf(stderr, "    -> After # advance, at char '%c'(0x%02x)\n",
+                (lexer->lookahead >= 32 && lexer->lookahead < 127) ? (char)lexer->lookahead : '?',
+                lexer->lookahead);
+        fflush(stderr);
+    }
 
     // Must be followed by 'if', 'ifdef', or 'ifndef'
     bool is_if = match_keyword_ci(lexer, "if");
     bool is_ifdef = match_keyword_ci(lexer, "ifdef");
     bool is_ifndef = match_keyword_ci(lexer, "ifndef");
 
+    if (SCANNER_DEBUG) {
+        fprintf(stderr, "    -> Directive check: is_if=%d, is_ifdef=%d, is_ifndef=%d\n",
+                is_if, is_ifdef, is_ifndef);
+        fflush(stderr);
+    }
+
     if (!is_if && !is_ifdef && !is_ifndef) {
-        return false;
+        if (SCANNER_DEBUG) fprintf(stderr, "    -> Not if/ifdef/ifndef, returning -1\n");
+        return -1;  // Not at #if at all (e.g., #endif, #else, etc.)
     }
 
     // Skip to end of directive line (for lookahead)
@@ -844,11 +902,23 @@ static bool scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
     uint32_t bytes_scanned = 0;
     const uint32_t MAX_LOOKAHEAD = 10000;
     
+    if (SCANNER_DEBUG) {
+        fprintf(stderr, "    -> Starting lookahead loop, depth=%d\n", depth);
+        fflush(stderr);
+    }
+
     while (depth > 0 && !lexer->eof(lexer) && bytes_scanned < MAX_LOOKAHEAD) {
         uint32_t pos_before = lexer->get_column(lexer);
-        
+
         // Skip whitespace, comments, and strings
         skip_non_code(lexer);
+
+        if (SCANNER_DEBUG) {
+            fprintf(stderr, "    -> After skip_non_code: char='%c'(0x%02x), depth=%d\n",
+                    (lexer->lookahead >= 32 && lexer->lookahead < 127) ? (char)lexer->lookahead : '?',
+                    lexer->lookahead, depth);
+            fflush(stderr);
+        }
         
         // Check for attributes and skip them
         if (lexer->lookahead == '[') {
@@ -873,8 +943,7 @@ static bool scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
         else if (depth == 1) {
             // Check for closing brace (ends the object)
             if (lexer->lookahead == '}') {
-                lexer->result_symbol = PREPROC_VAR_TERMINATOR;
-                return true;
+                return 1;  // Found terminator (closing brace)
             }
 
             // Only check for keywords at the start of identifiers
@@ -888,6 +957,11 @@ static bool scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
                     lexer->advance(lexer, false);
                 }
                 identifier[id_len] = '\0';
+
+                if (SCANNER_DEBUG) {
+                    fprintf(stderr, "    -> Found identifier: '%s'\n", identifier);
+                    fflush(stderr);
+                }
 
                 // Check if this identifier matches any var terminator (case-insensitive)
                 for (int i = 0; VAR_TERMINATORS[i]; i++) {
@@ -915,8 +989,7 @@ static bool scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
                             fprintf(stderr, "  -> Found terminator keyword: %s\n", term);
                             fflush(stderr);
                         }
-                        lexer->result_symbol = PREPROC_VAR_TERMINATOR;
-                        return true;
+                        return 1;  // Found terminator keyword
                     }
                 }
             } else {
@@ -933,8 +1006,8 @@ static bool scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
     }
 
     if (SCANNER_DEBUG) {
-        fprintf(stderr, "  -> scan_var_terminator_in_preproc: No terminators found\n");
+        fprintf(stderr, "  -> scan_var_terminator_in_preproc: No terminators found (is #if)\n");
         fflush(stderr);
     }
-    return false;  // No terminator found
+    return 0;  // Is #if but no terminator found - safe to continue var_section
 }

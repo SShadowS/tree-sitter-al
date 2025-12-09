@@ -66,34 +66,32 @@ codeunit 1448 "DSACryptoServiceProvider Impl." implements "Signature Algorithm v
       value: (inherent_permissions_value
         (permission_type)))
     (var_section
-      (attributed_variable_declaration
-        attributes: (attribute_list
-          (attribute
-            attribute_name: (identifier)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (dotnet_type
+            reference: (dotnet_type_name)))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
             (dotnet_type
-              reference: (dotnet_type_name))))))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)))
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (dotnet_type
-                reference: (dotnet_type_name)))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (identifier)))))))
+              reference: (dotnet_type_name)))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (identifier))))))
 
 ================================================================================
 Simple Codeunit with Preprocessor in Implements

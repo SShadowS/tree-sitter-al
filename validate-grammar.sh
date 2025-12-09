@@ -211,6 +211,30 @@ else
     print_success "No TODO comments found"
 fi
 
+# Step 8: Grammar health check (regression detection)
+print_header "Step 8: Grammar Health Check"
+if [ -f "check_grammar_health.py" ]; then
+    HEALTH_OUTPUT=$(python3 check_grammar_health.py --ci 2>&1)
+    HEALTH_EXIT_CODE=$?
+
+    if [ $HEALTH_EXIT_CODE -eq 0 ]; then
+        # Extract key metrics from output
+        if echo "$HEALTH_OUTPUT" | grep -q "No changes from baseline"; then
+            print_success "No regressions from baseline"
+        elif echo "$HEALTH_OUTPUT" | grep -q "IMPROVEMENTS:"; then
+            print_success "Health check passed with improvements"
+        else
+            print_success "Health check passed"
+        fi
+    else
+        print_error "Grammar health check detected regressions"
+        echo "$HEALTH_OUTPUT" | grep -A5 "REGRESSIONS:" | head -10
+        VALIDATION_FAILED=1
+    fi
+else
+    print_warning "Health check script not found (check_grammar_health.py)"
+fi
+
 # Final summary
 print_header "Validation Summary"
 END_TIME=$(date +%s)

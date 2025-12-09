@@ -18,6 +18,14 @@ function kw(word, precedence = null) {
   return precedence !== null ? token(prec(precedence, regex)) : token(regex);
 }
 
+// Helper for contextual keywords that match with '=' included
+// This disambiguates property names from variable names at the lexer level
+// Note: This does NOT allow comments between the keyword and '='
+function kw_with_eq(word, precedence = null) {
+  const regex = new RustRegex(`(?i)${word}[\\t\\f\\r ]*=`);
+  return precedence !== null ? token(prec(precedence, regex)) : token(regex);
+}
+
 // Helper for properties that can also be used as variable names
 // This pattern is used when a property name conflicts with variable usage
 // Only apply to properties that cause actual parsing failures in production
@@ -114,12 +122,17 @@ module.exports = grammar({
     [$.source_file],
     [$.preproc_conditional_procedures, $.preproc_conditional_mixed_content],
     [$.preproc_conditional_var_sections, $.preproc_conditional_mixed_content],
-    [$.interface_procedure],
     [$.preproc_conditional_layout, $.preproc_conditional_group_content],
     [$.preproc_conditional_group_content, $.preproc_conditional_properties],
     [$.preproc_conditional_if_statement, $._statement],
     [$.preproc_conditional_statements, $.preproc_conditional_if_statement],
     [$.attribute_content, $.attribute],  // Phase 2: Allow both Rust-style and legacy attributes during migration
+    // Prefer continuing var_section with preproc_conditional_variables over exiting to page properties
+    [$.preproc_conditional_variables, $.preproc_conditional_page_properties],
+    [$.preproc_conditional_procedures, $.preproc_conditional_mixed_content, $.preproc_split_procedure],  // Attributes in preproc branches
+    [$.preproc_conditional_procedures, $.preproc_split_procedure],  // Attributes conflict - exact
+    [$.enum_declaration, $.preproc_conditional_procedures],  // Attributes in preproc after enum header
+    [$.enum_declaration, $.preproc_split_procedure],  // Attributed split procedure in enum
   ],
 
   externals: $ => [
@@ -132,7 +145,8 @@ module.exports = grammar({
     $.error_sentinel,
     $.preproc_var_terminator,
     $.attribute_for_variable,
-    $.attribute_for_procedure
+    $.attribute_for_procedure,
+    $.preproc_var_continuation  // Signals #if contains ONLY variables, forces var_section continuation
   ],
 
   // Extras: whitespace, comments, and ignorable preprocessor directives
@@ -279,6 +293,8 @@ module.exports = grammar({
       $.var_section,
       $.preproc_conditional_var_sections,
       $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
       $.trigger_declaration,
       $._xmlport_properties,
       $.preproc_conditional_xmlport_properties,
@@ -691,6 +707,8 @@ module.exports = grammar({
       $.preproc_conditional_query_properties,
       $.trigger_declaration,         // triggers like OnBeforeOpen
       $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
       $.var_section,                 // var section for global variables
       $.preproc_conditional_var_sections,  // conditional var sections
 
@@ -861,8 +879,9 @@ module.exports = grammar({
     ),
 
     api_version_property: $ => seq(
-      kw('apiversion'),
-      $._string_property_template
+      kw_with_eq('apiversion'),
+      field('value', $.string_literal),
+      ';'
     ),
 
     order_by_property: _value_property_template(
@@ -1394,6 +1413,8 @@ module.exports = grammar({
       $.preproc_conditional_var_sections,
       $.trigger_declaration,
       $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
       $.preproc_region,
       $.preproc_endregion,
       $.pragma
@@ -1416,6 +1437,8 @@ module.exports = grammar({
       $.keys,
       $.fieldgroups_section,
       $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
       $.trigger_declaration,
       $.var_section,
       $.preproc_conditional_procedures,  // Support preprocessor conditional procedures
@@ -1678,9 +1701,10 @@ module.exports = grammar({
       $ => $.usage_category_value
     ),
 
-    source_table_property: _value_property_template(
-      $ => kw('sourcetable'),
-      $ => $._object_reference
+    source_table_property: $ => seq(
+      kw_with_eq('sourcetable'),
+      field('value', $._object_reference),
+      ';'
     ),
 
     page_type_property: $ => seq(
@@ -1818,16 +1842,15 @@ module.exports = grammar({
     ),
 
     visible_property: $ => seq(
-      field('name', alias(
-        choice('Visible', 'visible', 'VISIBLE'),
-        'Visible'
-      )),
-      $._expression_property_template
+      field('name', alias(kw_with_eq('visible'), 'Visible')),
+      field('value', $._expression),
+      ';'
     ),
 
     scope_property: $ => seq(
-      kw('scope'),
-      $._identifier_property_template
+      kw_with_eq('scope'),
+      field('value', $.identifier),
+      ';'
     ),
 
     promoted_property: $ => seq(
@@ -1879,15 +1902,13 @@ module.exports = grammar({
     _colon: $ => ':',
 
     table_no_property: $ => seq(
-      alias(kw('tableno'), 'TableNo'),
-      '=',
+      alias(kw_with_eq('tableno'), 'TableNo'),
       field('value', alias($._table_no_value, $.value)),
       ';'
     ),
 
     subtype_property: $ => seq(
-      kw('subtype'),
-      '=', 
+      kw_with_eq('subtype'),
       field('value', alias($.subtype_value, $.value)),
       ';'
     ),
@@ -1997,6 +2018,8 @@ module.exports = grammar({
         $.var_section,
         $.preproc_conditional_var_sections,
         $.procedure,
+        $.preproc_split_procedure,
+        $.preproc_procedure_body_split,
         $.onrun_trigger,
         $.trigger_declaration,
         $.preproc_conditional_procedures,
@@ -2283,6 +2306,8 @@ module.exports = grammar({
       $.var_section,
       $.preproc_conditional_var_sections,
       $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
       $.trigger_declaration,
       $.preproc_region,
       $.preproc_endregion,
@@ -2302,6 +2327,8 @@ module.exports = grammar({
 
       // Report procedures and triggers
       $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
       $.trigger_declaration,
       $.preproc_conditional_procedures,
 
@@ -2738,6 +2765,9 @@ module.exports = grammar({
       $.actions_section,
       $.views_section,  // Support page views section
       $.procedure,
+      // Use prec.dynamic to prefer var_section continuation over split procedures
+      prec.dynamic(-50, $.preproc_split_procedure),
+      $.preproc_procedure_body_split,
       $.var_section,
       $.preproc_conditional_var_sections, // Support preprocessor conditional var sections
       $.trigger_declaration,
@@ -2751,8 +2781,8 @@ module.exports = grammar({
       // All page properties now centralized
       $._page_properties,
 
-      // Preprocessor conditional page properties
-      $.preproc_conditional_page_properties,
+      // Lower dynamic precedence to prefer var_section continuation
+      prec.dynamic(-100, $.preproc_conditional_page_properties),
 
       // Special case: source_table_view_property at the top for higher precedence
       $.source_table_view_property,
@@ -3277,7 +3307,11 @@ module.exports = grammar({
       $._boolean_property_template
     ),
     
-    importance_property: _value_property_template($ => kw('importance'), $ => $.importance_value),
+    importance_property: $ => seq(
+      kw_with_eq('importance'),
+      field('value', $.importance_value),
+      ';'
+    ),
 
     navigation_page_id_property: $ => seq(
       'NavigationPageId',
@@ -3297,8 +3331,9 @@ module.exports = grammar({
     ),
 
     width_property: $ => seq(
-      kw('width'),
-      $._integer_property_template
+      kw_with_eq('width'),
+      field('value', $.integer),
+      ';'
     ),
 
     show_caption_property: $ => seq(
@@ -3333,11 +3368,16 @@ module.exports = grammar({
       $._expression_property_template
     ),
 
-    style_property: _value_property_template('Style', $ => $.style_value),
+    style_property: $ => seq(
+      kw_with_eq('style'),
+      field('value', $.style_value),
+      ';'
+    ),
 
     style_expr_property: $ => seq(
-      'StyleExpr',
-      $._expression_property_template
+      kw_with_eq('styleexpr'),
+      field('value', $._expression),
+      ';'
     ),
 
     page_id_value: $ => $._object_reference,
@@ -3568,11 +3608,7 @@ module.exports = grammar({
     ),
 
     table_type_property: $ => seq(
-      field('name', alias(
-        choice('TableType', 'tabletype', 'TABLETYPE', 'Tabletype'),
-        'TableType'
-      )),
-      '=',
+      field('name', alias(kw_with_eq('tabletype'), 'TableType')),
       field('value', alias($.table_type_value, $.value)),
       ';'
     ),
@@ -3656,8 +3692,9 @@ module.exports = grammar({
     ),
 
     description_property: $ => seq(
-      alias(kw('description'), 'Description'),
-      $._string_property_template
+      alias(kw_with_eq('description'), 'Description'),
+      field('value', $.string_literal),
+      ';'
     ),
 
 
@@ -3934,6 +3971,8 @@ module.exports = grammar({
 
       // Procedures
       $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
       $.preproc_conditional_procedures,
 
       // All table properties now centralized
@@ -4143,8 +4182,30 @@ module.exports = grammar({
     )),
 
     caption_property: $ => seq(
-      field('name', alias(kw('caption'), 'Caption')),
-      $._caption_full_template
+      field('name', alias(kw_with_eq('caption'), 'Caption')),
+      $.string_literal,
+      repeat(seq(
+        ',',
+        choice(
+          seq(
+            kw('locked'),
+            '=',
+            $.boolean
+          ),
+          seq(
+            kw('comment'),
+            '=',
+            $.string_literal
+          ),
+          seq(
+            kw('maxlength'),
+            '=',
+            $.integer
+          )
+        )
+      )),
+      optional(','),  // Support trailing comma
+      ';'
     ),
 
     caption_class_property: $ => seq(
@@ -4241,17 +4302,20 @@ module.exports = grammar({
     var_section: $ => prec.right(10, seq(
       optional(kw('protected')),
       kw('var'),
-      prec.right(repeat(choice(
+      repeat(choice(
         $.comment,
         $.multiline_comment,
         $.pragma,
-        $.attribute_item,
         $.variable_declaration,
-        $.preproc_conditional_variables  // #if with variables inside
-      )))
+        seq(
+          repeat1($.attribute_item),
+          repeat(choice($.comment, $.multiline_comment, $.pragma)),
+          $.variable_declaration
+        ),
+        // Scanner discrimination + high dynamic precedence forces parser to stay in var_section
+        prec.dynamic(100, seq($.preproc_var_continuation, $.preproc_conditional_variables))
+      ))
     )),
-
-    _var_declaration_with_optional_attribute: $ => $.variable_declaration,
 
     // Variable declaration with attributes (e.g., [RunOnClient])
 
@@ -5493,11 +5557,13 @@ enum_type: $ => prec(1, seq(
       $.code_block
     ),
 
-    // Split procedure with separate headers
+    // Split procedure with separate headers (optionally with attributes in branches)
     preproc_split_procedure: $ => seq(
       $.preproc_if,
+      repeat($.attribute_item),  // Optional attributes before procedure in #if branch
       field('if_header', $.procedure_header),
       $.preproc_else,
+      repeat($.attribute_item),  // Optional attributes before procedure in #else branch
       field('else_header', $.procedure_header),
       $.preproc_endif,
       optional(';'),
@@ -5508,7 +5574,6 @@ enum_type: $ => prec(1, seq(
       )),
       $.code_block
     ),
-
 
     // Procedure where header is complete but body is conditionally included
     preproc_procedure_body_split: $ => prec(2, seq(
@@ -6642,8 +6707,9 @@ enum_type: $ => prec(1, seq(
     ),
 
     include_caption_property: $ => seq(
-      kw('includecaption'),
-      $._caption_boolean_template
+      kw_with_eq('includecaption'),
+      field('value', $._boolean_value),
+      ';'
     ),
 
     // Critical report layout properties
@@ -7000,8 +7066,14 @@ enum_type: $ => prec(1, seq(
 
     // Preprocessor conditional rules for variable declarations
     preproc_conditional_variables: _preproc_conditional_block_template($ => choice(
-        $.attribute_item,
-        $.variable_declaration,
+        // Bare variable declaration (no attributes) - prefer within preproc var blocks
+        prec.dynamic(3, $.variable_declaration),
+        // Attributed variable (requires at least one attribute)
+        prec.dynamic(3, seq(
+          repeat1($.attribute_item),
+          repeat(choice($.comment, $.multiline_comment, $.pragma)),
+          $.variable_declaration
+        )),
         $.comment,
         $.multiline_comment,
         $.pragma,
@@ -7945,33 +8017,6 @@ enum_type: $ => prec(1, seq(
 
     // DEPRECATED: Use _string_value_template instead
     _caption_string_template: $ => $._string_value_template,
-
-    _caption_full_template: $ => seq(
-      '=',
-      $.string_literal,
-      repeat(seq(
-        ',',
-        choice(
-          seq(
-            kw('locked'),
-            '=',
-            $.boolean
-          ),
-          seq(
-            kw('comment'),
-            '=',
-            $.string_literal
-          ),
-          seq(
-            kw('maxlength'),
-            '=',
-            $.integer
-          )
-        )
-      )),
-      optional(','),  // Support trailing comma
-      ';'
-    ),
 
     _caption_boolean_template: $ => seq(
       '=',

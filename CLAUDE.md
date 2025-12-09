@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 97.3% production file success rate (14,946/15,358), 851 tests passing, comprehensive preprocessor support
+**Current Status**: 97.3% production file success rate (14,946/15,358), 1190 tests passing, comprehensive preprocessor support
 
 ## Quick Reference
 
@@ -167,48 +167,43 @@ Test Description
 
 ## Known Limitations
 
-~~**Preprocessor + Attributed Procedures**~~ **✅ FIXED in v2.0 (Rust-Style Attribute Refactor)**
+**✅ ALL MAJOR PREPROCESSOR LIMITATIONS RESOLVED**
 
-The main limitation where attributes before preprocessor directives caused parse failures has been **RESOLVED**.
+Previous limitations around preprocessor directives with attributes and var sections have been fixed:
 
 **Now supported:**
 ```al
+// Attribute before preprocessor directive
 [Attribute]
 #if CONDITION
 procedure Proc()
 #endif
 begin
 end;
-```
 
-This pattern now parses correctly! Attributes are treated as first-class statements that can appear before preprocessor directives.
-
-**Historical context:** This limitation affected 8 tests and was caused by Tree-sitter's literal tokens taking precedence over scanner tokens. The Rust-style refactor (treating attributes as statements rather than embedded modifiers) completely solved this issue.
-
-**Unsupported patterns after refactor:**
-
-Attributes INSIDE preprocessor branches with different attributes per branch are no longer supported:
-```al
-// ❌ NO LONGER SUPPORTED
+// Different attributes in each preprocessor branch
 #if CONDITION
-[Attr1]
+[Attr1('test')]
 procedure Proc()
 #else
-[Attr2]
+[Attr2('other')]
 procedure Proc()
+#endif
+begin
+end;
+
+// Var section continuation through preprocessor
+var
+    Var1: Text;
+#if not CLEAN24
+    Var2: Boolean;
 #endif
 ```
 
-**Migration:** Place attributes outside preprocessor blocks:
-```al
-// ✅ SUPPORTED
-[Attribute]
-#if CONDITION
-procedure Proc()
-#endif
-```
-
-See `PHASE4_UNSUPPORTED_PATTERNS.md` for details on intentionally unsupported patterns.
+**Historical context:** These limitations were resolved through:
+1. Rust-style attribute refactor (attributes as first-class statements)
+2. Scanner token discrimination (`PREPROC_VAR_CONTINUATION`) for var_section continuation
+3. Adding `repeat($.attribute_item)` to `preproc_split_procedure` branches
 
 ## Debugging Parse Failures
 
@@ -288,6 +283,52 @@ When integrating scanner tokens to resolve ambiguities, placement in grammar is 
 - **Rule**: Token should be at the decision point, not after structural boundaries
 
 See `SCANNER_TOKEN_INTEGRATION_LESSONS.md` for detailed case study, debugging techniques, and common pitfalls when integrating external scanner tokens. Essential reading before modifying scanner or adding new scanner tokens.
+
+### Scanner Debugging Techniques
+
+When the scanner isn't behaving as expected, use these debugging techniques:
+
+**1. Enable scanner debug output:**
+```c
+// In src/scanner.c, set:
+#define SCANNER_DEBUG 1
+```
+
+**2. Trace valid_symbols (what parser is asking for):**
+```c
+if (SCANNER_DEBUG) {
+    fprintf(stderr, "SCANNER: TERM=%d CONT=%d at '%c'(0x%02x)\n",
+            valid_symbols[PREPROC_VAR_TERMINATOR],
+            valid_symbols[PREPROC_VAR_CONTINUATION],
+            (lexer->lookahead >= 32 && lexer->lookahead < 127) ? (char)lexer->lookahead : '?',
+            lexer->lookahead);
+    fflush(stderr);
+}
+```
+
+**3. Trace character positions after whitespace skipping:**
+```c
+if (SCANNER_DEBUG && skipped > 0) {
+    fprintf(stderr, "SCANNER: Skipped %d whitespace, now at '%c'\n", skipped, lexer->lookahead);
+}
+```
+
+**4. Use tri-state return values for nuanced responses:**
+- Return `-1` for "not applicable" (e.g., not at `#if` at all)
+- Return `0` for "applicable but no match" (e.g., is `#if` but no terminators found)
+- Return `1` for "matched" (e.g., found terminator keyword)
+
+**5. Trace lookahead at decision points:**
+```c
+if (SCANNER_DEBUG) {
+    fprintf(stderr, "    -> After # advance, at char '%c'(0x%02x)\n", lexer->lookahead);
+}
+```
+
+**Common issues:**
+- Scanner returns false but continuation token still emitted → check condition logic
+- Keyword matching fails unexpectedly → check character position after advancing
+- Scanner called at wrong position → check what `#` directive is actually present (might be `#endif` not `#if`)
 
 ## Documentation Resources
 

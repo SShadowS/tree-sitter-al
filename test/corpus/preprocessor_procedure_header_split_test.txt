@@ -22,47 +22,46 @@ codeunit 50000 "Test Split Header"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (preproc_split_procedure
-        (preproc_if
-          condition: (preproc_not_expression
-            (identifier)))
-        if_header: (procedure_header
-          modifier: (procedure_modifier)
-          name: (name
-            (identifier))
-          (parameter_list
-            (parameter
-              parameter_name: (name
-                (identifier))
-              parameter_type: (type_specification
-                (recordref_type))))
-          (return_value
-            return_value: (identifier))
-          return_type: (return_type
-            (type_specification
-              (basic_type))))
-        (preproc_else)
-        else_header: (procedure_header
-          modifier: (procedure_modifier)
-          name: (name
-            (identifier))
-          (parameter_list
-            (parameter
-              parameter_name: (name
-                (identifier))
-              parameter_type: (type_specification
-                (recordref_type))))
-          return_type: (return_type
-            (type_specification
-              (basic_type))))
-        (preproc_endif)
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (integer)))))))
+    (preproc_split_procedure
+      (preproc_if
+        condition: (preproc_not_expression
+          (identifier)))
+      if_header: (procedure_header
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (recordref_type))))
+        (return_value
+          return_value: (identifier))
+        return_type: (return_type
+          (type_specification
+            (basic_type))))
+      (preproc_else)
+      else_header: (procedure_header
+        modifier: (procedure_modifier)
+        name: (name
+          (identifier))
+        (parameter_list
+          (parameter
+            parameter_name: (name
+              (identifier))
+            parameter_type: (type_specification
+              (recordref_type))))
+        return_type: (return_type
+          (type_specification
+            (basic_type))))
+      (preproc_endif)
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (integer))))))

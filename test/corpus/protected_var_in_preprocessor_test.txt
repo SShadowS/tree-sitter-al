@@ -28,6 +28,7 @@ table 50000 "Test Table"
         (identifier)
         (type_specification
           (basic_type)))
+      (preproc_var_continuation)
       (preproc_conditional_variables
         (preproc_if
           (preproc_not_expression
@@ -74,6 +75,7 @@ table 50001 "Sales Price"
         (identifier)
         (basic_type)
         (string_literal))
+      (preproc_var_continuation)
       (preproc_conditional_variables
         (preproc_if
           (preproc_not_expression
@@ -83,12 +85,12 @@ table 50001 "Sales Price"
             (identifier)
             (type_specification
               (record_type
-                (identifier))))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (record_type
                 (identifier)))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (record_type
+              (identifier))))
         (preproc_endif)))
     (var_section
       (variable_declaration
@@ -127,6 +129,7 @@ table 50002 "Test Table"
         (basic_type)
         (string_literal))
       (pragma)
+      (preproc_var_continuation)
       (preproc_conditional_variables
         (preproc_if
           (preproc_not_expression
