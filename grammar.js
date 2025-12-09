@@ -1104,6 +1104,7 @@ module.exports = grammar({
       $.identifier,
       $._quoted_identifier,
       $.integer,
+      $.boolean,  // Support for filter(true) and filter(false)
       $.string_literal,
       $.date_literal,
       $.time_literal,
