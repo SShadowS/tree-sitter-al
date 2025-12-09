@@ -127,12 +127,8 @@ module.exports = grammar({
     [$.preproc_conditional_if_statement, $._statement],
     [$.preproc_conditional_statements, $.preproc_conditional_if_statement],
     [$.attribute_content, $.attribute],  // Phase 2: Allow both Rust-style and legacy attributes during migration
-    // Prefer continuing var_section with preproc_conditional_variables over exiting to page properties
-    [$.preproc_conditional_variables, $.preproc_conditional_page_properties],
     [$.preproc_conditional_procedures, $.preproc_conditional_mixed_content, $.preproc_split_procedure],  // Attributes in preproc branches
     [$.preproc_conditional_procedures, $.preproc_split_procedure],  // Attributes conflict - exact
-    [$.enum_declaration, $.preproc_conditional_procedures],  // Attributes in preproc after enum header
-    [$.enum_declaration, $.preproc_split_procedure],  // Attributed split procedure in enum
   ],
 
   externals: $ => [
@@ -1086,13 +1082,14 @@ module.exports = grammar({
 
     // Unified filter value pattern - used in all FILTER() contexts
     _filter_base_value: $ => choice(
-      $.filter_not_equal_expression, 
+      $.filter_not_equal_expression,
       $.filter_equal_expression,
       $.filter_less_than_expression,
       $.filter_greater_than_expression,
       $.filter_less_than_or_equal_expression,
       $.filter_greater_than_or_equal_expression,
       $.filter_range_expression,
+      $.qualified_enum_value,  // Support for EnumType::Value patterns
       $.identifier,
       $._quoted_identifier,
       $.integer,
@@ -2259,7 +2256,7 @@ module.exports = grammar({
 
     interface_procedure: $ => seq(
       kw('procedure'),
-      field('name', $.identifier),
+      field('name', $._identifier_choice),
       '(',
       optional($.parameter_list),
       ')',
@@ -5662,6 +5659,25 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     )),
 
+    // Complete fragmented if-else including the leading #if that opens the block
+    // Pattern: #if COND ... if expr then begin ... end else begin #endif ... #if COND end; #endif
+    // The leading #if's #endif is consumed by the fragmented pattern itself
+    preproc_wrapped_fragmented_if_else: $ => prec(25, seq(
+      $.preproc_if,  // Opening #if before the if statement
+      kw('if', 10),
+      field('condition', $._expression),
+      kw('then', 10),
+      field('then_branch', $.code_block),
+      kw('else', 10),
+      kw('begin', 10),
+      $.preproc_endif,  // This matches the opening #if
+      repeat($._statement_or_preprocessor),
+      $.preproc_if,
+      kw('end'),
+      optional(';'),
+      $.preproc_endif
+    )),
+
     // Handle if statements where the condition varies by preprocessor but body is shared
     // Pattern: #if CONDITION1 \n if (expr1) then \n #else \n if (expr2) then \n #endif \n shared_body
     preproc_variant_condition_if: $ => prec(25, seq(
@@ -5840,6 +5856,7 @@ enum_type: $ => prec(1, seq(
       $._statement,
       $.preproc_conditional_statements,
       $.preproc_conditional_if_statement,
+      $.preproc_wrapped_fragmented_if_else,
       $.pragma
     ),
 
