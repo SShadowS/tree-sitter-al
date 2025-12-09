@@ -16,16 +16,15 @@ codeunit 50100 "Test Asserterror"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block
-          (asserterror_statement
-            body: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (asserterror_statement
+          body: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))))
 
 ================================================================================
 Asserterror with method call
@@ -47,25 +46,24 @@ codeunit 50101 "Test Asserterror Methods"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
-        (code_block
-          (asserterror_statement
-            body: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list
-                (quoted_identifier)
-                (string_literal)))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (asserterror_statement
+          body: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (quoted_identifier)
+              (string_literal))))))))
 
 ================================================================================
 Asserterror with enum value
@@ -88,32 +86,31 @@ codeunit 50102 "Test Asserterror Enum"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (enum_type
-                enum_name: (quoted_identifier)))))
-        (code_block
-          (asserterror_statement
-            body: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list
-                (quoted_identifier)
-                (qualified_enum_value
-                  enum_type: (identifier)
-                  value: (identifier))))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (enum_type
+              enum_name: (quoted_identifier)))))
+      (code_block
+        (asserterror_statement
+          body: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (quoted_identifier)
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier)))))))))
 
 ================================================================================
 Asserterror in test procedure
@@ -141,31 +138,30 @@ codeunit 50103 "Unit Test Example"
     object_name: (quoted_identifier)
     (subtype_property
       value: (value))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)))
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (codeunit_type
-                reference: (identifier)))))
-        (code_block
-          (asserterror_statement
-            body: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (codeunit_type
+              reference: (identifier)))))
+      (code_block
+        (asserterror_statement
+          body: (call_expression
+            function: (identifier)
             arguments: (argument_list
-              (string_literal))))))))
+              (string_literal))))
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (string_literal)))))))
 
 ================================================================================
 Asserterror with code block
@@ -191,22 +187,21 @@ codeunit 50104 "Test Asserterror Block"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (asserterror_statement
-            body: (code_block
-              (assignment_expression
-                left: (identifier)
-                right: (integer))
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (quoted_identifier))))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (asserterror_statement
+          body: (code_block
+            (assignment_expression
+              left: (identifier)
+              right: (integer))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (quoted_identifier)))))))))

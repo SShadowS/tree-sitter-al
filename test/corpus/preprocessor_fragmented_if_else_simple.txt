@@ -25,31 +25,30 @@ codeunit 50000 "Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (if_statement
-            (preproc_fragmented_if_else
-              condition: (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (integer))
-              then_branch: (code_block
-                (assignment_expression
-                  left: (identifier)
-                  right: (integer)))
-              (preproc_endif)
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (if_statement
+          (preproc_fragmented_if_else
+            condition: (comparison_expression
+              left: (identifier)
+              operator: (comparison_operator)
+              right: (integer))
+            then_branch: (code_block
               (assignment_expression
                 left: (identifier)
-                right: (integer))
-              (preproc_if
-                condition: (preproc_not_expression
-                  (identifier)))
-              (preproc_endif))))))))
+                right: (integer)))
+            (preproc_endif)
+            (assignment_expression
+              left: (identifier)
+              right: (integer))
+            (preproc_if
+              condition: (preproc_not_expression
+                (identifier)))
+            (preproc_endif)))))))

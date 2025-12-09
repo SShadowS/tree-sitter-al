@@ -66,27 +66,26 @@ codeunit 123 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (preproc_conditional_statements
-            (preproc_if
-              condition: (identifier))
-            (assignment_expression
-              left: (identifier)
-              right: (boolean))
-            (preproc_else)
-            (assignment_expression
-              left: (identifier)
-              right: (boolean))
-            (preproc_endif)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (preproc_conditional_statements
+          (preproc_if
+            condition: (identifier))
+          (assignment_expression
+            left: (identifier)
+            right: (boolean))
+          (preproc_else)
+          (assignment_expression
+            left: (identifier)
+            right: (boolean))
+          (preproc_endif))))))
 
 ================================================================================
 Mixed case preprocessor directives in code blocks
@@ -112,27 +111,26 @@ codeunit 124 "Test Codeunit Mixed"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (preproc_conditional_statements
-            (preproc_if
-              condition: (identifier))
-            (assignment_expression
-              left: (identifier)
-              right: (integer))
-            (preproc_else)
-            (assignment_expression
-              left: (identifier)
-              right: (integer))
-            (preproc_endif)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (preproc_conditional_statements
+          (preproc_if
+            condition: (identifier))
+          (assignment_expression
+            left: (identifier)
+            right: (integer))
+          (preproc_else)
+          (assignment_expression
+            left: (identifier)
+            right: (integer))
+          (preproc_endif))))))
 
 ================================================================================
 Uppercase preprocessor directives with complex conditions
@@ -161,34 +159,33 @@ codeunit 125 "Test Complex Preprocessor"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (preproc_conditional_statements
-            (preproc_if
-              condition: (identifier))
-            (assignment_expression
-              left: (identifier)
-              right: (boolean))
-            (assignment_expression
-              left: (identifier)
-              right: (integer))
-            (preproc_else)
-            (assignment_expression
-              left: (identifier)
-              right: (boolean))
-            (assignment_expression
-              left: (identifier)
-              right: (integer))
-            (preproc_endif)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (preproc_conditional_statements
+          (preproc_if
+            condition: (identifier))
+          (assignment_expression
+            left: (identifier)
+            right: (boolean))
+          (assignment_expression
+            left: (identifier)
+            right: (integer))
+          (preproc_else)
+          (assignment_expression
+            left: (identifier)
+            right: (boolean))
+          (assignment_expression
+            left: (identifier)
+            right: (integer))
+          (preproc_endif))))))

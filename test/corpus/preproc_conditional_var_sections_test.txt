@@ -37,39 +37,38 @@ codeunit 6466 "Serv. Page Management"
           type: (type_specification
             (basic_type))))
       (preproc_endif))
-    (attributed_procedure
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
-            arguments: (expression_list
-              (qualified_enum_value
-                enum_type: (identifier)
-                value: (identifier))
-              (qualified_enum_value
-                enum_type: (identifier)
-                value: (quoted_identifier))
-              (string_literal)
-              (string_literal)
-              (boolean)
-              (boolean)))))
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (recordref_type)))
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))
-        (code_block)))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)
+        arguments: (attribute_arguments
+          arguments: (expression_list
+            (qualified_enum_value
+              enum_type: (identifier)
+              value: (identifier))
+            (qualified_enum_value
+              enum_type: (identifier)
+              value: (quoted_identifier))
+            (string_literal)
+            (string_literal)
+            (boolean)
+            (boolean)))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (recordref_type)))
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (code_block))))
 
 ================================================================================
 Page with conditional var section with else clause

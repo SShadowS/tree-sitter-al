@@ -21,35 +21,17 @@ codeunit 50000 Test
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block
-          (if_statement
-            (preproc_variant_condition_if
-              (preproc_if
-                condition: (preproc_not_expression
-                  (identifier)))
-              condition_if: (logical_expression
-                left: (parenthesized_expression
-                  (comparison_expression
-                    left: (call_expression
-                      function: (member_expression
-                        object: (identifier)
-                        property: (identifier))
-                      arguments: (argument_list))
-                    operator: (comparison_operator)
-                    right: (integer)))
-                right: (parenthesized_expression
-                  (comparison_expression
-                    left: (member_expression
-                      object: (identifier)
-                      property: (identifier))
-                    operator: (comparison_operator)
-                    right: (integer))))
-              (preproc_else)
-              condition_else: (parenthesized_expression
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (if_statement
+          (preproc_variant_condition_if
+            (preproc_if
+              condition: (preproc_not_expression
+                (identifier)))
+            condition_if: (logical_expression
+              left: (parenthesized_expression
                 (comparison_expression
                   left: (call_expression
                     function: (member_expression
@@ -58,6 +40,23 @@ codeunit 50000 Test
                     arguments: (argument_list))
                   operator: (comparison_operator)
                   right: (integer)))
-              (preproc_endif)
-              shared_body: (exit_statement
-                return_value: (boolean)))))))))
+              right: (parenthesized_expression
+                (comparison_expression
+                  left: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  operator: (comparison_operator)
+                  right: (integer))))
+            (preproc_else)
+            condition_else: (parenthesized_expression
+              (comparison_expression
+                left: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  arguments: (argument_list))
+                operator: (comparison_operator)
+                right: (integer)))
+            (preproc_endif)
+            shared_body: (exit_statement
+              return_value: (boolean))))))))

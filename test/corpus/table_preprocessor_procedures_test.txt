@@ -45,10 +45,10 @@ table 50100 "Test Table"
       (preproc_if
         condition: (preproc_not_expression
           (identifier)))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
             arguments: (expression_list
               (string_literal)
               (string_literal)))))
@@ -61,15 +61,14 @@ table 50100 "Test Table"
             arguments: (argument_list
               (string_literal)))))
       (preproc_endif))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))
 
 ================================================================================
 Table with multiple preprocessor conditional procedures
@@ -114,10 +113,10 @@ table 50101 "VAT Amount Line"
       (preproc_if
         condition: (preproc_not_expression
           (identifier)))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
             arguments: (expression_list
               (string_literal)
               (string_literal)))))
@@ -162,10 +161,10 @@ table 50101 "VAT Amount Line"
       (preproc_if
         condition: (preproc_not_expression
           (identifier)))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
             arguments: (expression_list
               (string_literal)
               (string_literal)))))
@@ -194,15 +193,14 @@ table 50101 "VAT Amount Line"
             function: (identifier)
             arguments: (argument_list))))
       (preproc_endif))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))
 
 ================================================================================
 Table with preprocessor else branch procedures
@@ -242,10 +240,10 @@ table 50102 "Test Table"
             arguments: (argument_list
               (string_literal)))))
       (preproc_else)
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
             arguments: (expression_list
               (string_literal)
               (string_literal)))))
@@ -317,10 +315,10 @@ table 50103 "Test Table"
           (call_expression
             function: (identifier)
             arguments: (argument_list))))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
             arguments: (expression_list
               (string_literal)
               (string_literal)))))

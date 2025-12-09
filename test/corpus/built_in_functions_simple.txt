@@ -20,21 +20,20 @@ codeunit 50100 "Built-in Functions Test"
   (codeunit_declaration
     (integer)
     (quoted_identifier)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block
-          (call_expression
-            (identifier)
-            (argument_list))
-          (call_expression
-            (identifier)
-            (argument_list))
-          (call_expression
-            (identifier)
-            (argument_list))
-          (call_expression
-            (identifier)
-            (argument_list))
-          (call_expression
-            (identifier)
-            (argument_list)))))))
+    (onrun_trigger
+      (code_block
+        (call_expression
+          (identifier)
+          (argument_list))
+        (call_expression
+          (identifier)
+          (argument_list))
+        (call_expression
+          (identifier)
+          (argument_list))
+        (call_expression
+          (identifier)
+          (argument_list))
+        (call_expression
+          (identifier)
+          (argument_list))))))

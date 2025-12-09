@@ -20,9 +20,8 @@ codeunit 50000 "Test Codeunit"
     (table_no_property
       value: (value
         (quoted_identifier)))
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block)))))
+    (onrun_trigger
+      (code_block))))
 
 ================================================================================
 Codeunit with TableNo property using identifier
@@ -46,9 +45,8 @@ codeunit 50001 "Test Codeunit 2"
     (table_no_property
       value: (value
         (identifier)))
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block)))))
+    (onrun_trigger
+      (code_block))))
 
 ================================================================================
 Codeunit with TableNo property using integer table ID
@@ -72,9 +70,8 @@ codeunit 50002 "Test Codeunit 3"
     (table_no_property
       value: (value
         (integer)))
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block)))))
+    (onrun_trigger
+      (code_block))))
 
 ================================================================================
 Codeunit with multiple properties including TableNo
@@ -110,6 +107,5 @@ codeunit 50003 "Multi Property Codeunit"
         name: (identifier)
         type: (type_specification
           (basic_type))))
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block)))))
+    (onrun_trigger
+      (code_block))))

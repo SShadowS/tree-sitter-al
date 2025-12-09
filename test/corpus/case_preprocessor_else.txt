@@ -80,57 +80,57 @@ codeunit 50100 TestCodeunit
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (preproc_conditional_variables
-            (preproc_if
-              condition: (preproc_not_expression
-                (identifier)))
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (record_type
-                  reference: (qualified_table_reference
-                    (identifier)
-                    (identifier)
-                    (identifier)
-                    (quoted_identifier)))))
-            (preproc_endif))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (preproc_var_continuation)
+        (preproc_conditional_variables
+          (preproc_if
+            condition: (preproc_not_expression
+              (identifier)))
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (basic_type))))
-        (code_block
-          (case_statement
-            expression: (identifier)
-            (case_branch
-              pattern: (qualified_enum_value
-                enum_type: (identifier)
-                value: (quoted_identifier))
-              statements: (code_block
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal)))))
-            (case_branch
-              pattern: (qualified_enum_value
-                enum_type: (identifier)
-                value: (quoted_identifier))
+              (record_type
+                reference: (qualified_table_reference
+                  (identifier)
+                  (identifier)
+                  (identifier)
+                  (quoted_identifier)))))
+          (preproc_endif))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (qualified_enum_value
+              enum_type: (identifier)
+              value: (quoted_identifier))
+            statements: (code_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))))
+          (case_branch
+            pattern: (qualified_enum_value
+              enum_type: (identifier)
+              value: (quoted_identifier))
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (preproc_conditional_else_branch
+            (preproc_if
+              condition: (preproc_not_expression
+                (identifier)))
+            (else_branch
               statements: (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))
-            (preproc_conditional_else_branch
-              (preproc_if
-                condition: (preproc_not_expression
-                  (identifier)))
-              (else_branch
-                statements: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier)
-                    (identifier))))
-              (preproc_endif))))))))
+                  (identifier)
+                  (identifier))))
+            (preproc_endif)))))))

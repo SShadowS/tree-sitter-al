@@ -20,9 +20,8 @@ codeunit 50100 "Test Codeunit"
     consequence: (codeunit_declaration
       object_id: (integer)
       object_name: (quoted_identifier)
-      (attributed_onrun_trigger
-        (onrun_trigger
-          (code_block))))
+      (onrun_trigger
+        (code_block)))
     (preproc_endif)))
 
 ================================================================================

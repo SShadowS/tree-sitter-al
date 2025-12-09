@@ -39,10 +39,10 @@ report 1111 TestReport
       (preproc_if
         condition: (preproc_not_expression
           (identifier)))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
             arguments: (expression_list
               (string_literal)
               (string_literal)))))
@@ -124,10 +124,10 @@ report 50000 "Complex Report"
       (preproc_if
         condition: (preproc_not_expression
           (identifier)))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
             arguments: (expression_list
               (string_literal)
               (string_literal)))))

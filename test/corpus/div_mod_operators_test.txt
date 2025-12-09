@@ -18,21 +18,20 @@ codeunit 50100 TestDiv
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (integer)
-              right: (integer))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (multiplicative_expression
+            left: (integer)
+            right: (integer)))))))
 
 ================================================================================
 Basic mod operator
@@ -54,21 +53,20 @@ codeunit 50100 TestMod
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (integer)
-              right: (integer))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (multiplicative_expression
+            left: (integer)
+            right: (integer)))))))
 
 ================================================================================
 Div with case variations
@@ -92,33 +90,32 @@ codeunit 50100 TestDivCases
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            name: (identifier)
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (integer)
-              right: (integer)))
-          (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (integer)
-              right: (integer)))
-          (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (integer)
-              right: (integer))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (multiplicative_expression
+            left: (integer)
+            right: (integer)))
+        (assignment_expression
+          left: (identifier)
+          right: (multiplicative_expression
+            left: (integer)
+            right: (integer)))
+        (assignment_expression
+          left: (identifier)
+          right: (multiplicative_expression
+            left: (integer)
+            right: (integer)))))))
 
 ================================================================================
 Mod with case variations
@@ -142,33 +139,32 @@ codeunit 50100 TestModCases
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            name: (identifier)
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (integer)
-              right: (integer)))
-          (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (integer)
-              right: (integer)))
-          (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (integer)
-              right: (integer))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (multiplicative_expression
+            left: (integer)
+            right: (integer)))
+        (assignment_expression
+          left: (identifier)
+          right: (multiplicative_expression
+            left: (integer)
+            right: (integer)))
+        (assignment_expression
+          left: (identifier)
+          right: (multiplicative_expression
+            left: (integer)
+            right: (integer)))))))
 
 ================================================================================
 Div in case statement
@@ -193,25 +189,24 @@ codeunit 50100 TestDivInCase
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (case_statement
-            expression: (boolean)
-            (case_branch
-              pattern: (boolean)
-              statements: (assignment_expression
-                left: (identifier)
-                right: (multiplicative_expression
-                  left: (integer)
-                  right: (integer))))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (case_statement
+          expression: (boolean)
+          (case_branch
+            pattern: (boolean)
+            statements: (assignment_expression
+              left: (identifier)
+              right: (multiplicative_expression
+                left: (integer)
+                right: (integer)))))))))
 
 ================================================================================
 Complex expressions with div and mod
@@ -235,43 +230,42 @@ codeunit 50100 TestComplexDivMod
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (additive_expression
-              left: (multiplicative_expression
-                left: (parenthesized_expression
-                  (multiplicative_expression
-                    left: (integer)
-                    right: (integer)))
-                right: (integer))
-              right: (parenthesized_expression
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (additive_expression
+            left: (multiplicative_expression
+              left: (parenthesized_expression
                 (multiplicative_expression
                   left: (integer)
-                  right: (integer)))))
-          (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (multiplicative_expression
+                  right: (integer)))
+              right: (integer))
+            right: (parenthesized_expression
+              (multiplicative_expression
                 left: (integer)
-                right: (integer))
-              right: (integer)))
-          (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (multiplicative_expression
-                left: (integer)
-                right: (integer))
-              right: (integer))))))))
+                right: (integer)))))
+        (assignment_expression
+          left: (identifier)
+          right: (multiplicative_expression
+            left: (multiplicative_expression
+              left: (integer)
+              right: (integer))
+            right: (integer)))
+        (assignment_expression
+          left: (identifier)
+          right: (multiplicative_expression
+            left: (multiplicative_expression
+              left: (integer)
+              right: (integer))
+            right: (integer)))))))
 
 ================================================================================
 Case true with div in assignment
@@ -310,68 +304,67 @@ table 50100 TestTable
         name: (identifier)
         type: (type_specification
           (basic_type))))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
-        (code_block
-          (case_statement
-            expression: (boolean)
-            (case_branch
-              left: (unary_expression
-                operator: (unary_operator)
-                operand: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    property: (identifier))
-                  arguments: (argument_list)))
-              right: (call_expression
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (case_statement
+          expression: (boolean)
+          (case_branch
+            left: (unary_expression
+              operator: (unary_operator)
+              operand: (call_expression
                 function: (member_expression
                   object: (identifier)
                   property: (identifier))
-                arguments: (argument_list))
-              statements: (assignment_expression
+                arguments: (argument_list)))
+            right: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))
+            statements: (assignment_expression
+              left: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              right: (multiplicative_expression
                 left: (field_access
                   record: (identifier)
                   field: (quoted_identifier))
-                right: (multiplicative_expression
-                  left: (field_access
-                    record: (identifier)
-                    field: (quoted_identifier))
-                  right: (integer))))
-            (case_branch
-              left: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list))
-              right: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  property: (identifier))
-                arguments: (argument_list))
-              statements: (assignment_expression
-                left: (field_access
-                  record: (identifier)
-                  field: (quoted_identifier))
-                right: (multiplicative_expression
-                  left: (parenthesized_expression
-                    (additive_expression
-                      left: (field_access
-                        record: (identifier)
-                        field: (quoted_identifier))
-                      right: (field_access
-                        record: (identifier)
-                        field: (quoted_identifier))))
-                  right: (integer))))))))))
+                right: (integer))))
+          (case_branch
+            left: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))
+            right: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (argument_list))
+            statements: (assignment_expression
+              left: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              right: (multiplicative_expression
+                left: (parenthesized_expression
+                  (additive_expression
+                    left: (field_access
+                      record: (identifier)
+                      field: (quoted_identifier))
+                    right: (field_access
+                      record: (identifier)
+                      field: (quoted_identifier))))
+                right: (integer)))))))))

@@ -104,11 +104,10 @@ codeunit 50100 TestCodeunit
   (codeunit_declaration
     object_id: (integer)
     object_name: (identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block))))
 
 ================================================================================
 Nested preprocessor conditionals with namespace

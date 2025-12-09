@@ -22,57 +22,56 @@ codeunit 123 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (qualified_table_reference
-                  (identifier)
-                  (identifier)
-                  (identifier)
-                  (quoted_identifier)))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (qualified_table_reference
-                  (identifier)
-                  (identifier)
-                  (identifier)
-                  (identifier)))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (qualified_table_reference
-                  (identifier)
-                  (identifier)
-                  (identifier)
-                  (identifier))))))
-        (code_block
-          (call_expression
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (qualified_table_reference
+                (identifier)
+                (identifier)
+                (identifier)
+                (quoted_identifier)))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (qualified_table_reference
+                (identifier)
+                (identifier)
+                (identifier)
+                (identifier)))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (qualified_table_reference
+                (identifier)
+                (identifier)
+                (identifier)
+                (identifier))))))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (quoted_identifier)
+            (string_literal)))
+        (if_statement
+          condition: (call_expression
             function: (member_expression
               object: (identifier)
               property: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (string_literal)))
-          (if_statement
-            condition: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list))
-            then_branch: (assignment_expression
-              left: (member_expression
-                object: (identifier)
-                property: (identifier))
-              right: (member_expression
-                object: (identifier)
-                property: (identifier)))))))))
+            arguments: (argument_list))
+          then_branch: (assignment_expression
+            left: (member_expression
+              object: (identifier)
+              property: (identifier))
+            right: (member_expression
+              object: (identifier)
+              property: (identifier))))))))

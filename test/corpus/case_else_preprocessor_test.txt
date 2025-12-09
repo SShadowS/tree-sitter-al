@@ -35,83 +35,83 @@ codeunit 50000 "Test Case Else"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (code_type
-                length: (integer)))))
-        (var_section
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (code_type
+              length: (integer)))))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (preproc_var_continuation)
+        (preproc_conditional_variables
+          (preproc_if
+            condition: (preproc_not_expression
+              (identifier)))
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (record_type
                 reference: (quoted_identifier))))
-          (preproc_conditional_variables
-            (preproc_if
-              condition: (preproc_not_expression
-                (identifier)))
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (record_type
-                  reference: (quoted_identifier))))
-            (preproc_endif)))
-        (code_block
-          (case_statement
-            expression: (identifier)
-            (case_branch
-              pattern: (integer)
-              statements: (assignment_expression
-                left: (field_access
-                  record: (identifier)
-                  field: (quoted_identifier))
-                right: (identifier)))
-            (case_branch
-              pattern: (integer)
-              statements: (assignment_expression
-                left: (field_access
-                  record: (identifier)
-                  field: (quoted_identifier))
-                right: (identifier)))
-            (else_branch
-              statements: (preproc_conditional_statements
-                (preproc_if
-                  condition: (identifier))
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier)
-                    (identifier)
-                    (identifier)))
-                (preproc_else)
-                (identifier)
-                (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    property: (identifier))
-                  arguments: (argument_list
-                    (identifier)
-                    (identifier)
-                    (identifier)))
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier)
-                    (identifier)
-                    (identifier)))
-                (identifier)
-                (preproc_endif)))))))))
+          (preproc_endif)))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (integer)
+            statements: (assignment_expression
+              left: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              right: (identifier)))
+          (case_branch
+            pattern: (integer)
+            statements: (assignment_expression
+              left: (field_access
+                record: (identifier)
+                field: (quoted_identifier))
+              right: (identifier)))
+          (else_branch
+            statements: (preproc_conditional_statements
+              (preproc_if
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (identifier)
+                  (identifier)))
+              (preproc_else)
+              (identifier)
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (identifier)
+                  (identifier)))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (identifier)
+                  (identifier)))
+              (identifier)
+              (preproc_endif))))))))
 
 ================================================================================
 Simple case with preprocessor in else
@@ -142,45 +142,44 @@ codeunit 50001 "Simple Case Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))
-        (code_block
-          (case_statement
-            expression: (identifier)
-            (case_branch
-              pattern: (integer)
-              statements: (call_expression
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (integer)
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (case_branch
+            pattern: (integer)
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (else_branch
+            statements: (preproc_conditional_statements
+              (preproc_if
+                condition: (identifier))
+              (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))
-            (case_branch
-              pattern: (integer)
-              statements: (call_expression
+                  (string_literal)))
+              (preproc_else)
+              (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))
-            (else_branch
-              statements: (preproc_conditional_statements
-                (preproc_if
-                  condition: (identifier))
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal)))
-                (preproc_else)
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal)))
-                (preproc_endif)))))))))
+                  (string_literal)))
+              (preproc_endif))))))))
 
 ================================================================================
 Nested case with multiple preprocessor conditions
@@ -234,118 +233,109 @@ codeunit 50002 "Nested Case Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type)))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))
-        (code_block
-          (case_statement
-            expression: (identifier)
-            (case_branch
-              pattern: (integer)
-              statements: (case_statement
-                expression: (identifier)
-                (case_branch
-                  pattern: (integer)
-                  statements: (call_expression
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type)))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (integer)
+            statements: (case_statement
+              expression: (identifier)
+              (case_branch
+                pattern: (integer)
+                statements: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (case_branch
+                pattern: (integer)
+                statements: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (else_branch
+                statements: (preproc_conditional_statements
+                  (preproc_if
+                    condition: (identifier))
+                  (call_expression
                     function: (identifier)
-                    arguments: (argument_list)))
-                (case_branch
-                  pattern: (integer)
-                  statements: (call_expression
+                    arguments: (argument_list))
+                  (preproc_elif
+                    condition: (identifier))
+                  (call_expression
                     function: (identifier)
-                    arguments: (argument_list)))
-                (else_branch
-                  statements: (preproc_conditional_statements
-                    (preproc_if
-                      condition: (identifier))
-                    (call_expression
-                      function: (identifier)
-                      arguments: (argument_list))
-                    (preproc_elif
-                      condition: (identifier))
-                    (call_expression
-                      function: (identifier)
-                      arguments: (argument_list))
-                    (preproc_else)
-                    (call_expression
-                      function: (identifier)
-                      arguments: (argument_list))
-                    (preproc_endif)))))
-            (else_branch
-              statements: (preproc_conditional_statements
-                (preproc_if
-                  condition: (preproc_not_expression
-                    (identifier)))
-                (identifier)
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list))
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list))
-                (identifier)
-                (preproc_else)
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list))
-                (preproc_endif)))))))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (code_block)))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (code_block)))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (code_block)))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (code_block)))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (code_block)))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (code_block)))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (code_block)))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (code_block)))))
+                    arguments: (argument_list))
+                  (preproc_else)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))
+                  (preproc_endif)))))
+          (else_branch
+            statements: (preproc_conditional_statements
+              (preproc_if
+                condition: (preproc_not_expression
+                  (identifier)))
+              (identifier)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (identifier)
+              (preproc_else)
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (preproc_endif))))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))))

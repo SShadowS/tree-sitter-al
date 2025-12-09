@@ -26,10 +26,10 @@ codeunit 50000 "Conditional Test"
       (preproc_if
         condition: (preproc_not_expression
           (identifier)))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
             arguments: (expression_list
               (string_literal)
               (string_literal)))))
@@ -44,14 +44,13 @@ codeunit 50000 "Conditional Test"
               (option_type))))
         (code_block))
       (preproc_endif))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (basic_type))))
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (basic_type))))
+      (code_block))))

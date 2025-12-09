@@ -56,18 +56,17 @@ codeunit 50101 "Advanced Test"
         type: (type_specification
           (codeunit_type
             reference: (quoted_identifier)))))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              property: (identifier))
-            arguments: (argument_list
-              (boolean)
-              (string_literal))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (call_expression
+          function: (member_expression
+            object: (identifier)
+            property: (identifier))
+          arguments: (argument_list
+            (boolean)
+            (string_literal)))))))
 
 ================================================================================
 Test codeunit with case variations

@@ -66,33 +66,32 @@ codeunit 1448 "DSACryptoServiceProvider Impl." implements "Signature Algorithm v
       value: (inherent_permissions_value
         (permission_type)))
     (var_section
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
       (variable_declaration
         name: (identifier)
         type: (type_specification
           (dotnet_type
-            reference: (dotnet_type_name))))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier))))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (dotnet_type
-                reference: (dotnet_type_name)))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (identifier)))))))
+            reference: (dotnet_type_name)))))
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (dotnet_type
+              reference: (dotnet_type_name)))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (identifier))))))
 
 ================================================================================
 Simple Codeunit with Preprocessor in Implements
@@ -126,8 +125,7 @@ codeunit 50000 "Test Codeunit" implements "Interface 1", "Interface 2"
       interface: (quoted_identifier)
       interface: (quoted_identifier))
     (preproc_endif)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block))))

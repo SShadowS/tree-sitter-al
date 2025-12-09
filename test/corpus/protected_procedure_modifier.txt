@@ -30,31 +30,28 @@ codeunit 50100 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (return_value
-          return_value: (identifier))
-        return_type: (return_type
-          (type_specification
-            (basic_type)))
-        (code_block
-          (exit_statement
-            return_value: (boolean)))))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (code_block)))
-    (attributed_procedure
-      (procedure
-        modifier: (procedure_modifier)
-        name: (name
-          (identifier))
-        (code_block)))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (return_value
+        return_value: (identifier))
+      return_type: (return_type
+        (type_specification
+          (basic_type)))
+      (code_block
+        (exit_statement
+          return_value: (boolean))))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
+    (procedure
+      modifier: (procedure_modifier)
+      name: (name
+        (identifier))
+      (code_block))
     (var_section
       (variable_declaration
         name: (identifier)

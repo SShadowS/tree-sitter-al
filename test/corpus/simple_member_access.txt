@@ -16,14 +16,13 @@ codeunit 50100 "Test"
   (codeunit_declaration
     (integer)
     (quoted_identifier)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block
-          (call_expression
-            (member_expression
+    (onrun_trigger
+      (code_block
+        (call_expression
+          (member_expression
+            (identifier)
+            (identifier))
+          (argument_list
+            (field_access
               (identifier)
-              (identifier))
-            (argument_list
-              (field_access
-                (identifier)
-                (quoted_identifier)))))))))
+              (quoted_identifier))))))))

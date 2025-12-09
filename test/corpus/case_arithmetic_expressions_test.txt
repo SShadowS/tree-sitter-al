@@ -23,40 +23,39 @@ codeunit 123 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (code_block
-          (case_statement
-            expression: (identifier)
-            (case_branch
-              pattern: (additive_expression
-                left: (qualified_enum_value
-                  enum_type: (identifier)
-                  value: (quoted_identifier))
-                right: (integer))
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal))))
-            (case_branch
-              pattern: (additive_expression
-                left: (qualified_enum_value
-                  enum_type: (identifier)
-                  value: (quoted_identifier))
-                right: (integer))
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal))))
-            (case_branch
-              pattern: (multiplicative_expression
-                left: (qualified_enum_value
-                  enum_type: (identifier)
-                  value: (quoted_identifier))
-                right: (integer))
-              statements: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal))))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (case_statement
+          expression: (identifier)
+          (case_branch
+            pattern: (additive_expression
+              left: (qualified_enum_value
+                enum_type: (identifier)
+                value: (quoted_identifier))
+              right: (integer))
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (case_branch
+            pattern: (additive_expression
+              left: (qualified_enum_value
+                enum_type: (identifier)
+                value: (quoted_identifier))
+              right: (integer))
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (case_branch
+            pattern: (multiplicative_expression
+              left: (qualified_enum_value
+                enum_type: (identifier)
+                value: (quoted_identifier))
+              right: (integer))
+            statements: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))))

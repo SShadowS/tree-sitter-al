@@ -18,6 +18,14 @@ function kw(word, precedence = null) {
   return precedence !== null ? token(prec(precedence, regex)) : token(regex);
 }
 
+// Helper for contextual keywords that match with '=' included
+// This disambiguates property names from variable names at the lexer level
+// Note: This does NOT allow comments between the keyword and '='
+function kw_with_eq(word, precedence = null) {
+  const regex = new RustRegex(`(?i)${word}[\\t\\f\\r ]*=`);
+  return precedence !== null ? token(prec(precedence, regex)) : token(regex);
+}
+
 // Helper for properties that can also be used as variable names
 // This pattern is used when a property name conflicts with variable usage
 // Only apply to properties that cause actual parsing failures in production
@@ -114,13 +122,17 @@ module.exports = grammar({
     [$.source_file],
     [$.preproc_conditional_procedures, $.preproc_conditional_mixed_content],
     [$.preproc_conditional_var_sections, $.preproc_conditional_mixed_content],
-    [$.interface_procedure],
     [$.preproc_conditional_layout, $.preproc_conditional_group_content],
     [$.preproc_conditional_group_content, $.preproc_conditional_properties],
-    [$.preproc_split_procedure, $.preproc_attributed_split_procedure],
-    [$.attributed_procedure, $.preproc_conditional_variables],
     [$.preproc_conditional_if_statement, $._statement],
     [$.preproc_conditional_statements, $.preproc_conditional_if_statement],
+    [$.attribute_content, $.attribute],  // Phase 2: Allow both Rust-style and legacy attributes during migration
+    // Prefer continuing var_section with preproc_conditional_variables over exiting to page properties
+    [$.preproc_conditional_variables, $.preproc_conditional_page_properties],
+    [$.preproc_conditional_procedures, $.preproc_conditional_mixed_content, $.preproc_split_procedure],  // Attributes in preproc branches
+    [$.preproc_conditional_procedures, $.preproc_split_procedure],  // Attributes conflict - exact
+    [$.enum_declaration, $.preproc_conditional_procedures],  // Attributes in preproc after enum header
+    [$.enum_declaration, $.preproc_split_procedure],  // Attributed split procedure in enum
   ],
 
   externals: $ => [
@@ -130,10 +142,17 @@ module.exports = grammar({
     $.preproc_inactive_region_end,
     $.preproc_split_marker,
     $.preproc_continuation_marker,
-    $.error_sentinel
+    $.error_sentinel,
+    $.preproc_var_terminator,
+    $.attribute_for_variable,
+    $.attribute_for_procedure,
+    $.preproc_var_continuation  // Signals #if contains ONLY variables, forces var_section continuation
   ],
 
-  extras: $ => [new RustRegex('\\s'), $.comment, $.multiline_comment, $.pragma, $.preproc_region, $.preproc_endregion, $.malformed_directive, new RustRegex('\\uFEFF')],
+  // Extras: whitespace, comments, and ignorable preprocessor directives
+  // #if/#else/#elif/#endif are literals (structural)
+  // #region/#pragma/#endregion are regex patterns (structurally insignificant)
+  extras: $ => [new RustRegex('\\s'), $.comment, $.multiline_comment, $.pragma, $.preproc_region, $.preproc_endregion, new RustRegex('\\uFEFF')],
 
   rules: {
     source_file: $ => choice(
@@ -231,10 +250,11 @@ module.exports = grammar({
     )),
 
     _object_body_element: $ => choice(
+      $.attribute_item,
       $.var_section,
       $.preproc_conditional_var_sections,
-      $.attributed_procedure,
-      $.attributed_trigger,
+      $.procedure,
+      $.trigger_declaration,
       $.pragma,
       $.preproc_region,
       $.preproc_endregion,
@@ -268,10 +288,13 @@ module.exports = grammar({
     ),
     
     _xmlport_element: $ => choice(
+      $.attribute_item,
       $.xmlport_schema_element,
       $.var_section,
       $.preproc_conditional_var_sections,
-      $.attributed_procedure,  // Support both attributed and non-attributed procedures
+      $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
       $.trigger_declaration,
       $._xmlport_properties,
       $.preproc_conditional_xmlport_properties,
@@ -564,8 +587,8 @@ module.exports = grammar({
       optional($.implements_clause),
       '{',
       repeat(choice(
-        $._enum_properties, 
-        $.enum_value_declaration,
+        $._enum_properties,
+        seq(repeat($.attribute_item), $.enum_value_declaration),
         $.preproc_conditional_enum_content  // Support mixed content in conditional blocks (properties and/or values)
       )),
       '}'
@@ -578,7 +601,7 @@ module.exports = grammar({
       field('base_object', $._identifier_choice),
       '{',
       repeat(choice(
-        $.enum_value_declaration,
+        seq(repeat($.attribute_item), $.enum_value_declaration),
         $.preproc_if,
         $.preproc_else,
         $.preproc_endif,
@@ -606,13 +629,14 @@ module.exports = grammar({
       $.preproc_endif,
       '{',
       repeat(choice(
+        $.attribute_item,
         prec(4, $._codeunit_properties),
         $.preproc_conditional_object_properties,
         $.var_section,
         $.preproc_conditional_var_sections,
-        $.attributed_procedure,
-        $.attributed_onrun_trigger, 
-        $.attributed_trigger,
+        $.procedure,
+        $.onrun_trigger,
+        $.trigger_declaration,
         $.preproc_conditional_procedures,
         $.pragma,
         $.preproc_region,
@@ -675,16 +699,19 @@ module.exports = grammar({
     ),
 
     _query_element: $ => choice(
+      $.attribute_item,
       $._universal_properties,       // caption, description, application_area, etc.
       $._query_properties,           // query-specific properties
       $.elements_section,            // dataitem and column definitions
       $.property_list,               // generic property container
       $.preproc_conditional_query_properties,
       $.trigger_declaration,         // triggers like OnBeforeOpen
-      $.attributed_procedure,        // procedures with attributes (internal, etc.)
+      $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
       $.var_section,                 // var section for global variables
       $.preproc_conditional_var_sections,  // conditional var sections
-      
+
       // Region directives for code organization
       $.preproc_region,
       $.preproc_endregion
@@ -852,8 +879,9 @@ module.exports = grammar({
     ),
 
     api_version_property: $ => seq(
-      kw('apiversion'),
-      $._string_property_template
+      kw_with_eq('apiversion'),
+      field('value', $.string_literal),
+      ';'
     ),
 
     order_by_property: _value_property_template(
@@ -1376,6 +1404,7 @@ module.exports = grammar({
     ),
 
     _pageextension_element: $ => choice(
+      $.attribute_item,
       $.layout_section,
       $.actions_section,
       $.views_section,  // Support views section in page extensions
@@ -1383,7 +1412,9 @@ module.exports = grammar({
       $.var_section,
       $.preproc_conditional_var_sections,
       $.trigger_declaration,
-      seq(optional($.attribute_list), $.procedure),
+      $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
       $.preproc_region,
       $.preproc_endregion,
       $.pragma
@@ -1400,13 +1431,16 @@ module.exports = grammar({
     ),
 
     _tableextension_element: $ => choice(
+      $.attribute_item,
       $.fields,
       $.modify_field_declaration,  // Add direct modify field support
       $.keys,
       $.fieldgroups_section,
-      $.attributed_procedure,  // Support attributed procedures like [IntegrationEvent(false, false)]
+      $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
+      $.trigger_declaration,
       $.var_section,
-      $.attributed_trigger,    // Support attributed triggers as well
       $.preproc_conditional_procedures,  // Support preprocessor conditional procedures
       $._table_properties     // Centralized table properties
     ),
@@ -1548,7 +1582,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._action_property,
-        seq(optional($.attribute_list), $.trigger_declaration),
+        $.attribute_item,
+        $.trigger_declaration,
         ';'
       )),
       '}'
@@ -1666,9 +1701,10 @@ module.exports = grammar({
       $ => $.usage_category_value
     ),
 
-    source_table_property: _value_property_template(
-      $ => kw('sourcetable'),
-      $ => $._object_reference
+    source_table_property: $ => seq(
+      kw_with_eq('sourcetable'),
+      field('value', $._object_reference),
+      ';'
     ),
 
     page_type_property: $ => seq(
@@ -1806,16 +1842,15 @@ module.exports = grammar({
     ),
 
     visible_property: $ => seq(
-      field('name', alias(
-        choice('Visible', 'visible', 'VISIBLE'),
-        'Visible'
-      )),
-      $._expression_property_template
+      field('name', alias(kw_with_eq('visible'), 'Visible')),
+      field('value', $._expression),
+      ';'
     ),
 
     scope_property: $ => seq(
-      kw('scope'),
-      $._identifier_property_template
+      kw_with_eq('scope'),
+      field('value', $.identifier),
+      ';'
     ),
 
     promoted_property: $ => seq(
@@ -1867,15 +1902,13 @@ module.exports = grammar({
     _colon: $ => ':',
 
     table_no_property: $ => seq(
-      alias(kw('tableno'), 'TableNo'),
-      '=',
+      alias(kw_with_eq('tableno'), 'TableNo'),
       field('value', alias($._table_no_value, $.value)),
       ';'
     ),
 
     subtype_property: $ => seq(
-      kw('subtype'),
-      '=', 
+      kw_with_eq('subtype'),
       field('value', alias($.subtype_value, $.value)),
       ';'
     ),
@@ -1979,16 +2012,19 @@ module.exports = grammar({
       optional($.implements_clause),
       '{',
       repeat(choice(
+        $.attribute_item,
         prec(4, $._codeunit_properties), // Use individual properties
         $.preproc_conditional_object_properties,
         $.var_section,
         $.preproc_conditional_var_sections,
-        $.attributed_procedure,
-        $.attributed_onrun_trigger, 
-        $.attributed_trigger,
+        $.procedure,
+        $.preproc_split_procedure,
+        $.preproc_procedure_body_split,
+        $.onrun_trigger,
+        $.trigger_declaration,
         $.preproc_conditional_procedures,
         $.pragma,
-        
+
         // Region directives for code organization
         $.preproc_region,
         $.preproc_endregion
@@ -1996,46 +2032,16 @@ module.exports = grammar({
       '}'
     ),
 
-    preproc_conditional_attributes: $ => seq(
-      $.preproc_if,
-      $.attribute_list,
-      optional(seq(
-        $.preproc_else,
-        $.attribute_list
-      )),
-      $.preproc_endif
-    ),
 
-    attributed_procedure: $ => choice(
-      seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.procedure),
-      $.procedure,
-      $.preproc_split_procedure,
-      $.preproc_procedure_body_split,
-      $.preproc_attributed_split_procedure,
-      // Handle attributes before preprocessor-split procedure
-      seq(
-        $.attribute_list,
-        repeat($.pragma),
-        $.preproc_split_procedure
-      )
-    ),
 
-    attributed_trigger: $ => choice(
-      seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.trigger_declaration),
-      $.trigger_declaration
-    ),
 
-    attributed_onrun_trigger: $ => choice(
-      seq(choice($.attribute_list, $.preproc_conditional_attributes), repeat($.pragma), $.onrun_trigger),
-      $.onrun_trigger
-    ),
 
     preproc_conditional_procedures: $ => seq(
       $.preproc_if,
-      repeat1(seq(optional($.attribute_list), choice($.procedure, $.onrun_trigger, $.trigger_declaration))),
+      repeat1(choice($.attribute_item, $.procedure, $.onrun_trigger, $.trigger_declaration)),
       optional(seq(
         $.preproc_else,
-        repeat1(seq(optional($.attribute_list), choice($.procedure, $.onrun_trigger, $.trigger_declaration)))
+        repeat1(choice($.attribute_item, $.procedure, $.onrun_trigger, $.trigger_declaration))
       )),
       $.preproc_endif
     ),
@@ -2055,14 +2061,16 @@ module.exports = grammar({
       $.preproc_if,
       repeat1(choice(
         $.var_section,
-        seq(optional($.attribute_list), $.procedure),
+        $.attribute_item,
+        $.procedure,
         $.trigger_declaration
       )),
       optional(seq(
         $.preproc_else,
         repeat1(choice(
           $.var_section,
-          seq(optional($.attribute_list), $.procedure),
+          $.attribute_item,
+          $.procedure,
           $.trigger_declaration
         ))
       )),
@@ -2122,10 +2130,10 @@ module.exports = grammar({
     ),
 
     _controladdin_element: $ => choice(
+      $.attribute_item,
       $._controladdin_properties,    // Centralized properties
       $.controladdin_event,          // ControlAddIn structural elements
       $.controladdin_procedure,      // ControlAddIn procedures without attributes
-      $.attributed_controladdin_procedure,  // ControlAddIn procedures with attributes
       $.property_list,               // Generic fallback
       $.preproc_conditional_controladdin_elements
     ),
@@ -2206,7 +2214,6 @@ module.exports = grammar({
     ),
 
     controladdin_event: $ => seq(
-      optional($.attribute_list),
       'event',
       field('name', $.identifier),
       '(',
@@ -2224,11 +2231,6 @@ module.exports = grammar({
       optional(';')
     ),
 
-    attributed_controladdin_procedure: $ => seq(
-      choice($.attribute_list, $.preproc_conditional_attributes), 
-      repeat($.pragma), 
-      $.controladdin_procedure
-    ),
 
     interface_declaration: $ => seq(
       kw('interface', 10),
@@ -2248,9 +2250,9 @@ module.exports = grammar({
       )),
       '{',
       repeat(choice(
+        $.attribute_item,
         $._interface_properties,
-        $.interface_procedure,
-        $.attributed_interface_procedure
+        $.interface_procedure
       )),
       '}'
     ),
@@ -2275,10 +2277,6 @@ module.exports = grammar({
       field('return_type', $.return_type)
     )),
 
-    attributed_interface_procedure: $ => seq(
-      $.attribute_list,
-      $.interface_procedure
-    ),
 
     report_declaration: $ => seq(
       kw('report'),
@@ -2300,20 +2298,24 @@ module.exports = grammar({
 
     _reportextension_element: $ => choice(
       // Report extension can modify dataset, requestpage, etc.
+      $.attribute_item,
       $.dataset_section,
       $.requestpage_section,
       $.rendering_section,
       $._report_properties,
       $.var_section,
       $.preproc_conditional_var_sections,
-      seq(optional($.attribute_list), $.procedure),
-      seq(optional($.attribute_list), $.trigger_declaration),
+      $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
+      $.trigger_declaration,
       $.preproc_region,
       $.preproc_endregion,
       $.pragma
     ),
 
     _report_element: $ => choice(
+      $.attribute_item,
       // Structural report elements (not properties)
       $.dataset_section,
       $.labels_section,
@@ -2322,18 +2324,20 @@ module.exports = grammar({
       $.actions_section,
       $.var_section,
       $.preproc_conditional_var_sections,
-      
+
       // Report procedures and triggers
-      seq(optional($.attribute_list), $.procedure),
-      seq(optional($.attribute_list), $.trigger_declaration),
+      $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
+      $.trigger_declaration,
       $.preproc_conditional_procedures,
-      
+
       // Preprocessor conditional report properties
       $.preproc_conditional_report_properties,
-      
+
       // All report properties now centralized
       $._report_properties,
-      
+
       // Region directives for code organization
       $.preproc_region,
       $.preproc_endregion
@@ -2539,10 +2543,11 @@ module.exports = grammar({
     ),
 
     _report_dataitem_content_element: $ => choice(
-      $.report_column_section, 
+      $.report_column_section,
       $.report_dataitem_section,
       $._dataitem_properties,
-      seq(optional($.attribute_list), $.trigger_declaration),
+      $.attribute_item,
+      $.trigger_declaration,
       $.preproc_conditional_report_dataitem_content
     ),
 
@@ -2754,28 +2759,32 @@ module.exports = grammar({
     )),
 
     _page_element: $ => choice(
+      $.attribute_item,
       // Structural page elements (not properties)
       $.layout_section,
       $.actions_section,
       $.views_section,  // Support page views section
-      seq(optional($.attribute_list), $.procedure),  // Support attributed procedures in pages
+      $.procedure,
+      // Use prec.dynamic to prefer var_section continuation over split procedures
+      prec.dynamic(-50, $.preproc_split_procedure),
+      $.preproc_procedure_body_split,
       $.var_section,
       $.preproc_conditional_var_sections, // Support preprocessor conditional var sections
       $.trigger_declaration,
       $.preproc_conditional_procedures,  // Support preprocessor conditional procedures
       $.preproc_conditional_mixed_content,  // Support mixed trigger and var sections in preprocessor
-      
+
       // Region directives for code organization
       $.preproc_region,
       $.preproc_endregion,
-      
+
       // All page properties now centralized
       $._page_properties,
-      
-      // Preprocessor conditional page properties
-      $.preproc_conditional_page_properties,
-      
-      // Special case: source_table_view_property at the top for higher precedence  
+
+      // Lower dynamic precedence to prefer var_section continuation
+      prec.dynamic(-100, $.preproc_conditional_page_properties),
+
+      // Special case: source_table_view_property at the top for higher precedence
       $.source_table_view_property,
     ),
 
@@ -2893,7 +2902,8 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._page_properties,
-        seq(optional($.attribute_list), $.trigger_declaration)
+        $.attribute_item,
+        $.trigger_declaration
       )),
       '}'
     ),
@@ -3297,7 +3307,11 @@ module.exports = grammar({
       $._boolean_property_template
     ),
     
-    importance_property: _value_property_template($ => kw('importance'), $ => $.importance_value),
+    importance_property: $ => seq(
+      kw_with_eq('importance'),
+      field('value', $.importance_value),
+      ';'
+    ),
 
     navigation_page_id_property: $ => seq(
       'NavigationPageId',
@@ -3317,8 +3331,9 @@ module.exports = grammar({
     ),
 
     width_property: $ => seq(
-      kw('width'),
-      $._integer_property_template
+      kw_with_eq('width'),
+      field('value', $.integer),
+      ';'
     ),
 
     show_caption_property: $ => seq(
@@ -3353,11 +3368,16 @@ module.exports = grammar({
       $._expression_property_template
     ),
 
-    style_property: _value_property_template('Style', $ => $.style_value),
+    style_property: $ => seq(
+      kw_with_eq('style'),
+      field('value', $.style_value),
+      ';'
+    ),
 
     style_expr_property: $ => seq(
-      'StyleExpr',
-      $._expression_property_template
+      kw_with_eq('styleexpr'),
+      field('value', $._expression),
+      ';'
     ),
 
     page_id_value: $ => $._object_reference,
@@ -3588,11 +3608,7 @@ module.exports = grammar({
     ),
 
     table_type_property: $ => seq(
-      field('name', alias(
-        choice('TableType', 'tabletype', 'TABLETYPE', 'Tabletype'),
-        'TableType'
-      )),
-      '=',
+      field('name', alias(kw_with_eq('tabletype'), 'TableType')),
       field('value', alias($.table_type_value, $.value)),
       ';'
     ),
@@ -3676,8 +3692,9 @@ module.exports = grammar({
     ),
 
     description_property: $ => seq(
-      alias(kw('description'), 'Description'),
-      $._string_property_template
+      alias(kw_with_eq('description'), 'Description'),
+      field('value', $.string_literal),
+      ';'
     ),
 
 
@@ -3940,6 +3957,7 @@ module.exports = grammar({
 
 
     _table_element: $ => prec(1, choice(
+      $.attribute_item,
       // Structural table elements (not properties)
       $.fields,  // Fields section should be primary
       $.keys,
@@ -3947,23 +3965,25 @@ module.exports = grammar({
       $.var_section,
       $.preproc_conditional_var_sections,
       $.preproc_conditional_mixed_content,  // Add mixed content support
-      
+
       // Table triggers
       $.named_trigger,
-      
+
       // Procedures
-      $.attributed_procedure,  // Use attributed_procedure to handle all procedure patterns
+      $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
       $.preproc_conditional_procedures,
-      
+
       // All table properties now centralized
       $._table_properties,
-      
+
       // Preprocessor conditional table properties
       $.preproc_conditional_table_properties,
-      
+
       // Allow standalone semicolons (empty statements)
       $.empty_statement,
-      
+
       // Region directives for code organization
       $.preproc_region,
       $.preproc_endregion
@@ -4162,8 +4182,30 @@ module.exports = grammar({
     )),
 
     caption_property: $ => seq(
-      field('name', alias(kw('caption'), 'Caption')),
-      $._caption_full_template
+      field('name', alias(kw_with_eq('caption'), 'Caption')),
+      $.string_literal,
+      repeat(seq(
+        ',',
+        choice(
+          seq(
+            kw('locked'),
+            '=',
+            $.boolean
+          ),
+          seq(
+            kw('comment'),
+            '=',
+            $.string_literal
+          ),
+          seq(
+            kw('maxlength'),
+            '=',
+            $.integer
+          )
+        )
+      )),
+      optional(','),  // Support trailing comma
+      ';'
     ),
 
     caption_class_property: $ => seq(
@@ -4260,27 +4302,22 @@ module.exports = grammar({
     var_section: $ => prec.right(10, seq(
       optional(kw('protected')),
       kw('var'),
-      // Var section body - only allows variable-related content
-      prec.right(repeat(choice(
+      repeat(choice(
         $.comment,
         $.multiline_comment,
         $.pragma,
-        $._var_declaration_with_optional_attribute,
-        $.preproc_conditional_variables  // Re-added - needed for valid patterns
-      )))
+        $.variable_declaration,
+        seq(
+          repeat1($.attribute_item),
+          repeat(choice($.comment, $.multiline_comment, $.pragma)),
+          $.variable_declaration
+        ),
+        // Scanner discrimination + high dynamic precedence forces parser to stay in var_section
+        prec.dynamic(100, seq($.preproc_var_continuation, $.preproc_conditional_variables))
+      ))
     )),
 
-    // Variable declaration that can optionally have attributes (only valid inside var sections)
-    _var_declaration_with_optional_attribute: $ => choice(
-      $.variable_declaration,
-      $.attributed_variable_declaration
-    ),
-
     // Variable declaration with attributes (e.g., [RunOnClient])
-    attributed_variable_declaration: $ => seq(
-      field('attributes', $.attribute_list),
-      $.variable_declaration
-    ),
 
     // Helper rule for unquoted variable names (allows certain keywords as identifiers)
     _unquoted_variable_name: $ => choice(
@@ -4753,8 +4790,8 @@ enum_type: $ => prec(1, seq(
       kw('fields'),
       '{',
       repeat(choice(
-        $.field_declaration, 
-        $.modify_field_declaration,
+        seq(repeat($.attribute_item), $.field_declaration),
+        seq(repeat($.attribute_item), $.modify_field_declaration),
         $.preproc_conditional_fields
       )),
       '}'
@@ -4791,7 +4828,8 @@ enum_type: $ => prec(1, seq(
       '{',
       repeat(choice(
         $._field_properties,
-        seq(optional($.attribute_list), $.trigger_declaration)
+        $.attribute_item,
+        $.trigger_declaration
       )),
       '}'
     ),
@@ -5400,12 +5438,27 @@ enum_type: $ => prec(1, seq(
       repeat(seq(',', $._identifier_choice))
     ),
 
-    attribute_list: $ => prec.left(repeat1($.attribute)),
+    // NEW: Attribute as a statement (Rust-style refactor - Phase 1)
+    // This allows attributes to be peers with declarations, not embedded within them
+    attribute_item: $ => seq(
+      '[',
+      field('attribute', $.attribute_content),
+      ']'
+    ),
+
+    // NEW: Attribute content (shared structure)
+    attribute_content: $ => seq(
+      field('name', $.identifier),
+      optional(field('arguments', $.attribute_arguments))
+    ),
+
+    // LEGACY: Keep for backward compatibility during migration
+    // Will be deprecated after Phase 4-6
 
     attribute: $ => seq(
-      '[', 
-      field('attribute_name', $.identifier), 
-      optional($.attribute_arguments), 
+      '[',
+      field('attribute_name', $.identifier),
+      optional($.attribute_arguments),
       ']'
     ),
 
@@ -5504,40 +5557,14 @@ enum_type: $ => prec(1, seq(
       $.code_block
     ),
 
-    // Split procedure with separate headers
+    // Split procedure with separate headers (optionally with attributes in branches)
     preproc_split_procedure: $ => seq(
       $.preproc_if,
+      repeat($.attribute_item),  // Optional attributes before procedure in #if branch
       field('if_header', $.procedure_header),
       $.preproc_else,
+      repeat($.attribute_item),  // Optional attributes before procedure in #else branch
       field('else_header', $.procedure_header),
-      $.preproc_endif,
-      optional(';'),
-      repeat($.pragma),
-      optional(choice(
-        $.var_section,
-        $.preproc_conditional_var_sections
-      )),
-      $.code_block
-    ),
-
-    // Split procedure where one branch has attributes
-    preproc_attributed_split_procedure: $ => seq(
-      $.preproc_if,
-      field('if_branch', choice(
-        seq(
-          $.attribute_list,
-          $.procedure_header
-        ),
-        $.procedure_header
-      )),
-      $.preproc_else,
-      field('else_header', choice(
-        seq(
-          $.attribute_list,
-          $.procedure_header
-        ),
-        $.procedure_header
-      )),
       $.preproc_endif,
       optional(';'),
       repeat($.pragma),
@@ -5700,8 +5727,8 @@ enum_type: $ => prec(1, seq(
     ),
 
     parameter_list: $ => seq(
-      $.parameter,
-      repeat(seq(';', $.parameter))
+      seq(repeat($.attribute_item), $.parameter),
+      repeat(seq(';', seq(repeat($.attribute_item), $.parameter)))
     ),
 
     modifier: $ => kw('var'),
@@ -6680,8 +6707,9 @@ enum_type: $ => prec(1, seq(
     ),
 
     include_caption_property: $ => seq(
-      kw('includecaption'),
-      $._caption_boolean_template
+      kw_with_eq('includecaption'),
+      field('value', $._boolean_value),
+      ';'
     ),
 
     // Critical report layout properties
@@ -6998,10 +7026,10 @@ enum_type: $ => prec(1, seq(
     preproc_conditional_controladdin_properties: _preproc_conditional_block_template($ => choice($._controladdin_properties, $.property_list)),
 
     preproc_conditional_controladdin_elements: _preproc_conditional_block_template($ => choice(
+      $.attribute_item,
       $._controladdin_properties,
       $.controladdin_event,
       $.controladdin_procedure,
-      $.attributed_controladdin_procedure,
       $.property_list,
       $.preproc_conditional_controladdin_elements  // Allow nesting
     )),
@@ -7038,7 +7066,14 @@ enum_type: $ => prec(1, seq(
 
     // Preprocessor conditional rules for variable declarations
     preproc_conditional_variables: _preproc_conditional_block_template($ => choice(
-        $._var_declaration_with_optional_attribute,
+        // Bare variable declaration (no attributes) - prefer within preproc var blocks
+        prec.dynamic(3, $.variable_declaration),
+        // Attributed variable (requires at least one attribute)
+        prec.dynamic(3, seq(
+          repeat1($.attribute_item),
+          repeat(choice($.comment, $.multiline_comment, $.pragma)),
+          $.variable_declaration
+        )),
         $.comment,
         $.multiline_comment,
         $.pragma,
@@ -7087,14 +7122,11 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     )),
 
+    pragma: $ => new RustRegex('#pragma[^\\n\\r]*'),
+
     preproc_region: $ => new RustRegex('#\\s*region[^\\n\\r]*', 'i'),
 
     preproc_endregion: $ => new RustRegex('#endregion[^\\n\\r]*'),
-
-    pragma: $ => new RustRegex('#pragma[^\\n]*'), // Match lines starting with #pragma specifically
-
-    // Handle malformed preprocessor directives (like "# Region" with space)
-    malformed_directive: $ => new RustRegex('# [A-Za-z][^\\n\\r]*'),
 
     comment: $ => token(seq('//', new RustRegex('[^\\n\\r]*'))),
 
@@ -7985,33 +8017,6 @@ enum_type: $ => prec(1, seq(
 
     // DEPRECATED: Use _string_value_template instead
     _caption_string_template: $ => $._string_value_template,
-
-    _caption_full_template: $ => seq(
-      '=',
-      $.string_literal,
-      repeat(seq(
-        ',',
-        choice(
-          seq(
-            kw('locked'),
-            '=',
-            $.boolean
-          ),
-          seq(
-            kw('comment'),
-            '=',
-            $.string_literal
-          ),
-          seq(
-            kw('maxlength'),
-            '=',
-            $.integer
-          )
-        )
-      )),
-      optional(','),  // Support trailing comma
-      ';'
-    ),
 
     _caption_boolean_template: $ => seq(
       '=',

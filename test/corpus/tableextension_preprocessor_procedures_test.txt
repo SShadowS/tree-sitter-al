@@ -32,10 +32,10 @@ tableextension 123 "Test Extension" extends Item
       (preproc_if
         condition: (preproc_not_expression
           (identifier)))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
             arguments: (expression_list
               (string_literal)
               (string_literal)))))
@@ -52,16 +52,17 @@ tableextension 123 "Test Extension" extends Item
       (preproc_if
         condition: (preproc_not_expression
           (identifier)))
-      (attribute_list
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
             arguments: (expression_list
               (string_literal)
-              (string_literal))))
-        (attribute
-          attribute_name: (identifier)
-          (attribute_arguments
+              (string_literal)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
             arguments: (expression_list
               (boolean)
               (boolean)))))

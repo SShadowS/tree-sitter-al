@@ -38,89 +38,88 @@ codeunit 123 "Test XOR Operator"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (comment)
-          (assignment_expression
+    (onrun_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (comment)
+        (assignment_expression
+          left: (identifier)
+          right: (logical_expression
             left: (identifier)
-            right: (logical_expression
-              left: (identifier)
-              right: (identifier)))
-          (assignment_expression
-            left: (identifier)
-            right: (logical_expression
-              left: (boolean)
-              right: (boolean)))
-          (assignment_expression
-            left: (identifier)
-            right: (logical_expression
-              left: (parenthesized_expression
-                (comparison_expression
-                  left: (identifier)
-                  operator: (comparison_operator)
-                  right: (boolean)))
-              right: (parenthesized_expression
-                (comparison_expression
-                  left: (identifier)
-                  operator: (comparison_operator)
-                  right: (boolean)))))
-          (comment)
-          (assignment_expression
-            left: (identifier)
-            right: (logical_expression
-              left: (identifier)
-              right: (identifier)))
-          (assignment_expression
-            left: (identifier)
-            right: (logical_expression
-              left: (identifier)
-              right: (identifier)))
-          (comment)
-          (if_statement
-            condition: (logical_expression
-              left: (identifier)
-              right: (identifier))
-            then_branch: (assignment_expression
-              left: (identifier)
-              right: (boolean)))
-          (if_statement
-            condition: (logical_expression
-              left: (quoted_identifier)
-              right: (identifier))
-            then_branch: (exit_statement
-              return_value: (additive_expression
-                left: (string_literal)
-                right: (identifier))))
-          (comment)
-          (assignment_expression
-            left: (identifier)
-            right: (logical_expression
-              left: (logical_expression
+            right: (identifier)))
+        (assignment_expression
+          left: (identifier)
+          right: (logical_expression
+            left: (boolean)
+            right: (boolean)))
+        (assignment_expression
+          left: (identifier)
+          right: (logical_expression
+            left: (parenthesized_expression
+              (comparison_expression
                 left: (identifier)
-                right: (identifier))
-              right: (boolean)))
-          (assignment_expression
+                operator: (comparison_operator)
+                right: (boolean)))
+            right: (parenthesized_expression
+              (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (boolean)))))
+        (comment)
+        (assignment_expression
+          left: (identifier)
+          right: (logical_expression
             left: (identifier)
-            right: (logical_expression
-              left: (parenthesized_expression
-                (logical_expression
-                  left: (identifier)
-                  right: (identifier)))
-              right: (parenthesized_expression
-                (logical_expression
-                  left: (identifier)
-                  right: (identifier))))))))))
+            right: (identifier)))
+        (assignment_expression
+          left: (identifier)
+          right: (logical_expression
+            left: (identifier)
+            right: (identifier)))
+        (comment)
+        (if_statement
+          condition: (logical_expression
+            left: (identifier)
+            right: (identifier))
+          then_branch: (assignment_expression
+            left: (identifier)
+            right: (boolean)))
+        (if_statement
+          condition: (logical_expression
+            left: (quoted_identifier)
+            right: (identifier))
+          then_branch: (exit_statement
+            return_value: (additive_expression
+              left: (string_literal)
+              right: (identifier))))
+        (comment)
+        (assignment_expression
+          left: (identifier)
+          right: (logical_expression
+            left: (logical_expression
+              left: (identifier)
+              right: (identifier))
+            right: (boolean)))
+        (assignment_expression
+          left: (identifier)
+          right: (logical_expression
+            left: (parenthesized_expression
+              (logical_expression
+                left: (identifier)
+                right: (identifier)))
+            right: (parenthesized_expression
+              (logical_expression
+                left: (identifier)
+                right: (identifier)))))))))

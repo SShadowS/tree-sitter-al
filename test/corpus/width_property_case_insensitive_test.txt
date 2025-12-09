@@ -128,15 +128,14 @@ codeunit 50100 "Layout Manager"
         name: (identifier)
         type: (type_specification
           (basic_type))))
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        return_type: (return_type
-          (type_specification
-            (basic_type)))
-        (code_block
-          (exit_statement
-            return_value: (multiplicative_expression
-              left: (identifier)
-              right: (identifier))))))))
+    (procedure
+      name: (name
+        (identifier))
+      return_type: (return_type
+        (type_specification
+          (basic_type)))
+      (code_block
+        (exit_statement
+          return_value: (multiplicative_expression
+            left: (identifier)
+            right: (identifier)))))))

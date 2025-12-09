@@ -20,34 +20,33 @@ codeunit 50000 "Test For Loop"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
-        (code_block
-          (for_statement
-            variable: (field_access
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (for_statement
+          variable: (field_access
+            record: (identifier)
+            field: (quoted_identifier))
+          start: (qualified_enum_value
+            enum_type: (field_access
               record: (identifier)
               field: (quoted_identifier))
-            start: (qualified_enum_value
-              enum_type: (field_access
-                record: (identifier)
-                field: (quoted_identifier))
-              value: (identifier))
-            direction: (to)
-            end: (qualified_enum_value
-              enum_type: (field_access
-                record: (identifier)
-                field: (quoted_identifier))
-              value: (identifier))
-            body: (code_block
-              (comment))))))))
+            value: (identifier))
+          direction: (to)
+          end: (qualified_enum_value
+            enum_type: (field_access
+              record: (identifier)
+              field: (quoted_identifier))
+            value: (identifier))
+          body: (code_block
+            (comment)))))))
 
 ================================================================================
 For statement with member expression
@@ -70,29 +69,28 @@ codeunit 50001 "Test Member Loop"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (codeunit_type
-                reference: (identifier)))))
-        (code_block
-          (for_statement
-            variable: (member_expression
-              object: (identifier)
-              property: (identifier))
-            start: (integer)
-            direction: (to)
-            end: (member_expression
-              object: (identifier)
-              property: (identifier))
-            body: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (member_expression
-                  object: (identifier)
-                  property: (identifier))))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (codeunit_type
+              reference: (identifier)))))
+      (code_block
+        (for_statement
+          variable: (member_expression
+            object: (identifier)
+            property: (identifier))
+          start: (integer)
+          direction: (to)
+          end: (member_expression
+            object: (identifier)
+            property: (identifier))
+          body: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (member_expression
+                object: (identifier)
+                property: (identifier)))))))))

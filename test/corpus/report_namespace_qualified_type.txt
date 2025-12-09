@@ -17,20 +17,19 @@ codeunit 1234 "Test Codeunit"
   (codeunit_declaration
     (integer)
     (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (report_type
-                (identifier)
-                (identifier)
-                (identifier)
-                (quoted_identifier)))))
-        (code_block)))))
+    (procedure
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (report_type
+              (identifier)
+              (identifier)
+              (identifier)
+              (quoted_identifier)))))
+      (code_block))))
 
 ================================================================================
 Multiple report type declarations
@@ -53,26 +52,25 @@ codeunit 5678 "Another Test"
   (codeunit_declaration
     (integer)
     (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (report_type
-                (integer))))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (report_type
-                (quoted_identifier))))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (report_type
-                (identifier)
-                (identifier)
-                (quoted_identifier)))))
-        (code_block)))))
+    (procedure
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (report_type
+              (integer))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (report_type
+              (quoted_identifier))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (report_type
+              (identifier)
+              (identifier)
+              (quoted_identifier)))))
+      (code_block))))

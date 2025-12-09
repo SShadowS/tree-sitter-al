@@ -16,13 +16,12 @@ codeunit 50000 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))))))
+    (onrun_trigger
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))
 
 ==================
 OnRun trigger without semicolon (backward compatibility)
@@ -42,13 +41,12 @@ codeunit 50001 "Test Codeunit 2"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))))))
+    (onrun_trigger
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))
 
 ==================
 OnRun trigger with var section and semicolon
@@ -70,14 +68,13 @@ codeunit 50002 "Test Codeunit 3"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_onrun_trigger
-      (onrun_trigger
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
-        (code_block
-          (assignment_expression
-            left: (identifier)
-            right: (string_literal)))))))
+    (onrun_trigger
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (string_literal))))))

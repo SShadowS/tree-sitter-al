@@ -23,48 +23,47 @@ codeunit 50100 "Built-in Functions Test"
   (codeunit_declaration
     (integer)
     (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        (procedure_modifier)
-        (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_expression
-            (identifier)
-            (call_expression
-              (identifier)
-              (argument_list
-                (integer))))
+    (procedure
+      (procedure_modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          (identifier)
           (call_expression
             (identifier)
             (argument_list
-              (integer)))
-          (assignment_expression
+              (integer))))
+        (call_expression
+          (identifier)
+          (argument_list
+            (integer)))
+        (assignment_expression
+          (identifier)
+          (call_expression
             (identifier)
-            (call_expression
-              (identifier)
-              (argument_list
-                (decimal)
-                (decimal))))
-          (assignment_expression
+            (argument_list
+              (decimal)
+              (decimal))))
+        (assignment_expression
+          (identifier)
+          (call_expression
             (identifier)
-            (call_expression
-              (identifier)
-              (argument_list
-                (integer))))
-          (assignment_expression
+            (argument_list
+              (integer))))
+        (assignment_expression
+          (identifier)
+          (call_expression
             (identifier)
-            (call_expression
-              (identifier)
-              (argument_list
-                (integer)
-                (integer)))))))))
+            (argument_list
+              (integer)
+              (integer))))))))

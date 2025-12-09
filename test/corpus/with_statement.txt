@@ -22,25 +22,24 @@ codeunit 50000 "WITH Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
-        (code_block
-          (with_statement
-            record_variable: (identifier)
-            body: (code_block
-              (identifier)
-              (assignment_expression
-                left: (identifier)
-                right: (string_literal))
-              (identifier))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (with_statement
+          record_variable: (identifier)
+          body: (code_block
+            (identifier)
+            (assignment_expression
+              left: (identifier)
+              right: (string_literal))
+            (identifier)))))))
 
 ================================================================================
 WITH statement with single statement
@@ -63,20 +62,19 @@ codeunit 50001 "WITH Single Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
-        (code_block
-          (with_statement
-            record_variable: (identifier)
-            body: (identifier)))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (with_statement
+          record_variable: (identifier)
+          body: (identifier))))))
 
 ================================================================================
 Nested WITH statements
@@ -105,32 +103,31 @@ codeunit 50002 "Nested WITH Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (var_section
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
-        (code_block
-          (with_statement
-            record_variable: (identifier)
-            body: (code_block
-              (identifier)
-              (with_statement
-                record_variable: (identifier)
-                body: (code_block
-                  (identifier)
-                  (assignment_expression
-                    left: (quoted_identifier)
-                    right: (field_access
-                      record: (identifier)
-                      field: (quoted_identifier))))))))))))
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier)))))
+      (code_block
+        (with_statement
+          record_variable: (identifier)
+          body: (code_block
+            (identifier)
+            (with_statement
+              record_variable: (identifier)
+              body: (code_block
+                (identifier)
+                (assignment_expression
+                  left: (quoted_identifier)
+                  right: (field_access
+                    record: (identifier)
+                    field: (quoted_identifier)))))))))))

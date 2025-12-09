@@ -15,23 +15,22 @@ codeunit 50100 "Library Item Tracking"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (page_type
-                reference: (namespace_qualified_reference
-                  namespace: (identifier)
-                  segment: (identifier)
-                  segment: (identifier)
-                  segment: (quoted_identifier))))))
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (page_type
+              reference: (namespace_qualified_reference
+                namespace: (identifier)
+                segment: (identifier)
+                segment: (identifier)
+                segment: (quoted_identifier))))))
+      (code_block))))
 
 ================================================================================
 Codeunit parameter with namespace qualification
@@ -50,22 +49,21 @@ codeunit 50101 "Test Codeunit"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (codeunit_type
-                reference: (namespace_qualified_reference
-                  namespace: (identifier)
-                  segment: (identifier)
-                  segment: (identifier)
-                  segment: (quoted_identifier))))))
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (codeunit_type
+              reference: (namespace_qualified_reference
+                namespace: (identifier)
+                segment: (identifier)
+                segment: (identifier)
+                segment: (quoted_identifier))))))
+      (code_block))))
 
 ================================================================================
 XMLPort with namespace qualification
@@ -84,23 +82,22 @@ codeunit 50102 "Import Handler"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (xmlport_type
-                reference: (namespace_qualified_reference
-                  namespace: (identifier)
-                  segment: (identifier)
-                  segment: (identifier)
-                  segment: (quoted_identifier))))))
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (xmlport_type
+              reference: (namespace_qualified_reference
+                namespace: (identifier)
+                segment: (identifier)
+                segment: (identifier)
+                segment: (quoted_identifier))))))
+      (code_block))))
 
 ================================================================================
 TestPage with simple namespace
@@ -119,21 +116,20 @@ codeunit 50103 "Page Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (testpage_type
-                reference: (namespace_qualified_reference
-                  namespace: (identifier)
-                  segment: (identifier))))))
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (testpage_type
+              reference: (namespace_qualified_reference
+                namespace: (identifier)
+                segment: (identifier))))))
+      (code_block))))
 
 ================================================================================
 Mixed namespace qualified and regular types
@@ -156,41 +152,40 @@ codeunit 50104 "Mixed Types"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attributed_procedure
-      (procedure
-        name: (name
-          (identifier))
-        (parameter_list
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (page_type
-                reference: (quoted_identifier))))
-          (parameter
-            modifier: (modifier)
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (page_type
-                reference: (namespace_qualified_reference
-                  namespace: (identifier)
-                  segment: (identifier)
-                  segment: (quoted_identifier)))))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (report_type
-                reference: (integer))))
-          (parameter
-            parameter_name: (name
-              (identifier))
-            parameter_type: (type_specification
-              (codeunit_type
-                reference: (namespace_qualified_reference
-                  namespace: (identifier)
-                  segment: (identifier)
-                  segment: (identifier))))))
-        (code_block)))))
+    (procedure
+      name: (name
+        (identifier))
+      (parameter_list
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (page_type
+              reference: (quoted_identifier))))
+        (parameter
+          modifier: (modifier)
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (page_type
+              reference: (namespace_qualified_reference
+                namespace: (identifier)
+                segment: (identifier)
+                segment: (quoted_identifier)))))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (report_type
+              reference: (integer))))
+        (parameter
+          parameter_name: (name
+            (identifier))
+          parameter_type: (type_specification
+            (codeunit_type
+              reference: (namespace_qualified_reference
+                namespace: (identifier)
+                segment: (identifier)
+                segment: (identifier))))))
+      (code_block))))
