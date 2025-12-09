@@ -25,15 +25,13 @@ codeunit 50100 "Test Pragma"
       (pragma)
       (variable_declaration
         (identifier)
-        (type_specification
-          (basic_type)
-          (string_literal)))
+        (basic_type)
+        (string_literal))
       (pragma)
       (variable_declaration
         (identifier)
-        (type_specification
-          (basic_type)
-          (string_literal))))
+        (basic_type)
+        (string_literal)))
     (procedure
       (name
         (identifier))
@@ -73,28 +71,28 @@ codeunit 50101 "Test Nested Pragma"
       (pragma)
       (variable_declaration
         (identifier)
-        (type_specification
-          (basic_type)
-          (string_literal)))
+        (basic_type)
+        (string_literal))
       (pragma)
       (variable_declaration
         (identifier)
-        (type_specification
-          (basic_type)
-          (string_literal)))
+        (basic_type)
+        (string_literal))
       (pragma)
       (variable_declaration
         (identifier)
-        (type_specification
-          (basic_type)
-          (string_literal)
-          (label_property)))
+        (basic_type)
+        (string_literal)
+        (label_attribute
+          (identifier)
+          (string_literal)))
       (variable_declaration
         (identifier)
-        (type_specification
-          (basic_type)
-          (string_literal)
-          (label_property)))
+        (basic_type)
+        (string_literal)
+        (label_attribute
+          (identifier)
+          (string_literal)))
       (pragma)
       (pragma))
     (procedure

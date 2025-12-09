@@ -151,7 +151,9 @@ module.exports = grammar({
     $.preproc_var_terminator,
     $.attribute_for_variable,
     $.attribute_for_procedure,
-    $.preproc_var_continuation  // Signals #if contains ONLY variables, forces var_section continuation
+    $.preproc_var_continuation,  // Signals #if contains ONLY variables, forces var_section continuation
+    $._pragma_var_continuation,  // Signals pragma followed by variable, continue var_section (hidden)
+    $._attribute_var_continuation  // Signals attribute followed by variable, continue var_section (hidden)
   ],
 
   // Extras: whitespace, comments, and ignorable preprocessor directives
@@ -2029,7 +2031,8 @@ module.exports = grammar({
         $.onrun_trigger,
         $.trigger_declaration,
         $.preproc_conditional_procedures,
-        $.pragma,
+        // Lower precedence to prefer pragma inside var_section
+        prec(-10, $.pragma),
 
         // Region directives for code organization
         $.preproc_region,
@@ -4308,7 +4311,7 @@ module.exports = grammar({
     var_section: $ => prec.right(10, seq(
       optional(kw('protected')),
       kw('var'),
-      repeat(choice(
+      repeat(prec.right(20, choice(
         $.comment,
         $.multiline_comment,
         $.pragma,
@@ -4319,8 +4322,17 @@ module.exports = grammar({
           $.variable_declaration
         ),
         // Scanner discrimination + high dynamic precedence forces parser to stay in var_section
-        prec.dynamic(100, seq($.preproc_var_continuation, $.preproc_conditional_variables))
-      ))
+        prec.dynamic(100, seq($.preproc_var_continuation, $.preproc_conditional_variables)),
+        // Pragma followed by variable - scanner detects this and emits token to continue var_section
+        prec.dynamic(100, seq($._pragma_var_continuation, $.pragma)),
+        // Attribute followed by variable - scanner detects this and emits token to continue var_section
+        prec.dynamic(100, seq(
+          $._attribute_var_continuation,
+          repeat1($.attribute_item),
+          repeat(choice($.comment, $.multiline_comment, $.pragma)),
+          $.variable_declaration
+        ))
+      )))
     )),
 
     // Variable declaration with attributes (e.g., [RunOnClient])
