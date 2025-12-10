@@ -8,8 +8,9 @@
 // @ts-check
 
 // Helper function for explicit identifiers
+// Supports Unicode letters for international identifiers (e.g., ñ, ö, etc.)
 function ident() {
-  return token(/[A-Za-z_][A-Za-z0-9_]*/);
+  return token(/[\p{L}_][\p{L}\p{N}_]*/u);
 }
 
 // Helper function for case-insensitive keywords using RustRegex
@@ -787,9 +788,11 @@ module.exports = grammar({
     ),
 
     // Phase 2B - Medium Priority Complex Page Properties
+    // Uses kw_with_eq to distinguish property from variable name
     data_caption_expression_property: $ => seq(
-      kw('datacaptionexpression'),
-      $._expression_property_template
+      alias(kw_with_eq('datacaptionexpression'), 'DataCaptionExpression'),
+      field('value', $._expression),
+      ';'
     ),
 
     instructional_text_property: $ => seq(
@@ -2860,9 +2863,9 @@ module.exports = grammar({
       ';'
     ),
 
+    // Uses kw_with_eq to distinguish property from variable name
     view_filters_property: $ => seq(
-      kw('filters'),
-      '=',
+      alias(kw_with_eq('filters'), 'Filters'),
       field('value', $.where_clause),
       ';'
     ),
@@ -4437,9 +4440,7 @@ module.exports = grammar({
       // Allow 'ApiVersion' to be used as an identifier in variable contexts
       alias(kw('apiversion'), $.identifier),
       // Allow 'Filters' to be used as an identifier in variable contexts
-      alias('Filters', $.identifier),
-      alias('filters', $.identifier),
-      alias('FILTERS', $.identifier),
+      alias(kw('filters'), $.identifier),
       // Allow 'Visible' to be used as an identifier in variable contexts
       alias('Visible', $.identifier),
       alias('visible', $.identifier),
@@ -7016,15 +7017,9 @@ enum_type: $ => prec(1, seq(
       $._boolean_property_template
     ),
 
-    // Contextual Property Pattern exception: Uses literal strings instead of kw()
-    // to avoid lexer conflicts when used as variable names in var sections.
-    // All case variations must also be added to _unquoted_variable_name.
+    // Uses kw_with_eq to distinguish property from variable name
     filters_property: $ => seq(
-      field('name', alias(
-        choice('Filters', 'filters', 'FILTERS'),
-        'Filters'
-      )),
-      '=',
+      alias(kw_with_eq('filters'), 'Filters'),
       field('value', choice(
         $.identifier,
         $._quoted_identifier,
@@ -7248,9 +7243,9 @@ enum_type: $ => prec(1, seq(
 
     pragma: $ => new RustRegex('#pragma[^\\n\\r]*'),
 
-    preproc_region: $ => new RustRegex('#\\s*region[^\\n\\r]*', 'i'),
+    preproc_region: $ => new RustRegex('(?i)#\\s*region[^\\n\\r]*'),
 
-    preproc_endregion: $ => new RustRegex('#\\s*endregion[^\\n\\r]*', 'i'),
+    preproc_endregion: $ => new RustRegex('(?i)#\\s*endregion[^\\n\\r]*'),
 
     comment: $ => token(seq('//', new RustRegex('[^\\n\\r]*'))),
 

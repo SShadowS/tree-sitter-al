@@ -2771,15 +2771,28 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
+          "type": "ALIAS",
           "content": {
-            "type": "PATTERN",
-            "value": "(?i)datacaptionexpression"
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)datacaptionexpression[\\t\\f\\r ]*="
+            }
+          },
+          "named": false,
+          "value": "DataCaptionExpression"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expression"
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "_expression_property_template"
+          "type": "STRING",
+          "value": ";"
         }
       ]
     },
@@ -12003,15 +12016,16 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
+          "type": "ALIAS",
           "content": {
-            "type": "PATTERN",
-            "value": "(?i)filters"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "="
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)filters[\\t\\f\\r ]*="
+            }
+          },
+          "named": false,
+          "value": "Filters"
         },
         {
           "type": "FIELD",
@@ -19420,26 +19434,11 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "STRING",
-            "value": "Filters"
-          },
-          "named": true,
-          "value": "identifier"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "STRING",
-            "value": "filters"
-          },
-          "named": true,
-          "value": "identifier"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "STRING",
-            "value": "FILTERS"
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)filters"
+            }
           },
           "named": true,
           "value": "identifier"
@@ -26342,7 +26341,8 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[A-Za-z_][A-Za-z0-9_]*"
+        "value": "[\\p{L}_][\\p{L}\\p{N}_]*",
+        "flags": "u"
       }
     },
     "_quoted_identifier": {
@@ -31635,34 +31635,16 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "FIELD",
-          "name": "name",
+          "type": "ALIAS",
           "content": {
-            "type": "ALIAS",
+            "type": "TOKEN",
             "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "Filters"
-                },
-                {
-                  "type": "STRING",
-                  "value": "filters"
-                },
-                {
-                  "type": "STRING",
-                  "value": "FILTERS"
-                }
-              ]
-            },
-            "named": false,
-            "value": "Filters"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "="
+              "type": "PATTERN",
+              "value": "(?i)filters[\\t\\f\\r ]*="
+            }
+          },
+          "named": false,
+          "value": "Filters"
         },
         {
           "type": "FIELD",
@@ -34152,11 +34134,11 @@
     },
     "preproc_region": {
       "type": "PATTERN",
-      "value": "#\\s*region[^\\n\\r]*"
+      "value": "(?i)#\\s*region[^\\n\\r]*"
     },
     "preproc_endregion": {
       "type": "PATTERN",
-      "value": "#\\s*endregion[^\\n\\r]*"
+      "value": "(?i)#\\s*endregion[^\\n\\r]*"
     },
     "comment": {
       "type": "TOKEN",
