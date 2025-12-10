@@ -1368,6 +1368,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_actions",
+          "named": true
+        },
+        {
           "type": "separator_action",
           "named": true
         },
@@ -1640,6 +1644,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_actions",
+          "named": true
+        },
+        {
           "type": "separator_action",
           "named": true
         },
@@ -1909,6 +1917,10 @@
         },
         {
           "type": "fileuploadaction_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_actions",
           "named": true
         },
         {
@@ -2473,6 +2485,10 @@
           "named": true
         },
         {
+          "type": "preproc_conditional_actions",
+          "named": true
+        },
+        {
           "type": "separator_action",
           "named": true
         },
@@ -2725,16 +2741,12 @@
     "named": true,
     "fields": {
       "value": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
+            "type": ",",
+            "named": false
           },
           {
             "type": "string_literal",
@@ -3350,7 +3362,7 @@
     "fields": {
       "body": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "additive_expression",
@@ -21667,6 +21679,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_then_begin",
+          "named": true
+        },
+        {
           "type": "preproc_variant_condition_if",
           "named": true
         }
@@ -34286,7 +34302,15 @@
       "required": true,
       "types": [
         {
+          "type": "actions_section",
+          "named": true
+        },
+        {
           "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "layout_section",
           "named": true
         },
         {
@@ -35091,6 +35115,10 @@
         },
         {
           "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "permissionset_permissions",
           "named": true
         },
         {
@@ -39766,6 +39794,470 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_split_if_then_begin",
+    "named": true,
+    "fields": {
+      "condition": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "biginteger",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "conditional_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
+            "type": "enum_type_reference",
+            "named": true
+          },
+          {
+            "type": "field_access",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "left": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "biginteger",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "conditional_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
+            "type": "enum_type_reference",
+            "named": true
+          },
+          {
+            "type": "field_access",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "in_operator",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "additive_expression",
+          "named": true
+        },
+        {
+          "type": "asserterror_statement",
+          "named": true
+        },
+        {
+          "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "assignment_statement",
+          "named": true
+        },
+        {
+          "type": "biginteger",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call_expression",
+          "named": true
+        },
+        {
+          "type": "case_statement",
+          "named": true
+        },
+        {
+          "type": "comparison_expression",
+          "named": true
+        },
+        {
+          "type": "conditional_expression",
+          "named": true
+        },
+        {
+          "type": "database_reference",
+          "named": true
+        },
+        {
+          "type": "date_literal",
+          "named": true
+        },
+        {
+          "type": "datetime_literal",
+          "named": true
+        },
+        {
+          "type": "decimal",
+          "named": true
+        },
+        {
+          "type": "empty_statement",
+          "named": true
+        },
+        {
+          "type": "enum_keyword_qualified_value",
+          "named": true
+        },
+        {
+          "type": "enum_type_reference",
+          "named": true
+        },
+        {
+          "type": "exit_statement",
+          "named": true
+        },
+        {
+          "type": "field_access",
+          "named": true
+        },
+        {
+          "type": "for_statement",
+          "named": true
+        },
+        {
+          "type": "foreach_statement",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "if_statement",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "logical_expression",
+          "named": true
+        },
+        {
+          "type": "member_expression",
+          "named": true
+        },
+        {
+          "type": "multiplicative_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_if_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_statements",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_wrapped_fragmented_if_else",
+          "named": true
+        },
+        {
+          "type": "qualified_enum_value",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        },
+        {
+          "type": "range_expression",
+          "named": true
+        },
+        {
+          "type": "repeat_statement",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        },
+        {
+          "type": "subscript_expression",
+          "named": true
+        },
+        {
+          "type": "time_literal",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        },
+        {
+          "type": "while_statement",
+          "named": true
+        },
+        {
+          "type": "with_statement",
           "named": true
         }
       ]
@@ -46669,6 +47161,10 @@
           {
             "type": "identifier",
             "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
           }
         ]
       }
@@ -47044,6 +47540,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
           {
             "type": "quoted_identifier",
             "named": true
@@ -55058,7 +55558,23 @@
     "named": false
   },
   {
+    "type": "ACCESS",
+    "named": false
+  },
+  {
+    "type": "ACTIONS",
+    "named": false
+  },
+  {
     "type": "AND",
+    "named": false
+  },
+  {
+    "type": "Access",
+    "named": false
+  },
+  {
+    "type": "Actions",
     "named": false
   },
   {
@@ -55115,6 +55631,10 @@
   },
   {
     "type": "Caption",
+    "named": false
+  },
+  {
+    "type": "CaptionClass",
     "named": false
   },
   {
@@ -55178,6 +55698,10 @@
     "named": false
   },
   {
+    "type": "EXTENSIBLE",
+    "named": false
+  },
+  {
     "type": "Ellipsis",
     "named": false
   },
@@ -55199,6 +55723,10 @@
   },
   {
     "type": "ExcelLayoutMultipleDataSheets",
+    "named": false
+  },
+  {
+    "type": "Extensible",
     "named": false
   },
   {
@@ -55246,10 +55774,6 @@
     "named": false
   },
   {
-    "type": "ISPREVIEW",
-    "named": false
-  },
-  {
     "type": "Implementation",
     "named": false
   },
@@ -55275,6 +55799,14 @@
   },
   {
     "type": "IsPreview",
+    "named": false
+  },
+  {
+    "type": "LAYOUT",
+    "named": false
+  },
+  {
+    "type": "Layout",
     "named": false
   },
   {
@@ -55354,6 +55886,10 @@
     "named": false
   },
   {
+    "type": "PERMISSIONS",
+    "named": false
+  },
+  {
     "type": "PaperSourceDefaultPage",
     "named": false
   },
@@ -55371,6 +55907,10 @@
   },
   {
     "type": "PdfFontEmbedding",
+    "named": false
+  },
+  {
+    "type": "Permissions",
     "named": false
   },
   {
@@ -55546,6 +56086,14 @@
     "named": false
   },
   {
+    "type": "access",
+    "named": false
+  },
+  {
+    "type": "actions",
+    "named": false
+  },
+  {
     "type": "and",
     "named": false
   },
@@ -55611,6 +56159,10 @@
     "named": false
   },
   {
+    "type": "extensible",
+    "named": false
+  },
+  {
     "type": "fieldref_type",
     "named": true
   },
@@ -55627,7 +56179,7 @@
     "named": true
   },
   {
-    "type": "ispreview",
+    "type": "layout",
     "named": false
   },
   {
@@ -55662,6 +56214,10 @@
   {
     "type": "permission_type",
     "named": true
+  },
+  {
+    "type": "permissions",
+    "named": false
   },
   {
     "type": "pragma",

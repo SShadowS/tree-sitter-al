@@ -838,8 +838,9 @@ module.exports = grammar({
     ),
 
     show_filter_property: $ => seq(
-      'ShowFilter',
-      $._boolean_property_template
+      alias(kw_with_eq('showfilter'), 'ShowFilter'),
+      field('value', $.boolean),
+      ';'
     ),
 
     additional_search_terms_property: $ => seq(
@@ -932,13 +933,15 @@ module.exports = grammar({
     ),
 
     help_link_property: $ => seq(
-      'HelpLink',
-      $._string_property_template
+      alias(kw_with_eq('helplink'), 'HelpLink'),
+      field('value', $.string_literal),
+      ';'
     ),
 
     is_preview_property: $ => seq(
-      choice('IsPreview', 'ispreview', 'ISPREVIEW'),
-      $._boolean_property_template
+      alias(kw_with_eq('ispreview'), 'IsPreview'),
+      field('value', $.boolean),
+      ';'
     ),
     
     odata_key_fields_value: $ => $._identifier_choice_list,
@@ -1455,7 +1458,7 @@ module.exports = grammar({
     ),
 
     actions_section: $ => seq(
-      kw('actions'),
+      choice('actions', 'Actions', 'ACTIONS'),
       '{',
       repeat(choice(
         $._action_element,
@@ -1538,7 +1541,8 @@ module.exports = grammar({
       choice(
         $._action_element,
         $.action_group_section,
-        $.separator_action
+        $.separator_action,
+        $.preproc_conditional_actions
       )
     )($),
 
@@ -1547,7 +1551,8 @@ module.exports = grammar({
       choice(
         $._action_element,
         $.action_group_section,
-        $.separator_action
+        $.separator_action,
+        $.preproc_conditional_actions
       )
     )($),
 
@@ -1556,7 +1561,8 @@ module.exports = grammar({
       choice(
         $._action_element,
         $.action_group_section,
-        $.separator_action
+        $.separator_action,
+        $.preproc_conditional_actions
       )
     )($),
 
@@ -1565,7 +1571,8 @@ module.exports = grammar({
       choice(
         $._action_element,
         $.action_group_section,
-        $.separator_action
+        $.separator_action,
+        $.preproc_conditional_actions
       )
     )($),
 
@@ -1858,7 +1865,7 @@ module.exports = grammar({
 
     scope_property: $ => seq(
       kw_with_eq('scope'),
-      field('value', $.identifier),
+      field('value', $._identifier_choice),
       ';'
     ),
 
@@ -1885,7 +1892,17 @@ module.exports = grammar({
     shortcut_key_property: $ => prec(8, seq(
       kw('shortcutkey'),
       '=',
-      field('value', choice($.string_literal, $._quoted_identifier)),
+      field('value', choice(
+        $.string_literal,
+        $._quoted_identifier,
+        $.identifier,
+        // Allow keywords as shortcut key values (e.g., return, delete, escape)
+        kw('return'),
+        kw('delete'),
+        kw('escape'),
+        kw('end'),
+        kw('home')
+      )),
       ';'
     )),
 
@@ -1946,7 +1963,11 @@ module.exports = grammar({
     test_http_request_policy_property: $ => seq(
       kw('testhttprequestpolicy'),
       '=',
-      field('value', alias(kw('blockoutboundrequests'), $.value)),
+      field('value', choice(
+        alias(kw('blockoutboundrequests'), $.value),
+        alias(kw('allowoutboundfromhandler'), $.value),
+        alias(kw('allowoutbound'), $.value)
+      )),
       ';'
     ),
 
@@ -2073,7 +2094,9 @@ module.exports = grammar({
         $.var_section,
         $.attribute_item,
         $.procedure,
-        $.trigger_declaration
+        $.trigger_declaration,
+        $.actions_section,   // Allow conditional actions sections
+        $.layout_section     // Allow conditional layout sections
       )),
       optional(seq(
         $.preproc_else,
@@ -2081,7 +2104,9 @@ module.exports = grammar({
           $.var_section,
           $.attribute_item,
           $.procedure,
-          $.trigger_declaration
+          $.trigger_declaration,
+          $.actions_section,
+          $.layout_section
         ))
       )),
       $.preproc_endif
@@ -2372,7 +2397,7 @@ module.exports = grammar({
     ),
 
     rendering_layout: $ => seq(
-      kw('layout'),
+      choice('layout', 'Layout', 'LAYOUT'),
       '(',
       field('name', $._identifier_choice),
       ')',
@@ -2653,7 +2678,7 @@ module.exports = grammar({
     excluded_permission_sets_list: $ => $._identifier_choice_list,
 
     permissionset_permissions: $ => seq(
-      kw('Permissions'),
+      choice('Permissions', 'permissions', 'PERMISSIONS'),
       '=',
       $.permission_list,
       ';',
@@ -2799,7 +2824,7 @@ module.exports = grammar({
     ),
 
     layout_section: $ => seq(
-      kw('layout'),
+      choice('layout', 'Layout', 'LAYOUT'),
       '{',
       repeat($._layout_element),
       '}'
@@ -3667,7 +3692,7 @@ module.exports = grammar({
     ),
 
     access_property: $ => seq(
-      kw('Access'),
+      choice('Access', 'access', 'ACCESS'),
       '=',
       field('value', alias($.access_value, $.value)),
       ';'
@@ -3856,7 +3881,7 @@ module.exports = grammar({
     ),
 
     extensible_property: _value_property_template(
-      $ => kw('extensible'),
+      $ => choice('Extensible', 'extensible', 'EXTENSIBLE'),
       $ => $.extensible_value
     ),
 
@@ -4001,7 +4026,7 @@ module.exports = grammar({
 
     // For single table permission property
     permissions_property: $ => seq(
-      kw('Permissions'),
+      choice('Permissions', 'permissions', 'PERMISSIONS'),
       '=',
       optional($.tabledata_permission_list),
       ';'
@@ -4219,8 +4244,9 @@ module.exports = grammar({
     ),
 
     caption_class_property: $ => seq(
-      kw('captionclass'),
-      $._expression_property_template
+      alias(kw_with_eq('captionclass'), 'CaptionClass'),
+      field('value', $._expression),
+      ';'
     ),
 
     calc_fields_property: $ => seq(
@@ -4351,10 +4377,8 @@ module.exports = grammar({
       alias(kw('includecaption'), $.identifier),
       // Allow the keyword 'ExcludeCaption' to be treated as an identifier in variable contexts
       alias(kw('excludecaption'), $.identifier),
-      // Allow IsPreview as identifier - case-sensitive to avoid conflicts
-      alias('IsPreview', $.identifier),
-      alias('ispreview', $.identifier),
-      alias('ISPREVIEW', $.identifier),
+      // Allow IsPreview as identifier - using kw() for parser consistency
+      alias(kw('ispreview'), $.identifier),
       // Allow the keyword 'SubType' to be treated as an identifier in variable contexts
       alias(kw('subtype'), $.identifier),
       // Allow the keyword 'CuegroupLayout' to be treated as an identifier in variable contexts
@@ -4399,6 +4423,11 @@ module.exports = grammar({
       alias('tabletype', $.identifier),
       alias('TABLETYPE', $.identifier),
       alias('Tabletype', $.identifier),
+      // Allow 'ShowFilter' to be used as an identifier in variable contexts
+      alias('ShowFilter', $.identifier),
+      alias('showfilter', $.identifier),
+      alias('SHOWFILTER', $.identifier),
+      alias('Showfilter', $.identifier),
       // Allow 'DataCaptionExpression' to be used as an identifier in variable contexts
       alias(kw('datacaptionexpression'), $.identifier),
       // Allow 'Enum' to be used as an identifier in variable contexts
@@ -4414,7 +4443,32 @@ module.exports = grammar({
       // Allow 'Visible' to be used as an identifier in variable contexts
       alias('Visible', $.identifier),
       alias('visible', $.identifier),
-      alias('VISIBLE', $.identifier)
+      alias('VISIBLE', $.identifier),
+      // Allow 'HelpLink' to be used as an identifier in variable contexts - using kw() for parser consistency
+      alias(kw('helplink'), $.identifier),
+      // Allow 'Layout' to be used as an identifier in variable contexts
+      alias('Layout', $.identifier),
+      alias('layout', $.identifier),
+      alias('LAYOUT', $.identifier),
+      // Allow 'Actions' to be used as an identifier in variable contexts
+      alias('Actions', $.identifier),
+      alias('actions', $.identifier),
+      alias('ACTIONS', $.identifier),
+      // Allow 'Permissions' to be used as an identifier in variable contexts
+      alias('Permissions', $.identifier),
+      alias('permissions', $.identifier),
+      alias('PERMISSIONS', $.identifier),
+      // Note: 'Trigger' cannot be aliased as identifier - it breaks trigger declarations
+      // Allow 'Extensible' to be used as an identifier in variable contexts
+      alias('Extensible', $.identifier),
+      alias('extensible', $.identifier),
+      alias('EXTENSIBLE', $.identifier),
+      // Allow 'Access' to be used as an identifier in variable contexts
+      alias('Access', $.identifier),
+      alias('access', $.identifier),
+      alias('ACCESS', $.identifier),
+      // Allow 'CaptionClass' to be used as an identifier in variable contexts
+      alias(kw('captionclass'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
@@ -5660,6 +5714,24 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
+    // Split if-then-begin statement where begin is inside preprocessor, body outside, end in another preprocessor
+    // Pattern: #if COND \n if X then begin \n #endif \n body... \n #if COND \n end; \n #endif
+    preproc_split_if_then_begin: $ => prec(25, seq(
+      $.preproc_if,  // Opening #if
+      seq(
+        kw('if', 10),
+        field('condition', $._expression),
+        kw('then', 10),
+        kw('begin', 10)
+      ),
+      $.preproc_endif,  // First #endif
+      repeat($._statement_or_preprocessor),  // Body statements (outside preprocessor)
+      $.preproc_if,  // Second #if wrapping the end
+      kw('end'),
+      optional(';'),
+      $.preproc_endif  // Second #endif
+    )),
+
     // Handle complex preprocessor pattern where if-else is fragmented across multiple #if blocks
     // Pattern: normal if-else with "end else begin", then #endif, else body, then #if wrapping "end;", then #endif
     preproc_fragmented_if_else: $ => prec(20, seq(
@@ -5983,12 +6055,17 @@ enum_type: $ => prec(1, seq(
       )))
     ),
 
-    asserterror_statement: $ => prec(14, seq(
-      kw('asserterror', 10),
-      field('body', choice(
-        $._expression,
-        $.code_block
-      ))
+    asserterror_statement: $ => prec(14, choice(
+      // asserterror with expression or code block
+      seq(
+        kw('asserterror', 10),
+        field('body', choice(
+          $._expression,
+          $.code_block
+        ))
+      ),
+      // Standalone asserterror; (raises last error)
+      seq(kw('asserterror', 10), ';')
     )),
 
     assignment_statement: $ => seq(
@@ -6226,6 +6303,8 @@ enum_type: $ => prec(1, seq(
       $.preproc_split_if_else,
       // Split if statement (condition in preprocessor, body outside)
       $.preproc_split_if,
+      // Split if-then-begin statement (begin in preprocessor, body outside, end in preprocessor)
+      $.preproc_split_if_then_begin,
       // Fragmented if-else statement (complex preprocessor pattern)
       $.preproc_fragmented_if_else,
       // If statement with variant conditions but shared body
@@ -6638,7 +6717,10 @@ enum_type: $ => prec(1, seq(
     allowed_file_extensions_property: $ => seq(
       'AllowedFileExtensions',
       '=',
-      field('value', $._flexible_identifier_choice),
+      field('value', seq(
+        $.string_literal,
+        repeat(seq(',', $.string_literal))
+      )),
       ';'
     ),
 
@@ -7058,8 +7140,11 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     ),
 
-    // Preprocessor conditional rules for permissionset properties
-    preproc_conditional_permissionset_properties: _preproc_conditional_block_template($ => $._permissionset_properties),
+    // Preprocessor conditional rules for permissionset properties and permissions
+    preproc_conditional_permissionset_properties: _preproc_conditional_block_template($ => choice(
+      $._permissionset_properties,
+      $.permissionset_permissions
+    )),
 
     // Preprocessor conditional rules for controladdin properties
     preproc_conditional_controladdin_properties: _preproc_conditional_block_template($ => choice($._controladdin_properties, $.property_list)),
@@ -7165,7 +7250,7 @@ enum_type: $ => prec(1, seq(
 
     preproc_region: $ => new RustRegex('#\\s*region[^\\n\\r]*', 'i'),
 
-    preproc_endregion: $ => new RustRegex('#endregion[^\\n\\r]*'),
+    preproc_endregion: $ => new RustRegex('#\\s*endregion[^\\n\\r]*', 'i'),
 
     comment: $ => token(seq('//', new RustRegex('[^\\n\\r]*'))),
 
@@ -7919,7 +8004,7 @@ enum_type: $ => prec(1, seq(
 
     // Centralized identifier choice pattern (appears 35+ times)
     _identifier_choice: $ => prec(2, choice(
-      $.identifier, 
+      $.identifier,
       $._quoted_identifier,
       // Allow common End* identifiers that conflict with 'end' keyword
       alias(kw('end'), $.identifier),
