@@ -32,8 +32,8 @@ codeunit 50000 Test
       (code_block
         (case_statement
           expression: (identifier)
-          (else_branch
-            statements: (call_expression
+          (case_else_branch
+            (call_expression
               function: (identifier)
               arguments: (argument_list))))))))
 
@@ -119,8 +119,8 @@ codeunit 50001 Test
                 (string_literal)))))
         (case_statement
           expression: (identifier)
-          (else_branch
-            statements: (call_expression
+          (case_else_branch
+            (call_expression
               function: (identifier)
               arguments: (argument_list
                 (identifier)
@@ -176,7 +176,7 @@ codeunit 50002 Test
             statements: (call_expression
               function: (identifier)
               arguments: (argument_list)))
-          (else_branch
-            statements: (call_expression
+          (case_else_branch
+            (call_expression
               function: (identifier)
               arguments: (argument_list))))))))

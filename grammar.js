@@ -6306,8 +6306,8 @@ enum_type: $ => prec(1, seq(
       kw('of', 10),
       repeat($._case_item),
       optional(choice(
-        $.else_branch,
-        $.preproc_conditional_else_branch
+        $.case_else_branch,
+        $.preproc_conditional_case_else_branch
       )),
       kw('end')
     )),
@@ -6327,9 +6327,9 @@ enum_type: $ => prec(1, seq(
     ),
 
     preproc_conditional_case: _preproc_conditional_block_template($ => $.case_branch, true),
-    
-    // Preprocessor conditional else branch for case statements
-    preproc_conditional_else_branch: _preproc_conditional_block_template($ => $.else_branch, true),
+
+    // Preprocessor conditional else branch for case statements (allows multiple statements)
+    preproc_conditional_case_else_branch: _preproc_conditional_block_template($ => $.case_else_branch, true),
 
     // _case_pattern now directly handles single or multiple patterns
     // Updated to handle pragmas that may split pattern lists
@@ -6450,6 +6450,17 @@ enum_type: $ => prec(1, seq(
       kw('else', 10),
       field('statements', $._branch_statements)
     ),
+
+    // Case else branch - allows multiple statements without begin/end
+    // AL (like Pascal) allows: case x of else stmt1; stmt2; end;
+    // Also supports else begin ... end; for code blocks
+    case_else_branch: $ => prec.left(seq(
+      kw('else', 10),
+      choice(
+        $.code_block,  // else begin ... end;
+        repeat1($._statement_or_preprocessor)  // else stmt1; stmt2; (no begin/end)
+      )
+    )),
 
     // DATABASE references (DATABASE::Customer pattern)
     database_reference: $ => prec(300, seq(  // Increased precedence to beat qualified_enum_value

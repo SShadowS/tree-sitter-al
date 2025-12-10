@@ -65,8 +65,8 @@ codeunit 50100 TestUnit
               statements: (code_block
                 (comment)))
             (preproc_endif))
-          (else_branch
-            statements: (call_expression
+          (case_else_branch
+            (call_expression
               function: (identifier)
               arguments: (argument_list
                 (quoted_identifier)))))))))

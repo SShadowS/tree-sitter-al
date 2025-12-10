@@ -36,12 +36,12 @@ page 50100 TestPage
             statements: (call_expression
               function: (identifier)
               arguments: (argument_list)))
-          (preproc_conditional_else_branch
+          (preproc_conditional_case_else_branch
             (preproc_if
               condition: (preproc_not_expression
                 (identifier)))
-            (else_branch
-              statements: (call_expression
+            (case_else_branch
+              (call_expression
                 function: (identifier)
                 arguments: (argument_list)))
             (preproc_endif)))))))
@@ -123,12 +123,12 @@ codeunit 50100 TestCodeunit
               function: (identifier)
               arguments: (argument_list
                 (string_literal))))
-          (preproc_conditional_else_branch
+          (preproc_conditional_case_else_branch
             (preproc_if
               condition: (preproc_not_expression
                 (identifier)))
-            (else_branch
-              statements: (call_expression
+            (case_else_branch
+              (call_expression
                 function: (identifier)
                 arguments: (argument_list
                   (identifier)
