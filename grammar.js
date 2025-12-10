@@ -19,6 +19,17 @@ function kw(word, precedence = null) {
   return precedence !== null ? token(prec(precedence, regex)) : token(regex);
 }
 
+// Helper for keywords that must respect word boundaries (like 'begin', 'end')
+// Uses string literals inside token() which tree-sitter's `word` property handles
+function kw_literal(word, precedence = null) {
+  const lower = word.toLowerCase();
+  const upper = word.toUpperCase();
+  const title = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  // Wrap in token() to create single lexical token (reduces state count)
+  const variations = token(choice(lower, upper, title));
+  return precedence !== null ? prec(precedence, variations) : variations;
+}
+
 // Helper for contextual keywords that match with '=' included
 // This disambiguates property names from variable names at the lexer level
 // Note: This does NOT allow comments between the keyword and '='
@@ -5669,11 +5680,11 @@ enum_type: $ => prec(1, seq(
       $.preproc_if,
       repeat($.pragma),
       optional($.var_section),
-      kw('begin'),
+      kw_literal('begin'),
       repeat($._statement),
       repeat($.pragma),
       $.preproc_else,
-      kw('begin'),
+      kw_literal('begin'),
       $.preproc_endif,
       repeat($._statement),
       kw('end'),
@@ -5723,7 +5734,7 @@ enum_type: $ => prec(1, seq(
         kw('if', 10),
         field('condition', $._expression),
         kw('then', 10),
-        kw('begin', 10)
+        kw_literal('begin', 10)
       ),
       $.preproc_endif,  // First #endif
       repeat($._statement_or_preprocessor),  // Body statements (outside preprocessor)
@@ -5742,7 +5753,7 @@ enum_type: $ => prec(1, seq(
       kw('then', 10),
       field('then_branch', $.code_block),
       kw('else', 10),
-      kw('begin', 10),
+      kw_literal('begin', 10),
       // Then a preprocessor endif that closes some earlier #if
       $.preproc_endif,
       // The else body statements
@@ -5764,7 +5775,7 @@ enum_type: $ => prec(1, seq(
       kw('then', 10),
       field('then_branch', $.code_block),
       kw('else', 10),
-      kw('begin', 10),
+      kw_literal('begin', 10),
       $.preproc_endif,  // This matches the opening #if
       repeat($._statement_or_preprocessor),
       $.preproc_if,
@@ -5942,8 +5953,10 @@ enum_type: $ => prec(1, seq(
 
 
     // Define code blocks with explicit keyword handling
+    // Using kw_literal for 'begin' to ensure word boundary detection works
+    // This prevents 'BeginTotalAccNo' from being parsed as 'begin' + 'TotalAccNo'
     code_block: $ => prec.right(1, seq(
-      kw('begin', 10),
+      kw_literal('begin', 10),
       optional(repeat($._statement_or_preprocessor)),
       kw('end'),
       optional(token(';')) // Explicit token
