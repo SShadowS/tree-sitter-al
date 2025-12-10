@@ -77,14 +77,6 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "PREC",
-                    "value": 10,
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "preproc_split_object_declaration"
-                    }
-                  },
-                  {
                     "type": "SYMBOL",
                     "name": "preprocessor_file_conditional"
                   },
@@ -100,329 +92,6 @@
               }
             }
           ]
-        }
-      ]
-    },
-    "preproc_split_object_declaration": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "preproc_split_codeunit"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "preproc_split_enum"
-        }
-      ]
-    },
-    "preproc_split_codeunit": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "split_object_header"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "preproc_if"
-        },
-        {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)codeunit"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "object_id",
-          "content": {
-            "type": "SYMBOL",
-            "name": "integer"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "object_name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_identifier_choice"
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "implements_clause"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "preproc_else"
-        },
-        {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)codeunit"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "alt_object_id",
-          "content": {
-            "type": "SYMBOL",
-            "name": "integer"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "alt_object_name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_identifier_choice"
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "alt_implements",
-              "content": {
-                "type": "SYMBOL",
-                "name": "implements_clause"
-              }
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "preproc_endif"
-        },
-        {
-          "type": "STRING",
-          "value": "{"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "attribute_item"
-              },
-              {
-                "type": "PREC",
-                "value": 4,
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_codeunit_properties"
-                }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_conditional_object_properties"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "var_section"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_conditional_var_sections"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "procedure"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_split_procedure"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_procedure_body_split"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "onrun_trigger"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "trigger_declaration"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_conditional_procedures"
-              },
-              {
-                "type": "PREC",
-                "value": -10,
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "pragma"
-                }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_region"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_endregion"
-              }
-            ]
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "}"
-        }
-      ]
-    },
-    "preproc_split_enum": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "split_object_header"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "preproc_if"
-        },
-        {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)enum"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "object_id",
-          "content": {
-            "type": "SYMBOL",
-            "name": "integer"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "object_name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_identifier_choice"
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "implements_clause"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "preproc_else"
-        },
-        {
-          "type": "TOKEN",
-          "content": {
-            "type": "PATTERN",
-            "value": "(?i)enum"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "alt_object_id",
-          "content": {
-            "type": "SYMBOL",
-            "name": "integer"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "alt_object_name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_identifier_choice"
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "alt_implements",
-              "content": {
-                "type": "SYMBOL",
-                "name": "implements_clause"
-              }
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "preproc_endif"
-        },
-        {
-          "type": "STRING",
-          "value": "{"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_enum_properties"
-              },
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "REPEAT",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "attribute_item"
-                    }
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "enum_value_declaration"
-                  }
-                ]
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_conditional_enum_content"
-              }
-            ]
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "}"
         }
       ]
     },
@@ -27188,20 +26857,33 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "PREC",
-                  "value": 2,
+                  "type": "ALIAS",
                   "content": {
-                    "type": "ALIAS",
+                    "type": "PREC",
+                    "value": 10,
                     "content": {
                       "type": "TOKEN",
                       "content": {
-                        "type": "PATTERN",
-                        "value": "(?i)to"
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": "to"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "TO"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "To"
+                          }
+                        ]
                       }
-                    },
-                    "named": true,
-                    "value": "to"
-                  }
+                    }
+                  },
+                  "named": true,
+                  "value": "to"
                 },
                 {
                   "type": "ALIAS",
@@ -37944,10 +37626,6 @@
     {
       "type": "SYMBOL",
       "name": "_region_var_continuation"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "split_object_header"
     }
   ],
   "inline": [],

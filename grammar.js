@@ -5990,7 +5990,7 @@ enum_type: $ => prec(1, seq(
       ':=',
       field('start', $._expression),
       field('direction', choice(
-        prec(2, alias(kw('to'), $.to)),
+        alias(kw_literal('to', 10), $.to),
         alias(kw('downto', 10), $.downto)
       )),
       field('end', $._expression),

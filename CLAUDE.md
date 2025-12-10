@@ -132,6 +132,7 @@ Test Description
 - Never delete test files - fix the underlying issue instead
 - Use `tree-sitter test -u` only if no ERROR/MISSING nodes exist
 - Create tests for each new grammar feature
+- **Always create a test case when fixing a bug** - prevents regressions and documents the fix
 
 ## Grammar Development
 
@@ -175,46 +176,6 @@ Test Description
 3. Wrap value: `field('value', $.property_value)`
 4. Add to semantic category: `_universal_properties`, `_page_properties`, etc.
 5. Run `./validate-grammar.sh`
-
-## Known Limitations
-
-**✅ ALL MAJOR PREPROCESSOR LIMITATIONS RESOLVED**
-
-Previous limitations around preprocessor directives with attributes and var sections have been fixed:
-
-**Now supported:**
-```al
-// Attribute before preprocessor directive
-[Attribute]
-#if CONDITION
-procedure Proc()
-#endif
-begin
-end;
-
-// Different attributes in each preprocessor branch
-#if CONDITION
-[Attr1('test')]
-procedure Proc()
-#else
-[Attr2('other')]
-procedure Proc()
-#endif
-begin
-end;
-
-// Var section continuation through preprocessor
-var
-    Var1: Text;
-#if not CLEAN24
-    Var2: Boolean;
-#endif
-```
-
-**Historical context:** These limitations were resolved through:
-1. Rust-style attribute refactor (attributes as first-class statements)
-2. Scanner token discrimination (`PREPROC_VAR_CONTINUATION`) for var_section continuation
-3. Adding `repeat($.attribute_item)` to `preproc_split_procedure` branches
 
 ## Debugging Parse Failures
 

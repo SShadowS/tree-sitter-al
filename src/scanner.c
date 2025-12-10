@@ -659,11 +659,26 @@ bool tree_sitter_al_external_scanner_scan(
                         // Need to verify it's not a procedure/trigger keyword
                         bool is_var_content = true;
 
+                        // Skip over attributes if present (e.g., [Test][AnotherAttr])
+                        while (lexer->lookahead == '[') {
+                            int depth = 1;
+                            lexer->advance(lexer, false);
+                            while (depth > 0 && !lexer->eof(lexer)) {
+                                if (lexer->lookahead == '[') depth++;
+                                else if (lexer->lookahead == ']') depth--;
+                                lexer->advance(lexer, false);
+                            }
+                            // Skip whitespace between attributes
+                            while (iswspace(lexer->lookahead)) {
+                                lexer->advance(lexer, true);
+                            }
+                        }
+
+                        // Now check if we're at an identifier (could be terminator keyword)
                         if (iswalpha(lexer->lookahead) || lexer->lookahead == '_') {
                             // Read identifier to check if it's a terminator keyword
                             char id_buf[64];
                             int id_len = 0;
-                            uint32_t save_col = lexer->get_column(lexer);
 
                             while ((iswalpha(lexer->lookahead) || lexer->lookahead == '_' ||
                                     iswdigit(lexer->lookahead)) && id_len < 63) {
@@ -675,7 +690,7 @@ bool tree_sitter_al_external_scanner_scan(
                             // Check if it's a terminator keyword
                             for (int i = 0; VAR_TERMINATORS_ALWAYS[i]; i++) {
                                 const char *term = VAR_TERMINATORS_ALWAYS[i];
-                                if (strlen(term) == id_len) {
+                                if (strlen(term) == (size_t)id_len) {
                                     bool match = true;
                                     for (int j = 0; j < id_len; j++) {
                                         char c1 = id_buf[j];
