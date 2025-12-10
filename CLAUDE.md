@@ -2,7 +2,18 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 97.3% production file success rate (14,946/15,358), 1190 tests passing, comprehensive preprocessor support
+**Current Status**: 99.48% production file success rate (15,278/15,358 files), 1194 tests passing, 80 errors
+
+## Git Commit Guidelines
+
+**Always include error count in commit messages** to detect regressions:
+```
+Fix XYZ pattern
+
+[BC.History: 37 errors, 99.76% success]
+```
+
+Run full parse before committing: `find ./BC.History -name "*.al" -print0 | xargs -0 -I{} sh -c 'tree-sitter parse "{}" 2>&1 | grep -q ERROR && echo "{}"' | wc -l`
 
 ## Quick Reference
 
