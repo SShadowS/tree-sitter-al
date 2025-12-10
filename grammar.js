@@ -5775,6 +5775,7 @@ enum_type: $ => prec(1, seq(
 
     // Handle if statements where the condition varies by preprocessor but body is shared
     // Pattern: #if CONDITION1 \n if (expr1) then \n #else \n if (expr2) then \n #endif \n shared_body
+    // Pragmas can appear between branches (e.g., #pragma warning disable/restore)
     preproc_variant_condition_if: $ => prec(25, seq(
       $.preproc_if,
       // First variant: if (condition1) then
@@ -5792,8 +5793,9 @@ enum_type: $ => prec(1, seq(
           kw('then', 10)
         )
       )),
-      // Else branch with different condition
+      // Else branch with different condition (pragmas allowed before #else)
       optional(seq(
+        repeat($.pragma),  // Allow pragmas before #else
         $.preproc_else,
         seq(
           kw('if', 10),
