@@ -25,7 +25,8 @@ enum TokenType {
     ATTRIBUTE_FOR_PROCEDURE,          // 9 - Distinguishes [attr] for procedure
     PREPROC_VAR_CONTINUATION,         // 10 - Signals #if contains ONLY variables, continue var_section
     PRAGMA_VAR_CONTINUATION,          // 11 - Signals #pragma followed by variable, continue var_section
-    ATTRIBUTE_VAR_CONTINUATION        // 12 - Signals [attr] followed by variable, continue var_section
+    ATTRIBUTE_VAR_CONTINUATION,       // 12 - Signals [attr] followed by variable, continue var_section
+    REGION_VAR_CONTINUATION           // 13 - Signals #region followed by variables, continue var_section
 };
 
 // Keywords that ALWAYS terminate a var section (no context check needed)
@@ -640,9 +641,70 @@ bool tree_sitter_al_external_scanner_scan(
                         return true;
                     }
                 }
-                // Not #pragma or not followed by var-like content - fall through
+                // Not #pragma - check if it's #region
+                else if (valid_symbols[REGION_VAR_CONTINUATION] && match_keyword_ci(lexer, "region")) {
+                    // Found #region - skip to end of line (the region name)
+                    skip_to_eol(lexer);
+
+                    // Skip whitespace after #region line
+                    while (iswspace(lexer->lookahead)) {
+                        lexer->advance(lexer, true);
+                    }
+
+                    // Check if what follows looks like variable content
+                    // Could be: identifier, quoted identifier, [attribute], or #pragma
+                    if (lexer->lookahead == '#' || lexer->lookahead == '[' ||
+                        iswalpha(lexer->lookahead) || lexer->lookahead == '_' ||
+                        lexer->lookahead == '"') {
+                        // Need to verify it's not a procedure/trigger keyword
+                        bool is_var_content = true;
+
+                        if (iswalpha(lexer->lookahead) || lexer->lookahead == '_') {
+                            // Read identifier to check if it's a terminator keyword
+                            char id_buf[64];
+                            int id_len = 0;
+                            uint32_t save_col = lexer->get_column(lexer);
+
+                            while ((iswalpha(lexer->lookahead) || lexer->lookahead == '_' ||
+                                    iswdigit(lexer->lookahead)) && id_len < 63) {
+                                id_buf[id_len++] = lexer->lookahead;
+                                lexer->advance(lexer, false);
+                            }
+                            id_buf[id_len] = '\0';
+
+                            // Check if it's a terminator keyword
+                            for (int i = 0; VAR_TERMINATORS_ALWAYS[i]; i++) {
+                                const char *term = VAR_TERMINATORS_ALWAYS[i];
+                                if (strlen(term) == id_len) {
+                                    bool match = true;
+                                    for (int j = 0; j < id_len; j++) {
+                                        char c1 = id_buf[j];
+                                        char c2 = term[j];
+                                        if (c1 >= 'A' && c1 <= 'Z') c1 = c1 - 'A' + 'a';
+                                        if (c2 >= 'A' && c2 <= 'Z') c2 = c2 - 'A' + 'a';
+                                        if (c1 != c2) { match = false; break; }
+                                    }
+                                    if (match) {
+                                        is_var_content = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (is_var_content) {
+                            if (SCANNER_DEBUG) {
+                                fprintf(stderr, "SCANNER: ✓ Emitting REGION_VAR_CONTINUATION (#region followed by var content)\n");
+                                fflush(stderr);
+                            }
+                            lexer->result_symbol = REGION_VAR_CONTINUATION;
+                            return true;
+                        }
+                    }
+                }
+                // Not #pragma or #region, or not followed by var-like content - fall through
             }
-            // result == -1 and not pragma: don't emit preproc tokens
+            // result == -1 and not pragma/region: don't emit preproc tokens
         }
         // Reset if we didn't find a terminator - DON'T return, let other checks run
     }

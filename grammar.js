@@ -133,8 +133,7 @@ module.exports = grammar({
   word: $ => $.identifier,
 
   conflicts: $ => [
-    [$._source_content, $.preproc_conditional_using],
-    [$._source_content],
+    [$.preprocessor_file_conditional, $.preproc_conditional_using],
     [$.assignment_expression, $._assignable_expression],
     [$.assignment_statement, $.assignment_expression],
     [$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values],
@@ -165,7 +164,8 @@ module.exports = grammar({
     $.attribute_for_procedure,
     $.preproc_var_continuation,  // Signals #if contains ONLY variables, forces var_section continuation
     $._pragma_var_continuation,  // Signals pragma followed by variable, continue var_section (hidden)
-    $._attribute_var_continuation  // Signals attribute followed by variable, continue var_section (hidden)
+    $._attribute_var_continuation,  // Signals attribute followed by variable, continue var_section (hidden)
+    $._region_var_continuation  // Signals #region followed by variables, continue var_section (hidden)
   ],
 
   // Extras: whitespace, comments, and ignorable preprocessor directives
@@ -175,8 +175,8 @@ module.exports = grammar({
 
   rules: {
     source_file: $ => choice(
-      // Preprocessor-wrapped source file with optional pragmas (higher precedence)
-      prec(2, seq(
+      // Preprocessor-wrapped source file with optional pragmas (high precedence)
+      prec.dynamic(5, seq(
         repeat($.pragma),  // Allow pragmas before preprocessor
         $.preprocessor_file_conditional,
         repeat($.pragma)   // Allow pragmas after preprocessor
@@ -186,34 +186,58 @@ module.exports = grammar({
         repeat($.pragma),  // Allow pragmas at the beginning
         optional($.namespace_declaration),
         repeat(choice($.using_statement, $.preproc_conditional_using)),
-        repeat(choice($._object, $.pragma, $.preprocessor_file_conditional))
+        repeat(choice(
+          $.preprocessor_file_conditional,
+          $._object,
+          $.pragma
+        ))
       )
     ),
 
     preprocessor_file_conditional: $ => seq(
       field('condition', $.preproc_if),
-      field('consequence', $._source_content),
-      optional(field('alternative', seq(
-        $.preproc_else,
-        $._source_content
+      repeat(field('consequence', choice(
+        $.pragma,
+        $.namespace_declaration,
+        $.using_statement,
+        $.preproc_conditional_using,
+        $._simple_object
       ))),
+      optional(seq(
+        $.preproc_else,
+        repeat(field('alternative', choice(
+          $.pragma,
+          $.namespace_declaration,
+          $.using_statement,
+          $.preproc_conditional_using,
+          $._simple_object
+        )))
+      )),
       $.preproc_endif
     ),
 
-    _source_content: $ => choice(
-      // Case 1: Has at least one object or pragma
-      seq(
-        repeat($.pragma),
-        optional($.namespace_declaration),
-        repeat(choice($.using_statement, $.preproc_conditional_using)),
-        repeat1(choice($._object, $.pragma))
-      ),
-      // Case 2: Only has namespace declaration (no objects)
-      seq(
-        repeat($.pragma),
-        $.namespace_declaration,
-        repeat(choice($.using_statement, $.preproc_conditional_using))
-      )
+    // Object declarations for use inside preprocessor_file_conditional
+    _simple_object: $ => choice(
+      $.table_declaration,
+      $.tableextension_declaration,
+      $.codeunit_declaration,
+      $.pageextension_declaration,
+      $.page_declaration,
+      $.pagecustomization_declaration,
+      $.profile_declaration,
+      $.profileextension_declaration,
+      $.reportextension_declaration,
+      $.query_declaration,
+      $.enum_declaration,
+      $.enumextension_declaration,
+      $.xmlport_declaration,
+      $.interface_declaration,
+      $.dotnet_declaration,
+      $.report_declaration,
+      $.permissionset_declaration,
+      $.permissionsetextension_declaration,
+      $.entitlement_declaration,
+      $.controladdin_declaration
     ),
 
     _object: $ => choice(
@@ -228,9 +252,7 @@ module.exports = grammar({
       $.reportextension_declaration,
       $.query_declaration,
       $.enum_declaration,
-      $.enumextension_declaration, 
-      $.preproc_conditional_enum_declaration,
-      $.preproc_conditional_codeunit_declaration,
+      $.enumextension_declaration,
       $.xmlport_declaration,
       $.interface_declaration,
       $.dotnet_declaration,
@@ -238,35 +260,8 @@ module.exports = grammar({
       $.permissionset_declaration,
       $.permissionsetextension_declaration,
       $.controladdin_declaration,
-      $.entitlement_declaration,
-      $.preproc_conditional_object_declaration
+      $.entitlement_declaration
     ),
-
-    // Handle object declarations split by preprocessor
-    preproc_conditional_object_declaration: $ => seq(
-      $.preproc_if,
-      $._conditional_object_header,
-      $.preproc_else,
-      $._conditional_object_header,
-      $.preproc_endif,
-      '{',
-      repeat($._object_body_element),
-      '}'
-    ),
-
-    _conditional_object_header: $ => prec(2, seq(
-      choice(
-        kw('codeunit'),
-        kw('table'),
-        kw('page'),
-        kw('report'),
-        kw('query'),
-        kw('xmlport')
-      ),
-      field('object_id', $.integer),
-      field('object_name', $._identifier_choice),
-      optional($.implements_clause)
-    )),
 
     _object_body_element: $ => choice(
       $.attribute_item,
@@ -630,64 +625,8 @@ module.exports = grammar({
       '}'
     ),
 
-    preproc_conditional_codeunit_declaration: $ => prec(1, seq(
-      $.preproc_if,
-      optional($.pragma),
-      field('consequence', seq(
-        kw('codeunit'),
-        $._object_header_base,
-        optional($.implements_clause)
-      )),
-      optional($.pragma),
-      $.preproc_else,
-      field('alternative', seq(
-        kw('codeunit'),
-        $._object_header_base,
-        optional($.implements_clause)
-      )),
-      $.preproc_endif,
-      '{',
-      repeat(choice(
-        $.attribute_item,
-        prec(4, $._codeunit_properties),
-        $.preproc_conditional_object_properties,
-        $.var_section,
-        $.preproc_conditional_var_sections,
-        $.procedure,
-        $.onrun_trigger,
-        $.trigger_declaration,
-        $.preproc_conditional_procedures,
-        $.pragma,
-        $.preproc_region,
-        $.preproc_endregion
-      )),
-      '}'
-    )),
-
-    preproc_conditional_enum_declaration: $ => prec(1, seq(
-      $.preproc_if,
-      optional($.pragma),
-      field('consequence', seq(
-        kw('enum'),
-        $._object_header_base,
-        optional($.implements_clause)
-      )),
-      optional($.pragma),
-      $.preproc_else,
-      field('alternative', seq(
-        kw('enum'),
-        $._object_header_base,
-        optional($.implements_clause)
-      )),
-      $.preproc_endif,
-      '{',
-      repeat(choice(
-        $._enum_properties, 
-        $.enum_value_declaration,
-        $.preproc_conditional_enum_content  // Allow mixed content blocks (properties and values)
-      )),
-      '}'
-    )),
+    // NOTE: Split header patterns (preproc_conditional_codeunit_declaration, preproc_conditional_enum_declaration)
+    // require external scanner lookahead to distinguish from file-level #if. See todo: "Fix split header pattern"
 
     enum_value_declaration: $ => seq(
       kw('value'),
@@ -4372,9 +4311,29 @@ module.exports = grammar({
           repeat1($.attribute_item),
           repeat(choice($.comment, $.multiline_comment, $.pragma)),
           $.variable_declaration
-        ))
+        )),
+        // Region wrapping variables - scanner detects #region followed by variables
+        prec.dynamic(100, $.region_wrapped_variables)
       )))
     )),
+
+    // #region/#endregion wrapping variable declarations (must stay inside var_section)
+    region_wrapped_variables: $ => seq(
+      $._region_var_continuation,
+      $.preproc_region,
+      repeat1(choice(
+        $.variable_declaration,
+        seq(
+          repeat1($.attribute_item),
+          repeat(choice($.comment, $.multiline_comment, $.pragma)),
+          $.variable_declaration
+        ),
+        $.comment,
+        $.multiline_comment,
+        $.pragma
+      )),
+      $.preproc_endregion
+    ),
 
     // Variable declaration with attributes (e.g., [RunOnClient])
 
@@ -4500,6 +4459,7 @@ module.exports = grammar({
         ';'
       )),
       // Label variable declaration with string literal value and optional attributes
+      // Supports trailing comma without attributes: Label 'text',;
       prec(5, seq(
         field('names', $._variable_name_list),
         ':',
@@ -4507,10 +4467,10 @@ module.exports = grammar({
         field('value', $.string_literal),
         optional(seq(
           ',',
-          field('attributes', seq(
+          optional(field('attributes', seq(
             $.label_attribute,
             repeat(seq(',', $.label_attribute))
-          ))
+          )))
         )),
         ';'
       )),

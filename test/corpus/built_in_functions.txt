@@ -1,0 +1,343 @@
+================================================================================
+Built-in Functions
+================================================================================
+
+codeunit 50100 "Built-in Functions Test"
+{
+    trigger OnRun()
+    begin
+        TestDateTimeFunctions();
+        TestSystemFunctions();
+        TestMathFunctions();
+        TestStringFunctions();
+        TestDatabaseFunctions();
+    end;
+
+    local procedure TestDateTimeFunctions()
+    var
+        DT: DateTime;
+        D: Date;
+        T: Time;
+    begin
+        DT := CURRENTDATETIME;
+        D := CurrentDate;
+        T := CURRENTTIME;
+        D := Today;
+        D := WorkDate;
+        DT := CreateDateTime(D, T);
+        T := Time(12, 0, 0);
+    end;
+
+    local procedure TestSystemFunctions()
+    var
+        User: Text;
+        Company: Text;
+        Serial: Text;
+        Session: Integer;
+        WindowsUser: Text;
+    begin
+        User := USERID;
+        Company := CompanyName;
+        Serial := SerialNumber;
+        Session := SESSIONID;
+        WindowsUser := WindowsLoggedOnUser;
+    end;
+
+    local procedure TestMathFunctions()
+    var
+        X: Integer;
+        Y: Decimal;
+    begin
+        X := Random(100);
+        Randomize(42);
+        Y := Round(3.14159, 0.01);
+        Y := Abs(-42);
+        Y := Power(2, 3);
+    end;
+
+    local procedure TestStringFunctions()
+    var
+        Str: Text;
+        Len: Integer;
+    begin
+        Len := STRLEN('Test');
+        Str := CopyStr('Hello World', 1, 5);
+        Str := LowerCase('HELLO');
+        Str := UpperCase('hello');
+        Str := Format(42);
+    end;
+
+    local procedure TestDatabaseFunctions()
+    var
+        Customer: Record Customer;
+        Count: Integer;
+        MinValue: Code[20];
+        MaxValue: Code[20];
+        Filters: Text;
+    begin
+        Count := COUNT(Customer);
+        MinValue := GetRangeMin(Customer."No.");
+        MaxValue := GetRangeMax(Customer."No.");
+        Filters := GetFilters(Customer);
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (quoted_identifier)
+    (onrun_trigger
+      (code_block
+        (call_expression
+          (identifier)
+          (argument_list))
+        (call_expression
+          (identifier)
+          (argument_list))
+        (call_expression
+          (identifier)
+          (argument_list))
+        (call_expression
+          (identifier)
+          (argument_list))
+        (call_expression
+          (identifier)
+          (argument_list))))
+    (procedure
+      (procedure_modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          (identifier)
+          (identifier))
+        (assignment_expression
+          (identifier)
+          (identifier))
+        (assignment_expression
+          (identifier)
+          (identifier))
+        (assignment_expression
+          (identifier)
+          (identifier))
+        (assignment_expression
+          (identifier)
+          (identifier))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (identifier)
+              (identifier))))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (integer)
+              (integer)
+              (integer))))))
+    (procedure
+      (procedure_modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (text_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (text_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (text_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (text_type))))
+      (code_block
+        (assignment_expression
+          (identifier)
+          (identifier))
+        (assignment_expression
+          (identifier)
+          (identifier))
+        (assignment_expression
+          (identifier)
+          (identifier))
+        (assignment_expression
+          (identifier)
+          (identifier))
+        (assignment_expression
+          (identifier)
+          (identifier))))
+    (procedure
+      (procedure_modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (integer))))
+        (call_expression
+          (identifier)
+          (argument_list
+            (integer)))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (decimal)
+              (decimal))))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (integer))))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (integer)
+              (integer))))))
+    (procedure
+      (procedure_modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (text_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (string_literal))))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (string_literal)
+              (integer)
+              (integer))))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (string_literal))))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (string_literal))))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (integer))))))
+    (procedure
+      (procedure_modifier)
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (record_type
+              (identifier))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (code_type
+              (integer))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (code_type
+              (integer))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (text_type))))
+      (code_block
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (identifier))))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (field_access
+                (identifier)
+                (quoted_identifier)))))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (field_access
+                (identifier)
+                (quoted_identifier)))))
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (identifier))))))))
