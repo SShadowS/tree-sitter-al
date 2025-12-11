@@ -1,0 +1,134 @@
+========================================================================
+Preprocessor-split codeunit with different implements clauses
+========================================================================
+
+#if CONDITION
+#pragma warning disable AL0432
+codeunit 50100 "Test Impl" implements Interface1, Interface2
+#pragma warning restore AL0432
+#else
+codeunit 50100 "Test Impl" implements Interface2
+#endif
+{
+    Access = Internal;
+
+    procedure TestMethod()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (preproc_split_codeunit_declaration
+      (preproc_if
+        condition: (identifier))
+      (pragma)
+      object_id: (integer)
+      object_name: (quoted_identifier)
+      if_header: (implements_clause
+        interface: (identifier)
+        interface: (identifier))
+      (pragma)
+      (preproc_else)
+      object_id: (integer)
+      object_name: (quoted_identifier)
+      else_header: (implements_clause
+        interface: (identifier))
+      (preproc_endif)
+      (access_property
+        value: (value))
+      (procedure
+        name: (name
+          (identifier))
+        (code_block)))))
+
+========================================================================
+Preprocessor-split enum with different implements clauses
+========================================================================
+
+#if CONDITION
+enum 50100 TestEnum implements Interface1, Interface2
+#else
+enum 50100 TestEnum implements Interface2
+#endif
+{
+    Extensible = false;
+
+    value(0; Value1)
+    {
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (preproc_split_enum_declaration
+      (preproc_if
+        condition: (identifier))
+      object_id: (integer)
+      object_name: (identifier)
+      if_header: (implements_clause
+        interface: (identifier)
+        interface: (identifier))
+      (preproc_else)
+      object_id: (integer)
+      object_name: (identifier)
+      else_header: (implements_clause
+        interface: (identifier))
+      (preproc_endif)
+      (extensible_property
+        value: (extensible_value
+          (boolean)))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)))))
+
+========================================================================
+Preprocessor-split field section with different names
+========================================================================
+
+page 50100 TestPage
+{
+    layout
+    {
+        area(content)
+        {
+#if CONDITION
+#pragma warning disable AA0100
+            field("Field.A"; Source)
+#pragma warning restore AA0100
+#else
+            field("Field.B"; Source)
+#endif
+            {
+                ApplicationArea = All;
+            }
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (layout_section
+      (area_section
+        (field_section
+          (preproc_split_field_section
+            (preproc_if
+              condition: (identifier))
+            (pragma)
+            control_id: (quoted_identifier)
+            source_or_field_name: (identifier)
+            (pragma)
+            (preproc_else)
+            control_id: (quoted_identifier)
+            source_or_field_name: (identifier)
+            (preproc_endif)
+            (application_area_property
+              value: (identifier))))))))

@@ -112,6 +112,6 @@ codeunit 123 "Character Validation Test"
                 statements: (assignment_expression
                   left: (identifier)
                   right: (boolean)))
-              (else_branch
-                statements: (code_block
+              (case_else_branch
+                (code_block
                   (comment))))))))))

@@ -1,0 +1,160 @@
+================================================================================
+Complex identifiers with quotes and underscores
+================================================================================
+
+page 50101 "My Page Name"
+{
+    var
+        MyLocalVar: Integer;
+        "Variable With Space": Text;
+        _underscoreVar: Boolean;
+}
+
+interface "My Interface"
+{
+    procedure "Method With Space"(param1: Integer; "param with space": Text);
+    procedure _underscoreMethod();
+}
+
+enum 50102 "Status Enum"
+{
+    value(0; "Open") { }
+    value(1; "In Progress") { }
+    value(2; Closed) { }
+}
+
+query 50103 "My Query"
+{
+    elements
+    {
+        dataitem(Customer; Customer)
+        {
+            column(Name; Name) { }
+            column("Address 2"; "Address 2") { }
+        }
+    }
+}
+
+codeunit 50104 "Business Logic"
+{
+    local procedure HandleRecord(rec: Record Customer)
+    var
+        TempRec: Record "Sales Header" temporary;
+        ResultText: Text;
+    begin
+        ResultText := ProcessData(TempRec);
+    end;
+
+    procedure ProcessData(var SalesHeader: Record "Sales Header"): Text
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (integer)
+    (quoted_identifier)
+    (var_section
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (basic_type)))
+      (variable_declaration
+        (quoted_identifier)
+        (type_specification
+          (text_type)))
+      (variable_declaration
+        (identifier)
+        (type_specification
+          (basic_type)))))
+  (interface_declaration
+    (quoted_identifier)
+    (interface_procedure
+      (quoted_identifier)
+      (parameter_list
+        (parameter
+          (name
+            (identifier))
+          (type_specification
+            (basic_type)))
+        (parameter
+          (name
+            (quoted_identifier))
+          (type_specification
+            (text_type)))))
+    (interface_procedure
+      (identifier)))
+  (enum_declaration
+    (integer)
+    (quoted_identifier)
+    (enum_value_declaration
+      (integer)
+      (quoted_identifier))
+    (enum_value_declaration
+      (integer)
+      (quoted_identifier))
+    (enum_value_declaration
+      (integer)
+      (identifier)))
+  (query_declaration
+    (integer)
+    (quoted_identifier)
+    (elements_section
+      (dataitem_section
+        (identifier)
+        (identifier)
+        (column_section
+          (identifier)
+          (identifier))
+        (column_section
+          (quoted_identifier)
+          (quoted_identifier)))))
+  (codeunit_declaration
+    (integer)
+    (quoted_identifier)
+    (procedure
+      (procedure_modifier)
+      (name
+        (identifier))
+      (parameter_list
+        (parameter
+          (name
+            (identifier))
+          (type_specification
+            (record_type
+              (identifier)))))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (record_type
+              (quoted_identifier)))
+          (temporary))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (text_type))))
+      (code_block
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (argument_list
+              (identifier))))))
+    (procedure
+      (name
+        (identifier))
+      (parameter_list
+        (parameter
+          (modifier)
+          (name
+            (identifier))
+          (type_specification
+            (record_type
+              (quoted_identifier)))))
+      (return_type
+        (type_specification
+          (text_type)))
+      (code_block))))

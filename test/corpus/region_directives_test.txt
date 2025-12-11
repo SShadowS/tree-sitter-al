@@ -222,3 +222,47 @@ codeunit 50103 "Complex Region"
           left: (identifier)
           right: (integer))))
     (preproc_endregion)))
+
+================================================================================
+Region after var section with attributed procedure
+================================================================================
+
+codeunit 50104 "Test Region After Var"
+{
+    var
+        IsInitialized: Boolean;
+
+    #region Tests
+
+    [Test]
+    procedure TestMethod()
+    begin
+        Initialize();
+    end;
+
+    #endregion Tests
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (var_section
+      (variable_declaration
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))
+    (preproc_region)
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list))))
+    (preproc_endregion)))

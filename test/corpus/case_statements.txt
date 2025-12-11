@@ -189,8 +189,8 @@ table 50004 "Test Table"
             statements: (assignment_expression
               left: (identifier)
               right: (integer)))
-          (else_branch
-            statements: (assignment_expression
+          (case_else_branch
+            (assignment_expression
               left: (identifier)
               right: (integer))))))))
 
@@ -230,8 +230,8 @@ table 50005 "Test Table"
             statements: (assignment_expression
               left: (identifier)
               right: (integer)))
-          (else_branch
-            statements: (code_block
+          (case_else_branch
+            (code_block
               (assignment_expression
                 left: (identifier)
                 right: (integer))

@@ -23,21 +23,28 @@ enum TokenType {
     PREPROC_VAR_TERMINATOR,           // 7 - Detects var section terminators in preprocessor
     ATTRIBUTE_FOR_VARIABLE,           // 8 - Distinguishes [attr] for variable
     ATTRIBUTE_FOR_PROCEDURE,          // 9 - Distinguishes [attr] for procedure
-    PREPROC_VAR_CONTINUATION          // 10 - Signals #if contains ONLY variables, continue var_section
+    PREPROC_VAR_CONTINUATION,         // 10 - Signals #if contains ONLY variables, continue var_section
+    PRAGMA_VAR_CONTINUATION,          // 11 - Signals #pragma followed by variable, continue var_section
+    ATTRIBUTE_VAR_CONTINUATION,       // 12 - Signals [attr] followed by variable, continue var_section
+    REGION_VAR_CONTINUATION,          // 13 - Signals #region followed by variables, continue var_section
+    FOR_TO_KEYWORD,                   // 14 - 'to' keyword with word boundary check
+    FOR_DOWNTO_KEYWORD                // 15 - 'downto' keyword with word boundary check
 };
 
-// Keywords that can terminate a var section
-// When #if contains these, don't emit continuation (exit var_section)
-// Note: We only check for code constructs (procedure, trigger), not var/protected var
-// because #if containing var could be either:
-// - A new var section (when #if is at object body level)
-// - Continuation of variables (when #if is inside existing var_section)
-// The grammar's conflict resolution handles this ambiguity
-static const char* VAR_TERMINATORS[] = {
+// Keywords that ALWAYS terminate a var section (no context check needed)
+// These are procedure/trigger keywords and modifiers
+static const char* VAR_TERMINATORS_ALWAYS[] = {
     "procedure", "trigger", "onrun",
+    "local", "internal",  // Procedure modifiers that indicate end of var_section
+    "fields", "keys", "fieldgroups",
+    NULL  // Sentinel
+};
+
+// Object keywords that terminate var section ONLY when followed by an integer (object ID)
+// When used as a type (e.g., `Codeunit "MyCU"`), they don't terminate
+static const char* OBJECT_DECLARATION_KEYWORDS[] = {
     "table", "page", "codeunit", "report",
     "query", "xmlport", "enum", "interface",
-    "fields", "keys", "fieldgroups",
     NULL  // Sentinel
 };
 
@@ -535,10 +542,11 @@ bool tree_sitter_al_external_scanner_scan(
         }
 
         // Debug: print when VAR tokens are valid
-        if (valid_symbols[PREPROC_VAR_TERMINATOR] || valid_symbols[PREPROC_VAR_CONTINUATION]) {
-            fprintf(stderr, "SCANNER: VAR tokens - TERM=%d CONT=%d at '%c'(0x%02x)\n",
+        if (valid_symbols[PREPROC_VAR_TERMINATOR] || valid_symbols[PREPROC_VAR_CONTINUATION] || valid_symbols[PRAGMA_VAR_CONTINUATION]) {
+            fprintf(stderr, "SCANNER: VAR/PRAGMA tokens - TERM=%d CONT=%d PRAGMA_CONT=%d at '%c'(0x%02x)\n",
                     valid_symbols[PREPROC_VAR_TERMINATOR],
                     valid_symbols[PREPROC_VAR_CONTINUATION],
+                    valid_symbols[PRAGMA_VAR_CONTINUATION],
                     (lexer->lookahead >= 32 && lexer->lookahead < 127) ? (char)lexer->lookahead : '?',
                     lexer->lookahead);
             fflush(stderr);
@@ -610,10 +618,306 @@ bool tree_sitter_al_external_scanner_scan(
                 if (SCANNER_DEBUG) fprintf(stderr, "SCANNER: ✓ Emitting PREPROC_VAR_CONTINUATION (has vars only)!\n");
                 lexer->result_symbol = PREPROC_VAR_CONTINUATION;
                 return true;
+            } else if (result == -1 && valid_symbols[PRAGMA_VAR_CONTINUATION]) {
+                // Not #if - scanner is now positioned after '#', check if it's 'pragma'
+                // lexer->lookahead should be 'p' if it's #pragma
+                if (match_keyword_ci(lexer, "pragma")) {
+                    // Found #pragma - skip to end of line
+                    skip_to_eol(lexer);
+
+                    // Skip whitespace after pragma
+                    while (iswspace(lexer->lookahead)) {
+                        lexer->advance(lexer, true);
+                    }
+
+                    // Check if what follows looks like a variable declaration, attribute, or another pragma
+                    if (lexer->lookahead == '#' || lexer->lookahead == '[' ||
+                        iswalpha(lexer->lookahead) || lexer->lookahead == '_' ||
+                        lexer->lookahead == '"') {
+                        if (SCANNER_DEBUG) {
+                            fprintf(stderr, "SCANNER: ✓ Emitting PRAGMA_VAR_CONTINUATION (pragma followed by '%c')\n",
+                                    (lexer->lookahead >= 32 && lexer->lookahead < 127) ? (char)lexer->lookahead : '?');
+                            fflush(stderr);
+                        }
+                        lexer->result_symbol = PRAGMA_VAR_CONTINUATION;
+                        return true;
+                    }
+                }
+                // Not #pragma - check if it's #region
+                else if (valid_symbols[REGION_VAR_CONTINUATION] && match_keyword_ci(lexer, "region")) {
+                    // Found #region - skip to end of line (the region name)
+                    skip_to_eol(lexer);
+
+                    // Skip whitespace after #region line
+                    while (iswspace(lexer->lookahead)) {
+                        lexer->advance(lexer, true);
+                    }
+
+                    // Check if what follows looks like variable content
+                    // Could be: identifier, quoted identifier, [attribute], or #pragma
+                    if (lexer->lookahead == '#' || lexer->lookahead == '[' ||
+                        iswalpha(lexer->lookahead) || lexer->lookahead == '_' ||
+                        lexer->lookahead == '"') {
+                        // Need to verify it's not a procedure/trigger keyword
+                        bool is_var_content = true;
+
+                        // Skip over attributes if present (e.g., [Test][AnotherAttr])
+                        while (lexer->lookahead == '[') {
+                            int depth = 1;
+                            lexer->advance(lexer, false);
+                            while (depth > 0 && !lexer->eof(lexer)) {
+                                if (lexer->lookahead == '[') depth++;
+                                else if (lexer->lookahead == ']') depth--;
+                                lexer->advance(lexer, false);
+                            }
+                            // Skip whitespace between attributes
+                            while (iswspace(lexer->lookahead)) {
+                                lexer->advance(lexer, true);
+                            }
+                        }
+
+                        // Now check if we're at an identifier (could be terminator keyword)
+                        if (iswalpha(lexer->lookahead) || lexer->lookahead == '_') {
+                            // Read identifier to check if it's a terminator keyword
+                            char id_buf[64];
+                            int id_len = 0;
+
+                            while ((iswalpha(lexer->lookahead) || lexer->lookahead == '_' ||
+                                    iswdigit(lexer->lookahead)) && id_len < 63) {
+                                id_buf[id_len++] = lexer->lookahead;
+                                lexer->advance(lexer, false);
+                            }
+                            id_buf[id_len] = '\0';
+
+                            // Check if it's a terminator keyword
+                            for (int i = 0; VAR_TERMINATORS_ALWAYS[i]; i++) {
+                                const char *term = VAR_TERMINATORS_ALWAYS[i];
+                                if (strlen(term) == (size_t)id_len) {
+                                    bool match = true;
+                                    for (int j = 0; j < id_len; j++) {
+                                        char c1 = id_buf[j];
+                                        char c2 = term[j];
+                                        if (c1 >= 'A' && c1 <= 'Z') c1 = c1 - 'A' + 'a';
+                                        if (c2 >= 'A' && c2 <= 'Z') c2 = c2 - 'A' + 'a';
+                                        if (c1 != c2) { match = false; break; }
+                                    }
+                                    if (match) {
+                                        is_var_content = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (is_var_content) {
+                            if (SCANNER_DEBUG) {
+                                fprintf(stderr, "SCANNER: ✓ Emitting REGION_VAR_CONTINUATION (#region followed by var content)\n");
+                                fflush(stderr);
+                            }
+                            lexer->result_symbol = REGION_VAR_CONTINUATION;
+                            return true;
+                        }
+                    }
+                }
+                // Not #pragma or #region, or not followed by var-like content - fall through
             }
-            // result == -1: Not at #if (e.g., #endif, #else) - don't emit anything
+            // result == -1 and not pragma/region: don't emit preproc tokens
         }
         // Reset if we didn't find a terminator - DON'T return, let other checks run
+    }
+
+    // Check for FOR_TO_KEYWORD or FOR_DOWNTO_KEYWORD (to/downto with word boundary)
+    if (valid_symbols[FOR_TO_KEYWORD] || valid_symbols[FOR_DOWNTO_KEYWORD]) {
+        // Mark token start
+        lexer->mark_end(lexer);
+
+        // Try to match 'downto' first (longer, so must be checked first)
+        if (valid_symbols[FOR_DOWNTO_KEYWORD]) {
+            char chars[6];
+            int matched = 0;
+            bool all_match = true;
+            const char *downto = "downto";
+
+            // Check if we have 'downto' case-insensitively
+            for (int i = 0; i < 6 && !lexer->eof(lexer); i++) {
+                char c = lexer->lookahead;
+                chars[i] = c;
+                char lower = (c >= 'A' && c <= 'Z') ? c - 'A' + 'a' : c;
+                if (lower != downto[i]) {
+                    all_match = false;
+                    break;
+                }
+                matched++;
+                lexer->advance(lexer, false);
+            }
+
+            if (all_match && matched == 6) {
+                // Check word boundary - next char must NOT be identifier continuation
+                if (lexer->eof(lexer) || !is_id_continue(lexer->lookahead)) {
+                    // Mark the end after 'downto'
+                    lexer->mark_end(lexer);
+                    lexer->result_symbol = FOR_DOWNTO_KEYWORD;
+                    if (SCANNER_DEBUG) {
+                        fprintf(stderr, "SCANNER: ✓ Matched 'downto' with word boundary\n");
+                        fflush(stderr);
+                    }
+                    return true;
+                }
+            }
+            // Reset - can't rewind, so we need to re-read if trying 'to'
+            // But we already consumed characters, so let the next check handle fresh start
+        }
+
+        // Note: Since tree-sitter can't rewind, if 'downto' didn't match but started with 'd',
+        // we've consumed characters and can't try 'to'. However, this is fine because
+        // 'to' and 'downto' start with different letters ('t' vs 'd').
+        // The parser will try both tokens separately.
+
+        // We should return false here and let tree-sitter retry with FOR_TO_KEYWORD in a fresh call
+        // But since we might have consumed chars, let's check 'to' only on fresh input
+    }
+
+    // Separate check for 'to' keyword - must be on fresh input (lookahead is 't')
+    if (valid_symbols[FOR_TO_KEYWORD]) {
+        // Mark token start
+        lexer->mark_end(lexer);
+
+        // Check for 't' or 'T' at start
+        if (lexer->lookahead == 't' || lexer->lookahead == 'T') {
+            lexer->advance(lexer, false);
+            // Check for 'o' or 'O'
+            if (lexer->lookahead == 'o' || lexer->lookahead == 'O') {
+                lexer->advance(lexer, false);
+                // Check word boundary - next char must NOT be identifier continuation
+                if (lexer->eof(lexer) || !is_id_continue(lexer->lookahead)) {
+                    // Mark the end after 'to'
+                    lexer->mark_end(lexer);
+                    lexer->result_symbol = FOR_TO_KEYWORD;
+                    if (SCANNER_DEBUG) {
+                        fprintf(stderr, "SCANNER: ✓ Matched 'to' with word boundary\n");
+                        fflush(stderr);
+                    }
+                    return true;
+                }
+                // Word boundary failed - 'to' is prefix of longer word (e.g., 'tooltip', 'ToBeClassified')
+                if (SCANNER_DEBUG) {
+                    fprintf(stderr, "SCANNER: 'to' rejected - no word boundary (next='%c')\n",
+                            (lexer->lookahead >= 32 && lexer->lookahead < 127) ? (char)lexer->lookahead : '?');
+                    fflush(stderr);
+                }
+            }
+        }
+    }
+
+    // Check for attribute ([...]) followed by variable in var_section context
+    if (valid_symbols[ATTRIBUTE_VAR_CONTINUATION]) {
+        // Save start position for zero-width token
+        lexer->mark_end(lexer);
+
+        // Skip whitespace to find potential '['
+        while (iswspace(lexer->lookahead)) {
+            lexer->advance(lexer, true);
+        }
+
+        if (lexer->lookahead == '[') {
+            // Found '[' - skip the attribute block
+            lexer->advance(lexer, false);
+            int depth = 1;
+            while (depth > 0 && !lexer->eof(lexer)) {
+                if (lexer->lookahead == '[') depth++;
+                else if (lexer->lookahead == ']') depth--;
+                lexer->advance(lexer, false);
+            }
+
+            // Skip whitespace and any additional attributes
+            while (!lexer->eof(lexer)) {
+                while (iswspace(lexer->lookahead)) {
+                    lexer->advance(lexer, true);
+                }
+                if (lexer->lookahead == '[') {
+                    // Another attribute - skip it
+                    lexer->advance(lexer, false);
+                    depth = 1;
+                    while (depth > 0 && !lexer->eof(lexer)) {
+                        if (lexer->lookahead == '[') depth++;
+                        else if (lexer->lookahead == ']') depth--;
+                        lexer->advance(lexer, false);
+                    }
+                } else {
+                    break;
+                }
+            }
+
+            // Skip whitespace after all attributes
+            while (iswspace(lexer->lookahead)) {
+                lexer->advance(lexer, true);
+            }
+
+            // Check if what follows is an identifier (but NOT a keyword like 'procedure')
+            if (iswalpha(lexer->lookahead) || lexer->lookahead == '_') {
+                // Read the identifier into a buffer
+                char identifier[256];
+                int id_len = 0;
+
+                while (is_id_continue(lexer->lookahead) && !lexer->eof(lexer) && id_len < 255) {
+                    identifier[id_len++] = lexer->lookahead;
+                    lexer->advance(lexer, false);
+                }
+                identifier[id_len] = '\0';
+
+                // Helper for case-insensitive matching
+                #define MATCH_KW(term) ({ \
+                    bool _m = (strlen(term) == id_len); \
+                    if (_m) { \
+                        for (int _j = 0; _j < id_len; _j++) { \
+                            char _c1 = identifier[_j]; \
+                            char _c2 = term[_j]; \
+                            if (_c1 >= 'A' && _c1 <= 'Z') _c1 = _c1 - 'A' + 'a'; \
+                            if (_c2 >= 'A' && _c2 <= 'Z') _c2 = _c2 - 'A' + 'a'; \
+                            if (_c1 != _c2) { _m = false; break; } \
+                        } \
+                    } \
+                    _m; \
+                })
+
+                // Check if this identifier is an always-terminator keyword
+                bool is_terminator = false;
+                for (int i = 0; VAR_TERMINATORS_ALWAYS[i]; i++) {
+                    if (MATCH_KW(VAR_TERMINATORS_ALWAYS[i])) {
+                        is_terminator = true;
+                        break;
+                    }
+                }
+                #undef MATCH_KW
+
+                // Only emit ATTRIBUTE_VAR_CONTINUATION if NOT a terminator keyword
+                // Note: Object keywords (codeunit, table, etc.) are fine here because
+                // they would be type references in a var context, not declarations
+                if (!is_terminator) {
+                    if (SCANNER_DEBUG) {
+                        fprintf(stderr, "SCANNER: ✓ Emitting ATTRIBUTE_VAR_CONTINUATION (attribute followed by '%s')\n",
+                                identifier);
+                        fflush(stderr);
+                    }
+                    lexer->result_symbol = ATTRIBUTE_VAR_CONTINUATION;
+                    return true;
+                } else {
+                    if (SCANNER_DEBUG) {
+                        fprintf(stderr, "SCANNER: Attribute followed by terminator '%s', NOT continuing var_section\n",
+                                identifier);
+                        fflush(stderr);
+                    }
+                }
+            } else if (lexer->lookahead == '"') {
+                // Quoted identifier - this is a variable name
+                if (SCANNER_DEBUG) {
+                    fprintf(stderr, "SCANNER: ✓ Emitting ATTRIBUTE_VAR_CONTINUATION (attribute followed by quoted identifier)\n");
+                    fflush(stderr);
+                }
+                lexer->result_symbol = ATTRIBUTE_VAR_CONTINUATION;
+                return true;
+            }
+        }
     }
 
     return false;
@@ -963,35 +1267,55 @@ static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
                     fflush(stderr);
                 }
 
-                // Check if this identifier matches any var terminator (case-insensitive)
-                for (int i = 0; VAR_TERMINATORS[i]; i++) {
-                    // Case-insensitive comparison
-                    bool matches = true;
-                    const char *term = VAR_TERMINATORS[i];
-                    if (strlen(term) != id_len) {
-                        matches = false;
-                    } else {
-                        for (int j = 0; j < id_len; j++) {
-                            char c1 = identifier[j];
-                            char c2 = term[j];
-                            // Convert to lowercase for comparison
-                            if (c1 >= 'A' && c1 <= 'Z') c1 = c1 - 'A' + 'a';
-                            if (c2 >= 'A' && c2 <= 'Z') c2 = c2 - 'A' + 'a';
-                            if (c1 != c2) {
-                                matches = false;
-                                break;
-                            }
-                        }
-                    }
+                // Helper lambda-like function for case-insensitive matching
+                #define MATCH_KEYWORD(term) ({ \
+                    bool _matches = (strlen(term) == id_len); \
+                    if (_matches) { \
+                        for (int _j = 0; _j < id_len; _j++) { \
+                            char _c1 = identifier[_j]; \
+                            char _c2 = term[_j]; \
+                            if (_c1 >= 'A' && _c1 <= 'Z') _c1 = _c1 - 'A' + 'a'; \
+                            if (_c2 >= 'A' && _c2 <= 'Z') _c2 = _c2 - 'A' + 'a'; \
+                            if (_c1 != _c2) { _matches = false; break; } \
+                        } \
+                    } \
+                    _matches; \
+                })
 
-                    if (matches) {
+                // Check always-terminators (procedure, trigger, etc.)
+                for (int i = 0; VAR_TERMINATORS_ALWAYS[i]; i++) {
+                    if (MATCH_KEYWORD(VAR_TERMINATORS_ALWAYS[i])) {
                         if (SCANNER_DEBUG) {
-                            fprintf(stderr, "  -> Found terminator keyword: %s\n", term);
+                            fprintf(stderr, "  -> Found always-terminator keyword: %s\n", VAR_TERMINATORS_ALWAYS[i]);
                             fflush(stderr);
                         }
                         return 1;  // Found terminator keyword
                     }
                 }
+
+                // Check object declaration keywords (only terminate if followed by integer)
+                for (int i = 0; OBJECT_DECLARATION_KEYWORDS[i]; i++) {
+                    if (MATCH_KEYWORD(OBJECT_DECLARATION_KEYWORDS[i])) {
+                        // Skip whitespace and check if followed by a digit (object ID)
+                        while (iswspace(lexer->lookahead)) {
+                            lexer->advance(lexer, false);
+                        }
+                        if (iswdigit(lexer->lookahead)) {
+                            if (SCANNER_DEBUG) {
+                                fprintf(stderr, "  -> Found object declaration: %s (followed by digit)\n", OBJECT_DECLARATION_KEYWORDS[i]);
+                                fflush(stderr);
+                            }
+                            return 1;  // Object declaration - terminates var_section
+                        } else {
+                            if (SCANNER_DEBUG) {
+                                fprintf(stderr, "  -> Found type reference: %s (NOT followed by digit, continuing)\n", OBJECT_DECLARATION_KEYWORDS[i]);
+                                fflush(stderr);
+                            }
+                            // Not a declaration, just a type - continue scanning
+                        }
+                    }
+                }
+                #undef MATCH_KEYWORD
             } else {
                 // Not an identifier start, just advance one character
                 lexer->advance(lexer, false);

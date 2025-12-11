@@ -127,7 +127,7 @@ table 50012 "Test Table"
               function: (identifier)
               arguments: (argument_list
                 (string_literal))))
-          (else_branch
-            statements: (call_expression
+          (case_else_branch
+            (call_expression
               function: (identifier)
               arguments: (argument_list))))))))

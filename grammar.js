@@ -8,8 +8,9 @@
 // @ts-check
 
 // Helper function for explicit identifiers
+// Supports Unicode letters for international identifiers (e.g., ñ, ö, etc.)
 function ident() {
-  return token(/[A-Za-z_][A-Za-z0-9_]*/);
+  return token(/[\p{L}_][\p{L}\p{N}_]*/u);
 }
 
 // Helper function for case-insensitive keywords using RustRegex
@@ -18,11 +19,29 @@ function kw(word, precedence = null) {
   return precedence !== null ? token(prec(precedence, regex)) : token(regex);
 }
 
+// Helper for keywords that must respect word boundaries (like 'begin', 'end')
+// Uses string literals inside token() which tree-sitter's `word` property handles
+function kw_literal(word, precedence = null) {
+  const lower = word.toLowerCase();
+  const upper = word.toUpperCase();
+  const title = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  // Wrap in token() to create single lexical token (reduces state count)
+  const variations = token(choice(lower, upper, title));
+  return precedence !== null ? prec(precedence, variations) : variations;
+}
+
 // Helper for contextual keywords that match with '=' included
 // This disambiguates property names from variable names at the lexer level
 // Note: This does NOT allow comments between the keyword and '='
 function kw_with_eq(word, precedence = null) {
   const regex = new RustRegex(`(?i)${word}[\\t\\f\\r ]*=`);
+  return precedence !== null ? token(prec(precedence, regex)) : token(regex);
+}
+
+// Helper for object type keywords followed by :: (Table::, Report::, etc.)
+// This prevents standalone 'Table' from matching as keyword when it should be identifier
+function kw_with_coloncolon(word, precedence = null) {
+  const regex = new RustRegex(`(?i)${word}[\\t\\f\\r ]*::`);
   return precedence !== null ? token(prec(precedence, regex)) : token(regex);
 }
 
@@ -114,8 +133,9 @@ module.exports = grammar({
   word: $ => $.identifier,
 
   conflicts: $ => [
-    [$._source_content, $.preproc_conditional_using],
-    [$._source_content],
+    [$.preprocessor_file_conditional, $.preproc_conditional_using],
+    [$.preprocessor_file_conditional, $.preproc_split_enum_declaration, $.preproc_split_codeunit_declaration],  // Split object declarations
+    [$._layout_element, $.preproc_split_field_section],  // Split field sections in layouts
     [$.assignment_expression, $._assignable_expression],
     [$.assignment_statement, $.assignment_expression],
     [$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values],
@@ -127,12 +147,12 @@ module.exports = grammar({
     [$.preproc_conditional_if_statement, $._statement],
     [$.preproc_conditional_statements, $.preproc_conditional_if_statement],
     [$.attribute_content, $.attribute],  // Phase 2: Allow both Rust-style and legacy attributes during migration
-    // Prefer continuing var_section with preproc_conditional_variables over exiting to page properties
-    [$.preproc_conditional_variables, $.preproc_conditional_page_properties],
     [$.preproc_conditional_procedures, $.preproc_conditional_mixed_content, $.preproc_split_procedure],  // Attributes in preproc branches
     [$.preproc_conditional_procedures, $.preproc_split_procedure],  // Attributes conflict - exact
-    [$.enum_declaration, $.preproc_conditional_procedures],  // Attributes in preproc after enum header
-    [$.enum_declaration, $.preproc_split_procedure],  // Attributed split procedure in enum
+    [$._expression, $._extended_value_choice],  // Filter expression range ambiguity
+    [$._literal_value, $._extended_value_choice],  // Filter expression literal range ambiguity
+    [$._single_pattern_or_preproc, $.preproc_conditional_case_pattern],  // Preprocessor in case pattern list
+    [$._expression, $._single_pattern],  // Identifier in case pattern can be expression or pattern
   ],
 
   externals: $ => [
@@ -146,7 +166,12 @@ module.exports = grammar({
     $.preproc_var_terminator,
     $.attribute_for_variable,
     $.attribute_for_procedure,
-    $.preproc_var_continuation  // Signals #if contains ONLY variables, forces var_section continuation
+    $.preproc_var_continuation,  // Signals #if contains ONLY variables, forces var_section continuation
+    $._pragma_var_continuation,  // Signals pragma followed by variable, continue var_section (hidden)
+    $._attribute_var_continuation,  // Signals attribute followed by variable, continue var_section (hidden)
+    $._region_var_continuation,  // Signals #region followed by variables, continue var_section (hidden)
+    $.for_to_keyword,  // 'to' keyword with word boundary check (external scanner)
+    $.for_downto_keyword  // 'downto' keyword with word boundary check (external scanner)
   ],
 
   // Extras: whitespace, comments, and ignorable preprocessor directives
@@ -156,8 +181,8 @@ module.exports = grammar({
 
   rules: {
     source_file: $ => choice(
-      // Preprocessor-wrapped source file with optional pragmas (higher precedence)
-      prec(2, seq(
+      // Preprocessor-wrapped source file with optional pragmas (high precedence)
+      prec.dynamic(5, seq(
         repeat($.pragma),  // Allow pragmas before preprocessor
         $.preprocessor_file_conditional,
         repeat($.pragma)   // Allow pragmas after preprocessor
@@ -167,34 +192,58 @@ module.exports = grammar({
         repeat($.pragma),  // Allow pragmas at the beginning
         optional($.namespace_declaration),
         repeat(choice($.using_statement, $.preproc_conditional_using)),
-        repeat(choice($._object, $.pragma, $.preprocessor_file_conditional))
+        repeat(choice(
+          $.preprocessor_file_conditional,
+          $._object,
+          $.pragma
+        ))
       )
     ),
 
     preprocessor_file_conditional: $ => seq(
       field('condition', $.preproc_if),
-      field('consequence', $._source_content),
-      optional(field('alternative', seq(
-        $.preproc_else,
-        $._source_content
+      repeat(field('consequence', choice(
+        $.pragma,
+        $.namespace_declaration,
+        $.using_statement,
+        $.preproc_conditional_using,
+        $._simple_object
       ))),
+      optional(seq(
+        $.preproc_else,
+        repeat(field('alternative', choice(
+          $.pragma,
+          $.namespace_declaration,
+          $.using_statement,
+          $.preproc_conditional_using,
+          $._simple_object
+        )))
+      )),
       $.preproc_endif
     ),
 
-    _source_content: $ => choice(
-      // Case 1: Has at least one object or pragma
-      seq(
-        repeat($.pragma),
-        optional($.namespace_declaration),
-        repeat(choice($.using_statement, $.preproc_conditional_using)),
-        repeat1(choice($._object, $.pragma))
-      ),
-      // Case 2: Only has namespace declaration (no objects)
-      seq(
-        repeat($.pragma),
-        $.namespace_declaration,
-        repeat(choice($.using_statement, $.preproc_conditional_using))
-      )
+    // Object declarations for use inside preprocessor_file_conditional
+    _simple_object: $ => choice(
+      $.table_declaration,
+      $.tableextension_declaration,
+      $.codeunit_declaration,
+      $.pageextension_declaration,
+      $.page_declaration,
+      $.pagecustomization_declaration,
+      $.profile_declaration,
+      $.profileextension_declaration,
+      $.reportextension_declaration,
+      $.query_declaration,
+      $.enum_declaration,
+      $.enumextension_declaration,
+      $.xmlport_declaration,
+      $.interface_declaration,
+      $.dotnet_declaration,
+      $.report_declaration,
+      $.permissionset_declaration,
+      $.permissionsetextension_declaration,
+      $.entitlement_declaration,
+      $.controladdin_declaration
     ),
 
     _object: $ => choice(
@@ -209,9 +258,7 @@ module.exports = grammar({
       $.reportextension_declaration,
       $.query_declaration,
       $.enum_declaration,
-      $.enumextension_declaration, 
-      $.preproc_conditional_enum_declaration,
-      $.preproc_conditional_codeunit_declaration,
+      $.enumextension_declaration,
       $.xmlport_declaration,
       $.interface_declaration,
       $.dotnet_declaration,
@@ -219,47 +266,7 @@ module.exports = grammar({
       $.permissionset_declaration,
       $.permissionsetextension_declaration,
       $.controladdin_declaration,
-      $.entitlement_declaration,
-      $.preproc_conditional_object_declaration
-    ),
-
-    // Handle object declarations split by preprocessor
-    preproc_conditional_object_declaration: $ => seq(
-      $.preproc_if,
-      $._conditional_object_header,
-      $.preproc_else,
-      $._conditional_object_header,
-      $.preproc_endif,
-      '{',
-      repeat($._object_body_element),
-      '}'
-    ),
-
-    _conditional_object_header: $ => prec(2, seq(
-      choice(
-        kw('codeunit'),
-        kw('table'),
-        kw('page'),
-        kw('report'),
-        kw('query'),
-        kw('xmlport')
-      ),
-      field('object_id', $.integer),
-      field('object_name', $._identifier_choice),
-      optional($.implements_clause)
-    )),
-
-    _object_body_element: $ => choice(
-      $.attribute_item,
-      $.var_section,
-      $.preproc_conditional_var_sections,
-      $.procedure,
-      $.trigger_declaration,
-      $.pragma,
-      $.preproc_region,
-      $.preproc_endregion,
-      $.comment,
-      $.multiline_comment
+      $.entitlement_declaration
     ),
 
     namespace_declaration: $ => seq(
@@ -581,16 +588,47 @@ module.exports = grammar({
       ))
     ),
 
-    enum_declaration: $ => seq(
+    enum_declaration: $ => choice(
+      // Regular enum
+      seq(
+        kw('enum'),
+        $._object_header_base,
+        optional($.implements_clause),
+        '{',
+        repeat($._enum_body_element),
+        '}'
+      ),
+      // Preprocessor-split enum with different implements clauses
+      $.preproc_split_enum_declaration
+    ),
+
+    // Shared enum body elements
+    _enum_body_element: $ => choice(
+      $._enum_properties,
+      seq(repeat($.attribute_item), $.enum_value_declaration),
+      $.preproc_conditional_enum_content  // Support mixed content in conditional blocks (properties and/or values)
+    ),
+
+    // Enum header for use in preproc splits
+    _enum_header: $ => seq(
       kw('enum'),
       $._object_header_base,
-      optional($.implements_clause),
+      optional($.implements_clause)
+    ),
+
+    // Preprocessor-split enum declaration (different implements in each branch)
+    preproc_split_enum_declaration: $ => seq(
+      $.preproc_if,
+      repeat($.pragma),
+      field('if_header', $._enum_header),
+      repeat($.pragma),
+      $.preproc_else,
+      repeat($.pragma),
+      field('else_header', $._enum_header),
+      repeat($.pragma),
+      $.preproc_endif,
       '{',
-      repeat(choice(
-        $._enum_properties,
-        seq(repeat($.attribute_item), $.enum_value_declaration),
-        $.preproc_conditional_enum_content  // Support mixed content in conditional blocks (properties and/or values)
-      )),
+      repeat($._enum_body_element),
       '}'
     ),
 
@@ -611,64 +649,8 @@ module.exports = grammar({
       '}'
     ),
 
-    preproc_conditional_codeunit_declaration: $ => prec(1, seq(
-      $.preproc_if,
-      optional($.pragma),
-      field('consequence', seq(
-        kw('codeunit'),
-        $._object_header_base,
-        optional($.implements_clause)
-      )),
-      optional($.pragma),
-      $.preproc_else,
-      field('alternative', seq(
-        kw('codeunit'),
-        $._object_header_base,
-        optional($.implements_clause)
-      )),
-      $.preproc_endif,
-      '{',
-      repeat(choice(
-        $.attribute_item,
-        prec(4, $._codeunit_properties),
-        $.preproc_conditional_object_properties,
-        $.var_section,
-        $.preproc_conditional_var_sections,
-        $.procedure,
-        $.onrun_trigger,
-        $.trigger_declaration,
-        $.preproc_conditional_procedures,
-        $.pragma,
-        $.preproc_region,
-        $.preproc_endregion
-      )),
-      '}'
-    )),
-
-    preproc_conditional_enum_declaration: $ => prec(1, seq(
-      $.preproc_if,
-      optional($.pragma),
-      field('consequence', seq(
-        kw('enum'),
-        $._object_header_base,
-        optional($.implements_clause)
-      )),
-      optional($.pragma),
-      $.preproc_else,
-      field('alternative', seq(
-        kw('enum'),
-        $._object_header_base,
-        optional($.implements_clause)
-      )),
-      $.preproc_endif,
-      '{',
-      repeat(choice(
-        $._enum_properties, 
-        $.enum_value_declaration,
-        $.preproc_conditional_enum_content  // Allow mixed content blocks (properties and values)
-      )),
-      '}'
-    )),
+    // NOTE: Split header patterns (preproc_conditional_codeunit_declaration, preproc_conditional_enum_declaration)
+    // require external scanner lookahead to distinguish from file-level #if. See todo: "Fix split header pattern"
 
     enum_value_declaration: $ => seq(
       kw('value'),
@@ -780,9 +762,11 @@ module.exports = grammar({
     ),
 
     // Phase 2B - Medium Priority Complex Page Properties
+    // Uses kw_with_eq to distinguish property from variable name
     data_caption_expression_property: $ => seq(
-      kw('datacaptionexpression'),
-      $._expression_property_template
+      alias(kw_with_eq('datacaptionexpression'), 'DataCaptionExpression'),
+      field('value', $._expression),
+      ';'
     ),
 
     instructional_text_property: $ => seq(
@@ -831,8 +815,9 @@ module.exports = grammar({
     ),
 
     show_filter_property: $ => seq(
-      'ShowFilter',
-      $._boolean_property_template
+      alias(kw_with_eq('showfilter'), 'ShowFilter'),
+      field('value', $.boolean),
+      ';'
     ),
 
     additional_search_terms_property: $ => seq(
@@ -925,13 +910,15 @@ module.exports = grammar({
     ),
 
     help_link_property: $ => seq(
-      'HelpLink',
-      $._string_property_template
+      alias(kw_with_eq('helplink'), 'HelpLink'),
+      field('value', $.string_literal),
+      ';'
     ),
 
     is_preview_property: $ => seq(
-      choice('IsPreview', 'ispreview', 'ISPREVIEW'),
-      $._boolean_property_template
+      alias(kw_with_eq('ispreview'), 'IsPreview'),
+      field('value', $.boolean),
+      ';'
     ),
     
     odata_key_fields_value: $ => $._identifier_choice_list,
@@ -1086,16 +1073,18 @@ module.exports = grammar({
 
     // Unified filter value pattern - used in all FILTER() contexts
     _filter_base_value: $ => choice(
-      $.filter_not_equal_expression, 
+      $.filter_not_equal_expression,
       $.filter_equal_expression,
       $.filter_less_than_expression,
       $.filter_greater_than_expression,
       $.filter_less_than_or_equal_expression,
       $.filter_greater_than_or_equal_expression,
       $.filter_range_expression,
+      $.qualified_enum_value,  // Support for EnumType::Value patterns
       $.identifier,
       $._quoted_identifier,
       $.integer,
+      $.boolean,  // Support for filter(true) and filter(false)
       $.string_literal,
       $.date_literal,
       $.time_literal,
@@ -1446,7 +1435,7 @@ module.exports = grammar({
     ),
 
     actions_section: $ => seq(
-      kw('actions'),
+      choice('actions', 'Actions', 'ACTIONS'),
       '{',
       repeat(choice(
         $._action_element,
@@ -1529,7 +1518,8 @@ module.exports = grammar({
       choice(
         $._action_element,
         $.action_group_section,
-        $.separator_action
+        $.separator_action,
+        $.preproc_conditional_actions
       )
     )($),
 
@@ -1538,7 +1528,8 @@ module.exports = grammar({
       choice(
         $._action_element,
         $.action_group_section,
-        $.separator_action
+        $.separator_action,
+        $.preproc_conditional_actions
       )
     )($),
 
@@ -1547,7 +1538,8 @@ module.exports = grammar({
       choice(
         $._action_element,
         $.action_group_section,
-        $.separator_action
+        $.separator_action,
+        $.preproc_conditional_actions
       )
     )($),
 
@@ -1556,7 +1548,8 @@ module.exports = grammar({
       choice(
         $._action_element,
         $.action_group_section,
-        $.separator_action
+        $.separator_action,
+        $.preproc_conditional_actions
       )
     )($),
 
@@ -1849,7 +1842,7 @@ module.exports = grammar({
 
     scope_property: $ => seq(
       kw_with_eq('scope'),
-      field('value', $.identifier),
+      field('value', $._identifier_choice),
       ';'
     ),
 
@@ -1876,7 +1869,17 @@ module.exports = grammar({
     shortcut_key_property: $ => prec(8, seq(
       kw('shortcutkey'),
       '=',
-      field('value', choice($.string_literal, $._quoted_identifier)),
+      field('value', choice(
+        $.string_literal,
+        $._quoted_identifier,
+        $.identifier,
+        // Allow keywords as shortcut key values (e.g., return, delete, escape)
+        kw('return'),
+        kw('delete'),
+        kw('escape'),
+        kw('end'),
+        kw('home')
+      )),
       ';'
     )),
 
@@ -1937,7 +1940,11 @@ module.exports = grammar({
     test_http_request_policy_property: $ => seq(
       kw('testhttprequestpolicy'),
       '=',
-      field('value', alias(kw('blockoutboundrequests'), $.value)),
+      field('value', choice(
+        alias(kw('blockoutboundrequests'), $.value),
+        alias(kw('allowoutboundfromhandler'), $.value),
+        alias(kw('allowoutbound'), $.value)
+      )),
       ';'
     ),
 
@@ -2006,30 +2013,79 @@ module.exports = grammar({
       '}'
     ),
 
-    codeunit_declaration: $ => seq(
+    codeunit_declaration: $ => choice(
+      // Regular codeunit
+      seq(
+        kw('codeunit'),
+        $._object_header_base,
+        optional($.implements_clause),
+        '{',
+        repeat($._codeunit_body_element),
+        '}'
+      ),
+      // Preprocessor-split codeunit with different implements clauses
+      $.preproc_split_codeunit_declaration
+    ),
+
+    // Shared codeunit body elements
+    _codeunit_body_element: $ => choice(
+      $.attribute_item,
+      prec(4, $._codeunit_properties), // Use individual properties
+      $.preproc_conditional_object_properties,
+      $.var_section,
+      $.preproc_conditional_var_sections,
+      $.preproc_conditional_mixed_content,  // Support mixed var/procedure/trigger in preprocessor
+      $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
+      $.onrun_trigger,
+      $.trigger_declaration,
+      $.preproc_conditional_procedures,
+      // Lower precedence to prefer pragma inside var_section
+      prec(-10, $.pragma),
+      // Region directives for code organization
+      $.preproc_region,
+      $.preproc_endregion
+    ),
+
+    // Codeunit header for use in preproc splits
+    _codeunit_header: $ => seq(
       kw('codeunit'),
       $._object_header_base,
-      optional($.implements_clause),
-      '{',
-      repeat(choice(
-        $.attribute_item,
-        prec(4, $._codeunit_properties), // Use individual properties
-        $.preproc_conditional_object_properties,
-        $.var_section,
-        $.preproc_conditional_var_sections,
-        $.procedure,
-        $.preproc_split_procedure,
-        $.preproc_procedure_body_split,
-        $.onrun_trigger,
-        $.trigger_declaration,
-        $.preproc_conditional_procedures,
-        $.pragma,
+      optional($.implements_clause)
+    ),
 
-        // Region directives for code organization
-        $.preproc_region,
-        $.preproc_endregion
-      )),
+    // Preprocessor-split codeunit declaration (different implements in each branch)
+    // Supports nested #if/#else/#endif for multi-version conditionals
+    preproc_split_codeunit_declaration: $ => seq(
+      $.preproc_if,
+      repeat($.pragma), // Allow pragmas like #pragma warning disable
+      field('if_header', $._codeunit_header),
+      repeat($.pragma), // Allow pragmas like #pragma warning restore
+      $.preproc_else,
+      repeat($.pragma),
+      // Support either simple header or nested preprocessor conditionals
+      choice(
+        seq(field('else_header', $._codeunit_header), repeat($.pragma), $.preproc_endif),
+        $._nested_preproc_codeunit_header
+      ),
+      '{',
+      repeat($._codeunit_body_element),
       '}'
+    ),
+
+    // Nested preprocessor for codeunit headers (handles #if not CLEAN24 ... #else #if not CLEAN26 ... patterns)
+    _nested_preproc_codeunit_header: $ => seq(
+      $.preproc_if,
+      repeat($.pragma),
+      $._codeunit_header,
+      repeat($.pragma),
+      $.preproc_else,
+      repeat($.pragma),
+      choice(
+        seq($._codeunit_header, repeat($.pragma), $.preproc_endif, repeat($.pragma), $.preproc_endif),
+        seq($._nested_preproc_codeunit_header, $.preproc_endif)
+      )
     ),
 
 
@@ -2063,7 +2119,9 @@ module.exports = grammar({
         $.var_section,
         $.attribute_item,
         $.procedure,
-        $.trigger_declaration
+        $.trigger_declaration,
+        $.actions_section,   // Allow conditional actions sections
+        $.layout_section     // Allow conditional layout sections
       )),
       optional(seq(
         $.preproc_else,
@@ -2071,7 +2129,9 @@ module.exports = grammar({
           $.var_section,
           $.attribute_item,
           $.procedure,
-          $.trigger_declaration
+          $.trigger_declaration,
+          $.actions_section,
+          $.layout_section
         ))
       )),
       $.preproc_endif
@@ -2259,7 +2319,7 @@ module.exports = grammar({
 
     interface_procedure: $ => seq(
       kw('procedure'),
-      field('name', $.identifier),
+      field('name', $._identifier_choice),
       '(',
       optional($.parameter_list),
       ')',
@@ -2362,7 +2422,7 @@ module.exports = grammar({
     ),
 
     rendering_layout: $ => seq(
-      kw('layout'),
+      choice('layout', 'Layout', 'LAYOUT'),
       '(',
       field('name', $._identifier_choice),
       ')',
@@ -2643,7 +2703,7 @@ module.exports = grammar({
     excluded_permission_sets_list: $ => $._identifier_choice_list,
 
     permissionset_permissions: $ => seq(
-      kw('Permissions'),
+      choice('Permissions', 'permissions', 'PERMISSIONS'),
       '=',
       $.permission_list,
       ';',
@@ -2789,7 +2849,7 @@ module.exports = grammar({
     ),
 
     layout_section: $ => seq(
-      kw('layout'),
+      choice('layout', 'Layout', 'LAYOUT'),
       '{',
       repeat($._layout_element),
       '}'
@@ -2825,9 +2885,9 @@ module.exports = grammar({
       ';'
     ),
 
+    // Uses kw_with_eq to distinguish property from variable name
     view_filters_property: $ => seq(
-      kw('filters'),
-      '=',
+      alias(kw_with_eq('filters'), 'Filters'),
       field('value', $.where_clause),
       ';'
     ),
@@ -3033,7 +3093,20 @@ module.exports = grammar({
       '}'
     ),
 
-    field_section: $ => seq(
+    field_section: $ => choice(
+      // Regular field section
+      seq(
+        $._field_section_header,
+        '{',
+        repeat($._field_properties),
+        '}'
+      ),
+      // Preprocessor-split field with different names in branches
+      $.preproc_split_field_section
+    ),
+
+    // Field section header for reuse
+    _field_section_header: $ => seq(
       kw('field'),
       '(',
       field('control_id', choice($.string_literal, $._quoted_identifier, $.integer, $.identifier)),
@@ -3046,7 +3119,20 @@ module.exports = grammar({
         '(',
         field('control_name', $._identifier_choice),
         ')'
-      )),
+      ))
+    ),
+
+    // Preprocessor-split field section (different field names in branches)
+    preproc_split_field_section: $ => seq(
+      $.preproc_if,
+      repeat($.pragma),
+      field('if_header', $._field_section_header),
+      repeat($.pragma),
+      $.preproc_else,
+      repeat($.pragma),
+      field('else_header', $._field_section_header),
+      repeat($.pragma),
+      $.preproc_endif,
       '{',
       repeat($._field_properties),
       '}'
@@ -3657,7 +3743,7 @@ module.exports = grammar({
     ),
 
     access_property: $ => seq(
-      kw('Access'),
+      choice('Access', 'access', 'ACCESS'),
       '=',
       field('value', alias($.access_value, $.value)),
       ';'
@@ -3846,7 +3932,7 @@ module.exports = grammar({
     ),
 
     extensible_property: _value_property_template(
-      $ => kw('extensible'),
+      $ => choice('Extensible', 'extensible', 'EXTENSIBLE'),
       $ => $.extensible_value
     ),
 
@@ -3991,7 +4077,7 @@ module.exports = grammar({
 
     // For single table permission property
     permissions_property: $ => seq(
-      kw('Permissions'),
+      choice('Permissions', 'permissions', 'PERMISSIONS'),
       '=',
       optional($.tabledata_permission_list),
       ';'
@@ -4209,8 +4295,9 @@ module.exports = grammar({
     ),
 
     caption_class_property: $ => seq(
-      kw('captionclass'),
-      $._expression_property_template
+      alias(kw_with_eq('captionclass'), 'CaptionClass'),
+      field('value', $._expression),
+      ';'
     ),
 
     calc_fields_property: $ => seq(
@@ -4302,7 +4389,7 @@ module.exports = grammar({
     var_section: $ => prec.right(10, seq(
       optional(kw('protected')),
       kw('var'),
-      repeat(choice(
+      repeat(prec.right(20, choice(
         $.comment,
         $.multiline_comment,
         $.pragma,
@@ -4313,9 +4400,38 @@ module.exports = grammar({
           $.variable_declaration
         ),
         // Scanner discrimination + high dynamic precedence forces parser to stay in var_section
-        prec.dynamic(100, seq($.preproc_var_continuation, $.preproc_conditional_variables))
-      ))
+        prec.dynamic(100, seq($.preproc_var_continuation, $.preproc_conditional_variables)),
+        // Pragma followed by variable - scanner detects this and emits token to continue var_section
+        prec.dynamic(100, seq($._pragma_var_continuation, $.pragma)),
+        // Attribute followed by variable - scanner detects this and emits token to continue var_section
+        prec.dynamic(100, seq(
+          $._attribute_var_continuation,
+          repeat1($.attribute_item),
+          repeat(choice($.comment, $.multiline_comment, $.pragma)),
+          $.variable_declaration
+        )),
+        // Region wrapping variables - scanner detects #region followed by variables
+        prec.dynamic(100, $.region_wrapped_variables)
+      )))
     )),
+
+    // #region/#endregion wrapping variable declarations (must stay inside var_section)
+    region_wrapped_variables: $ => seq(
+      $._region_var_continuation,
+      $.preproc_region,
+      repeat1(choice(
+        $.variable_declaration,
+        seq(
+          repeat1($.attribute_item),
+          repeat(choice($.comment, $.multiline_comment, $.pragma)),
+          $.variable_declaration
+        ),
+        $.comment,
+        $.multiline_comment,
+        $.pragma
+      )),
+      $.preproc_endregion
+    ),
 
     // Variable declaration with attributes (e.g., [RunOnClient])
 
@@ -4332,10 +4448,8 @@ module.exports = grammar({
       alias(kw('includecaption'), $.identifier),
       // Allow the keyword 'ExcludeCaption' to be treated as an identifier in variable contexts
       alias(kw('excludecaption'), $.identifier),
-      // Allow IsPreview as identifier - case-sensitive to avoid conflicts
-      alias('IsPreview', $.identifier),
-      alias('ispreview', $.identifier),
-      alias('ISPREVIEW', $.identifier),
+      // Allow IsPreview as identifier - using kw() for parser consistency
+      alias(kw('ispreview'), $.identifier),
       // Allow the keyword 'SubType' to be treated as an identifier in variable contexts
       alias(kw('subtype'), $.identifier),
       // Allow the keyword 'CuegroupLayout' to be treated as an identifier in variable contexts
@@ -4380,6 +4494,11 @@ module.exports = grammar({
       alias('tabletype', $.identifier),
       alias('TABLETYPE', $.identifier),
       alias('Tabletype', $.identifier),
+      // Allow 'ShowFilter' to be used as an identifier in variable contexts
+      alias('ShowFilter', $.identifier),
+      alias('showfilter', $.identifier),
+      alias('SHOWFILTER', $.identifier),
+      alias('Showfilter', $.identifier),
       // Allow 'DataCaptionExpression' to be used as an identifier in variable contexts
       alias(kw('datacaptionexpression'), $.identifier),
       // Allow 'Enum' to be used as an identifier in variable contexts
@@ -4389,13 +4508,36 @@ module.exports = grammar({
       // Allow 'ApiVersion' to be used as an identifier in variable contexts
       alias(kw('apiversion'), $.identifier),
       // Allow 'Filters' to be used as an identifier in variable contexts
-      alias('Filters', $.identifier),
-      alias('filters', $.identifier),
-      alias('FILTERS', $.identifier),
+      alias(kw('filters'), $.identifier),
       // Allow 'Visible' to be used as an identifier in variable contexts
       alias('Visible', $.identifier),
       alias('visible', $.identifier),
-      alias('VISIBLE', $.identifier)
+      alias('VISIBLE', $.identifier),
+      // Allow 'HelpLink' to be used as an identifier in variable contexts - using kw() for parser consistency
+      alias(kw('helplink'), $.identifier),
+      // Allow 'Layout' to be used as an identifier in variable contexts
+      alias('Layout', $.identifier),
+      alias('layout', $.identifier),
+      alias('LAYOUT', $.identifier),
+      // Allow 'Actions' to be used as an identifier in variable contexts
+      alias('Actions', $.identifier),
+      alias('actions', $.identifier),
+      alias('ACTIONS', $.identifier),
+      // Allow 'Permissions' to be used as an identifier in variable contexts
+      alias('Permissions', $.identifier),
+      alias('permissions', $.identifier),
+      alias('PERMISSIONS', $.identifier),
+      // Note: 'Trigger' cannot be aliased as identifier - it breaks trigger declarations
+      // Allow 'Extensible' to be used as an identifier in variable contexts
+      alias('Extensible', $.identifier),
+      alias('extensible', $.identifier),
+      alias('EXTENSIBLE', $.identifier),
+      // Allow 'Access' to be used as an identifier in variable contexts
+      alias('Access', $.identifier),
+      alias('access', $.identifier),
+      alias('ACCESS', $.identifier),
+      // Allow 'CaptionClass' to be used as an identifier in variable contexts
+      alias(kw('captionclass'), $.identifier)
     ),
 
     // Helper rule for comma-separated variable names
@@ -4415,6 +4557,7 @@ module.exports = grammar({
         ';'
       )),
       // Label variable declaration with string literal value and optional attributes
+      // Supports trailing comma without attributes: Label 'text',;
       prec(5, seq(
         field('names', $._variable_name_list),
         ':',
@@ -4422,10 +4565,10 @@ module.exports = grammar({
         field('value', $.string_literal),
         optional(seq(
           ',',
-          field('attributes', seq(
+          optional(field('attributes', seq(
             $.label_attribute,
             repeat(seq(',', $.label_attribute))
-          ))
+          )))
         )),
         ';'
       )),
@@ -5595,11 +5738,11 @@ enum_type: $ => prec(1, seq(
       $.preproc_if,
       repeat($.pragma),
       optional($.var_section),
-      kw('begin'),
+      kw_literal('begin'),
       repeat($._statement),
       repeat($.pragma),
       $.preproc_else,
-      kw('begin'),
+      kw_literal('begin'),
       $.preproc_endif,
       repeat($._statement),
       kw('end'),
@@ -5641,6 +5784,24 @@ enum_type: $ => prec(1, seq(
       ))
     ),
 
+    // Split if-then-begin statement where begin is inside preprocessor, body outside, end in another preprocessor
+    // Pattern: #if COND \n if X then begin \n #endif \n body... \n #if COND \n end; \n #endif
+    preproc_split_if_then_begin: $ => prec(25, seq(
+      $.preproc_if,  // Opening #if
+      seq(
+        kw('if', 10),
+        field('condition', $._expression),
+        kw('then', 10),
+        kw_literal('begin', 10)
+      ),
+      $.preproc_endif,  // First #endif
+      repeat($._statement_or_preprocessor),  // Body statements (outside preprocessor)
+      $.preproc_if,  // Second #if wrapping the end
+      kw('end'),
+      optional(';'),
+      $.preproc_endif  // Second #endif
+    )),
+
     // Handle complex preprocessor pattern where if-else is fragmented across multiple #if blocks
     // Pattern: normal if-else with "end else begin", then #endif, else body, then #if wrapping "end;", then #endif
     preproc_fragmented_if_else: $ => prec(20, seq(
@@ -5650,7 +5811,7 @@ enum_type: $ => prec(1, seq(
       kw('then', 10),
       field('then_branch', $.code_block),
       kw('else', 10),
-      kw('begin', 10),
+      kw_literal('begin', 10),
       // Then a preprocessor endif that closes some earlier #if
       $.preproc_endif,
       // The else body statements
@@ -5662,8 +5823,28 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     )),
 
+    // Complete fragmented if-else including the leading #if that opens the block
+    // Pattern: #if COND ... if expr then begin ... end else begin #endif ... #if COND end; #endif
+    // The leading #if's #endif is consumed by the fragmented pattern itself
+    preproc_wrapped_fragmented_if_else: $ => prec(25, seq(
+      $.preproc_if,  // Opening #if before the if statement
+      kw('if', 10),
+      field('condition', $._expression),
+      kw('then', 10),
+      field('then_branch', $.code_block),
+      kw('else', 10),
+      kw_literal('begin', 10),
+      $.preproc_endif,  // This matches the opening #if
+      repeat($._statement_or_preprocessor),
+      $.preproc_if,
+      kw('end'),
+      optional(';'),
+      $.preproc_endif
+    )),
+
     // Handle if statements where the condition varies by preprocessor but body is shared
     // Pattern: #if CONDITION1 \n if (expr1) then \n #else \n if (expr2) then \n #endif \n shared_body
+    // Pragmas can appear between branches (e.g., #pragma warning disable/restore)
     preproc_variant_condition_if: $ => prec(25, seq(
       $.preproc_if,
       // First variant: if (condition1) then
@@ -5681,8 +5862,9 @@ enum_type: $ => prec(1, seq(
           kw('then', 10)
         )
       )),
-      // Else branch with different condition
+      // Else branch with different condition (pragmas allowed before #else)
       optional(seq(
+        repeat($.pragma),  // Allow pragmas before #else
         $.preproc_else,
         seq(
           kw('if', 10),
@@ -5829,8 +6011,10 @@ enum_type: $ => prec(1, seq(
 
 
     // Define code blocks with explicit keyword handling
+    // Using kw_literal for 'begin' to ensure word boundary detection works
+    // This prevents 'BeginTotalAccNo' from being parsed as 'begin' + 'TotalAccNo'
     code_block: $ => prec.right(1, seq(
-      kw('begin', 10),
+      kw_literal('begin', 10),
       optional(repeat($._statement_or_preprocessor)),
       kw('end'),
       optional(token(';')) // Explicit token
@@ -5840,6 +6024,7 @@ enum_type: $ => prec(1, seq(
       $._statement,
       $.preproc_conditional_statements,
       $.preproc_conditional_if_statement,
+      $.preproc_wrapped_fragmented_if_else,
       $.pragma
     ),
 
@@ -5903,8 +6088,10 @@ enum_type: $ => prec(1, seq(
       ':=',
       field('start', $._expression),
       field('direction', choice(
-        prec(2, alias(kw('to'), $.to)),
-        alias(kw('downto', 10), $.downto)
+        // External scanner handles word boundary check to prevent 'to' matching in 'tooltip', 'ToBeClassified'
+        // downto first since it's longer and should be tried first
+        alias($.for_downto_keyword, $.downto),
+        alias($.for_to_keyword, $.to)
       )),
       field('end', $._expression),
       kw('do', 10),
@@ -5944,12 +6131,17 @@ enum_type: $ => prec(1, seq(
       )))
     ),
 
-    asserterror_statement: $ => prec(14, seq(
-      kw('asserterror', 10),
-      field('body', choice(
-        $._expression,
-        $.code_block
-      ))
+    asserterror_statement: $ => prec(14, choice(
+      // asserterror with expression or code block
+      seq(
+        kw('asserterror', 10),
+        field('body', choice(
+          $._expression,
+          $.code_block
+        ))
+      ),
+      // Standalone asserterror; (raises last error)
+      seq(kw('asserterror', 10), ';')
     )),
 
     assignment_statement: $ => seq(
@@ -6187,6 +6379,8 @@ enum_type: $ => prec(1, seq(
       $.preproc_split_if_else,
       // Split if statement (condition in preprocessor, body outside)
       $.preproc_split_if,
+      // Split if-then-begin statement (begin in preprocessor, body outside, end in preprocessor)
+      $.preproc_split_if_then_begin,
       // Fragmented if-else statement (complex preprocessor pattern)
       $.preproc_fragmented_if_else,
       // If statement with variant conditions but shared body
@@ -6212,8 +6406,8 @@ enum_type: $ => prec(1, seq(
       kw('of', 10),
       repeat($._case_item),
       optional(choice(
-        $.else_branch,
-        $.preproc_conditional_else_branch
+        $.case_else_branch,
+        $.preproc_conditional_case_else_branch
       )),
       kw('end')
     )),
@@ -6233,21 +6427,37 @@ enum_type: $ => prec(1, seq(
     ),
 
     preproc_conditional_case: _preproc_conditional_block_template($ => $.case_branch, true),
-    
-    // Preprocessor conditional else branch for case statements
-    preproc_conditional_else_branch: _preproc_conditional_block_template($ => $.else_branch, true),
+
+    // Preprocessor conditional else branch for case statements (allows multiple statements)
+    preproc_conditional_case_else_branch: _preproc_conditional_block_template($ => $.case_else_branch, true),
 
     // _case_pattern now directly handles single or multiple patterns
-    // Updated to handle pragmas that may split pattern lists
-    _case_pattern: $ => choice(
-      // Case 1: Multiple patterns separated by commas
-      seq(
-        optional(','), // Allow optional leading comma for pragma-split patterns
+    // Updated to handle pragmas and preprocessor that may split pattern lists
+    // Preprocessor blocks can consume trailing commas, so we make commas optional
+    _case_pattern: $ => seq(
+      optional(','), // Allow optional leading comma for pragma-split patterns
+      $._single_pattern_or_preproc,
+      repeat(seq(optional(','), $._single_pattern_or_preproc))
+    ),
+
+    // Pattern element or preprocessor conditional pattern
+    _single_pattern_or_preproc: $ => choice(
+      $._single_pattern,
+      $.preproc_conditional_case_pattern
+    ),
+
+    // Preprocessor-wrapped case pattern (for patterns conditionally included in pattern lists)
+    // The trailing comma is consumed inside the preprocessor block
+    preproc_conditional_case_pattern: $ => seq(
+      $.preproc_if,
+      $._single_pattern,
+      optional(','), // Trailing comma inside preprocessor
+      optional(seq(
+        $.preproc_else,
         $._single_pattern,
-        repeat(seq(',', optional($._single_pattern))) // Make patterns optional after comma for pragma handling
-      ),
-      // Case 2: A single pattern element
-      $._single_pattern
+        optional(',')
+      )),
+      $.preproc_endif
     ),
 
     // _single_pattern defines the elements allowed within a case pattern
@@ -6263,6 +6473,7 @@ enum_type: $ => prec(1, seq(
       $._chained_expression, // Allow member expressions like Value.IsInteger
       $.unary_expression, // Allow NOT expressions in case patterns
       $.call_expression, // Allow method calls like SalesLine.Type::Item.AsInteger()
+      $.subscript_expression, // Allow array subscripts like DocumentNo[1]
       // Complex parenthesized expressions for CASE TRUE OF patterns
       prec(12, $.parenthesized_expression),
       // Boolean expressions for CASE TRUE OF patterns  
@@ -6352,29 +6563,48 @@ enum_type: $ => prec(1, seq(
       ')'
     ),
 
-    else_branch: $ => seq(
+    // Case else branch - allows multiple statements without begin/end
+    // AL (like Pascal) allows: case x of else stmt1; stmt2; end;
+    // Also supports else begin ... end; for code blocks
+    // Empty else is also valid: case x of 1: y := 1; else end;
+    case_else_branch: $ => prec.left(seq(
       kw('else', 10),
-      field('statements', $._branch_statements)
-    ),
+      choice(
+        $.code_block,  // else begin ... end;
+        repeat($._statement_or_preprocessor)  // else stmt1; stmt2; or empty else
+      )
+    )),
 
-    // DATABASE references (DATABASE::Customer pattern)
+    // DATABASE references (DATABASE::Customer or DATABASE::Namespace.Path."Table Name" patterns)
     database_reference: $ => prec(300, seq(  // Increased precedence to beat qualified_enum_value
       field('keyword', alias(kw('database'), 'database')),
       '::',
-      field('table_name', $._identifier_choice)
+      field('table_name', choice(
+        $._identifier_choice,
+        // Fully qualified namespace path: Microsoft.Service.Ledger."Service Ledger Entry"
+        $._database_namespace_path
+      ))
+    )),
+
+    // Namespace path for DATABASE:: references (e.g., Microsoft.Service.Ledger."Table Name")
+    _database_namespace_path: $ => prec(301, seq(
+      $.identifier,
+      repeat1(seq('.', $.identifier)),
+      '.',
+      $._identifier_choice
     )),
 
     // Object type qualified references (Report::"Report Name", Page::"Page Name", etc.)
+    // Uses kw_with_coloncolon to prevent standalone keywords from matching (e.g., filter(Table) should work)
     object_type_qualified_reference: $ => prec(300, seq(  // High precedence for object type patterns
-      field('object_type', choice(
-        kw('report'),
-        kw('page'),
-        kw('codeunit'),
-        kw('table'),
-        kw('xmlport'),
-        kw('query')
-      )),
-      '::',
+      choice(
+        kw_with_coloncolon('report'),
+        kw_with_coloncolon('page'),
+        kw_with_coloncolon('codeunit'),
+        kw_with_coloncolon('table'),
+        kw_with_coloncolon('xmlport'),
+        kw_with_coloncolon('query')
+      ),
       field('object_name', $._identifier_choice)
     )),
 
@@ -6436,12 +6666,6 @@ enum_type: $ => prec(1, seq(
       $._chained_expression,
       $.string_literal
     )),
-
-    _branch_statements: $ => choice(
-      $._statement,
-      $.code_block,
-      $.preproc_conditional_statements
-    ),
 
     fieldgroup_declaration: $ => seq(
       kw('fieldgroup', 10),
@@ -6599,7 +6823,10 @@ enum_type: $ => prec(1, seq(
     allowed_file_extensions_property: $ => seq(
       'AllowedFileExtensions',
       '=',
-      field('value', $._flexible_identifier_choice),
+      field('value', seq(
+        $.string_literal,
+        repeat(seq(',', $.string_literal))
+      )),
       ';'
     ),
 
@@ -6895,15 +7122,9 @@ enum_type: $ => prec(1, seq(
       $._boolean_property_template
     ),
 
-    // Contextual Property Pattern exception: Uses literal strings instead of kw()
-    // to avoid lexer conflicts when used as variable names in var sections.
-    // All case variations must also be added to _unquoted_variable_name.
+    // Uses kw_with_eq to distinguish property from variable name
     filters_property: $ => seq(
-      field('name', alias(
-        choice('Filters', 'filters', 'FILTERS'),
-        'Filters'
-      )),
-      '=',
+      alias(kw_with_eq('filters'), 'Filters'),
       field('value', choice(
         $.identifier,
         $._quoted_identifier,
@@ -7019,8 +7240,11 @@ enum_type: $ => prec(1, seq(
       $.preproc_endif
     ),
 
-    // Preprocessor conditional rules for permissionset properties
-    preproc_conditional_permissionset_properties: _preproc_conditional_block_template($ => $._permissionset_properties),
+    // Preprocessor conditional rules for permissionset properties and permissions
+    preproc_conditional_permissionset_properties: _preproc_conditional_block_template($ => choice(
+      $._permissionset_properties,
+      $.permissionset_permissions
+    )),
 
     // Preprocessor conditional rules for controladdin properties
     preproc_conditional_controladdin_properties: _preproc_conditional_block_template($ => choice($._controladdin_properties, $.property_list)),
@@ -7124,9 +7348,9 @@ enum_type: $ => prec(1, seq(
 
     pragma: $ => new RustRegex('#pragma[^\\n\\r]*'),
 
-    preproc_region: $ => new RustRegex('#\\s*region[^\\n\\r]*', 'i'),
+    preproc_region: $ => new RustRegex('(?i)#\\s*region[^\\n\\r]*'),
 
-    preproc_endregion: $ => new RustRegex('#endregion[^\\n\\r]*'),
+    preproc_endregion: $ => new RustRegex('(?i)#\\s*endregion[^\\n\\r]*'),
 
     comment: $ => token(seq('//', new RustRegex('[^\\n\\r]*'))),
 
@@ -7880,7 +8104,7 @@ enum_type: $ => prec(1, seq(
 
     // Centralized identifier choice pattern (appears 35+ times)
     _identifier_choice: $ => prec(2, choice(
-      $.identifier, 
+      $.identifier,
       $._quoted_identifier,
       // Allow common End* identifiers that conflict with 'end' keyword
       alias(kw('end'), $.identifier),

@@ -37,8 +37,8 @@ codeunit 50000 "Test"
   (codeunit_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (ERROR
-      (name
+    (procedure
+      name: (name
         (identifier))
       (var_section
         (variable_declaration
@@ -52,11 +52,11 @@ codeunit 50000 "Test"
           type: (type_specification
             (codeunit_type
               reference: (quoted_identifier)))))
-      (preproc_if
-        condition: (preproc_not_expression
-          (identifier)))
-      (if_statement
-        (preproc_fragmented_if_else
+      (code_block
+        (preproc_wrapped_fragmented_if_else
+          (preproc_if
+            condition: (preproc_not_expression
+              (identifier)))
           condition: (unary_expression
             operator: (unary_operator)
             operand: (call_expression
@@ -143,5 +143,4 @@ codeunit 50000 "Test"
           (preproc_if
             condition: (preproc_not_expression
               (identifier)))
-          (preproc_endif)))
-      (identifier))))
+          (preproc_endif))))))
