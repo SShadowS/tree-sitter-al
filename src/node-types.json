@@ -38411,7 +38411,7 @@
     "fields": {
       "else_header": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -38568,6 +38568,10 @@
         },
         {
           "type": "help_link_property",
+          "named": true
+        },
+        {
+          "type": "implements_clause",
           "named": true
         },
         {

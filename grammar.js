@@ -2054,6 +2054,7 @@ module.exports = grammar({
     ),
 
     // Preprocessor-split codeunit declaration (different implements in each branch)
+    // Supports nested #if/#else/#endif for multi-version conditionals
     preproc_split_codeunit_declaration: $ => seq(
       $.preproc_if,
       repeat($.pragma), // Allow pragmas like #pragma warning disable
@@ -2061,12 +2062,28 @@ module.exports = grammar({
       repeat($.pragma), // Allow pragmas like #pragma warning restore
       $.preproc_else,
       repeat($.pragma),
-      field('else_header', $._codeunit_header),
-      repeat($.pragma),
-      $.preproc_endif,
+      // Support either simple header or nested preprocessor conditionals
+      choice(
+        seq(field('else_header', $._codeunit_header), repeat($.pragma), $.preproc_endif),
+        $._nested_preproc_codeunit_header
+      ),
       '{',
       repeat($._codeunit_body_element),
       '}'
+    ),
+
+    // Nested preprocessor for codeunit headers (handles #if not CLEAN24 ... #else #if not CLEAN26 ... patterns)
+    _nested_preproc_codeunit_header: $ => seq(
+      $.preproc_if,
+      repeat($.pragma),
+      $._codeunit_header,
+      repeat($.pragma),
+      $.preproc_else,
+      repeat($.pragma),
+      choice(
+        seq($._codeunit_header, repeat($.pragma), $.preproc_endif, repeat($.pragma), $.preproc_endif),
+        seq($._nested_preproc_codeunit_header, $.preproc_endif)
+      )
     ),
 
 

@@ -8169,23 +8169,37 @@
           }
         },
         {
-          "type": "FIELD",
-          "name": "else_header",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_codeunit_header"
-          }
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "pragma"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "preproc_endif"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "else_header",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_codeunit_header"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "pragma"
+                  }
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_endif"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_nested_preproc_codeunit_header"
+            }
+          ]
         },
         {
           "type": "STRING",
@@ -8201,6 +8215,93 @@
         {
           "type": "STRING",
           "value": "}"
+        }
+      ]
+    },
+    "_nested_preproc_codeunit_header": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pragma"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_codeunit_header"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pragma"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_else"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pragma"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_codeunit_header"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "pragma"
+                  }
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_endif"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "pragma"
+                  }
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_endif"
+                }
+              ]
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_nested_preproc_codeunit_header"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_endif"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
