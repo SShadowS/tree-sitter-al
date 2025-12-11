@@ -135,6 +135,7 @@ module.exports = grammar({
   conflicts: $ => [
     [$.preprocessor_file_conditional, $.preproc_conditional_using],
     [$.preprocessor_file_conditional, $.preproc_split_enum_declaration, $.preproc_split_codeunit_declaration],  // Split object declarations
+    [$._layout_element, $.preproc_split_field_section],  // Split field sections in layouts
     [$.assignment_expression, $._assignable_expression],
     [$.assignment_statement, $.assignment_expression],
     [$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values],
@@ -150,6 +151,8 @@ module.exports = grammar({
     [$.preproc_conditional_procedures, $.preproc_split_procedure],  // Attributes conflict - exact
     [$._expression, $._extended_value_choice],  // Filter expression range ambiguity
     [$._literal_value, $._extended_value_choice],  // Filter expression literal range ambiguity
+    [$._single_pattern_or_preproc, $.preproc_conditional_case_pattern],  // Preprocessor in case pattern list
+    [$._expression, $._single_pattern],  // Identifier in case pattern can be expression or pattern
   ],
 
   externals: $ => [
@@ -2029,6 +2032,7 @@ module.exports = grammar({
       $.preproc_conditional_object_properties,
       $.var_section,
       $.preproc_conditional_var_sections,
+      $.preproc_conditional_mixed_content,  // Support mixed var/procedure/trigger in preprocessor
       $.procedure,
       $.preproc_split_procedure,
       $.preproc_procedure_body_split,
@@ -3070,7 +3074,20 @@ module.exports = grammar({
       '}'
     ),
 
-    field_section: $ => seq(
+    field_section: $ => choice(
+      // Regular field section
+      seq(
+        $._field_section_header,
+        '{',
+        repeat($._field_properties),
+        '}'
+      ),
+      // Preprocessor-split field with different names in branches
+      $.preproc_split_field_section
+    ),
+
+    // Field section header for reuse
+    _field_section_header: $ => seq(
       kw('field'),
       '(',
       field('control_id', choice($.string_literal, $._quoted_identifier, $.integer, $.identifier)),
@@ -3083,7 +3100,20 @@ module.exports = grammar({
         '(',
         field('control_name', $._identifier_choice),
         ')'
-      )),
+      ))
+    ),
+
+    // Preprocessor-split field section (different field names in branches)
+    preproc_split_field_section: $ => seq(
+      $.preproc_if,
+      repeat($.pragma),
+      field('if_header', $._field_section_header),
+      repeat($.pragma),
+      $.preproc_else,
+      repeat($.pragma),
+      field('else_header', $._field_section_header),
+      repeat($.pragma),
+      $.preproc_endif,
       '{',
       repeat($._field_properties),
       '}'
@@ -6381,16 +6411,32 @@ enum_type: $ => prec(1, seq(
     preproc_conditional_case_else_branch: _preproc_conditional_block_template($ => $.case_else_branch, true),
 
     // _case_pattern now directly handles single or multiple patterns
-    // Updated to handle pragmas that may split pattern lists
-    _case_pattern: $ => choice(
-      // Case 1: Multiple patterns separated by commas
-      seq(
-        optional(','), // Allow optional leading comma for pragma-split patterns
+    // Updated to handle pragmas and preprocessor that may split pattern lists
+    // Preprocessor blocks can consume trailing commas, so we make commas optional
+    _case_pattern: $ => seq(
+      optional(','), // Allow optional leading comma for pragma-split patterns
+      $._single_pattern_or_preproc,
+      repeat(seq(optional(','), $._single_pattern_or_preproc))
+    ),
+
+    // Pattern element or preprocessor conditional pattern
+    _single_pattern_or_preproc: $ => choice(
+      $._single_pattern,
+      $.preproc_conditional_case_pattern
+    ),
+
+    // Preprocessor-wrapped case pattern (for patterns conditionally included in pattern lists)
+    // The trailing comma is consumed inside the preprocessor block
+    preproc_conditional_case_pattern: $ => seq(
+      $.preproc_if,
+      $._single_pattern,
+      optional(','), // Trailing comma inside preprocessor
+      optional(seq(
+        $.preproc_else,
         $._single_pattern,
-        repeat(seq(',', optional($._single_pattern))) // Make patterns optional after comma for pragma handling
-      ),
-      // Case 2: A single pattern element
-      $._single_pattern
+        optional(',')
+      )),
+      $.preproc_endif
     ),
 
     // _single_pattern defines the elements allowed within a case pattern

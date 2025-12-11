@@ -107,3 +107,53 @@ codeunit 50100 Test
               (identifier)
               (integer))))))))
 
+
+========================================================================
+Case statement with preprocessor conditional in pattern list
+========================================================================
+
+codeunit 50100 Test
+{
+    procedure Test()
+    begin
+        case x of
+            DATABASE::"A",
+#if not CLEAN25
+            DATABASE::"B",
+#endif
+            DATABASE::"C":
+                y := 1;
+        end;
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (identifier)
+    (procedure
+      (name
+        (identifier))
+      (code_block
+        (case_statement
+          (identifier)
+          (case_branch
+            (qualified_enum_value
+              (identifier)
+              (quoted_identifier))
+            (preproc_conditional_case_pattern
+              (preproc_if
+                (preproc_not_expression
+                  (identifier)))
+              (qualified_enum_value
+                (identifier)
+                (quoted_identifier))
+              (preproc_endif))
+            (qualified_enum_value
+              (identifier)
+              (quoted_identifier))
+            (assignment_expression
+              (identifier)
+              (integer))))))))

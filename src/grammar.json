@@ -8056,6 +8056,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "preproc_conditional_mixed_content"
+        },
+        {
+          "type": "SYMBOL",
           "name": "procedure"
         },
         {
@@ -12714,6 +12718,39 @@
       ]
     },
     "field_section": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_field_section_header"
+            },
+            {
+              "type": "STRING",
+              "value": "{"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_field_properties"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "}"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_split_field_section"
+        }
+      ]
+    },
+    "_field_section_header": {
       "type": "SEQ",
       "members": [
         {
@@ -12809,6 +12846,67 @@
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "preproc_split_field_section": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pragma"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "if_header",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_field_section_header"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pragma"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_else"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pragma"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "else_header",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_field_section_header"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pragma"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
         },
         {
           "type": "STRING",
@@ -28838,56 +28936,122 @@
       ]
     },
     "_case_pattern": {
-      "type": "CHOICE",
+      "type": "SEQ",
       "members": [
         {
-          "type": "SEQ",
+          "type": "CHOICE",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": ","
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
+              "type": "STRING",
+              "value": ","
             },
             {
-              "type": "SYMBOL",
-              "name": "_single_pattern"
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_single_pattern_or_preproc"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
                 "members": [
                   {
                     "type": "STRING",
                     "value": ","
                   },
                   {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "_single_pattern"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
+                    "type": "BLANK"
                   }
                 ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_single_pattern_or_preproc"
               }
+            ]
+          }
+        }
+      ]
+    },
+    "_single_pattern_or_preproc": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_single_pattern"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_case_pattern"
+        }
+      ]
+    },
+    "preproc_conditional_case_pattern": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_single_pattern"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ","
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_single_pattern"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": ","
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
             }
           ]
         },
         {
           "type": "SYMBOL",
-          "name": "_single_pattern"
+          "name": "preproc_endif"
         }
       ]
     },
@@ -37748,6 +37912,10 @@
       "preproc_split_codeunit_declaration"
     ],
     [
+      "_layout_element",
+      "preproc_split_field_section"
+    ],
+    [
       "assignment_expression",
       "_assignable_expression"
     ],
@@ -37806,6 +37974,14 @@
     [
       "_literal_value",
       "_extended_value_choice"
+    ],
+    [
+      "_single_pattern_or_preproc",
+      "preproc_conditional_case_pattern"
+    ],
+    [
+      "_expression",
+      "_single_pattern"
     ]
   ],
   "precedences": [],

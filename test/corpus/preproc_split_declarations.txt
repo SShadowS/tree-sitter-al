@@ -85,3 +85,50 @@ enum 50100 TestEnum implements Interface2
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)))))
+
+========================================================================
+Preprocessor-split field section with different names
+========================================================================
+
+page 50100 TestPage
+{
+    layout
+    {
+        area(content)
+        {
+#if CONDITION
+#pragma warning disable AA0100
+            field("Field.A"; Source)
+#pragma warning restore AA0100
+#else
+            field("Field.B"; Source)
+#endif
+            {
+                ApplicationArea = All;
+            }
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (layout_section
+      (area_section
+        (field_section
+          (preproc_split_field_section
+            (preproc_if
+              condition: (identifier))
+            (pragma)
+            control_id: (quoted_identifier)
+            source_or_field_name: (identifier)
+            (pragma)
+            (preproc_else)
+            control_id: (quoted_identifier)
+            source_or_field_name: (identifier)
+            (preproc_endif)
+            (application_area_property
+              value: (identifier))))))))
