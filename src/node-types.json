@@ -5978,6 +5978,340 @@
     }
   },
   {
+    "type": "case_else_branch",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "biginteger",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "conditional_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "enum_keyword_qualified_value",
+            "named": true
+          },
+          {
+            "type": "enum_type_reference",
+            "named": true
+          },
+          {
+            "type": "field_access",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_operator",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "in_operator",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "additive_expression",
+          "named": true
+        },
+        {
+          "type": "asserterror_statement",
+          "named": true
+        },
+        {
+          "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "assignment_statement",
+          "named": true
+        },
+        {
+          "type": "biginteger",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "call_expression",
+          "named": true
+        },
+        {
+          "type": "case_statement",
+          "named": true
+        },
+        {
+          "type": "code_block",
+          "named": true
+        },
+        {
+          "type": "comparison_expression",
+          "named": true
+        },
+        {
+          "type": "conditional_expression",
+          "named": true
+        },
+        {
+          "type": "database_reference",
+          "named": true
+        },
+        {
+          "type": "date_literal",
+          "named": true
+        },
+        {
+          "type": "datetime_literal",
+          "named": true
+        },
+        {
+          "type": "decimal",
+          "named": true
+        },
+        {
+          "type": "empty_statement",
+          "named": true
+        },
+        {
+          "type": "enum_keyword_qualified_value",
+          "named": true
+        },
+        {
+          "type": "enum_type_reference",
+          "named": true
+        },
+        {
+          "type": "exit_statement",
+          "named": true
+        },
+        {
+          "type": "field_access",
+          "named": true
+        },
+        {
+          "type": "for_statement",
+          "named": true
+        },
+        {
+          "type": "foreach_statement",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "if_statement",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "logical_expression",
+          "named": true
+        },
+        {
+          "type": "member_expression",
+          "named": true
+        },
+        {
+          "type": "multiplicative_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_if_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_statements",
+          "named": true
+        },
+        {
+          "type": "preproc_wrapped_fragmented_if_else",
+          "named": true
+        },
+        {
+          "type": "qualified_enum_value",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        },
+        {
+          "type": "range_expression",
+          "named": true
+        },
+        {
+          "type": "repeat_statement",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        },
+        {
+          "type": "subscript_expression",
+          "named": true
+        },
+        {
+          "type": "time_literal",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        },
+        {
+          "type": "while_statement",
+          "named": true
+        },
+        {
+          "type": "with_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "case_statement",
     "named": true,
     "fields": {
@@ -6267,7 +6601,7 @@
           "named": true
         },
         {
-          "type": "else_branch",
+          "type": "case_else_branch",
           "named": true
         },
         {
@@ -6275,7 +6609,7 @@
           "named": true
         },
         {
-          "type": "preproc_conditional_else_branch",
+          "type": "preproc_conditional_case_else_branch",
           "named": true
         }
       ]
@@ -6760,7 +7094,7 @@
     "fields": {
       "object_id": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "integer",
@@ -6770,7 +7104,7 @@
       },
       "object_name": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -6953,6 +7287,10 @@
         },
         {
           "type": "preproc_region",
+          "named": true
+        },
+        {
+          "type": "preproc_split_codeunit_declaration",
           "named": true
         },
         {
@@ -10089,9 +10427,13 @@
         ]
       },
       "table_name": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
+          {
+            "type": ".",
+            "named": false
+          },
           {
             "type": "identifier",
             "named": true
@@ -10869,344 +11211,6 @@
     }
   },
   {
-    "type": "else_branch",
-    "named": true,
-    "fields": {
-      "left": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
-            "type": "biginteger",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "comparison_expression",
-            "named": true
-          },
-          {
-            "type": "conditional_expression",
-            "named": true
-          },
-          {
-            "type": "database_reference",
-            "named": true
-          },
-          {
-            "type": "date_literal",
-            "named": true
-          },
-          {
-            "type": "datetime_literal",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "enum_keyword_qualified_value",
-            "named": true
-          },
-          {
-            "type": "enum_type_reference",
-            "named": true
-          },
-          {
-            "type": "field_access",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "in_operator",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "logical_expression",
-            "named": true
-          },
-          {
-            "type": "member_expression",
-            "named": true
-          },
-          {
-            "type": "multiplicative_expression",
-            "named": true
-          },
-          {
-            "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "qualified_enum_value",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "range_expression",
-            "named": true
-          },
-          {
-            "type": "string_literal",
-            "named": true
-          },
-          {
-            "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "time_literal",
-            "named": true
-          },
-          {
-            "type": "type_specification",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "operator": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "in_operator",
-            "named": true
-          }
-        ]
-      },
-      "right": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "type_specification",
-            "named": true
-          }
-        ]
-      },
-      "statements": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": ";",
-            "named": false
-          },
-          {
-            "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "asserterror_statement",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_statement",
-            "named": true
-          },
-          {
-            "type": "biginteger",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "case_statement",
-            "named": true
-          },
-          {
-            "type": "code_block",
-            "named": true
-          },
-          {
-            "type": "comparison_expression",
-            "named": true
-          },
-          {
-            "type": "conditional_expression",
-            "named": true
-          },
-          {
-            "type": "database_reference",
-            "named": true
-          },
-          {
-            "type": "date_literal",
-            "named": true
-          },
-          {
-            "type": "datetime_literal",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "empty_statement",
-            "named": true
-          },
-          {
-            "type": "enum_keyword_qualified_value",
-            "named": true
-          },
-          {
-            "type": "enum_type_reference",
-            "named": true
-          },
-          {
-            "type": "exit_statement",
-            "named": true
-          },
-          {
-            "type": "field_access",
-            "named": true
-          },
-          {
-            "type": "for_statement",
-            "named": true
-          },
-          {
-            "type": "foreach_statement",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "if_statement",
-            "named": true
-          },
-          {
-            "type": "in_operator",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "logical_expression",
-            "named": true
-          },
-          {
-            "type": "member_expression",
-            "named": true
-          },
-          {
-            "type": "multiplicative_expression",
-            "named": true
-          },
-          {
-            "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "preproc_conditional_statements",
-            "named": true
-          },
-          {
-            "type": "qualified_enum_value",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "range_expression",
-            "named": true
-          },
-          {
-            "type": "repeat_statement",
-            "named": true
-          },
-          {
-            "type": "string_literal",
-            "named": true
-          },
-          {
-            "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "time_literal",
-            "named": true
-          },
-          {
-            "type": "type_specification",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          },
-          {
-            "type": "while_statement",
-            "named": true
-          },
-          {
-            "type": "with_statement",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "empty_statement",
     "named": true,
     "fields": {}
@@ -11877,7 +11881,7 @@
     "fields": {
       "object_id": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "integer",
@@ -11887,7 +11891,7 @@
       },
       "object_name": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -12026,6 +12030,10 @@
         },
         {
           "type": "preproc_conditional_enum_content",
+          "named": true
+        },
+        {
+          "type": "preproc_split_enum_declaration",
           "named": true
         },
         {
@@ -31578,6 +31586,37 @@
     }
   },
   {
+    "type": "preproc_conditional_case_else_branch",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "case_else_branch",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_controladdin_elements",
     "named": true,
     "fields": {},
@@ -31778,37 +31817,6 @@
         },
         {
           "type": "sql_join_type_property",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "preproc_conditional_else_branch",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "else_branch",
-          "named": true
-        },
-        {
-          "type": "preproc_elif",
-          "named": true
-        },
-        {
-          "type": "preproc_else",
-          "named": true
-        },
-        {
-          "type": "preproc_endif",
-          "named": true
-        },
-        {
-          "type": "preproc_if",
           "named": true
         }
       ]
@@ -37958,6 +37966,602 @@
         },
         {
           "type": "with_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_split_codeunit_declaration",
+    "named": true,
+    "fields": {
+      "else_header": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "implements_clause",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "if_header": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "implements_clause",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "object_id": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "object_name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "about_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "about_text_property",
+          "named": true
+        },
+        {
+          "type": "about_title_ml_property",
+          "named": true
+        },
+        {
+          "type": "about_title_property",
+          "named": true
+        },
+        {
+          "type": "access_by_permission_property",
+          "named": true
+        },
+        {
+          "type": "access_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_ml_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "card_page_id_property",
+          "named": true
+        },
+        {
+          "type": "context_sensitive_help_page_property",
+          "named": true
+        },
+        {
+          "type": "data_access_intent_property",
+          "named": true
+        },
+        {
+          "type": "data_per_company_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "drilldown_pageid_property",
+          "named": true
+        },
+        {
+          "type": "event_subscriber_instance_property",
+          "named": true
+        },
+        {
+          "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "help_link_property",
+          "named": true
+        },
+        {
+          "type": "inherent_entitlements_property",
+          "named": true
+        },
+        {
+          "type": "inherent_permissions_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_property",
+          "named": true
+        },
+        {
+          "type": "lookup_pageid_property",
+          "named": true
+        },
+        {
+          "type": "navigation_page_id_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "onrun_trigger",
+          "named": true
+        },
+        {
+          "type": "page_type_property",
+          "named": true
+        },
+        {
+          "type": "permissions_property",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_object_properties",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_procedures",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_var_sections",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_endregion",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_procedure_body_split",
+          "named": true
+        },
+        {
+          "type": "preproc_region",
+          "named": true
+        },
+        {
+          "type": "preproc_split_procedure",
+          "named": true
+        },
+        {
+          "type": "procedure",
+          "named": true
+        },
+        {
+          "type": "processing_only_property",
+          "named": true
+        },
+        {
+          "type": "replicate_data_property",
+          "named": true
+        },
+        {
+          "type": "run_form_link_type_property",
+          "named": true
+        },
+        {
+          "type": "run_object_property",
+          "named": true
+        },
+        {
+          "type": "run_page_link_property",
+          "named": true
+        },
+        {
+          "type": "run_page_view_property",
+          "named": true
+        },
+        {
+          "type": "scope_property",
+          "named": true
+        },
+        {
+          "type": "shortcut_key_property",
+          "named": true
+        },
+        {
+          "type": "single_instance_property",
+          "named": true
+        },
+        {
+          "type": "source_table_property",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "table_no_property",
+          "named": true
+        },
+        {
+          "type": "table_type_property",
+          "named": true
+        },
+        {
+          "type": "test_http_request_policy_property",
+          "named": true
+        },
+        {
+          "type": "test_isolation_property",
+          "named": true
+        },
+        {
+          "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
+          "named": true
+        },
+        {
+          "type": "use_request_page_property",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_split_enum_declaration",
+    "named": true,
+    "fields": {
+      "else_header": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "implements_clause",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "if_header": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "implements_clause",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "object_id": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "object_name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "about_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "about_text_property",
+          "named": true
+        },
+        {
+          "type": "about_title_ml_property",
+          "named": true
+        },
+        {
+          "type": "about_title_property",
+          "named": true
+        },
+        {
+          "type": "access_by_permission_property",
+          "named": true
+        },
+        {
+          "type": "access_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_ml_property",
+          "named": true
+        },
+        {
+          "type": "additional_search_terms_property",
+          "named": true
+        },
+        {
+          "type": "application_area_property",
+          "named": true
+        },
+        {
+          "type": "assignment_compatibility_property",
+          "named": true
+        },
+        {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "caption_class_property",
+          "named": true
+        },
+        {
+          "type": "caption_ml_property",
+          "named": true
+        },
+        {
+          "type": "caption_property",
+          "named": true
+        },
+        {
+          "type": "context_sensitive_help_page_property",
+          "named": true
+        },
+        {
+          "type": "data_access_intent_property",
+          "named": true
+        },
+        {
+          "type": "default_implementation_property",
+          "named": true
+        },
+        {
+          "type": "description_property",
+          "named": true
+        },
+        {
+          "type": "enum_value_declaration",
+          "named": true
+        },
+        {
+          "type": "extensible_property",
+          "named": true
+        },
+        {
+          "type": "help_link_property",
+          "named": true
+        },
+        {
+          "type": "implementation_property",
+          "named": true
+        },
+        {
+          "type": "inherent_entitlements_property",
+          "named": true
+        },
+        {
+          "type": "inherent_permissions_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_ml_property",
+          "named": true
+        },
+        {
+          "type": "instructional_text_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_reason_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_state_property",
+          "named": true
+        },
+        {
+          "type": "obsolete_tag_property",
+          "named": true
+        },
+        {
+          "type": "pragma",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_enum_content",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "scope_property",
+          "named": true
+        },
+        {
+          "type": "subtype_property",
+          "named": true
+        },
+        {
+          "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_ml_property",
+          "named": true
+        },
+        {
+          "type": "tool_tip_property",
+          "named": true
+        },
+        {
+          "type": "unknown_value_implementation_property",
+          "named": true
+        },
+        {
+          "type": "usage_category_property",
           "named": true
         }
       ]

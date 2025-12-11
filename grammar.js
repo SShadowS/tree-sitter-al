@@ -134,6 +134,7 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.preprocessor_file_conditional, $.preproc_conditional_using],
+    [$.preprocessor_file_conditional, $.preproc_split_enum_declaration, $.preproc_split_codeunit_declaration],  // Split object declarations
     [$.assignment_expression, $._assignable_expression],
     [$.assignment_statement, $.assignment_expression],
     [$.preproc_conditional_enum_properties, $.preproc_conditional_enum_values],
@@ -261,19 +262,6 @@ module.exports = grammar({
       $.permissionsetextension_declaration,
       $.controladdin_declaration,
       $.entitlement_declaration
-    ),
-
-    _object_body_element: $ => choice(
-      $.attribute_item,
-      $.var_section,
-      $.preproc_conditional_var_sections,
-      $.procedure,
-      $.trigger_declaration,
-      $.pragma,
-      $.preproc_region,
-      $.preproc_endregion,
-      $.comment,
-      $.multiline_comment
     ),
 
     namespace_declaration: $ => seq(
@@ -595,16 +583,47 @@ module.exports = grammar({
       ))
     ),
 
-    enum_declaration: $ => seq(
+    enum_declaration: $ => choice(
+      // Regular enum
+      seq(
+        kw('enum'),
+        $._object_header_base,
+        optional($.implements_clause),
+        '{',
+        repeat($._enum_body_element),
+        '}'
+      ),
+      // Preprocessor-split enum with different implements clauses
+      $.preproc_split_enum_declaration
+    ),
+
+    // Shared enum body elements
+    _enum_body_element: $ => choice(
+      $._enum_properties,
+      seq(repeat($.attribute_item), $.enum_value_declaration),
+      $.preproc_conditional_enum_content  // Support mixed content in conditional blocks (properties and/or values)
+    ),
+
+    // Enum header for use in preproc splits
+    _enum_header: $ => seq(
       kw('enum'),
       $._object_header_base,
-      optional($.implements_clause),
+      optional($.implements_clause)
+    ),
+
+    // Preprocessor-split enum declaration (different implements in each branch)
+    preproc_split_enum_declaration: $ => seq(
+      $.preproc_if,
+      repeat($.pragma),
+      field('if_header', $._enum_header),
+      repeat($.pragma),
+      $.preproc_else,
+      repeat($.pragma),
+      field('else_header', $._enum_header),
+      repeat($.pragma),
+      $.preproc_endif,
       '{',
-      repeat(choice(
-        $._enum_properties,
-        seq(repeat($.attribute_item), $.enum_value_declaration),
-        $.preproc_conditional_enum_content  // Support mixed content in conditional blocks (properties and/or values)
-      )),
+      repeat($._enum_body_element),
       '}'
     ),
 
@@ -1989,30 +2008,60 @@ module.exports = grammar({
       '}'
     ),
 
-    codeunit_declaration: $ => seq(
+    codeunit_declaration: $ => choice(
+      // Regular codeunit
+      seq(
+        kw('codeunit'),
+        $._object_header_base,
+        optional($.implements_clause),
+        '{',
+        repeat($._codeunit_body_element),
+        '}'
+      ),
+      // Preprocessor-split codeunit with different implements clauses
+      $.preproc_split_codeunit_declaration
+    ),
+
+    // Shared codeunit body elements
+    _codeunit_body_element: $ => choice(
+      $.attribute_item,
+      prec(4, $._codeunit_properties), // Use individual properties
+      $.preproc_conditional_object_properties,
+      $.var_section,
+      $.preproc_conditional_var_sections,
+      $.procedure,
+      $.preproc_split_procedure,
+      $.preproc_procedure_body_split,
+      $.onrun_trigger,
+      $.trigger_declaration,
+      $.preproc_conditional_procedures,
+      // Lower precedence to prefer pragma inside var_section
+      prec(-10, $.pragma),
+      // Region directives for code organization
+      $.preproc_region,
+      $.preproc_endregion
+    ),
+
+    // Codeunit header for use in preproc splits
+    _codeunit_header: $ => seq(
       kw('codeunit'),
       $._object_header_base,
-      optional($.implements_clause),
-      '{',
-      repeat(choice(
-        $.attribute_item,
-        prec(4, $._codeunit_properties), // Use individual properties
-        $.preproc_conditional_object_properties,
-        $.var_section,
-        $.preproc_conditional_var_sections,
-        $.procedure,
-        $.preproc_split_procedure,
-        $.preproc_procedure_body_split,
-        $.onrun_trigger,
-        $.trigger_declaration,
-        $.preproc_conditional_procedures,
-        // Lower precedence to prefer pragma inside var_section
-        prec(-10, $.pragma),
+      optional($.implements_clause)
+    ),
 
-        // Region directives for code organization
-        $.preproc_region,
-        $.preproc_endregion
-      )),
+    // Preprocessor-split codeunit declaration (different implements in each branch)
+    preproc_split_codeunit_declaration: $ => seq(
+      $.preproc_if,
+      repeat($.pragma), // Allow pragmas like #pragma warning disable
+      field('if_header', $._codeunit_header),
+      repeat($.pragma), // Allow pragmas like #pragma warning restore
+      $.preproc_else,
+      repeat($.pragma),
+      field('else_header', $._codeunit_header),
+      repeat($.pragma),
+      $.preproc_endif,
+      '{',
+      repeat($._codeunit_body_element),
       '}'
     ),
 
@@ -6357,6 +6406,7 @@ enum_type: $ => prec(1, seq(
       $._chained_expression, // Allow member expressions like Value.IsInteger
       $.unary_expression, // Allow NOT expressions in case patterns
       $.call_expression, // Allow method calls like SalesLine.Type::Item.AsInteger()
+      $.subscript_expression, // Allow array subscripts like DocumentNo[1]
       // Complex parenthesized expressions for CASE TRUE OF patterns
       prec(12, $.parenthesized_expression),
       // Boolean expressions for CASE TRUE OF patterns  
@@ -6446,27 +6496,35 @@ enum_type: $ => prec(1, seq(
       ')'
     ),
 
-    else_branch: $ => seq(
-      kw('else', 10),
-      field('statements', $._branch_statements)
-    ),
-
     // Case else branch - allows multiple statements without begin/end
     // AL (like Pascal) allows: case x of else stmt1; stmt2; end;
     // Also supports else begin ... end; for code blocks
+    // Empty else is also valid: case x of 1: y := 1; else end;
     case_else_branch: $ => prec.left(seq(
       kw('else', 10),
       choice(
         $.code_block,  // else begin ... end;
-        repeat1($._statement_or_preprocessor)  // else stmt1; stmt2; (no begin/end)
+        repeat($._statement_or_preprocessor)  // else stmt1; stmt2; or empty else
       )
     )),
 
-    // DATABASE references (DATABASE::Customer pattern)
+    // DATABASE references (DATABASE::Customer or DATABASE::Namespace.Path."Table Name" patterns)
     database_reference: $ => prec(300, seq(  // Increased precedence to beat qualified_enum_value
       field('keyword', alias(kw('database'), 'database')),
       '::',
-      field('table_name', $._identifier_choice)
+      field('table_name', choice(
+        $._identifier_choice,
+        // Fully qualified namespace path: Microsoft.Service.Ledger."Service Ledger Entry"
+        $._database_namespace_path
+      ))
+    )),
+
+    // Namespace path for DATABASE:: references (e.g., Microsoft.Service.Ledger."Table Name")
+    _database_namespace_path: $ => prec(301, seq(
+      $.identifier,
+      repeat1(seq('.', $.identifier)),
+      '.',
+      $._identifier_choice
     )),
 
     // Object type qualified references (Report::"Report Name", Page::"Page Name", etc.)
@@ -6541,12 +6599,6 @@ enum_type: $ => prec(1, seq(
       $._chained_expression,
       $.string_literal
     )),
-
-    _branch_statements: $ => choice(
-      $._statement,
-      $.code_block,
-      $.preproc_conditional_statements
-    ),
 
     fieldgroup_declaration: $ => seq(
       kw('fieldgroup', 10),

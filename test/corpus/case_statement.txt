@@ -1,0 +1,109 @@
+========================================================================
+Empty case else branch
+========================================================================
+
+codeunit 50100 Test
+{
+    procedure Test()
+    begin
+        case x of
+            Database::Customer:
+                begin
+                    y := 1;
+                end;
+            Database::Vendor:
+                begin
+                    y := 2;
+                end;
+            else
+        end;
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (identifier)
+    (procedure
+      (name
+        (identifier))
+      (code_block
+        (case_statement
+          (identifier)
+          (case_branch
+            (qualified_enum_value
+              (identifier)
+              (identifier))
+            (code_block
+              (assignment_expression
+                (identifier)
+                (integer))))
+          (case_branch
+            (qualified_enum_value
+              (identifier)
+              (identifier))
+            (code_block
+              (assignment_expression
+                (identifier)
+                (integer))))
+          (case_else_branch))))))
+
+========================================================================
+Case statement with subscript expressions as patterns
+========================================================================
+
+codeunit 50100 Test
+{
+    procedure Test()
+    var
+        DocumentNo: array[3] of Code[20];
+    begin
+        case x of
+            DocumentNo[1]:
+                y := 1;
+            DocumentNo[2]:
+                y := 2;
+        end;
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (integer)
+    (identifier)
+    (procedure
+      (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (array_type
+              (integer)
+              (type_specification
+                (code_type
+                  (integer)))))))
+      (code_block
+        (case_statement
+          (identifier)
+          (case_branch
+            (subscript_expression
+              (identifier)
+              (expression_list
+                (integer)))
+            (assignment_expression
+              (identifier)
+              (integer)))
+          (case_branch
+            (subscript_expression
+              (identifier)
+              (expression_list
+                (integer)))
+            (assignment_expression
+              (identifier)
+              (integer))))))))
+
