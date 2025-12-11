@@ -26,7 +26,9 @@ enum TokenType {
     PREPROC_VAR_CONTINUATION,         // 10 - Signals #if contains ONLY variables, continue var_section
     PRAGMA_VAR_CONTINUATION,          // 11 - Signals #pragma followed by variable, continue var_section
     ATTRIBUTE_VAR_CONTINUATION,       // 12 - Signals [attr] followed by variable, continue var_section
-    REGION_VAR_CONTINUATION           // 13 - Signals #region followed by variables, continue var_section
+    REGION_VAR_CONTINUATION,          // 13 - Signals #region followed by variables, continue var_section
+    FOR_TO_KEYWORD,                   // 14 - 'to' keyword with word boundary check
+    FOR_DOWNTO_KEYWORD                // 15 - 'downto' keyword with word boundary check
 };
 
 // Keywords that ALWAYS terminate a var section (no context check needed)
@@ -722,6 +724,89 @@ bool tree_sitter_al_external_scanner_scan(
             // result == -1 and not pragma/region: don't emit preproc tokens
         }
         // Reset if we didn't find a terminator - DON'T return, let other checks run
+    }
+
+    // Check for FOR_TO_KEYWORD or FOR_DOWNTO_KEYWORD (to/downto with word boundary)
+    if (valid_symbols[FOR_TO_KEYWORD] || valid_symbols[FOR_DOWNTO_KEYWORD]) {
+        // Mark token start
+        lexer->mark_end(lexer);
+
+        // Try to match 'downto' first (longer, so must be checked first)
+        if (valid_symbols[FOR_DOWNTO_KEYWORD]) {
+            char chars[6];
+            int matched = 0;
+            bool all_match = true;
+            const char *downto = "downto";
+
+            // Check if we have 'downto' case-insensitively
+            for (int i = 0; i < 6 && !lexer->eof(lexer); i++) {
+                char c = lexer->lookahead;
+                chars[i] = c;
+                char lower = (c >= 'A' && c <= 'Z') ? c - 'A' + 'a' : c;
+                if (lower != downto[i]) {
+                    all_match = false;
+                    break;
+                }
+                matched++;
+                lexer->advance(lexer, false);
+            }
+
+            if (all_match && matched == 6) {
+                // Check word boundary - next char must NOT be identifier continuation
+                if (lexer->eof(lexer) || !is_id_continue(lexer->lookahead)) {
+                    // Mark the end after 'downto'
+                    lexer->mark_end(lexer);
+                    lexer->result_symbol = FOR_DOWNTO_KEYWORD;
+                    if (SCANNER_DEBUG) {
+                        fprintf(stderr, "SCANNER: ✓ Matched 'downto' with word boundary\n");
+                        fflush(stderr);
+                    }
+                    return true;
+                }
+            }
+            // Reset - can't rewind, so we need to re-read if trying 'to'
+            // But we already consumed characters, so let the next check handle fresh start
+        }
+
+        // Note: Since tree-sitter can't rewind, if 'downto' didn't match but started with 'd',
+        // we've consumed characters and can't try 'to'. However, this is fine because
+        // 'to' and 'downto' start with different letters ('t' vs 'd').
+        // The parser will try both tokens separately.
+
+        // We should return false here and let tree-sitter retry with FOR_TO_KEYWORD in a fresh call
+        // But since we might have consumed chars, let's check 'to' only on fresh input
+    }
+
+    // Separate check for 'to' keyword - must be on fresh input (lookahead is 't')
+    if (valid_symbols[FOR_TO_KEYWORD]) {
+        // Mark token start
+        lexer->mark_end(lexer);
+
+        // Check for 't' or 'T' at start
+        if (lexer->lookahead == 't' || lexer->lookahead == 'T') {
+            lexer->advance(lexer, false);
+            // Check for 'o' or 'O'
+            if (lexer->lookahead == 'o' || lexer->lookahead == 'O') {
+                lexer->advance(lexer, false);
+                // Check word boundary - next char must NOT be identifier continuation
+                if (lexer->eof(lexer) || !is_id_continue(lexer->lookahead)) {
+                    // Mark the end after 'to'
+                    lexer->mark_end(lexer);
+                    lexer->result_symbol = FOR_TO_KEYWORD;
+                    if (SCANNER_DEBUG) {
+                        fprintf(stderr, "SCANNER: ✓ Matched 'to' with word boundary\n");
+                        fflush(stderr);
+                    }
+                    return true;
+                }
+                // Word boundary failed - 'to' is prefix of longer word (e.g., 'tooltip', 'ToBeClassified')
+                if (SCANNER_DEBUG) {
+                    fprintf(stderr, "SCANNER: 'to' rejected - no word boundary (next='%c')\n",
+                            (lexer->lookahead >= 32 && lexer->lookahead < 127) ? (char)lexer->lookahead : '?');
+                    fflush(stderr);
+                }
+            }
+        }
     }
 
     // Check for attribute ([...]) followed by variable in var_section context

@@ -27247,47 +27247,20 @@
                 {
                   "type": "ALIAS",
                   "content": {
-                    "type": "PREC",
-                    "value": 10,
-                    "content": {
-                      "type": "TOKEN",
-                      "content": {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "STRING",
-                            "value": "to"
-                          },
-                          {
-                            "type": "STRING",
-                            "value": "TO"
-                          },
-                          {
-                            "type": "STRING",
-                            "value": "To"
-                          }
-                        ]
-                      }
-                    }
+                    "type": "SYMBOL",
+                    "name": "for_downto_keyword"
                   },
                   "named": true,
-                  "value": "to"
+                  "value": "downto"
                 },
                 {
                   "type": "ALIAS",
                   "content": {
-                    "type": "TOKEN",
-                    "content": {
-                      "type": "PREC",
-                      "value": 10,
-                      "content": {
-                        "type": "PATTERN",
-                        "value": "(?i)downto"
-                      }
-                    }
+                    "type": "SYMBOL",
+                    "name": "for_to_keyword"
                   },
                   "named": true,
-                  "value": "downto"
+                  "value": "to"
                 }
               ]
             }
@@ -38142,6 +38115,14 @@
     {
       "type": "SYMBOL",
       "name": "_region_var_continuation"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "for_to_keyword"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "for_downto_keyword"
     }
   ],
   "inline": [],

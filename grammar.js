@@ -169,7 +169,9 @@ module.exports = grammar({
     $.preproc_var_continuation,  // Signals #if contains ONLY variables, forces var_section continuation
     $._pragma_var_continuation,  // Signals pragma followed by variable, continue var_section (hidden)
     $._attribute_var_continuation,  // Signals attribute followed by variable, continue var_section (hidden)
-    $._region_var_continuation  // Signals #region followed by variables, continue var_section (hidden)
+    $._region_var_continuation,  // Signals #region followed by variables, continue var_section (hidden)
+    $.for_to_keyword,  // 'to' keyword with word boundary check (external scanner)
+    $.for_downto_keyword  // 'downto' keyword with word boundary check (external scanner)
   ],
 
   // Extras: whitespace, comments, and ignorable preprocessor directives
@@ -6086,8 +6088,10 @@ enum_type: $ => prec(1, seq(
       ':=',
       field('start', $._expression),
       field('direction', choice(
-        alias(kw_literal('to', 10), $.to),
-        alias(kw('downto', 10), $.downto)
+        // External scanner handles word boundary check to prevent 'to' matching in 'tooltip', 'ToBeClassified'
+        // downto first since it's longer and should be tried first
+        alias($.for_downto_keyword, $.downto),
+        alias($.for_to_keyword, $.to)
       )),
       field('end', $._expression),
       kw('do', 10),
