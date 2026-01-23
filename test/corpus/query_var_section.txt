@@ -52,7 +52,8 @@ query 50100 "Test Query Var"
       (code_block
         (assignment_expression
           left: (identifier)
-          right: (integer))))))
+          right: (integer))
+        (block_end)))))
 
 ================================================================================
 Query with var section and global label
@@ -124,7 +125,8 @@ query 5506 "Email Related Record"
           return_value: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (integer))))))))
+              (integer))))
+        (block_end)))))
 
 ================================================================================
 Query with conditional var section
@@ -205,7 +207,8 @@ query 50101 "Query with Conditional Var"
           (preproc_else)
           (exit_statement
             return_value: (identifier))
-          (preproc_endif))))))
+          (preproc_endif))
+        (block_end)))))
 
 ================================================================================
 Query with mixed global and local var sections
@@ -284,10 +287,12 @@ query 50102 "Mixed Var Query"
           right: (integer))
         (assignment_expression
           left: (identifier)
-          right: (identifier))))
+          right: (identifier))
+        (block_end)))
     (trigger_declaration
       name: (trigger_name)
       (code_block
         (assignment_expression
           left: (identifier)
-          right: (integer))))))
+          right: (integer))
+        (block_end)))))

@@ -42,7 +42,8 @@ codeunit 50000 "Test BigInteger"
         (assignment_expression
           left: (identifier)
           right: (biginteger))
-        (comment)))))
+        (comment)
+        (block_end)))))
 
 ================================================================================
 BigInteger literal in comparison
@@ -82,7 +83,8 @@ codeunit 50001 "Test BigInteger Compare"
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))))
+              (string_literal))))
+        (block_end)))))
 
 ================================================================================
 BigInteger literal with lowercase l
@@ -119,4 +121,5 @@ codeunit 50002 "Test BigInteger Lowercase"
           right: (biginteger))
         (assignment_expression
           left: (identifier)
-          right: (biginteger))))))
+          right: (biginteger))
+        (block_end)))))

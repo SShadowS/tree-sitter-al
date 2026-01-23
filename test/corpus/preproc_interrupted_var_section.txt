@@ -89,7 +89,8 @@ table 50000 "Test Table"
       (code_block
         (assignment_expression
           left: (identifier)
-          right: (identifier))))))
+          right: (identifier))
+        (block_end)))))
 
 ================================================================================
 Multiple var sections with preprocessor procedure between
@@ -168,7 +169,8 @@ table 50001 "Complex Test"
           left: (identifier)
           right: (boolean))
         (exit_statement
-          return_value: (identifier))))
+          return_value: (identifier))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)
@@ -179,7 +181,8 @@ table 50001 "Complex Test"
       name: (name
         (identifier))
       (code_block
-        (comment)))))
+        (comment)
+        (block_end)))))
 
 ================================================================================
 Var section with preprocessor containing only attribute and procedure start
@@ -268,4 +271,5 @@ table 50002 "Edge Case Test"
       (preproc_endif)
       (code_block
         (exit_statement
-          return_value: (identifier))))))
+          return_value: (identifier))
+        (block_end)))))

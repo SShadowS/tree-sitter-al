@@ -60,7 +60,8 @@ page 7335 "Warehouse Pick Summary"
             function: (member_expression
               object: (identifier)
               property: (identifier))
-            arguments: (argument_list)))))
+            arguments: (argument_list)))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)
@@ -105,7 +106,8 @@ page 7335 "Warehouse Pick Summary"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (identifier)))))))
+            (identifier)))
+        (block_end)))))
 
 ================================================================================
 Page with protected var section
@@ -167,7 +169,8 @@ page 50101 "Order Page"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)

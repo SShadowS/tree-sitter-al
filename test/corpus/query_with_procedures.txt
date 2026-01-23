@@ -64,7 +64,8 @@ query 100 "Test Query"
             property: (identifier))
           arguments: (argument_list
             (identifier)
-            (identifier)))))))
+            (identifier)))
+        (block_end)))))
 
 ================================================================================
 Query with multiple procedures and tracking filter
@@ -348,4 +349,5 @@ query 7308 CalcOutstandQtyOnWhseActLine
                 (field_access
                   record: (identifier)
                   field: (quoted_identifier))
-                (string_literal)))))))))
+                (string_literal)))))
+        (block_end)))))

@@ -46,7 +46,9 @@ codeunit 50000 "Test For Loop"
               field: (quoted_identifier))
             value: (identifier))
           body: (code_block
-            (comment)))))))
+            (comment)
+            (block_end)))
+        (block_end)))))
 
 ================================================================================
 For statement with member expression
@@ -93,4 +95,5 @@ codeunit 50001 "Test Member Loop"
             arguments: (argument_list
               (member_expression
                 object: (identifier)
-                property: (identifier)))))))))
+                property: (identifier)))))
+        (block_end)))))

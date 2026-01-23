@@ -59,7 +59,8 @@ page 50100 "Item Turnover Lines"
                 arguments: (argument_list)))))
         (assignment_expression
           left: (identifier)
-          right: (identifier))))))
+          right: (identifier))
+        (block_end)))))
 
 ================================================================================
 Page trigger with named return value - OnNextRecord
@@ -122,7 +123,8 @@ page 50101 "Test Page"
                 arguments: (argument_list)))))
         (assignment_expression
           left: (identifier)
-          right: (identifier))))))
+          right: (identifier))
+        (block_end)))))
 
 ================================================================================
 Field trigger with named return value
@@ -178,7 +180,8 @@ table 50100 "Test Table"
                 arguments: (argument_list
                   (identifier))))
             (exit_statement
-              return_value: (identifier))))))))
+              return_value: (identifier))
+            (block_end)))))))
 
 ================================================================================
 Trigger with quoted named return value
@@ -212,7 +215,8 @@ page 50102 "Test Page"
             operator: (unary_operator)
             operand: (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list))))
+        (block_end)))))
 
 ================================================================================
 Trigger with named return value and semicolon
@@ -260,4 +264,5 @@ page 50103 "Test Page"
             function: (member_expression
               object: (identifier)
               property: (identifier))
-            arguments: (argument_list)))))))
+            arguments: (argument_list)))
+        (block_end)))))

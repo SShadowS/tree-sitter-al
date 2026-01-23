@@ -143,7 +143,8 @@ codeunit 50101 "ReadOnly Test"
             function: (identifier)
             arguments: (argument_list
               (string_literal)
-              (identifier))))))
+              (identifier))))
+        (block_end)))
     (procedure
       name: (name
         (identifier))
@@ -165,7 +166,8 @@ codeunit 50101 "ReadOnly Test"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (identifier)))))
+            (identifier)))
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
@@ -177,7 +179,8 @@ codeunit 50101 "ReadOnly Test"
           parameter_type: (type_specification
             (basic_type))))
       (code_block
-        (comment)))))
+        (comment)
+        (block_end)))))
 
 ================================================================================
 ReadOnly with usercontrol
@@ -261,7 +264,8 @@ page 50102 "Advanced Viewer"
                   (call_expression
                     function: (identifier)
                     arguments: (argument_list
-                      (identifier))))))))))
+                      (identifier)))))
+              (block_end))))))
     (var_section
       (variable_declaration
         name: (identifier)
@@ -282,7 +286,8 @@ page 50102 "Advanced Viewer"
         (exit_statement
           return_value: (unary_expression
             operator: (unary_operator)
-            operand: (identifier)))))
+            operand: (identifier)))
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
@@ -302,7 +307,8 @@ page 50102 "Advanced Viewer"
           then_branch: (exit_statement
             return_value: (string_literal)))
         (exit_statement
-          return_value: (string_literal))))))
+          return_value: (string_literal))
+        (block_end)))))
 
 ================================================================================
 ReadOnly as enum value reference
@@ -363,7 +369,8 @@ table 50103 "Permission Settings"
             operator: (comparison_operator)
             right: (qualified_enum_value
               enum_type: (quoted_identifier)
-              value: (identifier))))))))
+              value: (identifier))))
+        (block_end)))))
 
 ================================================================================
 Height and Width as variable names with workaround

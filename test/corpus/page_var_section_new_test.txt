@@ -30,7 +30,8 @@ page 50100 "Test Page"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)
@@ -104,7 +105,8 @@ page 703 "Merge Duplicate Subform"
               value: (identifier))))
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)
@@ -141,7 +143,8 @@ page 703 "Merge Duplicate Subform"
             property: (identifier))
           arguments: (argument_list
             (identifier)
-            (boolean)))))
+            (boolean)))
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
@@ -154,4 +157,5 @@ page 703 "Merge Duplicate Subform"
             right: (string_literal))
           else_branch: (assignment_expression
             left: (identifier)
-            right: (string_literal)))))))
+            right: (string_literal)))
+        (block_end)))))

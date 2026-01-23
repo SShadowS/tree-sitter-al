@@ -44,7 +44,8 @@ codeunit 50000 "Test Split If"
                   left: (identifier)
                   right: (integer))
                 (identifier)
-                (identifier)))))))))
+                (identifier)))))
+        (block_end)))))
 
 ================================================================================
 Multiple preprocessor split if statements
@@ -180,4 +181,5 @@ codeunit 50001 "Multiple Split If"
             (preproc_endif)
             shared_body: (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list))))
+        (block_end)))))

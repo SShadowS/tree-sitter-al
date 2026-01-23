@@ -35,7 +35,9 @@ codeunit 50000 Test
           (case_else_branch
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list)))
+          (block_end))
+        (block_end)))))
 
 ================================================================================
 Case statement with else branch and multiple statements
@@ -125,7 +127,9 @@ codeunit 50001 Test
               arguments: (argument_list
                 (identifier)
                 (identifier)
-                (identifier)))))))))
+                (identifier))))
+          (block_end))
+        (block_end)))))
 
 ================================================================================
 Case statement with normal branches and else
@@ -179,4 +183,6 @@ codeunit 50002 Test
           (case_else_branch
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list)))
+          (block_end))
+        (block_end)))))

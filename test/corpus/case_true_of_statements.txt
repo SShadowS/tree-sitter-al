@@ -48,7 +48,9 @@ table 50010 "Test Table"
                 object: (identifier)
                 property: (identifier))
               arguments: (argument_list
-                (identifier)))))))))
+                (identifier))))
+          (block_end))
+        (block_end)))))
 
 ==================
 Case TRUE OF with simple comparison
@@ -90,7 +92,9 @@ table 50011 "Test Table"
             right: (integer)
             statements: (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list)))
+          (block_end))
+        (block_end)))))
 
 ==================
 Case TRUE OF with NOT expression
@@ -130,4 +134,6 @@ table 50012 "Test Table"
           (case_else_branch
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list)))
+          (block_end))
+        (block_end)))))

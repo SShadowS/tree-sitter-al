@@ -184,7 +184,8 @@ codeunit 50000 "AL Built-in Functions Test"
               (quoted_identifier)
               (string_literal)
               (string_literal)))
-          property: (identifier))))
+          property: (identifier))
+        (block_end)))
     (procedure
       name: (name
         (identifier))
@@ -242,7 +243,8 @@ codeunit 50000 "AL Built-in Functions Test"
             (qualified_enum_value
               enum_type: (identifier)
               value: (quoted_identifier))
-            (identifier)))))
+            (identifier)))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)

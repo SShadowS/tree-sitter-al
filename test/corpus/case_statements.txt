@@ -41,7 +41,8 @@ table 50001 "Test Table"
                 right: (integer))
               (assignment_expression
                 left: (identifier)
-                right: (integer))))
+                right: (integer))
+              (block_end)))
           (case_branch
             pattern: (qualified_enum_value
               enum_type: (identifier)
@@ -52,7 +53,10 @@ table 50001 "Test Table"
                 right: (integer))
               (assignment_expression
                 left: (identifier)
-                right: (integer)))))))))
+                right: (integer))
+              (block_end)))
+          (block_end))
+        (block_end)))))
 
 ==================
 Case with string literals
@@ -90,7 +94,9 @@ table 50002 "Test Table"
             pattern: (string_literal)
             statements: (assignment_expression
               left: (identifier)
-              right: (integer))))))))
+              right: (integer)))
+          (block_end))
+        (block_end)))))
 
 ==================
 Case with multiple patterns per branch
@@ -148,7 +154,10 @@ table 50003 "Test Table"
                 right: (integer))
               (assignment_expression
                 left: (identifier)
-                right: (string_literal)))))))))
+                right: (string_literal))
+              (block_end)))
+          (block_end))
+        (block_end)))))
 
 ==================
 Case with else clause
@@ -192,7 +201,9 @@ table 50004 "Test Table"
           (case_else_branch
             (assignment_expression
               left: (identifier)
-              right: (integer))))))))
+              right: (integer)))
+          (block_end))
+        (block_end)))))
 
 ==================
 Case with else block
@@ -237,4 +248,7 @@ table 50005 "Test Table"
                 right: (integer))
               (assignment_expression
                 left: (identifier)
-                right: (string_literal)))))))))
+                right: (string_literal))
+              (block_end)))
+          (block_end))
+        (block_end)))))

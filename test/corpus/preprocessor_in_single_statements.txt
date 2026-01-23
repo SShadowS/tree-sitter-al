@@ -49,7 +49,8 @@ codeunit 50200 TestWhileSingle
               right: (additive_expression
                 left: (identifier)
                 right: (integer)))
-            (preproc_endif)))))))
+            (preproc_endif)))
+        (block_end)))))
 
 ================================================================================
 Preprocessor in for single statement
@@ -102,7 +103,8 @@ codeunit 50201 TestForSingle
               function: (identifier)
               arguments: (argument_list
                 (identifier)))
-            (preproc_endif)))))))
+            (preproc_endif)))
+        (block_end)))))
 
 ================================================================================
 Preprocessor in foreach single statement
@@ -160,7 +162,8 @@ codeunit 50202 TestForeachSingle
               function: (identifier)
               arguments: (argument_list
                 (identifier)))
-            (preproc_endif)))))))
+            (preproc_endif)))
+        (block_end)))))
 
 ================================================================================
 Preprocessor in with single statement
@@ -213,7 +216,8 @@ codeunit 50203 TestWithSingle
               arguments: (argument_list
                 (identifier)
                 (boolean)))
-            (preproc_endif)))))))
+            (preproc_endif)))
+        (block_end)))))
 
 ================================================================================
 Preprocessor in if single statement
@@ -266,7 +270,8 @@ codeunit 50204 TestIfSingle
               function: (identifier)
               arguments: (argument_list
                 (string_literal)))
-            (preproc_endif)))))))
+            (preproc_endif)))
+        (block_end)))))
 
 ================================================================================
 Preprocessor in case single statement
@@ -328,4 +333,6 @@ codeunit 50205 TestCaseSingle
             statements: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal))))
+          (block_end))
+        (block_end)))))

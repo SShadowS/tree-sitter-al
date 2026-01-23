@@ -43,7 +43,8 @@ codeunit 50000 "Install Codeunit"
           function: (member_expression
             object: (identifier)
             property: (identifier))
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (block_end)))
     (trigger_declaration
       name: (trigger_name)
       (var_section
@@ -59,7 +60,8 @@ codeunit 50000 "Install Codeunit"
             property: (identifier))
           arguments: (argument_list
             (string_literal)
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ================================================================================
 Trigger without semicolon (backward compatibility)
@@ -90,4 +92,5 @@ codeunit 50001 "Normal Codeunit"
       (code_block
         (assignment_expression
           left: (identifier)
-          right: (string_literal))))))
+          right: (string_literal))
+        (block_end)))))

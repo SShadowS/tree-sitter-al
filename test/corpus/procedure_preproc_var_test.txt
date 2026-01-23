@@ -46,7 +46,8 @@ codeunit 50000 "Test Codeunit"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ==================
 Procedure with simple preprocessor var section
@@ -85,4 +86,5 @@ codeunit 50001 "Test Codeunit"
               (basic_type))))
         (preproc_endif))
       (code_block
-        (exit_statement)))))
+        (exit_statement)
+        (block_end)))))

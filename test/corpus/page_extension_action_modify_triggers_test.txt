@@ -52,7 +52,8 @@ pageextension 50000 "AL Test Tool Ext" extends "AL Test Tool"
                 object: (identifier)
                 property: (identifier))
               arguments: (argument_list
-                (quoted_identifier))))))
+                (quoted_identifier)))
+            (block_end))))
       (modify_action
         target: (identifier)
         (trigger_declaration
@@ -69,7 +70,8 @@ pageextension 50000 "AL Test Tool Ext" extends "AL Test Tool"
                 object: (identifier)
                 property: (identifier))
               arguments: (argument_list
-                (quoted_identifier)))))))))
+                (quoted_identifier)))
+            (block_end)))))))
 
 ================================================================================
 Page extension action modify with mixed properties and triggers
@@ -111,6 +113,7 @@ pageextension 50001 "Mixed Action Ext" extends "Base Page"
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))
+                (string_literal)))
+            (block_end)))
         (caption_property
           (string_literal))))))

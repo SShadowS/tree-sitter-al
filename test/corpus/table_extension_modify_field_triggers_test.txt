@@ -53,7 +53,8 @@ tableextension 50000 "Customer Extension" extends Customer
             then_branch: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal))))))
+                (string_literal))))
+          (block_end)))
       (field_trigger_declaration
         type: (trigger_type)
         (var_section
@@ -84,7 +85,8 @@ tableextension 50000 "Customer Extension" extends Customer
                 record: (member_expression
                   object: (identifier)
                   property: (identifier))
-                field: (quoted_identifier)))))))
+                field: (quoted_identifier))))
+          (block_end))))
     (modify_field_declaration
       name: (identifier)
       (caption_property
@@ -94,7 +96,8 @@ tableextension 50000 "Customer Extension" extends Customer
         (code_block
           (assignment_expression
             left: (quoted_identifier)
-            right: (identifier)))))))
+            right: (identifier))
+          (block_end))))))
 
 ================================================================================
 Table extension with generic triggers in field modify
@@ -143,4 +146,5 @@ tableextension 50001 "Item Extension" extends Item
               left: (quoted_identifier)
               right: (member_expression
                 object: (identifier)
-                property: (identifier)))))))))
+                property: (identifier))))
+          (block_end))))))

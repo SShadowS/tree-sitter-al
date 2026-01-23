@@ -37,7 +37,8 @@ codeunit 50100 TestRustStyleAttribute
               (identifier))
             parameter_type: (type_specification
               (basic_type))))
-        (code_block))
+        (code_block
+          (block_end)))
       (preproc_endif))))
 
 ========================================================================
@@ -74,7 +75,8 @@ tableextension 50100 MyTableExt extends Customer
       (procedure
         name: (name
           (identifier))
-        (code_block))
+        (code_block
+          (block_end)))
       (preproc_endif))))
 
 ========================================================================
@@ -117,5 +119,6 @@ codeunit 50100 TestMultipleAttrs
       (procedure
         name: (name
           (identifier))
-        (code_block))
+        (code_block
+          (block_end)))
       (preproc_endif))))

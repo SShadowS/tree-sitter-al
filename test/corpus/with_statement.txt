@@ -39,7 +39,9 @@ codeunit 50000 "WITH Test"
             (assignment_expression
               left: (identifier)
               right: (string_literal))
-            (identifier)))))))
+            (identifier)
+            (block_end)))
+        (block_end)))))
 
 ================================================================================
 WITH statement with single statement
@@ -74,7 +76,8 @@ codeunit 50001 "WITH Single Test"
       (code_block
         (with_statement
           record_variable: (identifier)
-          body: (identifier))))))
+          body: (identifier))
+        (block_end)))))
 
 ================================================================================
 Nested WITH statements
@@ -130,4 +133,7 @@ codeunit 50002 "Nested WITH Test"
                   left: (quoted_identifier)
                   right: (field_access
                     record: (identifier)
-                    field: (quoted_identifier)))))))))))
+                    field: (quoted_identifier)))
+                (block_end)))
+            (block_end)))
+        (block_end)))))

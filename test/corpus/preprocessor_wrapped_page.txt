@@ -78,7 +78,8 @@ codeunit 50100 "Legacy Implementation"
       (procedure
         (name
           (identifier))
-        (code_block)))
+        (code_block
+          (block_end))))
     (preproc_else)
     (codeunit_declaration
       (integer)
@@ -86,7 +87,8 @@ codeunit 50100 "Legacy Implementation"
       (procedure
         (name
           (identifier))
-        (code_block)))
+        (code_block
+          (block_end))))
     (preproc_endif))
   (pragma))
 

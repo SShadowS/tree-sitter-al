@@ -53,7 +53,8 @@ report 1111 TestReport
           (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)))))
+              (string_literal)))
+          (block_end)))
       (preproc_endif))
     (procedure
       name: (name
@@ -62,7 +63,8 @@ report 1111 TestReport
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ================================================================================
 Report with multiple preprocessor conditional procedures
@@ -109,7 +111,8 @@ report 50000 "Complex Report"
           (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)))))
+              (string_literal)))
+          (block_end)))
       (preproc_else)
       (procedure
         name: (name
@@ -118,7 +121,8 @@ report 50000 "Complex Report"
           (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)))))
+              (string_literal)))
+          (block_end)))
       (preproc_endif))
     (preproc_conditional_procedures
       (preproc_if
@@ -142,5 +146,6 @@ report 50000 "Complex Report"
         (code_block
           (assignment_expression
             left: (identifier)
-            right: (integer))))
+            right: (integer))
+          (block_end)))
       (preproc_endif))))

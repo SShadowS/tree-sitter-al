@@ -54,7 +54,8 @@ dotnet
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (block_end)))
     (procedure
       name: (name
         (identifier))
@@ -68,7 +69,8 @@ dotnet
             (dotnet_type
               reference: (dotnet_type_name)))))
       (code_block
-        (comment))))
+        (comment)
+        (block_end))))
   (dotnet_declaration
     (assembly_declaration
       name: (quoted_identifier)

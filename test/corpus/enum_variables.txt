@@ -73,7 +73,8 @@ codeunit 50111 "Enum Assignment Test"
           (identifier)
           (qualified_enum_value
             (identifier)
-            (identifier)))))))
+            (identifier)))
+        (block_end)))))
 
 ==================
 Enum Comparison in If Statement
@@ -137,7 +138,8 @@ codeunit 50112 "Enum Comparison Test"
           (call_expression
             (identifier)
             (argument_list
-              (string_literal))))))))
+              (string_literal))))
+        (block_end)))))
 
 ==================
 Enum in Case Statement
@@ -208,7 +210,9 @@ codeunit 50113 "Enum Case Test"
             (call_expression
               (identifier)
               (argument_list
-                (string_literal)))))))))
+                (string_literal))))
+          (block_end))
+        (block_end)))))
 
 ==================
 Quoted Enum Values
@@ -293,7 +297,9 @@ codeunit 50114 "Quoted Enum Values Test"
             (call_expression
               (identifier)
               (argument_list
-                (string_literal)))))))))
+                (string_literal))))
+          (block_end))
+        (block_end)))))
 
 ==================
 Return Enum Value
@@ -330,7 +336,8 @@ codeunit 50115 "Enum Return Test"
         (exit_statement
           (qualified_enum_value
             (quoted_identifier)
-            (identifier)))))
+            (identifier)))
+        (block_end)))
     (procedure
       (name
         (identifier))
@@ -347,7 +354,8 @@ codeunit 50115 "Enum Return Test"
             (quoted_identifier)
             (identifier)))
         (exit_statement
-          (identifier))))))
+          (identifier))
+        (block_end)))))
 
 ==================
 Parameter of Enum Type
@@ -410,4 +418,6 @@ codeunit 50116 "Enum Parameter Test"
             (call_expression
               (identifier)
               (argument_list
-                (string_literal)))))))))
+                (string_literal))))
+          (block_end))
+        (block_end)))))

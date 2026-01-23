@@ -6016,7 +6016,7 @@ enum_type: $ => prec(1, seq(
     code_block: $ => prec.right(1, seq(
       kw_literal('begin', 10),
       optional(repeat($._statement_or_preprocessor)),
-      kw('end'),
+      alias(kw('end'), $.block_end),
       optional(token(';')) // Explicit token
     )),
 
@@ -6409,7 +6409,7 @@ enum_type: $ => prec(1, seq(
         $.case_else_branch,
         $.preproc_conditional_case_else_branch
       )),
-      kw('end')
+      alias(kw('end'), $.block_end)
     )),
 
     _case_item: $ => choice(

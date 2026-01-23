@@ -29,7 +29,8 @@ codeunit 50100 "Prepare Sales Line For Copying"
       temporary: (temporary)
       (code_block
         (exit_statement
-          return_value: (identifier))))
+          return_value: (identifier))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)
@@ -83,7 +84,8 @@ codeunit 50200 "Temporary Record Handler"
           left: (member_expression
             object: (identifier)
             property: (identifier))
-          right: (string_literal))))))
+          right: (string_literal))
+        (block_end)))))
 
 ================================================================================
 Procedure with temporary parameter and return
@@ -145,7 +147,8 @@ codeunit 50300 "Temp Record Processor"
             record: (identifier)
             field: (quoted_identifier)))
         (exit_statement
-          return_value: (identifier))))))
+          return_value: (identifier))
+        (block_end)))))
 
 ================================================================================
 Case variations of temporary keyword
@@ -180,7 +183,8 @@ codeunit 50400 "Case Test"
           (record_type
             reference: (identifier))))
       temporary: (temporary)
-      (code_block))
+      (code_block
+        (block_end)))
     (procedure
       name: (name
         (identifier))
@@ -189,7 +193,8 @@ codeunit 50400 "Case Test"
           (record_type
             reference: (identifier))))
       temporary: (temporary)
-      (code_block))
+      (code_block
+        (block_end)))
     (procedure
       name: (name
         (identifier))
@@ -198,4 +203,5 @@ codeunit 50400 "Case Test"
           (record_type
             reference: (identifier))))
       temporary: (temporary)
-      (code_block))))
+      (code_block
+        (block_end)))))

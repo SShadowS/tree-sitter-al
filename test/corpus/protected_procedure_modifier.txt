@@ -41,17 +41,20 @@ codeunit 50100 "Test Codeunit"
           (basic_type)))
       (code_block
         (exit_statement
-          return_value: (boolean))))
+          return_value: (boolean))
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))
+      (code_block
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))
+      (code_block
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)

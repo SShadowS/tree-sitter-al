@@ -243,7 +243,9 @@ page 1518 "My Notifications"
                       (member_expression
                         (identifier)
                         (identifier))
-                      (argument_list)))))))
+                      (argument_list))
+                    (block_end)))
+                (block_end))))
           (field_section
             (identifier)
             (identifier)
@@ -272,7 +274,9 @@ page 1518 "My Notifications"
                       (member_expression
                         (identifier)
                         (identifier))
-                      (argument_list))))))))))
+                      (argument_list))
+                    (block_end)))
+                (block_end)))))))
     (trigger_declaration
       (trigger_name)
       (code_block
@@ -282,7 +286,8 @@ page 1518 "My Notifications"
             (member_expression
               (identifier)
               (identifier))
-            (argument_list)))))
+            (argument_list)))
+        (block_end)))
     (var_section
       (variable_declaration
         (identifier)

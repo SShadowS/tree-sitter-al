@@ -55,7 +55,8 @@ codeunit 50100 "Test"
               (identifier)
               (expression_list
                 (integer)))
-            (quoted_identifier)))))))
+            (quoted_identifier)))
+        (block_end)))))
 
 ================================================================================
 Correct enum assignment without spaces
@@ -114,4 +115,5 @@ codeunit 50101 "Test"
               array: (identifier)
               indices: (expression_list
                 (integer)))
-            value: (quoted_identifier)))))))
+            value: (quoted_identifier)))
+        (block_end)))))

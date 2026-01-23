@@ -26815,11 +26815,16 @@
             ]
           },
           {
-            "type": "TOKEN",
+            "type": "ALIAS",
             "content": {
-              "type": "PATTERN",
-              "value": "(?i)end"
-            }
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)end"
+              }
+            },
+            "named": true,
+            "value": "block_end"
           },
           {
             "type": "CHOICE",
@@ -28827,11 +28832,16 @@
             ]
           },
           {
-            "type": "TOKEN",
+            "type": "ALIAS",
             "content": {
-              "type": "PATTERN",
-              "value": "(?i)end"
-            }
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)end"
+              }
+            },
+            "named": true,
+            "value": "block_end"
           }
         ]
       }

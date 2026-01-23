@@ -75,7 +75,8 @@ table 5880 "Test Table"
               function: (member_expression
                 object: (identifier)
                 property: (identifier))
-              arguments: (argument_list)))
+              arguments: (argument_list))
+            (block_end))
           (preproc_endif)
           (call_expression
             function: (member_expression
@@ -90,7 +91,8 @@ table 5880 "Test Table"
           (preproc_if
             condition: (preproc_not_expression
               (identifier)))
-          (preproc_endif))))
+          (preproc_endif))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)

@@ -41,7 +41,8 @@ codeunit 50200 "Exit Statements Test"
         (identifier))
       (code_block
         (exit_statement)
-        (comment)))
+        (comment)
+        (block_end)))
     (procedure
       (name
         (identifier))
@@ -51,7 +52,8 @@ codeunit 50200 "Exit Statements Test"
       (code_block
         (exit_statement
           (integer))
-        (comment)))
+        (comment)
+        (block_end)))
     (procedure
       (name
         (identifier))
@@ -69,7 +71,8 @@ codeunit 50200 "Exit Statements Test"
           (integer))
         (exit_statement
           (identifier))
-        (comment)))
+        (comment)
+        (block_end)))
     (procedure
       (name
         (identifier))
@@ -86,4 +89,5 @@ codeunit 50200 "Exit Statements Test"
       (code_block
         (exit_statement
           (identifier))
-        (comment)))))
+        (comment)
+        (block_end)))))

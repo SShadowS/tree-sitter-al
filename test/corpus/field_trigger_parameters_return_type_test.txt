@@ -46,7 +46,8 @@ page 50000 "Test Page"
               (basic_type))
             (code_block
               (exit_statement
-                (boolean)))))))))
+                (boolean))
+              (block_end))))))))
 
 ================================================================================
 Field trigger with parameters and return type - OnLookup without semicolon
@@ -96,7 +97,8 @@ page 50001 "Test Page 2"
               (basic_type))
             (code_block
               (exit_statement
-                (boolean)))))))))
+                (boolean))
+              (block_end))))))))
 
 ================================================================================
 Field trigger with multiple parameters and return type
@@ -166,7 +168,8 @@ page 50002 "Test Page 3"
                 (identifier)
                 (string_literal))
               (exit_statement
-                (boolean)))))))))
+                (boolean))
+              (block_end))))))))
 
 ================================================================================
 Field trigger without parameters but with return type
@@ -209,7 +212,8 @@ page 50003 "Test Page 4"
               (basic_type))
             (code_block
               (exit_statement
-                (boolean)))))))))
+                (boolean))
+              (block_end))))))))
 
 ================================================================================
 Field trigger compatibility with basic triggers
@@ -263,7 +267,8 @@ page 50004 "Test Page 5"
               (call_expression
                 (identifier)
                 (argument_list
-                  (string_literal)))))
+                  (string_literal)))
+              (block_end)))
           (field_trigger_declaration
             (trigger_type)
             (parameter_list
@@ -277,11 +282,13 @@ page 50004 "Test Page 5"
               (basic_type))
             (code_block
               (exit_statement
-                (boolean))))
+                (boolean))
+              (block_end)))
           (field_trigger_declaration
             (trigger_type)
             (code_block
               (call_expression
                 (identifier)
                 (argument_list
-                  (string_literal))))))))))
+                  (string_literal)))
+              (block_end))))))))

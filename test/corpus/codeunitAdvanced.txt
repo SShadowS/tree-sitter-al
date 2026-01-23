@@ -117,7 +117,8 @@ codeunit 50100 MyCodeunit
           (basic_type)))
       (code_block
         (exit_statement
-          (boolean))))))
+          (boolean))
+        (block_end)))))
 
 ==================
 Basic Trigger
@@ -140,7 +141,8 @@ codeunit 50100 MyCodeunit
         (call_expression
           (identifier)
           (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ==================
 Procedure With Var Section
@@ -194,4 +196,5 @@ codeunit 50100 MyCodeunit
           (identifier)
           (field_access
             (identifier)
-            (quoted_identifier)))))))
+            (quoted_identifier)))
+        (block_end)))))

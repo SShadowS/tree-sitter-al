@@ -6598,8 +6598,12 @@
     },
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "block_end",
+          "named": true
+        },
         {
           "type": "case_branch",
           "named": true
@@ -6903,7 +6907,7 @@
     },
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "additive_expression",
@@ -6923,6 +6927,10 @@
         },
         {
           "type": "biginteger",
+          "named": true
+        },
+        {
+          "type": "block_end",
           "named": true
         },
         {
@@ -57522,6 +57530,10 @@
   },
   {
     "type": "biginteger",
+    "named": true
+  },
+  {
+    "type": "block_end",
     "named": true
   },
   {

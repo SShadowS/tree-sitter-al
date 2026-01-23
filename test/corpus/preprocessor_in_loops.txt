@@ -98,7 +98,8 @@ codeunit 50100 TestPreprocessor
                 property: (identifier))
               arguments: (argument_list))
             operator: (comparison_operator)
-            right: (integer)))))))
+            right: (integer)))
+        (block_end)))))
 
 ================================================================================
 Preprocessor directives in while loop
@@ -158,7 +159,9 @@ codeunit 50101 TestWhilePreprocessor
                 function: (identifier)
                 arguments: (argument_list
                   (identifier)))
-              (preproc_endif))))))))
+              (preproc_endif))
+            (block_end)))
+        (block_end)))))
 
 ================================================================================
 Preprocessor directives in for loop
@@ -213,4 +216,6 @@ codeunit 50102 TestForPreprocessor
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (identifier)))))))))
+                (identifier)))
+            (block_end)))
+        (block_end)))))

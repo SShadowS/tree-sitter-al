@@ -152,8 +152,13 @@
 (var_section) @indent.begin
 
 ; ============================================================================
-; BRANCH MARKERS - Align with parent keyword
+; BLOCK TERMINATORS - End indented blocks
 ; ============================================================================
+
+; The 'end' keyword (block_end node) should align with 'begin'/'case'
+; Use @indent.branch so it reduces indent on the same line the node starts
+; (not subsequent lines like @indent.dedent would do)
+(block_end) @indent.branch
 
 ; Opening and closing braces align with the declaration line
 [
@@ -194,10 +199,6 @@
 ; ============================================================================
 ; BLOCK TERMINATORS - End indented blocks
 ; ============================================================================
-
-; Note: Opening and closing braces use @indent.branch to align with their declaration
-; Note: 'end' keyword is embedded in code_block node structure and 
-; cannot be queried as a separate token in AL grammar
 
 ; ============================================================================
 ; IGNORED PATTERNS - No indentation effect

@@ -166,7 +166,8 @@ codeunit 50200 "Database References"
             statements: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))
+                (string_literal))))
+          (block_end))
         (comment)
         (if_statement
           condition: (comparison_expression
@@ -178,4 +179,5 @@ codeunit 50200 "Database References"
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))))
+              (string_literal))))
+        (block_end)))))

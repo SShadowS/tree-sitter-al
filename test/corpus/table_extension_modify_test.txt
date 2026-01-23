@@ -34,7 +34,8 @@ tableextension 50000 "Test Extension" extends "Base Table"
         (field_trigger_declaration
           type: (trigger_type)
           (code_block
-            (comment))))
+            (comment)
+            (block_end))))
       (modify_field_declaration
         name: (quoted_identifier)
         (caption_property

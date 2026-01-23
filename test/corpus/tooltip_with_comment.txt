@@ -51,7 +51,8 @@ page 123 "Test Page"
               (string_literal)))
           (trigger_declaration
             name: (trigger_name)
-            (code_block)))
+            (code_block
+              (block_end))))
         (action_declaration
           name: (quoted_identifier)
           (application_area_property
@@ -64,4 +65,5 @@ page 123 "Test Page"
               (string_literal)))
           (trigger_declaration
             name: (trigger_name)
-            (code_block)))))))
+            (code_block
+              (block_end))))))))

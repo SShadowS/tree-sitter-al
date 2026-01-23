@@ -34,7 +34,8 @@ codeunit 12345 TestCodeunit
                   enum_type: (quoted_identifier))
                 property: (identifier))
               arguments: (argument_list))
-            property: (identifier)))))))
+            property: (identifier)))
+        (block_end)))))
 
 ================================================================================
 Enum type reference with Names method call
@@ -72,7 +73,8 @@ codeunit 23456 NamesTestCodeunit
               object: (enum_type_reference
                 enum_type: (quoted_identifier))
               property: (identifier))
-            arguments: (argument_list)))))))
+            arguments: (argument_list)))
+        (block_end)))))
 
 ================================================================================
 Multiple enum type references with different methods
@@ -140,7 +142,8 @@ codeunit 34567 MultiEnumCodeunit
               object: (enum_type_reference
                 enum_type: (quoted_identifier))
               property: (identifier))
-            arguments: (argument_list)))))))
+            arguments: (argument_list)))
+        (block_end)))))
 
 ================================================================================
 Enum type reference with case variations
@@ -200,7 +203,8 @@ codeunit 45678 CaseVariationCodeunit
                   enum_type: (quoted_identifier))
                 property: (identifier))
               arguments: (argument_list))
-            property: (identifier)))))))
+            property: (identifier)))
+        (block_end)))))
 
 ================================================================================
 Enum type reference with unquoted identifier
@@ -238,4 +242,5 @@ codeunit 56789 UnquotedEnumCodeunit
                   enum_type: (identifier))
                 property: (identifier))
               arguments: (argument_list))
-            property: (identifier)))))))
+            property: (identifier)))
+        (block_end)))))

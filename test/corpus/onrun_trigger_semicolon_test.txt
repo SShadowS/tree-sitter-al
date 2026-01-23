@@ -21,7 +21,8 @@ codeunit 50000 "Test Codeunit"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ==================
 OnRun trigger without semicolon (backward compatibility)
@@ -46,7 +47,8 @@ codeunit 50001 "Test Codeunit 2"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ==================
 OnRun trigger with var section and semicolon
@@ -77,4 +79,5 @@ codeunit 50002 "Test Codeunit 3"
       (code_block
         (assignment_expression
           left: (identifier)
-          right: (string_literal))))))
+          right: (string_literal))
+        (block_end)))))

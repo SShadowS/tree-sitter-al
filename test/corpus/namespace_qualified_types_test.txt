@@ -30,7 +30,8 @@ codeunit 50100 "Library Item Tracking"
                 segment: (identifier)
                 segment: (identifier)
                 segment: (quoted_identifier))))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Codeunit parameter with namespace qualification
@@ -63,7 +64,8 @@ codeunit 50101 "Test Codeunit"
                 segment: (identifier)
                 segment: (identifier)
                 segment: (quoted_identifier))))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 XMLPort with namespace qualification
@@ -97,7 +99,8 @@ codeunit 50102 "Import Handler"
                 segment: (identifier)
                 segment: (identifier)
                 segment: (quoted_identifier))))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 TestPage with simple namespace
@@ -129,7 +132,8 @@ codeunit 50103 "Page Test"
               reference: (namespace_qualified_reference
                 namespace: (identifier)
                 segment: (identifier))))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Mixed namespace qualified and regular types
@@ -188,4 +192,5 @@ codeunit 50104 "Mixed Types"
                 namespace: (identifier)
                 segment: (identifier)
                 segment: (identifier))))))
-      (code_block))))
+      (code_block
+        (block_end)))))

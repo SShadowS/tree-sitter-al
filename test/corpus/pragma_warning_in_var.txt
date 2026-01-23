@@ -35,7 +35,8 @@ codeunit 50100 "Test Pragma"
     (procedure
       (name
         (identifier))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Pragma warning nested disable/restore in var section
@@ -98,7 +99,8 @@ codeunit 50101 "Test Nested Pragma"
     (procedure
       (name
         (identifier))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Pragma warning in local var section
@@ -136,4 +138,5 @@ codeunit 50102 "Test Local Pragma"
           (identifier)
           (type_specification
             (basic_type))))
-      (code_block))))
+      (code_block
+        (block_end)))))

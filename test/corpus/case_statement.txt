@@ -39,7 +39,8 @@ codeunit 50100 Test
             (code_block
               (assignment_expression
                 (identifier)
-                (integer))))
+                (integer))
+              (block_end)))
           (case_branch
             (qualified_enum_value
               (identifier)
@@ -47,8 +48,11 @@ codeunit 50100 Test
             (code_block
               (assignment_expression
                 (identifier)
-                (integer))))
-          (case_else_branch))))))
+                (integer))
+              (block_end)))
+          (case_else_branch)
+          (block_end))
+        (block_end)))))
 
 ========================================================================
 Case statement with subscript expressions as patterns
@@ -105,8 +109,9 @@ codeunit 50100 Test
                 (integer)))
             (assignment_expression
               (identifier)
-              (integer))))))))
-
+              (integer)))
+          (block_end))
+        (block_end)))))
 
 ========================================================================
 Case statement with preprocessor conditional in pattern list
@@ -156,4 +161,6 @@ codeunit 50100 Test
               (quoted_identifier))
             (assignment_expression
               (identifier)
-              (integer))))))))
+              (integer)))
+          (block_end))
+        (block_end)))))

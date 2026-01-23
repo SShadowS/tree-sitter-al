@@ -54,7 +54,8 @@ report 50100 "Test Report"
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal)))
+            (block_end)))))))
 
 ================================================================================
 Field trigger with preprocessor in var section
@@ -123,7 +124,8 @@ table 50100 "Test Table"
           (code_block
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list))
+            (block_end)))))))
 
 ================================================================================
 Multiple nested preprocessor conditions in trigger
@@ -186,4 +188,5 @@ page 50100 "Test Page"
       (code_block
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))))
+          arguments: (argument_list))
+        (block_end)))))

@@ -168,7 +168,8 @@ reportextension 126 "Complex Extension" extends "Sales Report"
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal))))))
+                (string_literal)))
+            (block_end))))
       (addfirst_dataitem
         target: (identifier)
         (report_dataitem_section

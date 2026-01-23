@@ -175,7 +175,8 @@ xmlport 50101 "Import Data"
                   (call_expression
                     function: (identifier)
                     arguments: (argument_list
-                      (string_literal))))))
+                      (string_literal)))
+                  (block_end))))
             (preproc_endif))
           (xmlport_table_element
             name: (identifier)
@@ -241,7 +242,8 @@ xmlport 50102 "Complex Export"
                 (trigger_declaration
                   name: (trigger_name)
                   (code_block
-                    (comment)))
+                    (comment)
+                    (block_end)))
                 (preproc_endif)))
             (preproc_endif))
           (xmlport_table_element

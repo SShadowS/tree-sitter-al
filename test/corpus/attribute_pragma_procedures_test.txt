@@ -75,7 +75,8 @@ codeunit 50100 "Test Codeunit"
             (comparison_expression
               left: (identifier)
               operator: (comparison_operator)
-              right: (string_literal))))))
+              right: (string_literal))))
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)
@@ -115,4 +116,5 @@ codeunit 50100 "Test Codeunit"
           right: (identifier))
         (assignment_expression
           left: (identifier)
-          right: (boolean))))))
+          right: (boolean))
+        (block_end)))))

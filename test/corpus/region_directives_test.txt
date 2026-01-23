@@ -28,7 +28,8 @@ codeunit 50100 "Test Codeunit"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (block_end)))
     (preproc_endregion)))
 
 ================================================================================
@@ -58,7 +59,8 @@ codeunit 50101 "Another Codeunit"
       name: (name
         (identifier))
       (code_block
-        (comment)))
+        (comment)
+        (block_end)))
     (preproc_endregion)))
 
 ================================================================================
@@ -100,7 +102,8 @@ codeunit 50102 "Nested Regions"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (block_end)))
     (preproc_region)
     (procedure
       name: (name
@@ -109,7 +112,8 @@ codeunit 50102 "Nested Regions"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (block_end)))
     (preproc_endregion)
     (preproc_endregion)))
 
@@ -210,7 +214,8 @@ codeunit 50103 "Complex Region"
       (code_block
         (assignment_expression
           left: (identifier)
-          right: (string_literal))))
+          right: (string_literal))
+        (block_end)))
     (preproc_endregion)
     (preproc_region)
     (procedure
@@ -220,7 +225,8 @@ codeunit 50103 "Complex Region"
       (code_block
         (assignment_expression
           left: (identifier)
-          right: (integer))))
+          right: (integer))
+        (block_end)))
     (preproc_endregion)))
 
 ================================================================================
@@ -264,5 +270,6 @@ codeunit 50104 "Test Region After Var"
       (code_block
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (block_end)))
     (preproc_endregion)))

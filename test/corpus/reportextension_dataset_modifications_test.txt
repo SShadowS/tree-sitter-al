@@ -42,7 +42,8 @@ reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
           (code_block
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list))
+            (block_end)))))))
 
 ================================================================================
 Report extension with rendering section
@@ -188,7 +189,8 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
           (code_block
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))
+              arguments: (argument_list))
+            (block_end)))))
     (var_section
       (variable_declaration
         name: (identifier)
@@ -200,4 +202,5 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
       name: (name
         (identifier))
       (code_block
-        (comment)))))
+        (comment)
+        (block_end)))))

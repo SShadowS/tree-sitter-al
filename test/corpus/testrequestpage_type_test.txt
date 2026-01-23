@@ -58,7 +58,8 @@ codeunit 50000 "TestRequestPage Test"
           type: (type_specification
             (testrequestpage_type
               reference: (quoted_identifier)))))
-      (code_block))
+      (code_block
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)))
@@ -71,7 +72,8 @@ codeunit 50000 "TestRequestPage Test"
           type: (type_specification
             (testrequestpage_type
               reference: (identifier)))))
-      (code_block))
+      (code_block
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)))
@@ -84,7 +86,8 @@ codeunit 50000 "TestRequestPage Test"
           type: (type_specification
             (testrequestpage_type
               reference: (integer)))))
-      (code_block))
+      (code_block
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)))
@@ -110,7 +113,8 @@ codeunit 50000 "TestRequestPage Test"
             object: (identifier)
             property: (identifier))
           arguments: (argument_list
-            (identifier)))))
+            (identifier)))
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)))
@@ -131,4 +135,5 @@ codeunit 50000 "TestRequestPage Test"
           parameter_type: (type_specification
             (testrequestpage_type
               reference: (quoted_identifier)))))
-      (code_block))))
+      (code_block
+        (block_end)))))

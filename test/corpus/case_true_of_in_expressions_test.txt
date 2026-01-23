@@ -114,4 +114,8 @@ codeunit 123 "Character Validation Test"
                   right: (boolean)))
               (case_else_branch
                 (code_block
-                  (comment))))))))))
+                  (comment)
+                  (block_end)))
+              (block_end))
+            (block_end)))
+        (block_end)))))

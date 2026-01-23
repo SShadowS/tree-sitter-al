@@ -42,7 +42,8 @@ codeunit 50100 "Test Impl" implements Interface2
       (procedure
         name: (name
           (identifier))
-        (code_block)))))
+        (code_block
+          (block_end))))))
 
 ========================================================================
 Preprocessor-split enum with different implements clauses

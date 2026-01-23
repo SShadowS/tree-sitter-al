@@ -40,7 +40,8 @@ codeunit 50000 "Range Test"
             (expression_list
               (range_expression
                 left: (string_literal)
-                right: (string_literal)))))))))
+                right: (string_literal)))))
+        (block_end)))))
 
 ================================================================================
 IN expression with multiple ranges
@@ -90,7 +91,8 @@ codeunit 50001 "Multiple Range Test"
                 right: (string_literal))
               (range_expression
                 left: (string_literal)
-                right: (string_literal)))))))))
+                right: (string_literal)))))
+        (block_end)))))
 
 ================================================================================
 IN expression with individual values
@@ -136,7 +138,8 @@ codeunit 50002 "Value List Test"
               (integer)
               (integer)
               (integer)
-              (integer))))))))
+              (integer))))
+        (block_end)))))
 
 ================================================================================
 Range operator in other contexts
@@ -193,7 +196,8 @@ codeunit 50003 "Range Context Test"
             left: (identifier)
             right: (additive_expression
               left: (identifier)
-              right: (identifier))))))
+              right: (identifier))))
+        (block_end)))
     (procedure
       name: (name
         (identifier))
@@ -205,7 +209,8 @@ codeunit 50003 "Range Context Test"
       (code_block
         (assignment_expression
           left: (identifier)
-          right: (string_literal))))))
+          right: (string_literal))
+        (block_end)))))
 
 ================================================================================
 Complex IN expression with field access
@@ -253,4 +258,5 @@ codeunit 50004 "Field Access Test"
               (range_expression
                 left: (string_literal)
                 right: (string_literal))
-              (string_literal))))))))
+              (string_literal))))
+        (block_end)))))

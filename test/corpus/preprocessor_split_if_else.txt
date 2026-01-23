@@ -44,7 +44,8 @@ codeunit 50000 "Test Split If-Else"
             (preproc_endif)
             else_branch: (assignment_expression
               left: (identifier)
-              right: (string_literal))))))))
+              right: (string_literal))))
+        (block_end)))))
 
 ================================================================================
 Multiple preprocessor split if-else statements
@@ -154,4 +155,5 @@ codeunit 50001 "Multiple Split If-Else"
               function: (member_expression
                 object: (identifier)
                 property: (identifier))
-              arguments: (argument_list))))))))
+              arguments: (argument_list))))
+        (block_end)))))

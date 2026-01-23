@@ -79,7 +79,8 @@ codeunit 50100 "Test Asserterror Assignment"
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))
+              (string_literal))))
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
@@ -105,7 +106,8 @@ codeunit 50100 "Test Asserterror Assignment"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ================================================================================
 Multiple asserterror assignment patterns
@@ -194,7 +196,8 @@ codeunit 50200 "Complex Asserterror Tests"
               right: (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (integer))))))))
+                  (integer))))))
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
@@ -221,7 +224,8 @@ codeunit 50200 "Complex Asserterror Tests"
         (exit_statement
           return_value: (multiplicative_expression
             left: (identifier)
-            right: (integer)))))
+            right: (integer)))
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
@@ -239,4 +243,5 @@ codeunit 50200 "Complex Asserterror Tests"
         (exit_statement
           return_value: (multiplicative_expression
             left: (identifier)
-            right: (integer)))))))
+            right: (integer)))
+        (block_end)))))

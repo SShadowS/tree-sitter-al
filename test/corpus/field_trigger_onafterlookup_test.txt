@@ -63,7 +63,8 @@ page 116 "Sales Cr. Memo Subform"
                 then_branch: (exit_statement))
               (call_expression
                 function: (identifier)
-                arguments: (argument_list))))
+                arguments: (argument_list))
+              (block_end)))
           (field_trigger_declaration
             type: (trigger_type)
             (parameter_list
@@ -78,7 +79,8 @@ page 116 "Sales Cr. Memo Subform"
                   object: (identifier)
                   property: (identifier))
                 arguments: (argument_list
-                  (identifier))))))))))
+                  (identifier)))
+              (block_end))))))))
 
 ================================================================================
 OnAfterLookup with different parameter types
@@ -132,7 +134,8 @@ page 50000 "Test Page"
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (identifier))))))
+                  (identifier)))
+              (block_end))))
         (field_section
           control_id: (identifier)
           source_or_field_name: (identifier)
@@ -145,4 +148,5 @@ page 50000 "Test Page"
                 parameter_type: (type_specification
                   (recordref_type))))
             (code_block
-              (comment))))))))
+              (comment)
+              (block_end))))))))
