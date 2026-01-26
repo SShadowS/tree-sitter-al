@@ -45498,7 +45498,7 @@
     },
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "additive_expression",
@@ -45658,6 +45658,10 @@
         },
         {
           "type": "unary_expression",
+          "named": true
+        },
+        {
+          "type": "until_keyword",
           "named": true
         },
         {
@@ -57715,6 +57719,10 @@
   },
   {
     "type": "unary_operator",
+    "named": true
+  },
+  {
+    "type": "until_keyword",
     "named": true
   },
   {

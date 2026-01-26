@@ -160,6 +160,9 @@
 ; (not subsequent lines like @indent.dedent would do)
 (block_end) @indent.branch
 
+; The 'until' keyword in repeat statements should align with 'repeat'
+(until_keyword) @indent.branch
+
 ; Opening and closing braces align with the declaration line
 [
   "{"

@@ -125,6 +125,7 @@ codeunit 50000 "AL Built-in Functions Test"
             property: (identifier))
           then_branch: (repeat_statement
             (comment)
+            (until_keyword)
             condition: (comparison_expression
               left: (member_expression
                 object: (identifier)

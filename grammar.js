@@ -6118,7 +6118,7 @@ enum_type: $ => prec(1, seq(
     repeat_statement: $ => seq(
       kw('repeat', 10),
       repeat($._statement_or_preprocessor),
-      kw('until', 10),
+      alias(kw('until', 10), $.until_keyword),
       field('condition', $._expression)
     ),
 

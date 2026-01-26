@@ -27415,15 +27415,20 @@
           }
         },
         {
-          "type": "TOKEN",
+          "type": "ALIAS",
           "content": {
-            "type": "PREC",
-            "value": 10,
+            "type": "TOKEN",
             "content": {
-              "type": "PATTERN",
-              "value": "(?i)until"
+              "type": "PREC",
+              "value": 10,
+              "content": {
+                "type": "PATTERN",
+                "value": "(?i)until"
+              }
             }
-          }
+          },
+          "named": true,
+          "value": "until_keyword"
         },
         {
           "type": "FIELD",

@@ -94,6 +94,7 @@ codeunit 50000 "Test"
                     object: (identifier)
                     property: (identifier))
                   arguments: (argument_list))
+                (until_keyword)
                 condition: (comparison_expression
                   left: (call_expression
                     function: (member_expression
@@ -133,6 +134,7 @@ codeunit 50000 "Test"
                   object: (identifier)
                   property: (identifier))
                 arguments: (argument_list))
+              (until_keyword)
               condition: (comparison_expression
                 left: (call_expression
                   function: (member_expression
