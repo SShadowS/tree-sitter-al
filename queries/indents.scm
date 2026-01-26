@@ -59,6 +59,7 @@
   (actions_section)
   (views_section)
   (area_section)
+  (area_action_section)
   (group_section)
   (repeater_section)
   (grid_section)
@@ -80,6 +81,7 @@
   (report_column_section)
   (requestpage_section)
   (rendering_section)
+  (rendering_layout)
   (labels_section)
 ] @indent.begin
 
@@ -117,6 +119,12 @@
   (movebefore_layout_modification)
   (modify_field_declaration)
   (modify_action)
+  (modify_layout_modification)
+  (modify_action_group)
+  (addafter_action_group)
+  (addbefore_action_group)
+  (addfirst_action_group)
+  (addlast_action_group)
 ] @indent.begin
 
 ; ============================================================================
@@ -171,11 +179,17 @@
 
 ; 'else' branches should align with the 'if' keyword
 ; In the parse tree, else_branch is a field of if_statement
-(if_statement
-  else_branch: (_) @indent.branch)
+; COMMENTED OUT: Causes issues with both single-statement and code_block else branches
+; Without this rule: end-else-begin has 8 lines wrong, if-else without begin/end has 1 line wrong
+; With this rule: end-else-begin still has 8 lines wrong, if-else without begin/end has 2 lines wrong (worse!)
+; Decision: Comment out to minimize failures (12 lines vs 14 lines)
+; (if_statement
+;   else_branch: (_) @indent.branch)
 
-; 'else' in case statements aligns with case branches
-(case_else_branch) @indent.branch
+; 'else' in case statements should align with case branches
+; Changed from @indent.branch (which was dedenting) to @indent.begin (which indents content)
+; This allows else to align with case branches AND indent its content properly
+(case_else_branch) @indent.begin
 
 ; Note: 'until' in repeat_statement is part of the structure,
 ; no special handling needed as it naturally aligns
@@ -191,10 +205,11 @@
 (attribute_item) @indent.begin
 
 ; Multi-line argument and parameter lists
-[
-  (argument_list)
-  (parameter_list)
-] @indent.begin
+; Use indent.immediate so first parameter/argument is indented
+((argument_list) @indent.begin
+  (#set! indent.immediate 1))
+((parameter_list) @indent.begin
+  (#set! indent.immediate 1))
 
 ; List literals
 (list_literal) @indent.begin
