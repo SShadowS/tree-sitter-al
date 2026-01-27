@@ -183,6 +183,10 @@
 ; Without this rule: end-else-begin has 8 lines wrong, if-else without begin/end has 1 line wrong
 ; With this rule: end-else-begin still has 8 lines wrong, if-else without begin/end has 2 lines wrong (worse!)
 ; Decision: Comment out to minimize failures (12 lines vs 14 lines)
+; FINDINGS: Tree-sitter indentation cannot properly handle if-else patterns in AL
+; The fundamental issue is that the 'else' keyword is not a separate node in the parse tree
+; Any rule applied to else_branch affects the content, not just the keyword
+; This is a known limitation that would require grammar changes to fix properly
 ; (if_statement
 ;   else_branch: (_) @indent.branch)
 
