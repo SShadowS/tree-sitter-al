@@ -44,6 +44,7 @@ tableextension 50000 "Customer Extension" extends Customer
       name: (quoted_identifier)
       (field_trigger_declaration
         type: (trigger_type)
+        (parameter_list)
         (code_block
           (if_statement
             condition: (comparison_expression
@@ -57,6 +58,7 @@ tableextension 50000 "Customer Extension" extends Customer
           (block_end)))
       (field_trigger_declaration
         type: (trigger_type)
+        (parameter_list)
         (var_section
           (variable_declaration
             name: (identifier)
@@ -93,6 +95,7 @@ tableextension 50000 "Customer Extension" extends Customer
         (string_literal))
       (field_trigger_declaration
         type: (trigger_type)
+        (parameter_list)
         (code_block
           (assignment_expression
             left: (quoted_identifier)
@@ -128,6 +131,7 @@ tableextension 50001 "Item Extension" extends Item
       name: (quoted_identifier)
       (trigger_declaration
         name: (trigger_name)
+        (parameter_list)
         (var_section
           (variable_declaration
             name: (identifier)

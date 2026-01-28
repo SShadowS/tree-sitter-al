@@ -49,6 +49,7 @@ query 50100 "Test Query Var"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (assignment_expression
           left: (identifier)
@@ -115,6 +116,7 @@ query 5506 "Email Related Record"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (list_type
@@ -195,6 +197,7 @@ query 50101 "Query with Conditional Var"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (text_type)))
@@ -270,6 +273,7 @@ query 50102 "Mixed Var Query"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -291,6 +295,7 @@ query 50102 "Mixed Var Query"
         (block_end)))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (assignment_expression
           left: (identifier)

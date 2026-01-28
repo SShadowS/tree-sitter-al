@@ -39,6 +39,7 @@ xmlport 50000 "Test Import"
           source_table: (quoted_identifier)
           (trigger_declaration
             name: (trigger_name)
+            (parameter_list)
             (code_block
               (if_statement
                 condition: (call_expression

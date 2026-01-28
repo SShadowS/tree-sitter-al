@@ -151,6 +151,7 @@ xmlport 50101 "Test XMLPort Multiple Events"
       modifier: (procedure_modifier)
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (block_end)))
     (attribute_item
@@ -247,6 +248,7 @@ xmlport 50102 "Mixed Content XMLPort"
         name: (identifier)
         (trigger_declaration
           name: (trigger_name)
+          (parameter_list)
           (code_block
             (assignment_expression
               left: (identifier)
@@ -254,6 +256,7 @@ xmlport 50102 "Mixed Content XMLPort"
             (block_end)))))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
@@ -282,6 +285,7 @@ xmlport 50102 "Mixed Content XMLPort"
       modifier: (procedure_modifier)
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (comment)
         (block_end)))
@@ -295,5 +299,6 @@ xmlport 50102 "Mixed Content XMLPort"
       modifier: (procedure_modifier)
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (block_end)))))

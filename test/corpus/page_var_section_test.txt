@@ -53,6 +53,7 @@ page 7335 "Warehouse Pick Summary"
             value: (identifier)))))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (assignment_expression
           left: (identifier)
@@ -165,6 +166,7 @@ page 50101 "Order Page"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)

@@ -33,6 +33,7 @@ report 50100 "Test Report"
         table_name: (identifier)
         (trigger_declaration
           name: (trigger_name)
+          (parameter_list)
           (preproc_conditional_var_sections
             (preproc_if
               condition: (preproc_not_expression
@@ -98,6 +99,7 @@ table 50100 "Test Table"
             length: (integer)))
         (field_trigger_declaration
           type: (trigger_type)
+          (parameter_list)
           (preproc_conditional_var_sections
             (preproc_if
               condition: (identifier))
@@ -157,6 +159,7 @@ page 50100 "Test Page"
     object_name: (quoted_identifier)
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (preproc_conditional_var_sections
         (preproc_if
           condition: (preproc_not_expression

@@ -171,6 +171,7 @@ xmlport 50101 "Import Data"
                 field: (quoted_identifier))
               (trigger_declaration
                 name: (trigger_name)
+                (parameter_list)
                 (code_block
                   (call_expression
                     function: (identifier)
@@ -241,6 +242,7 @@ xmlport 50102 "Complex Export"
                   condition: (identifier))
                 (trigger_declaration
                   name: (trigger_name)
+                  (parameter_list)
                   (code_block
                     (comment)
                     (block_end)))

@@ -32,6 +32,7 @@ codeunit 50000 "Install Codeunit"
         (identifier)))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -47,6 +48,7 @@ codeunit 50000 "Install Codeunit"
         (block_end)))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)

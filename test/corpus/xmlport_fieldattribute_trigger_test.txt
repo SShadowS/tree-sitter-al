@@ -49,6 +49,7 @@ xmlport 149031 "AIT Test Suite Import/Export"
                 value: (occurrence_value)))
             (trigger_declaration
               name: (trigger_name)
+              (parameter_list)
               (var_section
                 (variable_declaration
                   name: (identifier)
@@ -119,6 +120,7 @@ xmlport 50000 "Test XMLPort"
               field: (quoted_identifier))
             (trigger_declaration
               name: (trigger_name)
+              (parameter_list)
               (code_block
                 (call_expression
                   function: (identifier)
@@ -127,6 +129,7 @@ xmlport 50000 "Test XMLPort"
                 (block_end)))
             (trigger_declaration
               name: (trigger_name)
+              (parameter_list)
               (code_block
                 (call_expression
                   function: (identifier)

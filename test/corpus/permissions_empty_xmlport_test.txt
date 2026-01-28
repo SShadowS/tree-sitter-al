@@ -46,6 +46,7 @@ codeunit 50100 "XMLport Example"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -101,6 +102,7 @@ page 50200 "Test Page"
     object_name: (quoted_identifier)
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)

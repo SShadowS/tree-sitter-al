@@ -22,6 +22,7 @@ codeunit 50000 "Test Split If"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (if_statement
           (preproc_variant_condition_if
@@ -86,6 +87,7 @@ codeunit 50001 "Multiple Split If"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)

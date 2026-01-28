@@ -54,6 +54,7 @@ page 332 "No. Series Generation"
                 (string_literal)))
             (trigger_declaration
               name: (trigger_name)
+              (parameter_list)
               (code_block
                 (assignment_expression
                   left: (identifier)
@@ -181,6 +182,7 @@ page 500 "Copilot Assistant"
               (string_literal))
             (trigger_declaration
               name: (trigger_name)
+              (parameter_list)
               (code_block
                 (call_expression
                   function: (identifier)

@@ -40,6 +40,7 @@ query 50145 "Delayed Prod Orders by Cost"
           field_name: (quoted_identifier))))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
@@ -89,6 +90,7 @@ query 50000 "Test Query"
           field_name: (quoted_identifier))))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
@@ -97,6 +99,7 @@ query 50000 "Test Query"
         (block_end)))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)

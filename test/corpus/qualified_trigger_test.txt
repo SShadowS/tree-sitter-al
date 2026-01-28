@@ -71,6 +71,7 @@ page 50200 "Provider Events"
       name: (trigger_name
         provider: (identifier)
         event: (identifier))
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
@@ -144,6 +145,7 @@ page 50300 "Mixed Triggers"
     object_name: (quoted_identifier)
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
@@ -167,6 +169,7 @@ page 50300 "Mixed Triggers"
         (block_end)))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)

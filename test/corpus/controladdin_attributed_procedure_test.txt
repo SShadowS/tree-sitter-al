@@ -104,7 +104,8 @@ controladdin "Test Control"
       attribute: (attribute_content
         name: (identifier)))
     (controladdin_procedure
-      name: (identifier))
+      name: (identifier)
+      (parameter_list))
     (controladdin_procedure
       name: (identifier)
       (parameter_list
@@ -255,7 +256,8 @@ controladdin "Microsoft.Dynamics.Nav.Client.PowerBIManagement"
       name: (identifier)
       value: (string_literal))
     (controladdin_event
-      name: (identifier))
+      name: (identifier)
+      (parameter_list))
     (controladdin_event
       name: (identifier)
       (parameter_list

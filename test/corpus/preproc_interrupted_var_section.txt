@@ -141,6 +141,7 @@ table 50001 "Complex Test"
       if_header: (procedure_header
         name: (name
           (identifier))
+        (parameter_list)
         return_type: (return_type
           (type_specification
             (basic_type))))
@@ -155,6 +156,7 @@ table 50001 "Complex Test"
       else_header: (procedure_header
         name: (name
           (identifier))
+        (parameter_list)
         return_type: (return_type
           (type_specification
             (basic_type))))
@@ -180,6 +182,7 @@ table 50001 "Complex Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (comment)
         (block_end)))))

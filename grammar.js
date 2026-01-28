@@ -1670,9 +1670,7 @@ module.exports = grammar({
     fileuploadaction_trigger: $ => seq(
       kw('trigger'),
       field('name', alias(kw('OnAction'), $.trigger_name)),
-      '(',
-      optional($.parameter_list),
-      ')',
+      $.parameter_list,
       optional($.var_section),
       $.code_block
     ),
@@ -2276,18 +2274,14 @@ module.exports = grammar({
     controladdin_event: $ => seq(
       'event',
       field('name', $.identifier),
-      '(',
-      optional($.parameter_list),
-      ')',
+      $.parameter_list,
       optional(';')
     ),
 
     controladdin_procedure: $ => seq(
       kw('procedure'),
       field('name', $.identifier),
-      '(',
-      optional($.parameter_list),
-      ')',
+      $.parameter_list,
       optional(';')
     ),
 
@@ -2320,9 +2314,7 @@ module.exports = grammar({
     interface_procedure: $ => seq(
       kw('procedure'),
       field('name', $._identifier_choice),
-      '(',
-      optional($.parameter_list),
-      ')',
+      $.parameter_list,
       optional(choice(
         // Named return (Identifier : Type) - higher precedence to prefer shift when identifier follows
         prec(11, $._procedure_named_return),
@@ -3255,10 +3247,7 @@ module.exports = grammar({
         ),
         $.trigger_name
       )),
-      choice(
-        seq('(', optional($.parameter_list), ')'),
-        seq()
-      ),
+      optional($.parameter_list),  // parameter_list now includes parens, empty triggers have no parens
       optional(choice(
         seq(':', $.type_specification), // Simple return type
         $._procedure_named_return        // Named return value
@@ -5475,10 +5464,7 @@ enum_type: $ => prec(1, seq(
         kw('onassistedit'),
         kw('ondrilldown')
       ), $.trigger_type)),
-      choice(
-        seq('(', optional($.parameter_list), ')'),
-        seq()
-      ),
+      optional($.parameter_list),  // parameter_list now includes parens
       optional(choice(
         seq(':', $.type_specification), // Simple return type
         $._procedure_named_return        // Named return value
@@ -5646,9 +5632,7 @@ enum_type: $ => prec(1, seq(
         optional(field('modifier', $.procedure_modifier)), 
         kw('procedure'),
         field('name', $._procedure_name),
-        '(',
-        optional($.parameter_list),
-        ')',
+        $.parameter_list,  // parameter_list now includes parens
         // Return type can be followed by optional semicolon or directly by var/begin
         optional(choice(
           seq(
@@ -5677,9 +5661,7 @@ enum_type: $ => prec(1, seq(
       optional(field('modifier', $.procedure_modifier)), 
       kw('procedure'),
       field('name', $._procedure_name),
-      '(',
-      optional($.parameter_list),
-      ')',
+      $.parameter_list,  // parameter_list now includes parens
       $.preproc_if,
       choice(
         $._procedure_return_specification, // : ReturnType
@@ -5723,9 +5705,7 @@ enum_type: $ => prec(1, seq(
       optional(field('modifier', $.procedure_modifier)), 
       kw('procedure'),
       field('name', $._procedure_name),
-      '(',
-      optional($.parameter_list),
-      ')',
+      $.parameter_list,  // parameter_list now includes parens
       optional(choice(
         seq(
           choice(
@@ -5886,9 +5866,7 @@ enum_type: $ => prec(1, seq(
       optional(field('modifier', $.procedure_modifier)), 
       kw('procedure'),
       field('name', $._procedure_name),
-      '(',
-      optional($.parameter_list),
-      ')',
+      $.parameter_list,  // parameter_list now includes parens
       optional(choice(
         seq(
           choice(
@@ -5908,9 +5886,15 @@ enum_type: $ => prec(1, seq(
       '='
     ),
 
+    // Parameter list now includes parentheses (like argument_list) for proper indentation
+    // Previously: parens were in procedure/trigger rules, making first param unindentable
     parameter_list: $ => seq(
-      seq(repeat($.attribute_item), $.parameter),
-      repeat(seq(';', seq(repeat($.attribute_item), $.parameter)))
+      '(',
+      optional(seq(
+        seq(repeat($.attribute_item), $.parameter),
+        repeat(seq(';', seq(repeat($.attribute_item), $.parameter)))
+      )),
+      ')'
     ),
 
     modifier: $ => kw('var'),

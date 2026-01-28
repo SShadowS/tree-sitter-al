@@ -92,6 +92,7 @@ codeunit 456 TestSpecialChars
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
@@ -220,6 +221,7 @@ codeunit 999 TestMixed
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (text_type)))

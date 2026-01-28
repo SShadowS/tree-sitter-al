@@ -19,6 +19,7 @@ codeunit 50100 "Test Asserterror"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (asserterror_statement
           body: (call_expression
@@ -50,6 +51,7 @@ codeunit 50101 "Test Asserterror Methods"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -91,6 +93,7 @@ codeunit 50102 "Test Asserterror Enum"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -147,6 +150,7 @@ codeunit 50103 "Unit Test Example"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -194,6 +198,7 @@ codeunit 50104 "Test Asserterror Block"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)

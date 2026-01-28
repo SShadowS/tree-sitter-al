@@ -26,6 +26,7 @@ page 50100 "Test Page"
     (page_type_property)
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
@@ -90,6 +91,7 @@ page 703 "Merge Duplicate Subform"
       (string_literal))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (assignment_expression
           left: (identifier)
@@ -149,6 +151,7 @@ page 703 "Merge Duplicate Subform"
       modifier: (procedure_modifier)
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (if_statement
           condition: (identifier)

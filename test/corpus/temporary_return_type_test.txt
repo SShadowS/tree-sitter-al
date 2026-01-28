@@ -22,6 +22,7 @@ codeunit 50100 "Prepare Sales Line For Copying"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (record_type
@@ -62,6 +63,7 @@ codeunit 50200 "Temporary Record Handler"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (return_value
         return_value: (identifier))
       return_type: (return_type
@@ -178,6 +180,7 @@ codeunit 50400 "Case Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (record_type
@@ -188,6 +191,7 @@ codeunit 50400 "Case Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (record_type
@@ -198,6 +202,7 @@ codeunit 50400 "Case Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (record_type

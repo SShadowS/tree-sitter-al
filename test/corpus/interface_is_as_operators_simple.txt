@@ -20,6 +20,7 @@ codeunit 50100 Test
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (if_statement
           left: (identifier)
@@ -52,6 +53,7 @@ codeunit 50101 Test2
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (assignment_expression
           left: (identifier)
@@ -82,6 +84,7 @@ codeunit 50102 Test3
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (if_statement
           condition: (logical_expression

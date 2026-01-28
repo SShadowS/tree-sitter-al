@@ -26,6 +26,7 @@ codeunit 50000 "Test Codeunit"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (preproc_conditional_var_sections
         (preproc_if
           condition: (preproc_not_expression
@@ -75,6 +76,7 @@ codeunit 50001 "Test Codeunit"
       modifier: (procedure_modifier)
       name: (name
         (identifier))
+      (parameter_list)
       (preproc_conditional_var_sections
         (preproc_if
           condition: (preproc_not_expression

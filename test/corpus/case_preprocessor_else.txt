@@ -26,6 +26,7 @@ page 50100 TestPage
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (case_statement
           expression: (identifier)
@@ -85,6 +86,7 @@ codeunit 50100 TestCodeunit
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (preproc_var_continuation)
         (preproc_conditional_variables

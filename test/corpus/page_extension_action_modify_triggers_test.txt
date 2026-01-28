@@ -40,6 +40,7 @@ pageextension 50000 "AL Test Tool Ext" extends "AL Test Tool"
         target: (identifier)
         (trigger_declaration
           name: (trigger_name)
+          (parameter_list)
           (var_section
             (variable_declaration
               name: (identifier)
@@ -58,6 +59,7 @@ pageextension 50000 "AL Test Tool Ext" extends "AL Test Tool"
         target: (identifier)
         (trigger_declaration
           name: (trigger_name)
+          (parameter_list)
           (var_section
             (variable_declaration
               name: (identifier)
@@ -109,6 +111,7 @@ pageextension 50001 "Mixed Action Ext" extends "Base Page"
           value: (boolean))
         (trigger_declaration
           name: (trigger_name)
+          (parameter_list)
           (code_block
             (call_expression
               function: (identifier)

@@ -86,6 +86,7 @@ interface "Production Interface"
     object_name: (quoted_identifier)
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (basic_type))))))
@@ -221,6 +222,7 @@ interface "No. Series - Single"
     (comment)
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (basic_type))))))

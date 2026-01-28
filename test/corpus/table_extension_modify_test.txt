@@ -33,6 +33,7 @@ tableextension 50000 "Test Extension" extends "Base Table"
         name: (quoted_identifier)
         (field_trigger_declaration
           type: (trigger_type)
+          (parameter_list)
           (code_block
             (comment)
             (block_end))))

@@ -75,6 +75,7 @@ tableextension 50100 MyTableExt extends Customer
       (procedure
         name: (name
           (identifier))
+        (parameter_list)
         (code_block
           (block_end)))
       (preproc_endif))))
@@ -119,6 +120,7 @@ codeunit 50100 TestMultipleAttrs
       (procedure
         name: (name
           (identifier))
+        (parameter_list)
         (code_block
           (block_end)))
       (preproc_endif))))

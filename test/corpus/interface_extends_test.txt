@@ -46,7 +46,8 @@ interface "My Interface" extends MyBaseInterface access = Internal
     object_name: (quoted_identifier)
     extends_interface: (identifier)
     (interface_procedure
-      name: (identifier))))
+      name: (identifier)
+      (parameter_list))))
 
 ================================================================================
 Simple interface without extends
@@ -64,7 +65,8 @@ interface "Simple Interface"
   (interface_declaration
     object_name: (quoted_identifier)
     (interface_procedure
-      name: (identifier))
+      name: (identifier)
+      (parameter_list))
     (interface_procedure
       name: (identifier)
       (parameter_list
