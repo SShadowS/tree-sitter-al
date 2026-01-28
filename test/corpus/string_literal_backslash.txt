@@ -196,8 +196,9 @@ codeunit 789 TestComplexStrings
                 (identifier)
                 (string_literal)
                 (string_literal))))
-          else_branch: (exit_statement
-            return_value: (identifier)))
+          (else_clause
+            body: (exit_statement
+              return_value: (identifier))))
         (block_end)))))
 
 ================================================================================

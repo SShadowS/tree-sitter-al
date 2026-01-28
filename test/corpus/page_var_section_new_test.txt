@@ -158,7 +158,8 @@ page 703 "Merge Duplicate Subform"
           then_branch: (assignment_expression
             left: (identifier)
             right: (string_literal))
-          else_branch: (assignment_expression
-            left: (identifier)
-            right: (string_literal)))
+          (else_clause
+            body: (assignment_expression
+              left: (identifier)
+              right: (string_literal))))
         (block_end)))))

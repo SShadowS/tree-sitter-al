@@ -277,17 +277,18 @@ query 7308 CalcOutstandQtyOnWhseActLine
                 (field_access
                   record: (identifier)
                   field: (quoted_identifier))))
-            else_branch: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list
-                (identifier)
-                (string_literal)
-                (field_access
-                  record: (identifier)
-                  field: (quoted_identifier))
-                (string_literal)))))
+            (else_clause
+              body: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (string_literal)
+                  (field_access
+                    record: (identifier)
+                    field: (quoted_identifier))
+                  (string_literal))))))
         (if_statement
           condition: (comparison_expression
             left: (field_access
@@ -308,17 +309,18 @@ query 7308 CalcOutstandQtyOnWhseActLine
                 (field_access
                   record: (identifier)
                   field: (quoted_identifier))))
-            else_branch: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list
-                (identifier)
-                (string_literal)
-                (field_access
-                  record: (identifier)
-                  field: (quoted_identifier))
-                (string_literal)))))
+            (else_clause
+              body: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (string_literal)
+                  (field_access
+                    record: (identifier)
+                    field: (quoted_identifier))
+                  (string_literal))))))
         (if_statement
           condition: (comparison_expression
             left: (field_access
@@ -339,15 +341,16 @@ query 7308 CalcOutstandQtyOnWhseActLine
                 (field_access
                   record: (identifier)
                   field: (quoted_identifier))))
-            else_branch: (call_expression
-              function: (member_expression
-                object: (identifier)
-                property: (identifier))
-              arguments: (argument_list
-                (identifier)
-                (string_literal)
-                (field_access
-                  record: (identifier)
-                  field: (quoted_identifier))
-                (string_literal)))))
+            (else_clause
+              body: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  property: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (string_literal)
+                  (field_access
+                    record: (identifier)
+                    field: (quoted_identifier))
+                  (string_literal))))))
         (block_end)))))

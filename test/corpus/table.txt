@@ -128,6 +128,7 @@ table 50100 "My Test Table"
             (string_literal))
           (exit_statement
             (boolean))
-          (exit_statement
-            (boolean)))
+          (else_clause
+            (exit_statement
+              (boolean))))
         (block_end)))))

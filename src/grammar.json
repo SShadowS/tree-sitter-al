@@ -28511,45 +28511,8 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "TOKEN",
-                        "content": {
-                          "type": "PREC",
-                          "value": 10,
-                          "content": {
-                            "type": "PATTERN",
-                            "value": "(?i)else"
-                          }
-                        }
-                      },
-                      {
-                        "type": "FIELD",
-                        "name": "else_branch",
-                        "content": {
-                          "type": "CHOICE",
-                          "members": [
-                            {
-                              "type": "SYMBOL",
-                              "name": "code_block"
-                            },
-                            {
-                              "type": "PREC",
-                              "value": 1,
-                              "content": {
-                                "type": "SYMBOL",
-                                "name": "if_statement"
-                              }
-                            },
-                            {
-                              "type": "SYMBOL",
-                              "name": "_if_then_body"
-                            }
-                          ]
-                        }
-                      }
-                    ]
+                    "type": "SYMBOL",
+                    "name": "else_clause"
                   },
                   {
                     "type": "BLANK"
@@ -28616,6 +28579,47 @@
           }
         ]
       }
+    },
+    "else_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PREC",
+            "value": 10,
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)else"
+            }
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "code_block"
+              },
+              {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "if_statement"
+                }
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_if_then_body"
+              }
+            ]
+          }
+        }
+      ]
     },
     "_case_expression": {
       "type": "SYMBOL",

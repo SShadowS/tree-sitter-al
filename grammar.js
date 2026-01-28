@@ -6350,14 +6350,7 @@ enum_type: $ => prec(1, seq(
           $.code_block,
           $._if_then_body
         )),
-        optional(seq(
-          kw('else', 10),
-          field('else_branch', choice(
-            $.code_block,
-            prec(1, $.if_statement),
-            $._if_then_body
-          ))
-        ))
+        optional($.else_clause)
       )),
       // Split if-else statement
       $.preproc_split_if_else,
@@ -6380,6 +6373,18 @@ enum_type: $ => prec(1, seq(
       ),
       repeat($.pragma)
     )),
+
+    // Else clause - wraps the 'else' keyword and its content
+    // This allows tree-sitter indent rules to target the 'else' keyword
+    // for proper dedentation (following Rust's approach)
+    else_clause: $ => seq(
+      kw('else', 10),
+      field('body', choice(
+        $.code_block,
+        prec(1, $.if_statement),  // else-if chain
+        $._if_then_body
+      ))
+    ),
 
     // Case expression uses the general _expression rule
     _case_expression: $ => $._expression,

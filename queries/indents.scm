@@ -177,22 +177,17 @@
   "}"
 ] @indent.branch
 
-; 'else' branches should align with the 'if' keyword
-; In the parse tree, else_branch is a field of if_statement
-; COMMENTED OUT: Causes issues with both single-statement and code_block else branches
-; Without this rule: end-else-begin has 8 lines wrong, if-else without begin/end has 1 line wrong
-; With this rule: end-else-begin still has 8 lines wrong, if-else without begin/end has 2 lines wrong (worse!)
-; Decision: Comment out to minimize failures (12 lines vs 14 lines)
-; FINDINGS: Tree-sitter indentation cannot properly handle if-else patterns in AL
-; The fundamental issue is that the 'else' keyword is not a separate node in the parse tree
-; Any rule applied to else_branch affects the content, not just the keyword
-; This is a known limitation that would require grammar changes to fix properly
-; (if_statement
-;   else_branch: (_) @indent.branch)
+; else_clause handling - the 'else' keyword is now exposed as a node (grammar fix)
+; Use @indent.branch to dedent the else keyword to align with 'if' content
+(else_clause) @indent.branch
+
+; When else_clause contains a code_block, we need to dedent to counteract
+; the extra indentation from if_statement, since code_block has its own indent
+(else_clause
+  body: (code_block) @indent.dedent)
 
 ; 'else' in case statements should align with case branches
-; Changed from @indent.branch (which was dedenting) to @indent.begin (which indents content)
-; This allows else to align with case branches AND indent its content properly
+; Use @indent.begin to indent the else content (the else keyword aligns with branches)
 (case_else_branch) @indent.begin
 
 ; Note: 'until' in repeat_statement is part of the structure,
