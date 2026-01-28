@@ -4,21 +4,23 @@
 **Focus**: Achieving excellent automatic indentation in Neovim using tree-sitter indent queries  
 **Repository**: `C:\Users\DanieleLixi\Projects\tree-sitter-al\`  
 **Last Updated**: January 28, 2026  
-**Current Success Rate**: 99.14% (916/932 lines correct, 16 diff lines)
+**Current Success Rate**: ~99.9% (930/932 lines correct, 2 diff lines - spacing only)
 
 ---
 
 ## Executive Summary
 
-We successfully improved indentation from 91.20% to **99.14%** success rate through multiple phases of fixes, culminating in a **grammar change** that fixed the parameter indentation issue.
+We successfully improved indentation from 91.20% to **~99.9%** success rate through multiple phases of fixes, culminating in **two grammar changes**:
+1. Fixed parameter indentation by including parentheses in `parameter_list`
+2. Fixed if-else indentation by creating an `else_clause` grammar rule
 
 **Key Achievements**:
-- Fixed 76 out of 82 originally broken lines (92.7% of issues resolved)
+- Fixed 80 out of 82 originally broken lines (97.6% of issues resolved)
 - Parameter indentation now works correctly (grammar change)
+- If-else indentation now works correctly (grammar change)
 - All 1198 parser tests pass
 - Parser rebuilt and installed to Neovim
-
-**Remaining Limitations**: 14 diff lines caused by if-else patterns (known tree-sitter limitation - `else` keyword not exposed as separate node).
+- **Only 2 diff lines remaining** (spacing issue, not indentation)
 
 ---
 
@@ -33,25 +35,37 @@ We successfully improved indentation from 91.20% to **99.14%** success rate thro
 
 **Problem Identified**: `parameter_list` node excluded parentheses, while `argument_list` included them. This caused the first parameter in multi-line lists to be under-indented.
 
-**Root Cause Analysis**:
-```javascript
-// argument_list - INCLUDES parens (worked correctly)
-argument_list: $ => seq('(', optional(...), ')')
-
-// parameter_list - EXCLUDED parens (broken)
-parameter_list: $ => seq($.parameter, repeat(...))
-```
-
 **Solution Applied**: Grammar change to make `parameter_list` include parentheses like `argument_list`.
 
-**Changes Made**:
-1. Modified `parameter_list` rule to include `'('` and `')'`
-2. Updated 10 locations in grammar.js that used `'(' optional($.parameter_list) ')'`
-3. Simplified indent rules (removed workaround comments)
-4. Updated 278 test expectations (structural changes only)
-5. Rebuilt parser and installed to Neovim
-
 **Result**: Parameter indentation now works correctly. Diff lines reduced from 18 to 16.
+
+### Phase 5: Else Clause Grammar Fix (January 28, 2026)
+
+**Problem Identified**: The `else` keyword was not exposed as a separate node in the parse tree. Any indent rule applied to `else_branch` affected the entire content, not just the keyword.
+
+**Solution Applied**: Created new `else_clause` grammar rule (following Rust's approach) that wraps the `else` keyword and its body as a distinct node.
+
+**Changes Made**:
+1. Added `else_clause` rule in `grammar.js`:
+   ```javascript
+   else_clause: $ => seq(
+     kw('else', 10),
+     field('body', choice(
+       $.code_block,
+       prec(1, $.if_statement),  // else-if chain
+       $._if_then_body
+     ))
+   ),
+   ```
+2. Modified `if_statement` to use `optional($.else_clause)` instead of inline else handling
+3. Updated `queries/indents.scm` with proper `else_clause` rules:
+   ```scm
+   (else_clause) @indent.branch
+   (else_clause body: (code_block) @indent.dedent)
+   ```
+4. Updated 4 test files for structural changes
+
+**Result**: Diff lines reduced from 16 to **2** (spacing only, not indentation).
 
 ---
 
@@ -59,15 +73,13 @@ parameter_list: $ => seq($.parameter, repeat(...))
 
 ### Success Metrics
 
-| Metric | Phase 1 Start | Phase 3 End | Phase 4 End | Total Improvement |
-|--------|---------------|-------------|-------------|-------------------|
-| **Success Rate** | 91.20% | 99.25% | 99.14%* | +7.94 pts |
-| **Lines Correct** | 850/932 | 923/930 | 916/932 | +66 lines |
-| **Diff Lines** | 82 | 18 | 16 | -66 lines |
+| Metric | Phase 1 Start | Phase 3 End | Phase 4 End | Phase 5 End | Total Improvement |
+|--------|---------------|-------------|-------------|-------------|-------------------|
+| **Success Rate** | 91.20% | 99.25% | 99.14% | ~99.9% | +8.7 pts |
+| **Lines Correct** | 850/932 | 923/930 | 916/932 | 930/932 | +80 lines |
+| **Diff Lines** | 82 | 18 | 16 | 2 | -80 lines |
 
-*Note: Slight decrease in % due to test file line count changes, but actual diff lines improved.
-
-### What Works Perfectly ✅
+### What Works Perfectly
 - All object structures (tables, pages, codeunits, reports, enums, etc.)
 - Report rendering layouts
 - Case statements and case else branches
@@ -75,29 +87,18 @@ parameter_list: $ => seq($.parameter, repeat(...))
 - Page action area() sections
 - Code blocks (begin/end)
 - All structural indentation patterns
-- Single-line if-then-else statements
-- If statements with code blocks in both branches
+- **If-else statements** (FIXED in Phase 5)
 - **Multi-line parameter lists** (FIXED in Phase 4)
 - **Multi-line argument lists**
 
-### What Doesn't Work ❌ (14 diff lines, 2 patterns)
+### What Doesn't Work (2 diff lines - spacing only)
 
-**Pattern A: If-Else Indentation** (12 diff lines)
-```al
-if condition then
-    Statement1()
-    else              // Over-indented by 4 spaces
-    Statement2();
-```
-
-**Pattern B: Spacing** (2 diff lines)
+**Pattern: Spacing before colon**
 ```al
 i, j, k : Integer;    // Source has space before colon
 i, j, k: Integer;     // Result removes space
 ```
-*Note: This is a formatting issue, not indentation.*
-
-**Root Cause**: The `else` keyword is not exposed as a separate node in the parse tree. Any indent rule applied to `else_branch` affects the entire content, not just the keyword.
+*Note: This is a formatting/spacing issue, not indentation. The indentation is correct.*
 
 ---
 
@@ -117,7 +118,6 @@ i, j, k: Integer;     // Result removes space
 |---------|------|
 | **Input (flush-left)** | `test_data/indents/indent_tests_initial.al` |
 | **Expected output** | `test_data/indents/indent_tests_expected.al` |
-| **Latest results** | `test_data/indents/indent_tests_results_new.al` |
 
 ---
 
@@ -143,10 +143,10 @@ tree-sitter test
 # Run indent test suite
 nvim --headless test_data/indents/indent_tests_initial.al \
   -c "set filetype=al" -c "normal! gg=G" \
-  -c "w! test_data/indents/indent_tests_results_new.al" -c "q!"
+  -c "w! test_data/indents/indent_tests_results.al" -c "q!"
 
-# Count diff lines (target: 16)
-diff test_data/indents/indent_tests_expected.al test_data/indents/indent_tests_results_new.al | grep -c "^[<>]"
+# Count diff lines (target: 2)
+diff test_data/indents/indent_tests_expected.al test_data/indents/indent_tests_results.al | grep -c "^[<>]"
 ```
 
 ### After Grammar Changes
@@ -166,13 +166,13 @@ cp queries/indents.scm "$LOCALAPPDATA/nvim-data/lazy/nvim-treesitter/runtime/que
 
 ---
 
-## Known Limitations
+## Grammar Changes for Indentation
 
-### If-Else Indentation (Cannot Fix Without Major Grammar Rewrite)
+### else_clause Rule (Phase 5)
 
-**Technical Reason**: The `else` keyword is consumed by the parser but not exposed as a named node.
+The key insight was that `else` needed to be exposed as a separate node (like Rust does) to allow proper indent targeting.
 
-**Parse Tree Structure**:
+**Before**: `else` was consumed by the parser but not a named node
 ```
 (if_statement
   condition: (boolean)
@@ -180,15 +180,26 @@ cp queries/indents.scm "$LOCALAPPDATA/nvim-data/lazy/nvim-treesitter/runtime/que
   else_branch: (statement))   // No 'else' keyword node!
 ```
 
-**What Would Be Needed**: Create an `else_clause` wrapper node that includes the `else` keyword. This would be a significant grammar change affecting all if-else handling.
+**After**: `else_clause` wraps the keyword and body
+```
+(if_statement
+  condition: (boolean)
+  then_branch: (statement)
+  (else_clause
+    body: (statement)))       // 'else' is now targetable!
+```
 
-**Current Workaround**: Users manually adjust the 12 affected lines when needed. This is acceptable given the 99%+ success rate.
+### parameter_list Rule (Phase 4)
+
+Aligned `parameter_list` structure with `argument_list` by including parentheses.
 
 ---
 
 ## Commit History
 
 ```
+77df3ed Add else_clause grammar rule for proper indentation
+0d2cedf Update indentation project status after parameter fix
 3d37da7 Fix parameter_list to include parentheses for proper indentation
 a77e453 try to fix parameters indent without grammar changes
 afdeb85 attempting to fix if_then_else auto indentation
@@ -198,19 +209,12 @@ afdeb85 attempting to fix if_then_else auto indentation
 
 ---
 
-## Future Improvements (Optional)
-
-1. **If-Else Grammar Change**: Create `else_clause` node to enable proper `else` keyword indentation
-2. **Spacing Normalization**: Handle spacing around `:` in type declarations
-3. **Preprocessor-Aware Indentation**: Handle `#if`/`#else` blocks properly
-
----
-
 ## Summary
 
-The indentation project has achieved **production-ready quality** with 99.14% success rate. The remaining 16 diff lines are:
-- 12 lines: If-else patterns (known limitation)
-- 2 lines: Spacing issues (not indentation)
-- 2 lines: Related if-else content
+The indentation project has achieved **production-ready quality** with ~99.9% success rate. The remaining 2 diff lines are:
+- **Spacing issue only** (`i, j, k : Integer` vs `i, j, k: Integer`)
+- Not an indentation problem
 
-The parameter indentation issue that prompted this session has been **fully resolved** through a grammar change that aligns `parameter_list` structure with `argument_list`.
+Both major indentation issues (parameters and if-else) have been **fully resolved** through grammar changes:
+1. `parameter_list` now includes parentheses
+2. `else_clause` now exposes the `else` keyword as a targetable node
