@@ -212,6 +212,24 @@
 ; Use indent.immediate so first parameter/argument is indented
 ((argument_list) @indent.begin
   (#set! indent.immediate 1))
+
+; EXPERIMENT Option A: FAILED - Cannot fix parameter indentation with query rules alone
+; The problem: parameter_list node starts at first parameter, not opening paren
+; So indent.immediate doesn't affect the first parameter
+;
+; FAILED VARIATIONS:
+; 1. Procedure-level @indent.begin - indented code_block too
+; 2. Token capture on "(" - no effect
+; 3. Adding "(" @indent.begin - double-indented second param
+; 4. Targeting parameter nodes directly - no effect
+;
+; ROOT CAUSE: Grammar inconsistency
+; - argument_list includes parens: seq('(', ..., ')') - WORKS
+; - parameter_list excludes parens: seq(param, ...) - BROKEN
+;
+; SOLUTION: Grammar change (Option B) is required to fix this properly
+;
+; Restoring original rule (doesn't fix first param, but doesn't break other things)
 ((parameter_list) @indent.begin
   (#set! indent.immediate 1))
 
