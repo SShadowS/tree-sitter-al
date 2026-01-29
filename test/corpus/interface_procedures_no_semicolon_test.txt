@@ -38,6 +38,7 @@ interface DataUpgradeSAFT
     (comment)
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (basic_type))))
@@ -46,6 +47,7 @@ interface DataUpgradeSAFT
     (comment)
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (text_type))))
@@ -53,13 +55,15 @@ interface DataUpgradeSAFT
     (comment)
     (comment)
     (interface_procedure
-      name: (identifier))
+      name: (identifier)
+      (parameter_list))
     (comment)
     (comment)
     (comment)
     (comment)
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       (return_value
         return_value: (identifier))
       return_type: (return_type
@@ -83,14 +87,17 @@ interface "My Interface"
   (interface_declaration
     object_name: (quoted_identifier)
     (interface_procedure
-      name: (identifier))
+      name: (identifier)
+      (parameter_list))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (basic_type))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       (return_value
         return_value: (identifier))
       return_type: (return_type
@@ -123,6 +130,7 @@ interface TestInterface
             (string_literal)))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (basic_type))))
@@ -167,14 +175,17 @@ interface DataExport
   (interface_declaration
     object_name: (identifier)
     (interface_procedure
-      name: (identifier))
+      name: (identifier)
+      (parameter_list))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (basic_type))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       (return_value
         return_value: (identifier))
       return_type: (return_type

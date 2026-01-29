@@ -32,6 +32,7 @@ codeunit 50000 "AL Built-in Functions Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -61,12 +62,14 @@ codeunit 50000 "AL Built-in Functions Test"
             property: (identifier))
           then_branch: (repeat_statement
             (comment)
+            (until_keyword)
             condition: (comparison_expression
               left: (member_expression
                 object: (identifier)
                 property: (identifier))
               operator: (comparison_operator)
-              right: (integer))))))
+              right: (integer))))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)

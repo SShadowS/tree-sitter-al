@@ -55,20 +55,24 @@ table 50100 "Test Table"
       (procedure
         name: (name
           (identifier))
+        (parameter_list)
         (code_block
           (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)))))
+              (string_literal)))
+          (block_end)))
       (preproc_endif))
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ================================================================================
 Table with multiple preprocessor conditional procedures
@@ -155,7 +159,8 @@ table 50101 "VAT Amount Line"
             function: (member_expression
               object: (identifier)
               property: (identifier))
-            arguments: (argument_list))))
+            arguments: (argument_list))
+          (block_end)))
       (preproc_endif))
     (preproc_conditional_mixed_content
       (preproc_if
@@ -191,16 +196,19 @@ table 50101 "VAT Amount Line"
             right: (identifier))
           (call_expression
             function: (identifier)
-            arguments: (argument_list))))
+            arguments: (argument_list))
+          (block_end)))
       (preproc_endif))
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ================================================================================
 Table with preprocessor else branch procedures
@@ -234,11 +242,13 @@ table 50102 "Test Table"
       (procedure
         name: (name
           (identifier))
+        (parameter_list)
         (code_block
           (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)))))
+              (string_literal)))
+          (block_end)))
       (preproc_else)
       (attribute_item
         attribute: (attribute_content
@@ -250,11 +260,13 @@ table 50102 "Test Table"
       (procedure
         name: (name
           (identifier))
+        (parameter_list)
         (code_block
           (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)))))
+              (string_literal)))
+          (block_end)))
       (preproc_endif))))
 
 ================================================================================
@@ -311,10 +323,12 @@ table 50103 "Test Table"
           (identifier)))
       (trigger_declaration
         name: (trigger_name)
+        (parameter_list)
         (code_block
           (call_expression
             function: (identifier)
-            arguments: (argument_list))))
+            arguments: (argument_list))
+          (block_end)))
       (attribute_item
         attribute: (attribute_content
           name: (identifier)
@@ -325,14 +339,17 @@ table 50103 "Test Table"
       (procedure
         name: (name
           (identifier))
+        (parameter_list)
         (code_block
-          (comment)))
+          (comment)
+          (block_end)))
       (preproc_endif))
     (named_trigger
       (code_block
         (assignment_expression
           left: (identifier)
-          right: (boolean))))))
+          right: (boolean))
+        (block_end)))))
 
 ================================================================================
 Table with procedure without attributes in preprocessor
@@ -361,9 +378,11 @@ table 50104 "Test Table"
       (procedure
         name: (name
           (identifier))
+        (parameter_list)
         (code_block
           (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)))))
+              (string_literal)))
+          (block_end)))
       (preproc_endif))))

@@ -35,5 +35,7 @@ table 50000 "Known Limitation"
       (procedure
         name: (name
           (identifier))
-        (code_block))
+        (parameter_list)
+        (code_block
+          (block_end)))
       (preproc_endif))))

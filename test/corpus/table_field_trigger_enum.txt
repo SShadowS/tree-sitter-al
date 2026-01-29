@@ -32,6 +32,7 @@ table 50000 "Test Table"
             length: (integer)))
         (field_trigger_declaration
           type: (trigger_type)
+          (parameter_list)
           (code_block
             (if_statement
               condition: (logical_expression
@@ -53,4 +54,5 @@ table 50000 "Test Table"
                   (quoted_identifier)
                   (qualified_enum_value
                     enum_type: (identifier)
-                    value: (identifier)))))))))))
+                    value: (identifier)))))
+            (block_end)))))))

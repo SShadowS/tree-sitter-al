@@ -33,6 +33,7 @@ report 50100 "Test Report"
         table_name: (identifier)
         (trigger_declaration
           name: (trigger_name)
+          (parameter_list)
           (preproc_conditional_var_sections
             (preproc_if
               condition: (preproc_not_expression
@@ -54,7 +55,8 @@ report 50100 "Test Report"
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal)))
+            (block_end)))))))
 
 ================================================================================
 Field trigger with preprocessor in var section
@@ -97,6 +99,7 @@ table 50100 "Test Table"
             length: (integer)))
         (field_trigger_declaration
           type: (trigger_type)
+          (parameter_list)
           (preproc_conditional_var_sections
             (preproc_if
               condition: (identifier))
@@ -123,7 +126,8 @@ table 50100 "Test Table"
           (code_block
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list))
+            (block_end)))))))
 
 ================================================================================
 Multiple nested preprocessor conditions in trigger
@@ -155,6 +159,7 @@ page 50100 "Test Page"
     object_name: (quoted_identifier)
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (preproc_conditional_var_sections
         (preproc_if
           condition: (preproc_not_expression
@@ -186,4 +191,5 @@ page 50100 "Test Page"
       (code_block
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))))
+          arguments: (argument_list))
+        (block_end)))))

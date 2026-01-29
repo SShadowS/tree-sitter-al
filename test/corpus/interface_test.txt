@@ -16,6 +16,7 @@ interface "Test Interface"
     object_name: (quoted_identifier)
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (text_type))))
@@ -33,4 +34,5 @@ interface "Test Interface"
         (type_specification
           (basic_type))))
     (interface_procedure
-      name: (identifier))))
+      name: (identifier)
+      (parameter_list))))

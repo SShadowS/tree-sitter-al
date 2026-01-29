@@ -30,7 +30,8 @@ codeunit 123 Test
               (type_specification
                 (text_type
                   length: (integer)))))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Single-dimensional array for comparison
@@ -63,7 +64,8 @@ codeunit 123 Test
               (type_specification
                 (text_type
                   length: (integer)))))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Three-dimensional array
@@ -97,4 +99,5 @@ codeunit 123 Test
               sizes: (integer)
               (type_specification
                 (basic_type))))))
-      (code_block))))
+      (code_block
+        (block_end)))))

@@ -152,10 +152,12 @@ codeunit 50100 "RunObject Examples"
     object_id: (integer)
     object_name: (quoted_identifier)
     (onrun_trigger
-      (code_block))
+      (code_block
+        (block_end)))
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -228,4 +230,5 @@ codeunit 50100 "RunObject Examples"
           left: (member_expression
             object: (identifier)
             property: (identifier))
-          right: (integer))))))
+          right: (integer))
+        (block_end)))))

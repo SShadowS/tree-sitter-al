@@ -89,6 +89,7 @@ page 50100 "Manufacturing Factbox"
       modifier: (procedure_modifier)
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (basic_type)))
@@ -110,11 +111,13 @@ page 50100 "Manufacturing Factbox"
                   record: (identifier)
                   field: (quoted_identifier))))))
         (exit_statement
-          return_value: (boolean))))
+          return_value: (boolean))
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (code_type
@@ -132,13 +135,16 @@ page 50100 "Manufacturing Factbox"
         (exit_statement
           return_value: (field_access
             record: (identifier)
-            field: (quoted_identifier)))))
+            field: (quoted_identifier)))
+        (block_end)))
     (preproc_endregion)
     (preproc_region)
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (block_end)))
     (preproc_endregion)))

@@ -30,6 +30,7 @@ codeunit 123 TestCodeunit
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -47,7 +48,8 @@ codeunit 123 TestCodeunit
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal)))))
+                  (string_literal)))
+              (block_end)))
           (case_branch
             pattern: (enum_keyword_qualified_value
               enum_type: (quoted_identifier)
@@ -56,7 +58,10 @@ codeunit 123 TestCodeunit
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))))))
+                  (string_literal)))
+              (block_end)))
+          (block_end))
+        (block_end)))))
 
 ================================================================================
 Simple enum case pattern test
@@ -84,6 +89,7 @@ codeunit 124 SimpleTest
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -100,4 +106,6 @@ codeunit 124 SimpleTest
             statements: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal))))
+          (block_end))
+        (block_end)))))

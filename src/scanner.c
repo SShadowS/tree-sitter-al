@@ -247,6 +247,35 @@ static void consume_line(TSLexer *lexer) {
     }
 }
 
+// Helper: Case-insensitive keyword matching
+// Compares an identifier buffer against a keyword string
+// Returns true if they match (case-insensitive), false otherwise
+static inline bool match_keyword_case_insensitive(
+    const char *identifier, 
+    int id_len, 
+    const char *keyword
+) {
+    size_t kw_len = strlen(keyword);
+    if ((size_t)id_len != kw_len) {
+        return false;
+    }
+    
+    for (int j = 0; j < id_len; j++) {
+        char c1 = identifier[j];
+        char c2 = keyword[j];
+        
+        // Convert to lowercase for comparison
+        if (c1 >= 'A' && c1 <= 'Z') c1 = c1 - 'A' + 'a';
+        if (c2 >= 'A' && c2 <= 'Z') c2 = c2 - 'A' + 'a';
+        
+        if (c1 != c2) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
 // Helper: Check for pragma directive
 static bool scan_pragma(Scanner *scanner, TSLexer *lexer) {
     if (lexer->lookahead != '#') return false;
@@ -865,30 +894,14 @@ bool tree_sitter_al_external_scanner_scan(
                 }
                 identifier[id_len] = '\0';
 
-                // Helper for case-insensitive matching
-                #define MATCH_KW(term) ({ \
-                    bool _m = (strlen(term) == id_len); \
-                    if (_m) { \
-                        for (int _j = 0; _j < id_len; _j++) { \
-                            char _c1 = identifier[_j]; \
-                            char _c2 = term[_j]; \
-                            if (_c1 >= 'A' && _c1 <= 'Z') _c1 = _c1 - 'A' + 'a'; \
-                            if (_c2 >= 'A' && _c2 <= 'Z') _c2 = _c2 - 'A' + 'a'; \
-                            if (_c1 != _c2) { _m = false; break; } \
-                        } \
-                    } \
-                    _m; \
-                })
-
                 // Check if this identifier is an always-terminator keyword
                 bool is_terminator = false;
                 for (int i = 0; VAR_TERMINATORS_ALWAYS[i]; i++) {
-                    if (MATCH_KW(VAR_TERMINATORS_ALWAYS[i])) {
+                    if (match_keyword_case_insensitive(identifier, id_len, VAR_TERMINATORS_ALWAYS[i])) {
                         is_terminator = true;
                         break;
                     }
                 }
-                #undef MATCH_KW
 
                 // Only emit ATTRIBUTE_VAR_CONTINUATION if NOT a terminator keyword
                 // Note: Object keywords (codeunit, table, etc.) are fine here because
@@ -1267,24 +1280,9 @@ static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
                     fflush(stderr);
                 }
 
-                // Helper lambda-like function for case-insensitive matching
-                #define MATCH_KEYWORD(term) ({ \
-                    bool _matches = (strlen(term) == id_len); \
-                    if (_matches) { \
-                        for (int _j = 0; _j < id_len; _j++) { \
-                            char _c1 = identifier[_j]; \
-                            char _c2 = term[_j]; \
-                            if (_c1 >= 'A' && _c1 <= 'Z') _c1 = _c1 - 'A' + 'a'; \
-                            if (_c2 >= 'A' && _c2 <= 'Z') _c2 = _c2 - 'A' + 'a'; \
-                            if (_c1 != _c2) { _matches = false; break; } \
-                        } \
-                    } \
-                    _matches; \
-                })
-
                 // Check always-terminators (procedure, trigger, etc.)
                 for (int i = 0; VAR_TERMINATORS_ALWAYS[i]; i++) {
-                    if (MATCH_KEYWORD(VAR_TERMINATORS_ALWAYS[i])) {
+                    if (match_keyword_case_insensitive(identifier, id_len, VAR_TERMINATORS_ALWAYS[i])) {
                         if (SCANNER_DEBUG) {
                             fprintf(stderr, "  -> Found always-terminator keyword: %s\n", VAR_TERMINATORS_ALWAYS[i]);
                             fflush(stderr);
@@ -1295,7 +1293,7 @@ static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
 
                 // Check object declaration keywords (only terminate if followed by integer)
                 for (int i = 0; OBJECT_DECLARATION_KEYWORDS[i]; i++) {
-                    if (MATCH_KEYWORD(OBJECT_DECLARATION_KEYWORDS[i])) {
+                    if (match_keyword_case_insensitive(identifier, id_len, OBJECT_DECLARATION_KEYWORDS[i])) {
                         // Skip whitespace and check if followed by a digit (object ID)
                         while (iswspace(lexer->lookahead)) {
                             lexer->advance(lexer, false);
@@ -1315,7 +1313,6 @@ static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
                         }
                     }
                 }
-                #undef MATCH_KEYWORD
             } else {
                 // Not an identifier start, just advance one character
                 lexer->advance(lexer, false);

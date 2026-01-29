@@ -20,8 +20,11 @@ table 50101 "Empty Code Block Test"
     (integer)
     (quoted_identifier)
     (named_trigger
-      (code_block))
+      (code_block
+        (block_end)))
     (procedure
       (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))

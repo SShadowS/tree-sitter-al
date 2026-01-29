@@ -68,7 +68,8 @@ xmlport 50100 "Test XMLPort"
             (identifier))
           parameter_type: (type_specification
             (basic_type))))
-      (code_block))
+      (code_block
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)
@@ -90,7 +91,8 @@ xmlport 50100 "Test XMLPort"
           function: (identifier)
           arguments: (argument_list
             (string_literal)
-            (identifier)))))))
+            (identifier)))
+        (block_end)))))
 
 ================================================================================
 XMLPort with multiple attributed procedures
@@ -149,7 +151,9 @@ xmlport 50101 "Test XMLPort Multiple Events"
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))
+      (parameter_list)
+      (code_block
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)
@@ -167,7 +171,8 @@ xmlport 50101 "Test XMLPort Multiple Events"
           parameter_type: (type_specification
             (code_type
               length: (integer)))))
-      (code_block))
+      (code_block
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)
@@ -187,7 +192,8 @@ xmlport 50101 "Test XMLPort Multiple Events"
           parameter_type: (type_specification
             (record_type
               reference: (identifier)))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 XMLPort with event attributes and triggers
@@ -242,16 +248,20 @@ xmlport 50102 "Mixed Content XMLPort"
         name: (identifier)
         (trigger_declaration
           name: (trigger_name)
+          (parameter_list)
           (code_block
             (assignment_expression
               left: (identifier)
-              right: (string_literal))))))
+              right: (string_literal))
+            (block_end)))))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)
@@ -269,13 +279,16 @@ xmlport 50102 "Mixed Content XMLPort"
             (identifier))
           parameter_type: (type_specification
             (basic_type))))
-      (code_block))
+      (code_block
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
-        (comment)))
+        (comment)
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)
@@ -286,4 +299,6 @@ xmlport 50102 "Mixed Content XMLPort"
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))

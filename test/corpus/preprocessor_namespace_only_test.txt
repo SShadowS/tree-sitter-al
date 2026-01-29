@@ -107,7 +107,9 @@ codeunit 50100 TestCodeunit
     (procedure
       name: (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Nested preprocessor conditionals with namespace

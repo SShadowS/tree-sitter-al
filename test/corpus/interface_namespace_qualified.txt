@@ -18,11 +18,13 @@ codeunit 50100 TestInterface
     (procedure
       (name
         (identifier))
+      (parameter_list)
       (return_type
         (type_specification
           (interface_type
             (quoted_identifier))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Namespace-Qualified Interface Type
@@ -44,6 +46,7 @@ codeunit 50100 TestInterface
     (procedure
       (name
         (identifier))
+      (parameter_list)
       (return_type
         (type_specification
           (interface_type
@@ -52,7 +55,8 @@ codeunit 50100 TestInterface
               (identifier)
               (identifier)
               (quoted_identifier)))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Interface Type in Variable Declaration
@@ -92,7 +96,9 @@ codeunit 50100 TestInterface
     (procedure
       (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Interface Type in Parameter
@@ -129,4 +135,5 @@ codeunit 50100 TestInterface
             (identifier))
           (type_specification
             (basic_type))))
-      (code_block))))
+      (code_block
+        (block_end)))))

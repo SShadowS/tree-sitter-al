@@ -27,6 +27,7 @@ codeunit 50000 "Test Begin Conflict"
     (procedure
       (name
         (identifier))
+      (parameter_list)
       (var_section
         (comment)
         (comment)
@@ -42,4 +43,5 @@ codeunit 50000 "Test Begin Conflict"
           (type_specification
             (code_type
               (integer)))))
-      (code_block))))
+      (code_block
+        (block_end)))))

@@ -21,5 +21,7 @@ codeunit 50100 "Test"
     (procedure
       name: (name
         (identifier))
-      (code_block))
+      (parameter_list)
+      (code_block
+        (block_end)))
     (preproc_endregion)))

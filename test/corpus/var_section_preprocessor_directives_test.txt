@@ -27,6 +27,7 @@ codeunit 50100 "Test Codeunit"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -58,4 +59,5 @@ codeunit 50100 "Test Codeunit"
           type: (type_specification
             (basic_type))))
       (code_block
-        (comment)))))
+        (comment)
+        (block_end)))))

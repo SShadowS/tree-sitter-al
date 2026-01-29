@@ -59,7 +59,9 @@ codeunit 23456 TestCodeunit
     (procedure
       name: (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))
 
 ================================================================================
 SubType property case variations with UserDefined

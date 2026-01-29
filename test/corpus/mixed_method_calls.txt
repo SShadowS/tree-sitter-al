@@ -72,7 +72,9 @@ codeunit 50100 MyCodeunit
             (call_expression
               (identifier)
               (argument_list
-                (string_literal)))))))))
+                (string_literal)))
+            (block_end)))
+        (block_end)))))
 
 ==================
 Complex Parameter Calls
@@ -128,4 +130,6 @@ codeunit 50100 MyCodeunit
             (call_expression
               (identifier)
               (argument_list
-                (string_literal)))))))))
+                (string_literal)))
+            (block_end)))
+        (block_end)))))

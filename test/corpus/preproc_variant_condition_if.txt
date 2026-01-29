@@ -24,6 +24,7 @@ codeunit 50000 Test
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (if_statement
           (preproc_variant_condition_if
@@ -59,4 +60,5 @@ codeunit 50000 Test
                 right: (integer)))
             (preproc_endif)
             shared_body: (exit_statement
-              return_value: (boolean))))))))
+              return_value: (boolean))))
+        (block_end)))))

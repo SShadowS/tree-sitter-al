@@ -49,8 +49,10 @@ xmlport 1 "Consolidation Import/Export"
           attribute_name: (identifier)
           (trigger_declaration
             name: (trigger_name)
+            (parameter_list)
             (code_block
-              (comment))))
+              (comment)
+              (block_end))))
         (xmlport_text_attribute
           attribute_name: (identifier))))))
 
@@ -98,13 +100,17 @@ xmlport 50100 "Test XMLPort"
               value: (occurrence_value)))
           (trigger_declaration
             name: (trigger_name)
+            (parameter_list)
             (code_block
               (call_expression
                 function: (identifier)
-                arguments: (argument_list))))
+                arguments: (argument_list))
+              (block_end)))
           (trigger_declaration
             name: (trigger_name)
+            (parameter_list)
             (code_block
               (call_expression
                 function: (identifier)
-                arguments: (argument_list)))))))))
+                arguments: (argument_list))
+              (block_end))))))))

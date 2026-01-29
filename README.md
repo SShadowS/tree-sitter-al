@@ -127,6 +127,7 @@ The parser successfully handles:
 
 - **`grammar.js`**: The heart of the project - defines all AL language grammar rules
 - **`test/corpus/`**: Comprehensive test suite with AL code examples and expected parse trees
+- **`queries/`**: Query files for syntax highlighting, folding, and indentation in editors
 - **`src/`**: Auto-generated C code for the parser (don't edit manually)
 
 ## Development Setup
@@ -157,13 +158,39 @@ tree-sitter parse path/to/file.al --quiet
 
 ### Running Tests
 ```bash
-# Run all grammar tests
+# Run all grammar tests (1,198 tests)
 tree-sitter test
 
 # Test specific file patterns
 tree-sitter test -f "table"
 tree-sitter test -f "page_action"
 ```
+
+### Query Files (Syntax Highlighting & Editor Features)
+
+This parser includes comprehensive query files for editor integration:
+
+- **`queries/highlights.scm`** - Syntax highlighting (252 patterns, 29 capture types)
+- **`queries/folds.scm`** - Code folding regions (100 patterns)
+- **`queries/indents.scm`** - Auto-indentation rules (14 patterns)
+- **`queries/locals.scm`** - Scope-aware highlighting (62 patterns)
+
+```bash
+# Test syntax highlighting
+tree-sitter highlight path/to/file.al
+
+# Validate query files
+tree-sitter query queries/highlights.scm
+
+# All query files are tested as part of 'tree-sitter test'
+```
+
+These query files enable full AL language support in:
+- **Neovim** (via nvim-treesitter)
+- **Helix** (built-in tree-sitter support)
+- **Emacs** (tree-sitter mode)
+- Any editor with tree-sitter support
+
 
 ### Interactive Development
 ```bash

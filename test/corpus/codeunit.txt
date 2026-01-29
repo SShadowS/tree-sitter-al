@@ -26,7 +26,8 @@ codeunit 50100 "My Test Codeunit"
         (call_expression
           (identifier)
           (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (block_end)))
     (procedure
       (name
         (identifier))
@@ -48,4 +49,5 @@ codeunit 50100 "My Test Codeunit"
         (exit_statement
           (additive_expression
             (identifier)
-            (identifier)))))))
+            (identifier)))
+        (block_end)))))

@@ -83,33 +83,40 @@ table 50100 "Sales Forecast"
       (code_block
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (block_end)))
     (named_trigger
       (code_block
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (block_end)))
     (named_trigger
       (code_block
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (block_end)))
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (assignment_expression
           left: (identifier)
           right: (additive_expression
             left: (identifier)
-            right: (integer)))))
+            right: (integer)))
+        (block_end)))
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (assignment_expression
           left: (identifier)
-          right: (integer))))))
+          right: (integer))
+        (block_end)))))
 
 ================================================================================
 Table trigger with var section and semicolon
@@ -175,7 +182,8 @@ table 50101 "Custom Table"
             (string_literal)
             (member_expression
               object: (identifier)
-              property: (identifier))))))
+              property: (identifier))))
+        (block_end)))
     (named_trigger
       (var_section
         (variable_declaration
@@ -208,4 +216,5 @@ table 50101 "Custom Table"
               property: (identifier))
             (member_expression
               object: (identifier)
-              property: (identifier))))))))
+              property: (identifier))))
+        (block_end)))))

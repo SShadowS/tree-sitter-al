@@ -40,6 +40,7 @@ codeunit 50000 "Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -94,6 +95,7 @@ codeunit 50000 "Test"
                     object: (identifier)
                     property: (identifier))
                   arguments: (argument_list))
+                (until_keyword)
                 condition: (comparison_expression
                   left: (call_expression
                     function: (member_expression
@@ -101,7 +103,8 @@ codeunit 50000 "Test"
                       property: (identifier))
                     arguments: (argument_list))
                   operator: (comparison_operator)
-                  right: (integer)))))
+                  right: (integer))))
+            (block_end))
           (preproc_endif)
           (call_expression
             function: (member_expression
@@ -132,6 +135,7 @@ codeunit 50000 "Test"
                   object: (identifier)
                   property: (identifier))
                 arguments: (argument_list))
+              (until_keyword)
               condition: (comparison_expression
                 left: (call_expression
                   function: (member_expression
@@ -143,4 +147,5 @@ codeunit 50000 "Test"
           (preproc_if
             condition: (preproc_not_expression
               (identifier)))
-          (preproc_endif))))))
+          (preproc_endif))
+        (block_end)))))

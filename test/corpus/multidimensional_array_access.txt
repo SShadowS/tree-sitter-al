@@ -64,7 +64,8 @@ table 50020 "Test Table"
             indices: (expression_list
               (identifier)
               (integer)))
-          right: (identifier))))))
+          right: (identifier))
+        (block_end)))))
 
 ==================
 Multi-dimensional array access in expressions
@@ -129,7 +130,8 @@ table 50021 "Test Table"
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))))
+              (string_literal))))
+        (block_end)))))
 
 ==================
 Three-dimensional array access
@@ -170,7 +172,8 @@ table 50022 "Test Table"
               (integer)
               (integer)
               (integer)))
-          right: (decimal))))))
+          right: (decimal))
+        (block_end)))))
 
 ==================
 Array access with variable indices
@@ -231,4 +234,5 @@ table 50023 "Test Table"
             array: (identifier)
             indices: (expression_list
               (identifier)
-              (identifier))))))))
+              (identifier))))
+        (block_end)))))

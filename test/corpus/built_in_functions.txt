@@ -104,11 +104,13 @@ codeunit 50100 "Built-in Functions Test"
           (argument_list))
         (call_expression
           (identifier)
-          (argument_list))))
+          (argument_list))
+        (block_end)))
     (procedure
       (procedure_modifier)
       (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           (identifier)
@@ -152,11 +154,13 @@ codeunit 50100 "Built-in Functions Test"
             (argument_list
               (integer)
               (integer)
-              (integer))))))
+              (integer))))
+        (block_end)))
     (procedure
       (procedure_modifier)
       (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           (identifier)
@@ -193,11 +197,13 @@ codeunit 50100 "Built-in Functions Test"
           (identifier))
         (assignment_expression
           (identifier)
-          (identifier))))
+          (identifier))
+        (block_end)))
     (procedure
       (procedure_modifier)
       (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           (identifier)
@@ -237,11 +243,13 @@ codeunit 50100 "Built-in Functions Test"
             (identifier)
             (argument_list
               (integer)
-              (integer))))))
+              (integer))))
+        (block_end)))
     (procedure
       (procedure_modifier)
       (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           (identifier)
@@ -283,11 +291,13 @@ codeunit 50100 "Built-in Functions Test"
           (call_expression
             (identifier)
             (argument_list
-              (integer))))))
+              (integer))))
+        (block_end)))
     (procedure
       (procedure_modifier)
       (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           (identifier)
@@ -340,4 +350,5 @@ codeunit 50100 "Built-in Functions Test"
           (call_expression
             (identifier)
             (argument_list
-              (identifier))))))))
+              (identifier))))
+        (block_end)))))

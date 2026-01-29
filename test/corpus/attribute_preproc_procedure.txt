@@ -89,7 +89,8 @@ table 50000 "Test"
       (code_block
         (assignment_expression
           left: (identifier)
-          right: (identifier))))))
+          right: (identifier))
+        (block_end)))))
 
 ================================================================================
 Multiple attributes in preprocessor branch
@@ -149,7 +150,8 @@ table 50000 "Test Table"
               (string_literal)))))
       if_header: (procedure_header
         name: (name
-          (identifier)))
+          (identifier))
+        (parameter_list))
       (preproc_else)
       (attribute_item
         attribute: (attribute_content
@@ -159,13 +161,15 @@ table 50000 "Test Table"
               (string_literal)))))
       else_header: (procedure_header
         name: (name
-          (identifier)))
+          (identifier))
+        (parameter_list))
       (preproc_endif)
       (code_block
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ================================================================================
 Attribute with split procedure header
@@ -240,4 +244,5 @@ table 50000 "Test"
                 reference: (quoted_identifier))))))
       (preproc_endif)
       (code_block
-        (comment)))))
+        (comment)
+        (block_end)))))

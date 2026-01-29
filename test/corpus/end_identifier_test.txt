@@ -23,6 +23,7 @@ codeunit 50100 "End Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -38,4 +39,5 @@ codeunit 50100 "End Test"
           right: (time_literal))
         (assignment_expression
           left: (identifier)
-          right: (time_literal))))))
+          right: (time_literal))
+        (block_end)))))

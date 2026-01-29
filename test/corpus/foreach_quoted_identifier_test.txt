@@ -24,6 +24,7 @@ codeunit 50100 "Test Foreach"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (quoted_identifier)
@@ -49,7 +50,9 @@ codeunit 50100 "Test Foreach"
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (quoted_identifier)))))))))
+                (quoted_identifier)))
+            (block_end)))
+        (block_end)))))
 
 ================================================================================
 Foreach with unquoted identifier (existing support)
@@ -75,6 +78,7 @@ codeunit 50101 "Test Foreach Standard"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -88,7 +92,8 @@ codeunit 50101 "Test Foreach Standard"
           body: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (identifier))))))))
+              (identifier))))
+        (block_end)))))
 
 ================================================================================
 Foreach with complex dictionary operations
@@ -224,4 +229,6 @@ codeunit 50102 "Dictionary Operations"
                   (identifier)
                   (quoted_identifier)
                   (identifier)
-                  (identifier))))))))))
+                  (identifier))))
+            (block_end)))
+        (block_end)))))

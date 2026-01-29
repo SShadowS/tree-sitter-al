@@ -44,6 +44,7 @@ page 50000 "Test Page"
             value: (quoted_identifier))
           (trigger_declaration
             name: (trigger_name)
+            (parameter_list)
             (var_section
               (variable_declaration
                 name: (identifier)
@@ -69,4 +70,5 @@ page 50000 "Test Page"
                   function: (member_expression
                     object: (identifier)
                     property: (identifier))
-                  arguments: (argument_list))))))))))
+                  arguments: (argument_list)))
+              (block_end))))))))

@@ -30,11 +30,13 @@ page 50000 "Test Page"
           (identifier)))
       (trigger_declaration
         name: (trigger_name)
+        (parameter_list)
         (code_block
           (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)))))
+              (string_literal)))
+          (block_end)))
       (var_section
         (variable_declaration
           name: (identifier)
@@ -137,6 +139,7 @@ page 30114 "Shpfy Order Attributes"
           (identifier)))
       (trigger_declaration
         name: (trigger_name)
+        (parameter_list)
         (var_section
           (variable_declaration
             name: (identifier)
@@ -171,7 +174,8 @@ page 30114 "Shpfy Order Attributes"
                 left: (identifier)
                 right: (field_access
                   record: (identifier)
-                  field: (quoted_identifier)))))))
+                  field: (quoted_identifier)))))
+          (block_end)))
       (var_section
         (variable_declaration
           name: (identifier)
@@ -258,6 +262,7 @@ page 50001 "Complex Page"
           (identifier)))
       (trigger_declaration
         name: (trigger_name)
+        (parameter_list)
         (var_section
           (variable_declaration
             name: (identifier)
@@ -271,11 +276,14 @@ page 50001 "Complex Page"
             function: (identifier)
             arguments: (argument_list
               (string_literal)
-              (identifier)))))
+              (identifier)))
+          (block_end)))
       (trigger_declaration
         name: (trigger_name)
+        (parameter_list)
         (code_block
-          (comment)))
+          (comment)
+          (block_end)))
       (var_section
         (variable_declaration
           name: (identifier)
@@ -289,5 +297,7 @@ page 50001 "Complex Page"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
-        (comment)))))
+        (comment)
+        (block_end)))))

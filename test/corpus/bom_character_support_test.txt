@@ -26,7 +26,8 @@ codeunit 50000 "BOM Test"
     object_id: (integer)
     object_name: (quoted_identifier)
     (onrun_trigger
-      (code_block))
+      (code_block
+        (block_end)))
     (procedure
       name: (name
         (identifier))
@@ -36,4 +37,5 @@ codeunit 50000 "BOM Test"
             (identifier))
           parameter_type: (type_specification
             (option_type))))
-      (code_block))))
+      (code_block
+        (block_end)))))

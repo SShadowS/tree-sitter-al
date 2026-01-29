@@ -24,6 +24,7 @@ codeunit 50100 TestUnit
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (pragma)
         (variable_declaration
@@ -42,4 +43,5 @@ codeunit 50100 TestUnit
           function: (member_expression
             object: (identifier)
             property: (identifier))
-          arguments: (argument_list))))))
+          arguments: (argument_list))
+        (block_end)))))

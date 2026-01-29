@@ -54,10 +54,12 @@ page 332 "No. Series Generation"
                 (string_literal)))
             (trigger_declaration
               name: (trigger_name)
+              (parameter_list)
               (code_block
                 (assignment_expression
                   left: (identifier)
-                  right: (identifier))))))))))
+                  right: (identifier))
+                (block_end)))))))))
 
 ================================================================================
 PromptGuide area case variations
@@ -180,11 +182,13 @@ page 500 "Copilot Assistant"
               (string_literal))
             (trigger_declaration
               name: (trigger_name)
+              (parameter_list)
               (code_block
                 (call_expression
                   function: (identifier)
                   arguments: (argument_list
-                    (string_literal)))))))
+                    (string_literal)))
+                (block_end)))))
         (action_group_section
           name: (identifier)
           (caption_property

@@ -59,6 +59,7 @@ codeunit 50101 "Advanced Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (call_expression
           function: (member_expression
@@ -66,7 +67,8 @@ codeunit 50101 "Advanced Test"
             property: (identifier))
           arguments: (argument_list
             (boolean)
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ================================================================================
 Test codeunit with case variations

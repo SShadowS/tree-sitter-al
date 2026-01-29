@@ -53,6 +53,7 @@ page 7335 "Warehouse Pick Summary"
             value: (identifier)))))
     (trigger_declaration
       name: (trigger_name)
+      (parameter_list)
       (code_block
         (assignment_expression
           left: (identifier)
@@ -60,7 +61,8 @@ page 7335 "Warehouse Pick Summary"
             function: (member_expression
               object: (identifier)
               property: (identifier))
-            arguments: (argument_list)))))
+            arguments: (argument_list)))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)
@@ -105,7 +107,8 @@ page 7335 "Warehouse Pick Summary"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (identifier)))))))
+            (identifier)))
+        (block_end)))))
 
 ================================================================================
 Page with protected var section
@@ -163,11 +166,13 @@ page 50101 "Order Page"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)

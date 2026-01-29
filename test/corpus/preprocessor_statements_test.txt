@@ -30,6 +30,7 @@ codeunit 50100 TestUnit
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -73,4 +74,7 @@ codeunit 50100 TestUnit
                 then_branch: (call_expression
                   function: (identifier)
                   arguments: (argument_list
-                    (quoted_identifier)))))))))))
+                    (quoted_identifier))))
+              (block_end)))
+          (block_end))
+        (block_end)))))

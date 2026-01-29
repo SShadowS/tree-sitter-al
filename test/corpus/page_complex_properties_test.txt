@@ -103,6 +103,7 @@ page 30 "Item Card"
             (string_literal))
           (trigger_declaration
             name: (trigger_name)
+            (parameter_list)
             (code_block
               (if_statement
                 left: (call_expression
@@ -122,4 +123,5 @@ page 30 "Item Card"
                 then_branch: (call_expression
                   function: (identifier)
                   arguments: (argument_list
-                    (string_literal)))))))))))
+                    (string_literal))))
+              (block_end))))))))

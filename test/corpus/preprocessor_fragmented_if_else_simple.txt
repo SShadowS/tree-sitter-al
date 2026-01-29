@@ -28,6 +28,7 @@ codeunit 50000 "Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -43,7 +44,8 @@ codeunit 50000 "Test"
             then_branch: (code_block
               (assignment_expression
                 left: (identifier)
-                right: (integer)))
+                right: (integer))
+              (block_end))
             (preproc_endif)
             (assignment_expression
               left: (identifier)
@@ -51,4 +53,5 @@ codeunit 50000 "Test"
             (preproc_if
               condition: (preproc_not_expression
                 (identifier)))
-            (preproc_endif)))))))
+            (preproc_endif)))
+        (block_end)))))

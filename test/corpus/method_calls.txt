@@ -29,7 +29,8 @@ codeunit 50100 MyCodeunit
         (call_expression
           (identifier)
           (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ==================
 Record Method Calls
@@ -84,7 +85,8 @@ codeunit 50100 MyCodeunit
             (identifier))
           (argument_list
             (boolean)
-            (boolean)))))))
+            (boolean)))
+        (block_end)))))
 
 ==================
 Boolean Method Conditions
@@ -149,12 +151,15 @@ codeunit 50100 MyCodeunit
                   (identifier)
                   (argument_list
                     (string_literal))))
+              (until_keyword)
               (comparison_expression
                 (field_access
                   (identifier)
                   (quoted_identifier))
                 (comparison_operator)
-                (string_literal)))))))))
+                (string_literal)))
+            (block_end)))
+        (block_end)))))
 
 ==================
 Mixed Method Calls With Parameters
@@ -217,4 +222,6 @@ codeunit 50100 MyCodeunit
               (argument_list
                 (quoted_identifier)
                 (string_literal)
-                (identifier)))))))))
+                (identifier)))
+            (block_end)))
+        (block_end)))))

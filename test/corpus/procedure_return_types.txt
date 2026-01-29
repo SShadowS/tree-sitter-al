@@ -41,15 +41,18 @@ codeunit 50100 "Return Types Test"
     (procedure
       (name
         (identifier))
+      (parameter_list)
       (return_type
         (type_specification
           (basic_type)))
       (code_block
         (exit_statement
-          (integer))))
+          (integer))
+        (block_end)))
     (procedure
       (name
         (identifier))
+      (parameter_list)
       (return_value
         (identifier))
       (return_type
@@ -60,20 +63,24 @@ codeunit 50100 "Return Types Test"
           (identifier)
           (integer))
         (exit_statement
-          (identifier))))
+          (identifier))
+        (block_end)))
     (procedure
       (name
         (identifier))
+      (parameter_list)
       (return_type
         (type_specification
           (record_type
             (identifier))))
       (code_block
         (exit_statement
-          (identifier))))
+          (identifier))
+        (block_end)))
     (procedure
       (name
         (identifier))
+      (parameter_list)
       (return_value
         (identifier))
       (return_type
@@ -85,12 +92,15 @@ codeunit 50100 "Return Types Test"
           (identifier)
           (identifier))
         (exit_statement
-          (identifier))))
+          (identifier))
+        (block_end)))
     (procedure
       (name
         (identifier))
+      (parameter_list)
       (code_block
         (call_expression
           (identifier)
           (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))

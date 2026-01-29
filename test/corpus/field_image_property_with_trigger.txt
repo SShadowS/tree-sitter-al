@@ -62,6 +62,7 @@ page 123 "Test Page"
                 (string_literal)))
             (field_trigger_declaration
               type: (trigger_type)
+              (parameter_list)
               (var_section
                 (variable_declaration
                   name: (identifier)
@@ -78,4 +79,5 @@ page 123 "Test Page"
                   function: (member_expression
                     object: (identifier)
                     property: (identifier))
-                  arguments: (argument_list))))))))))
+                  arguments: (argument_list))
+                (block_end)))))))))

@@ -46,9 +46,11 @@ controladdin "Test Label"
       name: (identifier)
       value: (integer))
     (controladdin_event
-      name: (identifier))
+      name: (identifier)
+      (parameter_list))
     (controladdin_procedure
-      name: (identifier))))
+      name: (identifier)
+      (parameter_list))))
 
 ================================================================================
 ControlAddIn with ObsoleteState Removed
@@ -86,7 +88,8 @@ controladdin "Removed Control"
       name: (identifier)
       value: (boolean))
     (controladdin_event
-      name: (identifier))))
+      name: (identifier)
+      (parameter_list))))
 
 ================================================================================
 ControlAddIn with only ObsoleteState property
@@ -118,7 +121,8 @@ controladdin SimpleObsolete
       name: (identifier)
       value: (integer))
     (controladdin_procedure
-      name: (identifier))))
+      name: (identifier)
+      (parameter_list))))
 
 ================================================================================
 ControlAddIn with case variations of obsolete state
@@ -152,7 +156,8 @@ controladdin "Case Test"
       name: (identifier)
       value: (integer))
     (controladdin_event
-      name: (identifier))))
+      name: (identifier)
+      (parameter_list))))
 
 ================================================================================
 ControlAddIn mixing obsolete and normal properties

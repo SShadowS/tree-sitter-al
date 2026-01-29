@@ -42,11 +42,13 @@ tableextension 123 "Test Extension" extends Item
       (procedure
         name: (name
           (identifier))
+        (parameter_list)
         (code_block
           (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)))))
+              (string_literal)))
+          (block_end)))
       (preproc_endif))
     (preproc_conditional_procedures
       (preproc_if
@@ -77,5 +79,6 @@ tableextension 123 "Test Extension" extends Item
             parameter_type: (type_specification
               (record_type
                 reference: (identifier)))))
-        (code_block))
+        (code_block
+          (block_end)))
       (preproc_endif))))

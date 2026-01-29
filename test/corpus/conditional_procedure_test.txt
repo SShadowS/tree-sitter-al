@@ -42,7 +42,8 @@ codeunit 50000 "Conditional Test"
               (identifier))
             parameter_type: (type_specification
               (option_type))))
-        (code_block))
+        (code_block
+          (block_end)))
       (preproc_endif))
     (procedure
       name: (name
@@ -53,4 +54,5 @@ codeunit 50000 "Conditional Test"
             (identifier))
           parameter_type: (type_specification
             (basic_type))))
-      (code_block))))
+      (code_block
+        (block_end)))))

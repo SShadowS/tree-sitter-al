@@ -106,7 +106,8 @@ table 50100 "My Test Table"
         (call_expression
           (identifier)
           (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (block_end)))
     (procedure
       (name
         (identifier))
@@ -127,5 +128,7 @@ table 50100 "My Test Table"
             (string_literal))
           (exit_statement
             (boolean))
-          (exit_statement
-            (boolean)))))))
+          (else_clause
+            (exit_statement
+              (boolean))))
+        (block_end)))))

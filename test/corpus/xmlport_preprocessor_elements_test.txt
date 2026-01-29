@@ -171,11 +171,13 @@ xmlport 50101 "Import Data"
                 field: (quoted_identifier))
               (trigger_declaration
                 name: (trigger_name)
+                (parameter_list)
                 (code_block
                   (call_expression
                     function: (identifier)
                     arguments: (argument_list
-                      (string_literal))))))
+                      (string_literal)))
+                  (block_end))))
             (preproc_endif))
           (xmlport_table_element
             name: (identifier)
@@ -240,8 +242,10 @@ xmlport 50102 "Complex Export"
                   condition: (identifier))
                 (trigger_declaration
                   name: (trigger_name)
+                  (parameter_list)
                   (code_block
-                    (comment)))
+                    (comment)
+                    (block_end)))
                 (preproc_endif)))
             (preproc_endif))
           (xmlport_table_element

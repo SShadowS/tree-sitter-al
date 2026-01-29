@@ -39,6 +39,7 @@ table 1234 "Test Table"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -87,7 +88,8 @@ table 1234 "Test Table"
             left: (integer)
             right: (multiplicative_expression
               left: (identifier)
-              right: (integer))))))
+              right: (integer))))
+        (block_end)))
     (procedure
       name: (name
         (identifier))
@@ -97,7 +99,8 @@ table 1234 "Test Table"
             (identifier))
           parameter_type: (type_specification
             (basic_type))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ==========================================
 Enum type reference still works
@@ -125,6 +128,7 @@ codeunit 50100 "Test Enum Types"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -150,4 +154,5 @@ codeunit 50100 "Test Enum Types"
           left: (identifier)
           right: (enum_keyword_qualified_value
             enum_type: (identifier)
-            value: (identifier)))))))
+            value: (identifier)))
+        (block_end)))))

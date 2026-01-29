@@ -111,7 +111,9 @@ codeunit 50000 "Test Case Else"
                   (identifier)
                   (identifier)))
               (identifier)
-              (preproc_endif))))))))
+              (preproc_endif)))
+          (block_end))
+        (block_end)))))
 
 ================================================================================
 Simple case with preprocessor in else
@@ -179,7 +181,9 @@ codeunit 50001 "Simple Case Test"
                 function: (identifier)
                 arguments: (argument_list
                   (string_literal)))
-              (preproc_endif))))))))
+              (preproc_endif)))
+          (block_end))
+        (block_end)))))
 
 ================================================================================
 Nested case with multiple preprocessor conditions
@@ -280,7 +284,8 @@ codeunit 50002 "Nested Case Test"
                   (call_expression
                     function: (identifier)
                     arguments: (argument_list))
-                  (preproc_endif)))))
+                  (preproc_endif)))
+              (block_end)))
           (case_else_branch
             (preproc_conditional_statements
               (preproc_if
@@ -298,44 +303,62 @@ codeunit 50002 "Nested Case Test"
               (call_expression
                 function: (identifier)
                 arguments: (argument_list))
-              (preproc_endif))))))
+              (preproc_endif)))
+          (block_end))
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))
+      (parameter_list)
+      (code_block
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))
+      (parameter_list)
+      (code_block
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))
+      (parameter_list)
+      (code_block
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))
+      (parameter_list)
+      (code_block
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))
+      (parameter_list)
+      (code_block
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))
+      (parameter_list)
+      (code_block
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))
+      (parameter_list)
+      (code_block
+        (block_end)))
     (procedure
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))

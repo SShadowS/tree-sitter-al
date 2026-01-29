@@ -57,7 +57,8 @@ pageextension 6085592 "CDC General Ledger Entries" extends "General Ledger Entri
             property: (identifier))
           arguments: (argument_list
             (quoted_identifier)
-            (identifier)))))
+            (identifier)))
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)
@@ -89,7 +90,8 @@ pageextension 6085592 "CDC General Ledger Entries" extends "General Ledger Entri
             (identifier))
           parameter_type: (type_specification
             (basic_type))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Page extension with EventSubscriber attributed procedure
@@ -127,4 +129,6 @@ pageextension 54321 "Test Page Extension" extends "Test Base Page"
       modifier: (procedure_modifier)
       name: (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))

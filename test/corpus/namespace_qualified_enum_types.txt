@@ -166,7 +166,9 @@ codeunit 126 TestCodeunit
     (procedure
       name: (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Namespace-qualified enum in procedure parameter
@@ -199,4 +201,5 @@ codeunit 127 ParamTest
                 (identifier)
                 (identifier)
                 (quoted_identifier))))))
-      (code_block))))
+      (code_block
+        (block_end)))))

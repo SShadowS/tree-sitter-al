@@ -23,6 +23,7 @@ codeunit 50100 "Test"
     (procedure
       (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           (identifier)
@@ -55,7 +56,8 @@ codeunit 50100 "Test"
               (identifier)
               (expression_list
                 (integer)))
-            (quoted_identifier)))))))
+            (quoted_identifier)))
+        (block_end)))))
 
 ================================================================================
 Correct enum assignment without spaces
@@ -82,6 +84,7 @@ codeunit 50101 "Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -114,4 +117,5 @@ codeunit 50101 "Test"
               array: (identifier)
               indices: (expression_list
                 (integer)))
-            value: (quoted_identifier)))))))
+            value: (quoted_identifier)))
+        (block_end)))))

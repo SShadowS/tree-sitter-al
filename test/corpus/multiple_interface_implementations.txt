@@ -110,4 +110,6 @@ codeunit 127 "Full Provider" implements IInterface1, IInterface2
     (procedure
       name: (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))

@@ -23,7 +23,9 @@ codeunit 50000 "Test Codeunit"
     (procedure
       name: (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Namespace with dotted path and page extension

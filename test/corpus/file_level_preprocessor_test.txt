@@ -21,7 +21,8 @@ codeunit 50100 "Test Codeunit"
       object_id: (integer)
       object_name: (quoted_identifier)
       (onrun_trigger
-        (code_block)))
+        (code_block
+          (block_end))))
     (preproc_endif)))
 
 ================================================================================

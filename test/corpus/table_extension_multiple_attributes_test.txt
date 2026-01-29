@@ -53,7 +53,8 @@ tableextension 50002 "Multiple Attributes Extension" extends Customer
           parameter_type: (type_specification
             (record_type
               reference: (identifier)))))
-      (code_block))
+      (code_block
+        (block_end)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)
@@ -81,8 +82,11 @@ tableextension 50002 "Multiple Attributes Extension" extends Customer
           parameter_type: (type_specification
             (record_type
               reference: (identifier)))))
-      (code_block))
+      (code_block
+        (block_end)))
     (procedure
       name: (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))

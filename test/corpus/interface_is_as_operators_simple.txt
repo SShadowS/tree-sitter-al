@@ -20,6 +20,7 @@ codeunit 50100 Test
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (if_statement
           left: (identifier)
@@ -28,7 +29,8 @@ codeunit 50100 Test
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))))
+              (string_literal))))
+        (block_end)))))
 
 ================================================================================
 Simple 'as' operator test
@@ -51,12 +53,14 @@ codeunit 50101 Test2
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (assignment_expression
           left: (identifier)
           left: (identifier)
           right: (type_specification
-            (identifier)))))))
+            (identifier)))
+        (block_end)))))
 
 ================================================================================
 Mixed operators test
@@ -80,6 +84,7 @@ codeunit 50102 Test3
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (if_statement
           condition: (logical_expression
@@ -95,4 +100,5 @@ codeunit 50102 Test3
             left: (identifier)
             left: (identifier)
             right: (type_specification
-              (identifier))))))))
+              (identifier))))
+        (block_end)))))

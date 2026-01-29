@@ -35,11 +35,13 @@ page 50000 "Test Page"
             (identifier))
           (field_trigger_declaration
             (trigger_type)
+            (parameter_list)
             (code_block
               (call_expression
                 (identifier)
                 (argument_list
-                  (string_literal))))))))))
+                  (string_literal)))
+              (block_end))))))))
 
 ================================================================================
 Page field trigger with OnDrillDown without semicolon
@@ -78,11 +80,13 @@ page 50001 "Test Page 2"
             (identifier))
           (field_trigger_declaration
             (trigger_type)
+            (parameter_list)
             (code_block
               (call_expression
                 (identifier)
                 (argument_list
-                  (string_literal))))))))))
+                  (string_literal)))
+              (block_end))))))))
 
 ================================================================================
 Page field triggers with multiple trigger types
@@ -126,15 +130,19 @@ page 50002 "Test Page Triggers"
             (identifier))
           (field_trigger_declaration
             (trigger_type)
+            (parameter_list)
             (code_block
               (call_expression
                 (identifier)
                 (argument_list
-                  (string_literal)))))
+                  (string_literal)))
+              (block_end)))
           (field_trigger_declaration
             (trigger_type)
+            (parameter_list)
             (code_block
               (call_expression
                 (identifier)
                 (argument_list
-                  (string_literal))))))))))
+                  (string_literal)))
+              (block_end))))))))

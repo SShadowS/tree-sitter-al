@@ -26,6 +26,7 @@ codeunit 123 "Test Codeunit"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (case_statement
           expression: (identifier)
@@ -58,4 +59,6 @@ codeunit 123 "Test Codeunit"
             statements: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal))))
+          (block_end))
+        (block_end)))))

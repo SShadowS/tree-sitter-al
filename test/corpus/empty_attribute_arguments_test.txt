@@ -24,8 +24,10 @@ codeunit 50000 "Test Empty Attributes"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
-        (comment)))))
+        (comment)
+        (block_end)))))
 
 ================================================================================
 Multiple attributes with empty and non-empty arguments
@@ -69,8 +71,10 @@ codeunit 50001 "Test Mixed Attributes"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
-        (comment)))))
+        (comment)
+        (block_end)))))
 
 ================================================================================
 NonDebuggable with empty arguments
@@ -98,5 +102,7 @@ codeunit 50002 "Test NonDebuggable"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
-        (comment)))))
+        (comment)
+        (block_end)))))

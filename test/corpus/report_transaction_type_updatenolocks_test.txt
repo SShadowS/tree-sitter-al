@@ -33,11 +33,13 @@ report 50100 "Test Report"
         table_name: (identifier)
         (trigger_declaration
           name: (trigger_name)
+          (parameter_list)
           (code_block
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal)))
+            (block_end)))))))
 
 ================================================================================
 Report with various TransactionType values

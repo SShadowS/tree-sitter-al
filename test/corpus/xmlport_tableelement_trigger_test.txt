@@ -39,6 +39,7 @@ xmlport 50000 "Test Import"
           source_table: (quoted_identifier)
           (trigger_declaration
             name: (trigger_name)
+            (parameter_list)
             (code_block
               (if_statement
                 condition: (call_expression
@@ -53,12 +54,14 @@ xmlport 50000 "Test Import"
                   function: (member_expression
                     object: (identifier)
                     property: (identifier))
-                  arguments: (argument_list)))))
+                  arguments: (argument_list)))
+              (block_end)))
           (named_trigger
             (code_block
               (call_expression
                 function: (identifier)
-                arguments: (argument_list)))))))))
+                arguments: (argument_list))
+              (block_end))))))))
 
 ================================================================================
 XMLPort tableelement with properties and triggers
@@ -111,7 +114,8 @@ xmlport 50001 "Customer Import"
             (code_block
               (call_expression
                 function: (identifier)
-                arguments: (argument_list))))
+                arguments: (argument_list))
+              (block_end)))
           (xmlport_field_attribute
             attribute_name: (identifier)
             source_field: (field_access

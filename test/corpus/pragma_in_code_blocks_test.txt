@@ -26,6 +26,7 @@ codeunit 50100 TestUnit
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -44,4 +45,6 @@ codeunit 50100 TestUnit
                   property: (identifier))
                 arguments: (argument_list
                   (boolean))))
-            (pragma)))))))
+            (pragma)
+            (block_end)))
+        (block_end)))))

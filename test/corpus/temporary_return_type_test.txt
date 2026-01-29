@@ -22,6 +22,7 @@ codeunit 50100 "Prepare Sales Line For Copying"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (record_type
@@ -29,7 +30,8 @@ codeunit 50100 "Prepare Sales Line For Copying"
       temporary: (temporary)
       (code_block
         (exit_statement
-          return_value: (identifier))))
+          return_value: (identifier))
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)
@@ -61,6 +63,7 @@ codeunit 50200 "Temporary Record Handler"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (return_value
         return_value: (identifier))
       return_type: (return_type
@@ -83,7 +86,8 @@ codeunit 50200 "Temporary Record Handler"
           left: (member_expression
             object: (identifier)
             property: (identifier))
-          right: (string_literal))))))
+          right: (string_literal))
+        (block_end)))))
 
 ================================================================================
 Procedure with temporary parameter and return
@@ -145,7 +149,8 @@ codeunit 50300 "Temp Record Processor"
             record: (identifier)
             field: (quoted_identifier)))
         (exit_statement
-          return_value: (identifier))))))
+          return_value: (identifier))
+        (block_end)))))
 
 ================================================================================
 Case variations of temporary keyword
@@ -175,27 +180,33 @@ codeunit 50400 "Case Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (record_type
             reference: (identifier))))
       temporary: (temporary)
-      (code_block))
+      (code_block
+        (block_end)))
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (record_type
             reference: (identifier))))
       temporary: (temporary)
-      (code_block))
+      (code_block
+        (block_end)))
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (record_type
             reference: (identifier))))
       temporary: (temporary)
-      (code_block))))
+      (code_block
+        (block_end)))))

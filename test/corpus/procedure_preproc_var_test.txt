@@ -26,6 +26,7 @@ codeunit 50000 "Test Codeunit"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (preproc_conditional_var_sections
         (preproc_if
           condition: (preproc_not_expression
@@ -46,7 +47,8 @@ codeunit 50000 "Test Codeunit"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ==================
 Procedure with simple preprocessor var section
@@ -74,6 +76,7 @@ codeunit 50001 "Test Codeunit"
       modifier: (procedure_modifier)
       name: (name
         (identifier))
+      (parameter_list)
       (preproc_conditional_var_sections
         (preproc_if
           condition: (preproc_not_expression
@@ -85,4 +88,5 @@ codeunit 50001 "Test Codeunit"
               (basic_type))))
         (preproc_endif))
       (code_block
-        (exit_statement)))))
+        (exit_statement)
+        (block_end)))))

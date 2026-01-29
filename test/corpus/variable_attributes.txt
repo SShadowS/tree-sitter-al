@@ -35,7 +35,9 @@ page 50100 "Test Page"
     (procedure
       (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))
 
 ================================================================================
 RunOnClient attribute on DotNet variable
@@ -82,7 +84,9 @@ codeunit 50100 "Test DotNet"
     (procedure
       (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))
 
 ================================================================================
 Multiple attributes on variable
@@ -126,7 +130,9 @@ page 50101 "Test Multiple Attrs"
     (procedure
       (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))
 
 ================================================================================
 NonDebuggable in local var section
@@ -152,6 +158,7 @@ codeunit 50102 "Test Local Attr"
     (procedure
       (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           (identifier)
@@ -164,7 +171,8 @@ codeunit 50102 "Test Local Attr"
           (identifier)
           (type_specification
             (text_type))))
-      (code_block))))
+      (code_block
+        (block_end)))))
 
 ================================================================================
 InDataSet attribute on variable
@@ -203,4 +211,6 @@ page 50103 "Test InDataSet"
     (procedure
       (name
         (identifier))
-      (code_block))))
+      (parameter_list)
+      (code_block
+        (block_end)))))

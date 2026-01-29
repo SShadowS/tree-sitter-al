@@ -23,6 +23,7 @@ codeunit 50000 "Test Codeunit"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -43,4 +44,5 @@ codeunit 50000 "Test Codeunit"
             left: (additive_expression
               left: (identifier)
               right: (string_literal))
-            right: (identifier)))))))
+            right: (identifier)))
+        (block_end)))))

@@ -48,11 +48,13 @@ page 50100 "Test Page"
             value: (identifier))
           (trigger_declaration
             name: (trigger_name)
+            (parameter_list)
             (code_block
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))))))
+                  (string_literal)))
+              (block_end))))))))
 
 ================================================================================
 Action with mixed case Image property variations
@@ -230,4 +232,5 @@ page 50103 "File Upload"
                 function: (identifier)
                 arguments: (argument_list
                   (identifier)
-                  (identifier))))))))))
+                  (identifier)))
+              (block_end))))))))

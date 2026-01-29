@@ -221,6 +221,7 @@ page 1518 "My Notifications"
               (identifier))
             (field_trigger_declaration
               (trigger_type)
+              (parameter_list)
               (code_block
                 (if_statement
                   (comparison_expression
@@ -243,7 +244,9 @@ page 1518 "My Notifications"
                       (member_expression
                         (identifier)
                         (identifier))
-                      (argument_list)))))))
+                      (argument_list))
+                    (block_end)))
+                (block_end))))
           (field_section
             (identifier)
             (identifier)
@@ -253,6 +256,7 @@ page 1518 "My Notifications"
               (boolean))
             (field_trigger_declaration
               (trigger_type)
+              (parameter_list)
               (code_block
                 (if_statement
                   (call_expression
@@ -272,9 +276,12 @@ page 1518 "My Notifications"
                       (member_expression
                         (identifier)
                         (identifier))
-                      (argument_list))))))))))
+                      (argument_list))
+                    (block_end)))
+                (block_end)))))))
     (trigger_declaration
       (trigger_name)
+      (parameter_list)
       (code_block
         (assignment_expression
           (identifier)
@@ -282,7 +289,8 @@ page 1518 "My Notifications"
             (member_expression
               (identifier)
               (identifier))
-            (argument_list)))))
+            (argument_list)))
+        (block_end)))
     (var_section
       (variable_declaration
         (identifier)

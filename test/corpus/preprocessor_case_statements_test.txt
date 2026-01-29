@@ -34,6 +34,7 @@ codeunit 50100 TestUnit
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -54,7 +55,8 @@ codeunit 50100 TestUnit
               enum_type: (identifier)
               value: (identifier))
             statements: (code_block
-              (comment)))
+              (comment)
+              (block_end)))
           (preproc_conditional_case
             (preproc_if
               condition: (identifier))
@@ -63,10 +65,13 @@ codeunit 50100 TestUnit
                 enum_type: (identifier)
                 value: (identifier))
               statements: (code_block
-                (comment)))
+                (comment)
+                (block_end)))
             (preproc_endif))
           (case_else_branch
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (quoted_identifier)))))))))
+                (quoted_identifier))))
+          (block_end))
+        (block_end)))))

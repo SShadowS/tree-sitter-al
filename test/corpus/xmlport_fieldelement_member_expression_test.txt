@@ -58,7 +58,9 @@ xmlport 50100 "SEPA Test"
                   property: (identifier))
                 (trigger_declaration
                   name: (trigger_name)
-                  (code_block))))))))))
+                  (parameter_list)
+                  (code_block
+                    (block_end)))))))))))
 
 ================================================================================
 XMLPort fieldelement mixed syntax with table declaration

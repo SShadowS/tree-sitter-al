@@ -69,6 +69,7 @@ codeunit 123 "Test Codeunit"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -85,7 +86,8 @@ codeunit 123 "Test Codeunit"
           (assignment_expression
             left: (identifier)
             right: (boolean))
-          (preproc_endif))))))
+          (preproc_endif))
+        (block_end)))))
 
 ================================================================================
 Mixed case preprocessor directives in code blocks
@@ -114,6 +116,7 @@ codeunit 124 "Test Codeunit Mixed"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -130,7 +133,8 @@ codeunit 124 "Test Codeunit Mixed"
           (assignment_expression
             left: (identifier)
             right: (integer))
-          (preproc_endif))))))
+          (preproc_endif))
+        (block_end)))))
 
 ================================================================================
 Uppercase preprocessor directives with complex conditions
@@ -162,6 +166,7 @@ codeunit 125 "Test Complex Preprocessor"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -188,4 +193,5 @@ codeunit 125 "Test Complex Preprocessor"
           (assignment_expression
             left: (identifier)
             right: (integer))
-          (preproc_endif))))))
+          (preproc_endif))
+        (block_end)))))

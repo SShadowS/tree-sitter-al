@@ -21,6 +21,7 @@ codeunit 50100 TestDiv
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -31,7 +32,8 @@ codeunit 50100 TestDiv
           left: (identifier)
           right: (multiplicative_expression
             left: (integer)
-            right: (integer)))))))
+            right: (integer)))
+        (block_end)))))
 
 ================================================================================
 Basic mod operator
@@ -56,6 +58,7 @@ codeunit 50100 TestMod
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -66,7 +69,8 @@ codeunit 50100 TestMod
           left: (identifier)
           right: (multiplicative_expression
             left: (integer)
-            right: (integer)))))))
+            right: (integer)))
+        (block_end)))))
 
 ================================================================================
 Div with case variations
@@ -93,6 +97,7 @@ codeunit 50100 TestDivCases
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -115,7 +120,8 @@ codeunit 50100 TestDivCases
           left: (identifier)
           right: (multiplicative_expression
             left: (integer)
-            right: (integer)))))))
+            right: (integer)))
+        (block_end)))))
 
 ================================================================================
 Mod with case variations
@@ -142,6 +148,7 @@ codeunit 50100 TestModCases
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -164,7 +171,8 @@ codeunit 50100 TestModCases
           left: (identifier)
           right: (multiplicative_expression
             left: (integer)
-            right: (integer)))))))
+            right: (integer)))
+        (block_end)))))
 
 ================================================================================
 Div in case statement
@@ -192,6 +200,7 @@ codeunit 50100 TestDivInCase
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -206,7 +215,9 @@ codeunit 50100 TestDivInCase
               left: (identifier)
               right: (multiplicative_expression
                 left: (integer)
-                right: (integer)))))))))
+                right: (integer))))
+          (block_end))
+        (block_end)))))
 
 ================================================================================
 Complex expressions with div and mod
@@ -233,6 +244,7 @@ codeunit 50100 TestComplexDivMod
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -265,7 +277,8 @@ codeunit 50100 TestComplexDivMod
             left: (multiplicative_expression
               left: (integer)
               right: (integer))
-            right: (integer)))))))
+            right: (integer)))
+        (block_end)))))
 
 ================================================================================
 Case true with div in assignment
@@ -307,6 +320,7 @@ table 50100 TestTable
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -367,4 +381,6 @@ table 50100 TestTable
                     right: (field_access
                       record: (identifier)
                       field: (quoted_identifier))))
-                right: (integer)))))))))
+                right: (integer))))
+          (block_end))
+        (block_end)))))

@@ -14,6 +14,7 @@ interface "Test Interface"
     object_name: (quoted_identifier)
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (code_type
@@ -56,17 +57,20 @@ interface "Reminder Action"
             (basic_type)))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (basic_type))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (code_type
             length: (integer)))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (text_type))))
@@ -90,12 +94,14 @@ interface "Reminder Action"
           (basic_type))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (text_type
             length: (integer)))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (code_type
@@ -119,6 +125,7 @@ interface "Complex Interface"
     object_name: (quoted_identifier)
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       (return_value
         return_value: (identifier))
       return_type: (return_type
@@ -127,6 +134,7 @@ interface "Complex Interface"
             length: (integer)))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       (return_value
         return_value: (identifier))
       return_type: (return_type
@@ -167,28 +175,33 @@ interface "Type Examples"
     object_name: (quoted_identifier)
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (code_type
             length: (integer)))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (text_type
             length: (integer)))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (basic_type))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (option_type))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (identifier))))))
@@ -256,17 +269,20 @@ interface "Reminder Action"
             (basic_type)))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (basic_type))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (code_type
             length: (integer)))))
     (interface_procedure
       name: (identifier)
+      (parameter_list)
       return_type: (return_type
         (type_specification
           (text_type))))
@@ -289,9 +305,11 @@ interface "Reminder Action"
         (type_specification
           (basic_type))))
     (interface_procedure
-      name: (identifier))
+      name: (identifier)
+      (parameter_list))
     (interface_procedure
-      name: (identifier))
+      name: (identifier)
+      (parameter_list))
     (interface_procedure
       name: (identifier)
       (parameter_list
@@ -302,4 +320,5 @@ interface "Reminder Action"
           parameter_type: (type_specification
             (basic_type)))))
     (interface_procedure
-      name: (identifier))))
+      name: (identifier)
+      (parameter_list))))

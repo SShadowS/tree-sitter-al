@@ -29,7 +29,8 @@ codeunit 50100 "Test Codeunit"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ================================================================================
 Multiline comment with special characters
@@ -95,6 +96,7 @@ codeunit 50101 "Comment Test"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (call_expression
           function: (identifier)
@@ -109,4 +111,5 @@ codeunit 50101 "Comment Test"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))

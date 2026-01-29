@@ -19,12 +19,14 @@ codeunit 50100 "Test Asserterror"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (code_block
         (asserterror_statement
           body: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))))
+              (string_literal))))
+        (block_end)))))
 
 ================================================================================
 Asserterror with method call
@@ -49,6 +51,7 @@ codeunit 50101 "Test Asserterror Methods"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -63,7 +66,8 @@ codeunit 50101 "Test Asserterror Methods"
               property: (identifier))
             arguments: (argument_list
               (quoted_identifier)
-              (string_literal))))))))
+              (string_literal))))
+        (block_end)))))
 
 ================================================================================
 Asserterror with enum value
@@ -89,6 +93,7 @@ codeunit 50102 "Test Asserterror Enum"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -110,7 +115,8 @@ codeunit 50102 "Test Asserterror Enum"
               (quoted_identifier)
               (qualified_enum_value
                 enum_type: (identifier)
-                value: (identifier)))))))))
+                value: (identifier)))))
+        (block_end)))))
 
 ================================================================================
 Asserterror in test procedure
@@ -144,6 +150,7 @@ codeunit 50103 "Unit Test Example"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -161,7 +168,8 @@ codeunit 50103 "Unit Test Example"
             object: (identifier)
             property: (identifier))
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (block_end)))))
 
 ================================================================================
 Asserterror with code block
@@ -190,6 +198,7 @@ codeunit 50104 "Test Asserterror Block"
     (procedure
       name: (name
         (identifier))
+      (parameter_list)
       (var_section
         (variable_declaration
           name: (identifier)
@@ -204,4 +213,6 @@ codeunit 50104 "Test Asserterror Block"
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (quoted_identifier)))))))))
+                (quoted_identifier)))
+            (block_end)))
+        (block_end)))))

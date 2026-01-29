@@ -79,7 +79,9 @@ page 50000 TestPage
     object_name: (identifier)
     (trigger_declaration
       name: (trigger_name)
-      (code_block))
+      (parameter_list)
+      (code_block
+        (block_end)))
     (var_section
       (variable_declaration
         name: (identifier)

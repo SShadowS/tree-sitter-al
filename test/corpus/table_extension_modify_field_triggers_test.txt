@@ -44,6 +44,7 @@ tableextension 50000 "Customer Extension" extends Customer
       name: (quoted_identifier)
       (field_trigger_declaration
         type: (trigger_type)
+        (parameter_list)
         (code_block
           (if_statement
             condition: (comparison_expression
@@ -53,9 +54,11 @@ tableextension 50000 "Customer Extension" extends Customer
             then_branch: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal))))))
+                (string_literal))))
+          (block_end)))
       (field_trigger_declaration
         type: (trigger_type)
+        (parameter_list)
         (var_section
           (variable_declaration
             name: (identifier)
@@ -84,17 +87,20 @@ tableextension 50000 "Customer Extension" extends Customer
                 record: (member_expression
                   object: (identifier)
                   property: (identifier))
-                field: (quoted_identifier)))))))
+                field: (quoted_identifier))))
+          (block_end))))
     (modify_field_declaration
       name: (identifier)
       (caption_property
         (string_literal))
       (field_trigger_declaration
         type: (trigger_type)
+        (parameter_list)
         (code_block
           (assignment_expression
             left: (quoted_identifier)
-            right: (identifier)))))))
+            right: (identifier))
+          (block_end))))))
 
 ================================================================================
 Table extension with generic triggers in field modify
@@ -125,6 +131,7 @@ tableextension 50001 "Item Extension" extends Item
       name: (quoted_identifier)
       (trigger_declaration
         name: (trigger_name)
+        (parameter_list)
         (var_section
           (variable_declaration
             name: (identifier)
@@ -143,4 +150,5 @@ tableextension 50001 "Item Extension" extends Item
               left: (quoted_identifier)
               right: (member_expression
                 object: (identifier)
-                property: (identifier)))))))))
+                property: (identifier))))
+          (block_end))))))

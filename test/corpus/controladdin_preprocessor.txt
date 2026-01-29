@@ -50,7 +50,8 @@ controladdin PowerBIManagement
       value: (string_literal)
       value: (string_literal))
     (controladdin_event
-      name: (identifier))
+      name: (identifier)
+      (parameter_list))
     (controladdin_procedure
       name: (identifier)
       (parameter_list
@@ -137,17 +138,20 @@ controladdin TestAddin
       (preproc_if
         condition: (identifier))
       (controladdin_procedure
-        name: (identifier))
+        name: (identifier)
+        (parameter_list))
       (preproc_else)
       (preproc_conditional_controladdin_elements
         (preproc_if
           condition: (preproc_not_expression
             (identifier)))
         (controladdin_procedure
-          name: (identifier))
+          name: (identifier)
+          (parameter_list))
         (preproc_else)
         (controladdin_procedure
-          name: (identifier))
+          name: (identifier)
+          (parameter_list))
         (preproc_endif))
       (preproc_endif))))
 
@@ -187,7 +191,8 @@ controladdin PowerBIManagement
       name: (identifier)
       value: (integer))
     (controladdin_event
-      name: (identifier))
+      name: (identifier)
+      (parameter_list))
     (controladdin_procedure
       name: (identifier)
       (parameter_list
