@@ -7039,6 +7039,13 @@ enum_type: $ => prec(1, seq(
       ';'
     ),
 
+    // InDataSet property for report columns
+    indataset_property: $ => seq(
+      kw_with_eq('indataset'),
+      field('value', $._boolean_value),
+      ';'
+    ),
+
     // Critical report layout properties
     default_layout_property: $ => seq(
       kw('defaultlayout'),
@@ -8111,18 +8118,19 @@ enum_type: $ => prec(1, seq(
     _report_column_properties: $ => choice(
       // Column appearance properties
       $.include_caption_property,
+      $.indataset_property,
       $.caption_property,
-      
+
       // Column formatting properties
       $.auto_format_expression_property,
       $.auto_format_type_property,
       $.decimal_places_property,
       $.auto_calc_field_property,
-      
+
       // Option-specific properties
       $.option_caption_property,
       $.option_members_property,
-      
+
       // Obsolete properties (for backwards compatibility)
       $.obsolete_state_property,
       $.obsolete_reason_property,
