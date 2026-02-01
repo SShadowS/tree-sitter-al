@@ -132,6 +132,13 @@ module.exports = grammar({
 
   word: $ => $.identifier,
 
+  // Supertypes for better AST organization and query writing
+  // Note: Only rules that are pure choices of rule references can be supertypes
+  supertypes: $ => [
+    $._object,
+    $._literal_value,
+  ],
+
   conflicts: $ => [
     [$.preprocessor_file_conditional, $.preproc_conditional_using],
     [$.preprocessor_file_conditional, $.preproc_split_enum_declaration, $.preproc_split_codeunit_declaration],  // Split object declarations

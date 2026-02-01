@@ -125,7 +125,13 @@ void tree_sitter_al_external_scanner_deserialize(
 ) {
     Scanner *scanner = (Scanner *)payload;
     array_clear(&scanner->condition_stack);
-    
+
+    // Reset all scalar fields before early return
+    scanner->in_split_construct = false;
+    scanner->current_split = SPLIT_NONE;
+    scanner->split_start_line = 0;
+    scanner->last_was_pragma = false;
+
     if (length == 0) return;
     
     size_t size = 0;
@@ -217,7 +223,7 @@ static void skip_whitespace_and_comments(TSLexer *lexer) {
 // Helper: Check if we're looking at a specific string
 static bool looking_at(TSLexer *lexer, const char *word) {
     skip_whitespace(lexer);
-    
+
     for (int i = 0; word[i] != '\0'; i++) {
         if (lexer->lookahead != word[i]) {
             return false;
@@ -230,7 +236,7 @@ static bool looking_at(TSLexer *lexer, const char *word) {
 // Helper: Check if we're looking at a specific string (case-insensitive)
 static bool looking_at_ci(TSLexer *lexer, const char *word) {
     skip_whitespace(lexer);
-    
+
     for (int i = 0; word[i] != '\0'; i++) {
         if (towlower(lexer->lookahead) != towlower(word[i])) {
             return false;
@@ -1164,7 +1170,10 @@ static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
     // Lookahead only - caller already marked token position
     // Check if this is #if
     if (lexer->lookahead != '#') {
-        fprintf(stderr, "    -> Not #, returning -1\n");
+        if (SCANNER_DEBUG) {
+            fprintf(stderr, "    -> Not #, returning -1\n");
+            fflush(stderr);
+        }
         return -1;  // Not at # at all
     }
 
