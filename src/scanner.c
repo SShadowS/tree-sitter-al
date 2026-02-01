@@ -58,12 +58,16 @@ typedef enum {
 } SplitType;
 
 // Scanner state structure
+// Note: Some fields are maintained for future use or serialization compatibility:
+//   - condition_stack: Reserved for future nested #if tracking
+//   - in_split_construct/current_split/split_start_line: Reserved for split construct tracking
+//   - last_was_pragma: Actively used for pragma detection
 typedef struct {
-    Array(bool) condition_stack;      // Track nested #if conditions
-    bool in_split_construct;          // Detect split syntactic constructs
-    SplitType current_split;          // Type of construct being split
-    uint32_t split_start_line;        // Line where split began
-    bool last_was_pragma;             // Track if last token was pragma
+    Array(bool) condition_stack;      // Reserved: Track nested #if conditions
+    bool in_split_construct;          // Reserved: Detect split syntactic constructs
+    SplitType current_split;          // Reserved: Type of construct being split
+    uint32_t split_start_line;        // Reserved: Line where split began
+    bool last_was_pragma;             // Active: Track if last token was pragma
 } Scanner;
 
 // Create scanner instance

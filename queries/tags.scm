@@ -102,6 +102,19 @@
   name: (trigger_name) @name) @definition.method
 
 ; =============================================================================
+; Parameter Definitions
+; =============================================================================
+
+; Function parameters
+(parameter
+  parameter_name: (name
+    (identifier) @name)) @definition.parameter
+
+(parameter
+  parameter_name: (name
+    (quoted_identifier) @name)) @definition.parameter
+
+; =============================================================================
 ; Field Definitions
 ; =============================================================================
 
@@ -125,7 +138,7 @@
 ; Variable and Label Definitions
 ; =============================================================================
 
-; Variable declarations (name field from _variable_name_list is propagated up)
+; Variable declarations
 (variable_declaration
   name: (identifier) @name) @definition.variable
 
@@ -152,6 +165,10 @@
 (systemaction_declaration
   name: [(identifier) (quoted_identifier)] @name) @definition.function
 
+; File upload action declarations
+(fileuploadaction_declaration
+  name: [(identifier) (quoted_identifier)] @name) @definition.function
+
 ; =============================================================================
 ; Module/Namespace Definitions
 ; =============================================================================
@@ -161,10 +178,10 @@
   name: (namespace_name) @name) @definition.module
 
 ; =============================================================================
-; References
+; Function/Method References
 ; =============================================================================
 
-; Method/function calls
+; Direct function calls
 (call_expression
   function: (identifier) @name) @reference.call
 
@@ -178,10 +195,44 @@
   function: (field_access
     field: (quoted_identifier) @name)) @reference.call
 
+; =============================================================================
+; Type References
+; =============================================================================
+
+; Record type references
+(record_type
+  reference: [(identifier) (quoted_identifier)] @name) @reference.type
+
+; Codeunit type references
+(codeunit_type
+  reference: [(identifier) (quoted_identifier) (integer)] @name) @reference.type
+
+; Enum type in type specifications
+(enum_type_reference
+  enum_type: [(identifier) (quoted_identifier)] @name) @reference.type
+
 ; Database references (Database::"Table Name")
 (database_reference
   table_name: [(identifier) (quoted_identifier)] @name) @reference.class
 
-; Enum type references (Enum::Value)
-(enum_type_reference
+; =============================================================================
+; Interface Implementation References
+; =============================================================================
+
+; Implements clause references
+(implements_clause
+  interface: [(identifier) (quoted_identifier)] @name) @reference.implementation
+
+; Qualified interface references
+(qualified_interface_reference) @reference.type
+
+; =============================================================================
+; Enum Value References
+; =============================================================================
+
+; Qualified enum values (Enum::Value)
+(qualified_enum_value
   enum_type: [(identifier) (quoted_identifier)] @name) @reference.class
+
+(qualified_enum_value
+  value: [(identifier) (quoted_identifier)] @name) @reference.constant

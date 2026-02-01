@@ -139,6 +139,15 @@ module.exports = grammar({
     $._literal_value,
   ],
 
+  // Inline simple wrapper rules for performance
+  // Note: _assignable_expression excluded - involved in conflicts
+  inline: $ => [
+    $._expression_statement,
+    $._case_expression,
+    $._boolean_value,
+    $._action_property,
+  ],
+
   conflicts: $ => [
     [$.preprocessor_file_conditional, $.preproc_conditional_using],
     [$.preprocessor_file_conditional, $.preproc_split_enum_declaration, $.preproc_split_codeunit_declaration],  // Split object declarations
@@ -162,23 +171,29 @@ module.exports = grammar({
     [$._expression, $._single_pattern],  // Identifier in case pattern can be expression or pattern
   ],
 
+  // External scanner tokens - order matters! Indices match scanner.c enum TokenType
+  // Note: Some tokens are reserved for future use or scanner internal logic:
+  //   - preproc_active/inactive_region_*: Reserved for future region tracking
+  //   - preproc_continuation_marker: Reserved for future split construct handling
+  //   - preproc_var_terminator: Used for lookahead checks, not emitted
+  //   - attribute_for_variable: Reserved for future variable attribute detection
   externals: $ => [
-    $.preproc_active_region_start,
-    $.preproc_active_region_end,
-    $.preproc_inactive_region_start,
-    $.preproc_inactive_region_end,
-    $.preproc_split_marker,
-    $.preproc_continuation_marker,
-    $.error_sentinel,
-    $.preproc_var_terminator,
-    $.attribute_for_variable,
-    $.attribute_for_procedure,
-    $.preproc_var_continuation,  // Signals #if contains ONLY variables, forces var_section continuation
-    $._pragma_var_continuation,  // Signals pragma followed by variable, continue var_section (hidden)
-    $._attribute_var_continuation,  // Signals attribute followed by variable, continue var_section (hidden)
-    $._region_var_continuation,  // Signals #region followed by variables, continue var_section (hidden)
-    $.for_to_keyword,  // 'to' keyword with word boundary check (external scanner)
-    $.for_downto_keyword  // 'downto' keyword with word boundary check (external scanner)
+    $.preproc_active_region_start,    // 0 - Reserved
+    $.preproc_active_region_end,      // 1 - Reserved
+    $.preproc_inactive_region_start,  // 2 - Reserved
+    $.preproc_inactive_region_end,    // 3 - Reserved
+    $.preproc_split_marker,           // 4 - Marks split procedure constructs
+    $.preproc_continuation_marker,    // 5 - Reserved
+    $.error_sentinel,                 // 6 - Error recovery detection
+    $.preproc_var_terminator,         // 7 - Lookahead check only
+    $.attribute_for_variable,         // 8 - Reserved
+    $.attribute_for_procedure,        // 9 - Detects procedure attributes
+    $.preproc_var_continuation,       // 10 - #if contains only variables
+    $._pragma_var_continuation,       // 11 - Pragma followed by variable (hidden)
+    $._attribute_var_continuation,    // 12 - Attribute followed by variable (hidden)
+    $._region_var_continuation,       // 13 - #region followed by variables (hidden)
+    $.for_to_keyword,                 // 14 - 'to' with word boundary check
+    $.for_downto_keyword              // 15 - 'downto' with word boundary check
   ],
 
   // Extras: whitespace, comments, and ignorable preprocessor directives
