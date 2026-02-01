@@ -28,7 +28,10 @@ enum TokenType {
     ATTRIBUTE_VAR_CONTINUATION,       // 12 - Signals [attr] followed by variable, continue var_section
     REGION_VAR_CONTINUATION,          // 13 - Signals #region followed by variables, continue var_section
     FOR_TO_KEYWORD,                   // 14 - 'to' keyword with word boundary check
-    FOR_DOWNTO_KEYWORD                // 15 - 'downto' keyword with word boundary check
+    FOR_DOWNTO_KEYWORD,               // 15 - 'downto' keyword with word boundary check
+    // Phase 2: Statement context tracking
+    IF_ELSE_CONTEXT_HINT,             // 16 - Hints about if-else nesting state
+    CASE_ELSE_KEYWORD                 // 17 - 'else' keyword that belongs to case statement (not if)
 };
 
 // Keywords that ALWAYS terminate a var section (no context check needed)
@@ -48,6 +51,19 @@ static const char* OBJECT_DECLARATION_KEYWORDS[] = {
     NULL  // Sentinel
 };
 
+// Helper function for case-insensitive keyword matching in buffer (MSVC-compatible)
+static bool match_keyword_in_buffer(const char* identifier, int id_len, const char* term) {
+    if ((int)strlen(term) != id_len) return false;
+    for (int j = 0; j < id_len; j++) {
+        char c1 = identifier[j];
+        char c2 = term[j];
+        if (c1 >= 'A' && c1 <= 'Z') c1 = c1 - 'A' + 'a';
+        if (c2 >= 'A' && c2 <= 'Z') c2 = c2 - 'A' + 'a';
+        if (c1 != c2) return false;
+    }
+    return true;
+}
+
 // Split types for tracking what construct is being split
 typedef enum {
     SPLIT_NONE,
@@ -64,6 +80,11 @@ typedef struct {
     SplitType current_split;          // Type of construct being split
     uint32_t split_start_line;        // Line where split began
     bool last_was_pragma;             // Track if last token was pragma
+    // Phase 2: Statement context tracking
+    uint16_t if_depth;                // Track nested if statement depth
+    uint16_t brace_depth;             // Track { } depth separately from preprocessor
+    uint16_t begin_end_depth;         // Track begin/end block depth
+    bool in_preproc_else;             // Currently in #else/#elif branch
 } Scanner;
 
 // Create scanner instance
@@ -74,6 +95,11 @@ void *tree_sitter_al_external_scanner_create() {
     scanner->current_split = SPLIT_NONE;
     scanner->split_start_line = 0;
     scanner->last_was_pragma = false;
+    // Phase 2: Initialize statement context tracking
+    scanner->if_depth = 0;
+    scanner->brace_depth = 0;
+    scanner->begin_end_depth = 0;
+    scanner->in_preproc_else = false;
     return scanner;
 }
 
@@ -91,19 +117,19 @@ unsigned tree_sitter_al_external_scanner_serialize(
 ) {
     Scanner *scanner = (Scanner *)payload;
     size_t size = 0;
-    
+
     // Serialize condition stack size
     uint32_t stack_size = scanner->condition_stack.size;
     if (size + sizeof(stack_size) <= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
         memcpy(buffer + size, &stack_size, sizeof(stack_size));
         size += sizeof(stack_size);
     }
-    
+
     // Serialize condition stack values
     for (uint32_t i = 0; i < stack_size && size < TREE_SITTER_SERIALIZATION_BUFFER_SIZE; i++) {
         buffer[size++] = scanner->condition_stack.contents[i] ? 1 : 0;
     }
-    
+
     // Serialize other state
     if (size + sizeof(bool) * 2 + sizeof(SplitType) + sizeof(uint32_t) <= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
         buffer[size++] = scanner->in_split_construct ? 1 : 0;
@@ -113,7 +139,18 @@ unsigned tree_sitter_al_external_scanner_serialize(
         memcpy(buffer + size, &scanner->split_start_line, sizeof(uint32_t));
         size += sizeof(uint32_t);
     }
-    
+
+    // Phase 2: Serialize statement context tracking
+    if (size + sizeof(uint16_t) * 3 + sizeof(bool) <= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
+        memcpy(buffer + size, &scanner->if_depth, sizeof(uint16_t));
+        size += sizeof(uint16_t);
+        memcpy(buffer + size, &scanner->brace_depth, sizeof(uint16_t));
+        size += sizeof(uint16_t);
+        memcpy(buffer + size, &scanner->begin_end_depth, sizeof(uint16_t));
+        size += sizeof(uint16_t);
+        buffer[size++] = scanner->in_preproc_else ? 1 : 0;
+    }
+
     return size;
 }
 
@@ -125,24 +162,30 @@ void tree_sitter_al_external_scanner_deserialize(
 ) {
     Scanner *scanner = (Scanner *)payload;
     array_clear(&scanner->condition_stack);
-    
+
+    // Initialize Phase 2 fields to defaults
+    scanner->if_depth = 0;
+    scanner->brace_depth = 0;
+    scanner->begin_end_depth = 0;
+    scanner->in_preproc_else = false;
+
     if (length == 0) return;
-    
+
     size_t size = 0;
-    
+
     // Deserialize condition stack size
     uint32_t stack_size = 0;
     if (size + sizeof(stack_size) <= length) {
         memcpy(&stack_size, buffer + size, sizeof(stack_size));
         size += sizeof(stack_size);
     }
-    
+
     // Deserialize condition stack values
     for (uint32_t i = 0; i < stack_size && size < length; i++) {
         bool value = buffer[size++] != 0;
         array_push(&scanner->condition_stack, value);
     }
-    
+
     // Deserialize other state
     if (size < length) scanner->in_split_construct = buffer[size++] != 0;
     if (size < length) scanner->last_was_pragma = buffer[size++] != 0;
@@ -152,6 +195,24 @@ void tree_sitter_al_external_scanner_deserialize(
     }
     if (size + sizeof(uint32_t) <= length) {
         memcpy(&scanner->split_start_line, buffer + size, sizeof(uint32_t));
+        size += sizeof(uint32_t);
+    }
+
+    // Phase 2: Deserialize statement context tracking
+    if (size + sizeof(uint16_t) <= length) {
+        memcpy(&scanner->if_depth, buffer + size, sizeof(uint16_t));
+        size += sizeof(uint16_t);
+    }
+    if (size + sizeof(uint16_t) <= length) {
+        memcpy(&scanner->brace_depth, buffer + size, sizeof(uint16_t));
+        size += sizeof(uint16_t);
+    }
+    if (size + sizeof(uint16_t) <= length) {
+        memcpy(&scanner->begin_end_depth, buffer + size, sizeof(uint16_t));
+        size += sizeof(uint16_t);
+    }
+    if (size < length) {
+        scanner->in_preproc_else = buffer[size++] != 0;
     }
 }
 
@@ -524,6 +585,8 @@ static bool match_directive_ci(TSLexer *lexer, const char *directive) {
 static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer);
 static bool scan_split_procedure_marker(Scanner *scanner, TSLexer *lexer);
 static bool scan_attribute_for_procedure(Scanner *scanner, TSLexer *lexer);
+static bool scan_case_else_keyword(Scanner *scanner, TSLexer *lexer);
+static bool scan_else_in_preproc(Scanner *scanner, TSLexer *lexer);
 
 // Main scan function
 bool tree_sitter_al_external_scanner_scan(
@@ -865,30 +928,14 @@ bool tree_sitter_al_external_scanner_scan(
                 }
                 identifier[id_len] = '\0';
 
-                // Helper for case-insensitive matching
-                #define MATCH_KW(term) ({ \
-                    bool _m = (strlen(term) == id_len); \
-                    if (_m) { \
-                        for (int _j = 0; _j < id_len; _j++) { \
-                            char _c1 = identifier[_j]; \
-                            char _c2 = term[_j]; \
-                            if (_c1 >= 'A' && _c1 <= 'Z') _c1 = _c1 - 'A' + 'a'; \
-                            if (_c2 >= 'A' && _c2 <= 'Z') _c2 = _c2 - 'A' + 'a'; \
-                            if (_c1 != _c2) { _m = false; break; } \
-                        } \
-                    } \
-                    _m; \
-                })
-
                 // Check if this identifier is an always-terminator keyword
                 bool is_terminator = false;
                 for (int i = 0; VAR_TERMINATORS_ALWAYS[i]; i++) {
-                    if (MATCH_KW(VAR_TERMINATORS_ALWAYS[i])) {
+                    if (match_keyword_in_buffer(identifier, id_len, VAR_TERMINATORS_ALWAYS[i])) {
                         is_terminator = true;
                         break;
                     }
                 }
-                #undef MATCH_KW
 
                 // Only emit ATTRIBUTE_VAR_CONTINUATION if NOT a terminator keyword
                 // Note: Object keywords (codeunit, table, etc.) are fine here because
@@ -917,6 +964,31 @@ bool tree_sitter_al_external_scanner_scan(
                 lexer->result_symbol = ATTRIBUTE_VAR_CONTINUATION;
                 return true;
             }
+        }
+    }
+
+    // Check for orphan else marker (else in preprocessor block without matching if)
+    // Check for case-else keyword (else that belongs to case statement, not if)
+    if (valid_symbols[CASE_ELSE_KEYWORD]) {
+        if (scan_case_else_keyword(scanner, lexer)) {
+            if (SCANNER_DEBUG) {
+                fprintf(stderr, "SCANNER: ✓ Emitting CASE_ELSE_KEYWORD\n");
+                fflush(stderr);
+            }
+            lexer->result_symbol = CASE_ELSE_KEYWORD;
+            return true;
+        }
+    }
+
+    // Check for else inside preprocessor block (for fragmented if-else detection)
+    if (valid_symbols[IF_ELSE_CONTEXT_HINT]) {
+        if (scan_else_in_preproc(scanner, lexer)) {
+            if (SCANNER_DEBUG) {
+                fprintf(stderr, "SCANNER: ✓ Emitting IF_ELSE_CONTEXT_HINT\n");
+                fflush(stderr);
+            }
+            lexer->result_symbol = IF_ELSE_CONTEXT_HINT;
+            return true;
         }
     }
 
@@ -1267,24 +1339,9 @@ static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
                     fflush(stderr);
                 }
 
-                // Helper lambda-like function for case-insensitive matching
-                #define MATCH_KEYWORD(term) ({ \
-                    bool _matches = (strlen(term) == id_len); \
-                    if (_matches) { \
-                        for (int _j = 0; _j < id_len; _j++) { \
-                            char _c1 = identifier[_j]; \
-                            char _c2 = term[_j]; \
-                            if (_c1 >= 'A' && _c1 <= 'Z') _c1 = _c1 - 'A' + 'a'; \
-                            if (_c2 >= 'A' && _c2 <= 'Z') _c2 = _c2 - 'A' + 'a'; \
-                            if (_c1 != _c2) { _matches = false; break; } \
-                        } \
-                    } \
-                    _matches; \
-                })
-
                 // Check always-terminators (procedure, trigger, etc.)
                 for (int i = 0; VAR_TERMINATORS_ALWAYS[i]; i++) {
-                    if (MATCH_KEYWORD(VAR_TERMINATORS_ALWAYS[i])) {
+                    if (match_keyword_in_buffer(identifier, id_len, VAR_TERMINATORS_ALWAYS[i])) {
                         if (SCANNER_DEBUG) {
                             fprintf(stderr, "  -> Found always-terminator keyword: %s\n", VAR_TERMINATORS_ALWAYS[i]);
                             fflush(stderr);
@@ -1295,7 +1352,7 @@ static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
 
                 // Check object declaration keywords (only terminate if followed by integer)
                 for (int i = 0; OBJECT_DECLARATION_KEYWORDS[i]; i++) {
-                    if (MATCH_KEYWORD(OBJECT_DECLARATION_KEYWORDS[i])) {
+                    if (match_keyword_in_buffer(identifier, id_len, OBJECT_DECLARATION_KEYWORDS[i])) {
                         // Skip whitespace and check if followed by a digit (object ID)
                         while (iswspace(lexer->lookahead)) {
                             lexer->advance(lexer, false);
@@ -1315,7 +1372,6 @@ static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
                         }
                     }
                 }
-                #undef MATCH_KEYWORD
             } else {
                 // Not an identifier start, just advance one character
                 lexer->advance(lexer, false);
@@ -1334,4 +1390,319 @@ static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
         fflush(stderr);
     }
     return 0;  // Is #if but no terminator found - safe to continue var_section
+}
+
+// ============================================================================
+// Phase 2: Orphan else detection for fragmented if-else patterns
+// ============================================================================
+
+// Helper: Check if current position has 'else' keyword with word boundary
+static bool at_else_keyword(TSLexer *lexer) {
+    if (towlower(lexer->lookahead) != 'e') return false;
+    lexer->advance(lexer, false);
+    if (towlower(lexer->lookahead) != 'l') return false;
+    lexer->advance(lexer, false);
+    if (towlower(lexer->lookahead) != 's') return false;
+    lexer->advance(lexer, false);
+    if (towlower(lexer->lookahead) != 'e') return false;
+    lexer->advance(lexer, false);
+    // Check word boundary
+    return lexer->eof(lexer) || !is_id_continue(lexer->lookahead);
+}
+
+// Helper: Check if current position has 'if' keyword with word boundary
+static bool at_if_keyword(TSLexer *lexer) {
+    if (towlower(lexer->lookahead) != 'i') return false;
+    lexer->advance(lexer, false);
+    if (towlower(lexer->lookahead) != 'f') return false;
+    lexer->advance(lexer, false);
+    // Check word boundary
+    return lexer->eof(lexer) || !is_id_continue(lexer->lookahead);
+}
+
+// Helper: Check if current position has 'end' keyword with word boundary
+static bool at_end_keyword(TSLexer *lexer) {
+    if (towlower(lexer->lookahead) != 'e') return false;
+    lexer->advance(lexer, false);
+    if (towlower(lexer->lookahead) != 'n') return false;
+    lexer->advance(lexer, false);
+    if (towlower(lexer->lookahead) != 'd') return false;
+    lexer->advance(lexer, false);
+    // Check word boundary
+    return lexer->eof(lexer) || !is_id_continue(lexer->lookahead);
+}
+
+// Scan for orphan else marker
+// Detects 'else' that appears in a preprocessor block without a matching 'if' in the same block
+// This helps resolve the fragmented if-else pattern:
+//   if condition then
+//       stmt;
+//   #if CONDITION
+// Scan for 'else' keyword that belongs to case statement (not if)
+// Detects case-else by counting statements after 'else' before 'end'
+// Case-else typically has multiple statements; if-else has single statement
+// When matched, CONSUMES the 'else' keyword and returns it as CASE_ELSE_KEYWORD token
+static bool scan_case_else_keyword(Scanner *scanner, TSLexer *lexer) {
+    // Skip whitespace (non-consuming for token boundary)
+    while (iswspace(lexer->lookahead)) {
+        lexer->advance(lexer, true);
+    }
+
+    // Must be at 'else' keyword
+    if (towlower(lexer->lookahead) != 'e') return false;
+
+    // Remember position after whitespace skip for potential token start
+    lexer->mark_end(lexer);
+
+    // Check for 'else' with word boundary
+    int32_t c1 = lexer->lookahead;
+    lexer->advance(lexer, false);
+    int32_t c2 = lexer->lookahead;
+    lexer->advance(lexer, false);
+    int32_t c3 = lexer->lookahead;
+    lexer->advance(lexer, false);
+    int32_t c4 = lexer->lookahead;
+    lexer->advance(lexer, false);
+    int32_t c5 = lexer->lookahead;
+
+    // Check if it spells 'else' with word boundary
+    if (towlower(c1) != 'e' || towlower(c2) != 'l' ||
+        towlower(c3) != 's' || towlower(c4) != 'e' ||
+        (c5 != 0 && is_id_continue(c5))) {
+        return false;
+    }
+
+    // Position is now right after 'else' keyword
+    // Mark potential token end (consuming 'else')
+    lexer->mark_end(lexer);
+
+    if (SCANNER_DEBUG) {
+        fprintf(stderr, "SCANNER: scan_case_else_keyword: found 'else', checking statements ahead\n");
+        fflush(stderr);
+    }
+
+    // Skip whitespace after else
+    while (iswspace(lexer->lookahead)) {
+        lexer->advance(lexer, false);
+    }
+
+    // Count semicolons before 'end' or '#' (preprocessor directive)
+    int semicolon_count = 0;
+    int depth = 0;  // Track begin/end depth
+    const uint32_t MAX_LOOKAHEAD = 2000;
+    uint32_t chars_scanned = 0;
+
+    while (!lexer->eof(lexer) && chars_scanned < MAX_LOOKAHEAD) {
+        chars_scanned++;
+
+        // Skip strings
+        if (lexer->lookahead == '\'' || lexer->lookahead == '"') {
+            char quote = lexer->lookahead;
+            lexer->advance(lexer, false);
+            while (!lexer->eof(lexer) && lexer->lookahead != quote) {
+                if (lexer->lookahead == quote) {
+                    lexer->advance(lexer, false);
+                    if (lexer->lookahead == quote) {
+                        lexer->advance(lexer, false);
+                        continue;
+                    }
+                    break;
+                }
+                lexer->advance(lexer, false);
+            }
+            if (lexer->lookahead == quote) lexer->advance(lexer, false);
+            continue;
+        }
+
+        // Check for 'begin' - increases depth
+        if (is_id_start(lexer->lookahead)) {
+            if (towlower(lexer->lookahead) == 'b') {
+                // Could be 'begin'
+                lexer->advance(lexer, false);
+                if (towlower(lexer->lookahead) == 'e') {
+                    lexer->advance(lexer, false);
+                    if (towlower(lexer->lookahead) == 'g') {
+                        lexer->advance(lexer, false);
+                        if (towlower(lexer->lookahead) == 'i') {
+                            lexer->advance(lexer, false);
+                            if (towlower(lexer->lookahead) == 'n') {
+                                lexer->advance(lexer, false);
+                                if (!is_id_continue(lexer->lookahead)) {
+                                    depth++;
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
+                // Skip rest of identifier
+                while (is_id_continue(lexer->lookahead)) lexer->advance(lexer, false);
+                continue;
+            }
+
+            // Check for 'end' - stop scanning at depth 0
+            if (towlower(lexer->lookahead) == 'e') {
+                lexer->advance(lexer, false);
+                if (towlower(lexer->lookahead) == 'n') {
+                    lexer->advance(lexer, false);
+                    if (towlower(lexer->lookahead) == 'd') {
+                        lexer->advance(lexer, false);
+                        if (!is_id_continue(lexer->lookahead)) {
+                            if (depth > 0) {
+                                depth--;
+                            } else {
+                                // Found 'end' at depth 0 - stop
+                                break;
+                            }
+                            continue;
+                        }
+                    }
+                }
+                // Skip rest of identifier
+                while (is_id_continue(lexer->lookahead)) lexer->advance(lexer, false);
+                continue;
+            }
+
+            // Skip other identifiers
+            while (is_id_continue(lexer->lookahead)) lexer->advance(lexer, false);
+            continue;
+        }
+
+        // Count semicolons at depth 0
+        if (lexer->lookahead == ';' && depth == 0) {
+            semicolon_count++;
+            lexer->advance(lexer, false);
+            continue;
+        }
+
+        // Check for preprocessor directive - stop scanning
+        if (lexer->lookahead == '#') {
+            break;
+        }
+
+        lexer->advance(lexer, false);
+    }
+
+    if (SCANNER_DEBUG) {
+        fprintf(stderr, "SCANNER: scan_case_else_keyword: semicolon_count=%d\n", semicolon_count);
+        fflush(stderr);
+    }
+
+    // Multiple statements after 'else' suggests case-else
+    // If-else would have single statement
+    return semicolon_count >= 2;
+}
+
+// Scan for else inside preprocessor block
+// Detects when 'else' appears inside a #if/#endif block
+// This is used to track fragmented if-else patterns
+static bool scan_else_in_preproc(Scanner *scanner, TSLexer *lexer) {
+    // This token is emitted when we're inside a preprocessor block
+    // and see 'else' that might be part of a fragmented if-else
+
+    // Mark token start (zero-width token)
+    lexer->mark_end(lexer);
+
+    // Skip whitespace
+    while (iswspace(lexer->lookahead)) {
+        lexer->advance(lexer, true);
+    }
+
+    // Check if we're at a preprocessor directive
+    if (lexer->lookahead != '#') return false;
+
+    lexer->advance(lexer, false);
+
+    // Check for #if, #ifdef, #ifndef
+    if (!match_keyword_ci(lexer, "if") &&
+        !match_keyword_ci(lexer, "ifdef") &&
+        !match_keyword_ci(lexer, "ifndef")) {
+        return false;
+    }
+
+    // Skip to end of directive line
+    skip_to_eol(lexer);
+
+    // Look inside the #if block for 'else' without matching 'if'
+    int if_count = 0;
+    int preproc_depth = 1;
+    const uint32_t MAX_LOOKAHEAD = 5000;
+    uint32_t chars_scanned = 0;
+
+    while (preproc_depth > 0 && !lexer->eof(lexer) && chars_scanned < MAX_LOOKAHEAD) {
+        chars_scanned++;
+        skip_whitespace_and_comments(lexer);
+
+        // Check for preprocessor directives
+        if (lexer->lookahead == '#') {
+            lexer->advance(lexer, false);
+            if (match_keyword_ci(lexer, "if") ||
+                match_keyword_ci(lexer, "ifdef") ||
+                match_keyword_ci(lexer, "ifndef")) {
+                preproc_depth++;
+            } else if (match_keyword_ci(lexer, "endif")) {
+                preproc_depth--;
+            }
+            skip_to_eol(lexer);
+            continue;
+        }
+
+        // At depth 1, track 'if' and 'else' keywords
+        if (preproc_depth == 1 && is_id_start(lexer->lookahead)) {
+            if (towlower(lexer->lookahead) == 'i') {
+                // Check for 'if'
+                lexer->advance(lexer, false);
+                if (towlower(lexer->lookahead) == 'f') {
+                    lexer->advance(lexer, false);
+                    if (!is_id_continue(lexer->lookahead)) {
+                        if_count++;
+                        continue;
+                    }
+                }
+                while (is_id_continue(lexer->lookahead)) lexer->advance(lexer, false);
+            } else if (towlower(lexer->lookahead) == 'e') {
+                // Check for 'else' or 'end'
+                lexer->advance(lexer, false);
+                if (towlower(lexer->lookahead) == 'l') {
+                    // Might be 'else'
+                    lexer->advance(lexer, false);
+                    if (towlower(lexer->lookahead) == 's') {
+                        lexer->advance(lexer, false);
+                        if (towlower(lexer->lookahead) == 'e') {
+                            lexer->advance(lexer, false);
+                            if (!is_id_continue(lexer->lookahead)) {
+                                // Found 'else'
+                                if (if_count == 0) {
+                                    // 'else' without matching 'if' in this block
+                                    return true;
+                                }
+                                // else belongs to an if in this block
+                                if_count--;
+                                continue;
+                            }
+                        }
+                    }
+                } else if (towlower(lexer->lookahead) == 'n') {
+                    // Might be 'end'
+                    lexer->advance(lexer, false);
+                    if (towlower(lexer->lookahead) == 'd') {
+                        lexer->advance(lexer, false);
+                        if (!is_id_continue(lexer->lookahead)) {
+                            // Found 'end' - reset if_count for this scope
+                            if_count = 0;
+                            continue;
+                        }
+                    }
+                }
+                while (is_id_continue(lexer->lookahead)) lexer->advance(lexer, false);
+            } else {
+                while (is_id_continue(lexer->lookahead)) lexer->advance(lexer, false);
+            }
+            continue;
+        }
+
+        lexer->advance(lexer, false);
+    }
+
+    return false;
 }

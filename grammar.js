@@ -1710,11 +1710,18 @@ module.exports = grammar({
         kw('worksheet'),
         kw('standarddialog'),
         kw('confirmdialog'),
+        kw('confirmationdialog'),
         kw('navigationpane'),
+        kw('navigatepage'),
         kw('headlines'),
         kw('document'),
         kw('api'),
         kw('cardpart'),
+        kw('listpart'),
+        kw('listplus'),
+        kw('chartpart'),
+        kw('reportpreview'),
+        kw('reportprocessingonly'),
         $.string_literal,
         $.identifier,
         $._quoted_identifier
@@ -2501,7 +2508,7 @@ module.exports = grammar({
     ),
 
     dataset_section: $ => seq(
-      'dataset',
+      kw('dataset'),
       '{',
       repeat(choice(
         $.report_dataitem_section,
@@ -2634,7 +2641,7 @@ module.exports = grammar({
     ),
 
     requestpage_section: $ => seq(
-      'requestpage',
+      kw('requestpage'),
       '{',
       repeat(choice(
         $._page_properties,
@@ -4778,18 +4785,20 @@ enum_type: $ => prec(1, seq(
       prec(1, kw('biginteger')),
       prec(1, kw('decimal')),
       prec(1, kw('byte')),
-      
+
       // Text Types
       prec(1, kw('char')),
       prec(10, kw('label')),  // High precedence for label type
-      
+      prec(1, kw('textbuilder')),
+      prec(1, kw('textconst')),
+
       // Date/Time Types
       prec(1, kw('date')),
       prec(1, kw('time')),
       prec(1, kw('datetime')),
       prec(1, kw('duration')),
       kw('dateformula'),
-      
+
       // Other Types
       prec(1, kw('boolean')),
       // Option removed, handled by option_type
@@ -4810,9 +4819,86 @@ enum_type: $ => prec(1, seq(
       prec(1, kw('instream')),
       prec(1, kw('outstream')),
       prec(1, kw('secrettext')),
-      prec(1, kw('moduleinfo')), 
-      prec(1, kw('objecttype')), 
-      prec(1, kw('keyref')), 
+      prec(1, kw('moduleinfo')),
+      prec(1, kw('moduledependencyinfo')),
+      prec(1, kw('objecttype')),
+      prec(1, kw('keyref')),
+      prec(1, kw('version')),
+
+      // HTTP Types
+      prec(1, kw('httpclient')),
+      prec(1, kw('httpcontent')),
+      prec(1, kw('httpheaders')),
+      prec(1, kw('httprequestmessage')),
+      prec(1, kw('httpresponsemessage')),
+      prec(1, kw('httprequesttype')),
+
+      // File Types
+      prec(1, kw('file')),
+      prec(1, kw('fileupload')),
+
+      // Notification Types
+      prec(1, kw('notification')),
+      prec(1, kw('notificationscope')),
+
+      // Error Types
+      prec(1, kw('errorinfo')),
+      prec(1, kw('errortype')),
+
+      // Session/Transaction Types
+      prec(1, kw('sessionsettings')),
+      prec(1, kw('transactionmodel')),
+      prec(1, kw('transactiontype')),
+      prec(1, kw('isolationlevel')),
+      prec(1, kw('datascope')),
+      prec(1, kw('datatransfer')),
+
+      // Security Types
+      prec(1, kw('securityfilter')),
+      prec(1, kw('securityoperationresult')),
+      prec(1, kw('auditcategory')),
+
+      // Execution Types
+      prec(1, kw('executioncontext')),
+      prec(1, kw('executionmode')),
+      prec(1, kw('verbosity')),
+
+      // Field/Table Types
+      prec(1, kw('fieldclass')),
+      prec(1, kw('fieldtype')),
+      prec(1, kw('tableconnectiontype')),
+      prec(1, kw('tablefilter')),
+
+      // Client Types
+      prec(1, kw('clienttype')),
+      prec(1, kw('connectiontype')),
+      prec(1, kw('cookie')),
+
+      // Page/Report Types
+      prec(1, kw('pageresult')),
+      prec(1, kw('pagestyle')),
+      prec(1, kw('reportformat')),
+      prec(1, kw('pagebackgroundtaskerrorlevel')),
+      prec(1, kw('completiontriggererrorlevel')),
+
+      // Test Types
+      prec(1, kw('testaction')),
+      prec(1, kw('testfield')),
+      prec(1, kw('testfilterfield')),
+      prec(1, kw('testhttprequestmessage')),
+      prec(1, kw('testhttpresponsemessage')),
+
+      // Web Service Types
+      prec(1, kw('webserviceactioncontext')),
+      prec(1, kw('webserviceactionresultcode')),
+
+      // Analysis/DotNet Types
+      prec(1, kw('analysisview')),
+      prec(1, kw('analysisviews')),
+      prec(1, kw('automation')),
+      prec(1, kw('dotnetassembly')),
+      prec(1, kw('dotnettypedeclaration')),
+      prec(1, kw('joker')),
 
       // XML Types
       kw('xmldocument'),
@@ -4820,7 +4906,17 @@ enum_type: $ => prec(1, seq(
       prec(1, kw('xmlelement')),
       prec(1, kw('xmlnodelist')),
       prec(1, kw('xmlattribute')),
-      prec(1, kw('xmlattributecollection'))
+      prec(1, kw('xmlattributecollection')),
+      prec(1, kw('xmlcdata')),
+      prec(1, kw('xmlcomment')),
+      prec(1, kw('xmldeclaration')),
+      prec(1, kw('xmldocumenttype')),
+      prec(1, kw('xmlnamespacemanager')),
+      prec(1, kw('xmlnametable')),
+      prec(1, kw('xmlprocessinginstruction')),
+      prec(1, kw('xmlreadoptions')),
+      prec(1, kw('xmltext')),
+      prec(1, kw('xmlwriteoptions'))
     ),
 
     text_type: $ => choice(
@@ -6053,6 +6149,7 @@ enum_type: $ => prec(1, seq(
         $.foreach_statement,
         $.with_statement,
         $.asserterror_statement,
+        $.continue_statement,
         $.empty_statement // Least common - standalone semicolons
       ),
       optional(';')
@@ -6130,6 +6227,9 @@ enum_type: $ => prec(1, seq(
         ')'
       )))
     ),
+
+    // Continue statement - skips to next iteration in a loop
+    continue_statement: $ => prec(13, kw('continue', 10)),
 
     asserterror_statement: $ => prec(14, choice(
       // asserterror with expression or code block
