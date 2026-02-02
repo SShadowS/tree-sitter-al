@@ -58,12 +58,16 @@ typedef enum {
 } SplitType;
 
 // Scanner state structure
+// Note: Some fields are maintained for future use or serialization compatibility:
+//   - condition_stack: Reserved for future nested #if tracking
+//   - in_split_construct/current_split/split_start_line: Reserved for split construct tracking
+//   - last_was_pragma: Actively used for pragma detection
 typedef struct {
-    Array(bool) condition_stack;      // Track nested #if conditions
-    bool in_split_construct;          // Detect split syntactic constructs
-    SplitType current_split;          // Type of construct being split
-    uint32_t split_start_line;        // Line where split began
-    bool last_was_pragma;             // Track if last token was pragma
+    Array(bool) condition_stack;      // Reserved: Track nested #if conditions
+    bool in_split_construct;          // Reserved: Detect split syntactic constructs
+    SplitType current_split;          // Reserved: Type of construct being split
+    uint32_t split_start_line;        // Reserved: Line where split began
+    bool last_was_pragma;             // Active: Track if last token was pragma
 } Scanner;
 
 // Create scanner instance
@@ -125,7 +129,13 @@ void tree_sitter_al_external_scanner_deserialize(
 ) {
     Scanner *scanner = (Scanner *)payload;
     array_clear(&scanner->condition_stack);
-    
+
+    // Reset all scalar fields before early return
+    scanner->in_split_construct = false;
+    scanner->current_split = SPLIT_NONE;
+    scanner->split_start_line = 0;
+    scanner->last_was_pragma = false;
+
     if (length == 0) return;
     
     size_t size = 0;
@@ -217,7 +227,7 @@ static void skip_whitespace_and_comments(TSLexer *lexer) {
 // Helper: Check if we're looking at a specific string
 static bool looking_at(TSLexer *lexer, const char *word) {
     skip_whitespace(lexer);
-    
+
     for (int i = 0; word[i] != '\0'; i++) {
         if (lexer->lookahead != word[i]) {
             return false;
@@ -230,7 +240,7 @@ static bool looking_at(TSLexer *lexer, const char *word) {
 // Helper: Check if we're looking at a specific string (case-insensitive)
 static bool looking_at_ci(TSLexer *lexer, const char *word) {
     skip_whitespace(lexer);
-    
+
     for (int i = 0; word[i] != '\0'; i++) {
         if (towlower(lexer->lookahead) != towlower(word[i])) {
             return false;
@@ -1164,7 +1174,10 @@ static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer) {
     // Lookahead only - caller already marked token position
     // Check if this is #if
     if (lexer->lookahead != '#') {
-        fprintf(stderr, "    -> Not #, returning -1\n");
+        if (SCANNER_DEBUG) {
+            fprintf(stderr, "    -> Not #, returning -1\n");
+            fflush(stderr);
+        }
         return -1;  // Not at # at all
     }
 
