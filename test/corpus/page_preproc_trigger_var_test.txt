@@ -23,7 +23,8 @@ page 50000 "Test Page"
   (page_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (page_type_property)
+    (page_type_property
+      value: (identifier))
     (preproc_conditional_mixed_content
       (preproc_if
         condition: (preproc_not_expression
@@ -235,7 +236,8 @@ page 50001 "Complex Page"
   (page_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (page_type_property)
+    (page_type_property
+      value: (identifier))
     (preproc_conditional_page_properties
       (preproc_if
         condition: (identifier))

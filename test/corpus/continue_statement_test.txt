@@ -1,0 +1,88 @@
+========================================================================
+Continue statement in for loop
+========================================================================
+codeunit 50100 Test
+{
+    procedure Test()
+    var
+        i: Integer;
+    begin
+        for i := 1 to 10 do
+            if i = 5 then
+                continue;
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (for_statement
+          variable: (identifier)
+          start: (integer)
+          direction: (to)
+          end: (integer)
+          body: (if_statement
+            condition: (comparison_expression
+              left: (identifier)
+              operator: (comparison_operator)
+              right: (integer))
+            then_branch: (continue_statement)))))))
+
+========================================================================
+Continue statement in repeat loop
+========================================================================
+codeunit 50100 Test
+{
+    procedure Test()
+    begin
+        repeat
+            continue;
+        until true;
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (repeat_statement
+          (continue_statement)
+          condition: (boolean))))))
+
+========================================================================
+Continue statement case-insensitive (CONTINUE)
+========================================================================
+codeunit 50100 Test
+{
+    procedure Test()
+    begin
+        CONTINUE;
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (code_block
+        (continue_statement)))))

@@ -1,0 +1,3913 @@
+{
+  "area_types": [
+    "Content",
+    "Factboxes",
+    "RoleCenter",
+    "Creation",
+    "Sections",
+    "Embedding",
+    "Prompt",
+    "PromptOptions",
+    "SystemActions",
+    "content"
+  ],
+  "by_file": {
+    "al.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 1,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "Codeunit",
+            "Page",
+            "Query",
+            "Report",
+            "Table",
+            "XmlPort"
+          ]
+        },
+        {
+          "placeholder": 2,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "Codeunit::",
+            "Database::",
+            "Page::",
+            "Query::",
+            "Report::",
+            "XmlPort::"
+          ]
+        }
+      ],
+      "all_keywords": [
+        "procedure"
+      ],
+      "all_properties": [],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "al.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Trigger",
+          "prefix": "ttrigger",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "procedure"
+          ],
+          "name": "Snippet: Procedure",
+          "prefix": "tprocedure",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Assert Error",
+          "prefix": "tassert",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: With Do",
+          "prefix": "twithdo",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: If",
+          "prefix": "tif",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: If Else",
+          "prefix": "tifelse",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Case Of",
+          "prefix": "tcaseof",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Case Else",
+          "prefix": "tcaseelse",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: For",
+          "prefix": "tfor",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: ForEach",
+          "prefix": "tforeach",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: While",
+          "prefix": "twhile",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Repeat Until",
+          "prefix": "trepeat",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 1,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "Codeunit",
+                "Page",
+                "Query",
+                "Report",
+                "Table",
+                "XmlPort"
+              ]
+            },
+            {
+              "placeholder": 2,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "Codeunit::",
+                "Database::",
+                "Page::",
+                "Query::",
+                "Report::",
+                "XmlPort::"
+              ]
+            }
+          ],
+          "keywords": [
+            "procedure"
+          ],
+          "name": "Snippet: Event Subscriber",
+          "prefix": "teventsub",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "procedure"
+          ],
+          "name": "Snippet: Integration Event",
+          "prefix": "teventint",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "procedure"
+          ],
+          "name": "Snippet: Business Event",
+          "prefix": "teventbus",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "procedure"
+          ],
+          "name": "Snippet: Internal Event",
+          "prefix": "teventinternal",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "procedure"
+          ],
+          "name": "Snippet: External Business Event",
+          "prefix": "teventexternal",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Caption ML",
+          "prefix": "tcaptionml",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Option Caption ML",
+          "prefix": "toptioncaptionml",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: If Table Empty Else",
+          "prefix": "tisemptyelse",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: If Table Empty",
+          "prefix": "tisempty",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "codeunit.json": {
+      "all_enum_choices": [],
+      "all_keywords": [],
+      "all_properties": [],
+      "all_sections": [],
+      "all_triggers": [
+        "OnRun"
+      ],
+      "file": "codeunit.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Codeunit",
+          "prefix": "tcodeunit",
+          "properties": [],
+          "sections": [],
+          "triggers": [
+            "OnRun"
+          ]
+        }
+      ]
+    },
+    "controladdin.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 8,
+          "property_name": "VerticalStretch",
+          "section_context": null,
+          "values": [
+            "true",
+            "false"
+          ]
+        },
+        {
+          "placeholder": 9,
+          "property_name": "VerticalShrink",
+          "section_context": null,
+          "values": [
+            "true",
+            "false"
+          ]
+        },
+        {
+          "placeholder": 10,
+          "property_name": "HorizontalStretch",
+          "section_context": null,
+          "values": [
+            "true",
+            "false"
+          ]
+        },
+        {
+          "placeholder": 11,
+          "property_name": "HorizontalShrink",
+          "section_context": null,
+          "values": [
+            "true",
+            "false"
+          ]
+        }
+      ],
+      "all_keywords": [
+        "event",
+        "procedure"
+      ],
+      "all_properties": [
+        {
+          "example_value": "300",
+          "name": "RequestedHeight"
+        },
+        {
+          "example_value": "300",
+          "name": "MinimumHeight"
+        },
+        {
+          "example_value": "300",
+          "name": "MaximumHeight"
+        },
+        {
+          "example_value": "700",
+          "name": "RequestedWidth"
+        },
+        {
+          "example_value": "700",
+          "name": "MinimumWidth"
+        },
+        {
+          "example_value": "700",
+          "name": "MaximumWidth"
+        },
+        {
+          "example_value": "[enum: true,false...]",
+          "name": "VerticalStretch"
+        },
+        {
+          "example_value": "[enum: true,false...]",
+          "name": "VerticalShrink"
+        },
+        {
+          "example_value": "[enum: true,false...]",
+          "name": "HorizontalStretch"
+        },
+        {
+          "example_value": "[enum: true,false...]",
+          "name": "HorizontalShrink"
+        },
+        {
+          "example_value": "'${14:style.css}'",
+          "name": "StyleSheets"
+        },
+        {
+          "example_value": "'${15:startupScript.js}'",
+          "name": "StartupScript"
+        },
+        {
+          "example_value": "'${16:recreateScript.js}'",
+          "name": "RecreateScript"
+        },
+        {
+          "example_value": "'${17:refreshScript.js}'",
+          "name": "RefreshScript"
+        }
+      ],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "controladdin.json",
+      "snippets": [
+        {
+          "enum_choices": [
+            {
+              "placeholder": 8,
+              "property_name": "VerticalStretch",
+              "section_context": null,
+              "values": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "placeholder": 9,
+              "property_name": "VerticalShrink",
+              "section_context": null,
+              "values": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "placeholder": 10,
+              "property_name": "HorizontalStretch",
+              "section_context": null,
+              "values": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "placeholder": 11,
+              "property_name": "HorizontalShrink",
+              "section_context": null,
+              "values": [
+                "true",
+                "false"
+              ]
+            }
+          ],
+          "keywords": [
+            "event",
+            "procedure"
+          ],
+          "name": "Snippet: Control Add-In",
+          "prefix": "tcontroladdin",
+          "properties": [
+            {
+              "example_value": "300",
+              "name": "RequestedHeight"
+            },
+            {
+              "example_value": "300",
+              "name": "MinimumHeight"
+            },
+            {
+              "example_value": "300",
+              "name": "MaximumHeight"
+            },
+            {
+              "example_value": "700",
+              "name": "RequestedWidth"
+            },
+            {
+              "example_value": "700",
+              "name": "MinimumWidth"
+            },
+            {
+              "example_value": "700",
+              "name": "MaximumWidth"
+            },
+            {
+              "example_value": "[enum: true,false...]",
+              "name": "VerticalStretch"
+            },
+            {
+              "example_value": "[enum: true,false...]",
+              "name": "VerticalShrink"
+            },
+            {
+              "example_value": "[enum: true,false...]",
+              "name": "HorizontalStretch"
+            },
+            {
+              "example_value": "[enum: true,false...]",
+              "name": "HorizontalShrink"
+            },
+            {
+              "example_value": "'${14:style.css}'",
+              "name": "StyleSheets"
+            },
+            {
+              "example_value": "'${15:startupScript.js}'",
+              "name": "StartupScript"
+            },
+            {
+              "example_value": "'${16:recreateScript.js}'",
+              "name": "RecreateScript"
+            },
+            {
+              "example_value": "'${17:refreshScript.js}'",
+              "name": "RefreshScript"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "dotnet.json": {
+      "all_enum_choices": [],
+      "all_keywords": [],
+      "all_properties": [],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "dotnet.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: DotNetPackage",
+          "prefix": "tdotnet",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: DotNetAssembly",
+          "prefix": "tdotnetassembly",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: DotNetType",
+          "prefix": "tdotnettype",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "entitlement.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 2,
+          "property_name": "Type",
+          "section_context": null,
+          "values": [
+            "Application",
+            "ApplicationScope",
+            "ConcurrentUserServicePlan",
+            "FlatRateServicePlan",
+            "Implicit",
+            "PerUserServicePlan",
+            "Role",
+            "Group"
+          ]
+        },
+        {
+          "placeholder": 3,
+          "property_name": "RoleType",
+          "section_context": null,
+          "values": [
+            "Delegated",
+            "Local"
+          ]
+        }
+      ],
+      "all_keywords": [],
+      "all_properties": [
+        {
+          "example_value": "[enum: Application,ApplicationScope,C...]",
+          "name": "Type"
+        },
+        {
+          "example_value": "[enum: Delegated,Local...]",
+          "name": "RoleType"
+        },
+        {
+          "example_value": "'${4:MyId}'",
+          "name": "Id"
+        },
+        {
+          "example_value": "\"${0:MyListofObjects}\"",
+          "name": "ObjectEntitlements"
+        }
+      ],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "entitlement.json",
+      "snippets": [
+        {
+          "enum_choices": [
+            {
+              "placeholder": 2,
+              "property_name": "Type",
+              "section_context": null,
+              "values": [
+                "Application",
+                "ApplicationScope",
+                "ConcurrentUserServicePlan",
+                "FlatRateServicePlan",
+                "Implicit",
+                "PerUserServicePlan",
+                "Role",
+                "Group"
+              ]
+            },
+            {
+              "placeholder": 3,
+              "property_name": "RoleType",
+              "section_context": null,
+              "values": [
+                "Delegated",
+                "Local"
+              ]
+            }
+          ],
+          "keywords": [],
+          "name": "Snippet: Entitlement",
+          "prefix": "tentitlement",
+          "properties": [
+            {
+              "example_value": "[enum: Application,ApplicationScope,C...]",
+              "name": "Type"
+            },
+            {
+              "example_value": "[enum: Delegated,Local...]",
+              "name": "RoleType"
+            },
+            {
+              "example_value": "'${4:MyId}'",
+              "name": "Id"
+            },
+            {
+              "example_value": "\"${0:MyListofObjects}\"",
+              "name": "ObjectEntitlements"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "enum.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 3,
+          "property_name": "Extensible",
+          "section_context": null,
+          "values": [
+            "true",
+            "false"
+          ]
+        }
+      ],
+      "all_keywords": [],
+      "all_properties": [
+        {
+          "example_value": "[enum: true,false...]",
+          "name": "Extensible"
+        }
+      ],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "enum.json",
+      "snippets": [
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": "Extensible",
+              "section_context": null,
+              "values": [
+                "true",
+                "false"
+              ]
+            }
+          ],
+          "keywords": [],
+          "name": "Snippet: Enum",
+          "prefix": "tenum",
+          "properties": [
+            {
+              "example_value": "[enum: true,false...]",
+              "name": "Extensible"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Enum Value",
+          "prefix": "tenumvalue",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "enumextension.json": {
+      "all_enum_choices": [],
+      "all_keywords": [],
+      "all_properties": [],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "enumextension.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Enum Extension",
+          "prefix": "tenumext",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "interface.json": {
+      "all_enum_choices": [],
+      "all_keywords": [
+        "procedure"
+      ],
+      "all_properties": [],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "interface.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [
+            "procedure"
+          ],
+          "name": "Snippet: Interface",
+          "prefix": "tinterface",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "page.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 3,
+          "property_name": "PageType",
+          "section_context": null,
+          "values": [
+            "Card",
+            "List",
+            "RoleCenter",
+            "CardPart",
+            "ListPart",
+            "Document",
+            "Worksheet",
+            "ListPlus",
+            "ConfirmationDialog",
+            "NavigatePage",
+            "StandardDialog",
+            "API",
+            "ReportPreview",
+            "ReportProcessingOnly",
+            "XmlPort"
+          ]
+        },
+        {
+          "placeholder": 4,
+          "property_name": "ApplicationArea",
+          "section_context": null,
+          "values": [
+            "All",
+            "Basic",
+            "Suite",
+            "Advanced"
+          ]
+        },
+        {
+          "placeholder": 5,
+          "property_name": "UsageCategory",
+          "section_context": null,
+          "values": [
+            "Administration",
+            "Documents",
+            "History",
+            "Lists",
+            "None",
+            "ReportsAndAnalysis",
+            "Tasks"
+          ]
+        },
+        {
+          "placeholder": 1,
+          "property_name": null,
+          "section_context": "systemaction",
+          "values": [
+            "Generate",
+            "Attach",
+            "Cancel",
+            "Ok",
+            "Regenerate"
+          ]
+        },
+        {
+          "placeholder": 3,
+          "property_name": "ApplicationArea",
+          "section_context": null,
+          "values": [
+            "All",
+            "Basic",
+            "Suite",
+            "Advanced"
+          ]
+        },
+        {
+          "placeholder": 4,
+          "property_name": "RunObject",
+          "section_context": null,
+          "values": [
+            "Page",
+            "Report",
+            "XmlPort",
+            "Codeunit"
+          ]
+        },
+        {
+          "placeholder": 8,
+          "property_name": "RunObject",
+          "section_context": null,
+          "values": [
+            "Page",
+            "Report",
+            "XmlPort",
+            "Codeunit"
+          ]
+        },
+        {
+          "placeholder": 11,
+          "property_name": "RunObject",
+          "section_context": null,
+          "values": [
+            "Page",
+            "Report",
+            "XmlPort",
+            "Codeunit"
+          ]
+        },
+        {
+          "placeholder": 5,
+          "property_name": "PromptMode",
+          "section_context": null,
+          "values": [
+            "Prompt",
+            "Generate",
+            "Content"
+          ]
+        },
+        {
+          "placeholder": 10,
+          "property_name": null,
+          "section_context": "systemaction",
+          "values": [
+            "Generate",
+            "Attach",
+            "Cancel",
+            "Ok",
+            "Regenerate"
+          ]
+        }
+      ],
+      "all_keywords": [
+        "field",
+        "action",
+        "actionref",
+        "customaction",
+        "systemaction",
+        "usercontrol",
+        "view",
+        "part",
+        "analysisview"
+      ],
+      "all_properties": [
+        {
+          "example_value": "[enum: Card,List,RoleCenter,CardPart,...]",
+          "name": "PageType"
+        },
+        {
+          "example_value": "[enum: All,Basic,Suite,Advanced...]",
+          "name": "ApplicationArea"
+        },
+        {
+          "example_value": "[enum: Administration,Documents,Histo...]",
+          "name": "UsageCategory"
+        },
+        {
+          "example_value": "TableName",
+          "name": "SourceTable"
+        },
+        {
+          "example_value": "'${2:ViewCaption}'",
+          "name": "Caption"
+        },
+        {
+          "example_value": "where(${3:TableFieldName} = filter(${0:FilterValue}))",
+          "name": "Filters"
+        },
+        {
+          "example_value": "false",
+          "name": "SharedLayout"
+        },
+        {
+          "example_value": "'${4:publisherName}'",
+          "name": "APIPublisher"
+        },
+        {
+          "example_value": "'${5:groupName}'",
+          "name": "APIGroup"
+        },
+        {
+          "example_value": "'${6:VersionList}'",
+          "name": "APIVersion"
+        },
+        {
+          "example_value": "'${7:entityName}'",
+          "name": "EntityName"
+        },
+        {
+          "example_value": "'${8:entitySetName}'",
+          "name": "EntitySetName"
+        },
+        {
+          "example_value": "true",
+          "name": "DelayedInsert"
+        },
+        {
+          "example_value": "[enum: Page,Report,XmlPort,Codeunit...]",
+          "name": "RunObject"
+        },
+        {
+          "example_value": "[enum: Prompt,Generate,Content...]",
+          "name": "PromptMode"
+        },
+        {
+          "example_value": "false",
+          "name": "Extensible"
+        },
+        {
+          "example_value": "true",
+          "name": "SourceTableTemporary"
+        },
+        {
+          "example_value": "'${2:DefinitionFilePath}'",
+          "name": "DefinitionFile"
+        }
+      ],
+      "all_sections": [
+        {
+          "type": "layout"
+        },
+        {
+          "type": "area"
+        },
+        {
+          "type": "group"
+        },
+        {
+          "type": "actions"
+        },
+        {
+          "name": "Content",
+          "type": "area"
+        },
+        {
+          "type": "repeater"
+        },
+        {
+          "name": "Factboxes",
+          "type": "area"
+        },
+        {
+          "name": "RoleCenter",
+          "type": "area"
+        },
+        {
+          "name": "Creation",
+          "type": "area"
+        },
+        {
+          "name": "Sections",
+          "type": "area"
+        },
+        {
+          "name": "Embedding",
+          "type": "area"
+        },
+        {
+          "name": "Prompt",
+          "type": "area"
+        },
+        {
+          "name": "PromptOptions",
+          "type": "area"
+        },
+        {
+          "name": "SystemActions",
+          "type": "area"
+        }
+      ],
+      "all_triggers": [
+        "OnAction"
+      ],
+      "file": "page.json",
+      "snippets": [
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": "PageType",
+              "section_context": null,
+              "values": [
+                "Card",
+                "List",
+                "RoleCenter",
+                "CardPart",
+                "ListPart",
+                "Document",
+                "Worksheet",
+                "ListPlus",
+                "ConfirmationDialog",
+                "NavigatePage",
+                "StandardDialog",
+                "API",
+                "ReportPreview",
+                "ReportProcessingOnly",
+                "XmlPort"
+              ]
+            },
+            {
+              "placeholder": 4,
+              "property_name": "ApplicationArea",
+              "section_context": null,
+              "values": [
+                "All",
+                "Basic",
+                "Suite",
+                "Advanced"
+              ]
+            },
+            {
+              "placeholder": 5,
+              "property_name": "UsageCategory",
+              "section_context": null,
+              "values": [
+                "Administration",
+                "Documents",
+                "History",
+                "Lists",
+                "None",
+                "ReportsAndAnalysis",
+                "Tasks"
+              ]
+            }
+          ],
+          "keywords": [
+            "field",
+            "action"
+          ],
+          "name": "Page",
+          "prefix": "tpage",
+          "properties": [
+            {
+              "example_value": "[enum: Card,List,RoleCenter,CardPart,...]",
+              "name": "PageType"
+            },
+            {
+              "example_value": "[enum: All,Basic,Suite,Advanced...]",
+              "name": "ApplicationArea"
+            },
+            {
+              "example_value": "[enum: Administration,Documents,Histo...]",
+              "name": "UsageCategory"
+            },
+            {
+              "example_value": "TableName",
+              "name": "SourceTable"
+            }
+          ],
+          "sections": [
+            {
+              "type": "layout"
+            },
+            {
+              "type": "area"
+            },
+            {
+              "type": "group"
+            },
+            {
+              "type": "actions"
+            },
+            {
+              "name": "Content",
+              "type": "area"
+            }
+          ],
+          "triggers": [
+            "OnAction"
+          ]
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "field"
+          ],
+          "name": "Snippet: Page Field",
+          "prefix": "tpagefield",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Group",
+          "prefix": "tgroup",
+          "properties": [],
+          "sections": [
+            {
+              "type": "group"
+            }
+          ],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "action"
+          ],
+          "name": "Snippet: Action",
+          "prefix": "taction",
+          "properties": [],
+          "sections": [],
+          "triggers": [
+            "OnAction"
+          ]
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "actionref"
+          ],
+          "name": "Snippet: Action Ref",
+          "prefix": "tactionref",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "customaction"
+          ],
+          "name": "Snippet: Custom Action",
+          "prefix": "tcustomaction",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 1,
+              "property_name": null,
+              "section_context": "systemaction",
+              "values": [
+                "Generate",
+                "Attach",
+                "Cancel",
+                "Ok",
+                "Regenerate"
+              ]
+            }
+          ],
+          "keywords": [
+            "systemaction"
+          ],
+          "name": "Snippet: System Action",
+          "prefix": "tsystemaction",
+          "properties": [],
+          "sections": [],
+          "triggers": [
+            "OnAction"
+          ]
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "usercontrol"
+          ],
+          "name": "Snippet: User Control",
+          "prefix": "tusercontrol",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "view"
+          ],
+          "name": "Snippet: View Shared Layout",
+          "prefix": "tview",
+          "properties": [
+            {
+              "example_value": "'${2:ViewCaption}'",
+              "name": "Caption"
+            },
+            {
+              "example_value": "where(${3:TableFieldName} = filter(${0:FilterValue}))",
+              "name": "Filters"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "view"
+          ],
+          "name": "Snippet: View Detached Layout",
+          "prefix": "tview",
+          "properties": [
+            {
+              "example_value": "'${2:ViewCaption}'",
+              "name": "Caption"
+            },
+            {
+              "example_value": "where(${3:TableFieldName} = filter(${4:FilterValue}))",
+              "name": "Filters"
+            },
+            {
+              "example_value": "false",
+              "name": "SharedLayout"
+            }
+          ],
+          "sections": [
+            {
+              "type": "layout"
+            }
+          ],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "part"
+          ],
+          "name": "Snippet: Part",
+          "prefix": "tpart",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": "ApplicationArea",
+              "section_context": null,
+              "values": [
+                "All",
+                "Basic",
+                "Suite",
+                "Advanced"
+              ]
+            }
+          ],
+          "keywords": [
+            "field",
+            "action"
+          ],
+          "name": "Page of type List",
+          "prefix": "tpage",
+          "properties": [
+            {
+              "example_value": "List",
+              "name": "PageType"
+            },
+            {
+              "example_value": "[enum: All,Basic,Suite,Advanced...]",
+              "name": "ApplicationArea"
+            },
+            {
+              "example_value": "Lists",
+              "name": "UsageCategory"
+            },
+            {
+              "example_value": "TableName",
+              "name": "SourceTable"
+            }
+          ],
+          "sections": [
+            {
+              "type": "layout"
+            },
+            {
+              "type": "area"
+            },
+            {
+              "type": "repeater"
+            },
+            {
+              "type": "actions"
+            },
+            {
+              "name": "Content",
+              "type": "area"
+            },
+            {
+              "name": "Factboxes",
+              "type": "area"
+            }
+          ],
+          "triggers": [
+            "OnAction"
+          ]
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "field"
+          ],
+          "name": "Page of type API",
+          "prefix": "tpage",
+          "properties": [
+            {
+              "example_value": "API",
+              "name": "PageType"
+            },
+            {
+              "example_value": "'${3:apiPageName}'",
+              "name": "Caption"
+            },
+            {
+              "example_value": "'${4:publisherName}'",
+              "name": "APIPublisher"
+            },
+            {
+              "example_value": "'${5:groupName}'",
+              "name": "APIGroup"
+            },
+            {
+              "example_value": "'${6:VersionList}'",
+              "name": "APIVersion"
+            },
+            {
+              "example_value": "'${7:entityName}'",
+              "name": "EntityName"
+            },
+            {
+              "example_value": "'${8:entitySetName}'",
+              "name": "EntitySetName"
+            },
+            {
+              "example_value": "TableName",
+              "name": "SourceTable"
+            },
+            {
+              "example_value": "true",
+              "name": "DelayedInsert"
+            },
+            {
+              "example_value": "'${13:fieldCaption}'",
+              "name": "Caption"
+            }
+          ],
+          "sections": [
+            {
+              "type": "layout"
+            },
+            {
+              "type": "area"
+            },
+            {
+              "type": "repeater"
+            },
+            {
+              "name": "Content",
+              "type": "area"
+            }
+          ],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 4,
+              "property_name": "RunObject",
+              "section_context": null,
+              "values": [
+                "Page",
+                "Report",
+                "XmlPort",
+                "Codeunit"
+              ]
+            },
+            {
+              "placeholder": 8,
+              "property_name": "RunObject",
+              "section_context": null,
+              "values": [
+                "Page",
+                "Report",
+                "XmlPort",
+                "Codeunit"
+              ]
+            },
+            {
+              "placeholder": 11,
+              "property_name": "RunObject",
+              "section_context": null,
+              "values": [
+                "Page",
+                "Report",
+                "XmlPort",
+                "Codeunit"
+              ]
+            }
+          ],
+          "keywords": [
+            "action"
+          ],
+          "name": "Page of type Role Center",
+          "prefix": "tpage",
+          "properties": [
+            {
+              "example_value": "RoleCenter",
+              "name": "PageType"
+            },
+            {
+              "example_value": "[enum: Page,Report,XmlPort,Codeunit...]",
+              "name": "RunObject"
+            },
+            {
+              "example_value": "[enum: Page,Report,XmlPort,Codeunit...]",
+              "name": "RunObject"
+            },
+            {
+              "example_value": "[enum: Page,Report,XmlPort,Codeunit...]",
+              "name": "RunObject"
+            }
+          ],
+          "sections": [
+            {
+              "type": "layout"
+            },
+            {
+              "type": "area"
+            },
+            {
+              "type": "actions"
+            },
+            {
+              "type": "group"
+            },
+            {
+              "name": "RoleCenter",
+              "type": "area"
+            },
+            {
+              "name": "Creation",
+              "type": "area"
+            },
+            {
+              "name": "Sections",
+              "type": "area"
+            },
+            {
+              "name": "Embedding",
+              "type": "area"
+            }
+          ],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": "ApplicationArea",
+              "section_context": null,
+              "values": [
+                "All",
+                "Basic",
+                "Suite",
+                "Advanced"
+              ]
+            },
+            {
+              "placeholder": 5,
+              "property_name": "PromptMode",
+              "section_context": null,
+              "values": [
+                "Prompt",
+                "Generate",
+                "Content"
+              ]
+            },
+            {
+              "placeholder": 10,
+              "property_name": null,
+              "section_context": "systemaction",
+              "values": [
+                "Generate",
+                "Attach",
+                "Cancel",
+                "Ok",
+                "Regenerate"
+              ]
+            }
+          ],
+          "keywords": [
+            "systemaction"
+          ],
+          "name": "Page of type PromptDialog",
+          "prefix": "tpage",
+          "properties": [
+            {
+              "example_value": "PromptDialog",
+              "name": "PageType"
+            },
+            {
+              "example_value": "[enum: All,Basic,Suite,Advanced...]",
+              "name": "ApplicationArea"
+            },
+            {
+              "example_value": "'${4:Draft with Copilot}'",
+              "name": "Caption"
+            },
+            {
+              "example_value": "[enum: Prompt,Generate,Content...]",
+              "name": "PromptMode"
+            },
+            {
+              "example_value": "false",
+              "name": "Extensible"
+            },
+            {
+              "example_value": "TableName",
+              "name": "SourceTable"
+            },
+            {
+              "example_value": "true",
+              "name": "SourceTableTemporary"
+            }
+          ],
+          "sections": [
+            {
+              "type": "layout"
+            },
+            {
+              "type": "area"
+            },
+            {
+              "type": "actions"
+            },
+            {
+              "name": "Prompt",
+              "type": "area"
+            },
+            {
+              "name": "PromptOptions",
+              "type": "area"
+            },
+            {
+              "name": "Content",
+              "type": "area"
+            },
+            {
+              "name": "SystemActions",
+              "type": "area"
+            }
+          ],
+          "triggers": [
+            "OnAction"
+          ]
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "analysisview"
+          ],
+          "name": "Snippet: Analysis View",
+          "prefix": "tanalysisview",
+          "properties": [
+            {
+              "example_value": "'${2:ViewCaption}'",
+              "name": "Caption"
+            },
+            {
+              "example_value": "'${2:DefinitionFilePath}'",
+              "name": "DefinitionFile"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "pagecustomization.json": {
+      "all_enum_choices": [],
+      "all_keywords": [],
+      "all_properties": [],
+      "all_sections": [
+        {
+          "type": "layout"
+        },
+        {
+          "type": "actions"
+        }
+      ],
+      "all_triggers": [],
+      "file": "pagecustomization.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Page Customization",
+          "prefix": "tpagecust",
+          "properties": [],
+          "sections": [
+            {
+              "type": "layout"
+            },
+            {
+              "type": "actions"
+            }
+          ],
+          "triggers": []
+        }
+      ]
+    },
+    "pageextension.json": {
+      "all_enum_choices": [],
+      "all_keywords": [],
+      "all_properties": [],
+      "all_sections": [
+        {
+          "type": "layout"
+        },
+        {
+          "type": "actions"
+        }
+      ],
+      "all_triggers": [],
+      "file": "pageextension.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Page Extension",
+          "prefix": "tpageext",
+          "properties": [],
+          "sections": [
+            {
+              "type": "layout"
+            },
+            {
+              "type": "actions"
+            }
+          ],
+          "triggers": []
+        }
+      ]
+    },
+    "permissionset.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 3,
+          "property_name": "Assignable",
+          "section_context": null,
+          "values": [
+            "true",
+            "false"
+          ]
+        }
+      ],
+      "all_keywords": [],
+      "all_properties": [
+        {
+          "example_value": "[enum: true,false...]",
+          "name": "Assignable"
+        },
+        {
+          "example_value": "SomePermissionSet",
+          "name": "IncludedPermissionSets"
+        },
+        {
+          "example_value": "ObjectType",
+          "name": "Permissions"
+        }
+      ],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "permissionset.json",
+      "snippets": [
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": "Assignable",
+              "section_context": null,
+              "values": [
+                "true",
+                "false"
+              ]
+            }
+          ],
+          "keywords": [],
+          "name": "Snippet: PermissionSet",
+          "prefix": "tpermissionset",
+          "properties": [
+            {
+              "example_value": "[enum: true,false...]",
+              "name": "Assignable"
+            },
+            {
+              "example_value": "SomePermissionSet",
+              "name": "IncludedPermissionSets"
+            },
+            {
+              "example_value": "ObjectType",
+              "name": "Permissions"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "permissionsetextension.json": {
+      "all_enum_choices": [],
+      "all_keywords": [],
+      "all_properties": [
+        {
+          "example_value": "SomePermissionSet",
+          "name": "IncludedPermissionSets"
+        },
+        {
+          "example_value": "ObjectType",
+          "name": "Permissions"
+        }
+      ],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "permissionsetextension.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: PermissionSetExtension",
+          "prefix": "tpermissionsetextension",
+          "properties": [
+            {
+              "example_value": "SomePermissionSet",
+              "name": "IncludedPermissionSets"
+            },
+            {
+              "example_value": "ObjectType",
+              "name": "Permissions"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "profile.json": {
+      "all_enum_choices": [],
+      "all_keywords": [],
+      "all_properties": [
+        {
+          "example_value": "'${2:Profile Display Name}'",
+          "name": "Description"
+        },
+        {
+          "example_value": "RoleCenter",
+          "name": "RoleCenter"
+        },
+        {
+          "example_value": "Customizations",
+          "name": "Customizations"
+        },
+        {
+          "example_value": "'${2:Profile Display Name}'",
+          "name": "Caption"
+        },
+        {
+          "example_value": "'${4:Profile Description}'",
+          "name": "ProfileDescription"
+        }
+      ],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "profile.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Profile",
+          "prefix": "tprofile",
+          "properties": [
+            {
+              "example_value": "'${2:Profile Display Name}'",
+              "name": "Description"
+            },
+            {
+              "example_value": "RoleCenter",
+              "name": "RoleCenter"
+            },
+            {
+              "example_value": "Customizations",
+              "name": "Customizations"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Profile (4.0)",
+          "prefix": "tprofile",
+          "properties": [
+            {
+              "example_value": "'${2:Profile Display Name}'",
+              "name": "Caption"
+            },
+            {
+              "example_value": "RoleCenter",
+              "name": "RoleCenter"
+            },
+            {
+              "example_value": "'${4:Profile Description}'",
+              "name": "ProfileDescription"
+            },
+            {
+              "example_value": "Customizations",
+              "name": "Customizations"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "profileextension.json": {
+      "all_enum_choices": [],
+      "all_keywords": [],
+      "all_properties": [
+        {
+          "example_value": "'${3:New Caption}'",
+          "name": "Caption"
+        },
+        {
+          "example_value": "Customizations",
+          "name": "Customizations"
+        }
+      ],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "profileextension.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: ProfileExtension",
+          "prefix": "tprofileextension",
+          "properties": [
+            {
+              "example_value": "'${3:New Caption}'",
+              "name": "Caption"
+            },
+            {
+              "example_value": "Customizations",
+              "name": "Customizations"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "query.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 3,
+          "property_name": "QueryType",
+          "section_context": null,
+          "values": [
+            "Normal",
+            "API"
+          ]
+        }
+      ],
+      "all_keywords": [
+        "column"
+      ],
+      "all_properties": [
+        {
+          "example_value": "[enum: Normal,API...]",
+          "name": "QueryType"
+        },
+        {
+          "example_value": "'${3:PublisherName}'",
+          "name": "APIPublisher"
+        },
+        {
+          "example_value": "'${4:GroupName}'",
+          "name": "APIGroup"
+        },
+        {
+          "example_value": "'${5:VersionList}'",
+          "name": "APIVersion"
+        },
+        {
+          "example_value": "'${6:EntityName}'",
+          "name": "EntityName"
+        },
+        {
+          "example_value": "'${7:EntitySetName}'",
+          "name": "EntitySetName"
+        },
+        {
+          "example_value": "column",
+          "name": "DataItemLink"
+        }
+      ],
+      "all_sections": [
+        {
+          "type": "dataitem"
+        }
+      ],
+      "all_triggers": [
+        "OnBeforeOpen"
+      ],
+      "file": "query.json",
+      "snippets": [
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": "QueryType",
+              "section_context": null,
+              "values": [
+                "Normal",
+                "API"
+              ]
+            }
+          ],
+          "keywords": [
+            "column"
+          ],
+          "name": "Snippet: Query",
+          "prefix": "tquery",
+          "properties": [
+            {
+              "example_value": "[enum: Normal,API...]",
+              "name": "QueryType"
+            }
+          ],
+          "sections": [
+            {
+              "type": "dataitem"
+            }
+          ],
+          "triggers": [
+            "OnBeforeOpen"
+          ]
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "column"
+          ],
+          "name": "Query of type API",
+          "prefix": "tquery",
+          "properties": [
+            {
+              "example_value": "API",
+              "name": "QueryType"
+            },
+            {
+              "example_value": "'${3:PublisherName}'",
+              "name": "APIPublisher"
+            },
+            {
+              "example_value": "'${4:GroupName}'",
+              "name": "APIGroup"
+            },
+            {
+              "example_value": "'${5:VersionList}'",
+              "name": "APIVersion"
+            },
+            {
+              "example_value": "'${6:EntityName}'",
+              "name": "EntityName"
+            },
+            {
+              "example_value": "'${7:EntitySetName}'",
+              "name": "EntitySetName"
+            }
+          ],
+          "sections": [
+            {
+              "type": "dataitem"
+            }
+          ],
+          "triggers": [
+            "OnBeforeOpen"
+          ]
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Query DataItemLink",
+          "prefix": "tquerydataitemlink",
+          "properties": [
+            {
+              "example_value": "column",
+              "name": "DataItemLink"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "report.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 3,
+          "property_name": "UsageCategory",
+          "section_context": null,
+          "values": [
+            "ReportsAndAnalysis",
+            "Administration",
+            "Documents",
+            "History",
+            "Lists",
+            "None",
+            "Tasks"
+          ]
+        },
+        {
+          "placeholder": 4,
+          "property_name": "ApplicationArea",
+          "section_context": null,
+          "values": [
+            "All",
+            "Basic",
+            "Suite",
+            "Advanced"
+          ]
+        }
+      ],
+      "all_keywords": [
+        "column",
+        "field",
+        "action"
+      ],
+      "all_properties": [
+        {
+          "example_value": "[enum: ReportsAndAnalysis,Administrat...]",
+          "name": "UsageCategory"
+        },
+        {
+          "example_value": "[enum: All,Basic,Suite,Advanced...]",
+          "name": "ApplicationArea"
+        },
+        {
+          "example_value": "LayoutName",
+          "name": "DefaultRenderingLayout"
+        },
+        {
+          "example_value": "'${10:Teaching tip title}'",
+          "name": "AboutTitle"
+        },
+        {
+          "example_value": "'${11:Teaching tip content}'",
+          "name": "AboutText"
+        },
+        {
+          "example_value": "Excel",
+          "name": "Type"
+        },
+        {
+          "example_value": "'${21:mySpreadsheet.xlsx}'",
+          "name": "LayoutFile"
+        }
+      ],
+      "all_sections": [
+        {
+          "type": "dataset"
+        },
+        {
+          "type": "dataitem"
+        },
+        {
+          "type": "requestpage"
+        },
+        {
+          "type": "layout"
+        },
+        {
+          "type": "area"
+        },
+        {
+          "type": "group"
+        },
+        {
+          "type": "actions"
+        },
+        {
+          "type": "rendering"
+        },
+        {
+          "name": "Content",
+          "type": "area"
+        }
+      ],
+      "all_triggers": [],
+      "file": "report.json",
+      "snippets": [
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": "UsageCategory",
+              "section_context": null,
+              "values": [
+                "ReportsAndAnalysis",
+                "Administration",
+                "Documents",
+                "History",
+                "Lists",
+                "None",
+                "Tasks"
+              ]
+            },
+            {
+              "placeholder": 4,
+              "property_name": "ApplicationArea",
+              "section_context": null,
+              "values": [
+                "All",
+                "Basic",
+                "Suite",
+                "Advanced"
+              ]
+            }
+          ],
+          "keywords": [
+            "column",
+            "field",
+            "action"
+          ],
+          "name": "Snippet: Report",
+          "prefix": "treport",
+          "properties": [
+            {
+              "example_value": "[enum: ReportsAndAnalysis,Administrat...]",
+              "name": "UsageCategory"
+            },
+            {
+              "example_value": "[enum: All,Basic,Suite,Advanced...]",
+              "name": "ApplicationArea"
+            },
+            {
+              "example_value": "LayoutName",
+              "name": "DefaultRenderingLayout"
+            },
+            {
+              "example_value": "'${10:Teaching tip title}'",
+              "name": "AboutTitle"
+            },
+            {
+              "example_value": "'${11:Teaching tip content}'",
+              "name": "AboutText"
+            },
+            {
+              "example_value": "Excel",
+              "name": "Type"
+            },
+            {
+              "example_value": "'${21:mySpreadsheet.xlsx}'",
+              "name": "LayoutFile"
+            }
+          ],
+          "sections": [
+            {
+              "type": "dataset"
+            },
+            {
+              "type": "dataitem"
+            },
+            {
+              "type": "requestpage"
+            },
+            {
+              "type": "layout"
+            },
+            {
+              "type": "area"
+            },
+            {
+              "type": "group"
+            },
+            {
+              "type": "actions"
+            },
+            {
+              "type": "rendering"
+            },
+            {
+              "name": "Content",
+              "type": "area"
+            }
+          ],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "column"
+          ],
+          "name": "Snippet: Data Item",
+          "prefix": "tdataitem",
+          "properties": [],
+          "sections": [
+            {
+              "type": "dataitem"
+            }
+          ],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "column"
+          ],
+          "name": "Snippet: Column",
+          "prefix": "tcolumn",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Report Layout",
+          "prefix": "treportlayout",
+          "properties": [
+            {
+              "example_value": "Excel",
+              "name": "Type"
+            },
+            {
+              "example_value": "'${2:mySpreadsheet.xlsx}'",
+              "name": "LayoutFile"
+            }
+          ],
+          "sections": [
+            {
+              "type": "layout"
+            }
+          ],
+          "triggers": []
+        }
+      ]
+    },
+    "reportextension.json": {
+      "all_enum_choices": [],
+      "all_keywords": [],
+      "all_properties": [
+        {
+          "example_value": "RDLC",
+          "name": "Type"
+        },
+        {
+          "example_value": "'${8:mylayout.rdl}'",
+          "name": "LayoutFile"
+        }
+      ],
+      "all_sections": [
+        {
+          "type": "dataset"
+        },
+        {
+          "type": "requestpage"
+        },
+        {
+          "type": "rendering"
+        },
+        {
+          "type": "layout"
+        }
+      ],
+      "all_triggers": [],
+      "file": "reportextension.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Report Extension",
+          "prefix": "treportext",
+          "properties": [
+            {
+              "example_value": "RDLC",
+              "name": "Type"
+            },
+            {
+              "example_value": "'${8:mylayout.rdl}'",
+              "name": "LayoutFile"
+            }
+          ],
+          "sections": [
+            {
+              "type": "dataset"
+            },
+            {
+              "type": "requestpage"
+            },
+            {
+              "type": "rendering"
+            },
+            {
+              "type": "layout"
+            }
+          ],
+          "triggers": []
+        }
+      ]
+    },
+    "ruleset.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 4,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "Error",
+            "Warning",
+            "Info",
+            "Hidden",
+            "None"
+          ]
+        },
+        {
+          "placeholder": 2,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "Error",
+            "Warning",
+            "Info",
+            "Hidden",
+            "None"
+          ]
+        }
+      ],
+      "all_keywords": [],
+      "all_properties": [],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "ruleset.json",
+      "snippets": [
+        {
+          "enum_choices": [
+            {
+              "placeholder": 4,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "Error",
+                "Warning",
+                "Info",
+                "Hidden",
+                "None"
+              ]
+            }
+          ],
+          "keywords": [],
+          "name": "Snippet: RuleSet",
+          "prefix": "truleset",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 2,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "Error",
+                "Warning",
+                "Info",
+                "Hidden",
+                "None"
+              ]
+            }
+          ],
+          "keywords": [],
+          "name": "Snippet: Rule",
+          "prefix": "trule",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "table.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 3,
+          "property_name": "DataClassification",
+          "section_context": null,
+          "values": [
+            "ToBeClassified",
+            "CustomerContent",
+            "EndUserIdentifiableInformation",
+            "AccountData",
+            "EndUserPseudonymousIdentifiers",
+            "OrganizationIdentifiableInformation",
+            "SystemMetadata"
+          ]
+        },
+        {
+          "placeholder": 6,
+          "property_name": "DataClassification",
+          "section_context": null,
+          "values": [
+            "ToBeClassified",
+            "CustomerContent",
+            "EndUserIdentifiableInformation",
+            "AccountData",
+            "EndUserPseudonymousIdentifiers",
+            "OrganizationIdentifiableInformation",
+            "SystemMetadata"
+          ]
+        },
+        {
+          "placeholder": 9,
+          "property_name": "Clustered",
+          "section_context": null,
+          "values": [
+            "true",
+            "false"
+          ]
+        },
+        {
+          "placeholder": 3,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "Blob",
+            "BigInteger",
+            "Boolean",
+            "Code[50]",
+            "Date",
+            "DateFormula",
+            "Decimal",
+            "Duration",
+            "Integer",
+            "Guid",
+            "Media",
+            "MediaSet",
+            "Option",
+            "RecordID",
+            "TableFilter",
+            "Text[50]",
+            "Time"
+          ]
+        },
+        {
+          "placeholder": 4,
+          "property_name": "DataClassification",
+          "section_context": null,
+          "values": [
+            "ToBeClassified",
+            "CustomerContent",
+            "EndUserIdentifiableInformation",
+            "AccountData",
+            "EndUserPseudonymousIdentifiers",
+            "OrganizationIdentifiableInformation",
+            "SystemMetadata"
+          ]
+        },
+        {
+          "placeholder": 1,
+          "property_name": null,
+          "section_context": "fieldgroup",
+          "values": [
+            "DropDown",
+            "Brick"
+          ]
+        }
+      ],
+      "all_keywords": [
+        "field",
+        "key"
+      ],
+      "all_properties": [
+        {
+          "example_value": "[enum: ToBeClassified,CustomerContent...]",
+          "name": "DataClassification"
+        },
+        {
+          "example_value": "[enum: true,false...]",
+          "name": "Clustered"
+        },
+        {
+          "example_value": "Default",
+          "name": "OptionMembers"
+        }
+      ],
+      "all_sections": [
+        {
+          "type": "fields"
+        },
+        {
+          "type": "keys"
+        },
+        {
+          "type": "fieldgroups"
+        }
+      ],
+      "all_triggers": [
+        "OnInsert",
+        "OnModify",
+        "OnDelete",
+        "OnRename"
+      ],
+      "file": "table.json",
+      "snippets": [
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": "DataClassification",
+              "section_context": null,
+              "values": [
+                "ToBeClassified",
+                "CustomerContent",
+                "EndUserIdentifiableInformation",
+                "AccountData",
+                "EndUserPseudonymousIdentifiers",
+                "OrganizationIdentifiableInformation",
+                "SystemMetadata"
+              ]
+            },
+            {
+              "placeholder": 6,
+              "property_name": "DataClassification",
+              "section_context": null,
+              "values": [
+                "ToBeClassified",
+                "CustomerContent",
+                "EndUserIdentifiableInformation",
+                "AccountData",
+                "EndUserPseudonymousIdentifiers",
+                "OrganizationIdentifiableInformation",
+                "SystemMetadata"
+              ]
+            },
+            {
+              "placeholder": 9,
+              "property_name": "Clustered",
+              "section_context": null,
+              "values": [
+                "true",
+                "false"
+              ]
+            }
+          ],
+          "keywords": [
+            "field",
+            "key"
+          ],
+          "name": "Snippet: Table",
+          "prefix": "ttable",
+          "properties": [
+            {
+              "example_value": "[enum: ToBeClassified,CustomerContent...]",
+              "name": "DataClassification"
+            },
+            {
+              "example_value": "[enum: ToBeClassified,CustomerContent...]",
+              "name": "DataClassification"
+            },
+            {
+              "example_value": "[enum: true,false...]",
+              "name": "Clustered"
+            }
+          ],
+          "sections": [
+            {
+              "type": "fields"
+            },
+            {
+              "type": "keys"
+            },
+            {
+              "type": "fieldgroups"
+            }
+          ],
+          "triggers": [
+            "OnInsert",
+            "OnModify",
+            "OnDelete",
+            "OnRename"
+          ]
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "Blob",
+                "BigInteger",
+                "Boolean",
+                "Code[50]",
+                "Date",
+                "DateFormula",
+                "Decimal",
+                "Duration",
+                "Integer",
+                "Guid",
+                "Media",
+                "MediaSet",
+                "Option",
+                "RecordID",
+                "TableFilter",
+                "Text[50]",
+                "Time"
+              ]
+            },
+            {
+              "placeholder": 4,
+              "property_name": "DataClassification",
+              "section_context": null,
+              "values": [
+                "ToBeClassified",
+                "CustomerContent",
+                "EndUserIdentifiableInformation",
+                "AccountData",
+                "EndUserPseudonymousIdentifiers",
+                "OrganizationIdentifiableInformation",
+                "SystemMetadata"
+              ]
+            }
+          ],
+          "keywords": [
+            "field"
+          ],
+          "name": "Snippet: Table Field",
+          "prefix": "tfield",
+          "properties": [
+            {
+              "example_value": "[enum: ToBeClassified,CustomerContent...]",
+              "name": "DataClassification"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": "DataClassification",
+              "section_context": null,
+              "values": [
+                "ToBeClassified",
+                "CustomerContent",
+                "EndUserIdentifiableInformation",
+                "AccountData",
+                "EndUserPseudonymousIdentifiers",
+                "OrganizationIdentifiableInformation",
+                "SystemMetadata"
+              ]
+            }
+          ],
+          "keywords": [
+            "field"
+          ],
+          "name": "Snippet: Table Field Option",
+          "prefix": "tfieldoption",
+          "properties": [
+            {
+              "example_value": "[enum: ToBeClassified,CustomerContent...]",
+              "name": "DataClassification"
+            },
+            {
+              "example_value": "Default",
+              "name": "OptionMembers"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 4,
+              "property_name": "DataClassification",
+              "section_context": null,
+              "values": [
+                "ToBeClassified",
+                "CustomerContent",
+                "EndUserIdentifiableInformation",
+                "AccountData",
+                "EndUserPseudonymousIdentifiers",
+                "OrganizationIdentifiableInformation",
+                "SystemMetadata"
+              ]
+            }
+          ],
+          "keywords": [
+            "field"
+          ],
+          "name": "Snippet: Table Field Code",
+          "prefix": "tfieldcode",
+          "properties": [
+            {
+              "example_value": "[enum: ToBeClassified,CustomerContent...]",
+              "name": "DataClassification"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 4,
+              "property_name": "DataClassification",
+              "section_context": null,
+              "values": [
+                "ToBeClassified",
+                "CustomerContent",
+                "EndUserIdentifiableInformation",
+                "AccountData",
+                "EndUserPseudonymousIdentifiers",
+                "OrganizationIdentifiableInformation",
+                "SystemMetadata"
+              ]
+            }
+          ],
+          "keywords": [
+            "field"
+          ],
+          "name": "Snippet: Table Field Text",
+          "prefix": "tfieldtext",
+          "properties": [
+            {
+              "example_value": "[enum: ToBeClassified,CustomerContent...]",
+              "name": "DataClassification"
+            }
+          ],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [],
+          "keywords": [
+            "key"
+          ],
+          "name": "Snippet: Table Key",
+          "prefix": "tkey",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 1,
+              "property_name": null,
+              "section_context": "fieldgroup",
+              "values": [
+                "DropDown",
+                "Brick"
+              ]
+            }
+          ],
+          "keywords": [],
+          "name": "Snippet: Table Field Group",
+          "prefix": "tfieldgroup",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "tableextension.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 1,
+          "property_name": null,
+          "section_context": "addlast",
+          "values": [
+            "DropDown",
+            "Brick"
+          ]
+        }
+      ],
+      "all_keywords": [],
+      "all_properties": [],
+      "all_sections": [
+        {
+          "type": "fields"
+        },
+        {
+          "type": "keys"
+        },
+        {
+          "type": "fieldgroups"
+        }
+      ],
+      "all_triggers": [],
+      "file": "tableextension.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [],
+          "name": "Snippet: Table Extension",
+          "prefix": "ttableext",
+          "properties": [],
+          "sections": [
+            {
+              "type": "fields"
+            },
+            {
+              "type": "keys"
+            },
+            {
+              "type": "fieldgroups"
+            }
+          ],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 1,
+              "property_name": null,
+              "section_context": "addlast",
+              "values": [
+                "DropDown",
+                "Brick"
+              ]
+            }
+          ],
+          "keywords": [],
+          "name": "Snippet: Table Extesion FieldGroup AddLast",
+          "prefix": "tfieldgroupaddlast",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "xml.json": {
+      "all_enum_choices": [
+        {
+          "placeholder": 1,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "Page",
+            "CodeUnit",
+            "Query"
+          ]
+        },
+        {
+          "placeholder": 4,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "false",
+            "true"
+          ]
+        },
+        {
+          "placeholder": 3,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11"
+          ]
+        },
+        {
+          "placeholder": 5,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "0",
+            "1"
+          ]
+        },
+        {
+          "placeholder": 6,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "0",
+            "1"
+          ]
+        },
+        {
+          "placeholder": 7,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "0",
+            "1"
+          ]
+        },
+        {
+          "placeholder": 8,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "0",
+            "1"
+          ]
+        },
+        {
+          "placeholder": 9,
+          "property_name": null,
+          "section_context": null,
+          "values": [
+            "0",
+            "1"
+          ]
+        }
+      ],
+      "all_keywords": [],
+      "all_properties": [],
+      "all_sections": [],
+      "all_triggers": [],
+      "file": "xml.json",
+      "snippets": [
+        {
+          "enum_choices": [
+            {
+              "placeholder": 1,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "Page",
+                "CodeUnit",
+                "Query"
+              ]
+            },
+            {
+              "placeholder": 4,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "false",
+                "true"
+              ]
+            }
+          ],
+          "keywords": [],
+          "name": "Snippet: WebService",
+          "prefix": "twebservice",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 1,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "Page",
+                "CodeUnit",
+                "Query"
+              ]
+            },
+            {
+              "placeholder": 4,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "false",
+                "true"
+              ]
+            }
+          ],
+          "keywords": [],
+          "name": "Snippet: WebServices",
+          "prefix": "twebservices",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11"
+              ]
+            },
+            {
+              "placeholder": 5,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            {
+              "placeholder": 6,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            {
+              "placeholder": 7,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            {
+              "placeholder": 8,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            {
+              "placeholder": 9,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          ],
+          "keywords": [],
+          "name": "Snippet: PermissionSet",
+          "prefix": "tpermset",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        },
+        {
+          "enum_choices": [
+            {
+              "placeholder": 3,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11"
+              ]
+            },
+            {
+              "placeholder": 5,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            {
+              "placeholder": 6,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            {
+              "placeholder": 7,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            {
+              "placeholder": 8,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1"
+              ]
+            },
+            {
+              "placeholder": 9,
+              "property_name": null,
+              "section_context": null,
+              "values": [
+                "0",
+                "1"
+              ]
+            }
+          ],
+          "keywords": [],
+          "name": "Snippet: PermissionSets",
+          "prefix": "tpermsets",
+          "properties": [],
+          "sections": [],
+          "triggers": []
+        }
+      ]
+    },
+    "xmlport.json": {
+      "all_enum_choices": [],
+      "all_keywords": [
+        "field",
+        "action"
+      ],
+      "all_properties": [],
+      "all_sections": [
+        {
+          "type": "requestpage"
+        },
+        {
+          "type": "layout"
+        },
+        {
+          "type": "area"
+        },
+        {
+          "type": "group"
+        },
+        {
+          "type": "actions"
+        },
+        {
+          "name": "content",
+          "type": "area"
+        }
+      ],
+      "all_triggers": [],
+      "file": "xmlport.json",
+      "snippets": [
+        {
+          "enum_choices": [],
+          "keywords": [
+            "field",
+            "action"
+          ],
+          "name": "Snippet: XmlPort",
+          "prefix": "txmlport",
+          "properties": [],
+          "sections": [
+            {
+              "type": "requestpage"
+            },
+            {
+              "type": "layout"
+            },
+            {
+              "type": "area"
+            },
+            {
+              "type": "group"
+            },
+            {
+              "type": "actions"
+            },
+            {
+              "name": "content",
+              "type": "area"
+            }
+          ],
+          "triggers": []
+        }
+      ]
+    }
+  },
+  "enum_choices": {
+    "ApplicationArea": [
+      "All",
+      "Basic",
+      "Suite",
+      "Advanced"
+    ],
+    "Assignable": [
+      "true",
+      "false"
+    ],
+    "Clustered": [
+      "true",
+      "false"
+    ],
+    "DataClassification": [
+      "ToBeClassified",
+      "CustomerContent",
+      "EndUserIdentifiableInformation",
+      "AccountData",
+      "EndUserPseudonymousIdentifiers",
+      "OrganizationIdentifiableInformation",
+      "SystemMetadata"
+    ],
+    "Extensible": [
+      "true",
+      "false"
+    ],
+    "HorizontalShrink": [
+      "true",
+      "false"
+    ],
+    "HorizontalStretch": [
+      "true",
+      "false"
+    ],
+    "PageType": [
+      "Card",
+      "List",
+      "RoleCenter",
+      "CardPart",
+      "ListPart",
+      "Document",
+      "Worksheet",
+      "ListPlus",
+      "ConfirmationDialog",
+      "NavigatePage",
+      "StandardDialog",
+      "API",
+      "ReportPreview",
+      "ReportProcessingOnly",
+      "XmlPort"
+    ],
+    "PromptMode": [
+      "Prompt",
+      "Generate",
+      "Content"
+    ],
+    "QueryType": [
+      "Normal",
+      "API"
+    ],
+    "RoleType": [
+      "Delegated",
+      "Local"
+    ],
+    "RunObject": [
+      "Page",
+      "Report",
+      "XmlPort",
+      "Codeunit"
+    ],
+    "Type": [
+      "Application",
+      "ApplicationScope",
+      "ConcurrentUserServicePlan",
+      "FlatRateServicePlan",
+      "Implicit",
+      "PerUserServicePlan",
+      "Role",
+      "Group"
+    ],
+    "UsageCategory": [
+      "Administration",
+      "Documents",
+      "History",
+      "Lists",
+      "None",
+      "ReportsAndAnalysis",
+      "Tasks"
+    ],
+    "VerticalShrink": [
+      "true",
+      "false"
+    ],
+    "VerticalStretch": [
+      "true",
+      "false"
+    ],
+    "addlast": [
+      "DropDown",
+      "Brick"
+    ],
+    "fieldgroup": [
+      "DropDown",
+      "Brick"
+    ],
+    "systemaction": [
+      "Generate",
+      "Attach",
+      "Cancel",
+      "Ok",
+      "Regenerate"
+    ],
+    "unknown": [
+      "Codeunit",
+      "Page",
+      "Query",
+      "Report",
+      "Table",
+      "XmlPort",
+      "Codeunit::",
+      "Database::",
+      "Page::",
+      "Query::",
+      "Report::",
+      "XmlPort::",
+      "Error",
+      "Warning",
+      "Info",
+      "Hidden",
+      "None",
+      "Blob",
+      "BigInteger",
+      "Boolean",
+      "Code[50]",
+      "Date",
+      "DateFormula",
+      "Decimal",
+      "Duration",
+      "Integer",
+      "Guid",
+      "Media",
+      "MediaSet",
+      "Option",
+      "RecordID",
+      "TableFilter",
+      "Text[50]",
+      "Time",
+      "CodeUnit",
+      "false",
+      "true",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ]
+  },
+  "extension_path": "C:\\Users\\SShadowS\\.vscode\\extensions\\ms-dynamics-smb.al-17.0.2037090",
+  "extension_version": "17.0.2037090",
+  "files_parsed": 23,
+  "keywords": [
+    "procedure",
+    "event",
+    "field",
+    "action",
+    "actionref",
+    "customaction",
+    "systemaction",
+    "usercontrol",
+    "view",
+    "part",
+    "analysisview",
+    "column",
+    "key"
+  ],
+  "properties": {
+    "APIGroup": {
+      "example_values": [
+        "'${5:groupName}'",
+        "'${4:GroupName}'"
+      ],
+      "sources": [
+        "page.json",
+        "query.json"
+      ]
+    },
+    "APIPublisher": {
+      "example_values": [
+        "'${4:publisherName}'",
+        "'${3:PublisherName}'"
+      ],
+      "sources": [
+        "page.json",
+        "query.json"
+      ]
+    },
+    "APIVersion": {
+      "example_values": [
+        "'${6:VersionList}'",
+        "'${5:VersionList}'"
+      ],
+      "sources": [
+        "page.json",
+        "query.json"
+      ]
+    },
+    "AboutText": {
+      "example_values": [
+        "'${11:Teaching tip content}'"
+      ],
+      "sources": [
+        "report.json"
+      ]
+    },
+    "AboutTitle": {
+      "example_values": [
+        "'${10:Teaching tip title}'"
+      ],
+      "sources": [
+        "report.json"
+      ]
+    },
+    "ApplicationArea": {
+      "example_values": [
+        "[enum: All,Basic,Suite,Advanced...]"
+      ],
+      "sources": [
+        "page.json",
+        "report.json"
+      ]
+    },
+    "Assignable": {
+      "example_values": [
+        "[enum: true,false...]"
+      ],
+      "sources": [
+        "permissionset.json"
+      ]
+    },
+    "Caption": {
+      "example_values": [
+        "'${2:ViewCaption}'",
+        "'${2:Profile Display Name}'",
+        "'${3:New Caption}'"
+      ],
+      "sources": [
+        "page.json",
+        "profile.json",
+        "profileextension.json"
+      ]
+    },
+    "Clustered": {
+      "example_values": [
+        "[enum: true,false...]"
+      ],
+      "sources": [
+        "table.json"
+      ]
+    },
+    "Customizations": {
+      "example_values": [
+        "Customizations"
+      ],
+      "sources": [
+        "profile.json",
+        "profileextension.json"
+      ]
+    },
+    "DataClassification": {
+      "example_values": [
+        "[enum: ToBeClassified,CustomerContent...]"
+      ],
+      "sources": [
+        "table.json"
+      ]
+    },
+    "DataItemLink": {
+      "example_values": [
+        "column"
+      ],
+      "sources": [
+        "query.json"
+      ]
+    },
+    "DefaultRenderingLayout": {
+      "example_values": [
+        "LayoutName"
+      ],
+      "sources": [
+        "report.json"
+      ]
+    },
+    "DefinitionFile": {
+      "example_values": [
+        "'${2:DefinitionFilePath}'"
+      ],
+      "sources": [
+        "page.json"
+      ]
+    },
+    "DelayedInsert": {
+      "example_values": [
+        "true"
+      ],
+      "sources": [
+        "page.json"
+      ]
+    },
+    "Description": {
+      "example_values": [
+        "'${2:Profile Display Name}'"
+      ],
+      "sources": [
+        "profile.json"
+      ]
+    },
+    "EntityName": {
+      "example_values": [
+        "'${7:entityName}'",
+        "'${6:EntityName}'"
+      ],
+      "sources": [
+        "page.json",
+        "query.json"
+      ]
+    },
+    "EntitySetName": {
+      "example_values": [
+        "'${8:entitySetName}'",
+        "'${7:EntitySetName}'"
+      ],
+      "sources": [
+        "page.json",
+        "query.json"
+      ]
+    },
+    "Extensible": {
+      "example_values": [
+        "[enum: true,false...]",
+        "false"
+      ],
+      "sources": [
+        "enum.json",
+        "page.json"
+      ]
+    },
+    "Filters": {
+      "example_values": [
+        "where(${3:TableFieldName} = filter(${0:FilterValue}))"
+      ],
+      "sources": [
+        "page.json"
+      ]
+    },
+    "HorizontalShrink": {
+      "example_values": [
+        "[enum: true,false...]"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "HorizontalStretch": {
+      "example_values": [
+        "[enum: true,false...]"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "Id": {
+      "example_values": [
+        "'${4:MyId}'"
+      ],
+      "sources": [
+        "entitlement.json"
+      ]
+    },
+    "IncludedPermissionSets": {
+      "example_values": [
+        "SomePermissionSet"
+      ],
+      "sources": [
+        "permissionset.json",
+        "permissionsetextension.json"
+      ]
+    },
+    "LayoutFile": {
+      "example_values": [
+        "'${21:mySpreadsheet.xlsx}'",
+        "'${8:mylayout.rdl}'"
+      ],
+      "sources": [
+        "report.json",
+        "reportextension.json"
+      ]
+    },
+    "MaximumHeight": {
+      "example_values": [
+        "300"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "MaximumWidth": {
+      "example_values": [
+        "700"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "MinimumHeight": {
+      "example_values": [
+        "300"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "MinimumWidth": {
+      "example_values": [
+        "700"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "ObjectEntitlements": {
+      "example_values": [
+        "\"${0:MyListofObjects}\""
+      ],
+      "sources": [
+        "entitlement.json"
+      ]
+    },
+    "OptionMembers": {
+      "example_values": [
+        "Default"
+      ],
+      "sources": [
+        "table.json"
+      ]
+    },
+    "PageType": {
+      "example_values": [
+        "[enum: Card,List,RoleCenter,CardPart,...]"
+      ],
+      "sources": [
+        "page.json"
+      ]
+    },
+    "Permissions": {
+      "example_values": [
+        "ObjectType"
+      ],
+      "sources": [
+        "permissionset.json",
+        "permissionsetextension.json"
+      ]
+    },
+    "ProfileDescription": {
+      "example_values": [
+        "'${4:Profile Description}'"
+      ],
+      "sources": [
+        "profile.json"
+      ]
+    },
+    "PromptMode": {
+      "example_values": [
+        "[enum: Prompt,Generate,Content...]"
+      ],
+      "sources": [
+        "page.json"
+      ]
+    },
+    "QueryType": {
+      "example_values": [
+        "[enum: Normal,API...]"
+      ],
+      "sources": [
+        "query.json"
+      ]
+    },
+    "RecreateScript": {
+      "example_values": [
+        "'${16:recreateScript.js}'"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "RefreshScript": {
+      "example_values": [
+        "'${17:refreshScript.js}'"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "RequestedHeight": {
+      "example_values": [
+        "300"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "RequestedWidth": {
+      "example_values": [
+        "700"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "RoleCenter": {
+      "example_values": [
+        "RoleCenter"
+      ],
+      "sources": [
+        "profile.json"
+      ]
+    },
+    "RoleType": {
+      "example_values": [
+        "[enum: Delegated,Local...]"
+      ],
+      "sources": [
+        "entitlement.json"
+      ]
+    },
+    "RunObject": {
+      "example_values": [
+        "[enum: Page,Report,XmlPort,Codeunit...]"
+      ],
+      "sources": [
+        "page.json"
+      ]
+    },
+    "SharedLayout": {
+      "example_values": [
+        "false"
+      ],
+      "sources": [
+        "page.json"
+      ]
+    },
+    "SourceTable": {
+      "example_values": [
+        "TableName"
+      ],
+      "sources": [
+        "page.json"
+      ]
+    },
+    "SourceTableTemporary": {
+      "example_values": [
+        "true"
+      ],
+      "sources": [
+        "page.json"
+      ]
+    },
+    "StartupScript": {
+      "example_values": [
+        "'${15:startupScript.js}'"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "StyleSheets": {
+      "example_values": [
+        "'${14:style.css}'"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "Type": {
+      "example_values": [
+        "[enum: Application,ApplicationScope,C...]",
+        "Excel",
+        "RDLC"
+      ],
+      "sources": [
+        "entitlement.json",
+        "report.json",
+        "reportextension.json"
+      ]
+    },
+    "UsageCategory": {
+      "example_values": [
+        "[enum: Administration,Documents,Histo...]",
+        "[enum: ReportsAndAnalysis,Administrat...]"
+      ],
+      "sources": [
+        "page.json",
+        "report.json"
+      ]
+    },
+    "VerticalShrink": {
+      "example_values": [
+        "[enum: true,false...]"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    },
+    "VerticalStretch": {
+      "example_values": [
+        "[enum: true,false...]"
+      ],
+      "sources": [
+        "controladdin.json"
+      ]
+    }
+  },
+  "sections": [
+    "layout",
+    "area",
+    "group",
+    "actions",
+    "repeater",
+    "dataitem",
+    "dataset",
+    "requestpage",
+    "rendering",
+    "fields",
+    "keys",
+    "fieldgroups"
+  ],
+  "snippets_dir": "C:\\Users\\SShadowS\\.vscode\\extensions\\ms-dynamics-smb.al-17.0.2037090\\snippets",
+  "triggers": [
+    "OnRun",
+    "OnAction",
+    "OnBeforeOpen",
+    "OnInsert",
+    "OnModify",
+    "OnDelete",
+    "OnRename"
+  ]
+}

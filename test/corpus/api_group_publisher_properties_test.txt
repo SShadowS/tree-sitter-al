@@ -24,7 +24,8 @@ page 20001 "APIV1 - Aut. Companies"
       value: (string_literal))
     (api_version_property
       value: (string_literal))
-    (page_type_property)
+    (page_type_property
+      value: (identifier))
     (entity_name_property
       value: (string_literal))
     (entity_set_name_property
@@ -57,7 +58,8 @@ page 30000 "API Test Page"
   (page_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (page_type_property)
+    (page_type_property
+      value: (identifier))
     (api_version_property
       value: (string_literal))
     (api_group_property
@@ -120,7 +122,8 @@ page 40000 TestAPI
       value: (string_literal))
     (api_version_property
       value: (string_literal))
-    (page_type_property)))
+    (page_type_property
+      value: (identifier))))
 
 ================================================================================
 Query with APIGroup and APIPublisher properties

@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 99.48% production file success rate (15,278/15,358 files), 1194 tests passing, 80 errors
+**Current Status**: 99.59% production file success rate (15,295/15,358 files), 1201 tests passing, 63 errors
 
 ## Git Commit Guidelines
 
@@ -318,6 +318,53 @@ if (SCANNER_DEBUG) {
 - Always run `./validate-grammar.sh` before completing any task
 - Use `rg` instead of `grep` for faster codebase searches
 
+## VS Code AL Extension Sync Tools
+
+Tools in `tools/keyword-sync/` compare VS Code AL extension data with the grammar to find gaps.
+
+**Run sync tools:**
+```bash
+cd tools/keyword-sync && python run_all.py
+```
+
+**Output:** `tools/keyword-sync/output/full_comparison_report.md`
+
+### Important: Most "Missing" Items Are False Positives
+
+The comparison report flags items not explicitly in grammar.js, but many work via **generic mechanisms**:
+
+| "Missing" Type | Actually Handled By |
+|----------------|---------------------|
+| `[InDataSet]`, `[RunOnClient]`, `[SecurityFiltering]` | Generic `attribute_item` rule |
+| `to`, `downto` keywords | External scanner tokens (`for_to_keyword`, `for_downto_keyword`) |
+| ControlAddIn properties (`RequestedHeight`, etc.) | Generic `controladdin_property` rule (accepts any identifier) |
+| Triggers (`OnBeforeOpen`, etc.) | Generic trigger support (`trigger OnXxx() begin end;`) |
+
+### Before Adding "Missing" Items to Grammar
+
+**Always verify the item actually causes parse failures:**
+
+```bash
+# 1. Search for usage in production files
+grep -ri 'ItemName' ./BC.History/ | head -5
+
+# 2. Parse a file that uses it
+tree-sitter parse "path/to/file.al" 2>&1 | grep ERROR
+```
+
+**If no ERROR** → Item works via generic mechanism. Don't add specific rule.
+
+**If ERROR exists** → Item needs specific grammar support. Follow Property Development Workflow.
+
+### Generic Mechanisms Reference
+
+These rules handle many constructs without explicit definitions:
+
+- **`attribute_item`** - Any `[AttrName]` or `[AttrName(args)]` pattern
+- **`controladdin_property`** - Any `PropertyName = value;` in ControlAddIn objects
+- **`named_trigger`** - Any `trigger OnXxx() begin end;` pattern
+- **`identifier`** - Catches unknown identifiers for forward compatibility
+
 ## Contextual Keywords
 
 Keywords that can be both properties and variables require special handling:
@@ -347,6 +394,40 @@ alias('TableType', $.identifier), alias('tabletype', $.identifier), ...
 - Property name is common variable name
 - Standard kw() causes unresolvable conflicts
 - Document specific file/context
+
+## Known Limitations
+
+### `Continue` as Variable Name (63 files, 0.41%)
+
+**Problem:** 63 production files use `Continue` as a variable name (e.g., `Continue := true`), but the grammar parses `continue` as a statement keyword.
+
+**Why it can't be fixed with tree-sitter:**
+
+Tree-sitter's architecture makes this fundamentally difficult:
+
+1. **Lexer runs before parser**: Tokens are created before parsing begins
+2. **`identifier` regex matches everything**: The `identifier` pattern matches `continue` before external scanner is called
+3. **External scanner timing**: Scanner only called when grammar tokens don't match OR when external token is the only valid option
+4. **No negative lookahead**: Can't exclude specific words from `identifier` pattern
+
+**Approaches tried and why they failed:**
+
+| Approach | Result |
+|----------|--------|
+| External scanner for `continue` | Scanner never called - `identifier` matches first |
+| `alias(kw('continue'), $.identifier)` in `_expression` | Parser prefers `continue_statement` (shift-reduce preference) |
+| Literal strings with GLR conflict | Tree-sitter marks conflict as "unnecessary" - same token used |
+| Precedence adjustments | Only affects reduce operations, not shift-reduce decisions |
+| Reordering in `choice()` | Lexer decides token type before parser sees alternatives |
+
+**Key insight:** The conflict is at the LEXER level, not parser level. When the lexer sees `continue`, it must decide the token type before the parser can look ahead to see `:=`.
+
+**Accepted trade-off:**
+- 63 files (0.41%) fail to parse `Continue := value` patterns
+- `continue;` statement works correctly
+- No test failures
+
+**DO NOT attempt to fix this** - the approaches above were thoroughly tested. Accept as known limitation.
 
 ## Test Failure Patterns (Quick Reference)
 

@@ -32,7 +32,8 @@ page 50001 "Test Page"
   (page_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (page_type_property)
+    (page_type_property
+      value: (identifier))
     (layout_section
       (area_section
         (repeater_section
