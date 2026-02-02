@@ -77,6 +77,14 @@ def generate_markdown_report(data: dict) -> str:
     lines.append("This report compares the VS Code AL extension data with the tree-sitter grammar")
     lines.append("to identify gaps and potential improvements.")
     lines.append("")
+    lines.append("> **Note**: Many 'missing' items are **false positives** because:")
+    lines.append("> - Keywords like `InDataSet`, `RunOnClient`, `SecurityFiltering` are **attributes** that work via the generic `attribute_item` rule")
+    lines.append("> - Keywords like `to`, `downto` are handled by **external scanner tokens** (`for_to_keyword`, `for_downto_keyword`)")
+    lines.append("> - ControlAddIn properties work via the generic `controladdin_property` rule (accepts any identifier)")
+    lines.append("> - Triggers like `OnBeforeOpen` work via generic trigger support")
+    lines.append(">")
+    lines.append("> Before adding items to the grammar, verify they actually cause parse failures in production files.")
+    lines.append("")
 
     # Summary table
     lines.append("| Data Source | Snippet Items | Grammar Items | Missing | Coverage |")
@@ -229,30 +237,47 @@ def generate_markdown_report(data: dict) -> str:
     lines.append("")
     lines.append("Based on the analysis, here are the recommended next steps:")
     lines.append("")
+    lines.append("### Before Adding Items")
+    lines.append("")
+    lines.append("1. **Verify parse failures**: Check if the 'missing' item actually causes errors")
+    lines.append("   ```bash")
+    lines.append("   # Search for usage in production files")
+    lines.append("   grep -ri 'ItemName' ./BC.History/ | head -5")
+    lines.append("   # Parse a file that uses it")
+    lines.append("   tree-sitter parse file.al 2>&1 | grep ERROR")
+    lines.append("   ```")
+    lines.append("")
+    lines.append("2. **Check generic rules**: Many items work via generic mechanisms:")
+    lines.append("   - `controladdin_property` - Any `PropertyName = value;` in ControlAddIn objects")
+    lines.append("   - `attribute_item` - Any `[AttributeName]` or `[AttributeName(args)]`")
+    lines.append("   - Generic trigger support - `trigger OnXxx() begin end;`")
+    lines.append("")
+    lines.append("### Potential Improvements")
+    lines.append("")
 
     action_num = 1
 
     if data.get("keywords"):
         missing_kw = data["keywords"].get("summary", {}).get("missing_in_grammar", 0)
         if missing_kw > 0:
-            lines.append(f"{action_num}. **Add {missing_kw} missing keywords** from tmlanguage to grammar.js")
+            lines.append(f"{action_num}. **Review {missing_kw} 'missing' keywords** - most are false positives (attributes, scanner tokens)")
             action_num += 1
 
     if data.get("properties"):
         missing_props = data["properties"].get("summary", {}).get("missing_in_grammar", 0)
         with_enums = len([p for p in data["properties"].get("missing_in_grammar", []) if p.get("has_enum_values")])
         if with_enums > 0:
-            lines.append(f"{action_num}. **Review {with_enums} high-priority properties** that have enum values")
+            lines.append(f"{action_num}. **Review {with_enums} properties with enum values** - may need specific rules if values are validated")
             action_num += 1
 
     if data.get("triggers"):
         missing_triggers = data["triggers"].get("summary", {}).get("missing_in_grammar", 0)
         if missing_triggers > 0:
-            lines.append(f"{action_num}. **Add {missing_triggers} missing triggers** to grammar.js")
+            lines.append(f"{action_num}. **Review {missing_triggers} 'missing' triggers** - likely work via generic trigger support")
             action_num += 1
 
     if data.get("snippets") and data["snippets"].get("enum_choices"):
-        lines.append(f"{action_num}. **Verify enum value coverage** against grammar choice() rules")
+        lines.append(f"{action_num}. **Verify enum value coverage** against grammar choice() rules if strict validation needed")
         action_num += 1
 
     if action_num == 1:
