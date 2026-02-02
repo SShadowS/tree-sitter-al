@@ -55,10 +55,18 @@ DC/*
 
 # Analysis and utility scripts
 *.py
+# But allow keyword-sync tools
+!tools/keyword-sync/*.py
+!tools/keyword-sync/output/
+tools/keyword-sync/__pycache__/
 current_orphans.txt
 orphan_report.txt
 run_query*.sh
-queries/
+# Ignore queries/ except standard tree-sitter query files
+queries/*
+!queries/tags.scm
+!queries/highlights.scm
+!queries/locals.scm
 FIXES.md
 
 # AI assistant files

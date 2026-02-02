@@ -1,0 +1,3772 @@
+{
+  "externals": [
+    "preproc_active_region_start",
+    "preproc_active_region_end",
+    "preproc_inactive_region_start",
+    "preproc_inactive_region_end",
+    "preproc_split_marker",
+    "preproc_continuation_marker",
+    "error_sentinel",
+    "preproc_var_terminator",
+    "attribute_for_variable",
+    "attribute_for_procedure",
+    "preproc_var_continuation",
+    "_pragma_var_continuation",
+    "_attribute_var_continuation",
+    "_region_var_continuation",
+    "for_to_keyword",
+    "for_downto_keyword"
+  ],
+  "grammar_file": "U:\\Git\\tree-sitter-al-work1\\grammar.js",
+  "keywords": {
+    "abouttext": {
+      "keyword": "abouttext",
+      "precedence": null,
+      "type": "kw"
+    },
+    "abouttextml": {
+      "keyword": "abouttextml",
+      "precedence": null,
+      "type": "kw"
+    },
+    "abouttitle": {
+      "keyword": "abouttitle",
+      "precedence": null,
+      "type": "kw"
+    },
+    "abouttitleml": {
+      "keyword": "abouttitleml",
+      "precedence": null,
+      "type": "kw"
+    },
+    "access": {
+      "keyword": "access",
+      "type": "choice_operator"
+    },
+    "accessbypermission": {
+      "keyword": "accessbypermission",
+      "precedence": null,
+      "type": "kw"
+    },
+    "accountdata": {
+      "keyword": "accountdata",
+      "precedence": null,
+      "type": "kw"
+    },
+    "action": {
+      "keyword": "action",
+      "precedence": null,
+      "type": "kw"
+    },
+    "actionref": {
+      "keyword": "actionref",
+      "precedence": null,
+      "type": "kw"
+    },
+    "actions": {
+      "keyword": "actions",
+      "type": "choice_operator"
+    },
+    "add": {
+      "keyword": "add",
+      "precedence": null,
+      "type": "kw"
+    },
+    "addafter": {
+      "keyword": "addafter",
+      "precedence": null,
+      "type": "kw"
+    },
+    "addbefore": {
+      "keyword": "addbefore",
+      "precedence": null,
+      "type": "kw"
+    },
+    "addfirst": {
+      "keyword": "addfirst",
+      "precedence": null,
+      "type": "kw"
+    },
+    "additional": {
+      "keyword": "additional",
+      "precedence": null,
+      "type": "kw"
+    },
+    "additionalsearchterms": {
+      "keyword": "additionalsearchterms",
+      "precedence": null,
+      "type": "kw"
+    },
+    "addlast": {
+      "keyword": "addlast",
+      "precedence": null,
+      "type": "kw"
+    },
+    "administration": {
+      "keyword": "administration",
+      "precedence": null,
+      "type": "kw"
+    },
+    "advanced": {
+      "keyword": "advanced",
+      "precedence": null,
+      "type": "kw"
+    },
+    "all": {
+      "keyword": "all",
+      "precedence": null,
+      "type": "kw"
+    },
+    "allowincustomizations": {
+      "keyword": "allowincustomizations",
+      "precedence": null,
+      "type": "kw"
+    },
+    "allowoutbound": {
+      "keyword": "allowoutbound",
+      "precedence": null,
+      "type": "kw"
+    },
+    "allowoutboundfromhandler": {
+      "keyword": "allowoutboundfromhandler",
+      "precedence": null,
+      "type": "kw"
+    },
+    "always": {
+      "keyword": "always",
+      "precedence": null,
+      "type": "kw"
+    },
+    "ambiguous": {
+      "keyword": "ambiguous",
+      "precedence": null,
+      "type": "kw"
+    },
+    "analysismodeenabled": {
+      "keyword": "analysismodeenabled",
+      "precedence": null,
+      "type": "kw"
+    },
+    "analysisview": {
+      "keyword": "analysisview",
+      "precedence": null,
+      "type": "kw"
+    },
+    "analysisviews": {
+      "keyword": "analysisviews",
+      "precedence": null,
+      "type": "kw"
+    },
+    "and": {
+      "keyword": "and",
+      "type": "choice_operator"
+    },
+    "api": {
+      "keyword": "api",
+      "precedence": null,
+      "type": "kw"
+    },
+    "apigroup": {
+      "keyword": "apigroup",
+      "precedence": null,
+      "type": "kw"
+    },
+    "apipublisher": {
+      "keyword": "apipublisher",
+      "precedence": null,
+      "type": "kw"
+    },
+    "apiversion": {
+      "keyword": "apiversion",
+      "type": "kw_with_eq"
+    },
+    "application": {
+      "keyword": "application",
+      "precedence": null,
+      "type": "kw"
+    },
+    "applicationscope": {
+      "keyword": "applicationscope",
+      "precedence": null,
+      "type": "kw"
+    },
+    "area": {
+      "keyword": "area",
+      "precedence": null,
+      "type": "kw"
+    },
+    "array": {
+      "keyword": "array",
+      "precedence": null,
+      "type": "kw"
+    },
+    "as": {
+      "keyword": "as",
+      "precedence": 5,
+      "type": "kw"
+    },
+    "ascending": {
+      "keyword": "ascending",
+      "precedence": null,
+      "type": "kw"
+    },
+    "assembly": {
+      "keyword": "assembly",
+      "precedence": null,
+      "type": "kw"
+    },
+    "asserterror": {
+      "keyword": "asserterror",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "assignmentcompatibility": {
+      "keyword": "assignmentcompatibility",
+      "precedence": null,
+      "type": "kw"
+    },
+    "attach": {
+      "keyword": "attach",
+      "precedence": null,
+      "type": "kw"
+    },
+    "attention": {
+      "keyword": "attention",
+      "precedence": null,
+      "type": "kw"
+    },
+    "attentionaccent": {
+      "keyword": "attentionaccent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "auditcategory": {
+      "keyword": "auditcategory",
+      "precedence": null,
+      "type": "kw"
+    },
+    "auto": {
+      "keyword": "auto",
+      "precedence": null,
+      "type": "kw"
+    },
+    "autocalcfield": {
+      "keyword": "autocalcfield",
+      "precedence": null,
+      "type": "kw"
+    },
+    "autoformatexpression": {
+      "keyword": "autoformatexpression",
+      "precedence": null,
+      "type": "kw"
+    },
+    "autoformattype": {
+      "keyword": "autoformattype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "automation": {
+      "keyword": "automation",
+      "precedence": null,
+      "type": "kw"
+    },
+    "autoreplace": {
+      "keyword": "autoreplace",
+      "precedence": null,
+      "type": "kw"
+    },
+    "autosave": {
+      "keyword": "autosave",
+      "precedence": null,
+      "type": "kw"
+    },
+    "autoupdate": {
+      "keyword": "autoupdate",
+      "precedence": null,
+      "type": "kw"
+    },
+    "average": {
+      "keyword": "average",
+      "precedence": null,
+      "type": "kw"
+    },
+    "barcode": {
+      "keyword": "barcode",
+      "precedence": null,
+      "type": "kw"
+    },
+    "basic": {
+      "keyword": "basic",
+      "precedence": null,
+      "type": "kw"
+    },
+    "begin": {
+      "keyword": "begin",
+      "precedence": null,
+      "type": "kw"
+    },
+    "bigint": {
+      "keyword": "bigint",
+      "precedence": null,
+      "type": "kw"
+    },
+    "biginteger": {
+      "keyword": "biginteger",
+      "precedence": null,
+      "type": "kw"
+    },
+    "bigtext": {
+      "keyword": "bigtext",
+      "precedence": null,
+      "type": "kw"
+    },
+    "bit": {
+      "keyword": "bit",
+      "precedence": null,
+      "type": "kw"
+    },
+    "bitmap": {
+      "keyword": "bitmap",
+      "precedence": null,
+      "type": "kw"
+    },
+    "blob": {
+      "keyword": "blob",
+      "precedence": null,
+      "type": "kw"
+    },
+    "blockoutboundrequests": {
+      "keyword": "blockoutboundrequests",
+      "precedence": null,
+      "type": "kw"
+    },
+    "boolean": {
+      "keyword": "boolean",
+      "precedence": null,
+      "type": "kw"
+    },
+    "both": {
+      "keyword": "both",
+      "precedence": null,
+      "type": "kw"
+    },
+    "break": {
+      "keyword": "break",
+      "precedence": null,
+      "type": "kw"
+    },
+    "brick": {
+      "keyword": "brick",
+      "precedence": null,
+      "type": "kw"
+    },
+    "browse": {
+      "keyword": "browse",
+      "precedence": null,
+      "type": "kw"
+    },
+    "button": {
+      "keyword": "button",
+      "precedence": null,
+      "type": "kw"
+    },
+    "byte": {
+      "keyword": "byte",
+      "precedence": null,
+      "type": "kw"
+    },
+    "c/side": {
+      "keyword": "c/side",
+      "precedence": null,
+      "type": "kw"
+    },
+    "calcfields": {
+      "keyword": "calcfields",
+      "precedence": null,
+      "type": "kw"
+    },
+    "cancel": {
+      "keyword": "cancel",
+      "precedence": null,
+      "type": "kw"
+    },
+    "caption": {
+      "keyword": "caption",
+      "type": "kw_with_eq"
+    },
+    "captionclass": {
+      "keyword": "captionclass",
+      "type": "kw_with_eq"
+    },
+    "captionml": {
+      "keyword": "captionml",
+      "precedence": null,
+      "type": "kw"
+    },
+    "card": {
+      "keyword": "card",
+      "precedence": null,
+      "type": "kw"
+    },
+    "cardpageid": {
+      "keyword": "cardpageid",
+      "precedence": null,
+      "type": "kw"
+    },
+    "cardpart": {
+      "keyword": "cardpart",
+      "precedence": null,
+      "type": "kw"
+    },
+    "case": {
+      "keyword": "case",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "char": {
+      "keyword": "char",
+      "precedence": null,
+      "type": "kw"
+    },
+    "chartpart": {
+      "keyword": "chartpart",
+      "precedence": null,
+      "type": "kw"
+    },
+    "clienttype": {
+      "keyword": "clienttype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "closingdates": {
+      "keyword": "closingdates",
+      "precedence": null,
+      "type": "kw"
+    },
+    "code": {
+      "keyword": "code",
+      "precedence": null,
+      "type": "kw"
+    },
+    "codeunit": {
+      "keyword": "codeunit",
+      "precedence": null,
+      "type": "kw"
+    },
+    "collapseall": {
+      "keyword": "collapseall",
+      "precedence": null,
+      "type": "kw"
+    },
+    "column": {
+      "keyword": "column",
+      "precedence": null,
+      "type": "kw"
+    },
+    "columnfilter": {
+      "keyword": "columnfilter",
+      "precedence": null,
+      "type": "kw"
+    },
+    "columns": {
+      "keyword": "columns",
+      "precedence": null,
+      "type": "kw"
+    },
+    "columnstoreindex": {
+      "keyword": "columnstoreindex",
+      "precedence": null,
+      "type": "kw"
+    },
+    "comment": {
+      "keyword": "comment",
+      "precedence": null,
+      "type": "kw"
+    },
+    "completiontriggererrorlevel": {
+      "keyword": "completiontriggererrorlevel",
+      "precedence": null,
+      "type": "kw"
+    },
+    "compressed": {
+      "keyword": "compressed",
+      "precedence": null,
+      "type": "kw"
+    },
+    "compressiontype": {
+      "keyword": "compressiontype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "concurrentuserserviceplan": {
+      "keyword": "concurrentuserserviceplan",
+      "precedence": null,
+      "type": "kw"
+    },
+    "confirmationdialog": {
+      "keyword": "confirmationdialog",
+      "precedence": null,
+      "type": "kw"
+    },
+    "confirmdialog": {
+      "keyword": "confirmdialog",
+      "precedence": null,
+      "type": "kw"
+    },
+    "connectiontype": {
+      "keyword": "connectiontype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "const": {
+      "keyword": "const",
+      "precedence": null,
+      "type": "kw"
+    },
+    "content": {
+      "keyword": "content",
+      "precedence": null,
+      "type": "kw"
+    },
+    "contextsensitivehelppage": {
+      "keyword": "contextsensitivehelppage",
+      "precedence": null,
+      "type": "kw"
+    },
+    "continue": {
+      "keyword": "continue",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "controladdin": {
+      "keyword": "controladdin",
+      "precedence": null,
+      "type": "kw"
+    },
+    "cookie": {
+      "keyword": "cookie",
+      "precedence": null,
+      "type": "kw"
+    },
+    "count": {
+      "keyword": "count",
+      "precedence": null,
+      "type": "kw"
+    },
+    "create": {
+      "keyword": "create",
+      "precedence": null,
+      "type": "kw"
+    },
+    "creation": {
+      "keyword": "creation",
+      "precedence": null,
+      "type": "kw"
+    },
+    "crm": {
+      "keyword": "crm",
+      "precedence": null,
+      "type": "kw"
+    },
+    "crossjoin": {
+      "keyword": "crossjoin",
+      "precedence": null,
+      "type": "kw"
+    },
+    "cuegroup": {
+      "keyword": "cuegroup",
+      "precedence": null,
+      "type": "kw"
+    },
+    "cuegrouplayout": {
+      "keyword": "cuegrouplayout",
+      "precedence": null,
+      "type": "kw"
+    },
+    "customaction": {
+      "keyword": "customaction",
+      "precedence": null,
+      "type": "kw"
+    },
+    "customactiontype": {
+      "keyword": "customactiontype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "customercontent": {
+      "keyword": "customercontent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "customizations": {
+      "keyword": "customizations",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "customizes": {
+      "keyword": "customizes",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dataaccessintent": {
+      "keyword": "dataaccessintent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "database": {
+      "keyword": "database",
+      "precedence": null,
+      "type": "kw"
+    },
+    "datacaptionexpression": {
+      "keyword": "datacaptionexpression",
+      "type": "kw_with_eq"
+    },
+    "datacaptionfields": {
+      "keyword": "datacaptionfields",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dataclassification": {
+      "keyword": "dataclassification",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dataitem": {
+      "keyword": "dataitem",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dataitemlink": {
+      "keyword": "dataitemlink",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dataitemlinkreference": {
+      "keyword": "dataitemlinkreference",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dataitemtablefilter": {
+      "keyword": "dataitemtablefilter",
+      "precedence": null,
+      "type": "kw"
+    },
+    "datapercompany": {
+      "keyword": "datapercompany",
+      "precedence": null,
+      "type": "kw"
+    },
+    "datascope": {
+      "keyword": "datascope",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dataset": {
+      "keyword": "dataset",
+      "precedence": null,
+      "type": "kw"
+    },
+    "datatransfer": {
+      "keyword": "datatransfer",
+      "precedence": null,
+      "type": "kw"
+    },
+    "date": {
+      "keyword": "date",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dateformula": {
+      "keyword": "dateformula",
+      "precedence": null,
+      "type": "kw"
+    },
+    "datetime": {
+      "keyword": "datetime",
+      "precedence": null,
+      "type": "kw"
+    },
+    "decimal": {
+      "keyword": "decimal",
+      "precedence": null,
+      "type": "kw"
+    },
+    "decimalplaces": {
+      "keyword": "decimalplaces",
+      "precedence": null,
+      "type": "kw"
+    },
+    "defaultfieldsvalidation": {
+      "keyword": "defaultfieldsvalidation",
+      "precedence": null,
+      "type": "kw"
+    },
+    "defaultimplementation": {
+      "keyword": "defaultimplementation",
+      "precedence": null,
+      "type": "kw"
+    },
+    "defaultlayout": {
+      "keyword": "defaultlayout",
+      "precedence": null,
+      "type": "kw"
+    },
+    "defaultnamespace": {
+      "keyword": "defaultnamespace",
+      "precedence": null,
+      "type": "kw"
+    },
+    "delegated": {
+      "keyword": "delegated",
+      "precedence": null,
+      "type": "kw"
+    },
+    "delete": {
+      "keyword": "delete",
+      "precedence": null,
+      "type": "kw"
+    },
+    "deleteallowed": {
+      "keyword": "deleteallowed",
+      "precedence": null,
+      "type": "kw"
+    },
+    "descending": {
+      "keyword": "descending",
+      "precedence": null,
+      "type": "kw"
+    },
+    "description": {
+      "keyword": "description",
+      "type": "kw_with_eq"
+    },
+    "dialog": {
+      "keyword": "dialog",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dictionary": {
+      "keyword": "dictionary",
+      "precedence": null,
+      "type": "kw"
+    },
+    "direction": {
+      "keyword": "direction",
+      "precedence": null,
+      "type": "kw"
+    },
+    "disabled": {
+      "keyword": "disabled",
+      "precedence": null,
+      "type": "kw"
+    },
+    "div": {
+      "keyword": "div",
+      "type": "choice_operator"
+    },
+    "do": {
+      "keyword": "do",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "document": {
+      "keyword": "document",
+      "precedence": null,
+      "type": "kw"
+    },
+    "documents": {
+      "keyword": "documents",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dotnet": {
+      "keyword": "dotnet",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dotnetassembly": {
+      "keyword": "dotnetassembly",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dotnettypedeclaration": {
+      "keyword": "dotnettypedeclaration",
+      "precedence": null,
+      "type": "kw"
+    },
+    "drilldownpageid": {
+      "keyword": "drilldownpageid",
+      "precedence": null,
+      "type": "kw"
+    },
+    "dropdown": {
+      "keyword": "dropdown",
+      "precedence": null,
+      "type": "kw"
+    },
+    "duration": {
+      "keyword": "duration",
+      "precedence": null,
+      "type": "kw"
+    },
+    "edit": {
+      "keyword": "edit",
+      "precedence": null,
+      "type": "kw"
+    },
+    "editable": {
+      "keyword": "editable",
+      "precedence": null,
+      "type": "kw"
+    },
+    "elements": {
+      "keyword": "elements",
+      "precedence": null,
+      "type": "kw"
+    },
+    "else": {
+      "keyword": "else",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "email": {
+      "keyword": "email",
+      "precedence": null,
+      "type": "kw"
+    },
+    "embedding": {
+      "keyword": "embedding",
+      "precedence": null,
+      "type": "kw"
+    },
+    "enabled": {
+      "keyword": "enabled",
+      "precedence": null,
+      "type": "kw"
+    },
+    "encoding": {
+      "keyword": "encoding",
+      "precedence": null,
+      "type": "kw"
+    },
+    "end": {
+      "keyword": "end",
+      "precedence": null,
+      "type": "kw"
+    },
+    "enddata": {
+      "keyword": "enddata",
+      "precedence": null,
+      "type": "kw"
+    },
+    "enddate": {
+      "keyword": "enddate",
+      "precedence": null,
+      "type": "kw"
+    },
+    "endindex": {
+      "keyword": "endindex",
+      "precedence": null,
+      "type": "kw"
+    },
+    "endingtime": {
+      "keyword": "endingtime",
+      "precedence": null,
+      "type": "kw"
+    },
+    "endpoint": {
+      "keyword": "endpoint",
+      "precedence": null,
+      "type": "kw"
+    },
+    "endtime": {
+      "keyword": "endtime",
+      "precedence": null,
+      "type": "kw"
+    },
+    "enduseridentifiableinformation": {
+      "keyword": "enduseridentifiableinformation",
+      "precedence": null,
+      "type": "kw"
+    },
+    "enduserpseudonymousidentifiers": {
+      "keyword": "enduserpseudonymousidentifiers",
+      "precedence": null,
+      "type": "kw"
+    },
+    "endvalue": {
+      "keyword": "endvalue",
+      "precedence": null,
+      "type": "kw"
+    },
+    "entitlement": {
+      "keyword": "entitlement",
+      "precedence": null,
+      "type": "kw"
+    },
+    "entitycaption": {
+      "keyword": "entitycaption",
+      "precedence": null,
+      "type": "kw"
+    },
+    "entitycaptionml": {
+      "keyword": "entitycaptionml",
+      "precedence": null,
+      "type": "kw"
+    },
+    "entityname": {
+      "keyword": "entityname",
+      "precedence": null,
+      "type": "kw"
+    },
+    "entitysetcaption": {
+      "keyword": "entitysetcaption",
+      "precedence": null,
+      "type": "kw"
+    },
+    "entitysetcaptionml": {
+      "keyword": "entitysetcaptionml",
+      "precedence": null,
+      "type": "kw"
+    },
+    "entitysetname": {
+      "keyword": "entitysetname",
+      "precedence": null,
+      "type": "kw"
+    },
+    "enum": {
+      "keyword": "enum",
+      "precedence": null,
+      "type": "kw"
+    },
+    "enumextension": {
+      "keyword": "enumextension",
+      "precedence": null,
+      "type": "kw"
+    },
+    "error": {
+      "keyword": "error",
+      "precedence": null,
+      "type": "kw"
+    },
+    "errorinfo": {
+      "keyword": "errorinfo",
+      "precedence": null,
+      "type": "kw"
+    },
+    "errortype": {
+      "keyword": "errortype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "escape": {
+      "keyword": "escape",
+      "precedence": null,
+      "type": "kw"
+    },
+    "event": {
+      "keyword": "event",
+      "precedence": null,
+      "type": "kw"
+    },
+    "eventsubscriberinstance": {
+      "keyword": "eventsubscriberinstance",
+      "precedence": null,
+      "type": "kw"
+    },
+    "excel": {
+      "keyword": "excel",
+      "precedence": null,
+      "type": "kw"
+    },
+    "exchange": {
+      "keyword": "exchange",
+      "precedence": null,
+      "type": "kw"
+    },
+    "exchangeobject": {
+      "keyword": "exchangeobject",
+      "precedence": null,
+      "type": "kw"
+    },
+    "excludecaption": {
+      "keyword": "excludecaption",
+      "precedence": null,
+      "type": "kw"
+    },
+    "excludedpermissionsets": {
+      "keyword": "excludedpermissionsets",
+      "precedence": null,
+      "type": "kw"
+    },
+    "executioncontext": {
+      "keyword": "executioncontext",
+      "precedence": null,
+      "type": "kw"
+    },
+    "executionmode": {
+      "keyword": "executionmode",
+      "precedence": null,
+      "type": "kw"
+    },
+    "executiontimeout": {
+      "keyword": "executiontimeout",
+      "precedence": null,
+      "type": "kw"
+    },
+    "exist": {
+      "keyword": "exist",
+      "precedence": null,
+      "type": "kw"
+    },
+    "exit": {
+      "keyword": "exit",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "expandall": {
+      "keyword": "expandall",
+      "precedence": null,
+      "type": "kw"
+    },
+    "export": {
+      "keyword": "export",
+      "precedence": null,
+      "type": "kw"
+    },
+    "extendeddatatype": {
+      "keyword": "extendeddatatype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "extends": {
+      "keyword": "extends",
+      "precedence": null,
+      "type": "kw"
+    },
+    "extensible": {
+      "keyword": "extensible",
+      "type": "choice_operator"
+    },
+    "external": {
+      "keyword": "external",
+      "precedence": null,
+      "type": "kw"
+    },
+    "externalaccess": {
+      "keyword": "externalaccess",
+      "precedence": null,
+      "type": "kw"
+    },
+    "externalname": {
+      "keyword": "externalname",
+      "precedence": null,
+      "type": "kw"
+    },
+    "externalsql": {
+      "keyword": "externalsql",
+      "precedence": null,
+      "type": "kw"
+    },
+    "externaltype": {
+      "keyword": "externaltype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "factboxes": {
+      "keyword": "factboxes",
+      "precedence": null,
+      "type": "kw"
+    },
+    "false": {
+      "keyword": "false",
+      "precedence": null,
+      "type": "kw"
+    },
+    "favorable": {
+      "keyword": "favorable",
+      "precedence": null,
+      "type": "kw"
+    },
+    "field": {
+      "keyword": "field",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fieldattribute": {
+      "keyword": "fieldattribute",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fieldclass": {
+      "keyword": "fieldclass",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fielddelimiter": {
+      "keyword": "fielddelimiter",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fieldelement": {
+      "keyword": "fieldelement",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fieldgroup": {
+      "keyword": "fieldgroup",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "fieldgroups": {
+      "keyword": "fieldgroups",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fieldref": {
+      "keyword": "fieldref",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fields": {
+      "keyword": "fields",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fieldseparator": {
+      "keyword": "fieldseparator",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fieldtype": {
+      "keyword": "fieldtype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fieldvalidate": {
+      "keyword": "fieldvalidate",
+      "precedence": null,
+      "type": "kw"
+    },
+    "file": {
+      "keyword": "file",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fileupload": {
+      "keyword": "fileupload",
+      "precedence": null,
+      "type": "kw"
+    },
+    "fileuploadaction": {
+      "keyword": "fileuploadaction",
+      "precedence": null,
+      "type": "kw"
+    },
+    "filter": {
+      "keyword": "filter",
+      "precedence": null,
+      "type": "kw"
+    },
+    "filterpagebuilder": {
+      "keyword": "filterpagebuilder",
+      "precedence": null,
+      "type": "kw"
+    },
+    "filters": {
+      "keyword": "filters",
+      "type": "kw_with_eq"
+    },
+    "fixed": {
+      "keyword": "fixed",
+      "precedence": 1,
+      "type": "kw"
+    },
+    "fixedtext": {
+      "keyword": "fixedtext",
+      "precedence": 1,
+      "type": "kw"
+    },
+    "flatrateserviceplan": {
+      "keyword": "flatrateserviceplan",
+      "precedence": null,
+      "type": "kw"
+    },
+    "float": {
+      "keyword": "float",
+      "precedence": null,
+      "type": "kw"
+    },
+    "flowcaption": {
+      "keyword": "flowcaption",
+      "precedence": null,
+      "type": "kw"
+    },
+    "flowenvironmentid": {
+      "keyword": "flowenvironmentid",
+      "precedence": null,
+      "type": "kw"
+    },
+    "flowfield": {
+      "keyword": "flowfield",
+      "precedence": null,
+      "type": "kw"
+    },
+    "flowfilter": {
+      "keyword": "flowfilter",
+      "precedence": null,
+      "type": "kw"
+    },
+    "flowid": {
+      "keyword": "flowid",
+      "precedence": null,
+      "type": "kw"
+    },
+    "flowtemplatecategoryname": {
+      "keyword": "flowtemplatecategoryname",
+      "precedence": null,
+      "type": "kw"
+    },
+    "flowtemplateid": {
+      "keyword": "flowtemplateid",
+      "precedence": null,
+      "type": "kw"
+    },
+    "for": {
+      "keyword": "for",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "foreach": {
+      "keyword": "foreach",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "format": {
+      "keyword": "format",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "formatevaluate": {
+      "keyword": "formatevaluate",
+      "precedence": 20,
+      "type": "kw"
+    },
+    "full": {
+      "keyword": "full",
+      "precedence": null,
+      "type": "kw"
+    },
+    "function": {
+      "keyword": "function",
+      "precedence": null,
+      "type": "kw"
+    },
+    "generate": {
+      "keyword": "generate",
+      "precedence": null,
+      "type": "kw"
+    },
+    "global": {
+      "keyword": "global",
+      "precedence": null,
+      "type": "kw"
+    },
+    "grid": {
+      "keyword": "grid",
+      "precedence": null,
+      "type": "kw"
+    },
+    "gridlayout": {
+      "keyword": "gridlayout",
+      "precedence": null,
+      "type": "kw"
+    },
+    "group": {
+      "keyword": "group",
+      "precedence": null,
+      "type": "kw"
+    },
+    "groupname": {
+      "keyword": "groupname",
+      "precedence": null,
+      "type": "kw"
+    },
+    "guid": {
+      "keyword": "guid",
+      "precedence": null,
+      "type": "kw"
+    },
+    "headlines": {
+      "keyword": "headlines",
+      "precedence": null,
+      "type": "kw"
+    },
+    "height": {
+      "keyword": "height",
+      "precedence": null,
+      "type": "kw"
+    },
+    "helplink": {
+      "keyword": "helplink",
+      "type": "kw_with_eq"
+    },
+    "hidden": {
+      "keyword": "hidden",
+      "precedence": null,
+      "type": "kw"
+    },
+    "history": {
+      "keyword": "history",
+      "precedence": null,
+      "type": "kw"
+    },
+    "home": {
+      "keyword": "home",
+      "precedence": null,
+      "type": "kw"
+    },
+    "httpclient": {
+      "keyword": "httpclient",
+      "precedence": null,
+      "type": "kw"
+    },
+    "httpcontent": {
+      "keyword": "httpcontent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "httpheaders": {
+      "keyword": "httpheaders",
+      "precedence": null,
+      "type": "kw"
+    },
+    "httprequestmessage": {
+      "keyword": "httprequestmessage",
+      "precedence": null,
+      "type": "kw"
+    },
+    "httprequesttype": {
+      "keyword": "httprequesttype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "httpresponsemessage": {
+      "keyword": "httpresponsemessage",
+      "precedence": null,
+      "type": "kw"
+    },
+    "id": {
+      "keyword": "id",
+      "precedence": null,
+      "type": "kw"
+    },
+    "if": {
+      "keyword": "if",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "image": {
+      "keyword": "image",
+      "precedence": null,
+      "type": "kw"
+    },
+    "implements": {
+      "keyword": "implements",
+      "precedence": null,
+      "type": "kw"
+    },
+    "implicit": {
+      "keyword": "implicit",
+      "precedence": null,
+      "type": "kw"
+    },
+    "import": {
+      "keyword": "import",
+      "precedence": null,
+      "type": "kw"
+    },
+    "importance": {
+      "keyword": "importance",
+      "type": "kw_with_eq"
+    },
+    "importanceadditional": {
+      "keyword": "importanceadditional",
+      "precedence": null,
+      "type": "kw"
+    },
+    "in": {
+      "keyword": "in",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "includecaption": {
+      "keyword": "includecaption",
+      "type": "kw_with_eq"
+    },
+    "includedpermissionsets": {
+      "keyword": "includedpermissionsets",
+      "precedence": null,
+      "type": "kw"
+    },
+    "indentationcolumn": {
+      "keyword": "indentationcolumn",
+      "precedence": null,
+      "type": "kw"
+    },
+    "indentationcontrols": {
+      "keyword": "indentationcontrols",
+      "precedence": null,
+      "type": "kw"
+    },
+    "info": {
+      "keyword": "info",
+      "precedence": null,
+      "type": "kw"
+    },
+    "inherententitlements": {
+      "keyword": "inherententitlements",
+      "precedence": null,
+      "type": "kw"
+    },
+    "inherentpermissions": {
+      "keyword": "inherentpermissions",
+      "precedence": null,
+      "type": "kw"
+    },
+    "initvalue": {
+      "keyword": "initvalue",
+      "precedence": null,
+      "type": "kw"
+    },
+    "innerjoin": {
+      "keyword": "innerjoin",
+      "precedence": null,
+      "type": "kw"
+    },
+    "insert": {
+      "keyword": "insert",
+      "precedence": null,
+      "type": "kw"
+    },
+    "insertallowed": {
+      "keyword": "insertallowed",
+      "precedence": null,
+      "type": "kw"
+    },
+    "install": {
+      "keyword": "install",
+      "precedence": null,
+      "type": "kw"
+    },
+    "instream": {
+      "keyword": "instream",
+      "precedence": null,
+      "type": "kw"
+    },
+    "int": {
+      "keyword": "int",
+      "precedence": null,
+      "type": "kw"
+    },
+    "integer": {
+      "keyword": "integer",
+      "precedence": null,
+      "type": "kw"
+    },
+    "interface": {
+      "keyword": "interface",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "internal": {
+      "keyword": "internal",
+      "precedence": null,
+      "type": "kw"
+    },
+    "is": {
+      "keyword": "is",
+      "precedence": 5,
+      "type": "kw"
+    },
+    "iscontroladdin": {
+      "keyword": "iscontroladdin",
+      "precedence": null,
+      "type": "kw"
+    },
+    "iso88591": {
+      "keyword": "iso88591",
+      "precedence": null,
+      "type": "kw"
+    },
+    "isolationlevel": {
+      "keyword": "isolationlevel",
+      "precedence": null,
+      "type": "kw"
+    },
+    "ispreview": {
+      "keyword": "ispreview",
+      "type": "kw_with_eq"
+    },
+    "joker": {
+      "keyword": "joker",
+      "precedence": null,
+      "type": "kw"
+    },
+    "json": {
+      "keyword": "json",
+      "precedence": null,
+      "type": "kw"
+    },
+    "jsonarray": {
+      "keyword": "jsonarray",
+      "precedence": null,
+      "type": "kw"
+    },
+    "jsonobject": {
+      "keyword": "jsonobject",
+      "precedence": null,
+      "type": "kw"
+    },
+    "jsontoken": {
+      "keyword": "jsontoken",
+      "precedence": null,
+      "type": "kw"
+    },
+    "jsonvalue": {
+      "keyword": "jsonvalue",
+      "precedence": null,
+      "type": "kw"
+    },
+    "key": {
+      "keyword": "key",
+      "precedence": null,
+      "type": "kw"
+    },
+    "keyref": {
+      "keyword": "keyref",
+      "precedence": null,
+      "type": "kw"
+    },
+    "keys": {
+      "keyword": "keys",
+      "precedence": null,
+      "type": "kw"
+    },
+    "label": {
+      "keyword": "label",
+      "precedence": null,
+      "type": "kw"
+    },
+    "labels": {
+      "keyword": "labels",
+      "precedence": null,
+      "type": "kw"
+    },
+    "layout": {
+      "keyword": "layout",
+      "type": "choice_operator"
+    },
+    "layoutfile": {
+      "keyword": "layoutfile",
+      "precedence": null,
+      "type": "kw"
+    },
+    "leftouterjoin": {
+      "keyword": "leftouterjoin",
+      "precedence": null,
+      "type": "kw"
+    },
+    "linkedintransaction": {
+      "keyword": "linkedintransaction",
+      "precedence": null,
+      "type": "kw"
+    },
+    "linkedobject": {
+      "keyword": "linkedobject",
+      "precedence": null,
+      "type": "kw"
+    },
+    "linkfields": {
+      "keyword": "linkfields",
+      "precedence": null,
+      "type": "kw"
+    },
+    "linktable": {
+      "keyword": "linktable",
+      "precedence": null,
+      "type": "kw"
+    },
+    "linktableforceinsert": {
+      "keyword": "linktableforceinsert",
+      "precedence": null,
+      "type": "kw"
+    },
+    "list": {
+      "keyword": "list",
+      "precedence": null,
+      "type": "kw"
+    },
+    "listpart": {
+      "keyword": "listpart",
+      "precedence": null,
+      "type": "kw"
+    },
+    "listplus": {
+      "keyword": "listplus",
+      "precedence": null,
+      "type": "kw"
+    },
+    "lists": {
+      "keyword": "lists",
+      "precedence": null,
+      "type": "kw"
+    },
+    "local": {
+      "keyword": "local",
+      "precedence": null,
+      "type": "kw"
+    },
+    "locked": {
+      "keyword": "locked",
+      "precedence": null,
+      "type": "kw"
+    },
+    "lookup": {
+      "keyword": "lookup",
+      "precedence": null,
+      "type": "kw"
+    },
+    "lookuppageid": {
+      "keyword": "lookuppageid",
+      "precedence": null,
+      "type": "kw"
+    },
+    "maintainsiftindex": {
+      "keyword": "maintainsiftindex",
+      "precedence": null,
+      "type": "kw"
+    },
+    "maintainsqlindex": {
+      "keyword": "maintainsqlindex",
+      "precedence": null,
+      "type": "kw"
+    },
+    "manual": {
+      "keyword": "manual",
+      "precedence": null,
+      "type": "kw"
+    },
+    "many": {
+      "keyword": "many",
+      "precedence": null,
+      "type": "kw"
+    },
+    "masked": {
+      "keyword": "masked",
+      "precedence": null,
+      "type": "kw"
+    },
+    "masterdataintegration": {
+      "keyword": "masterdataintegration",
+      "precedence": null,
+      "type": "kw"
+    },
+    "max": {
+      "keyword": "max",
+      "precedence": null,
+      "type": "kw"
+    },
+    "maxiteration": {
+      "keyword": "maxiteration",
+      "precedence": null,
+      "type": "kw"
+    },
+    "maxlength": {
+      "keyword": "maxlength",
+      "precedence": null,
+      "type": "kw"
+    },
+    "maxoccurs": {
+      "keyword": "maxoccurs",
+      "precedence": null,
+      "type": "kw"
+    },
+    "maxvalue": {
+      "keyword": "maxvalue",
+      "precedence": null,
+      "type": "kw"
+    },
+    "media": {
+      "keyword": "media",
+      "precedence": null,
+      "type": "kw"
+    },
+    "mediaset": {
+      "keyword": "mediaset",
+      "precedence": null,
+      "type": "kw"
+    },
+    "menu": {
+      "keyword": "menu",
+      "precedence": null,
+      "type": "kw"
+    },
+    "microsoftgraph": {
+      "keyword": "microsoftgraph",
+      "precedence": null,
+      "type": "kw"
+    },
+    "mimetype": {
+      "keyword": "mimetype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "min": {
+      "keyword": "min",
+      "precedence": null,
+      "type": "kw"
+    },
+    "minoccurs": {
+      "keyword": "minoccurs",
+      "precedence": null,
+      "type": "kw"
+    },
+    "minvalue": {
+      "keyword": "minvalue",
+      "precedence": null,
+      "type": "kw"
+    },
+    "mod": {
+      "keyword": "mod",
+      "type": "choice_operator"
+    },
+    "modify": {
+      "keyword": "modify",
+      "precedence": null,
+      "type": "kw"
+    },
+    "modifyallowed": {
+      "keyword": "modifyallowed",
+      "precedence": null,
+      "type": "kw"
+    },
+    "moduledependencyinfo": {
+      "keyword": "moduledependencyinfo",
+      "precedence": null,
+      "type": "kw"
+    },
+    "moduleinfo": {
+      "keyword": "moduleinfo",
+      "precedence": null,
+      "type": "kw"
+    },
+    "money": {
+      "keyword": "money",
+      "precedence": null,
+      "type": "kw"
+    },
+    "moveafter": {
+      "keyword": "moveafter",
+      "precedence": null,
+      "type": "kw"
+    },
+    "movebefore": {
+      "keyword": "movebefore",
+      "precedence": null,
+      "type": "kw"
+    },
+    "moved": {
+      "keyword": "moved",
+      "precedence": null,
+      "type": "kw"
+    },
+    "movedfrom": {
+      "keyword": "movedfrom",
+      "precedence": null,
+      "type": "kw"
+    },
+    "movedto": {
+      "keyword": "movedto",
+      "precedence": null,
+      "type": "kw"
+    },
+    "movefirst": {
+      "keyword": "movefirst",
+      "precedence": null,
+      "type": "kw"
+    },
+    "movelast": {
+      "keyword": "movelast",
+      "precedence": null,
+      "type": "kw"
+    },
+    "msdos": {
+      "keyword": "msdos",
+      "precedence": null,
+      "type": "kw"
+    },
+    "multiline": {
+      "keyword": "multiline",
+      "precedence": null,
+      "type": "kw"
+    },
+    "multiplicity": {
+      "keyword": "multiplicity",
+      "precedence": null,
+      "type": "kw"
+    },
+    "namespace": {
+      "keyword": "namespace",
+      "precedence": null,
+      "type": "kw"
+    },
+    "namespaces": {
+      "keyword": "namespaces",
+      "precedence": null,
+      "type": "kw"
+    },
+    "navigatepage": {
+      "keyword": "navigatepage",
+      "precedence": null,
+      "type": "kw"
+    },
+    "navigation": {
+      "keyword": "navigation",
+      "precedence": null,
+      "type": "kw"
+    },
+    "navigationpane": {
+      "keyword": "navigationpane",
+      "precedence": null,
+      "type": "kw"
+    },
+    "nchar": {
+      "keyword": "nchar",
+      "precedence": null,
+      "type": "kw"
+    },
+    "never": {
+      "keyword": "never",
+      "precedence": null,
+      "type": "kw"
+    },
+    "newline": {
+      "keyword": "newline",
+      "precedence": null,
+      "type": "kw"
+    },
+    "no": {
+      "keyword": "no",
+      "precedence": null,
+      "type": "kw"
+    },
+    "none": {
+      "keyword": "none",
+      "precedence": null,
+      "type": "kw"
+    },
+    "nonrestrictedproperties": {
+      "keyword": "nonrestrictedproperties",
+      "precedence": null,
+      "type": "kw"
+    },
+    "nonrestrictive": {
+      "keyword": "nonrestrictive",
+      "precedence": null,
+      "type": "kw"
+    },
+    "nonstandard": {
+      "keyword": "nonstandard",
+      "precedence": null,
+      "type": "kw"
+    },
+    "normal": {
+      "keyword": "normal",
+      "precedence": null,
+      "type": "kw"
+    },
+    "not": {
+      "keyword": "not",
+      "type": "choice_operator"
+    },
+    "notblank": {
+      "keyword": "notblank",
+      "precedence": null,
+      "type": "kw"
+    },
+    "notification": {
+      "keyword": "notification",
+      "precedence": null,
+      "type": "kw"
+    },
+    "notificationscope": {
+      "keyword": "notificationscope",
+      "precedence": null,
+      "type": "kw"
+    },
+    "ntext": {
+      "keyword": "ntext",
+      "precedence": null,
+      "type": "kw"
+    },
+    "numeric": {
+      "keyword": "numeric",
+      "precedence": null,
+      "type": "kw"
+    },
+    "nvarchar": {
+      "keyword": "nvarchar",
+      "precedence": null,
+      "type": "kw"
+    },
+    "objectentitlements": {
+      "keyword": "objectentitlements",
+      "precedence": null,
+      "type": "kw"
+    },
+    "objecttype": {
+      "keyword": "objecttype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "occurrence": {
+      "keyword": "occurrence",
+      "precedence": null,
+      "type": "kw"
+    },
+    "odatakeyfields": {
+      "keyword": "odatakeyfields",
+      "precedence": null,
+      "type": "kw"
+    },
+    "of": {
+      "keyword": "of",
+      "precedence": null,
+      "type": "kw"
+    },
+    "ok": {
+      "keyword": "ok",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onaction": {
+      "keyword": "onaction",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onafterdeleteevent": {
+      "keyword": "onafterdeleteevent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onaftergetrecord": {
+      "keyword": "onaftergetrecord",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onafterinsertevent": {
+      "keyword": "onafterinsertevent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onafterlookup": {
+      "keyword": "onafterlookup",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onaftermodifyevent": {
+      "keyword": "onaftermodifyevent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onaftervalidate": {
+      "keyword": "onaftervalidate",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onassistedit": {
+      "keyword": "onassistedit",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onbeforedeleteevent": {
+      "keyword": "onbeforedeleteevent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onbeforeinsertevent": {
+      "keyword": "onbeforeinsertevent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onbeforeinsertrecord": {
+      "keyword": "onbeforeinsertrecord",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onbeforemodifyevent": {
+      "keyword": "onbeforemodifyevent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "once": {
+      "keyword": "once",
+      "precedence": null,
+      "type": "kw"
+    },
+    "ondelete": {
+      "keyword": "ondelete",
+      "precedence": null,
+      "type": "kw"
+    },
+    "ondrilldown": {
+      "keyword": "ondrilldown",
+      "precedence": null,
+      "type": "kw"
+    },
+    "one": {
+      "keyword": "one",
+      "precedence": 1,
+      "type": "kw"
+    },
+    "onetomany": {
+      "keyword": "onetomany",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onetoone": {
+      "keyword": "onetoone",
+      "precedence": null,
+      "type": "kw"
+    },
+    "oninsert": {
+      "keyword": "oninsert",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onlookup": {
+      "keyword": "onlookup",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onmodify": {
+      "keyword": "onmodify",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onrename": {
+      "keyword": "onrename",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onrun": {
+      "keyword": "onrun",
+      "precedence": null,
+      "type": "kw"
+    },
+    "onvalidate": {
+      "keyword": "onvalidate",
+      "precedence": null,
+      "type": "kw"
+    },
+    "optimizefortextsearch": {
+      "keyword": "optimizefortextsearch",
+      "type": "choice_operator"
+    },
+    "option": {
+      "keyword": "option",
+      "precedence": null,
+      "type": "kw"
+    },
+    "optional": {
+      "keyword": "optional",
+      "precedence": null,
+      "type": "kw"
+    },
+    "optioncaption": {
+      "keyword": "optioncaption",
+      "precedence": null,
+      "type": "kw"
+    },
+    "optioncaptionml": {
+      "keyword": "optioncaptionml",
+      "precedence": null,
+      "type": "kw"
+    },
+    "optionmembers": {
+      "keyword": "optionmembers",
+      "precedence": null,
+      "type": "kw"
+    },
+    "optionordinalvalues": {
+      "keyword": "optionordinalvalues",
+      "precedence": null,
+      "type": "kw"
+    },
+    "or": {
+      "keyword": "or",
+      "type": "choice_operator"
+    },
+    "order": {
+      "keyword": "order",
+      "precedence": null,
+      "type": "kw"
+    },
+    "orderby": {
+      "keyword": "orderby",
+      "precedence": null,
+      "type": "kw"
+    },
+    "organizationidentifiableinformation": {
+      "keyword": "organizationidentifiableinformation",
+      "precedence": null,
+      "type": "kw"
+    },
+    "ostream": {
+      "keyword": "ostream",
+      "precedence": null,
+      "type": "kw"
+    },
+    "outstream": {
+      "keyword": "outstream",
+      "precedence": null,
+      "type": "kw"
+    },
+    "owner": {
+      "keyword": "owner",
+      "precedence": null,
+      "type": "kw"
+    },
+    "page": {
+      "keyword": "page",
+      "precedence": null,
+      "type": "kw"
+    },
+    "pagebackgroundtaskerrorlevel": {
+      "keyword": "pagebackgroundtaskerrorlevel",
+      "precedence": null,
+      "type": "kw"
+    },
+    "pagecustomization": {
+      "keyword": "pagecustomization",
+      "precedence": null,
+      "type": "kw"
+    },
+    "pageextension": {
+      "keyword": "pageextension",
+      "precedence": null,
+      "type": "kw"
+    },
+    "pageresult": {
+      "keyword": "pageresult",
+      "precedence": null,
+      "type": "kw"
+    },
+    "pagestyle": {
+      "keyword": "pagestyle",
+      "precedence": null,
+      "type": "kw"
+    },
+    "pagetype": {
+      "keyword": "pagetype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "part": {
+      "keyword": "part",
+      "precedence": null,
+      "type": "kw"
+    },
+    "pdf": {
+      "keyword": "pdf",
+      "precedence": null,
+      "type": "kw"
+    },
+    "pending": {
+      "keyword": "pending",
+      "precedence": null,
+      "type": "kw"
+    },
+    "permissions": {
+      "keyword": "permissions",
+      "type": "choice_operator"
+    },
+    "permissionset": {
+      "keyword": "permissionset",
+      "precedence": null,
+      "type": "kw"
+    },
+    "permissionsetextension": {
+      "keyword": "permissionsetextension",
+      "precedence": null,
+      "type": "kw"
+    },
+    "person": {
+      "keyword": "person",
+      "precedence": null,
+      "type": "kw"
+    },
+    "peruserserviceplan": {
+      "keyword": "peruserserviceplan",
+      "precedence": null,
+      "type": "kw"
+    },
+    "phoneno": {
+      "keyword": "phoneno",
+      "precedence": null,
+      "type": "kw"
+    },
+    "picklist": {
+      "keyword": "picklist",
+      "precedence": null,
+      "type": "kw"
+    },
+    "preservewhitespace": {
+      "keyword": "preservewhitespace",
+      "precedence": null,
+      "type": "kw"
+    },
+    "printlayout": {
+      "keyword": "printlayout",
+      "precedence": null,
+      "type": "kw"
+    },
+    "printonlyifdetail": {
+      "keyword": "printonlyifdetail",
+      "precedence": null,
+      "type": "kw"
+    },
+    "private": {
+      "keyword": "private",
+      "precedence": null,
+      "type": "kw"
+    },
+    "procedure": {
+      "keyword": "procedure",
+      "precedence": null,
+      "type": "kw"
+    },
+    "processing": {
+      "keyword": "processing",
+      "precedence": null,
+      "type": "kw"
+    },
+    "profile": {
+      "keyword": "profile",
+      "precedence": null,
+      "type": "kw"
+    },
+    "profileextension": {
+      "keyword": "profileextension",
+      "precedence": null,
+      "type": "kw"
+    },
+    "promoted": {
+      "keyword": "promoted",
+      "precedence": null,
+      "type": "kw"
+    },
+    "promotedactioncategories": {
+      "keyword": "promotedactioncategories",
+      "precedence": null,
+      "type": "kw"
+    },
+    "promotedcategory": {
+      "keyword": "promotedcategory",
+      "precedence": null,
+      "type": "kw"
+    },
+    "prompt": {
+      "keyword": "prompt",
+      "precedence": null,
+      "type": "kw"
+    },
+    "promptguide": {
+      "keyword": "promptguide",
+      "precedence": null,
+      "type": "kw"
+    },
+    "prompting": {
+      "keyword": "prompting",
+      "precedence": null,
+      "type": "kw"
+    },
+    "promptoptions": {
+      "keyword": "promptoptions",
+      "precedence": null,
+      "type": "kw"
+    },
+    "protected": {
+      "keyword": "protected",
+      "precedence": null,
+      "type": "kw"
+    },
+    "public": {
+      "keyword": "public",
+      "precedence": null,
+      "type": "kw"
+    },
+    "query": {
+      "keyword": "query",
+      "precedence": null,
+      "type": "kw"
+    },
+    "querycategory": {
+      "keyword": "querycategory",
+      "precedence": null,
+      "type": "kw"
+    },
+    "querytype": {
+      "keyword": "querytype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "ratio": {
+      "keyword": "ratio",
+      "precedence": null,
+      "type": "kw"
+    },
+    "rdlc": {
+      "keyword": "rdlc",
+      "precedence": null,
+      "type": "kw"
+    },
+    "read": {
+      "keyword": "read",
+      "precedence": null,
+      "type": "kw"
+    },
+    "readonly": {
+      "keyword": "readonly",
+      "precedence": null,
+      "type": "kw"
+    },
+    "readstate": {
+      "keyword": "readstate",
+      "precedence": null,
+      "type": "kw"
+    },
+    "readwrite": {
+      "keyword": "readwrite",
+      "precedence": null,
+      "type": "kw"
+    },
+    "real": {
+      "keyword": "real",
+      "precedence": null,
+      "type": "kw"
+    },
+    "record": {
+      "keyword": "record",
+      "precedence": null,
+      "type": "kw"
+    },
+    "recordid": {
+      "keyword": "recordid",
+      "precedence": null,
+      "type": "kw"
+    },
+    "recordref": {
+      "keyword": "recordref",
+      "precedence": null,
+      "type": "kw"
+    },
+    "regenerate": {
+      "keyword": "regenerate",
+      "precedence": null,
+      "type": "kw"
+    },
+    "removed": {
+      "keyword": "removed",
+      "precedence": null,
+      "type": "kw"
+    },
+    "rendering": {
+      "keyword": "rendering",
+      "precedence": null,
+      "type": "kw"
+    },
+    "repeat": {
+      "keyword": "repeat",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "repeater": {
+      "keyword": "repeater",
+      "precedence": null,
+      "type": "kw"
+    },
+    "replicatedata": {
+      "keyword": "replicatedata",
+      "precedence": null,
+      "type": "kw"
+    },
+    "report": {
+      "keyword": "report",
+      "precedence": null,
+      "type": "kw"
+    },
+    "reportextension": {
+      "keyword": "reportextension",
+      "precedence": null,
+      "type": "kw"
+    },
+    "reportformat": {
+      "keyword": "reportformat",
+      "precedence": null,
+      "type": "kw"
+    },
+    "reporting": {
+      "keyword": "reporting",
+      "precedence": null,
+      "type": "kw"
+    },
+    "reportpreview": {
+      "keyword": "reportpreview",
+      "precedence": null,
+      "type": "kw"
+    },
+    "reportprocessingonly": {
+      "keyword": "reportprocessingonly",
+      "precedence": null,
+      "type": "kw"
+    },
+    "reports": {
+      "keyword": "reports",
+      "precedence": null,
+      "type": "kw"
+    },
+    "reportsandanalysis": {
+      "keyword": "reportsandanalysis",
+      "precedence": null,
+      "type": "kw"
+    },
+    "requestfilterfields": {
+      "keyword": "requestfilterfields",
+      "precedence": null,
+      "type": "kw"
+    },
+    "requestfilterheading": {
+      "keyword": "requestfilterheading",
+      "precedence": null,
+      "type": "kw"
+    },
+    "requestpage": {
+      "keyword": "requestpage",
+      "precedence": null,
+      "type": "kw"
+    },
+    "required": {
+      "keyword": "required",
+      "precedence": null,
+      "type": "kw"
+    },
+    "restrictedproperties": {
+      "keyword": "restrictedproperties",
+      "precedence": null,
+      "type": "kw"
+    },
+    "restrictive": {
+      "keyword": "restrictive",
+      "precedence": null,
+      "type": "kw"
+    },
+    "return": {
+      "keyword": "return",
+      "precedence": null,
+      "type": "kw"
+    },
+    "richcontent": {
+      "keyword": "richcontent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "role": {
+      "keyword": "role",
+      "precedence": null,
+      "type": "kw"
+    },
+    "rolecenter": {
+      "keyword": "rolecenter",
+      "precedence": null,
+      "type": "kw"
+    },
+    "roletype": {
+      "keyword": "roletype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "row": {
+      "keyword": "row",
+      "precedence": null,
+      "type": "kw"
+    },
+    "rows": {
+      "keyword": "rows",
+      "precedence": null,
+      "type": "kw"
+    },
+    "runformlinktype": {
+      "keyword": "runformlinktype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "runobject": {
+      "keyword": "runobject",
+      "precedence": null,
+      "type": "kw"
+    },
+    "runpageview": {
+      "keyword": "runpageview",
+      "precedence": null,
+      "type": "kw"
+    },
+    "schema": {
+      "keyword": "schema",
+      "precedence": null,
+      "type": "kw"
+    },
+    "scope": {
+      "keyword": "scope",
+      "type": "kw_with_eq"
+    },
+    "secrettext": {
+      "keyword": "secrettext",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sections": {
+      "keyword": "sections",
+      "precedence": null,
+      "type": "kw"
+    },
+    "securityfilter": {
+      "keyword": "securityfilter",
+      "precedence": null,
+      "type": "kw"
+    },
+    "securityoperationresult": {
+      "keyword": "securityoperationresult",
+      "precedence": null,
+      "type": "kw"
+    },
+    "separator": {
+      "keyword": "separator",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sessionsettings": {
+      "keyword": "sessionsettings",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sharedlayout": {
+      "keyword": "sharedlayout",
+      "precedence": null,
+      "type": "kw"
+    },
+    "shortcutkey": {
+      "keyword": "shortcutkey",
+      "precedence": null,
+      "type": "kw"
+    },
+    "showastree": {
+      "keyword": "showastree",
+      "precedence": null,
+      "type": "kw"
+    },
+    "showcaption": {
+      "keyword": "showcaption",
+      "precedence": null,
+      "type": "kw"
+    },
+    "showfilter": {
+      "keyword": "showfilter",
+      "type": "kw_with_eq"
+    },
+    "smalldatetime": {
+      "keyword": "smalldatetime",
+      "precedence": null,
+      "type": "kw"
+    },
+    "smallint": {
+      "keyword": "smallint",
+      "precedence": null,
+      "type": "kw"
+    },
+    "smallmoney": {
+      "keyword": "smallmoney",
+      "precedence": null,
+      "type": "kw"
+    },
+    "snapshot": {
+      "keyword": "snapshot",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sorting": {
+      "keyword": "sorting",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sourcetable": {
+      "keyword": "sourcetable",
+      "type": "kw_with_eq"
+    },
+    "sourcetabletemporary": {
+      "keyword": "sourcetabletemporary",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sourcetableview": {
+      "keyword": "sourcetableview",
+      "precedence": null,
+      "type": "kw"
+    },
+    "splitbutton": {
+      "keyword": "splitbutton",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sqldatatype": {
+      "keyword": "sqldatatype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sqlindex": {
+      "keyword": "sqlindex",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sqljointype": {
+      "keyword": "sqljointype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sqltimestamp": {
+      "keyword": "sqltimestamp",
+      "precedence": null,
+      "type": "kw"
+    },
+    "standard": {
+      "keyword": "standard",
+      "precedence": null,
+      "type": "kw"
+    },
+    "standardaccent": {
+      "keyword": "standardaccent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "standarddialog": {
+      "keyword": "standarddialog",
+      "precedence": null,
+      "type": "kw"
+    },
+    "state": {
+      "keyword": "state",
+      "precedence": null,
+      "type": "kw"
+    },
+    "static": {
+      "keyword": "static",
+      "precedence": null,
+      "type": "kw"
+    },
+    "staticautomatic": {
+      "keyword": "staticautomatic",
+      "precedence": null,
+      "type": "kw"
+    },
+    "status": {
+      "keyword": "status",
+      "precedence": null,
+      "type": "kw"
+    },
+    "string": {
+      "keyword": "string",
+      "precedence": null,
+      "type": "kw"
+    },
+    "strong": {
+      "keyword": "strong",
+      "precedence": null,
+      "type": "kw"
+    },
+    "strongaccent": {
+      "keyword": "strongaccent",
+      "precedence": null,
+      "type": "kw"
+    },
+    "style": {
+      "keyword": "style",
+      "type": "kw_with_eq"
+    },
+    "styleexpr": {
+      "keyword": "styleexpr",
+      "type": "kw_with_eq"
+    },
+    "subordinate": {
+      "keyword": "subordinate",
+      "precedence": null,
+      "type": "kw"
+    },
+    "subpagelink": {
+      "keyword": "subpagelink",
+      "precedence": null,
+      "type": "kw"
+    },
+    "subtype": {
+      "keyword": "subtype",
+      "type": "kw_with_eq"
+    },
+    "suite": {
+      "keyword": "suite",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sum": {
+      "keyword": "sum",
+      "precedence": null,
+      "type": "kw"
+    },
+    "sumindexfields": {
+      "keyword": "sumindexfields",
+      "precedence": null,
+      "type": "kw"
+    },
+    "summary": {
+      "keyword": "summary",
+      "precedence": null,
+      "type": "kw"
+    },
+    "system": {
+      "keyword": "system",
+      "precedence": null,
+      "type": "kw"
+    },
+    "systemaction": {
+      "keyword": "systemaction",
+      "precedence": null,
+      "type": "kw"
+    },
+    "systemactions": {
+      "keyword": "systemactions",
+      "precedence": null,
+      "type": "kw"
+    },
+    "systemmetadata": {
+      "keyword": "systemmetadata",
+      "precedence": null,
+      "type": "kw"
+    },
+    "systempart": {
+      "keyword": "systempart",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tab": {
+      "keyword": "tab",
+      "precedence": null,
+      "type": "kw"
+    },
+    "table": {
+      "keyword": "table",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tableconnectiontype": {
+      "keyword": "tableconnectiontype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tabledata": {
+      "keyword": "tabledata",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tableelement": {
+      "keyword": "tableelement",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tableextension": {
+      "keyword": "tableextension",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tablefilter": {
+      "keyword": "tablefilter",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tableno": {
+      "keyword": "tableno",
+      "type": "kw_with_eq"
+    },
+    "tableseparator": {
+      "keyword": "tableseparator",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tabletype": {
+      "keyword": "tabletype",
+      "type": "kw_with_eq"
+    },
+    "tasks": {
+      "keyword": "tasks",
+      "precedence": null,
+      "type": "kw"
+    },
+    "temporary": {
+      "keyword": "temporary",
+      "precedence": null,
+      "type": "kw"
+    },
+    "test": {
+      "keyword": "test",
+      "precedence": null,
+      "type": "kw"
+    },
+    "testaction": {
+      "keyword": "testaction",
+      "precedence": null,
+      "type": "kw"
+    },
+    "testfield": {
+      "keyword": "testfield",
+      "precedence": null,
+      "type": "kw"
+    },
+    "testfilterfield": {
+      "keyword": "testfilterfield",
+      "precedence": null,
+      "type": "kw"
+    },
+    "testhttprequestmessage": {
+      "keyword": "testhttprequestmessage",
+      "precedence": null,
+      "type": "kw"
+    },
+    "testhttprequestpolicy": {
+      "keyword": "testhttprequestpolicy",
+      "precedence": null,
+      "type": "kw"
+    },
+    "testhttpresponsemessage": {
+      "keyword": "testhttpresponsemessage",
+      "precedence": null,
+      "type": "kw"
+    },
+    "testisolation": {
+      "keyword": "testisolation",
+      "precedence": null,
+      "type": "kw"
+    },
+    "testpage": {
+      "keyword": "testpage",
+      "precedence": null,
+      "type": "kw"
+    },
+    "testpermissions": {
+      "keyword": "testpermissions",
+      "precedence": null,
+      "type": "kw"
+    },
+    "testrequestpage": {
+      "keyword": "testrequestpage",
+      "precedence": null,
+      "type": "kw"
+    },
+    "testtablerelation": {
+      "keyword": "testtablerelation",
+      "precedence": null,
+      "type": "kw"
+    },
+    "text": {
+      "keyword": "text",
+      "precedence": null,
+      "type": "kw"
+    },
+    "textattribute": {
+      "keyword": "textattribute",
+      "precedence": null,
+      "type": "kw"
+    },
+    "textbuilder": {
+      "keyword": "textbuilder",
+      "precedence": null,
+      "type": "kw"
+    },
+    "textconst": {
+      "keyword": "textconst",
+      "precedence": null,
+      "type": "kw"
+    },
+    "textelement": {
+      "keyword": "textelement",
+      "precedence": null,
+      "type": "kw"
+    },
+    "textencoding": {
+      "keyword": "textencoding",
+      "precedence": null,
+      "type": "kw"
+    },
+    "texttype": {
+      "keyword": "texttype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "then": {
+      "keyword": "then",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "time": {
+      "keyword": "time",
+      "precedence": null,
+      "type": "kw"
+    },
+    "timestamp": {
+      "keyword": "timestamp",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tinyint": {
+      "keyword": "tinyint",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tobeclassified": {
+      "keyword": "tobeclassified",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tooltip": {
+      "keyword": "tooltip",
+      "precedence": null,
+      "type": "kw"
+    },
+    "tooltipml": {
+      "keyword": "tooltipml",
+      "precedence": null,
+      "type": "kw"
+    },
+    "topnumberofrows": {
+      "keyword": "topnumberofrows",
+      "precedence": null,
+      "type": "kw"
+    },
+    "transactionmodel": {
+      "keyword": "transactionmodel",
+      "precedence": null,
+      "type": "kw"
+    },
+    "transactiontype": {
+      "keyword": "transactiontype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "treeinitialstate": {
+      "keyword": "treeinitialstate",
+      "precedence": null,
+      "type": "kw"
+    },
+    "trigger": {
+      "keyword": "trigger",
+      "precedence": null,
+      "type": "kw"
+    },
+    "true": {
+      "keyword": "true",
+      "precedence": null,
+      "type": "kw"
+    },
+    "type": {
+      "keyword": "type",
+      "precedence": null,
+      "type": "kw"
+    },
+    "unbound": {
+      "keyword": "unbound",
+      "precedence": null,
+      "type": "kw"
+    },
+    "unbounded": {
+      "keyword": "unbounded",
+      "precedence": null,
+      "type": "kw"
+    },
+    "unfavorable": {
+      "keyword": "unfavorable",
+      "precedence": null,
+      "type": "kw"
+    },
+    "unique": {
+      "keyword": "unique",
+      "precedence": null,
+      "type": "kw"
+    },
+    "uniqueidentifier": {
+      "keyword": "uniqueidentifier",
+      "precedence": null,
+      "type": "kw"
+    },
+    "unknownvalueimplementation": {
+      "keyword": "unknownvalueimplementation",
+      "precedence": null,
+      "type": "kw"
+    },
+    "unspecified": {
+      "keyword": "unspecified",
+      "precedence": null,
+      "type": "kw"
+    },
+    "until": {
+      "keyword": "until",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "update": {
+      "keyword": "update",
+      "precedence": null,
+      "type": "kw"
+    },
+    "updated": {
+      "keyword": "updated",
+      "precedence": null,
+      "type": "kw"
+    },
+    "updatenolocks": {
+      "keyword": "updatenolocks",
+      "precedence": null,
+      "type": "kw"
+    },
+    "upgrade": {
+      "keyword": "upgrade",
+      "precedence": null,
+      "type": "kw"
+    },
+    "upperlimit": {
+      "keyword": "upperlimit",
+      "precedence": null,
+      "type": "kw"
+    },
+    "url": {
+      "keyword": "url",
+      "precedence": null,
+      "type": "kw"
+    },
+    "usagecategory": {
+      "keyword": "usagecategory",
+      "precedence": null,
+      "type": "kw"
+    },
+    "usedefaultnamespace": {
+      "keyword": "usedefaultnamespace",
+      "precedence": null,
+      "type": "kw"
+    },
+    "usercontrol": {
+      "keyword": "usercontrol",
+      "precedence": null,
+      "type": "kw"
+    },
+    "userdefined": {
+      "keyword": "userdefined",
+      "precedence": null,
+      "type": "kw"
+    },
+    "usetemporary": {
+      "keyword": "usetemporary",
+      "precedence": null,
+      "type": "kw"
+    },
+    "using": {
+      "keyword": "using",
+      "precedence": null,
+      "type": "kw"
+    },
+    "utf16": {
+      "keyword": "utf16",
+      "precedence": null,
+      "type": "kw"
+    },
+    "utf8": {
+      "keyword": "utf8",
+      "precedence": null,
+      "type": "kw"
+    },
+    "value": {
+      "keyword": "value",
+      "precedence": null,
+      "type": "kw"
+    },
+    "valuesallowed": {
+      "keyword": "valuesallowed",
+      "precedence": null,
+      "type": "kw"
+    },
+    "var": {
+      "keyword": "var",
+      "precedence": null,
+      "type": "kw"
+    },
+    "varchar": {
+      "keyword": "varchar",
+      "precedence": null,
+      "type": "kw"
+    },
+    "variable": {
+      "keyword": "variable",
+      "precedence": 1,
+      "type": "kw"
+    },
+    "variabletext": {
+      "keyword": "variabletext",
+      "precedence": 1,
+      "type": "kw"
+    },
+    "variant": {
+      "keyword": "variant",
+      "precedence": null,
+      "type": "kw"
+    },
+    "verbosity": {
+      "keyword": "verbosity",
+      "precedence": null,
+      "type": "kw"
+    },
+    "version": {
+      "keyword": "version",
+      "precedence": null,
+      "type": "kw"
+    },
+    "view": {
+      "keyword": "view",
+      "precedence": null,
+      "type": "kw"
+    },
+    "views": {
+      "keyword": "views",
+      "precedence": null,
+      "type": "kw"
+    },
+    "visible": {
+      "keyword": "visible",
+      "type": "kw_with_eq"
+    },
+    "warning": {
+      "keyword": "warning",
+      "precedence": null,
+      "type": "kw"
+    },
+    "webserviceactioncontext": {
+      "keyword": "webserviceactioncontext",
+      "precedence": null,
+      "type": "kw"
+    },
+    "webserviceactionresultcode": {
+      "keyword": "webserviceactionresultcode",
+      "precedence": null,
+      "type": "kw"
+    },
+    "where": {
+      "keyword": "where",
+      "precedence": 15,
+      "type": "kw"
+    },
+    "while": {
+      "keyword": "while",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "width": {
+      "keyword": "width",
+      "type": "kw_with_eq"
+    },
+    "windows": {
+      "keyword": "windows",
+      "precedence": null,
+      "type": "kw"
+    },
+    "with": {
+      "keyword": "with",
+      "precedence": 10,
+      "type": "kw"
+    },
+    "word": {
+      "keyword": "word",
+      "precedence": null,
+      "type": "kw"
+    },
+    "worksheet": {
+      "keyword": "worksheet",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xml": {
+      "keyword": "xml",
+      "precedence": 1,
+      "type": "kw"
+    },
+    "xmlattribute": {
+      "keyword": "xmlattribute",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlattributecollection": {
+      "keyword": "xmlattributecollection",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlcdata": {
+      "keyword": "xmlcdata",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlcomment": {
+      "keyword": "xmlcomment",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmldeclaration": {
+      "keyword": "xmldeclaration",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmldocument": {
+      "keyword": "xmldocument",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmldocumenttype": {
+      "keyword": "xmldocumenttype",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlelement": {
+      "keyword": "xmlelement",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlname": {
+      "keyword": "xmlname",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlnamespacemanager": {
+      "keyword": "xmlnamespacemanager",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlnametable": {
+      "keyword": "xmlnametable",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlnode": {
+      "keyword": "xmlnode",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlnodelist": {
+      "keyword": "xmlnodelist",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlport": {
+      "keyword": "xmlport",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlprocessinginstruction": {
+      "keyword": "xmlprocessinginstruction",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlreadoptions": {
+      "keyword": "xmlreadoptions",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmltext": {
+      "keyword": "xmltext",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xmlwriteoptions": {
+      "keyword": "xmlwriteoptions",
+      "precedence": null,
+      "type": "kw"
+    },
+    "xor": {
+      "keyword": "xor",
+      "type": "choice_operator"
+    },
+    "yes": {
+      "keyword": "yes",
+      "precedence": null,
+      "type": "kw"
+    },
+    "zero": {
+      "keyword": "zero",
+      "precedence": null,
+      "type": "kw"
+    },
+    "zeroormany": {
+      "keyword": "zeroormany",
+      "precedence": 1,
+      "type": "kw"
+    },
+    "zeroorone": {
+      "keyword": "zeroorone",
+      "precedence": 1,
+      "type": "kw"
+    }
+  },
+  "semantic_categories": {
+    "_access_properties": [
+      "access_property",
+      "inherent_permissions_property",
+      "inherent_entitlements_property",
+      "test_permissions_property",
+      "access_by_permission_property"
+    ],
+    "_action_properties": [
+      "_universal_properties",
+      "_display_properties",
+      "_navigation_properties",
+      "_access_properties",
+      "allowed_file_extensions_property",
+      "allow_multiple_files_property",
+      "custom_action_type_property",
+      "ellipsis_property",
+      "file_upload_action_property",
+      "file_upload_row_action_property",
+      "flow_template_category_name_property",
+      "flow_environment_id_property",
+      "flow_caption_property",
+      "flow_id_property",
+      "flow_template_id_property",
+      "gesture_property",
+      "image_property",
+      "in_footer_bar_property",
+      "is_header_property",
+      "promoted_property",
+      "promoted_category_property",
+      "promoted_is_big_property",
+      "promoted_only_property",
+      "run_page_mode_property",
+      "run_page_on_rec_property",
+      "show_as_property"
+    ],
+    "_codeunit_properties": [
+      "_universal_properties",
+      "_access_properties",
+      "_navigation_properties",
+      "_object_specific_properties",
+      "permissions_property",
+      "test_isolation_property",
+      "test_http_request_policy_property"
+    ],
+    "_codeunit_specific_properties": [
+      "table_no_property",
+      "single_instance_property",
+      "event_subscriber_instance_property"
+    ],
+    "_controladdin_properties": [
+      "_universal_properties",
+      "controladdin_property"
+    ],
+    "_data_properties": [
+      "source_expr_property",
+      "table_relation_property",
+      "calc_fields_property",
+      "calc_formula_property",
+      "lookup_property",
+      "auto_format_expression_property",
+      "auto_format_type_property",
+      "auto_increment_property",
+      "field_class_property",
+      "init_value_property",
+      "sql_data_type_property",
+      "sql_timestamp_property",
+      "test_table_relation_property",
+      "compressed_property",
+      "external_access_property"
+    ],
+    "_dataitem_properties": [
+      "_universal_properties",
+      "data_item_table_filter_property",
+      "data_item_table_view_property",
+      "max_iteration_property",
+      "data_item_link_property",
+      "data_item_link_reference_property",
+      "request_filter_fields_property",
+      "request_filter_heading_property",
+      "print_only_if_detail_property",
+      "sql_join_type_property",
+      "use_temporary_property",
+      "calc_fields_property"
+    ],
+    "_display_properties": [
+      "visible_property",
+      "enabled_property",
+      "editable_property",
+      "style_property",
+      "style_expr_property",
+      "width_property",
+      "row_span_property",
+      "column_span_property",
+      "freeze_column_property",
+      "indentation_column_property",
+      "indentation_controls_property",
+      "grid_layout_property",
+      "importance_property",
+      "show_caption_property",
+      "show_as_tree_property",
+      "tree_initial_state_property",
+      "show_mandatory_property",
+      "multi_line_property",
+      "hide_value_property"
+    ],
+    "_entitlement_properties": [
+      "_universal_properties",
+      "entitlement_type_property",
+      "entitlement_role_type_property",
+      "entitlement_id_property",
+      "entitlement_group_name_property",
+      "object_entitlements_property"
+    ],
+    "_enum_properties": [
+      "_universal_properties",
+      "_access_properties",
+      "assignment_compatibility_property",
+      "implementation_property",
+      "default_implementation_property",
+      "unknown_value_implementation_property"
+    ],
+    "_field_properties": [
+      "_universal_properties",
+      "_display_properties",
+      "_validation_properties",
+      "_data_properties",
+      "_navigation_properties",
+      "_access_properties",
+      "field_trigger_declaration",
+      "assist_edit_property",
+      "quick_entry_property",
+      "option_caption_property",
+      "option_caption_ml_property",
+      "option_members_property",
+      "option_ordinal_values_property",
+      "sign_displacement_property",
+      "data_classification_property",
+      "title_property",
+      "extended_datatype_property",
+      "odata_edm_type_property",
+      "drill_down_property",
+      "image_property",
+      "optimize_for_text_search_property",
+      "moved_from_property",
+      "moved_to_property",
+      "external_type_property",
+      "external_name_property",
+      "preproc_conditional_field_properties",
+      "empty_statement"
+    ],
+    "_interface_properties": [
+      "_universal_properties",
+      "inherent_permissions_property",
+      "access_property"
+    ],
+    "_key_properties": [
+      "clustered_property",
+      "enabled_property",
+      "unique_property",
+      "included_fields_property",
+      "maintain_sift_index_property",
+      "maintain_sql_index_property",
+      "sql_index_property",
+      "sum_index_fields_property",
+      "obsolete_reason_property",
+      "obsolete_state_property",
+      "obsolete_tag_property",
+      "preproc_conditional_key_properties",
+      "property",
+      "empty_statement"
+    ],
+    "_navigation_properties": [
+      "lookup_pageid_property",
+      "drilldown_pageid_property",
+      "navigation_page_id_property",
+      "run_object_property",
+      "run_page_link_property",
+      "run_page_view_property",
+      "run_form_link_type_property",
+      "shortcut_key_property",
+      "card_page_id_property"
+    ],
+    "_object_specific_properties": [
+      "_page_specific_properties",
+      "_codeunit_specific_properties",
+      "_table_specific_properties",
+      "_report_specific_properties"
+    ],
+    "_page_properties": [
+      "_universal_properties",
+      "_display_properties",
+      "_access_properties",
+      "_navigation_properties",
+      "_object_specific_properties",
+      "permissions_property",
+      "multiplicity_property",
+      "entity_name_property",
+      "entity_set_name_property",
+      "data_caption_expression_property",
+      "data_caption_fields_property",
+      "delete_allowed_property",
+      "insert_allowed_property",
+      "modify_allowed_property",
+      "source_table_temporary_property",
+      "analysis_mode_enabled_property",
+      "auto_split_key_property",
+      "change_tracking_allowed_property",
+      "delayed_insert_property",
+      "links_allowed_property",
+      "multiple_new_lines_property",
+      "populate_all_fields_property",
+      "image_property",
+      "prompt_mode_property",
+      "refresh_on_activate_property",
+      "save_values_property",
+      "show_filter_property",
+      "clear_actions_property",
+      "clear_layout_property",
+      "clear_views_property",
+      "show_as_property",
+      "importance_additional_property",
+      "include_caption_property",
+      "cuegroup_layout_property",
+      "entity_caption_property",
+      "entity_caption_ml_property",
+      "entity_name_property",
+      "entity_set_caption_property",
+      "entity_set_caption_ml_property",
+      "entity_set_name_property",
+      "odata_key_fields_property",
+      "api_version_property",
+      "api_group_property",
+      "api_publisher_property",
+      "multiplicity_property",
+      "is_preview_property",
+      "promoted_property",
+      "promoted_category_property",
+      "promoted_only_property",
+      "promoted_is_big_property",
+      "promoted_action_categories_property",
+      "provider_property",
+      "sub_page_link_property",
+      "sub_page_view_property",
+      "update_propagation_property",
+      "query_category_property",
+      "filters_property",
+      "order_by_property",
+      "shared_layout_property",
+      "data_item_table_view_property",
+      "quick_entry_property"
+    ],
+    "_page_specific_properties": [
+      "page_type_property",
+      "source_table_property"
+    ],
+    "_permissionset_properties": [
+      "_universal_properties",
+      "_access_properties",
+      "assignable_property",
+      "included_permission_sets_property",
+      "excluded_permission_sets_property"
+    ],
+    "_profile_properties": [
+      "description_property",
+      "caption_property",
+      "profile_rolecenter_property",
+      "profile_customizations_property",
+      "profile_description_property2",
+      "promoted_property",
+      "enabled_property",
+      "visible_property",
+      "obsolete_state_property",
+      "obsolete_reason_property",
+      "obsolete_tag_property",
+      "application_area_property",
+      "tool_tip_property",
+      "tool_tip_ml_property"
+    ],
+    "_query_properties": [
+      "permissions_property",
+      "query_type_property",
+      "read_state_property",
+      "query_category_property",
+      "order_by_property",
+      "top_number_of_rows_property",
+      "entity_caption_property",
+      "entity_caption_ml_property",
+      "entity_name_property",
+      "entity_set_caption_property",
+      "entity_set_caption_ml_property",
+      "entity_set_name_property",
+      "api_group_property",
+      "api_publisher_property",
+      "api_version_property"
+    ],
+    "_report_column_properties": [
+      "include_caption_property",
+      "caption_property",
+      "auto_format_expression_property",
+      "auto_format_type_property",
+      "decimal_places_property",
+      "auto_calc_field_property",
+      "option_caption_property",
+      "option_members_property",
+      "obsolete_state_property",
+      "obsolete_reason_property",
+      "obsolete_tag_property"
+    ],
+    "_report_properties": [
+      "_universal_properties",
+      "_access_properties",
+      "_object_specific_properties",
+      "permissions_property",
+      "default_layout_property",
+      "default_rendering_layout_property",
+      "excel_layout_property",
+      "rdlc_layout_property",
+      "word_layout_property",
+      "allow_scheduling_property",
+      "preview_mode_property",
+      "show_print_status_property",
+      "transaction_type_property",
+      "execution_timeout_property",
+      "format_region_property",
+      "use_system_printer_property",
+      "maximum_dataset_size_property",
+      "enable_external_assemblies_property",
+      "enable_external_images_property",
+      "enable_hyperlinks_property",
+      "excel_layout_multiple_data_sheets_property",
+      "maximum_document_count_property",
+      "paper_source_default_page_property",
+      "paper_source_first_page_property",
+      "paper_source_last_page_property",
+      "pdf_font_embedding_property",
+      "print_only_if_detail_property",
+      "word_merge_data_item_property",
+      "data_item_link_reference_property"
+    ],
+    "_report_specific_properties": [
+      "processing_only_property",
+      "use_request_page_property"
+    ],
+    "_table_properties": [
+      "_universal_properties",
+      "_access_properties",
+      "_navigation_properties",
+      "_object_specific_properties",
+      "permissions_property",
+      "data_caption_fields_property",
+      "column_store_index_property",
+      "compression_type_property",
+      "external_schema_property",
+      "paste_is_valid_property",
+      "external_name_property",
+      "moved_from_property",
+      "moved_to_property",
+      "linked_in_transaction_property",
+      "linked_object_property",
+      "data_classification_property",
+      "optimize_for_text_search_property"
+    ],
+    "_table_specific_properties": [
+      "table_type_property",
+      "data_per_company_property",
+      "replicate_data_property"
+    ],
+    "_universal_properties": [
+      "caption_property",
+      "caption_ml_property",
+      "caption_class_property",
+      "description_property",
+      "application_area_property",
+      "tool_tip_property",
+      "tool_tip_ml_property",
+      "obsolete_reason_property",
+      "obsolete_state_property",
+      "obsolete_tag_property",
+      "usage_category_property",
+      "subtype_property",
+      "about_title_property",
+      "about_text_property",
+      "about_title_ml_property",
+      "about_text_ml_property",
+      "context_sensitive_help_page_property",
+      "additional_search_terms_property",
+      "additional_search_terms_ml_property",
+      "help_link_property",
+      "instructional_text_property",
+      "instructional_text_ml_property",
+      "data_access_intent_property",
+      "scope_property",
+      "extensible_property"
+    ],
+    "_validation_properties": [
+      "min_value_property",
+      "max_value_property",
+      "not_blank_property",
+      "numeric_property",
+      "decimal_places_property",
+      "blank_zero_property",
+      "blank_numbers_property",
+      "unique_property",
+      "values_allowed_property",
+      "validate_table_relation_property",
+      "char_allowed_property",
+      "date_formula_property",
+      "closing_dates_property",
+      "allow_in_customizations_property"
+    ],
+    "_xmlport_properties": [
+      "_universal_properties",
+      "_access_properties",
+      "permissions_property",
+      "direction_property",
+      "format_evaluate_property",
+      "format_property",
+      "field_delimiter_property",
+      "field_separator_property",
+      "default_fields_validation_property",
+      "table_separator_property",
+      "text_encoding_property",
+      "paste_is_valid_property",
+      "moved_from_property",
+      "moved_to_property",
+      "linked_in_transaction_property",
+      "linked_object_property",
+      "external_schema_property",
+      "use_request_page_property",
+      "default_namespace_property",
+      "encoding_property",
+      "namespaces_property",
+      "use_default_namespace_property",
+      "preserve_whitespace_property"
+    ]
+  },
+  "total_choice_operators": 18,
+  "total_kw_calls": 945,
+  "total_kw_with_eq_calls": 21,
+  "unique_keywords": 668
+}
