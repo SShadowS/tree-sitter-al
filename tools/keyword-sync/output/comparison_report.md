@@ -1,6 +1,6 @@
 # Keyword Synchronization Report
 
-Generated: 2026-02-02 08:05:05
+Generated: 2026-02-02 10:53:27
 VS Code AL Extension: v17.0.2037090
 
 ## Summary
@@ -43,56 +43,56 @@ Keywords in grammar.js but not in VS Code extension. These may be:
 
 | Keyword | Type | Precedence |
 |---------|------|------------|
-| `abouttext` | kw | - |
+| `accessbypermission` | kw | - |
+| `additionalsearchterms` | kw | - |
 | `apigroup` | kw | - |
-| `autoformattype` | kw | - |
-| `autoreplace` | kw | - |
-| `c/side` | kw | - |
-| `columnfilter` | kw | - |
-| `columns` | kw | - |
-| `confirmdialog` | kw | - |
-| `create` | kw | - |
-| `cuegrouplayout` | kw | - |
-| `customactiontype` | kw | - |
-| `dataaccessintent` | kw | - |
-| `delete` | kw | - |
-| `disabled` | kw | - |
+| `autoupdate` | kw | - |
+| `both` | kw | - |
+| `caption` | kw_with_eq | - |
+| `closingdates` | kw | - |
+| `comment` | kw | - |
+| `decimalplaces` | kw | - |
+| `defaultimplementation` | kw | - |
+| `drilldownpageid` | kw | - |
+| `edit` | kw | - |
+| `embedding` | kw | - |
+| `endindex` | kw | - |
 | `endvalue` | kw | - |
-| `exchangeobject` | kw | - |
-| `fieldseparator` | kw | - |
-| `flowenvironmentid` | kw | - |
-| `flowfilter` | kw | - |
-| `format` | kw | 10 |
+| `externalname` | kw | - |
+| `float` | kw | - |
+| `formatevaluate` | kw | 20 |
 | `includecaption` | kw_with_eq | - |
-| `indentationcontrols` | kw | - |
-| `insertallowed` | kw | - |
-| `install` | kw | - |
-| `linkedobject` | kw | - |
+| `iscontroladdin` | kw | - |
+| `locked` | kw | - |
+| `maintainsqlindex` | kw | - |
 | `minvalue` | kw | - |
-| `no` | kw | - |
-| `onafterinsertevent` | kw | - |
-| `ondelete` | kw | - |
-| `onetomany` | kw | - |
+| `msdos` | kw | - |
+| `multiline` | kw | - |
+| `nonrestrictive` | kw | - |
+| `nonstandard` | kw | - |
+| `nvarchar` | kw | - |
+| `onafterdeleteevent` | kw | - |
+| `onbeforeinsertevent` | kw | - |
 | `onmodify` | kw | - |
-| `onrename` | kw | - |
-| `optionmembers` | kw | - |
-| `phoneno` | kw | - |
-| `prompting` | kw | - |
+| `onrun` | kw | - |
+| `processing` | kw | - |
+| `promoted` | kw | - |
+| `promotedcategory` | kw | - |
 | `rdlc` | kw | - |
-| `readwrite` | kw | - |
-| `reporting` | kw | - |
-| `runobject` | kw | - |
-| `smallint` | kw | - |
-| `splitbutton` | kw | - |
-| `sqltimestamp` | kw | - |
-| `tab` | kw | - |
-| `testtablerelation` | kw | - |
+| `requestfilterheading` | kw | - |
+| `showcaption` | kw | - |
+| `sqljointype` | kw | - |
+| `state` | kw | - |
+| `string` | kw | - |
+| `tableseparator` | kw | - |
+| `tooltipml` | kw | - |
 | `unbound` | kw | - |
-| `uniqueidentifier` | kw | - |
+| `unknownvalueimplementation` | kw | - |
 | `update` | kw | - |
-| `width` | kw_with_eq | - |
-| `xml` | kw | 1 |
-| `xmlname` | kw | - |
+| `usagecategory` | kw | - |
+| `utf8` | kw | - |
+| `variable` | kw | 1 |
+| `zeroormany` | kw | 1 |
 
 ## Special Handling Reference
 
