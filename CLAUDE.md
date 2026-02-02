@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 99.48% production file success rate (15,278/15,358 files), 1194 tests passing, 80 errors
+**Current Status**: 99.59% production file success rate (15,295/15,358 files), 1201 tests passing, 63 errors
 
 ## Git Commit Guidelines
 
@@ -347,6 +347,40 @@ alias('TableType', $.identifier), alias('tabletype', $.identifier), ...
 - Property name is common variable name
 - Standard kw() causes unresolvable conflicts
 - Document specific file/context
+
+## Known Limitations
+
+### `Continue` as Variable Name (63 files, 0.41%)
+
+**Problem:** 63 production files use `Continue` as a variable name (e.g., `Continue := true`), but the grammar parses `continue` as a statement keyword.
+
+**Why it can't be fixed with tree-sitter:**
+
+Tree-sitter's architecture makes this fundamentally difficult:
+
+1. **Lexer runs before parser**: Tokens are created before parsing begins
+2. **`identifier` regex matches everything**: The `identifier` pattern matches `continue` before external scanner is called
+3. **External scanner timing**: Scanner only called when grammar tokens don't match OR when external token is the only valid option
+4. **No negative lookahead**: Can't exclude specific words from `identifier` pattern
+
+**Approaches tried and why they failed:**
+
+| Approach | Result |
+|----------|--------|
+| External scanner for `continue` | Scanner never called - `identifier` matches first |
+| `alias(kw('continue'), $.identifier)` in `_expression` | Parser prefers `continue_statement` (shift-reduce preference) |
+| Literal strings with GLR conflict | Tree-sitter marks conflict as "unnecessary" - same token used |
+| Precedence adjustments | Only affects reduce operations, not shift-reduce decisions |
+| Reordering in `choice()` | Lexer decides token type before parser sees alternatives |
+
+**Key insight:** The conflict is at the LEXER level, not parser level. When the lexer sees `continue`, it must decide the token type before the parser can look ahead to see `:=`.
+
+**Accepted trade-off:**
+- 63 files (0.41%) fail to parse `Continue := value` patterns
+- `continue;` statement works correctly
+- No test failures
+
+**DO NOT attempt to fix this** - the approaches above were thoroughly tested. Accept as known limitation.
 
 ## Test Failure Patterns (Quick Reference)
 
