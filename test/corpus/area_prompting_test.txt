@@ -78,7 +78,8 @@ page 50100 "Bank Acc. Reconciliation List"
   (page_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (page_type_property)
+    (page_type_property
+      value: (identifier))
     (actions_section
       (area_action_section
         (action_declaration

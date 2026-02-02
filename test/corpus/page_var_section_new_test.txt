@@ -23,7 +23,8 @@ page 50100 "Test Page"
   (page_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (page_type_property)
+    (page_type_property
+      value: (identifier))
     (trigger_declaration
       name: (trigger_name)
       (code_block

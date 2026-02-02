@@ -49,12 +49,14 @@ page 50100 "On-Prem Page"
     consequence: (page_declaration
       object_id: (integer)
       object_name: (quoted_identifier)
-      (page_type_property))
+      (page_type_property
+        value: (identifier)))
     (preproc_else)
     alternative: (page_declaration
       object_id: (integer)
       object_name: (quoted_identifier)
-      (page_type_property))
+      (page_type_property
+        value: (identifier)))
     (preproc_endif)))
 
 ================================================================================

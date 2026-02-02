@@ -1726,17 +1726,24 @@ module.exports = grammar({
       kw('PageType'),
       '=',
       field('value', choice(
-        kw('card'),
-        kw('list'),
-        kw('rolecenter'),
-        kw('worksheet'),
-        kw('standarddialog'),
-        kw('confirmdialog'),
-        kw('navigationpane'),
-        kw('headlines'),
-        kw('document'),
-        kw('api'),
-        kw('cardpart'),
+        alias(kw('card'), $.identifier),
+        alias(kw('list'), $.identifier),
+        alias(kw('rolecenter'), $.identifier),
+        alias(kw('worksheet'), $.identifier),
+        alias(kw('standarddialog'), $.identifier),
+        alias(kw('confirmdialog'), $.identifier),
+        alias(kw('confirmationdialog'), $.identifier),
+        alias(kw('navigationpane'), $.identifier),
+        alias(kw('navigatepage'), $.identifier),
+        alias(kw('headlines'), $.identifier),
+        alias(kw('document'), $.identifier),
+        alias(kw('api'), $.identifier),
+        alias(kw('cardpart'), $.identifier),
+        alias(kw('listpart'), $.identifier),
+        alias(kw('listplus'), $.identifier),
+        alias(kw('dropdown'), $.identifier),
+        alias(kw('reportpreview'), $.identifier),
+        alias(kw('reportprocessingonly'), $.identifier),
         $.string_literal,
         $.identifier,
         $._quoted_identifier
@@ -2296,7 +2303,7 @@ module.exports = grammar({
     ),
 
     controladdin_event: $ => seq(
-      'event',
+      kw('event'),
       field('name', $.identifier),
       '(',
       optional($.parameter_list),
@@ -2523,7 +2530,7 @@ module.exports = grammar({
     ),
 
     dataset_section: $ => seq(
-      'dataset',
+      kw('dataset'),
       '{',
       repeat(choice(
         $.report_dataitem_section,
@@ -2656,7 +2663,7 @@ module.exports = grammar({
     ),
 
     requestpage_section: $ => seq(
-      'requestpage',
+      kw('requestpage'),
       '{',
       repeat(choice(
         $._page_properties,
@@ -2938,6 +2945,7 @@ module.exports = grammar({
       $.field_section,
       $.part_section,
       $.systempart_section,
+      $.chartpart_section,
       $.usercontrol_section,
       $.fixed_section,
       $.label_section,
@@ -3192,6 +3200,23 @@ module.exports = grammar({
       '}'
     ),
 
+    // ChartPart section for embedding charts in pages
+    chartpart_section: $ => seq(
+      kw('chartpart'),
+      '(',
+      field('name', choice($.string_literal, $.identifier, $._quoted_identifier)),
+      ';',
+      field('chart_name', $._identifier_choice),
+      ')',
+      '{',
+      repeat(choice(
+        $._page_properties,
+        $.empty_statement,
+        $.preproc_conditional_group_content
+      )),
+      '}'
+    ),
+
     usercontrol_section: $ => seq(
       kw('usercontrol'),
       '(',
@@ -3364,6 +3389,7 @@ module.exports = grammar({
       kw('standard'),
       kw('additional'),
       kw('promoted'),
+      kw('hidden'),
       prec(10, $._quoted_identifier)  // Higher precedence for quoted values
     ),
 
@@ -3527,6 +3553,8 @@ module.exports = grammar({
       kw('reports'),
       kw('tasks'),
       kw('reportsandanalysis'),
+      kw('history'),
+      kw('none'),
       $.identifier,
       $._quoted_identifier
     ),
@@ -4800,18 +4828,20 @@ enum_type: $ => prec(1, seq(
       prec(1, kw('biginteger')),
       prec(1, kw('decimal')),
       prec(1, kw('byte')),
-      
+
       // Text Types
       prec(1, kw('char')),
       prec(10, kw('label')),  // High precedence for label type
-      
+      prec(1, kw('textbuilder')),
+      prec(1, kw('textconst')),
+
       // Date/Time Types
       prec(1, kw('date')),
       prec(1, kw('time')),
       prec(1, kw('datetime')),
       prec(1, kw('duration')),
       kw('dateformula'),
-      
+
       // Other Types
       prec(1, kw('boolean')),
       // Option removed, handled by option_type
@@ -4832,9 +4862,94 @@ enum_type: $ => prec(1, seq(
       prec(1, kw('instream')),
       prec(1, kw('outstream')),
       prec(1, kw('secrettext')),
-      prec(1, kw('moduleinfo')), 
-      prec(1, kw('objecttype')), 
-      prec(1, kw('keyref')), 
+      prec(1, kw('moduleinfo')),
+      prec(1, kw('moduledependencyinfo')),
+      prec(1, kw('objecttype')),
+      prec(1, kw('keyref')),
+      prec(1, kw('version')),
+
+      // File Types
+      prec(1, kw('file')),
+      prec(1, kw('fileupload')),
+
+      // HTTP Types
+      prec(1, kw('httpclient')),
+      prec(1, kw('httpcontent')),
+      prec(1, kw('httpheaders')),
+      prec(1, kw('httprequestmessage')),
+      prec(1, kw('httpresponsemessage')),
+
+      // Notification Types
+      prec(1, kw('notification')),
+      prec(1, kw('notificationscope')),
+
+      // Error Types
+      prec(1, kw('errorinfo')),
+      prec(1, kw('errortype')),
+
+      // Session/Execution Types
+      prec(1, kw('sessionsettings')),
+      prec(1, kw('executioncontext')),
+      prec(1, kw('executionmode')),
+
+      // Data Transfer Types
+      prec(1, kw('datatransfer')),
+      prec(1, kw('datascope')),
+
+      // Transaction Types
+      prec(1, kw('transactionmodel')),
+      prec(1, kw('transactiontype')),
+      prec(1, kw('isolationlevel')),
+
+      // Security Types
+      prec(1, kw('securityfilter')),
+      prec(1, kw('securityoperationresult')),
+      prec(1, kw('auditcategory')),
+
+      // Table/Field Types
+      prec(1, kw('tablefilter')),
+      prec(1, kw('tableconnectiontype')),
+      prec(1, kw('fieldclass')),
+      prec(1, kw('fieldtype')),
+
+      // Page Types
+      prec(1, kw('pageresult')),
+      prec(1, kw('pagestyle')),
+      prec(1, kw('pagebackgroundtaskerrorlevel')),
+
+      // Report Types
+      prec(1, kw('reportformat')),
+
+      // Client/Connection Types
+      prec(1, kw('clienttype')),
+      prec(1, kw('connectiontype')),
+      prec(1, kw('httprequesttype')),
+
+      // Web Service Types
+      prec(1, kw('webserviceactioncontext')),
+      prec(1, kw('webserviceactionresultcode')),
+      prec(1, kw('cookie')),
+
+      // .NET Interop Types
+      prec(1, kw('automation')),
+      prec(1, kw('dotnetassembly')),
+      prec(1, kw('dotnettypedeclaration')),
+
+      // Test Types
+      prec(1, kw('testaction')),
+      prec(1, kw('testfield')),
+      prec(1, kw('testfilterfield')),
+      prec(1, kw('testhttprequestmessage')),
+      prec(1, kw('testhttpresponsemessage')),
+
+      // Analysis Types
+      prec(1, kw('analysisview')),
+      prec(1, kw('analysisviews')),
+
+      // Other Types
+      prec(1, kw('completiontriggererrorlevel')),
+      prec(1, kw('verbosity')),
+      prec(1, kw('joker')),
 
       // XML Types
       kw('xmldocument'),
@@ -4842,7 +4957,17 @@ enum_type: $ => prec(1, seq(
       prec(1, kw('xmlelement')),
       prec(1, kw('xmlnodelist')),
       prec(1, kw('xmlattribute')),
-      prec(1, kw('xmlattributecollection'))
+      prec(1, kw('xmlattributecollection')),
+      prec(1, kw('xmlcdata')),
+      prec(1, kw('xmlcomment')),
+      prec(1, kw('xmldeclaration')),
+      prec(1, kw('xmldocumenttype')),
+      prec(1, kw('xmlnamespacemanager')),
+      prec(1, kw('xmlnametable')),
+      prec(1, kw('xmlprocessinginstruction')),
+      prec(1, kw('xmlreadoptions')),
+      prec(1, kw('xmltext')),
+      prec(1, kw('xmlwriteoptions'))
     ),
 
     text_type: $ => choice(
@@ -6067,6 +6192,7 @@ enum_type: $ => prec(1, seq(
         $._expression_statement,
         $.if_statement,
         $.exit_statement,
+        $.continue_statement, // Loop control - continue to next iteration
         // Less common statements
         $.case_statement,
         $.for_statement,
@@ -6152,6 +6278,9 @@ enum_type: $ => prec(1, seq(
         ')'
       )))
     ),
+
+    // Continue statement for loop control (like break, but continues to next iteration)
+    continue_statement: $ => prec(13, kw('continue', 10)),
 
     asserterror_statement: $ => prec(14, choice(
       // asserterror with expression or code block
@@ -7395,7 +7524,12 @@ enum_type: $ => prec(1, seq(
       kw('Enum'),
       kw('Interface'),
       kw('ControlAddin'),
-      
+
+      // Structural sections
+      kw('Dataset'),
+      kw('RequestPage'),
+      kw('ChartPart'),
+
       // Data types
       kw('Code'),
       kw('Integer'),
@@ -7422,7 +7556,9 @@ enum_type: $ => prec(1, seq(
       kw('Of'),
       kw('Exit'),
       kw('Break'),
-      
+      kw('Continue'),
+      kw('Event'),
+
       // Visibility and scope
       kw('Local'),
       kw('Global'),
@@ -7450,7 +7586,44 @@ enum_type: $ => prec(1, seq(
       kw('Begin'),
       kw('End'),
       kw('With'),
-      kw('Do')
+      kw('Do'),
+
+      // ApplicationArea values
+      kw('Advanced'),
+      kw('All'),
+      kw('Basic'),
+      kw('Suite'),
+
+      // PageType values (additional)
+      kw('ConfirmationDialog'),
+      kw('Dropdown'),
+      kw('ListPart'),
+      kw('ListPlus'),
+      kw('NavigatePage'),
+      kw('ReportPreview'),
+      kw('ReportProcessingOnly'),
+
+      // UsageCategory values
+      kw('History'),
+
+      // Importance values
+      kw('Hidden'),
+
+      // Common enum values
+      kw('Ok'),
+      kw('Cancel'),
+      kw('Error'),
+      kw('Warning'),
+      kw('Info'),
+      kw('Attach'),
+      kw('Brick'),
+      kw('Regenerate'),
+
+      // Type values
+      kw('Application'),
+      kw('Implicit'),
+      kw('ConcurrentUserServicePlan'),
+      kw('FlatRateServicePlan')
     ),
 
     // Page customization elements

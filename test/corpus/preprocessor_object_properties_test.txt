@@ -182,11 +182,13 @@ page 50001 "Test Page"
     (preproc_conditional_page_properties
       (preproc_if
         condition: (identifier))
-      (page_type_property)
+      (page_type_property
+        value: (identifier))
       (application_area_property
         value: (identifier))
       (preproc_else)
-      (page_type_property)
+      (page_type_property
+        value: (identifier))
       (application_area_property
         value: (identifier)
         value: (identifier))

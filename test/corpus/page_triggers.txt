@@ -93,7 +93,8 @@ page 50000 "Test Page Triggers"
   (page_declaration
     object_id: (integer)
     object_name: (quoted_identifier)
-    (page_type_property)
+    (page_type_property
+      value: (identifier))
     (source_table_property
       value: (identifier))
     (layout_section
