@@ -318,6 +318,53 @@ if (SCANNER_DEBUG) {
 - Always run `./validate-grammar.sh` before completing any task
 - Use `rg` instead of `grep` for faster codebase searches
 
+## VS Code AL Extension Sync Tools
+
+Tools in `tools/keyword-sync/` compare VS Code AL extension data with the grammar to find gaps.
+
+**Run sync tools:**
+```bash
+cd tools/keyword-sync && python run_all.py
+```
+
+**Output:** `tools/keyword-sync/output/full_comparison_report.md`
+
+### Important: Most "Missing" Items Are False Positives
+
+The comparison report flags items not explicitly in grammar.js, but many work via **generic mechanisms**:
+
+| "Missing" Type | Actually Handled By |
+|----------------|---------------------|
+| `[InDataSet]`, `[RunOnClient]`, `[SecurityFiltering]` | Generic `attribute_item` rule |
+| `to`, `downto` keywords | External scanner tokens (`for_to_keyword`, `for_downto_keyword`) |
+| ControlAddIn properties (`RequestedHeight`, etc.) | Generic `controladdin_property` rule (accepts any identifier) |
+| Triggers (`OnBeforeOpen`, etc.) | Generic trigger support (`trigger OnXxx() begin end;`) |
+
+### Before Adding "Missing" Items to Grammar
+
+**Always verify the item actually causes parse failures:**
+
+```bash
+# 1. Search for usage in production files
+grep -ri 'ItemName' ./BC.History/ | head -5
+
+# 2. Parse a file that uses it
+tree-sitter parse "path/to/file.al" 2>&1 | grep ERROR
+```
+
+**If no ERROR** → Item works via generic mechanism. Don't add specific rule.
+
+**If ERROR exists** → Item needs specific grammar support. Follow Property Development Workflow.
+
+### Generic Mechanisms Reference
+
+These rules handle many constructs without explicit definitions:
+
+- **`attribute_item`** - Any `[AttrName]` or `[AttrName(args)]` pattern
+- **`controladdin_property`** - Any `PropertyName = value;` in ControlAddIn objects
+- **`named_trigger`** - Any `trigger OnXxx() begin end;` pattern
+- **`identifier`** - Catches unknown identifiers for forward compatibility
+
 ## Contextual Keywords
 
 Keywords that can be both properties and variables require special handling:
