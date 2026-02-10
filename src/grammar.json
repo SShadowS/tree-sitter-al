@@ -32221,6 +32221,30 @@
         }
       ]
     },
+    "indataset_property": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)indataset[\\t\\f\\r ]*="
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_boolean_value"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
     "default_layout_property": {
       "type": "SEQ",
       "members": [
@@ -37712,6 +37736,10 @@
         {
           "type": "SYMBOL",
           "name": "include_caption_property"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "indataset_property"
         },
         {
           "type": "SYMBOL",
