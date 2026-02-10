@@ -7,6 +7,7 @@ from pathlib import Path
 from config import (
     OUTPUT_DIR,
     PRIORITY_LEVELS,
+    FALSE_POSITIVE_KEYWORDS,
     get_special_handling,
 )
 
@@ -62,9 +63,23 @@ def compare_keywords() -> dict:
     extra_in_grammar = grammar_keywords - set(vscode_keywords.keys())
     common = grammar_keywords & set(vscode_keywords.keys())
 
-    # Categorize missing keywords
-    missing_by_category = {}
+    # Separate false positives from truly missing keywords
+    false_positives = []
+    truly_missing = set()
     for kw in missing_in_grammar:
+        if kw in FALSE_POSITIVE_KEYWORDS:
+            info = vscode_keywords[kw]
+            false_positives.append({
+                "keyword": kw,
+                "category": info["category"],
+                "reason": FALSE_POSITIVE_KEYWORDS[kw],
+            })
+        else:
+            truly_missing.add(kw)
+
+    # Categorize truly missing keywords
+    missing_by_category = {}
+    for kw in truly_missing:
         info = vscode_keywords[kw]
         category = info["category"]
         if category not in missing_by_category:
@@ -95,10 +110,12 @@ def compare_keywords() -> dict:
             "vscode_total": len(vscode_keywords),
             "grammar_total": len(grammar_keywords),
             "common": len(common),
-            "missing_in_grammar": len(missing_in_grammar),
+            "missing_in_grammar": len(truly_missing),
+            "false_positives": len(false_positives),
             "extra_in_grammar": len(extra_in_grammar),
         },
         "missing_in_grammar": missing_by_category,
+        "false_positives": sorted(false_positives, key=lambda x: x["keyword"]),
         "extra_in_grammar": extra_analysis,
         "vscode_extension_version": vscode_data.get("extension_version", "unknown"),
     }
@@ -128,6 +145,7 @@ def print_summary(data: dict):
     print(f"Grammar keywords: {summary['grammar_total']}")
     print(f"Common keywords: {summary['common']}")
     print(f"Missing in grammar: {summary['missing_in_grammar']}")
+    print(f"False positives: {summary.get('false_positives', 0)}")
     print(f"Extra in grammar: {summary['extra_in_grammar']}")
 
     if data["missing_in_grammar"]:
@@ -143,6 +161,11 @@ def print_summary(data: dict):
                 print(f"  - {kw_data['keyword']}{special}")
             if len(keywords) > 10:
                 print(f"  ... and {len(keywords) - 10} more")
+
+    if data.get("false_positives"):
+        print(f"\n=== False Positives ({len(data['false_positives'])} keywords) ===")
+        for fp in data["false_positives"]:
+            print(f"  - {fp['keyword']}: {fp['reason']}")
 
 
 if __name__ == "__main__":

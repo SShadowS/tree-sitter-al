@@ -10,7 +10,7 @@ import json
 import re
 from pathlib import Path
 
-from config import OUTPUT_DIR, GRAMMAR_FILE
+from config import OUTPUT_DIR, GRAMMAR_FILE, FALSE_POSITIVE_TRIGGERS
 
 
 def load_snippets_data() -> dict:
@@ -89,21 +89,35 @@ def compare_triggers() -> dict:
     grammar_trigger_names = set(t.lower() for t in grammar_triggers["trigger_names"])
 
     # Find differences
-    missing_in_grammar = snippet_triggers - grammar_trigger_names
+    all_missing = snippet_triggers - grammar_trigger_names
     extra_in_grammar = grammar_trigger_names - snippet_triggers
     common = snippet_triggers & grammar_trigger_names
+
+    # Separate false positives from truly missing triggers
+    false_positives = []
+    truly_missing = set()
+    for trigger in all_missing:
+        if trigger in FALSE_POSITIVE_TRIGGERS:
+            false_positives.append({
+                "trigger": trigger,
+                "reason": FALSE_POSITIVE_TRIGGERS[trigger],
+            })
+        else:
+            truly_missing.add(trigger)
 
     result = {
         "summary": {
             "snippet_triggers": len(snippet_triggers),
             "grammar_triggers": len(grammar_trigger_names),
             "common": len(common),
-            "missing_in_grammar": len(missing_in_grammar),
+            "missing_in_grammar": len(truly_missing),
+            "false_positives": len(false_positives),
             "extra_in_grammar": len(extra_in_grammar),
         },
         "snippet_triggers": sorted(list(snippet_triggers)),
         "grammar_triggers": sorted(list(grammar_trigger_names)),
-        "missing_in_grammar": sorted(list(missing_in_grammar)),
+        "missing_in_grammar": sorted(list(truly_missing)),
+        "false_positives": sorted(false_positives, key=lambda x: x["trigger"]),
         "extra_in_grammar": sorted(list(extra_in_grammar)),
         "common": sorted(list(common)),
         "extension_version": snippets_data.get("extension_version", "unknown"),
@@ -134,12 +148,18 @@ def print_summary(data: dict):
     print(f"Grammar triggers: {summary['grammar_triggers']}")
     print(f"Common: {summary['common']}")
     print(f"Missing in grammar: {summary['missing_in_grammar']}")
+    print(f"False positives: {summary.get('false_positives', 0)}")
     print(f"Extra in grammar: {summary['extra_in_grammar']}")
 
     if data["missing_in_grammar"]:
         print("\n=== Missing Triggers ===")
         for trigger in data["missing_in_grammar"]:
             print(f"  - {trigger}")
+
+    if data.get("false_positives"):
+        print(f"\n=== False Positives ({len(data['false_positives'])} triggers) ===")
+        for fp in data["false_positives"]:
+            print(f"  - {fp['trigger']}: {fp['reason']}")
 
     if data["extra_in_grammar"]:
         print("\n=== Extra Triggers in Grammar (may be valid) ===")

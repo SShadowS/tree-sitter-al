@@ -11,7 +11,7 @@ import json
 import re
 from pathlib import Path
 
-from config import OUTPUT_DIR, GRAMMAR_FILE, get_special_handling
+from config import OUTPUT_DIR, GRAMMAR_FILE, FALSE_POSITIVE_PROPERTIES, get_special_handling
 
 
 def load_snippets_data() -> dict:
@@ -152,9 +152,25 @@ def compare_properties() -> dict:
     for key, value in snippets_data.get("enum_choices", {}).items():
         enum_lower_map[key.lower()] = value
 
-    # Categorize missing properties
+    # Separate false positives from truly missing properties
+    false_positives = []
+    truly_missing = set()
+    for prop in missing_in_grammar:
+        if prop in FALSE_POSITIVE_PROPERTIES:
+            prop_info = props_lower_map.get(prop, {})
+            enum_info = enum_lower_map.get(prop, [])
+            false_positives.append({
+                "property": prop,
+                "reason": FALSE_POSITIVE_PROPERTIES[prop],
+                "sources": prop_info.get("sources", []),
+                "enum_values": enum_info[:10] if enum_info else [],
+            })
+        else:
+            truly_missing.add(prop)
+
+    # Categorize truly missing properties
     missing_details = []
-    for prop in sorted(missing_in_grammar):
+    for prop in sorted(truly_missing):
         prop_info = props_lower_map.get(prop, {})
         enum_info = enum_lower_map.get(prop, [])
 
@@ -176,10 +192,12 @@ def compare_properties() -> dict:
             "snippet_properties": len(snippet_properties),
             "grammar_keywords": len(grammar_keywords),
             "common": len(common),
-            "missing_in_grammar": len(missing_in_grammar),
+            "missing_in_grammar": len(truly_missing),
+            "false_positives": len(false_positives),
             "extra_in_grammar": len(extra_in_grammar),
         },
         "missing_in_grammar": missing_details,
+        "false_positives": sorted(false_positives, key=lambda x: x["property"]),
         "extra_in_grammar": sorted(list(extra_in_grammar)),
         "extension_version": snippets_data.get("extension_version", "unknown"),
     }
@@ -209,6 +227,7 @@ def print_summary(data: dict):
     print(f"Grammar keywords: {summary['grammar_keywords']}")
     print(f"Common: {summary['common']}")
     print(f"Missing in grammar: {summary['missing_in_grammar']}")
+    print(f"False positives: {summary.get('false_positives', 0)}")
     print(f"Extra in grammar: {summary['extra_in_grammar']}")
 
     if data["missing_in_grammar"]:
@@ -233,6 +252,11 @@ def print_summary(data: dict):
 
         if len(low_priority) > 10:
             print(f"  ... and {len(low_priority) - 10} more")
+
+    if data.get("false_positives"):
+        print(f"\n=== False Positives ({len(data['false_positives'])} properties) ===")
+        for fp in data["false_positives"]:
+            print(f"  - {fp['property']}: {fp['reason']}")
 
 
 if __name__ == "__main__":

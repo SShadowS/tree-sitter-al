@@ -44,11 +44,14 @@ def generate_markdown_report(data: dict) -> str:
     lines.append(f"| Grammar keywords | {summary['grammar_total']} |")
     lines.append(f"| Common (matched) | {summary['common']} |")
     lines.append(f"| Missing in grammar | {summary['missing_in_grammar']} |")
+    lines.append(f"| False positives | {summary.get('false_positives', 0)} |")
     lines.append(f"| Extra in grammar | {summary['extra_in_grammar']} |")
     lines.append("")
 
-    coverage = (summary['common'] / summary['vscode_total'] * 100) if summary['vscode_total'] > 0 else 0
-    lines.append(f"**Coverage**: {coverage:.1f}% of VS Code keywords are in grammar")
+    fp_count = summary.get('false_positives', 0)
+    effective_covered = summary['common'] + fp_count
+    coverage = (effective_covered / summary['vscode_total'] * 100) if summary['vscode_total'] > 0 else 0
+    lines.append(f"**Coverage**: {coverage:.1f}% of VS Code keywords are in grammar (including false positives handled by generic mechanisms)")
     lines.append("")
 
     # Missing keywords by category
@@ -79,6 +82,19 @@ def generate_markdown_report(data: dict) -> str:
             else:
                 lines.append("*None*")
             lines.append("")
+
+    # False positives section
+    if data.get("false_positives"):
+        lines.append("## False Positives")
+        lines.append("")
+        lines.append("Keywords flagged as 'missing' but handled by generic grammar mechanisms,")
+        lines.append("external scanner tokens, or not used in production AL files.")
+        lines.append("")
+        lines.append("| Keyword | Category | Reason |")
+        lines.append("|---------|----------|--------|")
+        for fp in data["false_positives"]:
+            lines.append(f"| `{fp['keyword']}` | {fp.get('category', '-')} | {fp['reason']} |")
+        lines.append("")
 
     # Extra keywords (in grammar but not in VS Code)
     if data.get("extra_in_grammar"):

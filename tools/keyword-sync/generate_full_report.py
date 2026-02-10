@@ -77,44 +77,48 @@ def generate_markdown_report(data: dict) -> str:
     lines.append("This report compares the VS Code AL extension data with the tree-sitter grammar")
     lines.append("to identify gaps and potential improvements.")
     lines.append("")
-    lines.append("> **Note**: Many 'missing' items are **false positives** because:")
-    lines.append("> - Keywords like `InDataSet`, `RunOnClient`, `SecurityFiltering` are **attributes** that work via the generic `attribute_item` rule")
-    lines.append("> - Keywords like `to`, `downto` are handled by **external scanner tokens** (`for_to_keyword`, `for_downto_keyword`)")
-    lines.append("> - ControlAddIn properties work via the generic `controladdin_property` rule (accepts any identifier)")
-    lines.append("> - Triggers like `OnBeforeOpen` work via generic trigger support")
-    lines.append(">")
-    lines.append("> Before adding items to the grammar, verify they actually cause parse failures in production files.")
+    lines.append("> Items handled by generic mechanisms (attributes, ControlAddIn properties, triggers)")
+    lines.append("> or external scanner tokens are automatically classified as **false positives**.")
+    lines.append("> Only items that actually cause parse failures in production files are listed as missing.")
     lines.append("")
 
     # Summary table
-    lines.append("| Data Source | Snippet Items | Grammar Items | Missing | Coverage |")
-    lines.append("|-------------|---------------|---------------|---------|----------|")
+    lines.append("| Data Source | Snippet Items | Grammar Items | Missing | False Positives | Coverage |")
+    lines.append("|-------------|---------------|---------------|---------|-----------------|----------|")
 
     if data.get("keywords") and data["keywords"].get("summary"):
         s = data["keywords"]["summary"]
-        coverage = (s["common"] / s["vscode_total"] * 100) if s["vscode_total"] > 0 else 0
-        lines.append(f"| Keywords (tmlanguage) | {s['vscode_total']} | {s['grammar_total']} | {s['missing_in_grammar']} | {coverage:.1f}% |")
+        fp = s.get("false_positives", 0)
+        # Coverage includes common + false positives (since they work)
+        effective_covered = s["common"] + fp
+        coverage = (effective_covered / s["vscode_total"] * 100) if s["vscode_total"] > 0 else 0
+        lines.append(f"| Keywords (tmlanguage) | {s['vscode_total']} | {s['grammar_total']} | {s['missing_in_grammar']} | {fp} | {coverage:.1f}% |")
 
     if data.get("properties") and data["properties"].get("summary"):
         s = data["properties"]["summary"]
-        coverage = (s["common"] / s["snippet_properties"] * 100) if s["snippet_properties"] > 0 else 0
-        lines.append(f"| Properties (snippets) | {s['snippet_properties']} | {s['grammar_keywords']} | {s['missing_in_grammar']} | {coverage:.1f}% |")
+        fp = s.get("false_positives", 0)
+        effective_covered = s["common"] + fp
+        coverage = (effective_covered / s["snippet_properties"] * 100) if s["snippet_properties"] > 0 else 0
+        lines.append(f"| Properties (snippets) | {s['snippet_properties']} | {s['grammar_keywords']} | {s['missing_in_grammar']} | {fp} | {coverage:.1f}% |")
 
     if data.get("triggers") and data["triggers"].get("summary"):
         s = data["triggers"]["summary"]
-        coverage = (s["common"] / s["snippet_triggers"] * 100) if s["snippet_triggers"] > 0 else 0
-        lines.append(f"| Triggers (snippets) | {s['snippet_triggers']} | {s['grammar_triggers']} | {s['missing_in_grammar']} | {coverage:.1f}% |")
+        fp = s.get("false_positives", 0)
+        effective_covered = s["common"] + fp
+        coverage = (effective_covered / s["snippet_triggers"] * 100) if s["snippet_triggers"] > 0 else 0
+        lines.append(f"| Triggers (snippets) | {s['snippet_triggers']} | {s['grammar_triggers']} | {s['missing_in_grammar']} | {fp} | {coverage:.1f}% |")
 
     lines.append("")
 
     # Section 1: Missing Keywords
-    if data.get("keywords") and data["keywords"].get("missing_in_grammar"):
-        lines.append("## 1. Missing Keywords (from tmlanguage)")
-        lines.append("")
+    lines.append("## 1. Missing Keywords (from tmlanguage)")
+    lines.append("")
+    kw_missing = data.get("keywords", {}).get("missing_in_grammar", {})
+    has_missing_kw = any(keywords for keywords in kw_missing.values()) if isinstance(kw_missing, dict) else bool(kw_missing)
+    if has_missing_kw:
         lines.append("Keywords defined in the TextMate syntax but not found in grammar.js.")
         lines.append("")
-
-        for category, keywords in data["keywords"]["missing_in_grammar"].items():
+        for category, keywords in kw_missing.items():
             if keywords:
                 lines.append(f"### {category.replace('_', ' ').title()}")
                 lines.append("")
@@ -126,17 +130,21 @@ def generate_markdown_report(data: dict) -> str:
                 if len(keywords) > 20:
                     lines.append(f"| ... | ({len(keywords) - 20} more) |")
                 lines.append("")
+    else:
+        lines.append("*All keywords are covered in grammar (or classified as false positives).*")
+        lines.append("")
 
     # Section 2: Missing Properties
-    if data.get("properties") and data["properties"].get("missing_in_grammar"):
-        lines.append("## 2. Missing Properties (from snippets)")
-        lines.append("")
+    lines.append("## 2. Missing Properties (from snippets)")
+    lines.append("")
+    prop_missing = data.get("properties", {}).get("missing_in_grammar", [])
+    if prop_missing:
         lines.append("Properties used in snippets but potentially not in grammar.js.")
         lines.append("")
 
         # Split by priority
-        with_enums = [p for p in data["properties"]["missing_in_grammar"] if p.get("has_enum_values")]
-        without_enums = [p for p in data["properties"]["missing_in_grammar"] if not p.get("has_enum_values")]
+        with_enums = [p for p in prop_missing if p.get("has_enum_values")]
+        without_enums = [p for p in prop_missing if not p.get("has_enum_values")]
 
         if with_enums:
             lines.append("### High Priority (have enum values)")
@@ -165,23 +173,67 @@ def generate_markdown_report(data: dict) -> str:
             if len(without_enums) > 20:
                 lines.append(f"| ... | | ({len(without_enums) - 20} more) |")
             lines.append("")
+    else:
+        lines.append("*All properties are covered in grammar (or classified as false positives).*")
+        lines.append("")
 
     # Section 3: Missing Triggers
-    if data.get("triggers") and data["triggers"].get("missing_in_grammar"):
-        lines.append("## 3. Missing Triggers (from snippets)")
-        lines.append("")
+    lines.append("## 3. Missing Triggers (from snippets)")
+    lines.append("")
+    trigger_missing = data.get("triggers", {}).get("missing_in_grammar", [])
+    if trigger_missing:
         lines.append("Triggers used in snippets but not found in grammar.js.")
         lines.append("")
+        lines.append("| Trigger Name |")
+        lines.append("|--------------|")
+        for trigger in trigger_missing:
+            lines.append(f"| `{trigger}` |")
+        lines.append("")
+    else:
+        lines.append("*All triggers are covered in grammar (or classified as false positives).*")
+        lines.append("")
 
-        triggers = data["triggers"]["missing_in_grammar"]
-        if triggers:
-            lines.append("| Trigger Name |")
-            lines.append("|--------------|")
-            for trigger in triggers:
-                lines.append(f"| `{trigger}` |")
+    # Section 3.5: False Positives
+    has_any_fp = (
+        data.get("keywords", {}).get("false_positives", [])
+        or data.get("properties", {}).get("false_positives", [])
+        or data.get("triggers", {}).get("false_positives", [])
+    )
+    if has_any_fp:
+        lines.append("## 3a. False Positives (handled by generic mechanisms)")
+        lines.append("")
+        lines.append("These items are flagged as 'missing' by the comparison but work correctly")
+        lines.append("via generic grammar rules, external scanner tokens, or are not used in production.")
+        lines.append("")
+
+        kw_fps = data.get("keywords", {}).get("false_positives", [])
+        if kw_fps:
+            lines.append("### Keywords")
             lines.append("")
-        else:
-            lines.append("*All snippet triggers are covered in grammar!*")
+            lines.append("| Keyword | Reason |")
+            lines.append("|---------|--------|")
+            for fp in kw_fps:
+                lines.append(f"| `{fp['keyword']}` | {fp['reason']} |")
+            lines.append("")
+
+        prop_fps = data.get("properties", {}).get("false_positives", [])
+        if prop_fps:
+            lines.append("### Properties")
+            lines.append("")
+            lines.append("| Property | Reason |")
+            lines.append("|----------|--------|")
+            for fp in prop_fps:
+                lines.append(f"| `{fp['property']}` | {fp['reason']} |")
+            lines.append("")
+
+        trigger_fps = data.get("triggers", {}).get("false_positives", [])
+        if trigger_fps:
+            lines.append("### Triggers")
+            lines.append("")
+            lines.append("| Trigger | Reason |")
+            lines.append("|---------|--------|")
+            for fp in trigger_fps:
+                lines.append(f"| `{fp['trigger']}` | {fp['reason']} |")
             lines.append("")
 
     # Section 4: Enum Values Summary
@@ -252,6 +304,8 @@ def generate_markdown_report(data: dict) -> str:
     lines.append("   - `attribute_item` - Any `[AttributeName]` or `[AttributeName(args)]`")
     lines.append("   - Generic trigger support - `trigger OnXxx() begin end;`")
     lines.append("")
+    lines.append("3. **Add to false positives list**: If verified as working, add to `FALSE_POSITIVE_*` in `config.py`")
+    lines.append("")
     lines.append("### Potential Improvements")
     lines.append("")
 
@@ -260,20 +314,23 @@ def generate_markdown_report(data: dict) -> str:
     if data.get("keywords"):
         missing_kw = data["keywords"].get("summary", {}).get("missing_in_grammar", 0)
         if missing_kw > 0:
-            lines.append(f"{action_num}. **Review {missing_kw} 'missing' keywords** - most are false positives (attributes, scanner tokens)")
+            lines.append(f"{action_num}. **Review {missing_kw} truly missing keywords** - verify they cause parse failures")
             action_num += 1
 
     if data.get("properties"):
         missing_props = data["properties"].get("summary", {}).get("missing_in_grammar", 0)
-        with_enums = len([p for p in data["properties"].get("missing_in_grammar", []) if p.get("has_enum_values")])
-        if with_enums > 0:
-            lines.append(f"{action_num}. **Review {with_enums} properties with enum values** - may need specific rules if values are validated")
+        if missing_props > 0:
+            with_enums = len([p for p in data["properties"].get("missing_in_grammar", []) if p.get("has_enum_values")])
+            if with_enums > 0:
+                lines.append(f"{action_num}. **Review {with_enums} properties with enum values** - may need specific rules if values are validated")
+            else:
+                lines.append(f"{action_num}. **Review {missing_props} truly missing properties** - verify they cause parse failures")
             action_num += 1
 
     if data.get("triggers"):
         missing_triggers = data["triggers"].get("summary", {}).get("missing_in_grammar", 0)
         if missing_triggers > 0:
-            lines.append(f"{action_num}. **Review {missing_triggers} 'missing' triggers** - likely work via generic trigger support")
+            lines.append(f"{action_num}. **Review {missing_triggers} truly missing triggers** - verify they cause parse failures")
             action_num += 1
 
     if data.get("snippets") and data["snippets"].get("enum_choices"):

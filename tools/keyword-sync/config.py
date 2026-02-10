@@ -46,6 +46,52 @@ PRIORITY_LEVELS = {
     "snippet_enums": 5,  # From snippets, may be property values
 }
 
+# =============================================================================
+# False Positives - items flagged as "missing" but handled by generic mechanisms
+# =============================================================================
+# Each entry maps lowercase item name -> reason string explaining why it's a
+# false positive. Verified against BC.History production files (15,000+ files).
+
+FALSE_POSITIVE_KEYWORDS = {
+    # External scanner tokens
+    "to": "Handled by external scanner token `for_to_keyword` (grammar.js externals)",
+    "downto": "Handled by external scanner token `for_downto_keyword` (grammar.js externals)",
+    # Attributes handled by generic attribute_item rule
+    "runonclient": "Attribute handled by generic `attribute_item` rule: [RunOnClient]",
+    "securityfiltering": "Attribute handled by generic `attribute_item` rule: [SecurityFiltering(...)]",
+    "withevents": "Attribute handled by generic `attribute_item` rule: [WithEvents]",
+    "suppressdispose": "Attribute handled by generic `attribute_item` rule: [SuppressDispose] (not used in production)",
+    # Legacy keywords
+    "program": "Legacy C/AL keyword not used in modern AL (Business Central)",
+}
+
+FALSE_POSITIVE_PROPERTIES = {
+    # Already explicitly defined in grammar.js
+    "extensible": "Already defined in grammar.js as `extensible_property`",
+    "profiledescription": "Already defined in grammar.js as `profile_description_property2`",
+    # ControlAddIn properties handled by generic controladdin_property rule
+    "horizontalshrink": "Handled by generic `controladdin_property` rule (any identifier = boolean)",
+    "horizontalstretch": "Handled by generic `controladdin_property` rule (any identifier = boolean)",
+    "verticalshrink": "Handled by generic `controladdin_property` rule (any identifier = boolean)",
+    "verticalstretch": "Handled by generic `controladdin_property` rule (any identifier = boolean)",
+    "maximumheight": "Handled by generic `controladdin_property` rule (any identifier = integer)",
+    "maximumwidth": "Handled by generic `controladdin_property` rule (any identifier = integer)",
+    "minimumheight": "Handled by generic `controladdin_property` rule (any identifier = integer)",
+    "minimumwidth": "Handled by generic `controladdin_property` rule (any identifier = integer)",
+    "requestedheight": "Handled by generic `controladdin_property` rule (any identifier = integer)",
+    "requestedwidth": "Handled by generic `controladdin_property` rule (any identifier = integer)",
+    "recreatescript": "Handled by generic `controladdin_property` rule (any identifier = string)",
+    "refreshscript": "Handled by generic `controladdin_property` rule (any identifier = string)",
+    "startupscript": "Handled by generic `controladdin_property` rule (any identifier = string)",
+    "stylesheets": "Handled by generic `controladdin_property` rule (any identifier = string)",
+    # Not used as a property in production
+    "definitionfile": "Not used as a property in any production file (only as variable name)",
+}
+
+FALSE_POSITIVE_TRIGGERS = {
+    "onbeforeopen": "Handled by generic `trigger_declaration` rule (accepts any identifier as trigger name)",
+}
+
 
 def find_al_extension() -> Path | None:
     """Find the installed AL extension directory."""

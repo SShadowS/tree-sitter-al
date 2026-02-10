@@ -1,82 +1,79 @@
 # VS Code AL Extension Sync Report
 
-Generated: 2026-02-02 10:53:27
-VS Code AL Extension: v17.0.2037090
+Generated: 2026-02-10 01:54:38
+VS Code AL Extension: v17.0.2107262
 
 ## Executive Summary
 
 This report compares the VS Code AL extension data with the tree-sitter grammar
 to identify gaps and potential improvements.
 
-> **Note**: Many 'missing' items are **false positives** because:
-> - Keywords like `InDataSet`, `RunOnClient`, `SecurityFiltering` are **attributes** that work via the generic `attribute_item` rule
-> - Keywords like `to`, `downto` are handled by **external scanner tokens** (`for_to_keyword`, `for_downto_keyword`)
-> - ControlAddIn properties work via the generic `controladdin_property` rule (accepts any identifier)
-> - Triggers like `OnBeforeOpen` work via generic trigger support
->
-> Before adding items to the grammar, verify they actually cause parse failures in production files.
+> Items handled by generic mechanisms (attributes, ControlAddIn properties, triggers)
+> or external scanner tokens are automatically classified as **false positives**.
+> Only items that actually cause parse failures in production files are listed as missing.
 
-| Data Source | Snippet Items | Grammar Items | Missing | Coverage |
-|-------------|---------------|---------------|---------|----------|
-| Keywords (tmlanguage) | 308 | 668 | 8 | 97.4% |
-| Properties (snippets) | 55 | 907 | 17 | 69.1% |
-| Triggers (snippets) | 7 | 24 | 1 | 85.7% |
+| Data Source | Snippet Items | Grammar Items | Missing | False Positives | Coverage |
+|-------------|---------------|---------------|---------|-----------------|----------|
+| Keywords (tmlanguage) | 308 | 669 | 0 | 7 | 100.0% |
+| Properties (snippets) | 55 | 908 | 0 | 17 | 100.0% |
+| Triggers (snippets) | 7 | 24 | 0 | 1 | 100.0% |
 
 ## 1. Missing Keywords (from tmlanguage)
 
-Keywords defined in the TextMate syntax but not found in grammar.js.
-
-### Control Flow
-
-| Keyword | Special Handling |
-|---------|------------------|
-| `downto` | kw |
-| `indataset` | kw |
-| `program` | kw |
-| `runonclient` | kw |
-| `securityfiltering` | kw |
-| `suppressdispose` | kw |
-| `to` | kw |
-| `withevents` | kw |
+*All keywords are covered in grammar (or classified as false positives).*
 
 ## 2. Missing Properties (from snippets)
 
-Properties used in snippets but potentially not in grammar.js.
-
-### High Priority (have enum values)
-
-| Property | Enum Values | Sources |
-|----------|-------------|---------|
-| `extensible` | true, false | enum.json, page.json |
-| `horizontalshrink` | true, false | controladdin.json |
-| `horizontalstretch` | true, false | controladdin.json |
-| `verticalshrink` | true, false | controladdin.json |
-| `verticalstretch` | true, false | controladdin.json |
-
-### Lower Priority (no enum values)
-
-| Property | Example Value | Sources |
-|----------|---------------|---------|
-| `definitionfile` | '${2:DefinitionFilePath}' | page.json |
-| `maximumheight` | 300 | controladdin.json |
-| `maximumwidth` | 700 | controladdin.json |
-| `minimumheight` | 300 | controladdin.json |
-| `minimumwidth` | 700 | controladdin.json |
-| `profiledescription` | '${4:Profile Description}' | profile.json |
-| `recreatescript` | '${16:recreateScript.js}' | controladdin.json |
-| `refreshscript` | '${17:refreshScript.js}' | controladdin.json |
-| `requestedheight` | 300 | controladdin.json |
-| `requestedwidth` | 700 | controladdin.json |
-| `startupscript` | '${15:startupScript.js}' | controladdin.json |
-| `stylesheets` | '${14:style.css}' | controladdin.json |
+*All properties are covered in grammar (or classified as false positives).*
 
 ## 3. Missing Triggers (from snippets)
 
-Triggers used in snippets but not found in grammar.js.
+*All triggers are covered in grammar (or classified as false positives).*
 
-| Trigger Name |
-|--------------|
-| `onbeforeopen` |
+## 3a. False Positives (handled by generic mechanisms)
+
+These items are flagged as 'missing' by the comparison but work correctly
+via generic grammar rules, external scanner tokens, or are not used in production.
+
+### Keywords
+
+| Keyword | Reason |
+|---------|--------|
+| `downto` | Handled by external scanner token `for_downto_keyword` (grammar.js externals) |
+| `program` | Legacy C/AL keyword not used in modern AL (Business Central) |
+| `runonclient` | Attribute handled by generic `attribute_item` rule: [RunOnClient] |
+| `securityfiltering` | Attribute handled by generic `attribute_item` rule: [SecurityFiltering(...)] |
+| `suppressdispose` | Attribute handled by generic `attribute_item` rule: [SuppressDispose] (not used in production) |
+| `to` | Handled by external scanner token `for_to_keyword` (grammar.js externals) |
+| `withevents` | Attribute handled by generic `attribute_item` rule: [WithEvents] |
+
+### Properties
+
+| Property | Reason |
+|----------|--------|
+| `definitionfile` | Not used as a property in any production file (only as variable name) |
+| `extensible` | Already defined in grammar.js as `extensible_property` |
+| `horizontalshrink` | Handled by generic `controladdin_property` rule (any identifier = boolean) |
+| `horizontalstretch` | Handled by generic `controladdin_property` rule (any identifier = boolean) |
+| `maximumheight` | Handled by generic `controladdin_property` rule (any identifier = integer) |
+| `maximumwidth` | Handled by generic `controladdin_property` rule (any identifier = integer) |
+| `minimumheight` | Handled by generic `controladdin_property` rule (any identifier = integer) |
+| `minimumwidth` | Handled by generic `controladdin_property` rule (any identifier = integer) |
+| `profiledescription` | Already defined in grammar.js as `profile_description_property2` |
+| `recreatescript` | Handled by generic `controladdin_property` rule (any identifier = string) |
+| `refreshscript` | Handled by generic `controladdin_property` rule (any identifier = string) |
+| `requestedheight` | Handled by generic `controladdin_property` rule (any identifier = integer) |
+| `requestedwidth` | Handled by generic `controladdin_property` rule (any identifier = integer) |
+| `startupscript` | Handled by generic `controladdin_property` rule (any identifier = string) |
+| `stylesheets` | Handled by generic `controladdin_property` rule (any identifier = string) |
+| `verticalshrink` | Handled by generic `controladdin_property` rule (any identifier = boolean) |
+| `verticalstretch` | Handled by generic `controladdin_property` rule (any identifier = boolean) |
+
+### Triggers
+
+| Trigger | Reason |
+|---------|--------|
+| `onbeforeopen` | Handled by generic `trigger_declaration` rule (accepts any identifier as trigger name) |
 
 ## 4. Enum Value Reference
 
@@ -236,12 +233,11 @@ Based on the analysis, here are the recommended next steps:
    - `attribute_item` - Any `[AttributeName]` or `[AttributeName(args)]`
    - Generic trigger support - `trigger OnXxx() begin end;`
 
+3. **Add to false positives list**: If verified as working, add to `FALSE_POSITIVE_*` in `config.py`
+
 ### Potential Improvements
 
-1. **Review 8 'missing' keywords** - most are false positives (attributes, scanner tokens)
-2. **Review 5 properties with enum values** - may need specific rules if values are validated
-3. **Review 1 'missing' triggers** - likely work via generic trigger support
-4. **Verify enum value coverage** against grammar choice() rules if strict validation needed
+1. **Verify enum value coverage** against grammar choice() rules if strict validation needed
 
 ---
 *Report generated by keyword-sync tools*

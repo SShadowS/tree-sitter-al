@@ -7,7 +7,7 @@
     "onrename",
     "onrun"
   ],
-  "extension_version": "17.0.2037090",
+  "extension_version": "17.0.2107262",
   "extra_in_grammar": [
     "onafterdeleteevent",
     "onaftergetrecord",
@@ -27,6 +27,12 @@
     "onetoone",
     "onlookup",
     "onvalidate"
+  ],
+  "false_positives": [
+    {
+      "reason": "Handled by generic `trigger_declaration` rule (accepts any identifier as trigger name)",
+      "trigger": "onbeforeopen"
+    }
   ],
   "grammar_triggers": [
     "onaction",
@@ -54,9 +60,7 @@
     "onrun",
     "onvalidate"
   ],
-  "missing_in_grammar": [
-    "onbeforeopen"
-  ],
+  "missing_in_grammar": [],
   "snippet_triggers": [
     "onaction",
     "onbeforeopen",
@@ -69,8 +73,9 @@
   "summary": {
     "common": 6,
     "extra_in_grammar": 18,
+    "false_positives": 1,
     "grammar_triggers": 24,
-    "missing_in_grammar": 1,
+    "missing_in_grammar": 0,
     "snippet_triggers": 7
   }
 }
