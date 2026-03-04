@@ -1,0 +1,38 @@
+name: Build and release WASM
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build-wasm:
+    name: Build tree-sitter-al.wasm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up tree-sitter CLI
+        uses: tree-sitter/setup-action/cli@v2
+
+      - name: Build WASM
+        run: tree-sitter build --wasm .
+
+      - name: Force-update 'latest' tag
+        run: |
+          git tag -f latest
+          git push origin latest --force
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest WASM build
+          body: |
+            Automatically built from the latest commit on `main`.
+            Download `tree-sitter-al.wasm` for use with `web-tree-sitter`.
+          files: tree-sitter-al.wasm
+          make_latest: true
+          prerelease: false
