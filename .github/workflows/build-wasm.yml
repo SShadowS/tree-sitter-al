@@ -25,6 +25,13 @@ jobs:
             | tar xz -C ~/.cache/tree-sitter
           mv ~/.cache/tree-sitter/wasi-sdk-${WASI_VERSION}.0-x86_64-linux ~/.cache/tree-sitter/wasi-sdk
 
+      - name: Add swap space for large parser compilation
+        run: |
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+
       - name: Build WASM
         run: tree-sitter build --wasm .
 
