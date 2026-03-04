@@ -17,12 +17,13 @@ jobs:
       - name: Set up tree-sitter CLI
         uses: tree-sitter/setup-action/cli@v2
 
-      - name: Install wasi-sdk
+      - name: Install wasi-sdk to tree-sitter cache
         run: |
-          WASI_SDK_VERSION=25
-          curl -fsSL https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VERSION}/wasi-sdk-${WASI_SDK_VERSION}.0-x86_64-linux.tar.gz \
-            | tar xz -C /opt
-          echo "TREE_SITTER_WASI_SDK=/opt/wasi-sdk-${WASI_SDK_VERSION}.0-x86_64-linux" >> "$GITHUB_ENV"
+          WASI_VERSION=25
+          mkdir -p ~/.cache/tree-sitter
+          curl -fsSL "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_VERSION}/wasi-sdk-${WASI_VERSION}.0-x86_64-linux.tar.gz" \
+            | tar xz -C ~/.cache/tree-sitter
+          mv ~/.cache/tree-sitter/wasi-sdk-${WASI_VERSION}.0-x86_64-linux ~/.cache/tree-sitter/wasi-sdk
 
       - name: Build WASM
         run: tree-sitter build --wasm .
