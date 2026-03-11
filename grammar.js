@@ -1966,6 +1966,20 @@ module.exports = grammar({
       ';'
     ),
 
+    test_type_property: $ => seq(
+      kw('testtype'),
+      '=',
+      field('value', alias($.test_type_value, $.value)),
+      ';'
+    ),
+
+    test_type_value: $ => choice(
+      kw('unittest'),
+      kw('integrationtest'),
+      kw('uncategorized'),
+      kw('aitest')
+    ),
+
     test_http_request_policy_property: $ => seq(
       kw('testhttprequestpolicy'),
       '=',
@@ -8142,6 +8156,7 @@ enum_type: $ => prec(1, seq(
       
       // Additional codeunit-specific properties not in other groups
       $.test_isolation_property,
+      $.test_type_property,
       $.test_http_request_policy_property
     ),
 

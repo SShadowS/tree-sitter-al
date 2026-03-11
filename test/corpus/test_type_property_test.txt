@@ -1,0 +1,80 @@
+========================================================================
+TestType property with Uncategorized value
+========================================================================
+
+codeunit 50100 "My Test"
+{
+    Subtype = Test;
+    TestType = Uncategorized;
+
+    trigger OnRun()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (subtype_property
+      value: (value))
+    (test_type_property
+      value: (value))
+    (onrun_trigger
+      (code_block))))
+
+========================================================================
+TestType property with IntegrationTest value
+========================================================================
+
+codeunit 50101 "Integration Tests"
+{
+    Subtype = Test;
+    TestType = IntegrationTest;
+
+    trigger OnRun()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (subtype_property
+      value: (value))
+    (test_type_property
+      value: (value))
+    (onrun_trigger
+      (code_block))))
+
+========================================================================
+TestType property with AITest value
+========================================================================
+
+codeunit 50102 "AI Tests"
+{
+    Subtype = Test;
+    TestType = AITest;
+
+    trigger OnRun()
+    begin
+    end;
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (subtype_property
+      value: (value))
+    (test_type_property
+      value: (value))
+    (onrun_trigger
+      (code_block))))
