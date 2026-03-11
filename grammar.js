@@ -3386,14 +3386,16 @@ module.exports = grammar({
     extended_datatype_value: $ => choice(
       kw('none'),
       kw('phoneno'),
-      kw('url'), 
+      kw('url'),
       kw('email'),
       kw('ratio'),
       kw('duration'),
       kw('masked'),
       kw('richcontent'),
       kw('barcode'),
-      kw('person')
+      kw('person'),
+      kw('task'),
+      kw('document')
     ),
 
     // Values for the first 5 missing Page Field Properties
