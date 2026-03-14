@@ -2897,7 +2897,7 @@
         "required": true,
         "types": [
           {
-            "type": "string_literal",
+            "type": "value",
             "named": true
           }
         ]
@@ -7338,6 +7338,10 @@
           "named": true
         },
         {
+          "type": "required_test_isolation_property",
+          "named": true
+        },
+        {
           "type": "run_form_link_type_property",
           "named": true
         },
@@ -7391,6 +7395,10 @@
         },
         {
           "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "test_type_property",
           "named": true
         },
         {
@@ -35131,6 +35139,10 @@
           "named": true
         },
         {
+          "type": "allow_in_customizations_property",
+          "named": true
+        },
+        {
           "type": "application_area_property",
           "named": true
         },
@@ -36904,6 +36916,10 @@
           "named": true
         },
         {
+          "type": "required_test_isolation_property",
+          "named": true
+        },
+        {
           "type": "run_form_link_type_property",
           "named": true
         },
@@ -36957,6 +36973,10 @@
         },
         {
           "type": "test_permissions_property",
+          "named": true
+        },
+        {
+          "type": "test_type_property",
           "named": true
         },
         {
@@ -45656,6 +45676,22 @@
     }
   },
   {
+    "type": "required_test_isolation_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "return_type",
     "named": true,
     "fields": {},
@@ -48698,6 +48734,10 @@
           "named": true
         },
         {
+          "type": "allow_in_customizations_property",
+          "named": true
+        },
+        {
           "type": "application_area_property",
           "named": true
         },
@@ -49293,6 +49333,10 @@
           "named": true
         },
         {
+          "type": "allow_in_customizations_property",
+          "named": true
+        },
+        {
           "type": "application_area_property",
           "named": true
         },
@@ -49637,6 +49681,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "test_type_property",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "value",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -51227,7 +51287,7 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {

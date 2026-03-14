@@ -1,0 +1,110 @@
+================================================================================
+API page with multi-value ApiVersion
+================================================================================
+
+page 50200 "API Page"
+{
+    PageType = API;
+    ApiVersion = 'v1.0', 'v2.0';
+    EntityName = 'customer';
+    EntitySetName = 'customers';
+    SourceTable = Customer;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property
+      value: (identifier))
+    (api_version_property
+      value: (value
+        (string_literal)
+        (string_literal)))
+    (entity_name_property
+      value: (string_literal))
+    (entity_set_name_property
+      value: (string_literal))
+    (source_table_property
+      value: (identifier))))
+
+================================================================================
+Query with multi-value ApiVersion
+================================================================================
+
+query 50200 "API Query"
+{
+    QueryType = API;
+    APIPublisher = 'microsoft';
+    APIGroup = 'analytics';
+    ApiVersion = 'v0.5', 'v1.0';
+    EntityName = 'dimension';
+    EntitySetName = 'dimensions';
+
+    elements
+    {
+        dataitem(DimensionItem; Dimension)
+        {
+            column(id; SystemId) { }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (query_type_property)
+    (api_publisher_property
+      value: (string_literal))
+    (api_group_property
+      value: (string_literal))
+    (api_version_property
+      value: (value
+        (string_literal)
+        (string_literal)))
+    (entity_name_property
+      value: (string_literal))
+    (entity_set_name_property
+      value: (string_literal))
+    (elements_section
+      (dataitem_section
+        name: (identifier)
+        table_name: (identifier)
+        (column_section
+          name: (identifier)
+          field_name: (identifier))))))
+
+================================================================================
+API page with three ApiVersion values
+================================================================================
+
+page 50201 "Multi Version API"
+{
+    PageType = API;
+    ApiVersion = 'v1.0', 'v2.0', 'v3.0';
+    EntityName = 'item';
+    EntitySetName = 'items';
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (page_type_property
+      value: (identifier))
+    (api_version_property
+      value: (value
+        (string_literal)
+        (string_literal)
+        (string_literal)))
+    (entity_name_property
+      value: (string_literal))
+    (entity_set_name_property
+      value: (string_literal))))

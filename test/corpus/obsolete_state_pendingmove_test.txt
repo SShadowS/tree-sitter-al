@@ -1,0 +1,69 @@
+================================================================================
+Table with ObsoleteState PendingMove
+================================================================================
+
+table 50300 "Test Table"
+{
+    ObsoleteState = PendingMove;
+    ObsoleteReason = 'Moving to new module';
+    MovedTo = 'New Module';
+
+    fields
+    {
+        field(1; "No."; Code[20]) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (obsolete_state_property
+      value: (obsolete_state_value))
+    (obsolete_reason_property
+      value: (obsolete_reason_value
+        (string_literal)))
+    (moved_to_property
+      value: (string_literal))
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))))))
+
+================================================================================
+Table with ObsoleteState PendingMove case insensitive
+================================================================================
+
+table 50301 "Case Test"
+{
+    ObsoleteState = pendingmove;
+    ObsoleteReason = 'Test';
+
+    fields
+    {
+        field(1; Id; Integer) { }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (obsolete_state_property
+      value: (obsolete_state_value))
+    (obsolete_reason_property
+      value: (obsolete_reason_value
+        (string_literal)))
+    (fields
+      (field_declaration
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (basic_type))))))

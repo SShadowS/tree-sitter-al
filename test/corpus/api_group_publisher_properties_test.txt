@@ -23,7 +23,8 @@ page 20001 "APIV1 - Aut. Companies"
     (api_publisher_property
       value: (string_literal))
     (api_version_property
-      value: (string_literal))
+      value: (value
+        (string_literal)))
     (page_type_property
       value: (identifier))
     (entity_name_property
@@ -61,7 +62,8 @@ page 30000 "API Test Page"
     (page_type_property
       value: (identifier))
     (api_version_property
-      value: (string_literal))
+      value: (value
+        (string_literal)))
     (api_group_property
       value: (string_literal))
     (api_publisher_property
@@ -121,7 +123,8 @@ page 40000 TestAPI
     (api_publisher_property
       value: (string_literal))
     (api_version_property
-      value: (string_literal))
+      value: (value
+        (string_literal)))
     (page_type_property
       value: (identifier))))
 
@@ -147,7 +150,8 @@ query 50000 "Customer Query"
     object_name: (quoted_identifier)
     (query_type_property)
     (api_version_property
-      value: (string_literal))
+      value: (value
+        (string_literal)))
     (api_group_property
       value: (string_literal))
     (api_publisher_property
