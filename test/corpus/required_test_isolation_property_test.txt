@@ -1,0 +1,83 @@
+================================================================================
+Codeunit with RequiredTestIsolation Disabled
+================================================================================
+
+codeunit 50104 "Required Isolation Test"
+{
+    Subtype = Test;
+    RequiredTestIsolation = Disabled;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (subtype_property
+      value: (value))
+    (required_test_isolation_property
+      value: (value))))
+
+================================================================================
+Codeunit with RequiredTestIsolation None
+================================================================================
+
+codeunit 50105 "No Isolation"
+{
+    Subtype = Test;
+    RequiredTestIsolation = None;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (subtype_property
+      value: (value))
+    (required_test_isolation_property
+      value: (value))))
+
+================================================================================
+Codeunit with RequiredTestIsolation Function
+================================================================================
+
+codeunit 50106 "Function Isolation"
+{
+    Subtype = Test;
+    RequiredTestIsolation = Function;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (subtype_property
+      value: (value))
+    (required_test_isolation_property
+      value: (value))))
+
+================================================================================
+Codeunit with RequiredTestIsolation case insensitive
+================================================================================
+
+codeunit 50107 "Case Test"
+{
+    Subtype = Test;
+    requiredtestisolation = disabled;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (subtype_property
+      value: (value))
+    (required_test_isolation_property
+      value: (value))))

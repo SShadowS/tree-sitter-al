@@ -43,7 +43,8 @@ query 123 "Test API Query"
     (api_publisher_property
       value: (string_literal))
     (api_version_property
-      value: (string_literal))
+      value: (value
+        (string_literal)))
     (data_access_intent_property)
     (elements_section
       (dataitem_section
@@ -99,7 +100,8 @@ query 456 "Mixed Case API Query"
     (api_publisher_property
       value: (string_literal))
     (api_version_property
-      value: (string_literal))
+      value: (value
+        (string_literal)))
     (elements_section
       (dataitem_section
         name: (identifier)
@@ -180,7 +182,8 @@ query 30305 "Complete API Query"
     (api_publisher_property
       value: (string_literal))
     (api_version_property
-      value: (string_literal))
+      value: (value
+        (string_literal)))
     (data_access_intent_property)
     (property_list
       (property

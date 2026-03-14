@@ -887,8 +887,13 @@ module.exports = grammar({
 
     api_version_property: $ => seq(
       kw_with_eq('apiversion'),
-      field('value', $.string_literal),
+      field('value', alias($.api_version_list, $.value)),
       ';'
+    ),
+
+    api_version_list: $ => seq(
+      $.string_literal,
+      repeat(seq(',', $.string_literal))
     ),
 
     order_by_property: _value_property_template(
@@ -1974,6 +1979,20 @@ module.exports = grammar({
         alias(kw('allowoutboundfromhandler'), $.value),
         alias(kw('allowoutbound'), $.value)
       )),
+      ';'
+    ),
+
+    test_type_property: $ => seq(
+      kw('testtype'),
+      '=',
+      field('value', alias($.test_type_value, $.value)),
+      ';'
+    ),
+
+    required_test_isolation_property: $ => seq(
+      kw('requiredtestisolation'),
+      '=',
+      field('value', alias($.required_test_isolation_value, $.value)),
       ';'
     ),
 
@@ -3356,6 +3375,20 @@ module.exports = grammar({
       kw('disabled')
     ),
 
+    test_type_value: $ => choice(
+      kw('uncategorized'),
+      kw('unittest'),
+      kw('integrationtest'),
+      kw('aitest')
+    ),
+
+    required_test_isolation_value: $ => choice(
+      kw('none'),
+      kw('disabled'),
+      kw('codeunit'),
+      kw('function')
+    ),
+
     implementation_value: $ => seq(
       field('interface', $._identifier_choice),
       '=',
@@ -3580,7 +3613,8 @@ module.exports = grammar({
     obsolete_state_value: $ => choice(
       kw('pending'),
       kw('removed'),
-      kw('moved')
+      kw('moved'),
+      kw('pendingmove')
     ),
     obsolete_tag_value: $ => $.string_literal,
     option_ordinal_values_value: $ => choice(
@@ -8130,6 +8164,9 @@ enum_type: $ => prec(1, seq(
       
       // Table external/integration properties
       $.optimize_for_text_search_property,
+
+      // Table customization properties
+      $.allow_in_customizations_property,
     ),
 
     // Composed property group for codeunit-level properties
@@ -8142,7 +8179,9 @@ enum_type: $ => prec(1, seq(
       
       // Additional codeunit-specific properties not in other groups
       $.test_isolation_property,
-      $.test_http_request_policy_property
+      $.test_http_request_policy_property,
+      $.test_type_property,
+      $.required_test_isolation_property
     ),
 
     // Composed property group for report-level properties
