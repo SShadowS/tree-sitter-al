@@ -1,4 +1,4 @@
-name: Build and release WASM
+name: Build and release artifacts
 
 on:
   workflow_dispatch:
@@ -36,19 +36,94 @@ jobs:
       - name: Build WASM
         run: tree-sitter build --wasm .
 
-      - name: Force-update 'latest' tag
+      - name: Upload WASM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tree-sitter-al.wasm
+          path: tree-sitter-al.wasm
+
+  build-shared-lib:
+    name: Build shared library (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: tree-sitter-al.so
+            lib-glob: "*.so"
+          - os: windows-latest
+            artifact: tree-sitter-al.dll
+            lib-glob: "*.dll"
+          - os: macos-latest
+            artifact: tree-sitter-al.dylib
+            lib-glob: "*.dylib"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up tree-sitter CLI
+        uses: tree-sitter/setup-action/cli@v2
+
+      - name: Add swap space (Linux only)
+        if: runner.os == 'Linux'
         run: |
-          git tag -f latest
-          git push origin latest --force
+          sudo swapoff /swapfile || true
+          sudo rm -f /swapfile
+          sudo fallocate -l 12G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+
+      - name: Build shared library
+        run: tree-sitter build .
+
+      - name: Find and rename output
+        shell: bash
+        run: |
+          LIB=$(find . -maxdepth 1 -name '${{ matrix.lib-glob }}' | head -1)
+          echo "Found: $LIB"
+          mv "$LIB" "${{ matrix.artifact }}"
+
+      - name: Upload shared library artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}
+
+  release:
+    name: Create GitHub Release
+    needs: [build-wasm, build-shared-lib]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: List artifacts
+        run: ls -la artifacts/
+
+      - name: Force-update 'test-build' tag
+        run: |
+          git tag -f test-build
+          git push origin test-build --force
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
-          name: Latest WASM build
+          tag_name: test-build
+          name: Test build
           body: |
             Automatically built from the latest commit on `main`.
-            Download `tree-sitter-al.wasm` for use with `web-tree-sitter`.
-          files: tree-sitter-al.wasm
+
+            | File | Platform | Use case |
+            |------|----------|----------|
+            | `tree-sitter-al.wasm` | All | web-tree-sitter |
+            | `tree-sitter-al.so` | Linux x86_64 | ast-grep, native bindings |
+            | `tree-sitter-al.dll` | Windows x86_64 | ast-grep, native bindings |
+            | `tree-sitter-al.dylib` | macOS ARM64 | ast-grep, native bindings |
+          files: artifacts/*
           make_latest: true
           prerelease: false
