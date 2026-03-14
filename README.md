@@ -231,7 +231,26 @@ tree-sitter build --wasm  # WebAssembly
 npm run build            # Native bindings
 ```
 
+## WASM Distribution
+
+A pre-built `tree-sitter-al.wasm` is published as a GitHub Release asset under the [`latest`](https://github.com/SShadowS/tree-sitter-al/releases/tag/latest) tag.
+
+**Download URL:**
+```
+https://github.com/SShadowS/tree-sitter-al/releases/download/latest/tree-sitter-al.wasm
+```
+
+### Building and uploading locally
+
+The parser.c is ~90MB, which exceeds what standard CI runners can compile to WASM. Use the local script instead:
+
+```powershell
+.\scripts\build-and-release-wasm.ps1
+```
+
+Prerequisites: `tree-sitter` CLI, `gh` CLI (authenticated).
+
 ---
 
 **Author**: Torben Leth (sshadows@sshadows.dk)  
-**License**: MIT
+**License**: GPL-3.0 (see [LICENSE](LICENSE))
