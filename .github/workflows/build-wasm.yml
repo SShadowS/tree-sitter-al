@@ -7,41 +7,6 @@ permissions:
   contents: write
 
 jobs:
-  build-wasm:
-    name: Build tree-sitter-al.wasm
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up tree-sitter CLI
-        uses: tree-sitter/setup-action/cli@v2
-
-      - name: Install wasi-sdk to tree-sitter cache
-        run: |
-          WASI_VERSION=25
-          mkdir -p ~/.cache/tree-sitter
-          curl -fsSL "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_VERSION}/wasi-sdk-${WASI_VERSION}.0-x86_64-linux.tar.gz" \
-            | tar xz -C ~/.cache/tree-sitter
-          mv ~/.cache/tree-sitter/wasi-sdk-${WASI_VERSION}.0-x86_64-linux ~/.cache/tree-sitter/wasi-sdk
-
-      - name: Add swap space for large parser compilation
-        run: |
-          sudo swapoff /swapfile || true
-          sudo rm -f /swapfile
-          sudo fallocate -l 12G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
-
-      - name: Build WASM
-        run: tree-sitter build --wasm .
-
-      - name: Upload WASM artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tree-sitter-al.wasm
-          path: tree-sitter-al.wasm
-
   build-shared-lib:
     name: Build shared library (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -91,7 +56,7 @@ jobs:
 
   release:
     name: Create GitHub Release
-    needs: [build-wasm, build-shared-lib]
+    needs: [build-shared-lib]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -102,19 +67,22 @@ jobs:
           path: artifacts
           merge-multiple: true
 
+      - name: Copy prebuilt WASM
+        run: cp tree-sitter-al.wasm artifacts/
+
       - name: List artifacts
         run: ls -la artifacts/
 
-      - name: Force-update 'test-build' tag
+      - name: Force-update 'latest' tag
         run: |
-          git tag -f test-build
-          git push origin test-build --force
+          git tag -f latest
+          git push origin latest --force
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: test-build
-          name: Test build
+          tag_name: latest
+          name: Latest build
           body: |
             Automatically built from the latest commit on `main`.
 
