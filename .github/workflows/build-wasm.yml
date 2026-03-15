@@ -55,7 +55,7 @@ jobs:
           path: ${{ matrix.artifact }}
 
   release:
-    name: Create GitHub Release
+    name: Create GitHub Releases
     needs: [build-shared-lib]
     runs-on: ubuntu-latest
     steps:
@@ -73,7 +73,46 @@ jobs:
       - name: List artifacts
         run: ls -la artifacts/
 
-      - name: Delete old release and tag
+      - name: Get version from package.json
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Version: $VERSION (tag: v$VERSION)"
+
+      - name: Check if versioned release already exists
+        id: check
+        run: |
+          if gh release view "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Versioned release v${{ steps.version.outputs.version }} already exists, skipping"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Create versioned release
+        if: steps.check.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          body: |
+            ## tree-sitter-al ${{ steps.version.outputs.tag }}
+
+            | File | Platform | Use case |
+            |------|----------|----------|
+            | `tree-sitter-al.wasm` | All | web-tree-sitter |
+            | `tree-sitter-al.so` | Linux x86_64 | ast-grep, native bindings |
+            | `tree-sitter-al.dll` | Windows x86_64 | ast-grep, native bindings |
+            | `tree-sitter-al.dylib` | macOS ARM64 | ast-grep, native bindings |
+          files: artifacts/*
+          make_latest: false
+          prerelease: false
+
+      - name: Delete old 'latest' release and tag
         run: |
           gh release delete latest --yes --cleanup-tag || true
           git push origin :refs/tags/latest || true
@@ -86,13 +125,13 @@ jobs:
           git tag latest
           git push origin latest
 
-      - name: Upload to GitHub Release
+      - name: Create 'latest' release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
           name: Latest build
           body: |
-            Automatically built from the latest commit on `main`.
+            Automatically built from the latest commit on `main` (v${{ steps.version.outputs.version }}).
 
             | File | Platform | Use case |
             |------|----------|----------|
