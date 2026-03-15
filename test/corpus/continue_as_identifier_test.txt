@@ -1,0 +1,176 @@
+================================================================================
+Continue as variable name in var section
+================================================================================
+codeunit 50000 "Continue Test"
+{
+    procedure Test()
+    var
+        Continue: Boolean;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block))))
+
+================================================================================
+Continue as variable in assignment
+================================================================================
+codeunit 50000 "Continue Test"
+{
+    procedure Test()
+    var
+        Continue: Boolean;
+    begin
+        Continue := true;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (boolean))))))
+
+================================================================================
+Continue statement still works
+================================================================================
+codeunit 50000 "Test"
+{
+    procedure Test()
+    var
+        i: Integer;
+    begin
+        for i := 1 to 10 do
+            continue;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (for_statement
+          variable: (identifier)
+          start: (integer)
+          direction: (to)
+          end: (integer)
+          body: (continue_statement))))))
+
+================================================================================
+Mixed Continue variable and continue statement
+================================================================================
+codeunit 50000 "Test"
+{
+    procedure Test()
+    var
+        Continue: Boolean;
+        i: Integer;
+    begin
+        Continue := false;
+        for i := 1 to 10 do begin
+            Continue := true;
+            continue;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (assignment_expression
+          left: (identifier)
+          right: (boolean))
+        (for_statement
+          variable: (identifier)
+          start: (integer)
+          direction: (to)
+          end: (integer)
+          body: (code_block
+            (assignment_expression
+              left: (identifier)
+              right: (boolean))
+            (continue_statement)))))))
+
+================================================================================
+Continue in conditional check
+================================================================================
+codeunit 50000 "Test"
+{
+    procedure Test()
+    var
+        Continue: Boolean;
+    begin
+        if not Continue then
+            exit;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (procedure
+      name: (name
+        (identifier))
+      (var_section
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (if_statement
+          condition: (unary_expression
+            operator: (unary_operator)
+            operand: (identifier))
+          then_branch: (exit_statement))))))

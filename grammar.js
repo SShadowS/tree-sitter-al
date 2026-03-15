@@ -193,7 +193,8 @@ module.exports = grammar({
     $._attribute_var_continuation,    // 12 - Attribute followed by variable (hidden)
     $._region_var_continuation,       // 13 - #region followed by variables (hidden)
     $.for_to_keyword,                 // 14 - 'to' with word boundary check
-    $.for_downto_keyword              // 15 - 'downto' with word boundary check
+    $.for_downto_keyword,             // 15 - 'downto' with word boundary check
+    $.continue_as_identifier          // 16 - 'continue' followed by ':=' (used as variable)
   ],
 
   // Extras: whitespace, comments, and ignorable preprocessor directives
@@ -6433,6 +6434,9 @@ enum_type: $ => prec(1, seq(
       $.identifier,
       // Allow 'End' to be used as identifier in expressions
       alias(kw('end'), $.identifier),
+      // Allow 'Continue' to be used as identifier (e.g., Continue := true)
+      // Uses external scanner to look ahead for ':=' and produce different token
+      alias($.continue_as_identifier, $.identifier),
       $._quoted_identifier,
       $._literal_value,
       $.parenthesized_expression,

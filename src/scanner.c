@@ -28,7 +28,8 @@ enum TokenType {
     ATTRIBUTE_VAR_CONTINUATION,       // 12 - Signals [attr] followed by variable, continue var_section
     REGION_VAR_CONTINUATION,          // 13 - Signals #region followed by variables, continue var_section
     FOR_TO_KEYWORD,                   // 14 - 'to' keyword with word boundary check
-    FOR_DOWNTO_KEYWORD                // 15 - 'downto' keyword with word boundary check
+    FOR_DOWNTO_KEYWORD,               // 15 - 'downto' keyword with word boundary check
+    CONTINUE_AS_IDENTIFIER            // 16 - 'continue' used as variable (followed by ':=')
 };
 
 // Keywords that ALWAYS terminate a var section (no context check needed)
@@ -548,6 +549,53 @@ static int scan_var_terminator_in_preproc(Scanner *scanner, TSLexer *lexer);
 static bool scan_split_procedure_marker(Scanner *scanner, TSLexer *lexer);
 static bool scan_attribute_for_procedure(Scanner *scanner, TSLexer *lexer);
 
+// Scan for 'continue' used as identifier (followed by ':=')
+// Returns true if we see 'continue' (case-insensitive) followed by ':='
+// This produces a CONTINUE_AS_IDENTIFIER token that the grammar aliases to identifier
+// Note: External scanner must handle whitespace skipping itself (extras don't apply)
+static bool scan_continue_as_identifier(TSLexer *lexer) {
+    // Skip whitespace (scanner must handle this — tree-sitter extras don't apply to externals)
+    while (iswspace(lexer->lookahead)) {
+        lexer->advance(lexer, true);  // true = skip (not part of token)
+    }
+
+    // Fast path: check first character
+    if (lexer->lookahead != 'c' && lexer->lookahead != 'C') return false;
+
+    // Mark token start (after whitespace)
+    lexer->mark_end(lexer);
+
+    // Try to match "continue" case-insensitively
+    const char *keyword = "continue";
+    for (int i = 0; keyword[i]; i++) {
+        char c = lexer->lookahead;
+        if (c >= 'A' && c <= 'Z') c = c - 'A' + 'a';
+        if (c != keyword[i]) return false;
+        lexer->advance(lexer, false);
+    }
+
+    // Verify word boundary - next char must NOT be alphanumeric or underscore
+    if (iswalpha(lexer->lookahead) || iswdigit(lexer->lookahead) || lexer->lookahead == '_') {
+        return false;
+    }
+
+    // Mark end of "continue" - this is the token we'll produce
+    lexer->mark_end(lexer);
+
+    // Skip whitespace to look for ':='
+    while (iswspace(lexer->lookahead)) {
+        lexer->advance(lexer, false);
+    }
+
+    // Check for ':='
+    if (lexer->lookahead != ':') return false;
+    lexer->advance(lexer, false);
+    if (lexer->lookahead != '=') return false;
+
+    // Found 'continue' followed by ':=' - this is an identifier, not a statement
+    return true;
+}
+
 // Main scan function
 bool tree_sitter_al_external_scanner_scan(
     void *payload,
@@ -573,6 +621,20 @@ bool tree_sitter_al_external_scanner_scan(
                     (lexer->lookahead >= 32 && lexer->lookahead < 127) ? (char)lexer->lookahead : '?',
                     lexer->lookahead);
             fflush(stderr);
+        }
+    }
+
+    // Check for 'continue' used as variable name (Continue := true)
+    // Must be checked early, before other tokens consume the input
+    // Scanner handles whitespace skipping internally
+    if (valid_symbols[CONTINUE_AS_IDENTIFIER]) {
+        if (scan_continue_as_identifier(lexer)) {
+            if (SCANNER_DEBUG) {
+                fprintf(stderr, "SCANNER: ✓ Found continue := pattern, emitting CONTINUE_AS_IDENTIFIER\n");
+                fflush(stderr);
+            }
+            lexer->result_symbol = CONTINUE_AS_IDENTIFIER;
+            return true;
         }
     }
 
