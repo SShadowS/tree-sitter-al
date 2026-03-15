@@ -73,10 +73,18 @@ jobs:
       - name: List artifacts
         run: ls -la artifacts/
 
-      - name: Force-update 'latest' tag
+      - name: Delete old release and tag
         run: |
-          git tag -f latest
-          git push origin latest --force
+          gh release delete latest --yes --cleanup-tag || true
+          git push origin :refs/tags/latest || true
+          git tag -d latest || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Create fresh 'latest' tag
+        run: |
+          git tag latest
+          git push origin latest
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
