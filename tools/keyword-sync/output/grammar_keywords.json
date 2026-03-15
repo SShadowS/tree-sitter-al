@@ -17,7 +17,7 @@
     "for_to_keyword",
     "for_downto_keyword"
   ],
-  "grammar_file": "U:\\Git\\tree-sitter-al-work1\\grammar.js",
+  "grammar_file": "U:\\Git\\tree-sitter-al\\grammar.js",
   "keywords": {
     "abouttext": {
       "keyword": "abouttext",
@@ -1409,6 +1409,10 @@
       "keyword": "includedpermissionsets",
       "precedence": null,
       "type": "kw"
+    },
+    "indataset": {
+      "keyword": "indataset",
+      "type": "kw_with_eq"
     },
     "indentationcolumn": {
       "keyword": "indentationcolumn",
@@ -3626,6 +3630,7 @@
     ],
     "_report_column_properties": [
       "include_caption_property",
+      "indataset_property",
       "caption_property",
       "auto_format_expression_property",
       "auto_format_type_property",
@@ -3767,6 +3772,6 @@
   },
   "total_choice_operators": 18,
   "total_kw_calls": 945,
-  "total_kw_with_eq_calls": 21,
-  "unique_keywords": 668
+  "total_kw_with_eq_calls": 22,
+  "unique_keywords": 669
 }
