@@ -23,19 +23,26 @@ page 50100 TestFlowProperties
 
 (source_file
   (page_declaration
+    (page_keyword)
     object_id: (integer)
     object_name: (identifier)
     (actions_section
-      (area_action_section
+      (actions_keyword)
+      (action_area_section
+        (area_keyword)
         (customaction_declaration
           name: (identifier)
-          (flow_caption_property
+          (property
+            name: (property_name)
             value: (string_literal))
-          (flow_id_property
+          (property
+            name: (property_name)
             value: (string_literal))
-          (flow_template_id_property
+          (property
+            name: (property_name)
             value: (string_literal))
-          (flow_environment_id_property
+          (property
+            name: (property_name)
             value: (string_literal)))))))
 
 ================================================================================
@@ -60,15 +67,23 @@ report 50200 TestReportLayout
 
 (source_file
   (report_declaration
+    (report_keyword)
     object_id: (integer)
     object_name: (identifier)
     (rendering_section
+      (rendering_keyword)
       (rendering_layout
+        (layout_keyword)
         name: (identifier)
-        (rendering_type_property)
-        (layout_file_property
+        (property
+          name: (property_name)
+          value: (identifier))
+        (property
+          name: (property_name)
           value: (string_literal))
-        (mime_type_property
+        (property
+          name: (property_name)
           value: (string_literal))
-        (caption_property
-          (string_literal))))))
+        (property
+          name: (property_name)
+          value: (string_literal))))))
