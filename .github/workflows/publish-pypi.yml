@@ -28,12 +28,12 @@ jobs:
         with:
           python-version: "3.12"
       - name: Set version
-        shell: bash
-        run: python -c "
+        shell: python
+        run: |
           import re, pathlib
-          p = pathlib.Path('pyproject.toml')
-          p.write_text(re.sub(r'version = \"0\.0\.0\"', 'version = \"${{ needs.get-version.outputs.version }}\"', p.read_text()))
-          "
+          v = "${{ needs.get-version.outputs.version }}"
+          p = pathlib.Path("pyproject.toml")
+          p.write_text(re.sub(r'version = "0\.0\.0"', f'version = "{v}"', p.read_text()))
       - run: pip install cibuildwheel
       - run: cibuildwheel --output-dir dist
       - uses: actions/upload-artifact@v4
@@ -51,7 +51,12 @@ jobs:
         with:
           python-version: "3.12"
       - name: Set version
-        run: sed -i 's/^version = "0.0.0"/version = "${{ needs.get-version.outputs.version }}"/' pyproject.toml
+        shell: python
+        run: |
+          import re, pathlib
+          v = "${{ needs.get-version.outputs.version }}"
+          p = pathlib.Path("pyproject.toml")
+          p.write_text(re.sub(r'version = "0\.0\.0"', f'version = "{v}"', p.read_text()))
       - run: pip install build
       - run: python -m build --sdist
       - uses: actions/upload-artifact@v4
