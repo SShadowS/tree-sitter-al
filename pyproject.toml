@@ -1,11 +1,11 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=62.4.0", "setuptools-scm>=8", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "tree-sitter-al"
 description = "AL for Business Central"
-version = "0.1.0"
+dynamic = ["version"]
 keywords = ["incremental", "parsing", "tree-sitter", "al"]
 classifiers = [
   "Intended Audience :: Developers",
@@ -15,7 +15,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 authors = [{ name = "Torben Leth", email = "sshadows@sshadows.dk" }]
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 license.text = "MIT"
 readme = "README.md"
 
@@ -23,8 +23,12 @@ readme = "README.md"
 Homepage = "https://github.com/sshadows/tree-sitter-al"
 
 [project.optional-dependencies]
-core = ["tree-sitter~=0.22"]
+core = ["tree-sitter~=0.24"]
+
+[tool.setuptools-scm]
+version_scheme = "guess-next-dev"
+local_scheme = "no-local-version"
 
 [tool.cibuildwheel]
-build = "cp39-*"
+build = "cp312-*"
 build-frontend = "build"
