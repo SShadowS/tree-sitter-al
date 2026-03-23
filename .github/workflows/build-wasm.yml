@@ -111,3 +111,9 @@ jobs:
           files: artifacts/*
           make_latest: true
           prerelease: false
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: [release]
+    if: needs.release.result == 'success'
+    uses: ./.github/workflows/publish-pypi.yml
