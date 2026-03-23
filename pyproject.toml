@@ -1,11 +1,11 @@
 [build-system]
-requires = ["setuptools>=62.4.0", "setuptools-scm>=8", "wheel"]
+requires = ["setuptools>=62.4.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "tree-sitter-al"
 description = "AL for Business Central"
-dynamic = ["version"]
+version = "0.0.0"
 keywords = ["incremental", "parsing", "tree-sitter", "al"]
 classifiers = [
   "Intended Audience :: Developers",
@@ -25,11 +25,6 @@ Homepage = "https://github.com/sshadows/tree-sitter-al"
 [project.optional-dependencies]
 core = ["tree-sitter~=0.24"]
 
-[tool.setuptools-scm]
-version_scheme = "guess-next-dev"
-local_scheme = "no-local-version"
-
 [tool.cibuildwheel]
 build = "cp312-*"
 build-frontend = "build"
-environment-pass = ["SETUPTOOLS_SCM_PRETEND_VERSION"]
