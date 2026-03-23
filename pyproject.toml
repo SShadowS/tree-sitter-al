@@ -32,3 +32,4 @@ local_scheme = "no-local-version"
 [tool.cibuildwheel]
 build = "cp312-*"
 build-frontend = "build"
+environment-pass = ["SETUPTOOLS_SCM_PRETEND_VERSION"]
