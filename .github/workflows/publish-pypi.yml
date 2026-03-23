@@ -8,7 +8,6 @@ on:
 jobs:
   build-wheels:
     name: Build wheels (${{ matrix.os }})
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, 'v')
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -29,7 +28,6 @@ jobs:
 
   build-sdist:
     name: Build sdist
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, 'v')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

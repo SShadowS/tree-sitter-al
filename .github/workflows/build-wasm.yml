@@ -109,36 +109,5 @@ jobs:
             | `tree-sitter-al.dll` | Windows x86_64 | ast-grep, native bindings |
             | `tree-sitter-al.dylib` | macOS ARM64 | ast-grep, native bindings |
           files: artifacts/*
-          make_latest: false
-          prerelease: false
-
-      - name: Delete old 'latest' release and tag
-        run: |
-          gh release delete latest --yes --cleanup-tag || true
-          git push origin :refs/tags/latest || true
-          git tag -d latest || true
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Create fresh 'latest' tag
-        run: |
-          git tag latest
-          git push origin latest
-
-      - name: Create 'latest' release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest
-          name: Latest build
-          body: |
-            Automatically built from the latest commit on `main` (v${{ steps.version.outputs.version }}).
-
-            | File | Platform | Use case |
-            |------|----------|----------|
-            | `tree-sitter-al.wasm` | All | web-tree-sitter |
-            | `tree-sitter-al.so` | Linux x86_64 | ast-grep, native bindings |
-            | `tree-sitter-al.dll` | Windows x86_64 | ast-grep, native bindings |
-            | `tree-sitter-al.dylib` | macOS ARM64 | ast-grep, native bindings |
-          files: artifacts/*
           make_latest: true
           prerelease: false
