@@ -5,16 +5,27 @@ on:
   workflow_dispatch:
 
 jobs:
+  get-version:
+    name: Get version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
   build-wheels:
     name: Build wheels (${{ matrix.os }})
+    needs: [get-version]
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
+    env:
+      SETUPTOOLS_SCM_PRETEND_VERSION: ${{ needs.get-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -27,11 +38,12 @@ jobs:
 
   build-sdist:
     name: Build sdist
+    needs: [get-version]
     runs-on: ubuntu-latest
+    env:
+      SETUPTOOLS_SCM_PRETEND_VERSION: ${{ needs.get-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
