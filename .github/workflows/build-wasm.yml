@@ -113,6 +113,5 @@ jobs:
           prerelease: false
 
   publish-pypi:
-    name: Publish to PyPI
     needs: [release]
     uses: ./.github/workflows/publish-pypi.yml
