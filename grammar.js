@@ -2176,11 +2176,34 @@ module.exports = grammar({
         )
       )),
       optional(';'),
-      optional(choice(
-        $.var_section,
-        $.preproc_conditional_var_block,
-      )),
-      $.code_block
+      choice(
+        seq(
+          optional(choice(
+            $.var_section,
+            $.preproc_conditional_var_block,
+          )),
+          $.code_block,
+        ),
+        $.preproc_split_procedure_body,
+      )
+    )),
+
+    // Preprocessor split procedure body: var+begin+preamble in #if, begin in #else
+    // #if / [var] begin [preamble] [if-guard then] / #else / begin / #endif / shared_stmts end;
+    // The #if branch may end with an if-then guard whose then-branch is the shared code.
+    preproc_split_procedure_body: $ => prec.right(25, seq(
+      $.preproc_if,
+      optional($.var_section),
+      kw('begin'),
+      repeat($._statement),
+      optional($._preproc_if_header),  // trailing if-then guard (body is shared code)
+      $.preproc_else,
+      optional($.var_section),
+      kw('begin'),
+      $.preproc_endif,
+      repeat($._statement),
+      choice($.end_keyword, kw('end')),
+      optional(';'),
     )),
 
     // Preprocessor-split procedure: header variants in #if/#else, shared body
