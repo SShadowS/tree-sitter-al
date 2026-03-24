@@ -50,6 +50,7 @@ permissionset 301 "No. Series - Read"
           permission: (permission_type))
         (preproc_conditional_permissions
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (pragma)
@@ -60,7 +61,8 @@ permissionset 301 "No. Series - Read"
             table_name: (quoted_identifier)
             permission: (permission_type))
           (pragma)
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (tabledata_permission
           table_name: (quoted_identifier)
           permission: (permission_type))
@@ -98,6 +100,7 @@ permissionset 50200 "Test Permissions"
       value: (tabledata_permission_list
         (preproc_conditional_permissions
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (tabledata_permission
             table_name: (quoted_identifier)
@@ -111,7 +114,8 @@ permissionset 50200 "Test Permissions"
             table_name: (quoted_identifier)
             permission: (permission_type))
           (pragma)
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (tabledata_permission
           table_name: (quoted_identifier)
           permission: (permission_type))))))
@@ -149,6 +153,7 @@ permissionset 50300 "Complex Permissions"
           permission: (permission_type))
         (preproc_conditional_permissions
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (pragma)
@@ -158,7 +163,8 @@ permissionset 50300 "Complex Permissions"
             permission: (permission_type))
           (pragma)
           (pragma)
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (tabledata_permission
           table_name: (identifier)
           permission: (permission_type))))))
@@ -194,6 +200,7 @@ permissionset 50400 "Pragma Heavy Permissions"
       value: (tabledata_permission_list
         (preproc_conditional_permissions
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (pragma)
@@ -209,7 +216,8 @@ permissionset 50400 "Pragma Heavy Permissions"
             table_name: (quoted_identifier)
             permission: (permission_type))
           (pragma)
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (tabledata_permission
           table_name: (quoted_identifier)
           permission: (permission_type))))))

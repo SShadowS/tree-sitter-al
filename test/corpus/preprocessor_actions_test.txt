@@ -40,6 +40,7 @@ pageextension 50000 MyPageExt extends "Customer List"
       (actions_keyword)
       (preproc_conditional_actions
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (addbefore_action_modification
@@ -53,7 +54,8 @@ pageextension 50000 MyPageExt extends "Customer List"
             (property
               name: (property_name)
               value: (identifier))))
-        (preproc_endif))
+        (preproc_endif
+          (preproc_close)))
       (addfirst_action_modification
         target: (identifier)
         (action_declaration
@@ -104,6 +106,7 @@ page 50001 MyPage
       (actions_keyword)
       (preproc_conditional_actions
         (preproc_if
+          (preproc_open)
           condition: (identifier))
         (action_area_section
           (area_keyword)
@@ -120,7 +123,8 @@ page 50001 MyPage
             (property
               name: (property_name)
               value: (string_literal))))
-        (preproc_endif)))))
+        (preproc_endif
+          (preproc_close))))))
 
 ================================================================================
 Nested action groups with preprocessor
@@ -171,6 +175,7 @@ pageextension 50002 ComplexActions extends "Item List"
         (area_keyword)
         (preproc_conditional_actions
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (action_group_section
@@ -184,7 +189,8 @@ pageextension 50002 ComplexActions extends "Item List"
               (property
                 name: (property_name)
                 value: (string_literal))))
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (action_group_section
           (group_keyword)
           name: (identifier)
@@ -234,6 +240,7 @@ page 50003 MixedCase
       (actions_keyword)
       (preproc_conditional_actions
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (action_area_section
@@ -243,13 +250,16 @@ page 50003 MixedCase
             (property
               name: (property_name)
               value: (string_literal))))
-        (preproc_endif))
+        (preproc_endif
+          (preproc_close)))
       (preproc_conditional_actions
         (preproc_if
+          (preproc_open)
           condition: (identifier))
         (modify_action_modification
           target: (identifier)
           (property
             name: (property_name)
             value: (boolean)))
-        (preproc_endif)))))
+        (preproc_endif
+          (preproc_close))))))

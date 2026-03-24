@@ -41,6 +41,7 @@ page 50100 TestPage
               arguments: (argument_list)))
           (preproc_conditional_case
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
             (case_else_branch
@@ -48,7 +49,8 @@ page 50100 TestPage
               (call_expression
                 function: (identifier)
                 arguments: (argument_list)))
-            (preproc_endif)))))))
+            (preproc_endif
+              (preproc_close))))))))
 
 ================================================================================
 Complex case with multiple branches and preprocessor else
@@ -92,6 +94,7 @@ codeunit 50100 TestCodeunit
         (var_keyword)
         (preproc_conditional_var
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (variable_declaration
@@ -102,7 +105,8 @@ codeunit 50100 TestCodeunit
                 reference: (identifier)
                 reference: (identifier)
                 reference: (quoted_identifier))))
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (variable_declaration
           name: (identifier)
           type: (type_specification
@@ -131,6 +135,7 @@ codeunit 50100 TestCodeunit
                 (string_literal))))
           (preproc_conditional_case
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
             (case_else_branch
@@ -140,4 +145,5 @@ codeunit 50100 TestCodeunit
                 arguments: (argument_list
                   (identifier)
                   (identifier))))
-            (preproc_endif)))))))
+            (preproc_endif
+              (preproc_close))))))))

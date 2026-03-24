@@ -17033,7 +17033,17 @@
   {
     "type": "preproc_endif",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_close",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "preproc_fragmented_else_tail",
@@ -17981,6 +17991,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_open",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -29442,10 +29462,6 @@
     "named": false
   },
   {
-    "type": "#ENDIF",
-    "named": false
-  },
-  {
     "type": "#Elif",
     "named": false
   },
@@ -29454,31 +29470,11 @@
     "named": false
   },
   {
-    "type": "#Endif",
-    "named": false
-  },
-  {
-    "type": "#IF",
-    "named": false
-  },
-  {
-    "type": "#If",
-    "named": false
-  },
-  {
     "type": "#elif",
     "named": false
   },
   {
     "type": "#else",
-    "named": false
-  },
-  {
-    "type": "#endif",
-    "named": false
-  },
-  {
-    "type": "#if",
     "named": false
   },
   {
@@ -30249,9 +30245,17 @@
     "extra": true
   },
   {
+    "type": "preproc_close",
+    "named": true
+  },
+  {
     "type": "preproc_endregion",
     "named": true,
     "extra": true
+  },
+  {
+    "type": "preproc_open",
+    "named": true
   },
   {
     "type": "preproc_region",

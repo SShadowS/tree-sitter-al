@@ -32,6 +32,7 @@ table 50000 "Test Table"
           (basic_type)))
       (preproc_conditional_var
         (preproc_if
+          (preproc_open)
           (preproc_not_expression
             (identifier)))
         (var_section
@@ -42,7 +43,8 @@ table 50000 "Test Table"
             (type_specification
               (record_type
                 (identifier)))))
-        (preproc_endif)))
+        (preproc_endif
+          (preproc_close))))
     (procedure
       (procedure_keyword)
       (identifier)
@@ -82,6 +84,7 @@ table 50001 "Sales Price"
         (string_literal))
       (preproc_conditional_var
         (preproc_if
+          (preproc_open)
           (preproc_not_expression
             (identifier)))
         (var_section
@@ -97,7 +100,8 @@ table 50001 "Sales Price"
             (type_specification
               (record_type
                 (identifier)))))
-        (preproc_endif)))
+        (preproc_endif
+          (preproc_close))))
     (var_section
       (protected_keyword)
       (var_keyword)
@@ -141,6 +145,7 @@ table 50002 "Test Table"
       (pragma)
       (preproc_conditional_var
         (preproc_if
+          (preproc_open)
           (preproc_not_expression
             (identifier)))
         (var_section
@@ -151,4 +156,5 @@ table 50002 "Test Table"
             (type_specification
               (record_type
                 (identifier)))))
-        (preproc_endif)))))
+        (preproc_endif
+          (preproc_close))))))

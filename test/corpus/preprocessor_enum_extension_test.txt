@@ -35,6 +35,7 @@ enumextension 50100 "Payment Method Type Ext" extends "Payment Method Type"
     base_object: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (enum_value_declaration
         value_id: (integer)
@@ -49,7 +50,8 @@ enumextension 50100 "Payment Method Type Ext" extends "Payment Method Type"
         (property
           name: (property_name)
           value: (string_literal)))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (preproc_region)
     (enum_value_declaration
       value_id: (integer)

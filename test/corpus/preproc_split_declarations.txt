@@ -22,6 +22,7 @@ codeunit 50100 "Test Impl" implements Interface2
 (source_file
   (preproc_split_declaration
     (preproc_if
+      (preproc_open)
       condition: (identifier))
     (pragma)
     (codeunit_keyword)
@@ -39,7 +40,8 @@ codeunit 50100 "Test Impl" implements Interface2
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    (preproc_endif)
+    (preproc_endif
+      (preproc_close))
     (property
       name: (property_name)
       value: (option_member_list
@@ -72,6 +74,7 @@ enum 50100 TestEnum implements Interface2
 (source_file
   (preproc_split_declaration
     (preproc_if
+      (preproc_open)
       condition: (identifier))
     (enum_keyword)
     object_id: (integer)
@@ -87,7 +90,8 @@ enum 50100 TestEnum implements Interface2
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    (preproc_endif)
+    (preproc_endif
+      (preproc_close))
     (property
       name: (property_name)
       value: (boolean))
@@ -132,6 +136,7 @@ page 50100 TestPage
         (area_keyword)
         (preproc_split_field
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (pragma)
           (quoted_identifier)
@@ -140,7 +145,8 @@ page 50100 TestPage
           (preproc_else)
           (quoted_identifier)
           (identifier)
-          (preproc_endif)
+          (preproc_endif
+            (preproc_close))
           (property
             name: (property_name)
             value: (identifier)))))))

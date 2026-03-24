@@ -51,6 +51,7 @@ table 23 "Vendor"
           permission: (permission_type))
         (preproc_conditional_permissions
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (tabledata_permission
@@ -59,7 +60,8 @@ table 23 "Vendor"
           (tabledata_permission
             table_name: (quoted_identifier)
             permission: (permission_type))
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (tabledata_permission
           table_name: (quoted_identifier)
           permission: (permission_type))

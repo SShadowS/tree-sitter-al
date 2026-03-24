@@ -41,12 +41,14 @@ page 17 "G/L Account Card" {
             value: (string_literal))
           (preproc_conditional
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
             (property
               name: (property_name)
               value: (identifier))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (page_field
             name: (quoted_identifier)
             source: (member_expression
@@ -99,11 +101,13 @@ page 18 "Test List" {
           name: (identifier)
           (preproc_conditional
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (property
               name: (property_name)
               value: (identifier))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (page_field
             name: (identifier)
             source: (member_expression
@@ -153,24 +157,22 @@ page 19 "Test Grid" {
         (grid_section
           (grid_keyword)
           name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (preproc_conditional
+          (ERROR
+            (property
+              name: (property_name)
+              value: (identifier))
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
-            (ERROR
-              (property
-                name: (property_name)
-                value: (boolean))
-              (group_section
-                (group_keyword)
-                name: (identifier)
-                (property
-                  name: (property_name)
-                  value: (string_literal)))
-              (preproc_else)
-              (identifier))
-            (empty_statement)
-            (preproc_endif)))))))
+            (property
+              name: (property_name)
+              value: (boolean))
+            (identifier)
+            (identifier))
+          (property
+            name: (property_name)
+            value: (string_literal)))
+        (ERROR
+          (identifier)))))
+  (ERROR))

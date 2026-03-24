@@ -20,6 +20,7 @@ page 36962 "Purchasing Scorecard"
   (pragma)
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       (preproc_not_expression
         (identifier)))
     (namespace_declaration
@@ -38,7 +39,8 @@ page 36962 "Purchasing Scorecard"
       (property
         (property_name)
         (identifier)))
-    (preproc_endif))
+    (preproc_endif
+      (preproc_close)))
   (pragma))
 
 ================================================================================
@@ -71,6 +73,7 @@ codeunit 50100 "Legacy Implementation"
   (pragma)
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       (identifier))
     (namespace_declaration
       (namespace_keyword)
@@ -95,7 +98,8 @@ codeunit 50100 "Legacy Implementation"
         (procedure_keyword)
         (identifier)
         (code_block)))
-    (preproc_endif))
+    (preproc_endif
+      (preproc_close)))
   (pragma))
 
 ================================================================================
@@ -126,6 +130,7 @@ table 50000 MyTable
   (pragma)
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       (identifier))
     (table_declaration
       (table_keyword)
@@ -142,6 +147,7 @@ table 50000 MyTable
           (property
             (property_name)
             (string_literal)))))
-    (preproc_endif))
+    (preproc_endif
+      (preproc_close)))
   (pragma)
   (pragma))

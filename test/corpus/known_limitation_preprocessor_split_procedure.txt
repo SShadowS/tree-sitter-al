@@ -27,6 +27,7 @@ codeunit 50000 "Known Limitation"
     (comment)
     (preproc_split_procedure
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       modifier: (procedure_modifier
@@ -53,7 +54,8 @@ codeunit 50000 "Known Limitation"
             (basic_type))))
       return_type: (type_specification
         (basic_type))
-      (preproc_endif)
+      (preproc_endif
+        (preproc_close))
       (var_section
         (var_keyword)
         (variable_declaration

@@ -40,6 +40,7 @@ report 1111 TestReport
         table_name: (identifier)))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (attribute_item
@@ -57,7 +58,8 @@ report 1111 TestReport
             function: (identifier)
             arguments: (argument_list
               (string_literal)))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -105,6 +107,7 @@ report 50000 "Complex Report"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (procedure
         (procedure_keyword)
@@ -123,9 +126,11 @@ report 50000 "Complex Report"
             function: (identifier)
             arguments: (argument_list
               (string_literal)))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (attribute_item
@@ -148,4 +153,5 @@ report 50000 "Complex Report"
           (assignment_statement
             left: (identifier)
             right: (integer))))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))

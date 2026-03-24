@@ -43,6 +43,7 @@ codeunit 50200 TestWhileSingle
           (do_keyword)
           body: (preproc_conditional_statement
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (assignment_statement
               left: (identifier)
@@ -53,7 +54,8 @@ codeunit 50200 TestWhileSingle
               right: (additive_expression
                 left: (identifier)
                 right: (integer)))
-            (preproc_endif)))))))
+            (preproc_endif
+              (preproc_close))))))))
 
 ================================================================================
 Preprocessor in for single statement
@@ -100,6 +102,7 @@ codeunit 50201 TestForSingle
           (do_keyword)
           body: (preproc_conditional_statement
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (call_expression
               function: (identifier)
@@ -110,7 +113,8 @@ codeunit 50201 TestForSingle
               function: (identifier)
               arguments: (argument_list
                 (identifier)))
-            (preproc_endif)))))))
+            (preproc_endif
+              (preproc_close))))))))
 
 ================================================================================
 Preprocessor in foreach single statement
@@ -163,6 +167,7 @@ codeunit 50202 TestForeachSingle
           (do_keyword)
           body: (preproc_conditional_statement
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (call_expression
               function: (identifier)
@@ -173,7 +178,8 @@ codeunit 50202 TestForeachSingle
               function: (identifier)
               arguments: (argument_list
                 (identifier)))
-            (preproc_endif)))))))
+            (preproc_endif
+              (preproc_close))))))))
 
 ================================================================================
 Preprocessor in with single statement
@@ -218,6 +224,7 @@ codeunit 50203 TestWithSingle
           (do_keyword)
           body: (preproc_conditional_statement
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (call_expression
               function: (identifier)
@@ -230,7 +237,8 @@ codeunit 50203 TestWithSingle
               arguments: (argument_list
                 (identifier)
                 (boolean)))
-            (preproc_endif)))))))
+            (preproc_endif
+              (preproc_close))))))))
 
 ================================================================================
 Preprocessor in if single statement
@@ -277,6 +285,7 @@ codeunit 50204 TestIfSingle
           (then_keyword)
           then_branch: (preproc_conditional_statement
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (call_expression
               function: (identifier)
@@ -287,7 +296,8 @@ codeunit 50204 TestIfSingle
               function: (identifier)
               arguments: (argument_list
                 (string_literal)))
-            (preproc_endif)))))))
+            (preproc_endif
+              (preproc_close))))))))
 
 ================================================================================
 Preprocessor in case single statement
@@ -337,6 +347,7 @@ codeunit 50205 TestCaseSingle
             pattern: (integer)
             body: (preproc_conditional_statement
               (preproc_if
+                (preproc_open)
                 condition: (identifier))
               (call_expression
                 function: (identifier)
@@ -347,7 +358,8 @@ codeunit 50205 TestCaseSingle
                 function: (identifier)
                 arguments: (argument_list
                   (string_literal)))
-              (preproc_endif)))
+              (preproc_endif
+                (preproc_close))))
           (case_branch
             pattern: (integer)
             body: (call_expression

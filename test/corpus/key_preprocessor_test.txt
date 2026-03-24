@@ -97,6 +97,7 @@ table 50100 TestTable
           value: (string_literal))
         (preproc_conditional
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (property
             name: (property_name)
@@ -111,7 +112,8 @@ table 50100 TestTable
           (property
             name: (property_name)
             value: (string_literal))
-          (preproc_endif))))))
+          (preproc_endif
+            (preproc_close)))))))
 
 ================================================================================
 Key with nested preprocessor conditionals
@@ -164,6 +166,7 @@ table 50101 AnotherTable
       (keys_keyword)
       (preproc_conditional_keys
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (key_declaration
@@ -179,6 +182,7 @@ table 50101 AnotherTable
             value: (string_literal))
           (preproc_conditional
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (property
               name: (property_name)
@@ -187,11 +191,13 @@ table 50101 AnotherTable
             (property
               name: (property_name)
               value: (identifier))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (property
             name: (property_name)
             value: (string_literal)))
-        (preproc_endif))
+        (preproc_endif
+          (preproc_close)))
       (key_declaration
         (key_keyword)
         name: (identifier)

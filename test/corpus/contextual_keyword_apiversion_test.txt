@@ -103,13 +103,15 @@ page 50102 "Shop Card"
           (basic_type)))
       (preproc_conditional_var
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (variable_declaration
           name: (identifier)
           type: (type_specification
             (basic_type)))
-        (preproc_endif))
+        (preproc_endif
+          (preproc_close)))
       (variable_declaration
         name: (identifier)
         type: (basic_type)

@@ -45,6 +45,7 @@ report 50000 "Test Report"
           (quoted_identifier))
         (preproc_conditional_report
           (preproc_if
+            (preproc_open)
             (preproc_not_expression
               (identifier)))
           (report_column
@@ -60,7 +61,8 @@ report 50000 "Test Report"
             (property
               (property_name)
               (string_literal)))
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (report_column
           (column_keyword)
           (identifier)

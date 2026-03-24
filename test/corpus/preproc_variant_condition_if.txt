@@ -28,6 +28,7 @@ codeunit 50000 Test
       (code_block
         (preproc_split_if_statement
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (if_keyword)
@@ -61,7 +62,8 @@ codeunit 50000 Test
               operator: (comparison_operator)
               right: (integer)))
           (then_keyword)
-          (preproc_endif)
+          (preproc_endif
+            (preproc_close))
           then_branch: (exit_statement
             (exit_keyword)
             return_value: (boolean)))))))

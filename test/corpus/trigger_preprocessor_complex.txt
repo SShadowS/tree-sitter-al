@@ -45,6 +45,7 @@ table 5880 "Test Table"
         (var_keyword)
         (preproc_conditional_var
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (variable_declaration
@@ -52,7 +53,8 @@ table 5880 "Test Table"
             type: (type_specification
               (record_type
                 reference: (quoted_identifier))))
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (variable_declaration
           name: (identifier)
           type: (type_specification
@@ -61,6 +63,7 @@ table 5880 "Test Table"
       (code_block
         (preproc_split_if_else_statement
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (if_keyword)
@@ -82,7 +85,8 @@ table 5880 "Test Table"
               arguments: (argument_list)))
           (else_keyword)
           (preproc_fragmented_else_tail
-            (preproc_endif)
+            (preproc_endif
+              (preproc_close))
             (call_expression
               function: (member_expression
                 object: (identifier)
@@ -94,9 +98,11 @@ table 5880 "Test Table"
                 member: (identifier))
               arguments: (argument_list))
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
-            (preproc_endif)))))
+            (preproc_endif
+              (preproc_close))))))
     (var_section
       (var_keyword)
       (variable_declaration
@@ -105,6 +111,7 @@ table 5880 "Test Table"
           (basic_type)))
       (preproc_conditional_var
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (variable_declaration
@@ -113,4 +120,5 @@ table 5880 "Test Table"
             (object_reference_type
               object_type: (codeunit_keyword)
               reference: (quoted_identifier))))
-        (preproc_endif)))))
+        (preproc_endif
+          (preproc_close))))))

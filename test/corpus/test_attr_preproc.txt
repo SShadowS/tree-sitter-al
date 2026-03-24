@@ -41,6 +41,7 @@ table 50000 "Test"
               (boolean)))))
       (preproc_split_procedure
         (preproc_if
+          (preproc_open)
           condition: (identifier))
         (procedure_keyword)
         name: (identifier)
@@ -66,6 +67,7 @@ table 50000 "Test"
             type: (type_specification
               (record_type
                 reference: (quoted_identifier)))))
-        (preproc_endif)
+        (preproc_endif
+          (preproc_close))
         (code_block
           (comment))))))

@@ -26,6 +26,7 @@ codeunit 50000 "Test Split If"
       (code_block
         (preproc_split_if_statement
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (if_keyword)
@@ -35,7 +36,8 @@ codeunit 50000 "Test Split If"
               (identifier)
               (identifier)))
           (then_keyword)
-          (preproc_endif)
+          (preproc_endif
+            (preproc_close))
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
@@ -146,6 +148,7 @@ codeunit 50001 "Multiple Split If"
             (exit_keyword)))
         (preproc_split_if_statement
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (if_keyword)
@@ -159,7 +162,8 @@ codeunit 50001 "Multiple Split If"
                 object: (identifier)
                 member: (identifier))))
           (then_keyword)
-          (preproc_endif)
+          (preproc_endif
+            (preproc_close))
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
@@ -179,6 +183,7 @@ codeunit 50001 "Multiple Split If"
                 member: (identifier)))))
         (preproc_split_if_statement
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (if_keyword)
@@ -186,7 +191,8 @@ codeunit 50001 "Multiple Split If"
             function: (identifier)
             arguments: (argument_list))
           (then_keyword)
-          (preproc_endif)
+          (preproc_endif
+            (preproc_close))
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list)))))))

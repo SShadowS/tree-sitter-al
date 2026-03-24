@@ -48,6 +48,7 @@ codeunit 50100 TestPreprocessor
               reference: (quoted_identifier))))
         (preproc_conditional_var
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (variable_declaration
@@ -55,7 +56,8 @@ codeunit 50100 TestPreprocessor
             type: (type_specification
               (record_type
                 reference: (quoted_identifier))))
-          (preproc_endif)))
+          (preproc_endif
+            (preproc_close))))
       (code_block
         (call_expression
           function: (member_expression
@@ -80,6 +82,7 @@ codeunit 50100 TestPreprocessor
               member: (quoted_identifier)))
           (preproc_conditional_statement
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
             (call_expression
@@ -87,7 +90,8 @@ codeunit 50100 TestPreprocessor
               arguments: (argument_list
                 (identifier)
                 (identifier)))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (call_expression
             function: (member_expression
               object: (identifier)
@@ -155,6 +159,7 @@ codeunit 50101 TestWhilePreprocessor
           body: (code_block
             (preproc_conditional_statement
               (preproc_if
+                (preproc_open)
                 condition: (identifier))
               (call_expression
                 function: (identifier)
@@ -165,7 +170,8 @@ codeunit 50101 TestWhilePreprocessor
                 function: (identifier)
                 arguments: (argument_list
                   (identifier)))
-              (preproc_endif))))))))
+              (preproc_endif
+                (preproc_close)))))))))
 
 ================================================================================
 Preprocessor directives in for loop
@@ -213,6 +219,7 @@ codeunit 50102 TestForPreprocessor
           body: (code_block
             (preproc_conditional_statement
               (preproc_if
+                (preproc_open)
                 condition: (preproc_not_expression
                   (identifier)))
               (call_expression
@@ -220,7 +227,8 @@ codeunit 50102 TestForPreprocessor
                 arguments: (argument_list
                   (string_literal)
                   (identifier)))
-              (preproc_endif))
+              (preproc_endif
+                (preproc_close)))
             (call_expression
               function: (identifier)
               arguments: (argument_list

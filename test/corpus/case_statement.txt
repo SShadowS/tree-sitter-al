@@ -153,12 +153,14 @@ codeunit 50100 Test
               (quoted_identifier))
             (preproc_conditional_case_patterns
               (preproc_if
+                (preproc_open)
                 (preproc_not_expression
                   (identifier)))
               (database_reference
                 (object_type_keyword)
                 (quoted_identifier))
-              (preproc_endif))
+              (preproc_endif
+                (preproc_close)))
             (database_reference
               (object_type_keyword)
               (quoted_identifier))

@@ -26,9 +26,9 @@ codeunit 134 "No. Series Setup Impl."
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
+    (ERROR
       (procedure_keyword)
-      name: (identifier)
+      (identifier)
       (parameter_list
         (parameter
           modifier: (var_keyword)
@@ -38,6 +38,7 @@ codeunit 134 "No. Series Setup Impl."
               reference: (quoted_identifier)))))
       (preproc_conditional_var_block
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (pragma)
@@ -47,14 +48,13 @@ codeunit 134 "No. Series Setup Impl."
             name: (identifier)
             type: (type_specification
               (basic_type))))
-        (preproc_endif
-          (MISSING "#endif")))
-      (code_block
-        (assignment_statement
-          left: (identifier)
-          right: (boolean))
+        (ERROR
+          (identifier)
+          (identifier))
         (pragma)
-        (ERROR)
-        (exit_statement
-          (exit_keyword)
-          return_value: (boolean))))))
+        (preproc_else)
+        (ERROR
+          (identifier))
+        (preproc_endif
+          (preproc_close)))
+      (identifier))))

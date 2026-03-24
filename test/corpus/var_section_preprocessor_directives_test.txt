@@ -47,13 +47,15 @@ codeunit 50100 "Test Codeunit"
               reference: (quoted_identifier))))
         (preproc_conditional_var
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (record_type
                 reference: (quoted_identifier))))
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (variable_declaration
           name: (identifier)
           type: (type_specification

@@ -78,6 +78,7 @@ codeunit 50100 MyCodeunit
     object_name: (identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (procedure
         (procedure_keyword)
@@ -88,7 +89,8 @@ codeunit 50100 MyCodeunit
         (procedure_keyword)
         name: (identifier)
         (code_block))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))
 
 ========================================================================
 Preprocessor with not condition
@@ -112,13 +114,15 @@ codeunit 50100 MyCodeunit
     object_name: (identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (procedure
         (procedure_keyword)
         name: (identifier)
         (code_block))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))
 
 ========================================================================
 Preprocessor with elif
@@ -150,6 +154,7 @@ codeunit 50100 MyCodeunit
     object_name: (identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (procedure
         (procedure_keyword)
@@ -166,7 +171,8 @@ codeunit 50100 MyCodeunit
         (procedure_keyword)
         name: (identifier)
         (code_block))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))
 
 ========================================================================
 Fragmented if-else across preprocessor (else begin #endif ... #if end; #endif)
@@ -201,6 +207,7 @@ codeunit 50100 Test
       (code_block
         (preproc_split_if_else_statement
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (if_keyword)
@@ -212,14 +219,17 @@ codeunit 50100 Test
               arguments: (argument_list)))
           (else_keyword)
           (preproc_fragmented_else_tail
-            (preproc_endif)
+            (preproc_endif
+              (preproc_close))
             (call_expression
               function: (identifier)
               arguments: (argument_list))
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
-            (preproc_endif)))))))
+            (preproc_endif
+              (preproc_close))))))))
 
 ========================================================================
 Split if-then-begin across preprocessor (#if ... if then begin #endif ... #if end; #endif)
@@ -252,6 +262,7 @@ codeunit 50100 Test
       (code_block
         (preproc_split_if_then_begin
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (if_keyword)
@@ -259,14 +270,17 @@ codeunit 50100 Test
             function: (identifier)
             arguments: (argument_list))
           (then_keyword)
-          (preproc_endif)
+          (preproc_endif
+            (preproc_close))
           (call_expression
             function: (identifier)
             arguments: (argument_list))
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
-          (preproc_endif))))))
+          (preproc_endif
+            (preproc_close)))))))
 
 ========================================================================
 ControlAddin with preprocessor after interface_procedure
@@ -297,6 +311,7 @@ controladdin Test
       (interface_procedure_suffix))
     (preproc_conditional_controladdin
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (interface_procedure
@@ -308,7 +323,8 @@ controladdin Test
             type: (type_specification
               (basic_type))))
         (interface_procedure_suffix))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))
 
 ========================================================================
 Preprocessor conditional in dataset section (around dataitems)
@@ -344,13 +360,15 @@ report 50100 Test
         table_name: (identifier))
       (preproc_conditional_dataset
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (report_dataitem
           (dataitem_keyword)
           name: (identifier)
           table_name: (quoted_identifier))
-        (preproc_endif)))))
+        (preproc_endif
+          (preproc_close))))))
 
 ========================================================================
 Preprocessor split if-statement with guard statements
@@ -402,6 +420,7 @@ codeunit 50100 Test
           then_branch: (code_block
             (preproc_guarded_statement
               (preproc_if
+                (preproc_open)
                 condition: (preproc_not_expression
                   (identifier)))
               (call_expression
@@ -413,7 +432,8 @@ codeunit 50100 Test
               condition: (unary_expression
                 operand: (identifier))
               (then_keyword)
-              (preproc_endif)
+              (preproc_endif
+                (preproc_close))
               then_branch: (call_expression
                 function: (member_expression
                   object: (identifier)

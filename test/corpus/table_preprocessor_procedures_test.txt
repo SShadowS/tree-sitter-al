@@ -46,6 +46,7 @@ table 50100 "Test Table"
           value: (string_literal))))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (attribute_item
@@ -63,7 +64,8 @@ table 50100 "Test Table"
             function: (identifier)
             arguments: (argument_list
               (string_literal)))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -115,6 +117,7 @@ table 50101 "VAT Amount Line"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (attribute_item
@@ -158,9 +161,11 @@ table 50101 "VAT Amount Line"
               object: (identifier)
               member: (identifier))
             arguments: (argument_list))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (attribute_item
@@ -192,7 +197,8 @@ table 50101 "VAT Amount Line"
           (call_expression
             function: (identifier)
             arguments: (argument_list))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -231,6 +237,7 @@ table 50102 "Test Table"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (procedure
         (procedure_keyword)
@@ -256,7 +263,8 @@ table 50102 "Test Table"
             function: (identifier)
             arguments: (argument_list
               (string_literal)))))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))
 
 ================================================================================
 Table with mixed procedures and triggers in preprocessor
@@ -311,6 +319,7 @@ table 50103 "Test Table"
           value: (string_literal))))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (trigger_declaration
@@ -332,7 +341,8 @@ table 50103 "Test Table"
         name: (identifier)
         (code_block
           (comment)))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
@@ -364,6 +374,7 @@ table 50104 "Test Table"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (procedure
@@ -374,4 +385,5 @@ table 50104 "Test Table"
             function: (identifier)
             arguments: (argument_list
               (string_literal)))))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))

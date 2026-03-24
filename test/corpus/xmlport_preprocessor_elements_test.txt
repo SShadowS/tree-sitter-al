@@ -64,6 +64,7 @@ xmlport 50100 "Export Item Data"
               member: (identifier)))
           (preproc_conditional_xmlport
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
             (xmlport_element
@@ -71,7 +72,8 @@ xmlport 50100 "Export Item Data"
               source: (member_expression
                 object: (identifier)
                 member: (quoted_identifier)))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (xmlport_element
             name: (identifier)
             source: (member_expression
@@ -134,6 +136,7 @@ xmlport 50101 "Import Data"
         name: (identifier)
         (preproc_conditional_xmlport
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (xmlport_element
             name: (identifier)
@@ -162,12 +165,14 @@ xmlport 50101 "Import Data"
               source: (member_expression
                 object: (identifier)
                 member: (identifier))))
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (xmlport_element
           name: (identifier)
           source: (identifier)
           (preproc_conditional_xmlport
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
             (xmlport_element
@@ -183,7 +188,8 @@ xmlport 50101 "Import Data"
                     function: (identifier)
                     arguments: (argument_list
                       (string_literal))))))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (xmlport_element
             name: (identifier)
             source: (member_expression
@@ -237,6 +243,7 @@ xmlport 50102 "Complex Export"
           source: (quoted_identifier)
           (preproc_conditional_xmlport
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
             (xmlport_element
@@ -246,14 +253,17 @@ xmlport 50102 "Complex Export"
                 member: (quoted_identifier))
               (preproc_conditional_xmlport
                 (preproc_if
+                  (preproc_open)
                   condition: (identifier))
                 (trigger_declaration
                   (trigger_keyword)
                   name: (identifier)
                   (code_block
                     (comment)))
-                (preproc_endif)))
-            (preproc_endif))
+                (preproc_endif
+                  (preproc_close))))
+            (preproc_endif
+              (preproc_close)))
           (xmlport_element
             name: (identifier)
             source: (member_expression

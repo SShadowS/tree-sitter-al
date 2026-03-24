@@ -25,6 +25,7 @@ codeunit 6466 "Serv. Page Management"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (var_section
@@ -39,7 +40,8 @@ codeunit 6466 "Serv. Page Management"
           name: (identifier)
           type: (type_specification
             (basic_type))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)
@@ -106,6 +108,7 @@ page 123 "Test Page"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (var_section
         (var_keyword)
@@ -124,7 +127,8 @@ page 123 "Test Page"
             (object_reference_type
               object_type: (codeunit_keyword)
               reference: (quoted_identifier)))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (layout_section
       (layout_keyword)
       (area_section
@@ -166,6 +170,7 @@ table 50001 "Test Table"
       value: (identifier))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (var_section
@@ -176,7 +181,8 @@ table 50001 "Test Table"
             (object_reference_type
               object_type: (codeunit_keyword)
               reference: (quoted_identifier)))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (fields_section
       (fields_keyword)
       (field_declaration
@@ -226,6 +232,7 @@ report 50001 "Test Report"
       value: (identifier))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (var_section
@@ -236,7 +243,8 @@ report 50001 "Test Report"
             (object_reference_type
               object_type: (codeunit_keyword)
               reference: (quoted_identifier)))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (dataset_section
       (dataset_keyword)
       (report_dataitem
@@ -281,6 +289,7 @@ xmlport 50001 "Test XMLPort"
       value: (identifier))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (var_section
         (var_keyword)
@@ -290,7 +299,8 @@ xmlport 50001 "Test XMLPort"
             (object_reference_type
               object_type: (codeunit_keyword)
               reference: (quoted_identifier)))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (schema_section
       (schema_keyword)
       (xmlport_element

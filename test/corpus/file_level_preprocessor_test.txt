@@ -16,6 +16,7 @@ codeunit 50100 "Test Codeunit"
 (source_file
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       condition: (identifier))
     (codeunit_declaration
       (codeunit_keyword)
@@ -25,7 +26,8 @@ codeunit 50100 "Test Codeunit"
         (trigger_keyword)
         name: (identifier)
         (code_block)))
-    (preproc_endif)))
+    (preproc_endif
+      (preproc_close))))
 
 ================================================================================
 File-level preprocessor with else branch
@@ -48,6 +50,7 @@ page 50100 "On-Prem Page"
 (source_file
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       condition: (identifier))
     (page_declaration
       (page_keyword)
@@ -64,7 +67,8 @@ page 50100 "On-Prem Page"
       (property
         name: (property_name)
         value: (identifier)))
-    (preproc_endif)))
+    (preproc_endif
+      (preproc_close))))
 
 ================================================================================
 File-level preprocessor with namespace
@@ -91,6 +95,7 @@ table 50100 "Test Table"
 (source_file
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       condition: (identifier))
     (namespace_declaration
       (namespace_keyword)
@@ -116,4 +121,5 @@ table 50100 "Test Table"
           type: (type_specification
             (code_type
               length: (integer))))))
-    (preproc_endif)))
+    (preproc_endif
+      (preproc_close))))

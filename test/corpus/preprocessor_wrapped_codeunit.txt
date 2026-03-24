@@ -16,6 +16,7 @@ codeunit 50000 "Test Codeunit"
 (source_file
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       (preproc_not_expression
         (identifier)))
     (codeunit_declaration
@@ -31,4 +32,5 @@ codeunit 50000 "Test Codeunit"
       (property
         (property_name)
         (string_literal)))
-    (preproc_endif)))
+    (preproc_endif
+      (preproc_close))))

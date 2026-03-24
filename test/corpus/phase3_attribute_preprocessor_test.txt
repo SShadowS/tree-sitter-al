@@ -28,6 +28,7 @@ codeunit 50100 TestRustStyleAttribute
             (boolean)))))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (procedure
         (procedure_keyword)
@@ -38,7 +39,8 @@ codeunit 50100 TestRustStyleAttribute
             type: (type_specification
               (basic_type))))
         (code_block))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))
 
 ========================================================================
 Phase 3: Attribute before preprocessor with procedure in table extension
@@ -72,12 +74,14 @@ tableextension 50100 MyTableExt extends Customer
             (boolean)))))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (procedure
         (procedure_keyword)
         name: (identifier)
         (code_block))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))
 
 ========================================================================
 Phase 3: Multiple attributes before preprocessor
@@ -116,9 +120,11 @@ codeunit 50100 TestMultipleAttrs
             (boolean)))))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (procedure
         (procedure_keyword)
         name: (identifier)
         (code_block))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))

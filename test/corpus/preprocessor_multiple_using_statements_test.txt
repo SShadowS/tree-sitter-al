@@ -27,6 +27,7 @@ page 50000 "Test Page"
       (identifier)))
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       condition: (preproc_not_expression
         (identifier)))
     (using_statement
@@ -60,7 +61,8 @@ page 50000 "Test Page"
         (identifier)
         (identifier)
         (identifier)))
-    (preproc_endif))
+    (preproc_endif
+      (preproc_close)))
   (using_statement
     (using_keyword)
     namespace: (namespace_name

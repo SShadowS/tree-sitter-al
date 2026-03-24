@@ -92,8 +92,13 @@ module.exports = grammar({
   ],
 
   externals: $ => [
-    $.property_name,            // identifier followed by = (not :=)
-    $.continue_as_identifier,   // 'continue' followed by ':=' (used as variable)
+    $.property_name,            // [0] identifier followed by = (not :=)
+    $.continue_as_identifier,   // [1] 'continue' followed by ':=' (used as variable)
+    $.preproc_open,             // [2] #if — depth++
+    $.preproc_close,            // [3] #endif — depth--
+    $.begin_keyword,            // [4] 'begin' at depth 0
+    $.end_keyword,              // [5] 'end' at depth 0
+    $.preproc_split_begin,      // [6] 'begin' at depth > 0, immediately before #endif
   ],
 
   conflicts: $ => [
@@ -2439,7 +2444,7 @@ module.exports = grammar({
     ),
 
     preproc_if: $ => seq(
-      choice('#if', '#IF', '#If'),
+      choice($.preproc_open, '#if', '#IF', '#If'),
       field('condition', choice(
         $.identifier,
         $.preproc_not_expression,
@@ -2461,7 +2466,7 @@ module.exports = grammar({
 
     preproc_else: $ => choice('#else', '#ELSE', '#Else'),
 
-    preproc_endif: $ => choice('#endif', '#ENDIF', '#Endif'),
+    preproc_endif: $ => choice($.preproc_close, '#endif', '#ENDIF', '#Endif'),
 
     // Preprocessor-split if statement: if header varies across #if/#else, body is shared
     // Pattern 1: #if COND / if (expr) then / #else / if (expr) then / #endif / body;

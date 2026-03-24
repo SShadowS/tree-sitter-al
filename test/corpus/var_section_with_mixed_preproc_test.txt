@@ -37,13 +37,15 @@ page 50100 "Test Page"
           (basic_type)))
       (preproc_conditional_var
         (preproc_if
+          (preproc_open)
           (preproc_not_expression
             (identifier)))
         (variable_declaration
           (identifier)
           (type_specification
             (basic_type)))
-        (preproc_endif))
+        (preproc_endif
+          (preproc_close)))
       (variable_declaration
         (identifier)
         (basic_type)

@@ -40,6 +40,7 @@ codeunit 50100 TestUnit
       (code_block))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (attribute_item
         attribute: (attribute_content
@@ -56,7 +57,8 @@ codeunit 50100 TestUnit
               (string_literal)
               (boolean)
               (boolean)))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (procedure
       modifier: (procedure_modifier
         (local_keyword))
@@ -83,6 +85,7 @@ codeunit 50100 TestUnit
         (comment)))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (attribute_item
         attribute: (attribute_content
@@ -91,7 +94,8 @@ codeunit 50100 TestUnit
             (attribute_argument_list
               (boolean)
               (boolean)))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (procedure
       (procedure_keyword)
       name: (identifier)

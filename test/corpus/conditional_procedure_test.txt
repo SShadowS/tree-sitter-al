@@ -25,6 +25,7 @@ codeunit 50000 "Conditional Test"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (attribute_item
@@ -43,7 +44,8 @@ codeunit 50000 "Conditional Test"
             type: (type_specification
               (option_type))))
         (code_block))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (procedure
       (procedure_keyword)
       name: (identifier)

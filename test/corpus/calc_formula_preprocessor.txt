@@ -53,6 +53,7 @@ table 50000 "Test Table"
                     (integer)))
                 (preproc_conditional_where
                   (preproc_if
+                    (preproc_open)
                     condition: (preproc_not_expression
                       (identifier)))
                   (where_condition
@@ -60,7 +61,8 @@ table 50000 "Test Table"
                     (filter_keyword)
                     value: (filter_value
                       (integer)))
-                  (preproc_endif))
+                  (preproc_endif
+                    (preproc_close)))
                 (where_condition
                   field: (quoted_identifier)
                   value: (quoted_identifier))))))

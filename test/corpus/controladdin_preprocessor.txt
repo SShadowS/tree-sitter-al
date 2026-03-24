@@ -67,6 +67,7 @@ controladdin PowerBIManagement
       (interface_procedure_suffix))
     (preproc_conditional_controladdin
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (attribute_item
@@ -85,9 +86,11 @@ controladdin PowerBIManagement
             type: (type_specification
               (text_type))))
         (interface_procedure_suffix))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (preproc_conditional_controladdin
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (interface_procedure
@@ -112,7 +115,8 @@ controladdin PowerBIManagement
             type: (type_specification
               (basic_type))))
         (interface_procedure_suffix))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))
 
 ================================================================================
 ControlAddIn with nested preprocessor blocks
@@ -144,6 +148,7 @@ controladdin TestAddin
       value: (integer))
     (preproc_conditional_controladdin
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (interface_procedure
         (procedure_keyword)
@@ -152,6 +157,7 @@ controladdin TestAddin
       (preproc_else)
       (preproc_conditional_controladdin
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (interface_procedure
@@ -163,8 +169,10 @@ controladdin TestAddin
           (procedure_keyword)
           name: (identifier)
           (interface_procedure_suffix))
-        (preproc_endif))
-      (preproc_endif))))
+        (preproc_endif
+          (preproc_close)))
+      (preproc_endif
+        (preproc_close)))))
 
 ================================================================================
 ControlAddIn ending with preprocessor block
@@ -217,6 +225,7 @@ controladdin PowerBIManagement
       (interface_procedure_suffix))
     (preproc_conditional_controladdin
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (attribute_item
@@ -260,4 +269,5 @@ controladdin PowerBIManagement
             type: (type_specification
               (text_type))))
         (interface_procedure_suffix))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))

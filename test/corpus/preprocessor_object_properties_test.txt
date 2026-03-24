@@ -22,6 +22,7 @@ codeunit 6086078 "Test Codeunit"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -29,7 +30,8 @@ codeunit 6086078 "Test Codeunit"
       (property
         name: (property_name)
         value: (identifier))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (var_section
       (var_keyword)
       (variable_declaration
@@ -71,6 +73,7 @@ codeunit 50000 "Mixed Properties"
       value: (identifier))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -85,7 +88,8 @@ codeunit 50000 "Mixed Properties"
       (property
         name: (property_name)
         value: (identifier))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (property
       name: (property_name)
       value: (keyword_identifier
@@ -128,6 +132,7 @@ table 50000 "Test Table"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -135,7 +140,8 @@ table 50000 "Test Table"
       (property
         name: (property_name)
         value: (boolean))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (fields_section
       (fields_keyword)
       (field_declaration
@@ -187,6 +193,7 @@ page 50001 "Test Page"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -205,7 +212,8 @@ page 50001 "Test Page"
             (identifier))
           (option_member
             (identifier))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (property
       name: (property_name)
       value: (quoted_identifier))
@@ -252,6 +260,7 @@ report 50002 "Test Report"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -259,7 +268,8 @@ report 50002 "Test Report"
       (property
         name: (property_name)
         value: (boolean))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (dataset_section
       (dataset_keyword)
       (report_dataitem
@@ -303,6 +313,7 @@ xmlport 50003 "Test XMLPort"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -310,7 +321,8 @@ xmlport 50003 "Test XMLPort"
       (property
         name: (property_name)
         value: (identifier))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (schema_section
       (schema_keyword)
       (xmlport_element
@@ -351,6 +363,7 @@ query 50004 "Test Query"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -358,7 +371,8 @@ query 50004 "Test Query"
       (property
         name: (property_name)
         value: (identifier))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (elements_section
       (elements_keyword)
       (query_dataitem
@@ -396,6 +410,7 @@ enum 50005 "Test Enum"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -403,7 +418,8 @@ enum 50005 "Test Enum"
       (property
         name: (property_name)
         value: (string_literal))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (enum_value_declaration
       value_id: (integer)
       value_name: (quoted_identifier)
@@ -434,6 +450,7 @@ permissionset 50006 "Test Permission Set"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -441,7 +458,8 @@ permissionset 50006 "Test Permission Set"
       (property
         name: (property_name)
         value: (string_literal))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (property
       name: (property_name)
       value: (tabledata_permission_list
@@ -471,6 +489,7 @@ controladdin "Test Control"
     object_name: (quoted_identifier)
     (preproc_conditional_controladdin
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -478,7 +497,8 @@ controladdin "Test Control"
       (property
         name: (property_name)
         value: (integer))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (property
       name: (property_name)
       value: (string_literal))))
@@ -505,6 +525,7 @@ profile "Test Profile"
     object_name: (quoted_identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -512,7 +533,8 @@ profile "Test Profile"
       (property
         name: (property_name)
         value: (boolean))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (property
       name: (property_name)
       value: (quoted_identifier))))

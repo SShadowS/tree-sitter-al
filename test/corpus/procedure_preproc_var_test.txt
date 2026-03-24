@@ -29,6 +29,7 @@ codeunit 50000 "Test Codeunit"
       name: (identifier)
       (preproc_conditional_var_block
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (var_section
@@ -44,7 +45,8 @@ codeunit 50000 "Test Codeunit"
             name: (identifier)
             type: (type_specification
               (text_type))))
-        (preproc_endif))
+        (preproc_endif
+          (preproc_close)))
       (code_block
         (call_expression
           function: (identifier)
@@ -81,6 +83,7 @@ codeunit 50001 "Test Codeunit"
       name: (identifier)
       (preproc_conditional_var_block
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (var_section
@@ -89,7 +92,8 @@ codeunit 50001 "Test Codeunit"
             name: (identifier)
             type: (type_specification
               (basic_type))))
-        (preproc_endif))
+        (preproc_endif
+          (preproc_close)))
       (code_block
         (exit_statement
           (exit_keyword))))))

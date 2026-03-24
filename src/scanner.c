@@ -1,16 +1,43 @@
 #include "tree_sitter/parser.h"
+#include <stdlib.h>
 #include <string.h>
 #include <wctype.h>
 
 enum TokenType {
-  PROPERTY_NAME,
-  CONTINUE_AS_IDENTIFIER,
+  PROPERTY_NAME = 0,
+  CONTINUE_AS_IDENTIFIER = 1,
+  PREPROC_OPEN = 2,
+  PREPROC_CLOSE = 3,
+  BEGIN_KEYWORD = 4,
+  END_KEYWORD = 5,
+  PREPROC_SPLIT_BEGIN = 6,
 };
 
-void *tree_sitter_al_external_scanner_create() { return NULL; }
-void tree_sitter_al_external_scanner_destroy(void *payload) {}
-unsigned tree_sitter_al_external_scanner_serialize(void *payload, char *buffer) { return 0; }
-void tree_sitter_al_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {}
+typedef struct {
+  uint8_t depth;  // current #if/#endif nesting depth (max 255)
+} ScannerState;
+
+void *tree_sitter_al_external_scanner_create() {
+  ScannerState *state = calloc(1, sizeof(ScannerState));
+  return state;
+}
+
+void tree_sitter_al_external_scanner_destroy(void *payload) {
+  free(payload);
+}
+
+unsigned tree_sitter_al_external_scanner_serialize(void *payload, char *buffer) {
+  ScannerState *state = (ScannerState *)payload;
+  buffer[0] = (char)state->depth;
+  return 1;
+}
+
+void tree_sitter_al_external_scanner_deserialize(
+  void *payload, const char *buffer, unsigned length
+) {
+  ScannerState *state = (ScannerState *)payload;
+  state->depth = (length > 0) ? (uint8_t)buffer[0] : 0;
+}
 
 static bool is_identifier_start(int32_t c) {
   return iswalpha(c) || c == '_';
@@ -20,11 +47,85 @@ static bool is_identifier_char(int32_t c) {
   return iswalnum(c) || c == '_';
 }
 
+// Skip whitespace and newlines (advance without marking)
+static void skip_whitespace(TSLexer *lexer) {
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
+         lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
+         lexer->lookahead == '\f') {
+    lexer->advance(lexer, true);
+  }
+}
+
+// Read a keyword case-insensitively. Returns true if matched and lookahead is
+// not an identifier character after the keyword (i.e., whole word matched).
+// Advances the lexer past the keyword on success.
+static bool read_keyword_ci(TSLexer *lexer, const char *keyword) {
+  for (int i = 0; keyword[i] != '\0'; i++) {
+    if (towlower(lexer->lookahead) != keyword[i]) return false;
+    lexer->advance(lexer, false);
+  }
+  // Ensure it's a whole-word match (not followed by identifier chars)
+  if (is_identifier_char(lexer->lookahead)) return false;
+  return true;
+}
+
+// Peek (without advancing) whether the keyword follows at current position.
+// Skips whitespace first. Returns true if the keyword is found as a whole word.
+static bool peek_keyword_ci(TSLexer *lexer, const char *keyword) {
+  // We can't actually peek without advancing in the tree-sitter API.
+  // This function advances freely — on false returns tree-sitter resets the lexer.
+  skip_whitespace(lexer);
+  for (int i = 0; keyword[i] != '\0'; i++) {
+    if (towlower(lexer->lookahead) != keyword[i]) return false;
+    lexer->advance(lexer, false);
+  }
+  if (is_identifier_char(lexer->lookahead)) return false;
+  return true;
+}
+
 bool tree_sitter_al_external_scanner_scan(
   void *payload,
   TSLexer *lexer,
   const bool *valid_symbols
 ) {
+  ScannerState *state = (ScannerState *)payload;
+
+  // Error recovery guard: when all externals are valid, the parser is in
+  // error recovery mode. Don't match anything — let the parser handle it.
+  if (valid_symbols[PROPERTY_NAME] && valid_symbols[CONTINUE_AS_IDENTIFIER] &&
+      valid_symbols[PREPROC_OPEN] && valid_symbols[PREPROC_CLOSE] &&
+      valid_symbols[BEGIN_KEYWORD] && valid_symbols[END_KEYWORD] &&
+      valid_symbols[PREPROC_SPLIT_BEGIN]) {
+    return false;
+  }
+
+  // PREPROC_OPEN (#if) and PREPROC_CLOSE (#endif) — combined dispatch
+  // We must handle both in one block because consuming '#' is irreversible
+  // within a single scanner call.
+  if (valid_symbols[PREPROC_OPEN] || valid_symbols[PREPROC_CLOSE]) {
+    skip_whitespace(lexer);
+    if (lexer->lookahead == '#') {
+      lexer->advance(lexer, false);
+      if (valid_symbols[PREPROC_OPEN] && read_keyword_ci(lexer, "if")) {
+        state->depth++;
+        lexer->result_symbol = PREPROC_OPEN;
+        return true;
+      }
+      // Note: if "if" didn't match, we consumed '#' + partial chars.
+      // But read_keyword_ci only advances while chars match, so if it
+      // returned false on the first char, we only consumed '#'.
+      // For "#endif", after failing "#if" match (first char 'e' != 'i'),
+      // the lexer is at 'e'. We can still try "endif".
+      if (valid_symbols[PREPROC_CLOSE] && read_keyword_ci(lexer, "endif")) {
+        if (state->depth > 0) state->depth--;
+        lexer->result_symbol = PREPROC_CLOSE;
+        return true;
+      }
+      // '#' was consumed but neither matched — return false
+      return false;
+    }
+  }
+
   // CONTINUE_AS_IDENTIFIER: match 'continue' followed by ':='
   if (valid_symbols[CONTINUE_AS_IDENTIFIER]) {
     // Skip leading whitespace

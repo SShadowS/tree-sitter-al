@@ -58,6 +58,7 @@ codeunit 50000 "Test Case Else"
               reference: (quoted_identifier))))
         (preproc_conditional_var
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (variable_declaration
@@ -65,7 +66,8 @@ codeunit 50000 "Test Case Else"
             type: (type_specification
               (record_type
                 reference: (quoted_identifier))))
-          (preproc_endif)))
+          (preproc_endif
+            (preproc_close))))
       (code_block
         (case_statement
           (case_keyword)
@@ -89,6 +91,7 @@ codeunit 50000 "Test Case Else"
             (else_keyword)
             (preproc_conditional_statement
               (preproc_if
+                (preproc_open)
                 condition: (identifier))
               (call_expression
                 function: (identifier)
@@ -113,7 +116,8 @@ codeunit 50000 "Test Case Else"
                   (identifier)
                   (identifier)))
               (identifier)
-              (preproc_endif))))))))
+              (preproc_endif
+                (preproc_close)))))))))
 
 ================================================================================
 Simple case with preprocessor in else
@@ -174,6 +178,7 @@ codeunit 50001 "Simple Case Test"
             (else_keyword)
             (preproc_conditional_statement
               (preproc_if
+                (preproc_open)
                 condition: (identifier))
               (call_expression
                 function: (identifier)
@@ -184,7 +189,8 @@ codeunit 50001 "Simple Case Test"
                 function: (identifier)
                 arguments: (argument_list
                   (string_literal)))
-              (preproc_endif))))))))
+              (preproc_endif
+                (preproc_close)))))))))
 
 ================================================================================
 Nested case with multiple preprocessor conditions
@@ -276,6 +282,7 @@ codeunit 50002 "Nested Case Test"
                 (else_keyword)
                 (preproc_conditional_statement
                   (preproc_if
+                    (preproc_open)
                     condition: (identifier))
                   (call_expression
                     function: (identifier)
@@ -289,11 +296,13 @@ codeunit 50002 "Nested Case Test"
                   (call_expression
                     function: (identifier)
                     arguments: (argument_list))
-                  (preproc_endif)))))
+                  (preproc_endif
+                    (preproc_close))))))
           (case_else_branch
             (else_keyword)
             (preproc_conditional_statement
               (preproc_if
+                (preproc_open)
                 condition: (preproc_not_expression
                   (identifier)))
               (identifier)
@@ -308,7 +317,8 @@ codeunit 50002 "Nested Case Test"
               (call_expression
                 function: (identifier)
                 arguments: (argument_list))
-              (preproc_endif))))))
+              (preproc_endif
+                (preproc_close)))))))
     (procedure
       modifier: (procedure_modifier
         (local_keyword))

@@ -58,6 +58,7 @@ codeunit 50000 "Test"
       (code_block
         (preproc_split_if_else_statement
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (if_keyword)
@@ -112,7 +113,8 @@ codeunit 50000 "Test"
                   right: (integer)))))
           (else_keyword)
           (preproc_fragmented_else_tail
-            (preproc_endif)
+            (preproc_endif
+              (preproc_close))
             (call_expression
               function: (member_expression
                 object: (identifier)
@@ -155,6 +157,8 @@ codeunit 50000 "Test"
                   operator: (comparison_operator)
                   right: (integer))))
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
-            (preproc_endif)))))))
+            (preproc_endif
+              (preproc_close))))))))

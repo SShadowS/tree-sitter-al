@@ -301,6 +301,7 @@ table 50102 "Test Preprocessor Keys"
           value: (boolean))
         (preproc_conditional
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (property
             name: (property_name)
@@ -315,4 +316,5 @@ table 50102 "Test Preprocessor Keys"
           (property
             name: (property_name)
             value: (string_literal))
-          (preproc_endif))))))
+          (preproc_endif
+            (preproc_close)))))))

@@ -16,6 +16,7 @@ page 50100 TestPage
 (source_file
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       condition: (identifier))
     (namespace_declaration
       (namespace_keyword)
@@ -23,7 +24,8 @@ page 50100 TestPage
         (identifier)
         (identifier)
         (identifier)))
-    (preproc_endif))
+    (preproc_endif
+      (preproc_close)))
   (page_declaration
     (page_keyword)
     object_id: (integer)
@@ -54,6 +56,7 @@ table 50100 TestTable
 (source_file
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       condition: (identifier))
     (namespace_declaration
       (namespace_keyword)
@@ -66,7 +69,8 @@ table 50100 TestTable
       namespace: (namespace_name
         (identifier)
         (identifier)))
-    (preproc_endif))
+    (preproc_endif
+      (preproc_close)))
   (table_declaration
     (table_keyword)
     object_id: (integer)
@@ -100,6 +104,7 @@ codeunit 50100 TestCodeunit
 (source_file
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       condition: (identifier))
     (pragma)
     (namespace_declaration
@@ -108,7 +113,8 @@ codeunit 50100 TestCodeunit
         (identifier)
         (identifier)
         (identifier)))
-    (preproc_endif))
+    (preproc_endif
+      (preproc_close)))
   (codeunit_declaration
     (codeunit_keyword)
     object_id: (integer)
@@ -140,6 +146,7 @@ enum 50100 TestEnum
 (source_file
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       condition: (identifier))
     (namespace_declaration
       (namespace_keyword)
@@ -148,14 +155,17 @@ enum 50100 TestEnum
         (identifier)))
     (preproc_conditional_object
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (using_statement
         (using_keyword)
         namespace: (namespace_name
           (identifier)
           (identifier)))
-      (preproc_endif))
-    (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
+    (preproc_endif
+      (preproc_close)))
   (enum_declaration
     (enum_keyword)
     object_id: (integer)
@@ -190,6 +200,7 @@ page 50102 OuterPage
 (source_file
   (preproc_conditional_object
     (preproc_if
+      (preproc_open)
       condition: (identifier))
     (namespace_declaration
       (namespace_keyword)
@@ -203,7 +214,8 @@ page 50102 OuterPage
       (property
         name: (property_name)
         value: (identifier)))
-    (preproc_endif))
+    (preproc_endif
+      (preproc_close)))
   (page_declaration
     (page_keyword)
     object_id: (integer)

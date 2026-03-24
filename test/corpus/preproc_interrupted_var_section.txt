@@ -43,6 +43,7 @@ table 50000 "Test Table"
             reference: (quoted_identifier))))
       (preproc_split_procedure
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (attribute_item
@@ -75,7 +76,8 @@ table 50000 "Test Table"
         return_value: (identifier)
         return_type: (type_specification
           (text_type))
-        (preproc_endif)
+        (preproc_endif
+          (preproc_close))
         (var_section
           (var_keyword)
           (variable_declaration
@@ -134,6 +136,7 @@ table 50001 "Complex Test"
             reference: (quoted_identifier))))
       (preproc_split_procedure
         (preproc_if
+          (preproc_open)
           condition: (identifier))
         (procedure_keyword)
         name: (identifier)
@@ -151,7 +154,8 @@ table 50001 "Complex Test"
         name: (identifier)
         return_type: (type_specification
           (basic_type))
-        (preproc_endif)
+        (preproc_endif
+          (preproc_close))
         (var_section
           (var_keyword)
           (variable_declaration
@@ -227,6 +231,7 @@ table 50002 "Edge Case Test"
           (basic_type)))
       (preproc_split_procedure
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (attribute_item
@@ -259,7 +264,8 @@ table 50002 "Edge Case Test"
               (basic_type))))
         return_type: (type_specification
           (basic_type))
-        (preproc_endif)
+        (preproc_endif
+          (preproc_close))
         (code_block
           (exit_statement
             (exit_keyword)

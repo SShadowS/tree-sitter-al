@@ -68,6 +68,7 @@ page 42 "Sales Order"
             value: (string_literal))
           (preproc_conditional
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (property
               name: (property_name)
@@ -76,7 +77,8 @@ page 42 "Sales Order"
             (property
               name: (property_name)
               value: (boolean))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (property
             name: (property_name)
             value: (string_literal))
@@ -193,6 +195,7 @@ page 50101 "Order Page"
             value: (identifier))
           (preproc_conditional
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (property
               name: (property_name)
@@ -201,9 +204,11 @@ page 50101 "Order Page"
             (property
               name: (property_name)
               value: (string_literal))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (preproc_conditional
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (property
               name: (property_name)
@@ -218,7 +223,8 @@ page 50101 "Order Page"
             (property
               name: (property_name)
               value: (boolean))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (property
             name: (property_name)
             value: (string_literal)))))))

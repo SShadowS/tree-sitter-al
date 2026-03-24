@@ -54,6 +54,7 @@ table 50000 "Test Table"
       (fieldgroups_keyword)
       (preproc_conditional_fieldgroups
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (fieldgroup_declaration
@@ -69,7 +70,8 @@ table 50000 "Test Table"
           fields: (field_list
             (quoted_identifier)
             (identifier)))
-        (preproc_endif)))))
+        (preproc_endif
+          (preproc_close))))))
 
 ================================================================================
 Fieldgroups with nested preprocessor conditionals
@@ -118,6 +120,7 @@ table 50001 "Test Table 2"
           (identifier)))
       (preproc_conditional_fieldgroups
         (preproc_if
+          (preproc_open)
           condition: (identifier))
         (fieldgroup_declaration
           (fieldgroup_keyword)
@@ -128,6 +131,7 @@ table 50001 "Test Table 2"
         (preproc_else)
         (preproc_conditional_fieldgroups
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (fieldgroup_declaration
             (fieldgroup_keyword)
@@ -140,8 +144,10 @@ table 50001 "Test Table 2"
             name: (identifier)
             fields: (field_list
               (identifier)))
-          (preproc_endif))
-        (preproc_endif)))))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_endif
+          (preproc_close))))))
 
 ================================================================================
 Fieldgroups with mixed content in preprocessor
@@ -183,6 +189,7 @@ table 50002 "Test Table 3"
           (identifier)))
       (preproc_conditional_fieldgroups
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (fieldgroup_declaration
@@ -199,4 +206,5 @@ table 50002 "Test Table 3"
           name: (identifier)
           fields: (field_list
             (identifier)))
-        (preproc_endif)))))
+        (preproc_endif
+          (preproc_close))))))

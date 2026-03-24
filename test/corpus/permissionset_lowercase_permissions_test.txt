@@ -132,6 +132,7 @@ permissionset 50101 "Conditional Permissions"
       value: (tabledata_permission_list
         (preproc_conditional_permissions
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (tabledata_permission
             (table_keyword)
@@ -150,7 +151,8 @@ permissionset 50101 "Conditional Permissions"
             (codeunit_keyword)
             table_name: (quoted_identifier)
             permission: (permission_type))
-          (preproc_endif))
+          (preproc_endif
+            (preproc_close)))
         (tabledata_permission
           (query_keyword)
           table_name: (quoted_identifier)

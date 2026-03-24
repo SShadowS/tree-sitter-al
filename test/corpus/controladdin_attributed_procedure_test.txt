@@ -163,6 +163,7 @@ controladdin "Conditional Control"
     object_name: (quoted_identifier)
     (preproc_conditional_controladdin
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (attribute_item
         attribute: (attribute_content
@@ -179,7 +180,8 @@ controladdin "Conditional Control"
             (attribute_argument_list
               (string_literal)
               (string_literal)))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (interface_procedure
       (procedure_keyword)
       name: (identifier)

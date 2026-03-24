@@ -36,6 +36,7 @@ codeunit 50000 "Test Split If-Else"
       (code_block
         (preproc_split_if_else_statement
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (if_keyword)
@@ -45,7 +46,8 @@ codeunit 50000 "Test Split If-Else"
             left: (identifier)
             right: (string_literal))
           (else_keyword)
-          (preproc_endif)
+          (preproc_endif
+            (preproc_close))
           else_branch: (assignment_statement
             left: (identifier)
             right: (string_literal)))))))
@@ -102,6 +104,7 @@ codeunit 50001 "Multiple Split If-Else"
       (code_block
         (preproc_split_if_else_statement
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (if_keyword)
@@ -126,7 +129,8 @@ codeunit 50001 "Multiple Split If-Else"
                       object: (identifier)
                       member: (identifier)))))))
           (else_keyword)
-          (preproc_endif)
+          (preproc_endif
+            (preproc_close))
           else_branch: (assignment_statement
             left: (member_expression
               object: (identifier)
@@ -144,6 +148,7 @@ codeunit 50001 "Multiple Split If-Else"
                       member: (quoted_identifier))))))))
         (preproc_split_if_else_statement
           (preproc_if
+            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (if_keyword)
@@ -158,7 +163,8 @@ codeunit 50001 "Multiple Split If-Else"
             arguments: (argument_list
               (string_literal)))
           (else_keyword)
-          (preproc_endif)
+          (preproc_endif
+            (preproc_close))
           else_branch: (call_expression
             function: (member_expression
               object: (identifier)

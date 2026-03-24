@@ -39,6 +39,7 @@ report 50100 "Test Report"
           name: (identifier)
           (preproc_conditional_var_block
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
             (var_section
@@ -54,7 +55,8 @@ report 50100 "Test Report"
                   (record_type
                     reference: (identifier)
                     (temporary_keyword)))))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (code_block
             (call_expression
               function: (identifier)
@@ -107,6 +109,7 @@ table 50100 "Test Table"
           name: (identifier)
           (preproc_conditional_var_block
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (var_section
               (var_keyword)
@@ -129,7 +132,8 @@ table 50100 "Test Table"
                   (record_type
                     reference: (identifier)
                     (temporary_keyword)))))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (code_block
             (call_expression
               function: (identifier)
@@ -169,6 +173,7 @@ page 50100 "Test Page"
       name: (identifier)
       (preproc_conditional_var_block
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (var_section
@@ -180,13 +185,15 @@ page 50100 "Test Page"
                 reference: (quoted_identifier))))
           (preproc_conditional_var
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (variable_declaration
               name: (identifier)
               type: (type_specification
                 (record_type
                   reference: (quoted_identifier))))
-            (preproc_endif)))
+            (preproc_endif
+              (preproc_close))))
         (preproc_else)
         (var_section
           (var_keyword)
@@ -195,7 +202,8 @@ page 50100 "Test Page"
             type: (type_specification
               (record_type
                 reference: (quoted_identifier)))))
-        (preproc_endif))
+        (preproc_endif
+          (preproc_close)))
       (code_block
         (call_expression
           function: (identifier)

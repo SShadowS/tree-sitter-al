@@ -29,6 +29,7 @@ page 50000 "Test Page"
       value: (identifier))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (trigger_declaration
@@ -45,7 +46,8 @@ page 50000 "Test Page"
           name: (identifier)
           type: (type_specification
             (basic_type))))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))
 
 ================================================================================
 Page with preprocessor containing trigger with var section and variable
@@ -131,6 +133,7 @@ page 30114 "Shpfy Order Attributes"
               value: (string_literal)))
           (preproc_conditional_layout
             (preproc_if
+              (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
             (page_field
@@ -144,9 +147,11 @@ page 30114 "Shpfy Order Attributes"
               (property
                 name: (property_name)
                 value: (string_literal)))
-            (preproc_endif)))))
+            (preproc_endif
+              (preproc_close))))))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (trigger_declaration
@@ -198,7 +203,8 @@ page 30114 "Shpfy Order Attributes"
           name: (identifier)
           type: (type_specification
             (basic_type))))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))
 
 ================================================================================
 Page with multiple preprocessor blocks and mixed content
@@ -262,6 +268,7 @@ page 50001 "Complex Page"
       value: (identifier))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (property
         name: (property_name)
@@ -270,7 +277,8 @@ page 50001 "Complex Page"
       (property
         name: (property_name)
         value: (string_literal))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (layout_section
       (layout_keyword)
       (area_section
@@ -283,6 +291,7 @@ page 50001 "Complex Page"
             value: (identifier)))))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (trigger_declaration
@@ -318,7 +327,8 @@ page 50001 "Complex Page"
           name: (identifier)
           type: (type_specification
             (basic_type))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (procedure
       (procedure_keyword)
       name: (identifier)

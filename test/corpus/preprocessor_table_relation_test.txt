@@ -78,6 +78,7 @@ table 123 "Test Table"
                     else_relation: (table_relation_expression
                       (preproc_conditional_table_relation
                         (preproc_if
+                          (preproc_open)
                           condition: (identifier))
                         (table_relation_expression
                           (if_table_relation
@@ -101,7 +102,8 @@ table 123 "Test Table"
                                 value: (quoted_identifier)))
                             then_relation: (simple_table_relation
                               table: (quoted_identifier))))
-                        (preproc_endif)))))))))))))
+                        (preproc_endif
+                          (preproc_close))))))))))))))
 
 ================================================================================
 Simple TableRelation with preprocessor
@@ -139,6 +141,7 @@ table 124 "Simple Test"
             length: (integer)))
         (preproc_conditional
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (property
             name: (property_name)
@@ -147,7 +150,8 @@ table 124 "Simple Test"
           (property
             name: (property_name)
             value: (quoted_identifier))
-          (preproc_endif))))))
+          (preproc_endif
+            (preproc_close)))))))
 
 ================================================================================
 TableRelation with multiple nested IFs and preprocessor
@@ -224,6 +228,7 @@ table 125 "Complex Test"
                         else_relation: (table_relation_expression
                           (preproc_conditional_table_relation
                             (preproc_if
+                              (preproc_open)
                               condition: (identifier))
                             (table_relation_expression
                               (simple_table_relation
@@ -232,7 +237,8 @@ table 125 "Complex Test"
                             (table_relation_expression
                               (simple_table_relation
                                 table: (identifier)))
-                            (preproc_endif)))))))))))
+                            (preproc_endif
+                              (preproc_close))))))))))))
         (trigger_declaration
           (trigger_keyword)
           name: (identifier)

@@ -51,12 +51,14 @@ page 50000 "Test Page"
                 value: (quoted_identifier))
               (preproc_conditional_link_values
                 (preproc_if
+                  (preproc_open)
                   condition: (preproc_not_expression
                     (identifier)))
                 (link_value
                   field: (quoted_identifier)
                   value: (quoted_identifier))
-                (preproc_endif))
+                (preproc_endif
+                  (preproc_close)))
               (link_value
                 field: (quoted_identifier)
                 value: (quoted_identifier)))))))))
@@ -108,6 +110,7 @@ page 50001 "Test Page"
                 value: (quoted_identifier))
               (preproc_conditional_link_values
                 (preproc_if
+                  (preproc_open)
                   condition: (identifier))
                 (link_value
                   field: (quoted_identifier)
@@ -116,7 +119,8 @@ page 50001 "Test Page"
                 (link_value
                   field: (quoted_identifier)
                   value: (quoted_identifier))
-                (preproc_endif))
+                (preproc_endif
+                  (preproc_close)))
               (link_value
                 field: (quoted_identifier)
                 value: (quoted_identifier)))))))))
@@ -168,12 +172,14 @@ page 50002 "Test Page"
                   table_name: (identifier)))
               (preproc_conditional_link_values
                 (preproc_if
+                  (preproc_open)
                   condition: (preproc_not_expression
                     (identifier)))
                 (link_value
                   field: (quoted_identifier)
                   value: (integer))
-                (preproc_endif))
+                (preproc_endif
+                  (preproc_close)))
               (link_value
                 field: (quoted_identifier)
                 value: (quoted_identifier)))))))))

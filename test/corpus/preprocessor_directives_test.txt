@@ -33,6 +33,7 @@ pageextension 123 "Test Extension" extends "Base Page"
       (layout_keyword)
       (preproc_conditional_layout
         (preproc_if
+          (preproc_open)
           condition: (identifier))
         (modify_modification
           target: (quoted_identifier)
@@ -45,7 +46,8 @@ pageextension 123 "Test Extension" extends "Base Page"
           (property
             name: (property_name)
             value: (boolean)))
-        (preproc_endif)))))
+        (preproc_endif
+          (preproc_close))))))
 
 ================================================================================
 Uppercase preprocessor directives in code blocks
@@ -84,6 +86,7 @@ codeunit 123 "Test Codeunit"
       (code_block
         (preproc_conditional_statement
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (assignment_statement
             left: (identifier)
@@ -92,7 +95,8 @@ codeunit 123 "Test Codeunit"
           (assignment_statement
             left: (identifier)
             right: (boolean))
-          (preproc_endif))))))
+          (preproc_endif
+            (preproc_close)))))))
 
 ================================================================================
 Mixed case preprocessor directives in code blocks
@@ -131,6 +135,7 @@ codeunit 124 "Test Codeunit Mixed"
       (code_block
         (preproc_conditional_statement
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (assignment_statement
             left: (identifier)
@@ -139,7 +144,8 @@ codeunit 124 "Test Codeunit Mixed"
           (assignment_statement
             left: (identifier)
             right: (integer))
-          (preproc_endif))))))
+          (preproc_endif
+            (preproc_close)))))))
 
 ================================================================================
 Uppercase preprocessor directives with complex conditions
@@ -185,6 +191,7 @@ codeunit 125 "Test Complex Preprocessor"
       (code_block
         (preproc_conditional_statement
           (preproc_if
+            (preproc_open)
             condition: (identifier))
           (assignment_statement
             left: (identifier)
@@ -199,4 +206,5 @@ codeunit 125 "Test Complex Preprocessor"
           (assignment_statement
             left: (identifier)
             right: (integer))
-          (preproc_endif))))))
+          (preproc_endif
+            (preproc_close)))))))

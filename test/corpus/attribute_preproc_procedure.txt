@@ -43,6 +43,7 @@ table 50000 "Test"
             reference: (quoted_identifier))))
       (preproc_split_procedure
         (preproc_if
+          (preproc_open)
           condition: (preproc_not_expression
             (identifier)))
         (attribute_item
@@ -75,7 +76,8 @@ table 50000 "Test"
         return_value: (identifier)
         return_type: (type_specification
           (text_type))
-        (preproc_endif)
+        (preproc_endif
+          (preproc_close))
         (var_section
           (var_keyword)
           (variable_declaration
@@ -128,6 +130,7 @@ table 50000 "Test Table"
           (basic_type))))
     (preproc_split_procedure
       (preproc_if
+        (preproc_open)
         condition: (identifier))
       (attribute_item
         attribute: (attribute_content
@@ -156,7 +159,8 @@ table 50000 "Test Table"
               (string_literal)))))
       (procedure_keyword)
       name: (identifier)
-      (preproc_endif)
+      (preproc_endif
+        (preproc_close))
       (code_block
         (call_expression
           function: (identifier)
@@ -206,6 +210,7 @@ table 50000 "Test"
               (boolean)))))
       (preproc_split_procedure
         (preproc_if
+          (preproc_open)
           condition: (identifier))
         (procedure_keyword)
         name: (identifier)
@@ -231,6 +236,7 @@ table 50000 "Test"
             type: (type_specification
               (record_type
                 reference: (quoted_identifier)))))
-        (preproc_endif)
+        (preproc_endif
+          (preproc_close))
         (code_block
           (comment))))))

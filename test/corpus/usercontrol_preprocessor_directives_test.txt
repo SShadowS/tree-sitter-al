@@ -43,11 +43,13 @@ page 50100 "Test Page"
           source: (quoted_identifier)
           (preproc_conditional
             (preproc_if
+              (preproc_open)
               condition: (identifier))
             (property
               name: (property_name)
               value: (boolean))
-            (preproc_endif))
+            (preproc_endif
+              (preproc_close)))
           (property
             name: (property_name)
             value: (identifier))

@@ -32,6 +32,7 @@ tableextension 123 "Test Extension" extends Item
     base_object: (identifier)
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (attribute_item
@@ -49,9 +50,11 @@ tableextension 123 "Test Extension" extends Item
             function: (identifier)
             arguments: (argument_list
               (string_literal)))))
-      (preproc_endif))
+      (preproc_endif
+        (preproc_close)))
     (preproc_conditional
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       (attribute_item
@@ -79,4 +82,5 @@ tableextension 123 "Test Extension" extends Item
               (record_type
                 reference: (identifier)))))
         (code_block))
-      (preproc_endif))))
+      (preproc_endif
+        (preproc_close)))))

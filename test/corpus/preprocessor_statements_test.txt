@@ -48,6 +48,7 @@ codeunit 50100 TestUnit
             body: (code_block
               (preproc_conditional_statement
                 (preproc_if
+                  (preproc_open)
                   condition: (identifier))
                 (call_expression
                   function: (member_expression
@@ -60,7 +61,8 @@ codeunit 50100 TestUnit
                         object: (identifier)
                         member: (quoted_identifier))
                       value: (identifier))))
-                (preproc_endif))
+                (preproc_endif
+                  (preproc_close)))
               (if_statement
                 (if_keyword)
                 condition: (comparison_expression

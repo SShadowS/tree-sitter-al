@@ -25,6 +25,7 @@ codeunit 50000 "Test Split Header"
     object_name: (quoted_identifier)
     (preproc_split_procedure
       (preproc_if
+        (preproc_open)
         condition: (preproc_not_expression
           (identifier)))
       modifier: (procedure_modifier
@@ -51,7 +52,8 @@ codeunit 50000 "Test Split Header"
             (basic_type))))
       return_type: (type_specification
         (basic_type))
-      (preproc_endif)
+      (preproc_endif
+        (preproc_close))
       (var_section
         (var_keyword)
         (variable_declaration
