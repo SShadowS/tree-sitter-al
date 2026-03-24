@@ -124,4 +124,4 @@ See [CLAUDE.md](CLAUDE.md) for detailed development guidelines including archite
 ---
 
 **Author**: Torben Leth (sshadows@sshadows.dk)
-**License**: GPL-3.0 (see [LICENSE](LICENSE))
+**License**: MIT (see [LICENSE](LICENSE))
