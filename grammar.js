@@ -2569,7 +2569,7 @@ module.exports = grammar({
     )),
 
     // Preprocessor split if-then-begin:
-    // #if COND / if EXPR then begin / #endif / statements / #if COND / end; / #endif
+    // #if COND / [preamble] if EXPR then begin / #endif / statements / #if COND / end[;] or end else begin...end; / #endif
     preproc_split_if_then_begin: $ => prec(26, seq(
       $.preproc_if,
       repeat($._statement),           // allow preamble statements before if
@@ -2582,7 +2582,16 @@ module.exports = grammar({
       $.preproc_if,
       repeat($._statement),           // allow preamble before end
       kw('end'),
-      optional(';'),
+      choice(
+        optional(';'),                // Pattern A: just end;
+        seq(                          // Pattern B: end else begin ... end;
+          $.else_keyword,
+          kw('begin'),
+          repeat($._statement),
+          kw('end'),
+          optional(';'),
+        ),
+      ),
       $.preproc_endif,
     )),
 
