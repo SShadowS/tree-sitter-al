@@ -2,8 +2,7 @@
 ; See: https://tree-sitter.github.io/tree-sitter/syntax-highlighting
 ;
 ; Keywords are exposed as named nodes (e.g., if_keyword, table_keyword) for
-; precise highlighting. Note: begin/end use kw() regex tokens and cannot be
-; matched in queries.
+; precise highlighting. begin/end are named at depth 0 via external scanner.
 
 ; =============================================================================
 ; Comments
@@ -50,6 +49,8 @@
   (asserterror_keyword)
   (to_keyword)
   (downto_keyword)
+  (begin_keyword)
+  (end_keyword)
 ] @keyword.control
 
 ; =============================================================================

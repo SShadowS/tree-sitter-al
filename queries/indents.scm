@@ -182,6 +182,9 @@
 ")" @indent.end
 "]" @indent.end
 
+; Code block begin/end tokens (at depth 0 — named nodes)
+(code_block (end_keyword) @indent.end)
+
 ; =============================================================================
 ; Indent Branch - closing tokens that should dedent to match their opener
 ; =============================================================================
