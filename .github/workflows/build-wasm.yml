@@ -111,7 +111,3 @@ jobs:
           files: artifacts/*
           make_latest: true
           prerelease: false
-
-  publish-pypi:
-    needs: [release]
-    uses: ./.github/workflows/publish-pypi.yml
