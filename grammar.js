@@ -2570,15 +2570,17 @@ module.exports = grammar({
 
     // Preprocessor split if-then-begin:
     // #if COND / if EXPR then begin / #endif / statements / #if COND / end; / #endif
-    preproc_split_if_then_begin: $ => prec(25, seq(
+    preproc_split_if_then_begin: $ => prec(26, seq(
       $.preproc_if,
+      repeat($._statement),           // allow preamble statements before if
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      kw('begin'),
+      $.preproc_split_begin,          // 'begin' at depth > 0, before #endif
       $.preproc_endif,
       repeat($._statement),
       $.preproc_if,
+      repeat($._statement),           // allow preamble before end
       kw('end'),
       optional(';'),
       $.preproc_endif,
@@ -2587,7 +2589,7 @@ module.exports = grammar({
     // Fragmented else tail: begin #endif stmts #if end; #endif
     // Used after else_keyword when the else branch's begin/end is split across preprocessor blocks
     preproc_fragmented_else_tail: $ => prec(25, seq(
-      kw('begin'),
+      $.preproc_split_begin,          // 'begin' at depth > 0, before #endif
       $.preproc_endif,
       repeat($._statement),
       $.preproc_if,

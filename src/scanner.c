@@ -144,6 +144,26 @@ bool tree_sitter_al_external_scanner_scan(
     }
   }
 
+  // PREPROC_SPLIT_BEGIN: 'begin' at depth > 0, immediately before #endif
+  //
+  // '#' handling: peek_keyword_ci is called with "#endif" (the full string
+  // including '#'). PREPROC_OPEN/CLOSE manually advance past '#' before calling
+  // read_keyword_ci("if"/"endif"). These are DIFFERENT conventions — do not mix.
+  if (valid_symbols[PREPROC_SPLIT_BEGIN] && state->depth > 0) {
+    skip_whitespace(lexer);
+    if (read_keyword_ci(lexer, "begin")) {
+      lexer->mark_end(lexer);  // token covers only 'begin'
+      if (peek_keyword_ci(lexer, "#endif")) {
+        lexer->result_symbol = PREPROC_SPLIT_BEGIN;
+        return true;
+      }
+      // 'begin' found but #endif not next — return false.
+      // tree-sitter resets lexer to pre-scan position; anonymous kw('begin') fires.
+      return false;
+    }
+    return false;
+  }
+
   // CONTINUE_AS_IDENTIFIER: match 'continue' followed by ':='
   if (valid_symbols[CONTINUE_AS_IDENTIFIER]) {
     // Skip leading whitespace

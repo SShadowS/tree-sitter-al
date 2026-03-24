@@ -12359,13 +12359,20 @@
     },
     "preproc_split_if_then_begin": {
       "type": "PREC",
-      "value": 25,
+      "value": 26,
       "content": {
         "type": "SEQ",
         "members": [
           {
             "type": "SYMBOL",
             "name": "preproc_if"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_statement"
+            }
           },
           {
             "type": "SYMBOL",
@@ -12384,11 +12391,8 @@
             "name": "then_keyword"
           },
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)begin"
-            }
+            "type": "SYMBOL",
+            "name": "preproc_split_begin"
           },
           {
             "type": "SYMBOL",
@@ -12404,6 +12408,13 @@
           {
             "type": "SYMBOL",
             "name": "preproc_if"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_statement"
+            }
           },
           {
             "type": "TOKEN",
@@ -12438,11 +12449,8 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)begin"
-            }
+            "type": "SYMBOL",
+            "name": "preproc_split_begin"
           },
           {
             "type": "SYMBOL",
