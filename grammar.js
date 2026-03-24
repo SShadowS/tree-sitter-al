@@ -1329,8 +1329,24 @@ module.exports = grammar({
       ')',
       '{',
       repeat($._layout_element),
-      '}'
+      choice(
+        '}',
+        // Split closing brace: } inside both #if and #else branches
+        $.preproc_split_brace_close,
+      )
     ),
+
+    // Split closing brace: #if content } #else content } #endif
+    // Used when a section's closing } differs across preprocessor branches.
+    preproc_split_brace_close: $ => prec(25, seq(
+      $.preproc_if,
+      repeat($._layout_element),
+      '}',
+      $.preproc_else,
+      repeat($._layout_element),
+      '}',
+      $.preproc_endif,
+    )),
 
     // group(General) { ... }
     group_section: $ => seq(
