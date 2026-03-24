@@ -2,12 +2,23 @@
 
 The external scanner (`src/scanner.c`) handles patterns that can't be expressed in JavaScript grammar alone.
 
+## Scanner State
+
+The scanner maintains a 1-byte `ScannerState` with a `depth` counter (uint8_t) tracking `#if`/`#endif` nesting. Serialized as 1 byte via lifecycle functions.
+
 ## Scanner Tokens
 
-| Token | Purpose | Lookahead |
-|-------|---------|-----------|
-| `PROPERTY_NAME` | `identifier` followed by `=` (not `:=`) — disambiguates properties from variables | Skip whitespace after identifier, check next char |
-| `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` — used as variable name | Check for `:=` after `continue` |
+| Token | Purpose | Depth Effect |
+|-------|---------|-------------|
+| `PROPERTY_NAME` | `identifier` followed by `=` (not `:=`) — property/variable disambiguation | none |
+| `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` — used as variable name | none |
+| `PREPROC_OPEN` | `#if` — with string literal fallback in grammar | depth++ |
+| `PREPROC_CLOSE` | `#endif` — with string literal fallback in grammar | depth-- |
+| `BEGIN_KEYWORD` | `begin` at depth 0 — named node for queries | none |
+| `END_KEYWORD` | `end` at depth 0 — named node for queries | none |
+| `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection | none |
+
+**Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → BEGIN_KEYWORD → END_KEYWORD → PREPROC_SPLIT_BEGIN → CONTINUE_AS_IDENTIFIER → PROPERTY_NAME
 
 ## PROPERTY_NAME Token
 

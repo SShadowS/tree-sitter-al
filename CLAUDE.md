@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 99.95% production file success rate (15,351/15,358 files), 1404 tests passing, 7 errors
+**Current Status**: 99.97% production file success rate (15,353/15,358 files), 1404 tests passing, 5 errors
 
 ## Git Commit Guidelines
 
@@ -51,7 +51,8 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 - **Scanner-based property disambiguation** — The `PROPERTY_NAME` scanner token distinguishes `identifier =` (property) from `identifier :` (variable) via 1-char lookahead
 - **Generic property rule** — ONE `property` rule handles all simple properties (vs V1's 291 individual rules)
 - **Generic preprocessor** — ONE `preproc_conditional` rule + ~12 dedicated split-construct rules (vs V1's 63)
-- **Named keyword nodes** — 80 keywords exposed as named nodes for query matching
+- **Named keyword nodes** — 82 keywords exposed as named nodes for query matching (including `begin_keyword`, `end_keyword`)
+- **Stateful scanner** — 1-byte depth counter tracks `#if`/`#endif` nesting; `begin`/`end` named at depth 0, anonymous at depth > 0
 
 **Scanner Tokens:**
 
@@ -59,6 +60,11 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 |-------|---------|
 | `PROPERTY_NAME` | `identifier` followed by `=` (not `:=`) — property/variable disambiguation |
 | `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` — used as variable name |
+| `PREPROC_OPEN` | `#if` — increments depth counter |
+| `PREPROC_CLOSE` | `#endif` — decrements depth counter |
+| `BEGIN_KEYWORD` | `begin` at depth 0 — named node for queries |
+| `END_KEYWORD` | `end` at depth 0 — named node for queries |
+| `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection |
 
 ## Property Handling
 
@@ -94,7 +100,7 @@ table_keyword: $ => kw('table'),
 procedure_keyword: $ => kw('procedure'),
 ```
 
-**begin/end MUST stay anonymous** — Named nodes (by ANY mechanism: named rules, named alias, anonymous alias) break GLR backtracking in preprocessor-split constructs. This is a fundamental tree-sitter limitation.
+**begin/end are named via stateful scanner** — `begin_keyword` and `end_keyword` are emitted at depth 0 (outside `#if` blocks). At depth > 0, the scanner declines and anonymous `kw('begin')`/`kw('end')` tokens handle preprocessor-split contexts. Direct naming via grammar rules or `alias()` still breaks GLR backtracking — the stateful scanner is the correct approach.
 
 **CamelCase keywords** use explicit case alternatives:
 ```javascript
@@ -186,9 +192,9 @@ python parse_bug_finder.py file.al debug.log
 | **Property syntax** | Complex property fails | Add dedicated complex property rule |
 | **Keyword as identifier** | Variable name conflicts | Add to `keyword_as_identifier` choice list |
 
-### Remaining 7 Errors
+### Remaining 5 Errors
 
-All 7 files have cross-branch `begin`/`end` preprocessor patterns where `begin` is inside one `#if` branch and the matching `end` is elsewhere. These require major scanner work (scanning ahead through `#if` blocks to match begin/end pairs).
+5 files have cross-branch `begin`/`end` preprocessor patterns. Pattern 2 (3 files, procedure begin variants across `#if` branches) requires a follow-on spec. The dangling-else pattern (1 file, `IncomingDocument.Table.al`) is documented in `docs/dangling-else-fix.md`.
 
 ## Parser Metrics
 
@@ -199,8 +205,8 @@ All 7 files have cross-branch `begin`/`end` preprocessor patterns where `begin` 
 | STATE_COUNT | ~5,179 |
 | grammar.js lines | ~3,000 |
 | Tests | 1,404 |
-| Production success | 99.95% (7 errors) |
-| Named keywords | 80 |
+| Production success | 99.97% (5 errors) |
+| Named keywords | 82 |
 | Query files | 5 (highlights, locals, tags, indents, folds) |
 
 ## Documentation Resources

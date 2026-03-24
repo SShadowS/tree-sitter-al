@@ -32,6 +32,6 @@ controladdin_keyword: $ => prec(10, choice(
 )),
 ```
 
-## begin/end Limitation
+## begin/end Named via Stateful Scanner
 
-`begin`/`end` MUST stay as anonymous `kw()` tokens. Any naming mechanism (named rules, alias named, alias anonymous) changes the token type and breaks GLR backtracking in preprocessor-split constructs. This is a fundamental tree-sitter limitation.
+`begin_keyword` and `end_keyword` are external scanner tokens emitted at depth 0 (outside `#if` blocks). At depth > 0, the scanner declines and anonymous `kw('begin')`/`kw('end')` tokens handle preprocessor-split contexts. Direct naming via grammar rules or `alias()` still breaks GLR backtracking — the stateful scanner is the correct approach. See `docs/superpowers/specs/2026-03-24-stateful-scanner-begin-end-design.md` for details.
