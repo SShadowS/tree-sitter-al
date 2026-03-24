@@ -145,6 +145,7 @@ module.exports = grammar({
     [$.preproc_conditional_case, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$.case_branch, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$._preproc_guard_block, $._statement],
+    [$.if_statement, $._if_statement_no_else],  // dangling-else in case branches
   ],
 
   rules: {
@@ -2728,6 +2729,19 @@ module.exports = grammar({
       ))
     )),
 
+    // If statement without else clause — used as case branch body
+    // to prevent the dangling-else problem where 'else' would be
+    // consumed by the if instead of the enclosing case statement.
+    _if_statement_no_else: $ => prec.dynamic(10, seq(
+      $.if_keyword,
+      field('condition', $._expression),
+      $.then_keyword,
+      field('then_branch', choice(
+        $.code_block,
+        $._statement,
+      )),
+    )),
+
     // --- Case ---
 
     case_statement: $ => prec(2, seq(
@@ -2758,6 +2772,7 @@ module.exports = grammar({
         ':',
         field('body', choice(
           $.code_block,
+          alias($._if_statement_no_else, $.if_statement),
           $._statement,
         ))
       ),
@@ -2784,6 +2799,7 @@ module.exports = grammar({
       ':',
       field('body', choice(
         $.code_block,
+        alias($._if_statement_no_else, $.if_statement),
         $._statement,
       ))
     )),
