@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 99.97% production file success rate (15,353/15,358 files), 1404 tests passing, 5 errors
+**Current Status**: 100% production file success rate (15,358/15,358 files), 1404 tests passing, 0 errors
 
 ## Git Commit Guidelines
 
@@ -192,10 +192,6 @@ python parse_bug_finder.py file.al debug.log
 | **Property syntax** | Complex property fails | Add dedicated complex property rule |
 | **Keyword as identifier** | Variable name conflicts | Add to `keyword_as_identifier` choice list |
 
-### Remaining 5 Errors
-
-5 files have cross-branch `begin`/`end` preprocessor patterns. Pattern 2 (3 files, procedure begin variants across `#if` branches) requires a follow-on spec. The dangling-else pattern (1 file, `IncomingDocument.Table.al`) is documented in `docs/dangling-else-fix.md`.
-
 ## Parser Metrics
 
 | Metric | Value |
@@ -205,7 +201,7 @@ python parse_bug_finder.py file.al debug.log
 | STATE_COUNT | ~5,179 |
 | grammar.js lines | ~3,000 |
 | Tests | 1,404 |
-| Production success | 99.97% (5 errors) |
+| Production success | 100% (0 errors) |
 | Named keywords | 82 |
 | Query files | 5 (highlights, locals, tags, indents, folds) |
 

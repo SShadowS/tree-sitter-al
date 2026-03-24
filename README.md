@@ -10,11 +10,12 @@ Validated against **15,358 production AL files** from the Business Central codeb
 
 | Metric | Value |
 |--------|-------|
-| **Success rate** | **99.95%** (15,351 / 15,358 files) |
+| **Success rate** | **100%** (15,358 / 15,358 files) |
 | Tests | 1,404 |
-| parser.c size | 10.6 MB |
-| grammar.js | ~3,000 lines |
-| Named keywords | 80 (queryable via highlights/tags) |
+| parser.c size | ~11 MB |
+| grammar.js | ~3,100 lines |
+| Named keywords | 82 (queryable via highlights/tags) |
+| Scanner tokens | 8 (stateful, depth-tracking) |
 | Query files | 5 (highlights, locals, tags, indents, folds) |
 
 ## Installation
@@ -61,21 +62,21 @@ The grammar was rewritten from scratch in March 2026, achieving a **10x reductio
 | Metric | V1 | V2 |
 |--------|-----|-----|
 | parser.c | 106 MB (can't push to GitHub) | **10.6 MB** |
-| Errors | 14 | **7** |
-| Success rate | 99.91% | **99.95%** |
-| Symbols | 2,249 | **724** |
-| States | 29,126 | **5,179** |
-| grammar.js | 8,500 lines | **~3,000 lines** |
+| Errors | 14 | **0** |
+| Success rate | 99.91% | **100%** |
+| Symbols | 2,249 | **~740** |
+| States | 29,126 | **~5,300** |
+| grammar.js | 8,500 lines | **~3,100 lines** |
 | Tests | 1,225 | **1,404** |
-| Keywords | invisible in queries | **80 named nodes** |
+| Keywords | invisible in queries | **82 named nodes** |
 | Query files | 3 (partial) | **5 (comprehensive)** |
 
 ### Key design decisions
 
-- **Scanner-based property disambiguation** — One `PROPERTY_NAME` scanner token replaces 291 individual property rules. The scanner checks if `identifier` is followed by `=` (not `:=`) with a single-character lookahead.
+- **Stateful external scanner** — 8 scanner tokens handle property disambiguation, depth tracking (`#if`/`#endif` nesting), named `begin`/`end` keywords at depth 0, and split-construct detection via lookahead.
 - **Parse structure, don't validate** — Accept any `Name = Value ;` as a property. Semantic validation belongs in linters/LSP servers, not the parser.
-- **Generic preprocessor** — One `preproc_conditional` rule + ~12 dedicated rules for genuinely complex split constructs, replacing 63 specialized rules.
-- **80 named keyword nodes** — All keywords except `begin`/`end` are named nodes, enabling proper syntax highlighting and code navigation queries.
+- **Generic preprocessor** — One `preproc_conditional` rule + ~15 dedicated rules for genuinely complex split constructs (begin/end, var/begin, brace-close across `#if`/`#else` branches).
+- **82 named keyword nodes** — All keywords including `begin`/`end` are named nodes, enabling proper syntax highlighting and code navigation queries.
 
 See [docs/v2-blog-post-notes.md](docs/v2-blog-post-notes.md) for the full rewrite narrative.
 
@@ -113,7 +114,7 @@ tree-sitter parse path/to/file.al -q    # Quiet (errors only)
 | File | Purpose |
 |------|---------|
 | `grammar.js` | Main grammar definition |
-| `src/scanner.c` | External scanner (property disambiguation, preprocessor) |
+| `src/scanner.c` | External scanner (8 tokens: property, depth tracking, named begin/end, split detection) |
 | `test/corpus/` | Test suite (1,404 tests) |
 | `queries/` | Syntax highlighting, code navigation, folding, indentation |
 
