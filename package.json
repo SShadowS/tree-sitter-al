@@ -2,7 +2,7 @@
   "name": "tree-sitter-al",
   "version": "2.1.0",
   "description": "AL for Business Central",
-  "repository": "github:tree-sitter/tree-sitter-al",
+  "repository": "github:SShadowS/tree-sitter-al",
   "license": "MIT",
   "author": {
     "name": "Torben Leth",
@@ -48,6 +48,9 @@
     "prestart": "tree-sitter build --wasm",
     "start": "tree-sitter playground",
     "test": "node --test bindings/node/*_test.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "tree-sitter": [
     {
