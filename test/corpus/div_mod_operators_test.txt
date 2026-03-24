@@ -29,11 +29,13 @@ codeunit 50100 TestDiv
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (multiplicative_expression
             left: (integer)
-            right: (integer)))))))
+            right: (integer)))
+        (end_keyword)))))
 
 ================================================================================
 Basic mod operator
@@ -66,11 +68,13 @@ codeunit 50100 TestMod
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (multiplicative_expression
             left: (integer)
-            right: (integer)))))))
+            right: (integer)))
+        (end_keyword)))))
 
 ================================================================================
 Div with case variations
@@ -107,6 +111,7 @@ codeunit 50100 TestDivCases
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (multiplicative_expression
@@ -121,7 +126,8 @@ codeunit 50100 TestDivCases
           left: (identifier)
           right: (multiplicative_expression
             left: (integer)
-            right: (integer)))))))
+            right: (integer)))
+        (end_keyword)))))
 
 ================================================================================
 Mod with case variations
@@ -158,6 +164,7 @@ codeunit 50100 TestModCases
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (multiplicative_expression
@@ -172,7 +179,8 @@ codeunit 50100 TestModCases
           left: (identifier)
           right: (multiplicative_expression
             left: (integer)
-            right: (integer)))))))
+            right: (integer)))
+        (end_keyword)))))
 
 ================================================================================
 Div in case statement
@@ -208,6 +216,7 @@ codeunit 50100 TestDivInCase
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (boolean)
@@ -218,7 +227,8 @@ codeunit 50100 TestDivInCase
               left: (identifier)
               right: (multiplicative_expression
                 left: (integer)
-                right: (integer)))))))))
+                right: (integer)))))
+        (end_keyword)))))
 
 ================================================================================
 Complex expressions with div and mod
@@ -253,6 +263,7 @@ codeunit 50100 TestComplexDivMod
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (additive_expression
@@ -279,7 +290,8 @@ codeunit 50100 TestComplexDivMod
             left: (multiplicative_expression
               left: (integer)
               right: (integer))
-            right: (integer)))))))
+            right: (integer)))
+        (end_keyword)))))
 
 ================================================================================
 Case true with div in assignment
@@ -336,6 +348,7 @@ table 50100 TestTable
             (record_type
               reference: (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (boolean)
@@ -387,4 +400,5 @@ table 50100 TestTable
                     right: (member_expression
                       object: (identifier)
                       member: (quoted_identifier))))
-                right: (integer)))))))))
+                right: (integer)))))
+        (end_keyword)))))

@@ -120,47 +120,58 @@ page 50000 "Test Page Triggers"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
-          right: (boolean))))
+          right: (boolean))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (quoted_identifier)))))
+            (quoted_identifier)))
+        (end_keyword)))
     (comment)
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (member_expression
             object: (identifier)
-            member: (identifier)))))
+            member: (identifier)))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (member_expression
             object: (identifier)
@@ -169,31 +180,37 @@ page 50000 "Test Page Triggers"
             enum_type: (member_expression
               object: (identifier)
               member: (identifier))
-            value: (identifier)))))
+            value: (identifier)))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (integer))
         (exit_statement
           (exit_keyword)
-          return_value: (boolean))))
+          return_value: (boolean))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (integer))
         (exit_statement
           (exit_keyword)
-          return_value: (boolean))))
+          return_value: (boolean))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (unary_expression
@@ -204,11 +221,13 @@ page 50000 "Test Page Triggers"
             return_value: (boolean)))
         (exit_statement
           (exit_keyword)
-          return_value: (boolean))))
+          return_value: (boolean))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (member_expression
@@ -223,7 +242,8 @@ page 50000 "Test Page Triggers"
                 (string_literal)))))
         (exit_statement
           (exit_keyword)
-          return_value: (boolean))))
+          return_value: (boolean))
+        (end_keyword)))
     (var_section
       (var_keyword)
       (variable_declaration

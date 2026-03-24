@@ -56,10 +56,12 @@ dotnet
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -75,7 +77,9 @@ dotnet
               (dotnet_keyword)
               reference: (identifier)))))
       (code_block
-        (comment))))
+        (begin_keyword)
+        (comment)
+        (end_keyword))))
   (dotnet_declaration
     (dotnet_keyword)
     (assembly_declaration

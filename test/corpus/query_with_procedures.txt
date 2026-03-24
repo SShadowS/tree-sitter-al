@@ -64,13 +64,15 @@ query 100 "Test Query"
           type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
             member: (identifier))
           arguments: (argument_list
             (identifier)
-            (identifier)))))))
+            (identifier)))
+        (end_keyword)))))
 
 ================================================================================
 Query with multiple procedures and tracking filter
@@ -300,6 +302,7 @@ query 7308 CalcOutstandQtyOnWhseActLine
             (record_type
               reference: (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (comparison_expression
@@ -407,4 +410,5 @@ query 7308 CalcOutstandQtyOnWhseActLine
                 (member_expression
                   object: (identifier)
                   member: (quoted_identifier))
-                (string_literal)))))))))
+                (string_literal)))))
+        (end_keyword)))))

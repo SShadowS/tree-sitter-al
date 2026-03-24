@@ -34,6 +34,7 @@ codeunit 50200 TestWhileSingle
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (while_statement
           (while_keyword)
           condition: (comparison_expression
@@ -55,7 +56,8 @@ codeunit 50200 TestWhileSingle
                 left: (identifier)
                 right: (integer)))
             (preproc_endif
-              (preproc_close))))))))
+              (preproc_close))))
+        (end_keyword)))))
 
 ================================================================================
 Preprocessor in for single statement
@@ -93,6 +95,7 @@ codeunit 50201 TestForSingle
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (for_statement
           (for_keyword)
           variable: (identifier)
@@ -114,7 +117,8 @@ codeunit 50201 TestForSingle
               arguments: (argument_list
                 (identifier)))
             (preproc_endif
-              (preproc_close))))))))
+              (preproc_close))))
+        (end_keyword)))))
 
 ================================================================================
 Preprocessor in foreach single statement
@@ -159,6 +163,7 @@ codeunit 50202 TestForeachSingle
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (foreach_statement
           (foreach_keyword)
           variable: (identifier)
@@ -179,7 +184,8 @@ codeunit 50202 TestForeachSingle
               arguments: (argument_list
                 (identifier)))
             (preproc_endif
-              (preproc_close))))))))
+              (preproc_close))))
+        (end_keyword)))))
 
 ================================================================================
 Preprocessor in with single statement
@@ -218,6 +224,7 @@ codeunit 50203 TestWithSingle
             (record_type
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (with_statement
           (with_keyword)
           record: (identifier)
@@ -238,7 +245,8 @@ codeunit 50203 TestWithSingle
                 (identifier)
                 (boolean)))
             (preproc_endif
-              (preproc_close))))))))
+              (preproc_close))))
+        (end_keyword)))))
 
 ================================================================================
 Preprocessor in if single statement
@@ -276,6 +284,7 @@ codeunit 50204 TestIfSingle
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (comparison_expression
@@ -297,7 +306,8 @@ codeunit 50204 TestIfSingle
               arguments: (argument_list
                 (string_literal)))
             (preproc_endif
-              (preproc_close))))))))
+              (preproc_close))))
+        (end_keyword)))))
 
 ================================================================================
 Preprocessor in case single statement
@@ -339,6 +349,7 @@ codeunit 50205 TestCaseSingle
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -365,4 +376,5 @@ codeunit 50205 TestCaseSingle
             body: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal)))))
+        (end_keyword)))))

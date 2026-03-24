@@ -29,6 +29,7 @@ codeunit 12345 TestCodeunit
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (member_expression
@@ -40,7 +41,8 @@ codeunit 12345 TestCodeunit
                   value: (quoted_identifier))
                 member: (identifier))
               arguments: (argument_list))
-            member: (identifier)))))))
+            member: (identifier)))
+        (end_keyword)))))
 
 ================================================================================
 Enum type reference with Names method call
@@ -75,6 +77,7 @@ codeunit 23456 NamesTestCodeunit
               element_type: (type_specification
                 (text_type))))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (call_expression
@@ -84,7 +87,8 @@ codeunit 23456 NamesTestCodeunit
                   (enum_keyword))
                 value: (quoted_identifier))
               member: (identifier))
-            arguments: (argument_list)))))))
+            arguments: (argument_list)))
+        (end_keyword)))))
 
 ================================================================================
 Multiple enum type references with different methods
@@ -131,6 +135,7 @@ codeunit 34567 MultiEnumCodeunit
               element_type: (type_specification
                 (text_type))))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (member_expression
@@ -162,7 +167,8 @@ codeunit 34567 MultiEnumCodeunit
                   (enum_keyword))
                 value: (quoted_identifier))
               member: (identifier))
-            arguments: (argument_list)))))))
+            arguments: (argument_list)))
+        (end_keyword)))))
 
 ================================================================================
 Enum type reference with case variations
@@ -197,6 +203,7 @@ codeunit 45678 CaseVariationCodeunit
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (member_expression
@@ -232,7 +239,8 @@ codeunit 45678 CaseVariationCodeunit
                   value: (quoted_identifier))
                 member: (identifier))
               arguments: (argument_list))
-            member: (identifier)))))))
+            member: (identifier)))
+        (end_keyword)))))
 
 ================================================================================
 Enum type reference with unquoted identifier
@@ -265,6 +273,7 @@ codeunit 56789 UnquotedEnumCodeunit
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (member_expression
@@ -276,4 +285,5 @@ codeunit 56789 UnquotedEnumCodeunit
                   value: (identifier))
                 member: (identifier))
               arguments: (argument_list))
-            member: (identifier)))))))
+            member: (identifier)))
+        (end_keyword)))))

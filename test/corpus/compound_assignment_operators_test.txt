@@ -48,6 +48,7 @@ codeunit 123 "Test Compound Assignment"
           type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (integer))
@@ -80,4 +81,5 @@ codeunit 123 "Test Compound Assignment"
           right: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (identifier))))))))
+              (identifier))))
+        (end_keyword)))))

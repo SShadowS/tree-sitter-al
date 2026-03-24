@@ -40,6 +40,7 @@ codeunit 123 TestCodeunit
               object_type: (enum_keyword)
               reference: (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -52,10 +53,12 @@ codeunit 123 TestCodeunit
                 value: (quoted_identifier))
               value: (identifier))
             body: (code_block
+              (begin_keyword)
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal)))))
+                  (string_literal)))
+              (end_keyword)))
           (case_branch
             pattern: (qualified_enum_value
               enum_type: (qualified_enum_value
@@ -64,10 +67,13 @@ codeunit 123 TestCodeunit
                 value: (quoted_identifier))
               value: (identifier))
             body: (code_block
+              (begin_keyword)
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))))))
+                  (string_literal)))
+              (end_keyword))))
+        (end_keyword)))))
 
 ================================================================================
 Simple enum case pattern test
@@ -105,6 +111,7 @@ codeunit 124 SimpleTest
               object_type: (enum_keyword)
               reference: (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -119,4 +126,5 @@ codeunit 124 SimpleTest
             body: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal)))))
+        (end_keyword)))))

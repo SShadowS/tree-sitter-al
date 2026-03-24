@@ -41,6 +41,7 @@ codeunit 50100 "Database Reference Test"
           (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (comment)
         (call_expression
           (member_expression
@@ -88,4 +89,5 @@ codeunit 50100 "Database Reference Test"
           (argument_list
             (database_reference
               (object_type_keyword)
-              (quoted_identifier))))))))
+              (quoted_identifier))))
+        (end_keyword)))))

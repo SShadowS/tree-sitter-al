@@ -34,6 +34,7 @@ codeunit 50000 "Range Test"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           left: (identifier)
@@ -41,7 +42,8 @@ codeunit 50000 "Range Test"
           right: (list_literal
             (range_expression
               left: (string_literal)
-              right: (string_literal))))))))
+              right: (string_literal))))
+        (end_keyword)))))
 
 ================================================================================
 IN expression with multiple ranges
@@ -79,6 +81,7 @@ codeunit 50001 "Multiple Range Test"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           left: (identifier)
@@ -92,7 +95,8 @@ codeunit 50001 "Multiple Range Test"
               right: (string_literal))
             (range_expression
               left: (string_literal)
-              right: (string_literal))))))))
+              right: (string_literal))))
+        (end_keyword)))))
 
 ================================================================================
 IN expression with individual values
@@ -130,6 +134,7 @@ codeunit 50002 "Value List Test"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           left: (identifier)
@@ -139,7 +144,8 @@ codeunit 50002 "Value List Test"
             (integer)
             (integer)
             (integer)
-            (integer)))))))
+            (integer)))
+        (end_keyword)))))
 
 ================================================================================
 Range operator in other contexts
@@ -186,6 +192,7 @@ codeunit 50003 "Range Context Test"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (integer))
@@ -200,7 +207,8 @@ codeunit 50003 "Range Context Test"
             left: (identifier)
             right: (additive_expression
               left: (identifier)
-              right: (identifier))))))
+              right: (identifier))))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -211,9 +219,11 @@ codeunit 50003 "Range Context Test"
           type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
-          right: (string_literal))))))
+          right: (string_literal))
+        (end_keyword)))))
 
 ================================================================================
 Complex IN expression with field access
@@ -252,6 +262,7 @@ codeunit 50004 "Field Access Test"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           left: (member_expression
@@ -262,4 +273,5 @@ codeunit 50004 "Field Access Test"
             (range_expression
               left: (string_literal)
               right: (string_literal))
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))

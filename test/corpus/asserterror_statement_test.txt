@@ -21,12 +21,14 @@ codeunit 50100 "Test Asserterror"
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (asserterror_statement
           (asserterror_keyword)
           body: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))))
+              (string_literal))))
+        (end_keyword)))))
 
 ================================================================================
 Asserterror with method call
@@ -60,6 +62,7 @@ codeunit 50101 "Test Asserterror Methods"
             (record_type
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (asserterror_statement
           (asserterror_keyword)
           body: (call_expression
@@ -68,7 +71,8 @@ codeunit 50101 "Test Asserterror Methods"
               member: (identifier))
             arguments: (argument_list
               (quoted_identifier)
-              (string_literal))))))))
+              (string_literal))))
+        (end_keyword)))))
 
 ================================================================================
 Asserterror with enum value
@@ -109,6 +113,7 @@ codeunit 50102 "Test Asserterror Enum"
               object_type: (enum_keyword)
               reference: (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (asserterror_statement
           (asserterror_keyword)
           body: (call_expression
@@ -119,7 +124,8 @@ codeunit 50102 "Test Asserterror Enum"
               (quoted_identifier)
               (qualified_enum_value
                 enum_type: (identifier)
-                value: (identifier)))))))))
+                value: (identifier)))))
+        (end_keyword)))))
 
 ================================================================================
 Asserterror in test procedure
@@ -164,6 +170,7 @@ codeunit 50103 "Unit Test Example"
               object_type: (codeunit_keyword)
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (asserterror_statement
           (asserterror_keyword)
           body: (call_expression
@@ -175,7 +182,8 @@ codeunit 50103 "Unit Test Example"
             object: (identifier)
             member: (identifier))
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ================================================================================
 Asserterror with code block
@@ -212,13 +220,17 @@ codeunit 50104 "Test Asserterror Block"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (asserterror_statement
           (asserterror_keyword)
           body: (code_block
+            (begin_keyword)
             (assignment_statement
               left: (identifier)
               right: (integer))
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (quoted_identifier)))))))))
+                (quoted_identifier)))
+            (end_keyword)))
+        (end_keyword)))))

@@ -28,11 +28,13 @@ codeunit 50100 "Test Codeunit"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (multiline_comment)
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ================================================================================
 Multiline comment with special characters
@@ -102,6 +104,7 @@ codeunit 50101 "Comment Test"
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
           arguments: (argument_list
@@ -115,4 +118,5 @@ codeunit 50101 "Comment Test"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))

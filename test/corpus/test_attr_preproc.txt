@@ -70,4 +70,6 @@ table 50000 "Test"
         (preproc_endif
           (preproc_close))
         (code_block
-          (comment))))))
+          (begin_keyword)
+          (comment)
+          (end_keyword))))))

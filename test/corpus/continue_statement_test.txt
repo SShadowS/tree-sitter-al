@@ -29,6 +29,7 @@ codeunit 50100 Test
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (for_statement
           (for_keyword)
           variable: (identifier)
@@ -44,7 +45,8 @@ codeunit 50100 Test
               right: (integer))
             (then_keyword)
             then_branch: (continue_statement
-              (continue_keyword))))))))
+              (continue_keyword))))
+        (end_keyword)))))
 
 ========================================================================
 Continue statement in repeat loop
@@ -69,12 +71,14 @@ codeunit 50100 Test
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (repeat_statement
           (repeat_keyword)
           (continue_statement
             (continue_keyword))
           (until_keyword)
-          condition: (boolean))))))
+          condition: (boolean))
+        (end_keyword)))))
 
 ========================================================================
 Continue statement case-insensitive (CONTINUE)
@@ -97,5 +101,7 @@ codeunit 50100 Test
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (continue_statement
-          (continue_keyword))))))
+          (continue_keyword))
+        (end_keyword)))))

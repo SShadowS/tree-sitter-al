@@ -40,6 +40,7 @@ codeunit 50100 "Test Foreach"
               value_type: (type_specification
                 (text_type))))))
       (code_block
+        (begin_keyword)
         (foreach_statement
           (foreach_keyword)
           variable: (quoted_identifier)
@@ -51,10 +52,13 @@ codeunit 50100 "Test Foreach"
             arguments: (argument_list))
           (do_keyword)
           body: (code_block
+            (begin_keyword)
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (quoted_identifier)))))))))
+                (quoted_identifier)))
+            (end_keyword)))
+        (end_keyword)))))
 
 ================================================================================
 Foreach with unquoted identifier (existing support)
@@ -89,6 +93,7 @@ codeunit 50101 "Test Foreach Standard"
             (record_type
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (foreach_statement
           (foreach_keyword)
           variable: (identifier)
@@ -98,7 +103,8 @@ codeunit 50101 "Test Foreach Standard"
           body: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (identifier))))))))
+              (identifier))))
+        (end_keyword)))))
 
 ================================================================================
 Foreach with complex dictionary operations
@@ -166,6 +172,7 @@ codeunit 50102 "Dictionary Operations"
           type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (comparison_expression
@@ -206,6 +213,7 @@ codeunit 50102 "Dictionary Operations"
             arguments: (argument_list))
           (do_keyword)
           body: (code_block
+            (begin_keyword)
             (if_statement
               (if_keyword)
               condition: (unary_expression
@@ -242,4 +250,6 @@ codeunit 50102 "Dictionary Operations"
                   (identifier)
                   (quoted_identifier)
                   (identifier)
-                  (identifier))))))))))
+                  (identifier))))
+            (end_keyword)))
+        (end_keyword)))))

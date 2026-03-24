@@ -66,6 +66,7 @@ codeunit 50100 "XMLport Example"
               object_type: (xmlport_keyword)
               reference: (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
@@ -84,7 +85,8 @@ codeunit 50100 "XMLport Example"
           function: (member_expression
             object: (identifier)
             member: (identifier))
-          arguments: (argument_list))))))
+          arguments: (argument_list))
+        (end_keyword)))))
 
 ================================================================================
 XMLport type with integer reference
@@ -119,8 +121,10 @@ page 50200 "Test Page"
               object_type: (xmlport_keyword)
               reference: (integer)))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
             member: (identifier))
-          arguments: (argument_list))))))
+          arguments: (argument_list))
+        (end_keyword)))))

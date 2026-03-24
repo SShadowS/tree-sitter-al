@@ -84,6 +84,7 @@ codeunit 123 "Test Codeunit"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (preproc_conditional_statement
           (preproc_if
             (preproc_open)
@@ -96,7 +97,8 @@ codeunit 123 "Test Codeunit"
             left: (identifier)
             right: (boolean))
           (preproc_endif
-            (preproc_close)))))))
+            (preproc_close)))
+        (end_keyword)))))
 
 ================================================================================
 Mixed case preprocessor directives in code blocks
@@ -133,6 +135,7 @@ codeunit 124 "Test Codeunit Mixed"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (preproc_conditional_statement
           (preproc_if
             (preproc_open)
@@ -145,7 +148,8 @@ codeunit 124 "Test Codeunit Mixed"
             left: (identifier)
             right: (integer))
           (preproc_endif
-            (preproc_close)))))))
+            (preproc_close)))
+        (end_keyword)))))
 
 ================================================================================
 Uppercase preprocessor directives with complex conditions
@@ -189,6 +193,7 @@ codeunit 125 "Test Complex Preprocessor"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (preproc_conditional_statement
           (preproc_if
             (preproc_open)
@@ -207,4 +212,5 @@ codeunit 125 "Test Complex Preprocessor"
             left: (identifier)
             right: (integer))
           (preproc_endif
-            (preproc_close)))))))
+            (preproc_close)))
+        (end_keyword)))))

@@ -59,6 +59,7 @@ page 116 "Sales Cr. Memo Subform"
             (trigger_keyword)
             name: (identifier)
             (code_block
+              (begin_keyword)
               (if_statement
                 (if_keyword)
                 condition: (comparison_expression
@@ -74,7 +75,8 @@ page 116 "Sales Cr. Memo Subform"
                   (exit_keyword)))
               (call_expression
                 function: (identifier)
-                arguments: (argument_list))))
+                arguments: (argument_list))
+              (end_keyword)))
           (trigger_declaration
             (trigger_keyword)
             name: (identifier)
@@ -84,12 +86,14 @@ page 116 "Sales Cr. Memo Subform"
                 type: (type_specification
                   (basic_type))))
             (code_block
+              (begin_keyword)
               (call_expression
                 function: (member_expression
                   object: (identifier)
                   member: (identifier))
                 arguments: (argument_list
-                  (identifier))))))))))
+                  (identifier)))
+              (end_keyword))))))))
 
 ================================================================================
 OnAfterLookup with different parameter types
@@ -143,10 +147,12 @@ page 50000 "Test Page"
                 type: (type_specification
                   (basic_type))))
             (code_block
+              (begin_keyword)
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (identifier))))))
+                  (identifier)))
+              (end_keyword))))
         (page_field
           name: (identifier)
           source: (identifier)
@@ -159,4 +165,6 @@ page 50000 "Test Page"
                 type: (type_specification
                   (basic_type))))
             (code_block
-              (comment))))))))
+              (begin_keyword)
+              (comment)
+              (end_keyword))))))))

@@ -93,6 +93,7 @@ codeunit 50100 "Built-in Functions Test"
       (trigger_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           (identifier)
           (argument_list))
@@ -107,7 +108,8 @@ codeunit 50100 "Built-in Functions Test"
           (argument_list))
         (call_expression
           (identifier)
-          (argument_list))))
+          (argument_list))
+        (end_keyword)))
     (procedure
       (procedure_modifier
         (local_keyword))
@@ -128,6 +130,7 @@ codeunit 50100 "Built-in Functions Test"
           (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (identifier))
@@ -157,7 +160,8 @@ codeunit 50100 "Built-in Functions Test"
             (argument_list
               (integer)
               (integer)
-              (integer))))))
+              (integer))))
+        (end_keyword)))
     (procedure
       (procedure_modifier
         (local_keyword))
@@ -186,6 +190,7 @@ codeunit 50100 "Built-in Functions Test"
           (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (identifier))
@@ -200,7 +205,8 @@ codeunit 50100 "Built-in Functions Test"
           (identifier))
         (assignment_statement
           (identifier)
-          (identifier))))
+          (identifier))
+        (end_keyword)))
     (procedure
       (procedure_modifier
         (local_keyword))
@@ -217,6 +223,7 @@ codeunit 50100 "Built-in Functions Test"
           (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (call_expression
@@ -247,7 +254,8 @@ codeunit 50100 "Built-in Functions Test"
             (identifier)
             (argument_list
               (integer)
-              (integer))))))
+              (integer))))
+        (end_keyword)))
     (procedure
       (procedure_modifier
         (local_keyword))
@@ -264,6 +272,7 @@ codeunit 50100 "Built-in Functions Test"
           (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (call_expression
@@ -295,7 +304,8 @@ codeunit 50100 "Built-in Functions Test"
           (call_expression
             (identifier)
             (argument_list
-              (integer))))))
+              (integer))))
+        (end_keyword)))
     (procedure
       (procedure_modifier
         (local_keyword))
@@ -327,6 +337,7 @@ codeunit 50100 "Built-in Functions Test"
           (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (call_expression
@@ -354,4 +365,5 @@ codeunit 50100 "Built-in Functions Test"
           (call_expression
             (identifier)
             (argument_list
-              (identifier))))))))
+              (identifier))))
+        (end_keyword)))))

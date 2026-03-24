@@ -31,10 +31,12 @@ page 50100 "Test Page"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (end_keyword)))
     (var_section
       (var_keyword)
       (variable_declaration
@@ -98,6 +100,7 @@ page 703 "Merge Duplicate Subform"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (comparison_expression
@@ -112,7 +115,8 @@ page 703 "Merge Duplicate Subform"
               value: (identifier))))
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (end_keyword)))
     (var_section
       (var_keyword)
       (variable_declaration
@@ -143,19 +147,22 @@ page 703 "Merge Duplicate Subform"
               reference: (quoted_identifier)
               (temporary_keyword)))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
             member: (identifier))
           arguments: (argument_list
             (identifier)
-            (boolean)))))
+            (boolean)))
+        (end_keyword)))
     (procedure
       modifier: (procedure_modifier
         (local_keyword))
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (identifier)
@@ -166,4 +173,5 @@ page 703 "Merge Duplicate Subform"
           (else_keyword)
           else_branch: (assignment_statement
             left: (identifier)
-            right: (string_literal)))))))
+            right: (string_literal)))
+        (end_keyword)))))

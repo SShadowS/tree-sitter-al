@@ -41,6 +41,7 @@ codeunit 50000 "AL Built-in Functions Test"
             (record_type
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (comment)
         (call_expression
           function: (member_expression
@@ -72,7 +73,8 @@ codeunit 50000 "AL Built-in Functions Test"
                 object: (identifier)
                 member: (identifier))
               operator: (comparison_operator)
-              right: (integer))))))
+              right: (integer))))
+        (end_keyword)))
     (var_section
       (var_keyword)
       (variable_declaration

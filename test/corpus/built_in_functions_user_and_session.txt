@@ -54,6 +54,7 @@ codeunit 50100 "Built-in Functions Test"
           (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (call_expression
@@ -73,4 +74,5 @@ codeunit 50100 "Built-in Functions Test"
           (keyword_identifier)
           (call_expression
             (identifier)
-            (argument_list)))))))
+            (argument_list)))
+        (end_keyword)))))

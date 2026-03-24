@@ -39,6 +39,7 @@ codeunit 50100 TestUnit
             (record_type
               reference: (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (boolean)
@@ -46,6 +47,7 @@ codeunit 50100 TestUnit
           (case_branch
             pattern: (boolean)
             body: (code_block
+              (begin_keyword)
               (preproc_conditional_statement
                 (preproc_if
                   (preproc_open)
@@ -82,4 +84,6 @@ codeunit 50100 TestUnit
                 then_branch: (call_expression
                   function: (identifier)
                   arguments: (argument_list
-                    (quoted_identifier)))))))))))
+                    (quoted_identifier))))
+              (end_keyword))))
+        (end_keyword)))))

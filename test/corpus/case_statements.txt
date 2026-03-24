@@ -32,6 +32,7 @@ table 50001 "Test Table"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -41,23 +42,28 @@ table 50001 "Test Table"
               enum_type: (identifier)
               value: (identifier))
             body: (code_block
+              (begin_keyword)
               (assignment_statement
                 left: (identifier)
                 right: (integer))
               (assignment_statement
                 left: (identifier)
-                right: (integer))))
+                right: (integer))
+              (end_keyword)))
           (case_branch
             pattern: (qualified_enum_value
               enum_type: (identifier)
               value: (identifier))
             body: (code_block
+              (begin_keyword)
               (assignment_statement
                 left: (identifier)
                 right: (integer))
               (assignment_statement
                 left: (identifier)
-                right: (integer)))))))))
+                right: (integer))
+              (end_keyword))))
+        (end_keyword)))))
 
 ==================
 Case with string literals
@@ -87,6 +93,7 @@ table 50002 "Test Table"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -100,7 +107,8 @@ table 50002 "Test Table"
             pattern: (string_literal)
             body: (assignment_statement
               left: (identifier)
-              right: (integer))))))))
+              right: (integer))))
+        (end_keyword)))))
 
 ==================
 Case with multiple patterns per branch
@@ -133,6 +141,7 @@ table 50003 "Test Table"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -158,12 +167,15 @@ table 50003 "Test Table"
               enum_type: (identifier)
               value: (identifier))
             body: (code_block
+              (begin_keyword)
               (assignment_statement
                 left: (identifier)
                 right: (integer))
               (assignment_statement
                 left: (identifier)
-                right: (string_literal)))))))))
+                right: (string_literal))
+              (end_keyword))))
+        (end_keyword)))))
 
 ==================
 Case with else clause
@@ -195,6 +207,7 @@ table 50004 "Test Table"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -213,7 +226,8 @@ table 50004 "Test Table"
             (else_keyword)
             (assignment_statement
               left: (identifier)
-              right: (integer))))))))
+              right: (integer))))
+        (end_keyword)))))
 
 ==================
 Case with else block
@@ -245,6 +259,7 @@ table 50005 "Test Table"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -259,9 +274,12 @@ table 50005 "Test Table"
           (case_else_branch
             (else_keyword)
             (code_block
+              (begin_keyword)
               (assignment_statement
                 left: (identifier)
                 right: (integer))
               (assignment_statement
                 left: (identifier)
-                right: (string_literal)))))))))
+                right: (string_literal))
+              (end_keyword))))
+        (end_keyword)))))

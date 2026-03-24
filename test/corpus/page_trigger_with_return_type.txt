@@ -32,6 +32,7 @@ page 50000 "Test Page"
       (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           (comparison_expression
@@ -53,4 +54,5 @@ page 50000 "Test Page"
               (boolean))))
         (exit_statement
           (exit_keyword)
-          (boolean))))))
+          (boolean))
+        (end_keyword)))))

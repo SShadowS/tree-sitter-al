@@ -36,6 +36,7 @@ table 50000 "Test Table"
           (trigger_keyword)
           name: (identifier)
           (code_block
+            (begin_keyword)
             (if_statement
               (if_keyword)
               condition: (logical_expression
@@ -58,4 +59,5 @@ table 50000 "Test Table"
                   (quoted_identifier)
                   (qualified_enum_value
                     enum_type: (identifier)
-                    value: (identifier)))))))))))
+                    value: (identifier)))))
+            (end_keyword)))))))

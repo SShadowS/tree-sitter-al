@@ -64,9 +64,11 @@ page 332 "No. Series Generation"
               (trigger_keyword)
               name: (identifier)
               (code_block
+                (begin_keyword)
                 (assignment_statement
                   left: (identifier)
-                  right: (identifier))))))))))
+                  right: (identifier))
+                (end_keyword)))))))))
 
 ================================================================================
 PromptGuide area case variations
@@ -206,10 +208,12 @@ page 500 "Copilot Assistant"
               (trigger_keyword)
               name: (identifier)
               (code_block
+                (begin_keyword)
                 (call_expression
                   function: (identifier)
                   arguments: (argument_list
-                    (string_literal)))))))
+                    (string_literal)))
+                (end_keyword)))))
         (action_group_section
           (group_keyword)
           name: (identifier)

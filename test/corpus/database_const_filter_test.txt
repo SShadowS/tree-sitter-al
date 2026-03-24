@@ -143,6 +143,7 @@ codeunit 50200 "Database References"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (comment)
         (assignment_statement
           left: (identifier)
@@ -183,4 +184,5 @@ codeunit 50200 "Database References"
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))))
+              (string_literal))))
+        (end_keyword)))))

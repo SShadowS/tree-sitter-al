@@ -26,10 +26,12 @@ codeunit 50100 "My Test Codeunit"
       (trigger_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           (identifier)
           (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       (identifier)
@@ -45,8 +47,10 @@ codeunit 50100 "My Test Codeunit"
       (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
           (additive_expression
             (identifier)
-            (identifier)))))))
+            (identifier)))
+        (end_keyword)))))

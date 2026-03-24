@@ -113,6 +113,7 @@ table 6175314 "CDO Extension App Page"
                 (record_type
                   reference: (quoted_identifier)))))
           (code_block
+            (begin_keyword)
             (call_expression
               function: (identifier)
               arguments: (argument_list
@@ -161,7 +162,8 @@ table 6175314 "CDO Extension App Page"
                     (call_expression
                       function: (identifier)
                       arguments: (argument_list
-                        (quoted_identifier))))))))))
+                        (quoted_identifier)))))))
+            (end_keyword))))
       (field_declaration
         id: (integer)
         name: (quoted_identifier)

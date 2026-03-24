@@ -45,9 +45,11 @@ reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
           (trigger_keyword)
           name: (identifier)
           (code_block
+            (begin_keyword)
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list))
+            (end_keyword)))))))
 
 ================================================================================
 Report extension with rendering section
@@ -214,9 +216,11 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
           (trigger_keyword)
           name: (identifier)
           (code_block
+            (begin_keyword)
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))
+              arguments: (argument_list))
+            (end_keyword)))))
     (var_section
       (var_keyword)
       (variable_declaration
@@ -229,4 +233,6 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
       (procedure_keyword)
       name: (identifier)
       (code_block
-        (comment)))))
+        (begin_keyword)
+        (comment)
+        (end_keyword)))))

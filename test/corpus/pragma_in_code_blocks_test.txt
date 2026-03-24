@@ -34,11 +34,13 @@ codeunit 50100 TestUnit
           type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (identifier)
           (then_keyword)
           then_branch: (code_block
+            (begin_keyword)
             (pragma)
             (assignment_statement
               left: (identifier)
@@ -48,4 +50,6 @@ codeunit 50100 TestUnit
                   member: (identifier))
                 arguments: (argument_list
                   (boolean))))
-            (pragma)))))))
+            (pragma)
+            (end_keyword)))
+        (end_keyword)))))

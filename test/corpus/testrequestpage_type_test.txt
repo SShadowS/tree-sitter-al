@@ -60,7 +60,9 @@ codeunit 50000 "TestRequestPage Test"
           type: (type_specification
             (object_reference_type
               reference: (quoted_identifier)))))
-      (code_block))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)))
@@ -74,7 +76,9 @@ codeunit 50000 "TestRequestPage Test"
           type: (type_specification
             (object_reference_type
               reference: (identifier)))))
-      (code_block))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)))
@@ -88,7 +92,9 @@ codeunit 50000 "TestRequestPage Test"
           type: (type_specification
             (object_reference_type
               reference: (integer)))))
-      (code_block))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)))
@@ -109,12 +115,14 @@ codeunit 50000 "TestRequestPage Test"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
             member: (identifier))
           arguments: (argument_list
-            (identifier)))))
+            (identifier)))
+        (end_keyword)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)))
@@ -134,4 +142,6 @@ codeunit 50000 "TestRequestPage Test"
           type: (type_specification
             (object_reference_type
               reference: (quoted_identifier)))))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))

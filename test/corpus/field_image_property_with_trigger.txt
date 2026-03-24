@@ -83,6 +83,7 @@ page 123 "Test Page"
                       object_type: (page_keyword)
                       reference: (quoted_identifier)))))
               (code_block
+                (begin_keyword)
                 (call_expression
                   function: (member_expression
                     object: (identifier)
@@ -92,4 +93,5 @@ page 123 "Test Page"
                   function: (member_expression
                     object: (identifier)
                     member: (identifier))
-                  arguments: (argument_list))))))))))
+                  arguments: (argument_list))
+                (end_keyword)))))))))

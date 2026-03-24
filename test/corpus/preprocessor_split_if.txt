@@ -24,6 +24,7 @@ codeunit 50000 "Test Split If"
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (preproc_split_if_statement
           (preproc_if
             (preproc_open)
@@ -48,7 +49,8 @@ codeunit 50000 "Test Split If"
                 left: (identifier)
                 right: (integer))
               (identifier)
-              (identifier))))))))
+              (identifier))))
+        (end_keyword)))))
 
 ================================================================================
 Multiple preprocessor split if statements
@@ -102,6 +104,7 @@ codeunit 50001 "Multiple Split If"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
@@ -195,4 +198,5 @@ codeunit 50001 "Multiple Split If"
             (preproc_close))
           then_branch: (call_expression
             function: (identifier)
-            arguments: (argument_list)))))))
+            arguments: (argument_list)))
+        (end_keyword)))))

@@ -88,7 +88,9 @@ page 50001 "Test Page Actions"
               (trigger_keyword)
               name: (identifier)
               (code_block
-                (comment)))))))
+                (begin_keyword)
+                (comment)
+                (end_keyword)))))))
     (var_section
       (var_keyword)
       (variable_declaration

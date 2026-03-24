@@ -53,6 +53,7 @@ table 1234 "Test Table"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (comment)
         (assignment_statement
           left: (identifier)
@@ -99,7 +100,8 @@ table 1234 "Test Table"
             right: (multiplicative_expression
               left: (keyword_identifier
                 (enum_keyword))
-              right: (integer))))))
+              right: (integer))))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -108,7 +110,9 @@ table 1234 "Test Table"
           name: (identifier)
           type: (type_specification
             (basic_type))))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ==========================================
 Enum type reference still works
@@ -150,6 +154,7 @@ codeunit 50100 "Test Enum Types"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (comment)
         (assignment_statement
           left: (identifier)
@@ -170,4 +175,5 @@ codeunit 50100 "Test Enum Types"
               enum_type: (keyword_identifier
                 (enum_keyword))
               value: (identifier))
-            value: (identifier)))))))
+            value: (identifier)))
+        (end_keyword)))))

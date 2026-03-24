@@ -36,6 +36,7 @@ codeunit 50100 "Test"
                   (enum_keyword)
                   (quoted_identifier)))))))
       (code_block
+        (begin_keyword)
         (comment)
         (assignment_statement
           (subscript_expression
@@ -54,7 +55,8 @@ codeunit 50100 "Test"
             (subscript_expression
               (identifier)
               (integer))
-            (quoted_identifier)))))))
+            (quoted_identifier)))
+        (end_keyword)))))
 
 ================================================================================
 Correct enum assignment without spaces
@@ -94,6 +96,7 @@ codeunit 50101 "Test"
                   object_type: (enum_keyword)
                   reference: (quoted_identifier)))))))
       (code_block
+        (begin_keyword)
         (comment)
         (assignment_statement
           left: (subscript_expression
@@ -112,4 +115,5 @@ codeunit 50101 "Test"
             enum_type: (subscript_expression
               object: (identifier)
               index: (integer))
-            value: (quoted_identifier)))))))
+            value: (quoted_identifier)))
+        (end_keyword)))))

@@ -34,16 +34,20 @@ codeunit 50000 "WITH Test"
             (record_type
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (with_statement
           (with_keyword)
           record: (identifier)
           (do_keyword)
           body: (code_block
+            (begin_keyword)
             (identifier)
             (assignment_statement
               left: (identifier)
               right: (string_literal))
-            (identifier)))))))
+            (identifier)
+            (end_keyword)))
+        (end_keyword)))))
 
 ================================================================================
 WITH statement with single statement
@@ -78,11 +82,13 @@ codeunit 50001 "WITH Single Test"
             (record_type
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (with_statement
           (with_keyword)
           record: (identifier)
           (do_keyword)
-          body: (identifier))))))
+          body: (identifier))
+        (end_keyword)))))
 
 ================================================================================
 Nested WITH statements
@@ -128,20 +134,26 @@ codeunit 50002 "Nested WITH Test"
             (record_type
               reference: (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (with_statement
           (with_keyword)
           record: (identifier)
           (do_keyword)
           body: (code_block
+            (begin_keyword)
             (identifier)
             (with_statement
               (with_keyword)
               record: (identifier)
               (do_keyword)
               body: (code_block
+                (begin_keyword)
                 (identifier)
                 (assignment_statement
                   left: (quoted_identifier)
                   right: (member_expression
                     object: (identifier)
-                    member: (quoted_identifier)))))))))))
+                    member: (quoted_identifier)))
+                (end_keyword)))
+            (end_keyword)))
+        (end_keyword)))))

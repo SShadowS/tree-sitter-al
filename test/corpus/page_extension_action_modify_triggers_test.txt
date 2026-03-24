@@ -53,12 +53,14 @@ pageextension 50000 "AL Test Tool Ext" extends "AL Test Tool"
                   object_type: (codeunit_keyword)
                   reference: (quoted_identifier)))))
           (code_block
+            (begin_keyword)
             (call_expression
               function: (member_expression
                 object: (identifier)
                 member: (identifier))
               arguments: (argument_list
-                (quoted_identifier))))))
+                (quoted_identifier)))
+            (end_keyword))))
       (modify_action_modification
         target: (identifier)
         (trigger_declaration
@@ -73,12 +75,14 @@ pageextension 50000 "AL Test Tool Ext" extends "AL Test Tool"
                   object_type: (codeunit_keyword)
                   reference: (quoted_identifier)))))
           (code_block
+            (begin_keyword)
             (call_expression
               function: (member_expression
                 object: (identifier)
                 member: (identifier))
               arguments: (argument_list
-                (quoted_identifier)))))))))
+                (quoted_identifier)))
+            (end_keyword)))))))
 
 ================================================================================
 Page extension action modify with mixed properties and triggers
@@ -122,10 +126,12 @@ pageextension 50001 "Mixed Action Ext" extends "Base Page"
           (trigger_keyword)
           name: (identifier)
           (code_block
+            (begin_keyword)
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))
+                (string_literal)))
+            (end_keyword)))
         (property
           name: (property_name)
           value: (string_literal))))))

@@ -43,6 +43,7 @@ codeunit 123 "Test"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (unary_expression
@@ -62,4 +63,5 @@ codeunit 123 "Test"
         (assignment_statement
           left: (identifier)
           right: (unary_expression
-            operand: (boolean)))))))
+            operand: (boolean)))
+        (end_keyword)))))

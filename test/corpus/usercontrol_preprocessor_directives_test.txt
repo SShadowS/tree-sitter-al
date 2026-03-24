@@ -65,6 +65,7 @@ page 50100 "Test Page"
                     object_type: (codeunit_keyword)
                     reference: (quoted_identifier)))))
             (code_block
+              (begin_keyword)
               (if_statement
                 (if_keyword)
                 condition: (call_expression
@@ -83,4 +84,5 @@ page 50100 "Test Page"
                     (decimal)
                     (database_reference
                       keyword: (object_type_keyword)
-                      table_name: (quoted_identifier))))))))))))
+                      table_name: (quoted_identifier)))))
+              (end_keyword))))))))

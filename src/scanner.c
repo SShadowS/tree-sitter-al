@@ -126,6 +126,24 @@ bool tree_sitter_al_external_scanner_scan(
     }
   }
 
+  // BEGIN_KEYWORD: 'begin' at depth 0 only — decline at depth > 0
+  if (valid_symbols[BEGIN_KEYWORD] && state->depth == 0) {
+    skip_whitespace(lexer);
+    if (read_keyword_ci(lexer, "begin")) {
+      lexer->result_symbol = BEGIN_KEYWORD;
+      return true;
+    }
+  }
+
+  // END_KEYWORD: 'end' at depth 0 only — decline at depth > 0
+  if (valid_symbols[END_KEYWORD] && state->depth == 0) {
+    skip_whitespace(lexer);
+    if (read_keyword_ci(lexer, "end")) {
+      lexer->result_symbol = END_KEYWORD;
+      return true;
+    }
+  }
+
   // CONTINUE_AS_IDENTIFIER: match 'continue' followed by ':='
   if (valid_symbols[CONTINUE_AS_IDENTIFIER]) {
     // Skip leading whitespace

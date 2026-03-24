@@ -21,6 +21,7 @@ codeunit 50100 MyCodeunit
       (trigger_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           (identifier)
           (argument_list
@@ -32,7 +33,8 @@ codeunit 50100 MyCodeunit
         (call_expression
           (identifier)
           (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ==================
 Record Method Calls
@@ -67,6 +69,7 @@ codeunit 50100 MyCodeunit
       (trigger_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           (member_expression
             (identifier)
@@ -91,7 +94,8 @@ codeunit 50100 MyCodeunit
             (identifier))
           (argument_list
             (boolean)
-            (boolean)))))))
+            (boolean)))
+        (end_keyword)))))
 
 ==================
 Boolean Method Conditions
@@ -131,6 +135,7 @@ codeunit 50100 MyCodeunit
       (trigger_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           (call_expression
@@ -153,6 +158,7 @@ codeunit 50100 MyCodeunit
             (argument_list))
           (then_keyword)
           (code_block
+            (begin_keyword)
             (repeat_statement
               (repeat_keyword)
               (if_statement
@@ -173,7 +179,9 @@ codeunit 50100 MyCodeunit
                   (identifier)
                   (quoted_identifier))
                 (comparison_operator)
-                (string_literal)))))))))
+                (string_literal)))
+            (end_keyword)))
+        (end_keyword)))))
 
 ==================
 Mixed Method Calls With Parameters
@@ -215,6 +223,7 @@ codeunit 50100 MyCodeunit
       (trigger_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           (call_expression
@@ -225,6 +234,7 @@ codeunit 50100 MyCodeunit
               (string_literal)))
           (then_keyword)
           (code_block
+            (begin_keyword)
             (assignment_statement
               (identifier)
               (member_expression
@@ -242,4 +252,6 @@ codeunit 50100 MyCodeunit
               (argument_list
                 (quoted_identifier)
                 (string_literal)
-                (identifier)))))))))
+                (identifier)))
+            (end_keyword)))
+        (end_keyword)))))

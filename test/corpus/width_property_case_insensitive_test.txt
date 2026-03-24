@@ -150,8 +150,10 @@ codeunit 50100 "Layout Manager"
       return_type: (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
           return_value: (multiplicative_expression
             left: (identifier)
-            right: (identifier)))))))
+            right: (identifier)))
+        (end_keyword)))))

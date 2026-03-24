@@ -58,10 +58,12 @@ report 50100 "Test Report"
             (preproc_endif
               (preproc_close)))
           (code_block
+            (begin_keyword)
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal)))
+            (end_keyword)))))))
 
 ================================================================================
 Field trigger with preprocessor in var section
@@ -135,9 +137,11 @@ table 50100 "Test Table"
             (preproc_endif
               (preproc_close)))
           (code_block
+            (begin_keyword)
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list))
+            (end_keyword)))))))
 
 ================================================================================
 Multiple nested preprocessor conditions in trigger
@@ -205,6 +209,8 @@ page 50100 "Test Page"
         (preproc_endif
           (preproc_close)))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))))
+          arguments: (argument_list))
+        (end_keyword)))))

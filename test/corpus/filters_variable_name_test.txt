@@ -247,6 +247,7 @@ page 1518 "My Notifications"
               (trigger_keyword)
               (identifier)
               (code_block
+                (begin_keyword)
                 (if_statement
                   (if_keyword)
                   (comparison_expression
@@ -259,6 +260,7 @@ page 1518 "My Notifications"
                       (identifier)))
                   (then_keyword)
                   (code_block
+                    (begin_keyword)
                     (assignment_statement
                       (identifier)
                       (call_expression
@@ -270,7 +272,9 @@ page 1518 "My Notifications"
                       (member_expression
                         (identifier)
                         (identifier))
-                      (argument_list)))))))
+                      (argument_list))
+                    (end_keyword)))
+                (end_keyword))))
           (page_field
             (identifier)
             (identifier)
@@ -284,6 +288,7 @@ page 1518 "My Notifications"
               (trigger_keyword)
               (identifier)
               (code_block
+                (begin_keyword)
                 (if_statement
                   (if_keyword)
                   (call_expression
@@ -293,6 +298,7 @@ page 1518 "My Notifications"
                     (argument_list))
                   (then_keyword)
                   (code_block
+                    (begin_keyword)
                     (assignment_statement
                       (identifier)
                       (call_expression
@@ -304,18 +310,22 @@ page 1518 "My Notifications"
                       (member_expression
                         (identifier)
                         (identifier))
-                      (argument_list))))))))))
+                      (argument_list))
+                    (end_keyword)))
+                (end_keyword)))))))
     (trigger_declaration
       (trigger_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (call_expression
             (member_expression
               (identifier)
               (identifier))
-            (argument_list)))))
+            (argument_list)))
+        (end_keyword)))
     (var_section
       (var_keyword)
       (variable_declaration

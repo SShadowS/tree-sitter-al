@@ -60,6 +60,7 @@ codeunit 50100 "Enum Variable Test"
           type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (keyword_identifier
             (enum_keyword))
@@ -76,7 +77,8 @@ codeunit 50100 "Enum Variable Test"
                 function: (identifier)
                 arguments: (argument_list
                   (identifier)))
-              (string_literal))))))))
+              (string_literal))))
+        (end_keyword)))))
 
 ================================================================================
 Enum in complex DotNet scenarios
@@ -150,6 +152,7 @@ codeunit 50101 "X509 Certificate Handler"
               (dotnet_keyword)
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (call_expression
@@ -178,7 +181,8 @@ codeunit 50101 "X509 Certificate Handler"
                   object: (identifier)
                   member: (identifier))
                 arguments: (argument_list
-                  (identifier))))))))))
+                  (identifier))))))
+        (end_keyword)))))
 
 ================================================================================
 Enum case variations as identifiers
@@ -244,6 +248,7 @@ codeunit 50102 "Case Test"
           type: (type_specification
             (option_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (keyword_identifier
             (enum_keyword))
@@ -258,4 +263,5 @@ codeunit 50102 "Case Test"
           right: (boolean))
         (assignment_statement
           left: (identifier)
-          right: (decimal))))))
+          right: (decimal))
+        (end_keyword)))))

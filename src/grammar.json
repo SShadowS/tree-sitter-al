@@ -10986,11 +10986,20 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)begin"
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "begin_keyword"
+              },
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "(?i)begin"
+                }
+              }
+            ]
           },
           {
             "type": "REPEAT",
@@ -11000,11 +11009,20 @@
             }
           },
           {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)end"
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "end_keyword"
+              },
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "(?i)end"
+                }
+              }
+            ]
           },
           {
             "type": "CHOICE",
@@ -11804,8 +11822,25 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "preproc_open"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_open"
+            },
+            {
+              "type": "STRING",
+              "value": "#if"
+            },
+            {
+              "type": "STRING",
+              "value": "#IF"
+            },
+            {
+              "type": "STRING",
+              "value": "#If"
+            }
+          ]
         },
         {
           "type": "FIELD",
@@ -11909,8 +11944,25 @@
       ]
     },
     "preproc_endif": {
-      "type": "SYMBOL",
-      "name": "preproc_close"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_close"
+        },
+        {
+          "type": "STRING",
+          "value": "#endif"
+        },
+        {
+          "type": "STRING",
+          "value": "#ENDIF"
+        },
+        {
+          "type": "STRING",
+          "value": "#Endif"
+        }
+      ]
     },
     "preproc_split_if_statement": {
       "type": "PREC_RIGHT",

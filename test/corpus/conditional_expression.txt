@@ -34,12 +34,14 @@ codeunit 50100 TestTernary
           (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (ternary_expression
             (identifier)
             (integer)
-            (integer)))))))
+            (integer)))
+        (end_keyword)))))
 
 ================================================================================
 Nested Ternary Operators
@@ -79,6 +81,7 @@ codeunit 50100 NestedTernary
           (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (ternary_expression
@@ -92,7 +95,8 @@ codeunit 50100 NestedTernary
               (ternary_expression
                 (identifier)
                 (integer)
-                (integer)))))))))
+                (integer)))))
+        (end_keyword)))))
 
 ================================================================================
 Ternary with Complex Expressions
@@ -146,6 +150,7 @@ codeunit 50100 ComplexTernary
             (record_type
               (identifier)))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (ternary_expression
@@ -168,7 +173,8 @@ codeunit 50100 ComplexTernary
               (quoted_identifier))
             (unary_expression
               (integer))
-            (integer)))))))
+            (integer)))
+        (end_keyword)))))
 
 ================================================================================
 Ternary in Method Calls
@@ -204,6 +210,7 @@ codeunit 50100 TernaryInCalls
           (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (call_expression
           (identifier)
           (argument_list
@@ -218,7 +225,8 @@ codeunit 50100 TernaryInCalls
             (ternary_expression
               (identifier)
               (integer)
-              (integer))))))
+              (integer))))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       (identifier)
@@ -227,4 +235,6 @@ codeunit 50100 TernaryInCalls
           (identifier)
           (type_specification
             (text_type))))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))

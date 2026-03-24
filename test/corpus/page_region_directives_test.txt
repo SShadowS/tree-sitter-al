@@ -102,6 +102,7 @@ page 50100 "Manufacturing Factbox"
       return_type: (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (comparison_expression
@@ -123,7 +124,8 @@ page 50100 "Manufacturing Factbox"
                   member: (quoted_identifier))))))
         (exit_statement
           (exit_keyword)
-          return_value: (boolean))))
+          return_value: (boolean))
+        (end_keyword)))
     (procedure
       modifier: (procedure_modifier
         (local_keyword))
@@ -133,6 +135,7 @@ page 50100 "Manufacturing Factbox"
         (code_type
           length: (integer)))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (comparison_expression
@@ -149,14 +152,17 @@ page 50100 "Manufacturing Factbox"
           (exit_keyword)
           return_value: (member_expression
             object: (identifier)
-            member: (quoted_identifier)))))
+            member: (quoted_identifier)))
+        (end_keyword)))
     (preproc_endregion)
     (preproc_region)
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (end_keyword)))
     (preproc_endregion)))

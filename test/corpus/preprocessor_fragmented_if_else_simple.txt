@@ -33,6 +33,7 @@ codeunit 50000 "Test"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (comparison_expression
@@ -41,11 +42,16 @@ codeunit 50000 "Test"
             right: (integer))
           (then_keyword)
           then_branch: (code_block
+            (begin_keyword)
             (assignment_statement
               left: (identifier)
-              right: (integer)))
+              right: (integer))
+            (end_keyword))
           (else_keyword)
           else_branch: (code_block
+            (begin_keyword)
             (assignment_statement
               left: (identifier)
-              right: (integer))))))))
+              right: (integer))
+            (end_keyword)))
+        (end_keyword)))))

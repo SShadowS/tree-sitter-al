@@ -55,9 +55,11 @@ query 50100 "Test Query Var"
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
-          right: (integer))))))
+          right: (integer))
+        (end_keyword)))))
 
 ================================================================================
 Query with var section and global label
@@ -133,12 +135,14 @@ query 5506 "Email Related Record"
           element_type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
           return_value: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (integer))))))))
+              (integer))))
+        (end_keyword)))))
 
 ================================================================================
 Query with conditional var section
@@ -218,6 +222,7 @@ query 50101 "Query with Conditional Var"
       return_type: (type_specification
         (text_type))
       (code_block
+        (begin_keyword)
         (preproc_conditional_statement
           (preproc_if
             (preproc_open)
@@ -230,7 +235,8 @@ query 50101 "Query with Conditional Var"
             (exit_keyword)
             return_value: (identifier))
           (preproc_endif
-            (preproc_close)))))))
+            (preproc_close)))
+        (end_keyword)))))
 
 ================================================================================
 Query with mixed global and local var sections
@@ -310,16 +316,20 @@ query 50102 "Mixed Var Query"
             (text_type
               length: (integer)))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (integer))
         (assignment_statement
           left: (identifier)
-          right: (identifier))))
+          right: (identifier))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
-          right: (integer))))))
+          right: (integer))
+        (end_keyword)))))

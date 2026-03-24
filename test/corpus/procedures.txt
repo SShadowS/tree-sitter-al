@@ -19,7 +19,9 @@ codeunit 50100 "My Codeunit"
     (procedure
       (procedure_keyword)
       (identifier)
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Procedure with parameters
@@ -51,7 +53,9 @@ codeunit 50100 Test
           (identifier)
           (type_specification
             (text_type))))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Procedure with var parameters
@@ -81,7 +85,9 @@ codeunit 50100 Test
           (type_specification
             (record_type
               (quoted_identifier)))))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Procedure with return type
@@ -106,7 +112,9 @@ codeunit 50100 Test
       (identifier)
       (type_specification
         (basic_type))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Procedure with named return value
@@ -132,7 +140,9 @@ codeunit 50100 Test
       (identifier)
       (type_specification
         (basic_type))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Local procedure modifier
@@ -157,7 +167,9 @@ codeunit 50100 Test
         (local_keyword))
       (procedure_keyword)
       (identifier)
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Internal procedure modifier
@@ -182,7 +194,9 @@ codeunit 50100 Test
         (internal_keyword))
       (procedure_keyword)
       (identifier)
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Protected procedure modifier
@@ -207,7 +221,9 @@ codeunit 50100 Test
         (protected_keyword))
       (procedure_keyword)
       (identifier)
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Procedure with var section
@@ -243,7 +259,9 @@ codeunit 50100 Test
           (identifier)
           (type_specification
             (basic_type))))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Procedure with parameters, return type, and var section
@@ -291,7 +309,9 @@ codeunit 50100 Test
           (type_specification
             (record_type
               (quoted_identifier)))))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Trigger declaration
@@ -314,7 +334,9 @@ codeunit 50100 Test
     (trigger_declaration
       (trigger_keyword)
       (identifier)
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Trigger with var section
@@ -345,7 +367,9 @@ table 50100 MyTable
           (identifier)
           (type_specification
             (basic_type))))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Variable declarations in object body
@@ -412,7 +436,9 @@ codeunit 50100 Test
     (procedure
       (procedure_keyword)
       (identifier)
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Multiple attributes before procedure
@@ -450,7 +476,9 @@ codeunit 50100 Test
     (procedure
       (procedure_keyword)
       (identifier)
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Attribute without arguments
@@ -477,7 +505,9 @@ codeunit 50100 Test
     (procedure
       (procedure_keyword)
       (identifier)
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Multiple procedures in codeunit
@@ -508,17 +538,23 @@ codeunit 50100 Test
     (trigger_declaration
       (trigger_keyword)
       (identifier)
-      (code_block))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))
     (procedure
       (procedure_modifier
         (local_keyword))
       (procedure_keyword)
       (identifier)
-      (code_block))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       (identifier)
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Quoted variable name
@@ -578,4 +614,6 @@ codeunit 50100 Test
           (type_specification
             (record_type
               (quoted_identifier)))))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))

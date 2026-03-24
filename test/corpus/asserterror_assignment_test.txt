@@ -55,6 +55,7 @@ codeunit 50100 "Test Asserterror Assignment"
             (code_type
               length: (integer)))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (string_literal))
@@ -84,7 +85,8 @@ codeunit 50100 "Test Asserterror Assignment"
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))
+              (string_literal))))
+        (end_keyword)))
     (procedure
       modifier: (procedure_modifier
         (local_keyword))
@@ -105,10 +107,12 @@ codeunit 50100 "Test Asserterror Assignment"
         (code_type
           length: (integer)))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ================================================================================
 Multiple asserterror assignment patterns
@@ -171,6 +175,7 @@ codeunit 50200 "Complex Asserterror Tests"
             (record_type
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (comment)
         (asserterror_statement
           (asserterror_keyword)
@@ -202,7 +207,8 @@ codeunit 50200 "Complex Asserterror Tests"
               right: (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (integer))))))))
+                  (integer))))))
+        (end_keyword)))
     (procedure
       modifier: (procedure_modifier
         (local_keyword))
@@ -216,6 +222,7 @@ codeunit 50200 "Complex Asserterror Tests"
       return_type: (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (comparison_expression
@@ -231,7 +238,8 @@ codeunit 50200 "Complex Asserterror Tests"
           (exit_keyword)
           return_value: (multiplicative_expression
             left: (identifier)
-            right: (integer)))))
+            right: (integer)))
+        (end_keyword)))
     (procedure
       modifier: (procedure_modifier
         (local_keyword))
@@ -245,8 +253,10 @@ codeunit 50200 "Complex Asserterror Tests"
       return_type: (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
           return_value: (multiplicative_expression
             left: (identifier)
-            right: (integer)))))))
+            right: (integer)))
+        (end_keyword)))))

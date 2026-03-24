@@ -50,6 +50,7 @@ table 50020 "Test Table"
           type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (additive_expression
@@ -66,7 +67,8 @@ table 50020 "Test Table"
             object: (identifier)
             index: (identifier)
             (integer))
-          right: (identifier))))))
+          right: (identifier))
+        (end_keyword)))))
 
 ==================
 Multi-dimensional array access in expressions
@@ -110,6 +112,7 @@ table 50021 "Test Table"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (additive_expression
@@ -134,7 +137,8 @@ table 50021 "Test Table"
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))))
+              (string_literal))))
+        (end_keyword)))))
 
 ==================
 Three-dimensional array access
@@ -172,13 +176,15 @@ table 50022 "Test Table"
               element_type: (type_specification
                 (basic_type))))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (subscript_expression
             object: (identifier)
             index: (integer)
             (integer)
             (integer))
-          right: (decimal))))))
+          right: (decimal))
+        (end_keyword)))))
 
 ==================
 Array access with variable indices
@@ -222,6 +228,7 @@ table 50023 "Test Table"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (subscript_expression
             object: (identifier)
@@ -240,4 +247,5 @@ table 50023 "Test Table"
           right: (subscript_expression
             object: (identifier)
             index: (identifier)
-            (identifier)))))))
+            (identifier)))
+        (end_keyword)))))

@@ -26,6 +26,7 @@ table 50010 "Test Table"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (boolean)
@@ -55,7 +56,8 @@ table 50010 "Test Table"
                 object: (identifier)
                 member: (identifier))
               arguments: (argument_list
-                (identifier)))))))))
+                (identifier)))))
+        (end_keyword)))))
 
 ==================
 Case TRUE OF with simple comparison
@@ -85,6 +87,7 @@ table 50011 "Test Table"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (boolean)
@@ -104,7 +107,8 @@ table 50011 "Test Table"
               right: (integer))
             body: (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list))))
+        (end_keyword)))))
 
 ==================
 Case TRUE OF with NOT expression
@@ -134,6 +138,7 @@ table 50012 "Test Table"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (boolean)
@@ -149,4 +154,5 @@ table 50012 "Test Table"
             (else_keyword)
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list))))
+        (end_keyword)))))

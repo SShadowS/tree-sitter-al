@@ -37,7 +37,9 @@ codeunit 50100 TestUnit
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
-      (code_block))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))
     (preproc_conditional
       (preproc_if
         (preproc_open)
@@ -82,7 +84,9 @@ codeunit 50100 TestUnit
           type: (type_specification
             (basic_type))))
       (code_block
-        (comment)))
+        (begin_keyword)
+        (comment)
+        (end_keyword)))
     (preproc_conditional
       (preproc_if
         (preproc_open)
@@ -100,4 +104,6 @@ codeunit 50100 TestUnit
       (procedure_keyword)
       name: (identifier)
       (code_block
-        (comment)))))
+        (begin_keyword)
+        (comment)
+        (end_keyword)))))

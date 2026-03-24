@@ -53,6 +53,7 @@ codeunit 50117 "Array Indexing Test"
               (type_specification
                 (basic_type))))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (subscript_expression
             (identifier)
@@ -85,4 +86,5 @@ codeunit 50117 "Array Indexing Test"
             (subscript_expression
               (identifier)
               (integer))
-            (integer)))))))
+            (integer)))
+        (end_keyword)))))

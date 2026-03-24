@@ -64,10 +64,12 @@ report 1111 TestReport
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ================================================================================
 Report with multiple preprocessor conditional procedures

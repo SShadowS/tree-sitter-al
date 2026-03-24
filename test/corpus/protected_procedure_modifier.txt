@@ -40,21 +40,27 @@ codeunit 50100 "Test Codeunit"
       return_type: (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
-          return_value: (boolean))))
+          return_value: (boolean))
+        (end_keyword)))
     (procedure
       modifier: (procedure_modifier
         (local_keyword))
       (procedure_keyword)
       name: (identifier)
-      (code_block))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))
     (procedure
       modifier: (procedure_modifier
         (internal_keyword))
       (procedure_keyword)
       name: (identifier)
-      (code_block))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))
     (var_section
       (protected_keyword)
       (var_keyword)

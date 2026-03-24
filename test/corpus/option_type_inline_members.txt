@@ -108,7 +108,9 @@ codeunit 456 "Test Codeunit"
           type: (type_specification
             (basic_type))))
       (code_block
-        (comment)))
+        (begin_keyword)
+        (comment)
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -125,7 +127,9 @@ codeunit 456 "Test Codeunit"
                 (option_member
                   (identifier)))))))
       (code_block
-        (comment)))
+        (begin_keyword)
+        (comment)
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -157,4 +161,6 @@ codeunit 456 "Test Codeunit"
                 (option_member
                   (quoted_identifier)))))))
       (code_block
-        (comment)))))
+        (begin_keyword)
+        (comment)
+        (end_keyword)))))

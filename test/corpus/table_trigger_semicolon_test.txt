@@ -87,39 +87,49 @@ table 50100 "Sales Forecast"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (additive_expression
             left: (identifier)
-            right: (integer)))))
+            right: (integer)))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
-          right: (integer))))))
+          right: (integer))
+        (end_keyword)))))
 
 ================================================================================
 Table trigger with var section and semicolon
@@ -178,6 +188,7 @@ table 50101 "Custom Table"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
@@ -190,7 +201,8 @@ table 50101 "Custom Table"
             (string_literal)
             (member_expression
               object: (identifier)
-              member: (identifier))))))
+              member: (identifier))))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
@@ -205,6 +217,7 @@ table 50101 "Custom Table"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
@@ -226,4 +239,5 @@ table 50101 "Custom Table"
               member: (identifier))
             (member_expression
               object: (identifier)
-              member: (identifier))))))))
+              member: (identifier))))
+        (end_keyword)))))

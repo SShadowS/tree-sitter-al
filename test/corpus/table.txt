@@ -119,10 +119,12 @@ table 50100 "My Test Table"
       (trigger_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           (identifier)
           (argument_list
-            (string_literal)))))
+            (string_literal)))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       (identifier)
@@ -134,6 +136,7 @@ table 50100 "My Test Table"
       (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           (comparison_expression
@@ -147,4 +150,5 @@ table 50100 "My Test Table"
           (else_keyword)
           (exit_statement
             (exit_keyword)
-            (boolean)))))))
+            (boolean)))
+        (end_keyword)))))

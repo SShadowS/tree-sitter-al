@@ -40,6 +40,7 @@ codeunit 50100 MyCodeunit
       (trigger_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           (identifier)
           (argument_list
@@ -75,10 +76,13 @@ codeunit 50100 MyCodeunit
             (argument_list))
           (then_keyword)
           (code_block
+            (begin_keyword)
             (call_expression
               (identifier)
               (argument_list
-                (string_literal)))))))))
+                (string_literal)))
+            (end_keyword)))
+        (end_keyword)))))
 
 ==================
 Complex Parameter Calls
@@ -115,6 +119,7 @@ codeunit 50100 MyCodeunit
       (trigger_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           (identifier)
           (argument_list
@@ -137,7 +142,10 @@ codeunit 50100 MyCodeunit
                 (quoted_identifier))))
           (then_keyword)
           (code_block
+            (begin_keyword)
             (call_expression
               (identifier)
               (argument_list
-                (string_literal)))))))))
+                (string_literal)))
+            (end_keyword)))
+        (end_keyword)))))

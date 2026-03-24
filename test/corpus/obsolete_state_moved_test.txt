@@ -77,7 +77,9 @@ page 50002 "Test Page"
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
-      (code_block)))
+      (code_block
+        (begin_keyword)
+        (end_keyword))))
   (page_declaration
     (page_keyword)
     object_id: (integer)

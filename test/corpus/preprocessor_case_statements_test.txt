@@ -49,6 +49,7 @@ codeunit 50100 TestUnit
                 (option_member
                   (identifier)))))))
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -58,7 +59,9 @@ codeunit 50100 TestUnit
               enum_type: (identifier)
               value: (identifier))
             body: (code_block
-              (comment)))
+              (begin_keyword)
+              (comment)
+              (end_keyword)))
           (preproc_conditional_case
             (preproc_if
               (preproc_open)
@@ -76,4 +79,5 @@ codeunit 50100 TestUnit
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (quoted_identifier)))))))))
+                (quoted_identifier)))))
+        (end_keyword)))))

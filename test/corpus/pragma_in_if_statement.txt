@@ -44,6 +44,7 @@ codeunit 50100 "Test Pragma in If"
               (codeunit_keyword)
               (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           (identifier)
@@ -58,4 +59,5 @@ codeunit 50100 "Test Pragma in If"
                 (identifier))
               (argument_list
                 (boolean)))))
-        (pragma)))))
+        (pragma)
+        (end_keyword)))))

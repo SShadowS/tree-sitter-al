@@ -26,6 +26,7 @@ table 50006 "Test Table"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (quoted_identifier)
@@ -45,4 +46,5 @@ table 50006 "Test Table"
               function: (identifier)
               arguments: (argument_list
                 (quoted_identifier)
-                (string_literal)))))))))
+                (string_literal)))))
+        (end_keyword)))))

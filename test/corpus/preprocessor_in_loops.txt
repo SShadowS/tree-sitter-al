@@ -59,6 +59,7 @@ codeunit 50100 TestPreprocessor
           (preproc_endif
             (preproc_close))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
@@ -105,7 +106,8 @@ codeunit 50100 TestPreprocessor
                 member: (identifier))
               arguments: (argument_list))
             operator: (comparison_operator)
-            right: (integer)))))))
+            right: (integer)))
+        (end_keyword)))))
 
 ================================================================================
 Preprocessor directives in while loop
@@ -145,6 +147,7 @@ codeunit 50101 TestWhilePreprocessor
             (record_type
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (while_statement
           (while_keyword)
           condition: (comparison_expression
@@ -157,6 +160,7 @@ codeunit 50101 TestWhilePreprocessor
             right: (integer))
           (do_keyword)
           body: (code_block
+            (begin_keyword)
             (preproc_conditional_statement
               (preproc_if
                 (preproc_open)
@@ -171,7 +175,9 @@ codeunit 50101 TestWhilePreprocessor
                 arguments: (argument_list
                   (identifier)))
               (preproc_endif
-                (preproc_close)))))))))
+                (preproc_close)))
+            (end_keyword)))
+        (end_keyword)))))
 
 ================================================================================
 Preprocessor directives in for loop
@@ -209,6 +215,7 @@ codeunit 50102 TestForPreprocessor
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (for_statement
           (for_keyword)
           variable: (identifier)
@@ -217,6 +224,7 @@ codeunit 50102 TestForPreprocessor
           end: (integer)
           (do_keyword)
           body: (code_block
+            (begin_keyword)
             (preproc_conditional_statement
               (preproc_if
                 (preproc_open)
@@ -232,4 +240,6 @@ codeunit 50102 TestForPreprocessor
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (identifier)))))))))
+                (identifier)))
+            (end_keyword)))
+        (end_keyword)))))

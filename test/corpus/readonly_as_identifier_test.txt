@@ -136,6 +136,7 @@ codeunit 50101 "ReadOnly Test"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (boolean))
@@ -156,7 +157,8 @@ codeunit 50101 "ReadOnly Test"
             function: (identifier)
             arguments: (argument_list
               (string_literal)
-              (identifier))))))
+              (identifier))))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -170,6 +172,7 @@ codeunit 50101 "ReadOnly Test"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (identifier)
@@ -179,7 +182,8 @@ codeunit 50101 "ReadOnly Test"
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (identifier)))))
+            (identifier)))
+        (end_keyword)))
     (procedure
       modifier: (procedure_modifier
         (local_keyword))
@@ -191,7 +195,9 @@ codeunit 50101 "ReadOnly Test"
           type: (type_specification
             (basic_type))))
       (code_block
-        (comment)))))
+        (begin_keyword)
+        (comment)
+        (end_keyword)))))
 
 ================================================================================
 ReadOnly with usercontrol
@@ -263,6 +269,7 @@ page 50102 "Advanced Viewer"
                 type: (type_specification
                   (basic_type))))
             (code_block
+              (begin_keyword)
               (assignment_statement
                 left: (identifier)
                 right: (unary_expression
@@ -279,7 +286,8 @@ page 50102 "Advanced Viewer"
                   (call_expression
                     function: (identifier)
                     arguments: (argument_list
-                      (identifier))))))))))
+                      (identifier)))))
+              (end_keyword))))))
     (var_section
       (var_keyword)
       (variable_declaration
@@ -298,10 +306,12 @@ page 50102 "Advanced Viewer"
       return_type: (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
           return_value: (unary_expression
-            operand: (identifier)))))
+            operand: (identifier)))
+        (end_keyword)))
     (procedure
       modifier: (procedure_modifier
         (local_keyword))
@@ -315,6 +325,7 @@ page 50102 "Advanced Viewer"
       return_type: (type_specification
         (text_type))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (identifier)
@@ -324,7 +335,8 @@ page 50102 "Advanced Viewer"
             return_value: (string_literal)))
         (exit_statement
           (exit_keyword)
-          return_value: (string_literal))))))
+          return_value: (string_literal))
+        (end_keyword)))))
 
 ================================================================================
 ReadOnly as enum value reference
@@ -378,6 +390,7 @@ table 50103 "Permission Settings"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (quoted_identifier)
           right: (qualified_enum_value
@@ -390,7 +403,8 @@ table 50103 "Permission Settings"
             operator: (comparison_operator)
             right: (qualified_enum_value
               enum_type: (quoted_identifier)
-              value: (identifier))))))))
+              value: (identifier))))
+        (end_keyword)))))
 
 ================================================================================
 Height and Width as variable names with workaround

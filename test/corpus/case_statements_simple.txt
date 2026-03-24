@@ -26,6 +26,7 @@ table 50000 "Test Table"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -43,4 +44,5 @@ table 50000 "Test Table"
               value: (identifier))
             body: (assignment_statement
               left: (identifier)
-              right: (integer))))))))
+              right: (integer))))
+        (end_keyword)))))

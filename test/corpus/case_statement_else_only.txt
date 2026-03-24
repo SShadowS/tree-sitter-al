@@ -32,6 +32,7 @@ codeunit 50000 Test
           type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -40,7 +41,8 @@ codeunit 50000 Test
             (else_keyword)
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list))))
+        (end_keyword)))))
 
 ================================================================================
 Case statement with else branch and multiple statements
@@ -99,6 +101,7 @@ codeunit 50001 Test
           type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (call_expression
@@ -139,7 +142,8 @@ codeunit 50001 Test
               arguments: (argument_list
                 (identifier)
                 (identifier)
-                (identifier)))))))))
+                (identifier)))))
+        (end_keyword)))))
 
 ================================================================================
 Case statement with normal branches and else
@@ -179,6 +183,7 @@ codeunit 50002 Test
           type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -198,4 +203,5 @@ codeunit 50002 Test
             (else_keyword)
             (call_expression
               function: (identifier)
-              arguments: (argument_list))))))))
+              arguments: (argument_list))))
+        (end_keyword)))))

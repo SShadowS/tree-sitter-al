@@ -67,6 +67,7 @@ codeunit 50100 "Test Codeunit"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (identifier))
@@ -76,7 +77,8 @@ codeunit 50100 "Test Codeunit"
             (comparison_expression
               left: (identifier)
               operator: (comparison_operator)
-              right: (string_literal))))))
+              right: (string_literal))))
+        (end_keyword)))
     (attribute_item
       attribute: (attribute_content
         name: (identifier)
@@ -110,9 +112,11 @@ codeunit 50100 "Test Codeunit"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (identifier))
         (assignment_statement
           left: (identifier)
-          right: (boolean))))))
+          right: (boolean))
+        (end_keyword)))))

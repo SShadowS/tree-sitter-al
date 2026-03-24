@@ -43,11 +43,13 @@ codeunit 50000 "Install Codeunit"
               object_type: (codeunit_keyword)
               reference: (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
             member: (identifier))
-          arguments: (argument_list))))
+          arguments: (argument_list))
+        (end_keyword)))
     (trigger_declaration
       (trigger_keyword)
       name: (identifier)
@@ -60,13 +62,15 @@ codeunit 50000 "Install Codeunit"
               object_type: (codeunit_keyword)
               reference: (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
             member: (identifier))
           arguments: (argument_list
             (string_literal)
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ================================================================================
 Trigger without semicolon (backward compatibility)
@@ -99,6 +103,8 @@ codeunit 50001 "Normal Codeunit"
           type: (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
-          right: (string_literal))))))
+          right: (string_literal))
+        (end_keyword)))))

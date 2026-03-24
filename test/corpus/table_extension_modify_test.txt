@@ -38,7 +38,9 @@ tableextension 50000 "Test Extension" extends "Base Table"
           (trigger_keyword)
           name: (identifier)
           (code_block
-            (comment))))
+            (begin_keyword)
+            (comment)
+            (end_keyword))))
       (modify_modification
         target: (quoted_identifier)
         (property

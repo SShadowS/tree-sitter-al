@@ -32,6 +32,7 @@ codeunit 50000 "Test For Loop"
             (record_type
               reference: (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (for_statement
           (for_keyword)
           variable: (member_expression
@@ -50,7 +51,10 @@ codeunit 50000 "Test For Loop"
             value: (identifier))
           (do_keyword)
           body: (code_block
-            (comment)))))))
+            (begin_keyword)
+            (comment)
+            (end_keyword)))
+        (end_keyword)))))
 
 ================================================================================
 For statement with member expression
@@ -86,6 +90,7 @@ codeunit 50001 "Test Member Loop"
               object_type: (codeunit_keyword)
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (for_statement
           (for_keyword)
           variable: (member_expression
@@ -102,4 +107,5 @@ codeunit 50001 "Test Member Loop"
             arguments: (argument_list
               (member_expression
                 object: (identifier)
-                member: (identifier)))))))))
+                member: (identifier)))))
+        (end_keyword)))))

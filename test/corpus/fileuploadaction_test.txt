@@ -54,7 +54,9 @@ page 50006 TestPage
                   (list_type
                     element_type: (type_specification
                       (basic_type))))))
-            (code_block)))))))
+            (code_block
+              (begin_keyword)
+              (end_keyword))))))))
 
 ================================================================================
 FileUploadAction with all properties
@@ -153,6 +155,7 @@ page 50007 TestPage
                 type: (type_specification
                   (basic_type))))
             (code_block
+              (begin_keyword)
               (foreach_statement
                 (foreach_keyword)
                 variable: (identifier)
@@ -160,12 +163,15 @@ page 50007 TestPage
                 iterable: (identifier)
                 (do_keyword)
                 body: (code_block
+                  (begin_keyword)
                   (call_expression
                     function: (member_expression
                       object: (identifier)
                       member: (identifier))
                     arguments: (argument_list
-                      (identifier))))))))))))
+                      (identifier)))
+                  (end_keyword)))
+              (end_keyword))))))))
 
 ================================================================================
 FileUploadAction case variations
@@ -216,7 +222,9 @@ page 50008 TestPage
                   (list_type
                     element_type: (type_specification
                       (basic_type))))))
-            (code_block)))
+            (code_block
+              (begin_keyword)
+              (end_keyword))))
         (fileuploadaction_declaration
           name: (identifier)
           (trigger_declaration
@@ -229,7 +237,9 @@ page 50008 TestPage
                   (list_type
                     element_type: (type_specification
                       (basic_type))))))
-            (code_block)))))))
+            (code_block
+              (begin_keyword)
+              (end_keyword))))))))
 
 ================================================================================
 FileUploadAction with complex trigger
@@ -318,6 +328,7 @@ page 50009 TestPage
                 type: (type_specification
                   (text_type))))
             (code_block
+              (begin_keyword)
               (foreach_statement
                 (foreach_keyword)
                 variable: (identifier)
@@ -325,6 +336,7 @@ page 50009 TestPage
                 iterable: (identifier)
                 (do_keyword)
                 body: (code_block
+                  (begin_keyword)
                   (assignment_statement
                     left: (identifier)
                     right: (call_expression
@@ -344,7 +356,9 @@ page 50009 TestPage
                       member: (identifier))
                     arguments: (argument_list
                       (identifier)
-                      (identifier))))))))))))
+                      (identifier)))
+                  (end_keyword)))
+              (end_keyword))))))))
 
 ================================================================================
 FileUploadAction with obsolete properties
@@ -414,4 +428,6 @@ page 50010 TestPage
                   (list_type
                     element_type: (type_specification
                       (basic_type))))))
-            (code_block)))))))
+            (code_block
+              (begin_keyword)
+              (end_keyword))))))))

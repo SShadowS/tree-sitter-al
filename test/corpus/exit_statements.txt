@@ -41,19 +41,23 @@ codeunit 50200 "Exit Statements Test"
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword))
-        (comment)))
+        (comment)
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       (identifier)
       (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
           (integer))
-        (comment)))
+        (comment)
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       (identifier)
@@ -66,13 +70,15 @@ codeunit 50200 "Exit Statements Test"
           (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (integer))
         (exit_statement
           (exit_keyword)
           (identifier))
-        (comment)))
+        (comment)
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       (identifier)
@@ -87,7 +93,9 @@ codeunit 50200 "Exit Statements Test"
             (record_type
               (identifier)))))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
           (identifier))
-        (comment)))))
+        (comment)
+        (end_keyword)))))

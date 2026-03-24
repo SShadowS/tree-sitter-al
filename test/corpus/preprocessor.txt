@@ -23,7 +23,9 @@ codeunit 50100 MyCodeunit
       (procedure_keyword)
       name: (identifier)
       (pragma)
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Region directives (extras)
@@ -49,7 +51,9 @@ codeunit 50100 MyCodeunit
     (procedure
       (procedure_keyword)
       name: (identifier)
-      (code_block))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))
     (preproc_endregion)))
 
 ========================================================================
@@ -205,6 +209,7 @@ codeunit 50100 Test
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (preproc_split_if_else_statement
           (preproc_if
             (preproc_open)
@@ -229,7 +234,8 @@ codeunit 50100 Test
               condition: (preproc_not_expression
                 (identifier)))
             (preproc_endif
-              (preproc_close))))))))
+              (preproc_close))))
+        (end_keyword)))))
 
 ========================================================================
 Split if-then-begin across preprocessor (#if ... if then begin #endif ... #if end; #endif)
@@ -260,6 +266,7 @@ codeunit 50100 Test
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (preproc_split_if_then_begin
           (preproc_if
             (preproc_open)
@@ -280,7 +287,8 @@ codeunit 50100 Test
             condition: (preproc_not_expression
               (identifier)))
           (preproc_endif
-            (preproc_close)))))))
+            (preproc_close)))
+        (end_keyword)))))
 
 ========================================================================
 ControlAddin with preprocessor after interface_procedure
@@ -413,11 +421,13 @@ codeunit 50100 Test
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (boolean)
           (then_keyword)
           then_branch: (code_block
+            (begin_keyword)
             (preproc_guarded_statement
               (preproc_if
                 (preproc_open)
@@ -439,4 +449,6 @@ codeunit 50100 Test
                   object: (identifier)
                   member: (identifier))
                 arguments: (argument_list
-                  (boolean))))))))))
+                  (boolean))))
+            (end_keyword)))
+        (end_keyword)))))

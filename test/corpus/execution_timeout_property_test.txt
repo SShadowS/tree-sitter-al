@@ -147,7 +147,9 @@ report 50004 "Auto Posting Errors"
           (trigger_keyword)
           name: (identifier)
           (code_block
-            (comment)))))))
+            (begin_keyword)
+            (comment)
+            (end_keyword)))))))
 
 ================================================================================
 ExecutionTimeout with single digit hours

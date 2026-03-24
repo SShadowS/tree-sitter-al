@@ -49,7 +49,9 @@ codeunit 50000 "Test Codeunit"
       (procedure_keyword)
       name: (identifier)
       (code_block
-        (comment)))))
+        (begin_keyword)
+        (comment)
+        (end_keyword)))))
 
 ================================================================================
 Using statement without namespace declaration

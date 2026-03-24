@@ -40,8 +40,10 @@ codeunit 50100 TestUnit
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
             member: (identifier))
-          arguments: (argument_list))))))
+          arguments: (argument_list))
+        (end_keyword)))))

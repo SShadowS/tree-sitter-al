@@ -82,6 +82,7 @@ codeunit 50000 "AL Built-in Functions Test"
             (record_type
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (comment)
         (call_expression
           function: (member_expression
@@ -193,7 +194,8 @@ codeunit 50000 "AL Built-in Functions Test"
               (quoted_identifier)
               (string_literal)
               (string_literal)))
-          member: (identifier))))
+          member: (identifier))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -205,6 +207,7 @@ codeunit 50000 "AL Built-in Functions Test"
             (record_type
               reference: (identifier)))))
       (code_block
+        (begin_keyword)
         (comment)
         (if_statement
           (if_keyword)
@@ -258,7 +261,8 @@ codeunit 50000 "AL Built-in Functions Test"
             (database_reference
               keyword: (object_type_keyword)
               table_name: (quoted_identifier))
-            (identifier)))))
+            (identifier)))
+        (end_keyword)))
     (var_section
       (var_keyword)
       (variable_declaration

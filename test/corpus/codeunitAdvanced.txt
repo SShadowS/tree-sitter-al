@@ -120,9 +120,11 @@ codeunit 50100 MyCodeunit
       (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
-          (boolean))))))
+          (boolean))
+        (end_keyword)))))
 
 ==================
 Basic Trigger
@@ -145,10 +147,12 @@ codeunit 50100 MyCodeunit
       (trigger_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           (identifier)
           (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ==================
 Procedure With Var Section
@@ -194,6 +198,7 @@ codeunit 50100 MyCodeunit
           (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (call_expression
           (member_expression
             (identifier)
@@ -204,4 +209,5 @@ codeunit 50100 MyCodeunit
           (identifier)
           (member_expression
             (identifier)
-            (quoted_identifier)))))))
+            (quoted_identifier)))
+        (end_keyword)))))

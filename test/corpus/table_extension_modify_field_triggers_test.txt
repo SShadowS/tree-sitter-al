@@ -48,6 +48,7 @@ tableextension 50000 "Customer Extension" extends Customer
         (trigger_keyword)
         name: (identifier)
         (code_block
+          (begin_keyword)
           (if_statement
             (if_keyword)
             condition: (comparison_expression
@@ -58,7 +59,8 @@ tableextension 50000 "Customer Extension" extends Customer
             then_branch: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal))))))
+                (string_literal))))
+          (end_keyword)))
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)
@@ -71,6 +73,7 @@ tableextension 50000 "Customer Extension" extends Customer
                 object_type: (page_keyword)
                 reference: (quoted_identifier)))))
         (code_block
+          (begin_keyword)
           (call_expression
             function: (member_expression
               object: (identifier)
@@ -94,7 +97,8 @@ tableextension 50000 "Customer Extension" extends Customer
                 object: (member_expression
                   object: (identifier)
                   member: (identifier))
-                member: (quoted_identifier)))))))
+                member: (quoted_identifier))))
+          (end_keyword))))
     (modify_modification
       target: (identifier)
       (property
@@ -104,9 +108,11 @@ tableextension 50000 "Customer Extension" extends Customer
         (trigger_keyword)
         name: (identifier)
         (code_block
+          (begin_keyword)
           (assignment_statement
             left: (quoted_identifier)
-            right: (identifier)))))))
+            right: (identifier))
+          (end_keyword))))))
 
 ================================================================================
 Table extension with generic triggers in field modify
@@ -148,6 +154,7 @@ tableextension 50001 "Item Extension" extends Item
               (record_type
                 reference: (quoted_identifier)))))
         (code_block
+          (begin_keyword)
           (if_statement
             (if_keyword)
             condition: (call_expression
@@ -161,4 +168,5 @@ tableextension 50001 "Item Extension" extends Item
               left: (quoted_identifier)
               right: (member_expression
                 object: (identifier)
-                member: (identifier)))))))))
+                member: (identifier))))
+          (end_keyword))))))

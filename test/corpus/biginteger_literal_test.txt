@@ -32,6 +32,7 @@ codeunit 50000 "Test BigInteger"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (biginteger_literal))
@@ -45,7 +46,8 @@ codeunit 50000 "Test BigInteger"
         (assignment_statement
           left: (identifier)
           right: (biginteger_literal))
-        (comment)))))
+        (comment)
+        (end_keyword)))))
 
 ================================================================================
 BigInteger literal in comparison
@@ -79,6 +81,7 @@ codeunit 50001 "Test BigInteger Compare"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           condition: (comparison_expression
@@ -89,7 +92,8 @@ codeunit 50001 "Test BigInteger Compare"
           then_branch: (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))))))
+              (string_literal))))
+        (end_keyword)))))
 
 ================================================================================
 BigInteger literal with lowercase l
@@ -123,6 +127,7 @@ codeunit 50002 "Test BigInteger Lowercase"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (integer))
@@ -131,4 +136,5 @@ codeunit 50002 "Test BigInteger Lowercase"
           left: (identifier)
           right: (unary_expression
             operand: (integer)))
-        (identifier)))))
+        (identifier)
+        (end_keyword)))))

@@ -28,6 +28,7 @@ codeunit 123 "Test Codeunit"
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -61,4 +62,5 @@ codeunit 123 "Test Codeunit"
             body: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal)))))
+        (end_keyword)))))

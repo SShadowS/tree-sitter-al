@@ -127,6 +127,7 @@ page 30 "Item Card"
             (trigger_keyword)
             name: (identifier)
             (code_block
+              (begin_keyword)
               (if_statement
                 (if_keyword)
                 left: (call_expression
@@ -146,4 +147,5 @@ page 30 "Item Card"
                 then_branch: (call_expression
                   function: (identifier)
                   arguments: (argument_list
-                    (string_literal)))))))))))
+                    (string_literal))))
+              (end_keyword))))))))

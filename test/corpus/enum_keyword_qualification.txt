@@ -37,6 +37,7 @@ codeunit 50120 "Enum Keyword Qualification Test"
               (codeunit_keyword)
               (quoted_identifier)))))
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           (unary_expression
@@ -69,4 +70,5 @@ codeunit 50120 "Enum Keyword Qualification Test"
           (integer))
         (assignment_statement
           (identifier)
-          (decimal))))))
+          (decimal))
+        (end_keyword)))))

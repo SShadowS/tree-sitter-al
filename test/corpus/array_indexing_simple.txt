@@ -32,8 +32,10 @@ codeunit 50118 "Simple Array Indexing Test"
               (type_specification
                 (basic_type))))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (subscript_expression
             (identifier)
             (integer))
-          (integer))))))
+          (integer))
+        (end_keyword)))))

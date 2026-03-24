@@ -49,9 +49,11 @@ page 50000 "Test Page"
             (type_specification
               (basic_type))
             (code_block
+              (begin_keyword)
               (exit_statement
                 (exit_keyword)
-                (boolean)))))))))
+                (boolean))
+              (end_keyword))))))))
 
 ================================================================================
 Field trigger with parameters and return type - OnLookup without semicolon
@@ -104,9 +106,11 @@ page 50001 "Test Page 2"
             (type_specification
               (basic_type))
             (code_block
+              (begin_keyword)
               (exit_statement
                 (exit_keyword)
-                (boolean)))))))))
+                (boolean))
+              (end_keyword))))))))
 
 ================================================================================
 Field trigger with multiple parameters and return type
@@ -176,12 +180,14 @@ page 50002 "Test Page 3"
                   (text_type
                     (integer)))))
             (code_block
+              (begin_keyword)
               (assignment_statement
                 (identifier)
                 (string_literal))
               (exit_statement
                 (exit_keyword)
-                (boolean)))))))))
+                (boolean))
+              (end_keyword))))))))
 
 ================================================================================
 Field trigger without parameters but with return type
@@ -228,9 +234,11 @@ page 50003 "Test Page 4"
             (type_specification
               (basic_type))
             (code_block
+              (begin_keyword)
               (exit_statement
                 (exit_keyword)
-                (boolean)))))))))
+                (boolean))
+              (end_keyword))))))))
 
 ================================================================================
 Field trigger compatibility with basic triggers
@@ -286,10 +294,12 @@ page 50004 "Test Page 5"
             (trigger_keyword)
             (identifier)
             (code_block
+              (begin_keyword)
               (call_expression
                 (identifier)
                 (argument_list
-                  (string_literal)))))
+                  (string_literal)))
+              (end_keyword)))
           (trigger_declaration
             (trigger_keyword)
             (identifier)
@@ -302,14 +312,18 @@ page 50004 "Test Page 5"
             (type_specification
               (basic_type))
             (code_block
+              (begin_keyword)
               (exit_statement
                 (exit_keyword)
-                (boolean))))
+                (boolean))
+              (end_keyword)))
           (trigger_declaration
             (trigger_keyword)
             (identifier)
             (code_block
+              (begin_keyword)
               (call_expression
                 (identifier)
                 (argument_list
-                  (string_literal))))))))))
+                  (string_literal)))
+              (end_keyword))))))))

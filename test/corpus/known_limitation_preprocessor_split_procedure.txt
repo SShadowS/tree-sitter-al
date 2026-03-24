@@ -63,6 +63,8 @@ codeunit 50000 "Known Limitation"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
-          right: (integer))))))
+          right: (integer))
+        (end_keyword)))))

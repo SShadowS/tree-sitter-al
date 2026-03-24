@@ -30,9 +30,11 @@ codeunit 50000 "Test Codeunit"
         (text_type
           length: (integer)))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
-          return_value: (string_literal))))
+          return_value: (string_literal))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -40,9 +42,11 @@ codeunit 50000 "Test Codeunit"
       return_type: (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
-          return_value: (decimal))))))
+          return_value: (decimal))
+        (end_keyword)))))
 
 ================================================================================
 Procedure with unquoted return parameter name
@@ -70,6 +74,8 @@ codeunit 50001 "Another Codeunit"
       return_type: (type_specification
         (basic_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
-          return_value: (integer))))))
+          return_value: (integer))
+        (end_keyword)))))

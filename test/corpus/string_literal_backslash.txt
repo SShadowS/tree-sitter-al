@@ -33,6 +33,7 @@ codeunit 123 TestBackslash
       return_type: (type_specification
         (text_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
           return_value: (call_expression
@@ -40,7 +41,8 @@ codeunit 123 TestBackslash
             arguments: (argument_list
               (identifier)
               (string_literal)
-              (string_literal))))))
+              (string_literal))))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       name: (identifier)
@@ -52,6 +54,7 @@ codeunit 123 TestBackslash
       return_type: (type_specification
         (text_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
           return_value: (call_expression
@@ -59,7 +62,8 @@ codeunit 123 TestBackslash
             arguments: (argument_list
               (identifier)
               (string_literal)
-              (string_literal))))))))
+              (string_literal))))
+        (end_keyword)))))
 
 ================================================================================
 String literals with various special characters
@@ -91,6 +95,7 @@ codeunit 456 TestSpecialChars
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
           arguments: (argument_list
@@ -122,7 +127,8 @@ codeunit 456 TestSpecialChars
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ================================================================================
 String literals in complex expressions
@@ -159,6 +165,7 @@ codeunit 789 TestComplexStrings
       return_type: (type_specification
         (text_type))
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
           right: (call_expression
@@ -197,7 +204,8 @@ codeunit 789 TestComplexStrings
           (else_keyword)
           else_branch: (exit_statement
             (exit_keyword)
-            return_value: (identifier)))))))
+            return_value: (identifier)))
+        (end_keyword)))))
 
 ================================================================================
 Mixed string literals and function calls
@@ -224,6 +232,7 @@ codeunit 999 TestMixed
       return_type: (type_specification
         (text_type))
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
           return_value: (call_expression
@@ -232,4 +241,5 @@ codeunit 999 TestMixed
               (string_literal)
               (string_literal)
               (string_literal)
-              (string_literal))))))))
+              (string_literal))))
+        (end_keyword)))))

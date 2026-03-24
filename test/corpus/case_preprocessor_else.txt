@@ -28,6 +28,7 @@ page 50100 TestPage
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -50,7 +51,8 @@ page 50100 TestPage
                 function: (identifier)
                 arguments: (argument_list)))
             (preproc_endif
-              (preproc_close))))))))
+              (preproc_close))))
+        (end_keyword)))))
 
 ================================================================================
 Complex case with multiple branches and preprocessor else
@@ -112,6 +114,7 @@ codeunit 50100 TestCodeunit
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           expression: (identifier)
@@ -121,10 +124,12 @@ codeunit 50100 TestCodeunit
               keyword: (object_type_keyword)
               table_name: (quoted_identifier))
             body: (code_block
+              (begin_keyword)
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal)))))
+                  (string_literal)))
+              (end_keyword)))
           (case_branch
             pattern: (database_reference
               keyword: (object_type_keyword)
@@ -146,4 +151,5 @@ codeunit 50100 TestCodeunit
                   (identifier)
                   (identifier))))
             (preproc_endif
-              (preproc_close))))))))
+              (preproc_close))))
+        (end_keyword)))))

@@ -30,6 +30,7 @@ codeunit 123 "Test"
           type: (type_specification
             (basic_type))))
       (code_block
+        (begin_keyword)
         (for_statement
           (for_keyword)
           variable: (identifier)
@@ -41,4 +42,5 @@ codeunit 123 "Test"
             left: (identifier)
             right: (additive_expression
               left: (identifier)
-              right: (integer))))))))
+              right: (integer))))
+        (end_keyword)))))

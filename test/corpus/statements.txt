@@ -21,9 +21,11 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
-          (integer))))))
+          (integer))
+        (end_keyword)))))
 
 ========================================================================
 Compound assignment operators
@@ -51,6 +53,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (integer))
@@ -62,7 +65,8 @@ codeunit 50100 Test
           (integer))
         (assignment_statement
           (identifier)
-          (integer))))))
+          (integer))
+        (end_keyword)))))
 
 ========================================================================
 Assignment to member expression
@@ -87,11 +91,13 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           (member_expression
             (identifier)
             (identifier))
-          (string_literal))))))
+          (string_literal))
+        (end_keyword)))))
 
 ========================================================================
 Simple if statement
@@ -117,6 +123,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           (comparison_expression
@@ -126,7 +133,8 @@ codeunit 50100 Test
           (then_keyword)
           (assignment_statement
             (identifier)
-            (integer)))))))
+            (integer)))
+        (end_keyword)))))
 
 ========================================================================
 If-else statement
@@ -154,6 +162,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           (comparison_expression
@@ -167,7 +176,8 @@ codeunit 50100 Test
           (else_keyword)
           (assignment_statement
             (identifier)
-            (integer)))))))
+            (integer)))
+        (end_keyword)))))
 
 ========================================================================
 If-else with begin/end blocks
@@ -197,6 +207,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           (comparison_expression
@@ -205,17 +216,22 @@ codeunit 50100 Test
             (integer))
           (then_keyword)
           (code_block
+            (begin_keyword)
             (assignment_statement
               (identifier)
               (integer))
             (assignment_statement
               (identifier)
-              (integer)))
+              (integer))
+            (end_keyword))
           (else_keyword)
           (code_block
+            (begin_keyword)
             (assignment_statement
               (identifier)
-              (integer))))))))
+              (integer))
+            (end_keyword)))
+        (end_keyword)))))
 
 ========================================================================
 If-else if chain
@@ -245,6 +261,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (if_statement
           (if_keyword)
           (comparison_expression
@@ -269,7 +286,8 @@ codeunit 50100 Test
             (else_keyword)
             (assignment_statement
               (identifier)
-              (string_literal))))))))
+              (string_literal))))
+        (end_keyword)))))
 
 ========================================================================
 Case statement
@@ -301,6 +319,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           (identifier)
@@ -320,7 +339,8 @@ codeunit 50100 Test
             (else_keyword)
             (assignment_statement
               (identifier)
-              (string_literal))))))))
+              (string_literal))))
+        (end_keyword)))))
 
 ========================================================================
 Case with range pattern
@@ -348,6 +368,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           (identifier)
@@ -358,7 +379,8 @@ codeunit 50100 Test
               (integer))
             (assignment_statement
               (identifier)
-              (string_literal))))))))
+              (string_literal))))
+        (end_keyword)))))
 
 ========================================================================
 For loop with to
@@ -384,6 +406,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (for_statement
           (for_keyword)
           (identifier)
@@ -393,7 +416,8 @@ codeunit 50100 Test
           (do_keyword)
           (assignment_statement
             (identifier)
-            (identifier)))))))
+            (identifier)))
+        (end_keyword)))))
 
 ========================================================================
 For loop with downto
@@ -419,6 +443,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (for_statement
           (for_keyword)
           (identifier)
@@ -428,7 +453,8 @@ codeunit 50100 Test
           (do_keyword)
           (assignment_statement
             (identifier)
-            (identifier)))))))
+            (identifier)))
+        (end_keyword)))))
 
 ========================================================================
 Foreach statement
@@ -454,6 +480,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (foreach_statement
           (foreach_keyword)
           (identifier)
@@ -463,7 +490,8 @@ codeunit 50100 Test
           (call_expression
             (identifier)
             (argument_list
-              (identifier))))))))
+              (identifier))))
+        (end_keyword)))))
 
 ========================================================================
 While statement
@@ -489,6 +517,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (while_statement
           (while_keyword)
           (comparison_expression
@@ -498,7 +527,8 @@ codeunit 50100 Test
           (do_keyword)
           (assignment_statement
             (identifier)
-            (integer)))))))
+            (integer)))
+        (end_keyword)))))
 
 ========================================================================
 Repeat-until statement
@@ -525,6 +555,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (repeat_statement
           (repeat_keyword)
           (assignment_statement
@@ -534,7 +565,8 @@ codeunit 50100 Test
           (comparison_expression
             (identifier)
             (comparison_operator)
-            (integer)))))))
+            (integer)))
+        (end_keyword)))))
 
 ========================================================================
 With statement
@@ -561,14 +593,18 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (with_statement
           (with_keyword)
           (identifier)
           (do_keyword)
           (code_block
+            (begin_keyword)
             (assignment_statement
               (identifier)
-              (string_literal))))))))
+              (string_literal))
+            (end_keyword)))
+        (end_keyword)))))
 
 ========================================================================
 Exit statement without value
@@ -593,8 +629,10 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (exit_statement
-          (exit_keyword))))))
+          (exit_keyword))
+        (end_keyword)))))
 
 ========================================================================
 Exit statement with value
@@ -619,9 +657,11 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (exit_statement
           (exit_keyword)
-          (boolean))))))
+          (boolean))
+        (end_keyword)))))
 
 ========================================================================
 Asserterror statement
@@ -646,13 +686,15 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (asserterror_statement
           (asserterror_keyword)
           (call_expression
             (member_expression
               (identifier)
               (identifier))
-            (argument_list)))))))
+            (argument_list)))
+        (end_keyword)))))
 
 ========================================================================
 Empty code block
@@ -675,7 +717,9 @@ codeunit 50100 Test
     (procedure
       (procedure_keyword)
       (identifier)
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
 
 ========================================================================
 Function call statement
@@ -700,11 +744,13 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           (identifier)
           (argument_list
             (string_literal)
-            (identifier)))))))
+            (identifier)))
+        (end_keyword)))))
 
 ========================================================================
 Method call on object
@@ -729,6 +775,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           (member_expression
             (identifier)
@@ -736,7 +783,8 @@ codeunit 50100 Test
           (argument_list
             (quoted_identifier)
             (string_literal)
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ========================================================================
 Multiple statements
@@ -763,6 +811,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (integer))
@@ -773,7 +822,8 @@ codeunit 50100 Test
           (identifier)
           (additive_expression
             (identifier)
-            (identifier)))))))
+            (identifier)))
+        (end_keyword)))))
 
 ========================================================================
 For loop with begin/end body
@@ -801,6 +851,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (for_statement
           (for_keyword)
           (identifier)
@@ -809,12 +860,15 @@ codeunit 50100 Test
           (integer)
           (do_keyword)
           (code_block
+            (begin_keyword)
             (assignment_statement
               (identifier)
               (identifier))
             (assignment_statement
               (identifier)
-              (integer))))))))
+              (integer))
+            (end_keyword)))
+        (end_keyword)))))
 
 ========================================================================
 Continue statement in loop
@@ -843,6 +897,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (repeat_statement
           (repeat_keyword)
           (if_statement
@@ -861,7 +916,8 @@ codeunit 50100 Test
           (comparison_expression
             (identifier)
             (comparison_operator)
-            (integer)))))))
+            (integer)))
+        (end_keyword)))))
 
 ========================================================================
 Case with code block branch
@@ -891,6 +947,7 @@ codeunit 50100 Test
       (procedure_keyword)
       (identifier)
       (code_block
+        (begin_keyword)
         (case_statement
           (case_keyword)
           (identifier)
@@ -898,9 +955,12 @@ codeunit 50100 Test
           (case_branch
             (integer)
             (code_block
+              (begin_keyword)
               (assignment_statement
                 (identifier)
                 (string_literal))
               (assignment_statement
                 (identifier)
-                (integer)))))))))
+                (integer))
+              (end_keyword))))
+        (end_keyword)))))

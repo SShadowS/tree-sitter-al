@@ -86,10 +86,12 @@ page 50100 "Test Page"
           (trigger_keyword)
           name: (identifier)
           (code_block
+            (begin_keyword)
             (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal)))))))))
+                (string_literal)))
+            (end_keyword)))))))
 
 ================================================================================
 Multiple standalone semicolons in action

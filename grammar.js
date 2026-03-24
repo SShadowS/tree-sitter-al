@@ -2268,11 +2268,12 @@ module.exports = grammar({
     ),
 
     // code_block: begin ... end;
-    // Using kw() for begin/end — anonymous tokens, NOT named rules
+    // At depth 0: scanner emits begin_keyword/end_keyword (named tokens)
+    // At depth > 0: scanner declines, kw() anonymous regex handles it
     code_block: $ => prec.right(seq(
-      kw('begin'),
+      choice($.begin_keyword, kw('begin')),
       repeat($._statement),
-      kw('end'),
+      choice($.end_keyword, kw('end')),
       optional(';'),
     )),
 

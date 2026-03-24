@@ -70,10 +70,12 @@ table 50100 "Test Table"
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ================================================================================
 Table with multiple preprocessor conditional procedures
@@ -203,10 +205,12 @@ table 50101 "VAT Amount Line"
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (identifier)
           arguments: (argument_list
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ================================================================================
 Table with preprocessor else branch procedures
@@ -347,9 +351,11 @@ table 50103 "Test Table"
       (trigger_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (assignment_statement
           left: (identifier)
-          right: (boolean))))))
+          right: (boolean))
+        (end_keyword)))))
 
 ================================================================================
 Table with procedure without attributes in preprocessor

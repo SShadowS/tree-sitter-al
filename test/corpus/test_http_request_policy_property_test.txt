@@ -70,13 +70,15 @@ codeunit 50101 "Advanced Test"
       (procedure_keyword)
       name: (identifier)
       (code_block
+        (begin_keyword)
         (call_expression
           function: (member_expression
             object: (identifier)
             member: (identifier))
           arguments: (argument_list
             (boolean)
-            (string_literal)))))))
+            (string_literal)))
+        (end_keyword)))))
 
 ================================================================================
 Test codeunit with case variations

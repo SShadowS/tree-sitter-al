@@ -150,12 +150,14 @@ codeunit 50104 "Business Logic"
           (type_specification
             (text_type))))
       (code_block
+        (begin_keyword)
         (assignment_statement
           (identifier)
           (call_expression
             (identifier)
             (argument_list
-              (identifier))))))
+              (identifier))))
+        (end_keyword)))
     (procedure
       (procedure_keyword)
       (identifier)
@@ -168,4 +170,6 @@ codeunit 50104 "Business Logic"
               (quoted_identifier)))))
       (type_specification
         (text_type))
-      (code_block))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))
