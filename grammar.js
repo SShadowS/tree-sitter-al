@@ -99,6 +99,7 @@ module.exports = grammar({
     $.begin_keyword,            // [4] 'begin' at depth 0
     $.end_keyword,              // [5] 'end' at depth 0
     $.preproc_split_begin,      // [6] 'begin' at depth > 0, immediately before #endif
+    $.preproc_split_end,        // [7] 'end' at depth > 0, followed by ; then #else/#endif
   ],
 
   conflicts: $ => [
@@ -2274,8 +2275,12 @@ module.exports = grammar({
     code_block: $ => prec.right(seq(
       choice($.begin_keyword, kw('begin')),
       repeat($._statement),
-      choice($.end_keyword, kw('end')),
-      optional(';'),
+      choice(
+        seq(choice($.end_keyword, kw('end')), optional(';')),
+        // Split ending: 'end' is inside #if, with different structure in #else
+        // Scanner's PREPROC_SPLIT_END only fires when end;#else or end;#endif
+        $.preproc_split_code_block_end,
+      ),
     )),
 
     // =====================================================================
@@ -2593,6 +2598,25 @@ module.exports = grammar({
           optional(';'),
         ),
       ),
+      $.preproc_endif,
+    )),
+
+    // Split code_block ending: #if end; #else [stmts] end else begin stmts end; #endif
+    // Used in code_block when the closing end (and optional else branch)
+    // differs across preprocessor branches. Scanner's PREPROC_SPLIT_END ensures
+    // this only matches when 'end' at depth>0 is followed by ';' then #else/#endif.
+    preproc_split_code_block_end: $ => prec(25, seq(
+      $.preproc_if,
+      $.preproc_split_end,
+      optional(';'),
+      $.preproc_else,
+      repeat($._statement),
+      kw('end'),
+      $.else_keyword,
+      kw('begin'),
+      repeat($._statement),
+      kw('end'),
+      optional(';'),
       $.preproc_endif,
     )),
 

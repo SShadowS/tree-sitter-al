@@ -11,6 +11,7 @@ enum TokenType {
   BEGIN_KEYWORD = 4,
   END_KEYWORD = 5,
   PREPROC_SPLIT_BEGIN = 6,
+  PREPROC_SPLIT_END = 7,
 };
 
 typedef struct {
@@ -95,7 +96,8 @@ bool tree_sitter_al_external_scanner_scan(
   if (valid_symbols[PROPERTY_NAME] && valid_symbols[CONTINUE_AS_IDENTIFIER] &&
       valid_symbols[PREPROC_OPEN] && valid_symbols[PREPROC_CLOSE] &&
       valid_symbols[BEGIN_KEYWORD] && valid_symbols[END_KEYWORD] &&
-      valid_symbols[PREPROC_SPLIT_BEGIN]) {
+      valid_symbols[PREPROC_SPLIT_BEGIN] &&
+      valid_symbols[PREPROC_SPLIT_END]) {
     return false;
   }
 
@@ -159,6 +161,41 @@ bool tree_sitter_al_external_scanner_scan(
       }
       // 'begin' found but #endif not next — return false.
       // tree-sitter resets lexer to pre-scan position; anonymous kw('begin') fires.
+      return false;
+    }
+    return false;
+  }
+
+  // PREPROC_SPLIT_END: 'end' at depth > 0, followed by ';' then #else or #endif
+  // Analogous to PREPROC_SPLIT_BEGIN but for 'end' tokens.
+  // Fires when code_block's 'end' is inside a #if block.
+  if (valid_symbols[PREPROC_SPLIT_END] && state->depth > 0) {
+    skip_whitespace(lexer);
+    if (read_keyword_ci(lexer, "end")) {
+      lexer->mark_end(lexer);  // token covers only 'end'
+      // Check for ';' then whitespace then '#else' or '#endif'
+      while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
+             lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
+             lexer->lookahead == '\f') {
+        lexer->advance(lexer, false);
+      }
+      if (lexer->lookahead == ';') {
+        lexer->advance(lexer, false);
+        // Now check for #else or #endif after whitespace
+        while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
+               lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
+               lexer->lookahead == '\f') {
+          lexer->advance(lexer, false);
+        }
+        if (lexer->lookahead == '#') {
+          lexer->advance(lexer, false);
+          if (read_keyword_ci(lexer, "else") || read_keyword_ci(lexer, "endif")) {
+            lexer->result_symbol = PREPROC_SPLIT_END;
+            return true;
+          }
+        }
+      }
+      // 'end' found but not followed by ; then #else/#endif — return false.
       return false;
     }
     return false;
