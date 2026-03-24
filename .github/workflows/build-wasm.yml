@@ -115,5 +115,4 @@ jobs:
   publish-pypi:
     name: Publish to PyPI
     needs: [release]
-    if: needs.release.result == 'success'
     uses: ./.github/workflows/publish-pypi.yml
