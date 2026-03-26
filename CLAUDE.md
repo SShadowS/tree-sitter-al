@@ -102,6 +102,8 @@ procedure_keyword: $ => kw('procedure'),
 
 **begin/end are named via stateful scanner** — `begin_keyword` and `end_keyword` are emitted at depth 0 (outside `#if` blocks). At depth > 0, the scanner declines and anonymous `kw('begin')`/`kw('end')` tokens handle preprocessor-split contexts. Direct naming via grammar rules or `alias()` still breaks GLR backtracking — the stateful scanner is the correct approach.
 
+**Named keyword node structure** — Named keyword rules (e.g., `exit_keyword`) wrap anonymous string children (`"exit"`). When tree-walking into children, you hit the anonymous string — this is expected tree-sitter behavior, not a grammar bug. The named node is the parent; the literal text is an anonymous child.
+
 **CamelCase keywords** use explicit case alternatives:
 ```javascript
 controladdin_keyword: $ => prec(10, choice('controladdin', 'CONTROLADDIN', 'Controladdin', 'ControlAddIn')),
