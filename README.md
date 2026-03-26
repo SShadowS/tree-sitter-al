@@ -3,6 +3,8 @@
 A [tree-sitter](https://tree-sitter.github.io/tree-sitter/) parser for the AL programming language used in Microsoft Dynamics 365 Business Central.
 
 [![PyPI](https://img.shields.io/pypi/v/tree-sitter-al)](https://pypi.org/project/tree-sitter-al/)
+[![crates.io](https://img.shields.io/crates/v/tree-sitter-al)](https://crates.io/crates/tree-sitter-al)
+[![npm](https://img.shields.io/npm/v/tree-sitter-al)](https://www.npmjs.com/package/tree-sitter-al)
 
 ## Parser Status
 
@@ -19,6 +21,27 @@ Validated against **15,358 production AL files** from the Business Central codeb
 | Query files | 5 (highlights, locals, tags, indents, folds) |
 
 ## Installation
+
+### Rust
+
+```bash
+cargo add tree-sitter-al
+```
+
+```rust
+use tree_sitter::Parser;
+
+let mut parser = Parser::new();
+let language = tree_sitter_al::LANGUAGE;
+parser.set_language(&language.into()).expect("Error loading AL grammar");
+let tree = parser.parse("codeunit 50100 MyCodeunit { }", None).unwrap();
+println!("{}", tree.root_node().to_sexp());
+```
+
+Query constants are also available:
+```rust
+use tree_sitter_al::{HIGHLIGHTS_QUERY, TAGS_QUERY, LOCALS_QUERY, FOLDS_QUERY, INDENTS_QUERY};
+```
 
 ### Python (tree-sitter 0.24+)
 
