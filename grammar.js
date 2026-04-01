@@ -151,6 +151,10 @@ module.exports = grammar({
     [$.procedure, $.interface_procedure_suffix],
     [$.procedure, $._procedure_header, $.interface_procedure_suffix],
     [$._procedure_header, $.interface_procedure_suffix],
+    [$.procedure, $._procedure_header],
+    [$.procedure, $._procedure_preamble],
+    [$.procedure, $._procedure_header, $._procedure_preamble],
+    [$.procedure, $._procedure_header, $.interface_procedure],
     [$.preproc_conditional_case, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$.case_branch, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$._preproc_guard_block, $._statement],
@@ -427,6 +431,8 @@ module.exports = grammar({
       $.event_declaration,
       // Preprocessor-split procedure: header variants in #if/#else, shared body
       $.preproc_split_procedure,
+      // Preprocessor-split procedure preamble: header+var in #if/#else, shared body after #endif
+      $.preproc_split_procedure_preamble,
       // Preprocessor conditionals
       $.preproc_conditional,
       // Extension modifications (table/page extensions)
@@ -2327,6 +2333,26 @@ module.exports = grammar({
         $.var_section,
         $.preproc_conditional_var_block,
       )),
+      $.code_block,
+    )),
+
+    // Procedure preamble: header + optional var section (used in preproc_split_procedure_preamble)
+    _procedure_preamble: $ => seq(
+      $._procedure_header,
+      optional(choice(
+        $.var_section,
+        $.preproc_conditional_var_block,
+      )),
+    ),
+
+    // Preprocessor-split procedure preamble: header+var variants in #if/#else, shared body after #endif
+    // Example: procedure signature AND var section differ across branches, shared begin...end follows
+    preproc_split_procedure_preamble: $ => prec(25, seq(
+      $.preproc_if,
+      $._procedure_preamble,
+      repeat(seq($.preproc_elif, $._procedure_preamble)),
+      optional(seq($.preproc_else, $._procedure_preamble)),
+      $.preproc_endif,
       $.code_block,
     )),
 

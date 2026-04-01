@@ -1863,6 +1863,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "preproc_split_procedure_preamble"
+        },
+        {
+          "type": "SYMBOL",
           "name": "preproc_conditional"
         },
         {
@@ -11218,6 +11222,98 @@
         ]
       }
     },
+    "_procedure_preamble": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_procedure_header"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "var_section"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_conditional_var_block"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "preproc_split_procedure_preamble": {
+      "type": "PREC",
+      "value": 25,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "preproc_if"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_procedure_preamble"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_elif"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_procedure_preamble"
+                }
+              ]
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_else"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_procedure_preamble"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_endif"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "code_block"
+          }
+        ]
+      }
+    },
     "_procedure_header": {
       "type": "SEQ",
       "members": [
@@ -17869,6 +17965,24 @@
     [
       "_procedure_header",
       "interface_procedure_suffix"
+    ],
+    [
+      "procedure",
+      "_procedure_header"
+    ],
+    [
+      "procedure",
+      "_procedure_preamble"
+    ],
+    [
+      "procedure",
+      "_procedure_header",
+      "_procedure_preamble"
+    ],
+    [
+      "procedure",
+      "_procedure_header",
+      "interface_procedure"
     ],
     [
       "preproc_conditional_case",
