@@ -41,7 +41,7 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 ## Architecture
 
 **Core Files:**
-- `grammar.js` - Main grammar definition (~3,000 lines). Never edit `src/parser.c` (auto-generated)
+- `grammar.js` - Main grammar definition (~3,400 lines). Never edit `src/parser.c` (auto-generated)
 - `src/scanner.c` - External scanner for property disambiguation and preprocessor patterns
 - `test/corpus/` - Test suite with AL code and expected parse trees (1,404 tests)
 - `queries/` - 5 query files (highlights, locals, tags, indents, folds)
@@ -65,6 +65,7 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 | `BEGIN_KEYWORD` | `begin` at depth 0 — named node for queries |
 | `END_KEYWORD` | `end` at depth 0 — named node for queries |
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection |
+| `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#else`/`#endif` — split detection |
 
 ## Property Handling
 
@@ -79,7 +80,7 @@ property: $ => seq(
 ),
 ```
 
-**Complex properties** (~20 rules) have unique syntax and remain as individual rules:
+**Complex properties** (~36 rules) have unique syntax and remain as individual rules:
 - CalcFormula, TableRelation, Permissions, AccessByPermission
 - DataItemLink, RunPageLink, SubPageLink, ColumnFilter
 - SourceTableView (and related view properties)
@@ -196,12 +197,14 @@ python parse_bug_finder.py file.al debug.log
 
 ## Parser Metrics
 
+**Note:** These metrics are approximate and may drift as the grammar evolves. Verify with `wc -c src/parser.c` and `grep -E 'SYMBOL_COUNT|STATE_COUNT' src/parser.c` if precision matters.
+
 | Metric | Value |
 |--------|-------|
-| parser.c size | 10.6 MB |
-| SYMBOL_COUNT | ~724 |
-| STATE_COUNT | ~5,179 |
-| grammar.js lines | ~3,000 |
+| parser.c size | 23.5 MB |
+| SYMBOL_COUNT | ~762 |
+| STATE_COUNT | ~11,705 |
+| grammar.js lines | ~3,400 |
 | Tests | 1,404 |
 | Production success | 100% (0 errors) |
 | Named keywords | 82 |
