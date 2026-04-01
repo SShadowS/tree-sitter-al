@@ -2867,6 +2867,36 @@ module.exports = grammar({
     )),
 
     // Split code_block ending: #if end; #else [stmts] end else begin stmts end; #endif
+    // Split call statement: function call where first argument(s) differ across #if/#else
+    // Each branch: func_name(arg, arg,   (ends with trailing comma)
+    // After #endif: remaining_args);
+    preproc_split_call_statement: $ => prec(25, seq(
+      $.preproc_if,
+      $._preproc_call_prefix,
+      repeat(seq($.preproc_elif, $._preproc_call_prefix)),
+      optional(seq($.preproc_else, $._preproc_call_prefix)),
+      $.preproc_endif,
+      // Shared remaining arguments
+      optional(seq($._expression, repeat(seq(',', $._expression)))),
+      ')',
+      ';'
+    )),
+
+    // Call prefix inside a preproc branch: func(arg1, arg2,
+    _preproc_call_prefix: $ => seq(
+      choice(
+        $.identifier,
+        $.member_expression,
+        $.qualified_enum_value,
+        $.keyword_identifier,
+        $.subscript_expression,
+      ),
+      '(',
+      $._expression,
+      repeat(seq(',', $._expression)),
+      ','  // trailing comma leads into shared args
+    ),
+
     // Used in code_block when the closing end (and optional else branch)
     // differs across preprocessor branches. Scanner's PREPROC_SPLIT_END ensures
     // this only matches when 'end' at depth>0 is followed by ';' then #else/#endif.
@@ -2992,6 +3022,7 @@ module.exports = grammar({
         $.preproc_split_if_then_begin,
         $.preproc_split_if_begin_asymmetric,
         $.preproc_guarded_statement,
+        $.preproc_split_call_statement,
       ),
       optional(';')
     )),
