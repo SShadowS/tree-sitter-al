@@ -160,23 +160,23 @@ page 19 "Test Grid" {
           (property
             name: (property_name)
             value: (identifier))
-          (preproc_conditional
+          (preproc_conditional_layout_mixed
             (preproc_if
               (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
-            (ERROR
+            (property
+              name: (property_name)
+              value: (boolean))
+            (group_section
+              (group_keyword)
+              name: (identifier)
               (property
                 name: (property_name)
-                value: (boolean))
-              (group_section
-                (group_keyword)
-                name: (identifier)
-                (property
-                  name: (property_name)
-                  value: (string_literal)))
-              (preproc_else)
-              (identifier))
-            (empty_statement)
+                value: (string_literal)))
+            (preproc_else)
+            (property
+              name: (property_name)
+              value: (boolean))
             (preproc_endif
               (preproc_close))))))))

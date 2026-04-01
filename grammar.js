@@ -109,6 +109,9 @@ module.exports = grammar({
     [$.caption_value, $.option_member],
     [$.assignment_statement, $.assignment_expression],
     [$.preproc_conditional, $.preproc_conditional_layout],
+    [$.preproc_conditional, $.preproc_conditional_layout, $.preproc_conditional_layout_mixed],
+    [$.preproc_conditional, $.preproc_conditional_layout_mixed],
+    [$.preproc_conditional_layout, $.preproc_conditional_layout_mixed],
     [$.preproc_conditional, $.preproc_conditional_actions],
     [$._expression, $._identifier_or_quoted],
     [$._body_element, $.preproc_conditional_var],
@@ -730,6 +733,8 @@ module.exports = grammar({
           $._identifier_or_quoted,
           '.', $._identifier_or_quoted
         ))),
+        // Bare value: Field = "Value" or Field = Value
+        field('value', prec(-1, $._identifier_or_quoted)),
       )
     ),
 
@@ -1359,6 +1364,7 @@ module.exports = grammar({
       repeat(choice(
         $._body_element,
         $._layout_element,
+        $.preproc_conditional_layout_mixed,
       )),
       '}'
     ),
@@ -1373,6 +1379,7 @@ module.exports = grammar({
       repeat(choice(
         $._body_element,
         $._layout_element,
+        $.preproc_conditional_layout_mixed,
       )),
       '}'
     ),
@@ -1387,6 +1394,7 @@ module.exports = grammar({
       repeat(choice(
         $._body_element,
         $._layout_element,
+        $.preproc_conditional_layout_mixed,
       )),
       '}'
     ),
@@ -1401,6 +1409,7 @@ module.exports = grammar({
       repeat(choice(
         $._body_element,
         $._layout_element,
+        $.preproc_conditional_layout_mixed,
       )),
       '}'
     ),
@@ -1415,6 +1424,7 @@ module.exports = grammar({
       repeat(choice(
         $._body_element,
         $._layout_element,
+        $.preproc_conditional_layout_mixed,
       )),
       '}'
     ),
@@ -2725,6 +2735,23 @@ module.exports = grammar({
       )),
       $.preproc_endif,
     ),
+
+    // Preprocessor conditionals in mixed layout+body contexts (grid, group, etc.)
+    // Uses prec.dynamic(-1) so pure-property or pure-layout preproc rules are
+    // preferred when they can parse; this only wins when content is truly mixed.
+    preproc_conditional_layout_mixed: $ => prec.dynamic(-1, seq(
+      $.preproc_if,
+      repeat(choice($._body_element, $._layout_element)),
+      repeat(seq(
+        $.preproc_elif,
+        repeat(choice($._body_element, $._layout_element)),
+      )),
+      optional(seq(
+        $.preproc_else,
+        repeat(choice($._body_element, $._layout_element)),
+      )),
+      $.preproc_endif,
+    )),
 
     // Pragma and region directives (extras — can appear anywhere)
     pragma: $ => new RustRegex('#pragma[^\\n\\r]*'),

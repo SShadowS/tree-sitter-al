@@ -43,10 +43,10 @@ query 50100 "Production Query"
                 (quoted_identifier)))
             (link_value
               field: (quoted_identifier)
-              value: (identifier)))
-          (ERROR
-            (quoted_identifier)
-            (quoted_identifier)))
+              value: (identifier))
+            (link_value
+              field: (quoted_identifier)
+              value: (quoted_identifier))))
         (query_column
           (column_keyword)
           name: (identifier)
