@@ -157,22 +157,26 @@ page 19 "Test Grid" {
         (grid_section
           (grid_keyword)
           name: (identifier)
-          (ERROR
-            (property
-              name: (property_name)
-              value: (identifier))
+          (property
+            name: (property_name)
+            value: (identifier))
+          (preproc_conditional
             (preproc_if
               (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
-            (property
-              name: (property_name)
-              value: (boolean))
-            (identifier)
-            (identifier))
-          (property
-            name: (property_name)
-            value: (string_literal)))
-        (ERROR
-          (identifier)))))
-  (ERROR))
+            (ERROR
+              (property
+                name: (property_name)
+                value: (boolean))
+              (group_section
+                (group_keyword)
+                name: (identifier)
+                (property
+                  name: (property_name)
+                  value: (string_literal)))
+              (preproc_else)
+              (identifier))
+            (empty_statement)
+            (preproc_endif
+              (preproc_close))))))))

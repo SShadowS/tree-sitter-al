@@ -276,11 +276,11 @@ codeunit 50104 "Test Region After Var"
       (variable_declaration
         name: (identifier)
         type: (type_specification
-          (basic_type)))
-      (preproc_region)
-      (attribute_item
-        attribute: (attribute_content
-          name: (identifier))))
+          (basic_type))))
+    (preproc_region)
+    (attribute_item
+      attribute: (attribute_content
+        name: (identifier)))
     (procedure
       (procedure_keyword)
       name: (identifier)

@@ -11473,7 +11473,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "attribute_item"
+                  "name": "var_attribute_item"
                 },
                 {
                   "type": "SYMBOL",
@@ -11488,6 +11488,27 @@
           }
         ]
       }
+    },
+    "var_attribute_item": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "var_attribute_open"
+        },
+        {
+          "type": "FIELD",
+          "name": "attribute",
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_content"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
     },
     "preproc_conditional_var": {
       "type": "SEQ",
@@ -11504,6 +11525,10 @@
               {
                 "type": "SYMBOL",
                 "name": "variable_declaration"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "var_attribute_item"
               },
               {
                 "type": "SYMBOL",
@@ -11533,6 +11558,10 @@
                     {
                       "type": "SYMBOL",
                       "name": "variable_declaration"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "var_attribute_item"
                     },
                     {
                       "type": "SYMBOL",
@@ -11566,6 +11595,10 @@
                       {
                         "type": "SYMBOL",
                         "name": "variable_declaration"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "var_attribute_item"
                       },
                       {
                         "type": "SYMBOL",
@@ -17151,6 +17184,10 @@
     {
       "type": "SYMBOL",
       "name": "preproc_split_end"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "var_attribute_open"
     }
   ],
   "inline": [],

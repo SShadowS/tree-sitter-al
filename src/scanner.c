@@ -12,6 +12,7 @@ enum TokenType {
   END_KEYWORD = 5,
   PREPROC_SPLIT_BEGIN = 6,
   PREPROC_SPLIT_END = 7,
+  VAR_ATTRIBUTE_OPEN = 8,
 };
 
 typedef struct {
@@ -97,7 +98,8 @@ bool tree_sitter_al_external_scanner_scan(
       valid_symbols[PREPROC_OPEN] && valid_symbols[PREPROC_CLOSE] &&
       valid_symbols[BEGIN_KEYWORD] && valid_symbols[END_KEYWORD] &&
       valid_symbols[PREPROC_SPLIT_BEGIN] &&
-      valid_symbols[PREPROC_SPLIT_END]) {
+      valid_symbols[PREPROC_SPLIT_END] &&
+      valid_symbols[VAR_ATTRIBUTE_OPEN]) {
     return false;
   }
 
@@ -199,6 +201,182 @@ bool tree_sitter_al_external_scanner_scan(
       return false;
     }
     return false;
+  }
+
+  // VAR_ATTRIBUTE_OPEN: match '[' when the attribute is followed by a variable
+  // declaration pattern (identifier ':' or quoted_identifier ':' or another '[').
+  // This prevents var_section from greedily consuming procedure-level attributes.
+  // The scanner scans past the entire [...] attribute, then checks what follows.
+  if (valid_symbols[VAR_ATTRIBUTE_OPEN]) {
+    skip_whitespace(lexer);
+    if (lexer->lookahead == '[') {
+      // Mark the '[' as the token (single character)
+      lexer->advance(lexer, false);
+      lexer->mark_end(lexer);
+
+      // Scan past the attribute content to find the closing ']'.
+      // Track bracket and paren depth for nested constructs like [Obsolete('msg', '24.0')]
+      int bracket_depth = 1;
+      int paren_depth = 0;
+      bool in_string = false;
+
+      while (bracket_depth > 0 && lexer->lookahead != 0) {
+        if (in_string) {
+          if (lexer->lookahead == '\'') {
+            lexer->advance(lexer, false);
+            // Check for escaped quote ('')
+            if (lexer->lookahead == '\'') {
+              lexer->advance(lexer, false);
+              continue;
+            }
+            in_string = false;
+            continue;
+          }
+        } else {
+          if (lexer->lookahead == '\'') {
+            in_string = true;
+          } else if (lexer->lookahead == '(') {
+            paren_depth++;
+          } else if (lexer->lookahead == ')') {
+            if (paren_depth > 0) paren_depth--;
+          } else if (lexer->lookahead == '[') {
+            bracket_depth++;
+          } else if (lexer->lookahead == ']') {
+            bracket_depth--;
+            if (bracket_depth == 0) {
+              lexer->advance(lexer, false);  // consume the ']'
+              break;
+            }
+          }
+        }
+        lexer->advance(lexer, false);
+      }
+
+      if (bracket_depth != 0) return false;  // unterminated attribute
+
+      // Now skip whitespace after ']' and check what follows
+      while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
+             lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
+             lexer->lookahead == '\f') {
+        lexer->advance(lexer, false);
+      }
+
+      // Check what follows:
+      // - '[' → another attribute (chain) → this is a var attribute
+      // - identifier followed by ':' → variable declaration → var attribute
+      // - '"' quoted identifier followed by ':' → variable declaration → var attribute
+      // - anything else → NOT a variable → decline
+
+      if (lexer->lookahead == '[') {
+        // Another attribute follows — scan past all chained attributes to check
+        // if the final one is followed by a variable declaration pattern.
+        // We need to scan past [attr1][attr2]...[attrN] identifier: to confirm.
+        while (lexer->lookahead == '[') {
+          int inner_bracket_depth = 1;
+          bool inner_in_string = false;
+          lexer->advance(lexer, false);  // consume '['
+          while (inner_bracket_depth > 0 && lexer->lookahead != 0) {
+            if (inner_in_string) {
+              if (lexer->lookahead == '\'') {
+                lexer->advance(lexer, false);
+                if (lexer->lookahead == '\'') {
+                  lexer->advance(lexer, false);
+                  continue;
+                }
+                inner_in_string = false;
+                continue;
+              }
+            } else {
+              if (lexer->lookahead == '\'') {
+                inner_in_string = true;
+              } else if (lexer->lookahead == '[') {
+                inner_bracket_depth++;
+              } else if (lexer->lookahead == ']') {
+                inner_bracket_depth--;
+                if (inner_bracket_depth == 0) {
+                  lexer->advance(lexer, false);  // consume ']'
+                  break;
+                }
+              }
+            }
+            lexer->advance(lexer, false);
+          }
+          if (inner_bracket_depth != 0) return false;
+          // Skip whitespace between chained attributes
+          while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
+                 lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
+                 lexer->lookahead == '\f') {
+            lexer->advance(lexer, false);
+          }
+        }
+        // After all chained attributes, check for variable declaration pattern
+        // (fall through to the identifier/quoted-identifier checks below)
+      }
+
+      if (lexer->lookahead == '"') {
+        // Quoted identifier — scan to closing '"', check for ':'
+        lexer->advance(lexer, false);
+        while (lexer->lookahead != 0 && lexer->lookahead != '"') {
+          lexer->advance(lexer, false);
+        }
+        if (lexer->lookahead == '"') {
+          lexer->advance(lexer, false);
+          // Skip whitespace
+          while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+            lexer->advance(lexer, false);
+          }
+          if (lexer->lookahead == ':') {
+            lexer->result_symbol = VAR_ATTRIBUTE_OPEN;
+            return true;
+          }
+        }
+        return false;
+      }
+
+      if (is_identifier_start(lexer->lookahead)) {
+        // Identifier — scan it, then check for ':' (or ',' for multi-variable decls)
+        // Pattern: identifier (',' identifier)* ':'
+        while (true) {
+          while (is_identifier_char(lexer->lookahead)) {
+            lexer->advance(lexer, false);
+          }
+          // Skip whitespace
+          while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+            lexer->advance(lexer, false);
+          }
+          if (lexer->lookahead == ':') {
+            lexer->result_symbol = VAR_ATTRIBUTE_OPEN;
+            return true;
+          }
+          if (lexer->lookahead == ',') {
+            // Multi-variable: identifier, identifier, ... : Type
+            lexer->advance(lexer, false);
+            while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+              lexer->advance(lexer, false);
+            }
+            if (lexer->lookahead == '"') {
+              // Quoted identifier in multi-var list
+              lexer->advance(lexer, false);
+              while (lexer->lookahead != 0 && lexer->lookahead != '"') {
+                lexer->advance(lexer, false);
+              }
+              if (lexer->lookahead == '"') lexer->advance(lexer, false);
+              while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+                lexer->advance(lexer, false);
+              }
+              // Loop back to check for ':', ',' etc.
+              continue;
+            }
+            if (!is_identifier_start(lexer->lookahead)) return false;
+            continue;
+          }
+          return false;
+        }
+      }
+
+      // Not followed by variable declaration pattern — decline
+      return false;
+    }
   }
 
   // CONTINUE_AS_IDENTIFIER: match 'continue' followed by ':='

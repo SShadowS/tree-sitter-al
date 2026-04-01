@@ -100,6 +100,7 @@ module.exports = grammar({
     $.end_keyword,              // [5] 'end' at depth 0
     $.preproc_split_begin,      // [6] 'begin' at depth > 0, immediately before #endif
     $.preproc_split_end,        // [7] 'end' at depth > 0, followed by ; then #else/#endif
+    $.var_attribute_open,       // [8] '[' when attribute is followed by variable declaration
   ],
 
   conflicts: $ => [
@@ -2374,22 +2375,31 @@ module.exports = grammar({
       $.var_keyword,
       repeat(choice(
         $.variable_declaration,
-        $.attribute_item,
+        $.var_attribute_item,
         $.preproc_conditional_var,
         $.preproc_split_procedure,
       )),
     )),
 
+    // Attribute inside a var section — uses scanner token to ensure the attribute
+    // is followed by a variable declaration (not a procedure or other construct).
+    // This prevents var_section from greedily consuming procedure-level attributes.
+    var_attribute_item: $ => seq(
+      $.var_attribute_open,  // scanner-disambiguated '['
+      field('attribute', $.attribute_content),
+      ']'
+    ),
+
     preproc_conditional_var: $ => seq(
       $.preproc_if,
-      repeat(choice($.variable_declaration, $.attribute_item, $._body_element)),
+      repeat(choice($.variable_declaration, $.var_attribute_item, $.attribute_item, $._body_element)),
       repeat(seq(
         $.preproc_elif,
-        repeat(choice($.variable_declaration, $.attribute_item, $._body_element)),
+        repeat(choice($.variable_declaration, $.var_attribute_item, $.attribute_item, $._body_element)),
       )),
       optional(seq(
         $.preproc_else,
-        repeat(choice($.variable_declaration, $.attribute_item, $._body_element)),
+        repeat(choice($.variable_declaration, $.var_attribute_item, $.attribute_item, $._body_element)),
       )),
       $.preproc_endif,
     ),
