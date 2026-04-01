@@ -85,6 +85,55 @@ static bool peek_keyword_ci(TSLexer *lexer, const char *keyword) {
   return true;
 }
 
+// Skip whitespace and any #pragma lines, then peek for a keyword.
+// #pragma lines are transparent extras — we must skip them when scanning ahead
+// for split-construct patterns (e.g., PREPROC_SPLIT_BEGIN checking for #endif).
+static bool peek_keyword_ci_skip_pragma(TSLexer *lexer, const char *keyword) {
+  while (true) {
+    skip_whitespace(lexer);
+    // Check for '#pragma' line — skip entire line
+    if (lexer->lookahead == '#') {
+      lexer->advance(lexer, false);
+      // Check if 'pragma' follows
+      const char *pragma = "pragma";
+      bool is_pragma = true;
+      for (int i = 0; pragma[i] != '\0'; i++) {
+        if (towlower(lexer->lookahead) != pragma[i]) { is_pragma = false; break; }
+        lexer->advance(lexer, false);
+      }
+      if (is_pragma && (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
+                        lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
+                        lexer->lookahead == '\0')) {
+        // Skip rest of this #pragma line
+        while (lexer->lookahead != '\0' && lexer->lookahead != '\n') {
+          lexer->advance(lexer, false);
+        }
+        continue;  // loop back to skip more whitespace/#pragma lines
+      } else {
+        // '#' was followed by something other than 'pragma' — check for keyword
+        // We already consumed '#'; now match rest of keyword (which starts with '#')
+        // Since we consumed '#', match from position 1 of keyword
+        if (keyword[0] != '#') return false;
+        const char *rest = keyword + 1;
+        for (int i = 0; rest[i] != '\0'; i++) {
+          if (towlower(lexer->lookahead) != rest[i]) return false;
+          lexer->advance(lexer, false);
+        }
+        if (is_identifier_char(lexer->lookahead)) return false;
+        return true;
+      }
+    } else {
+      // Not '#' — try to match keyword directly
+      for (int i = 0; keyword[i] != '\0'; i++) {
+        if (towlower(lexer->lookahead) != keyword[i]) return false;
+        lexer->advance(lexer, false);
+      }
+      if (is_identifier_char(lexer->lookahead)) return false;
+      return true;
+    }
+  }
+}
+
 bool tree_sitter_al_external_scanner_scan(
   void *payload,
   TSLexer *lexer,
@@ -148,16 +197,18 @@ bool tree_sitter_al_external_scanner_scan(
     }
   }
 
-  // PREPROC_SPLIT_BEGIN: 'begin' at depth > 0, immediately before #endif
+  // PREPROC_SPLIT_BEGIN: 'begin' at depth > 0, before #endif (possibly with #pragma lines between)
   //
   // '#' handling: peek_keyword_ci is called with "#endif" (the full string
   // including '#'). PREPROC_OPEN/CLOSE manually advance past '#' before calling
   // read_keyword_ci("if"/"endif"). These are DIFFERENT conventions — do not mix.
+  //
+  // #pragma lines are transparent extras — we skip them when scanning ahead for #endif.
   if (valid_symbols[PREPROC_SPLIT_BEGIN] && state->depth > 0) {
     skip_whitespace(lexer);
     if (read_keyword_ci(lexer, "begin")) {
       lexer->mark_end(lexer);  // token covers only 'begin'
-      if (peek_keyword_ci(lexer, "#endif")) {
+      if (peek_keyword_ci_skip_pragma(lexer, "#endif")) {
         lexer->result_symbol = PREPROC_SPLIT_BEGIN;
         return true;
       }

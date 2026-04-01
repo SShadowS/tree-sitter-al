@@ -1086,6 +1086,14 @@
           "named": true
         },
         {
+          "type": "preproc_split_brace_close",
+          "named": true
+        },
+        {
+          "type": "preproc_split_brace_close_if_only",
+          "named": true
+        },
+        {
           "type": "preproc_split_field",
           "named": true
         },
@@ -1455,6 +1463,14 @@
         },
         {
           "type": "preproc_conditional_layout",
+          "named": true
+        },
+        {
+          "type": "preproc_split_brace_close",
+          "named": true
+        },
+        {
+          "type": "preproc_split_brace_close_if_only",
           "named": true
         },
         {
@@ -1857,6 +1873,14 @@
         },
         {
           "type": "preproc_conditional_layout",
+          "named": true
+        },
+        {
+          "type": "preproc_split_brace_close",
+          "named": true
+        },
+        {
+          "type": "preproc_split_brace_close_if_only",
           "named": true
         },
         {
@@ -2515,6 +2539,14 @@
           "named": true
         },
         {
+          "type": "preproc_split_brace_close",
+          "named": true
+        },
+        {
+          "type": "preproc_split_brace_close_if_only",
+          "named": true
+        },
+        {
           "type": "preproc_split_field",
           "named": true
         },
@@ -2681,6 +2713,10 @@
         },
         {
           "type": "preproc_split_brace_close",
+          "named": true
+        },
+        {
+          "type": "preproc_split_brace_close_if_only",
           "named": true
         },
         {
@@ -4215,6 +4251,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_begin_asymmetric",
+            "named": true
+          },
+          {
             "type": "preproc_split_if_else_statement",
             "named": true
           },
@@ -4849,6 +4889,10 @@
         },
         {
           "type": "preproc_guarded_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_begin_asymmetric",
           "named": true
         },
         {
@@ -5504,6 +5548,10 @@
         },
         {
           "type": "preproc_split_code_block_end",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_begin_asymmetric",
           "named": true
         },
         {
@@ -8593,6 +8641,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_begin_asymmetric",
+            "named": true
+          },
+          {
             "type": "preproc_split_if_else_statement",
             "named": true
           },
@@ -9239,6 +9291,10 @@
           },
           {
             "type": "preproc_guarded_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_begin_asymmetric",
             "named": true
           },
           {
@@ -10336,6 +10392,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_begin_asymmetric",
+            "named": true
+          },
+          {
             "type": "preproc_split_if_else_statement",
             "named": true
           },
@@ -10681,6 +10741,10 @@
           },
           {
             "type": "preproc_guarded_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_begin_asymmetric",
             "named": true
           },
           {
@@ -17254,6 +17318,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_begin_asymmetric",
+          "named": true
+        },
+        {
           "type": "preproc_split_if_else_statement",
           "named": true
         },
@@ -18023,6 +18091,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_begin_asymmetric",
+          "named": true
+        },
+        {
           "type": "preproc_split_if_else_statement",
           "named": true
         },
@@ -18494,6 +18566,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_begin_asymmetric",
+            "named": true
+          },
+          {
             "type": "preproc_split_if_else_statement",
             "named": true
           },
@@ -18895,6 +18971,113 @@
     }
   },
   {
+    "type": "preproc_split_brace_close_if_only",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "addafter_modification",
+          "named": true
+        },
+        {
+          "type": "addbefore_modification",
+          "named": true
+        },
+        {
+          "type": "addfirst_modification",
+          "named": true
+        },
+        {
+          "type": "addlast_modification",
+          "named": true
+        },
+        {
+          "type": "area_section",
+          "named": true
+        },
+        {
+          "type": "cuegroup_section",
+          "named": true
+        },
+        {
+          "type": "fixed_section",
+          "named": true
+        },
+        {
+          "type": "grid_section",
+          "named": true
+        },
+        {
+          "type": "group_section",
+          "named": true
+        },
+        {
+          "type": "label_section",
+          "named": true
+        },
+        {
+          "type": "modify_modification",
+          "named": true
+        },
+        {
+          "type": "moveafter_modification",
+          "named": true
+        },
+        {
+          "type": "movebefore_modification",
+          "named": true
+        },
+        {
+          "type": "movefirst_modification",
+          "named": true
+        },
+        {
+          "type": "movelast_modification",
+          "named": true
+        },
+        {
+          "type": "page_field",
+          "named": true
+        },
+        {
+          "type": "part_section",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_layout",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_split_field",
+          "named": true
+        },
+        {
+          "type": "repeater_section",
+          "named": true
+        },
+        {
+          "type": "systempart_section",
+          "named": true
+        },
+        {
+          "type": "usercontrol_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_split_case_branch",
     "named": true,
     "fields": {
@@ -19032,6 +19215,10 @@
           },
           {
             "type": "preproc_guarded_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_begin_asymmetric",
             "named": true
           },
           {
@@ -19792,6 +19979,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_begin_asymmetric",
+          "named": true
+        },
+        {
           "type": "preproc_split_if_else_statement",
           "named": true
         },
@@ -20143,6 +20334,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_begin_asymmetric",
           "named": true
         },
         {
@@ -20853,6 +21048,494 @@
     }
   },
   {
+    "type": "preproc_split_if_begin_asymmetric",
+    "named": true,
+    "fields": {
+      "condition": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "biginteger_literal",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_keyword",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "keyword_identifier",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "ternary_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "verbatim_string",
+            "named": true
+          }
+        ]
+      },
+      "left": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "biginteger_literal",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_keyword",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "keyword_identifier",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "ternary_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "verbatim_string",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "in_keyword",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "additive_expression",
+          "named": true
+        },
+        {
+          "type": "asserterror_statement",
+          "named": true
+        },
+        {
+          "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "assignment_statement",
+          "named": true
+        },
+        {
+          "type": "biginteger_literal",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "break_statement",
+          "named": true
+        },
+        {
+          "type": "call_expression",
+          "named": true
+        },
+        {
+          "type": "case_statement",
+          "named": true
+        },
+        {
+          "type": "comparison_expression",
+          "named": true
+        },
+        {
+          "type": "continue_statement",
+          "named": true
+        },
+        {
+          "type": "database_reference",
+          "named": true
+        },
+        {
+          "type": "date_literal",
+          "named": true
+        },
+        {
+          "type": "datetime_literal",
+          "named": true
+        },
+        {
+          "type": "decimal",
+          "named": true
+        },
+        {
+          "type": "empty_statement",
+          "named": true
+        },
+        {
+          "type": "end_keyword",
+          "named": true
+        },
+        {
+          "type": "exit_statement",
+          "named": true
+        },
+        {
+          "type": "for_statement",
+          "named": true
+        },
+        {
+          "type": "foreach_statement",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "if_keyword",
+          "named": true
+        },
+        {
+          "type": "if_statement",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "keyword_identifier",
+          "named": true
+        },
+        {
+          "type": "list_literal",
+          "named": true
+        },
+        {
+          "type": "logical_expression",
+          "named": true
+        },
+        {
+          "type": "member_expression",
+          "named": true
+        },
+        {
+          "type": "multiplicative_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_guarded_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_split_begin",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_begin_asymmetric",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_else_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_then_begin",
+          "named": true
+        },
+        {
+          "type": "qualified_enum_value",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        },
+        {
+          "type": "range_expression",
+          "named": true
+        },
+        {
+          "type": "repeat_statement",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        },
+        {
+          "type": "subscript_expression",
+          "named": true
+        },
+        {
+          "type": "ternary_expression",
+          "named": true
+        },
+        {
+          "type": "then_keyword",
+          "named": true
+        },
+        {
+          "type": "time_literal",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        },
+        {
+          "type": "verbatim_string",
+          "named": true
+        },
+        {
+          "type": "while_statement",
+          "named": true
+        },
+        {
+          "type": "with_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_split_if_else_statement",
     "named": true,
     "fields": {
@@ -21112,6 +21795,10 @@
           },
           {
             "type": "preproc_guarded_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_begin_asymmetric",
             "named": true
           },
           {
@@ -21460,6 +22147,10 @@
           },
           {
             "type": "preproc_guarded_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_begin_asymmetric",
             "named": true
           },
           {
@@ -21831,6 +22522,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_begin_asymmetric",
+            "named": true
+          },
+          {
             "type": "preproc_split_if_else_statement",
             "named": true
           },
@@ -22176,6 +22871,10 @@
           },
           {
             "type": "preproc_guarded_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_begin_asymmetric",
             "named": true
           },
           {
@@ -22695,6 +23394,10 @@
         },
         {
           "type": "preproc_split_begin",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_begin_asymmetric",
           "named": true
         },
         {
@@ -23279,6 +23982,10 @@
         },
         {
           "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_begin_asymmetric",
           "named": true
         },
         {
@@ -25706,6 +26413,10 @@
         },
         {
           "type": "preproc_guarded_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_begin_asymmetric",
           "named": true
         },
         {
@@ -30400,6 +31111,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_begin_asymmetric",
+            "named": true
+          },
+          {
             "type": "preproc_split_if_else_statement",
             "named": true
           },
@@ -30892,6 +31607,10 @@
           },
           {
             "type": "preproc_guarded_statement",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_begin_asymmetric",
             "named": true
           },
           {

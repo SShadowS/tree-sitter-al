@@ -1404,6 +1404,8 @@ module.exports = grammar({
         '}',
         // Split closing brace: } inside both #if and #else branches
         $.preproc_split_brace_close,
+        // Split closing brace: } inside #if only (no #else)
+        $.preproc_split_brace_close_if_only,
       )
     ),
 
@@ -1414,6 +1416,15 @@ module.exports = grammar({
       repeat($._layout_element),
       '}',
       $.preproc_else,
+      repeat($._layout_element),
+      '}',
+      $.preproc_endif,
+    )),
+
+    // Split closing brace (if-only): #if content } #endif  (no #else branch)
+    // Used when a section's closing } is inside a #if with no #else.
+    preproc_split_brace_close_if_only: $ => prec(25, seq(
+      $.preproc_if,
       repeat($._layout_element),
       '}',
       $.preproc_endif,
@@ -1617,7 +1628,11 @@ module.exports = grammar({
       ')',
       '{',
       repeat($._layout_element),
-      '}'
+      choice(
+        '}',
+        $.preproc_split_brace_close,
+        $.preproc_split_brace_close_if_only,
+      )
     ),
 
     addlast_modification: $ => seq(
@@ -1627,7 +1642,11 @@ module.exports = grammar({
       ')',
       '{',
       repeat($._layout_element),
-      '}'
+      choice(
+        '}',
+        $.preproc_split_brace_close,
+        $.preproc_split_brace_close_if_only,
+      )
     ),
 
     addafter_modification: $ => seq(
@@ -1637,7 +1656,11 @@ module.exports = grammar({
       ')',
       '{',
       repeat($._layout_element),
-      '}'
+      choice(
+        '}',
+        $.preproc_split_brace_close,
+        $.preproc_split_brace_close_if_only,
+      )
     ),
 
     addbefore_modification: $ => seq(
@@ -1647,7 +1670,11 @@ module.exports = grammar({
       ')',
       '{',
       repeat($._layout_element),
-      '}'
+      choice(
+        '}',
+        $.preproc_split_brace_close,
+        $.preproc_split_brace_close_if_only,
+      )
     ),
 
     // modify("Name") { Visible = false; }
@@ -2824,6 +2851,21 @@ module.exports = grammar({
       $.preproc_endif,
     )),
 
+    // Asymmetric if-then-begin: if...then begin is inside #if, but end is outside
+    // Pattern: #if / if EXPR then begin / #endif / shared_stmts end;
+    preproc_split_if_begin_asymmetric: $ => prec.right(26, seq(
+      $.preproc_if,
+      repeat($._statement),           // allow preamble statements before if
+      $.if_keyword,
+      field('condition', $._expression),
+      $.then_keyword,
+      $.preproc_split_begin,          // 'begin' at depth > 0, immediately before #endif
+      $.preproc_endif,
+      repeat($._statement),
+      choice($.end_keyword, kw('end')),
+      optional(';'),
+    )),
+
     // Split code_block ending: #if end; #else [stmts] end else begin stmts end; #endif
     // Used in code_block when the closing end (and optional else branch)
     // differs across preprocessor branches. Scanner's PREPROC_SPLIT_END ensures
@@ -2948,6 +2990,7 @@ module.exports = grammar({
         $.preproc_split_if_statement,
         $.preproc_split_if_else_statement,
         $.preproc_split_if_then_begin,
+        $.preproc_split_if_begin_asymmetric,
         $.preproc_guarded_statement,
       ),
       optional(';')
