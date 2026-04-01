@@ -157,6 +157,7 @@ module.exports = grammar({
     [$.procedure, $._procedure_header, $.interface_procedure],
     [$.preproc_conditional_case, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$.case_branch, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
+    [$.case_branch, $.preproc_split_case_branch, $.preproc_conditional_case_patterns, $.preproc_split_case_extended],
     [$._preproc_guard_block, $._statement],
     [$.if_statement, $._if_statement_no_else],  // dangling-else in case branches
   ],
@@ -3089,6 +3090,7 @@ module.exports = grammar({
       repeat(choice(
         $.case_branch,
         $.preproc_conditional_case,
+        $.preproc_split_case_extended,
       )),
       optional($.case_else_branch),
       kw('end')
@@ -3140,6 +3142,34 @@ module.exports = grammar({
         alias($._if_statement_no_else, $.if_statement),
         $._statement,
       ))
+    )),
+
+    // Extended case split: #if adds complete branches + provides header for next shared branch
+    // Example: #if DOSMTP  1: begin DoSMTP(); end;  2:  #else  2, 1:  #endif  begin DoEmail(); end;
+    preproc_split_case_extended: $ => prec(25, seq(
+      $.preproc_if,
+      repeat($.case_branch),             // zero or more complete extra branches
+      field('pattern', $._case_pattern), // header-only for the next branch
+      ':',
+      repeat(seq(
+        $.preproc_elif,
+        repeat($.case_branch),
+        field('pattern', $._case_pattern),
+        ':',
+      )),
+      optional(seq(
+        $.preproc_else,
+        repeat($.case_branch),
+        field('pattern', $._case_pattern),
+        ':',
+      )),
+      $.preproc_endif,
+      // Shared body for the split branch
+      field('body', choice(
+        $.code_block,
+        alias($._if_statement_no_else, $.if_statement),
+        $._statement,
+      )),
     )),
 
     // Case pattern list: supports preprocessor conditionals interleaved with patterns
