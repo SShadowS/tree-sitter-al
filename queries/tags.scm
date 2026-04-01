@@ -95,6 +95,36 @@
   name: [(identifier) (quoted_identifier)] @name) @definition.method
 
 ; =============================================================================
+; Test Definitions (for test runners like neotest)
+; =============================================================================
+
+; [Test] as first attribute, 0+ trailing attributes before procedure
+(
+  (attribute_item
+    (attribute_content
+      name: (identifier) @_test_attr
+      (#match? @_test_attr "^[Tt][Ee][Ss][Tt]$")))
+  (attribute_item)*
+  .
+  (procedure
+    name: [(identifier) (quoted_identifier)] @test.name) @test.definition
+)
+
+; [Test] after 1+ other attributes (e.g. [Obsolete][Test][Scope] procedure)
+(
+  (attribute_item)
+  .
+  (attribute_item
+    (attribute_content
+      name: (identifier) @_test_attr
+      (#match? @_test_attr "^[Tt][Ee][Ss][Tt]$")))
+  (attribute_item)*
+  .
+  (procedure
+    name: [(identifier) (quoted_identifier)] @test.name) @test.definition
+)
+
+; =============================================================================
 ; Parameter Definitions
 ; =============================================================================
 
