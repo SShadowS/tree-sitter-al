@@ -6696,6 +6696,22 @@
     "fields": {}
   },
   {
+    "type": "else_table_relation_fragment",
+    "named": true,
+    "fields": {
+      "else_relation": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "table_relation_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "empty_statement",
     "named": true,
     "fields": {}
@@ -17153,6 +17169,10 @@
       "required": true,
       "types": [
         {
+          "type": "else_table_relation_fragment",
+          "named": true
+        },
+        {
           "type": "preproc_elif",
           "named": true
         },
@@ -23397,6 +23417,10 @@
             "named": true
           },
           {
+            "type": "if_table_relation",
+            "named": true
+          },
+          {
             "type": "implementation_value_list",
             "named": true
           },
@@ -23433,6 +23457,10 @@
             "named": true
           },
           {
+            "type": "preproc_conditional_table_relation",
+            "named": true
+          },
+          {
             "type": "property_expression",
             "named": true
           },
@@ -23450,6 +23478,10 @@
           },
           {
             "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "table_relation_expression",
             "named": true
           },
           {

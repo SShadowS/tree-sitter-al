@@ -1769,6 +1769,15 @@
           "value": "property"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "table_relation_property"
+          },
+          "named": true,
+          "value": "property"
+        },
+        {
           "type": "SYMBOL",
           "name": "empty_statement"
         },
@@ -1927,6 +1936,57 @@
             "content": {
               "type": "SYMBOL",
               "name": "tabledata_permission_list"
+            }
+          }
+        ]
+      }
+    },
+    "table_relation_property": {
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "SYMBOL",
+              "name": "property_name"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "="
+          },
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_conditional_table_relation"
+                },
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "table_relation_expression"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "preproc_conditional_table_relation"
+                    }
+                  ]
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "if_table_relation"
+                }
+              ]
             }
           }
         ]
@@ -3699,7 +3759,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "table_relation_expression"
+                  "name": "_table_relation_branch_content"
                 },
                 {
                   "type": "CHOICE",
@@ -3737,7 +3797,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "table_relation_expression"
+                        "name": "_table_relation_branch_content"
                       },
                       {
                         "type": "CHOICE",
@@ -3779,7 +3839,7 @@
                       "members": [
                         {
                           "type": "SYMBOL",
-                          "name": "table_relation_expression"
+                          "name": "_table_relation_branch_content"
                         },
                         {
                           "type": "CHOICE",
@@ -3812,6 +3872,43 @@
           "name": "preproc_endif"
         }
       ]
+    },
+    "_table_relation_branch_content": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "table_relation_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "else_table_relation_fragment"
+        }
+      ]
+    },
+    "else_table_relation_fragment": {
+      "type": "PREC_RIGHT",
+      "value": 15,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "(?i)else"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "else_relation",
+            "content": {
+              "type": "SYMBOL",
+              "name": "table_relation_expression"
+            }
+          }
+        ]
+      }
     },
     "table_relation_expression": {
       "type": "CHOICE",
@@ -17742,6 +17839,10 @@
     ],
     [
       "tabledata_permission_list"
+    ],
+    [
+      "_namespaced_or_simple_ref",
+      "_literal_value"
     ],
     [
       "preproc_conditional_link_values",

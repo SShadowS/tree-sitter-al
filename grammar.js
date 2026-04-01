@@ -144,6 +144,7 @@ module.exports = grammar({
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_table_relation],
     [$.preproc_conditional_permissions, $.preproc_conditional_table_relation],
     [$.tabledata_permission_list],
+    [$._namespaced_or_simple_ref, $._literal_value],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$.preproc_conditional_link_values, $.preproc_conditional_impl_values],
     [$.preproc_conditional_controladdin, $.preproc_conditional],
@@ -393,6 +394,7 @@ module.exports = grammar({
     _body_element: $ => choice(
       $.property,
       alias($.permissions_property, $.property),
+      alias($.table_relation_property, $.property),
       $.empty_statement,
       // Table internals
       $.fields_section,
@@ -456,6 +458,23 @@ module.exports = grammar({
       field('name', $.property_name),
       '=',
       field('value', $.tabledata_permission_list),
+    )),
+
+    // --- TableRelation property variant: ';' may be consumed inside preproc branches ---
+    // Used when the terminating ';' is inside #if/#else branches of a conditional table relation.
+    // Pattern: TableRelation = if (...) Item else #if BC24 if (...) Table; #else IF (...) Table; #endif
+    // Restricted to preproc_conditional_table_relation (not plain table_relation_value) to avoid
+    // ambiguity with AccessByPermission/Permissions properties that use keyword identifiers.
+    // The alias ensures the AST node type remains 'property'.
+    // Lower precedence than 'property' so 'property' (with ';') is preferred when ';' follows.
+    table_relation_property: $ => prec(-1, seq(
+      field('name', $.property_name),
+      '=',
+      field('value', choice(
+        $.preproc_conditional_table_relation,
+        seq($.table_relation_expression, $.preproc_conditional_table_relation),
+        $.if_table_relation,
+      )),
     )),
 
     _property_value: $ => choice(
@@ -767,17 +786,33 @@ module.exports = grammar({
     // Preprocessor conditionals inside TableRelation value
     preproc_conditional_table_relation: $ => seq(
       $.preproc_if,
-      optional(seq($.table_relation_expression, optional(';'))),
+      optional(seq($._table_relation_branch_content, optional(';'))),
       repeat(seq(
         $.preproc_elif,
-        optional(seq($.table_relation_expression, optional(';'))),
+        optional(seq($._table_relation_branch_content, optional(';'))),
       )),
       optional(seq(
         $.preproc_else,
-        optional(seq($.table_relation_expression, optional(';'))),
+        optional(seq($._table_relation_branch_content, optional(';'))),
       )),
       $.preproc_endif,
     ),
+
+    // Branch content inside preproc_conditional_table_relation.
+    // Can be a full table_relation_expression OR an else-continuation fragment
+    // (e.g. 'else if (Type = const("Alloc")) "Table"' which is the tail of an
+    // if_table_relation chain whose head is outside the #if block).
+    _table_relation_branch_content: $ => choice(
+      $.table_relation_expression,
+      $.else_table_relation_fragment,
+    ),
+
+    // Fragment for 'else <table_relation_expression>' inside a preproc branch.
+    // Used when the preceding if-chain ends before the #if and this branch continues it.
+    else_table_relation_fragment: $ => prec.right(15, seq(
+      kw('else'),
+      field('else_relation', $.table_relation_expression),
+    )),
 
     table_relation_expression: $ => choice(
       $.simple_table_relation,

@@ -83,7 +83,8 @@ query 50101 "Mixed Fields OrderBy"
       (query_dataitem
         (dataitem_keyword)
         name: (identifier)
-        table_name: (identifier)))))
+        table_name: (identifier
+          (table_keyword))))))
 
 ================================================================================
 OrderBy property with quoted field names

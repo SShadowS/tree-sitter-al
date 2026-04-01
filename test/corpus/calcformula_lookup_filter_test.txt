@@ -152,7 +152,8 @@ table 50101 "Case Test"
           name: (property_name)
           value: (lookup_formula
             target: (calc_field_reference
-              (identifier)
+              (identifier
+                (table_keyword))
               (identifier))
             (where_clause
               (where_conditions
@@ -175,7 +176,8 @@ table 50101 "Case Test"
           name: (property_name)
           value: (lookup_formula
             target: (calc_field_reference
-              (identifier)
+              (identifier
+                (table_keyword))
               (identifier))
             (where_clause
               (where_conditions
