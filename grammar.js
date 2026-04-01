@@ -2300,6 +2300,7 @@ module.exports = grammar({
           $.code_block,
         ),
         $.preproc_split_procedure_body,
+        $.preproc_split_complete_body,
       )
     )),
 
@@ -2319,6 +2320,35 @@ module.exports = grammar({
       repeat($._statement),
       choice($.end_keyword, kw('end')),
       optional(';'),
+    )),
+
+    // Preprocessor split complete body: each #if/#else branch has a full var+begin+end body
+    // No shared code after #endif — the entire body differs across branches.
+    // Example: trigger OnValidate() #if ... var ... begin ... end; #else ... var ... begin ... end; #endif
+    preproc_split_complete_body: $ => prec.right(25, seq(
+      $.preproc_if,
+      optional($.var_section),
+      kw('begin'),
+      repeat($._statement),
+      kw('end'),
+      optional(';'),
+      repeat(seq(
+        $.preproc_elif,
+        optional($.var_section),
+        kw('begin'),
+        repeat($._statement),
+        kw('end'),
+        optional(';'),
+      )),
+      optional(seq(
+        $.preproc_else,
+        optional($.var_section),
+        kw('begin'),
+        repeat($._statement),
+        kw('end'),
+        optional(';'),
+      )),
+      $.preproc_endif,
     )),
 
     // Preprocessor-split procedure: header variants in #if/#else, shared body
@@ -2456,11 +2486,16 @@ module.exports = grammar({
         $._procedure_named_return,
       )),
       optional(';'),
-      optional(choice(
-        $.var_section,
-        $.preproc_conditional_var_block,
-      )),
-      $.code_block
+      choice(
+        seq(
+          optional(choice(
+            $.var_section,
+            $.preproc_conditional_var_block,
+          )),
+          $.code_block,
+        ),
+        $.preproc_split_complete_body,
+      )
     ),
 
     // Preprocessor conditional wrapping a var section before begin
