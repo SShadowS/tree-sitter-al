@@ -125,6 +125,8 @@ module.exports = grammar({
     [$._body_element, $._procedure_header],
     [$._body_element, $._action_element, $._procedure_header],
     [$._field_source, $._field_header],
+    [$.page_field, $._field_header],
+    [$.field_declaration, $._table_field_header],
     [$._property_value, $.option_member, $._namespaced_or_simple_ref],
     [$.addafter_modification, $.addafter_views_modification],
     [$.addbefore_modification, $.addbefore_views_modification],
@@ -449,6 +451,7 @@ module.exports = grammar({
       $.integer,
       $.decimal,
       $.string_literal,
+      $.verbatim_string,
       $.identifier,
       $.quoted_identifier,
       // Complex value types
@@ -529,7 +532,7 @@ module.exports = grammar({
     // Also handles trailing comma: Caption = 'text',;
     // Uses property_name (scanner token) since the sub-fields follow Name = Value pattern
     caption_value: $ => prec.right(seq(
-      $.string_literal,
+      choice($.string_literal, $.verbatim_string),
       choice(
         seq(
           repeat1(seq(
@@ -640,6 +643,7 @@ module.exports = grammar({
         seq(kw('const'), '(', optional(field('value', choice(
           $.string_literal, $.identifier, $.quoted_identifier, $.integer, $.boolean,
           $.database_reference, $.qualified_enum_value, $.keyword_identifier,
+          $.datetime_literal, $.date_literal, $.time_literal,
         ))), ')'),
         // filter(expression)
         seq($.filter_keyword, '(', field('value', $.filter_value), ')'),
@@ -726,6 +730,7 @@ module.exports = grammar({
         seq(kw('const'), '(', optional(field('value', choice(
           $.string_literal, $.identifier, $.quoted_identifier, $.integer, $.boolean,
           $.database_reference, $.qualified_enum_value, $.keyword_identifier,
+          $.datetime_literal, $.date_literal, $.time_literal,
         ))), ')'),
         seq($.filter_keyword, '(', field('value', $.filter_value), ')'),
         // Direct reference: DataItem.FieldName (used in query DataItemLink)
@@ -794,14 +799,17 @@ module.exports = grammar({
     ))),
 
     // Preprocessor conditionals inside permission lists
+    // Comma may appear inside #if when wrapping trailing entries
     preproc_conditional_permissions: $ => seq(
       $.preproc_if,
+      optional(','),
       repeat(choice(
         seq($.tabledata_permission, optional(',')),
         $.preproc_conditional_permissions,
       )),
       repeat(seq(
         $.preproc_elif,
+        optional(','),
         repeat(choice(
           seq($.tabledata_permission, optional(',')),
           $.preproc_conditional_permissions,
@@ -809,6 +817,7 @@ module.exports = grammar({
       )),
       optional(seq(
         $.preproc_else,
+        optional(','),
         repeat(choice(
           seq($.tabledata_permission, optional(',')),
           $.preproc_conditional_permissions,
@@ -924,6 +933,7 @@ module.exports = grammar({
         $.field_declaration,
         $.attribute_item,
         $.preproc_conditional_fields,
+        $.preproc_split_table_field,
         // Extension modifications inside fields section
         $.modify_modification,
       )),
@@ -1267,7 +1277,7 @@ module.exports = grammar({
     label_declaration: $ => seq(
       field('name', $.identifier),
       '=',
-      field('value', $.string_literal),
+      field('value', choice($.string_literal, $.verbatim_string)),
       repeat(seq(
         ',',
         choice(
@@ -1497,12 +1507,35 @@ module.exports = grammar({
       optional(seq('{', repeat($._body_element), '}'))
     )),
 
+    // Table field split: #if field(id; name; type) #else field(id; name; type) #endif { }
+    preproc_split_table_field: $ => prec(25, seq(
+      $.preproc_if,
+      $._table_field_header,
+      repeat(seq($.preproc_elif, $._table_field_header)),
+      optional(seq($.preproc_else, $._table_field_header)),
+      $.preproc_endif,
+      optional(seq('{', repeat($._body_element), '}'))
+    )),
+
+    // Page field header: field(Name; SourceExpression) — used in preproc_split_field
     _field_header: $ => seq(
       kw('field'),
       '(',
-      $._identifier_or_quoted,
+      field('name', $._identifier_or_quoted),
       ';',
-      $._expression,
+      field('source', $._field_source),
+      ')',
+    ),
+
+    // Table field header: field(id; name; type) — used in preproc_split_table_field
+    _table_field_header: $ => seq(
+      kw('field'),
+      '(',
+      field('id', $.integer),
+      ';',
+      field('name', $._identifier_or_quoted),
+      ';',
+      field('type', $.type_specification),
       ')',
     ),
 
@@ -2420,7 +2453,7 @@ module.exports = grammar({
         field('name', $._identifier_or_quoted),
         ':',
         field('type', $.basic_type),  // Must be Label type
-        field('value', $.string_literal),
+        field('value', choice($.string_literal, $.verbatim_string)),
         optional(seq(
           ',',
           optional(seq(
@@ -2428,6 +2461,14 @@ module.exports = grammar({
             repeat(seq(',', $.label_attribute))
           ))
         )),
+        ';'
+      )),
+      // TextConst variable: Name: TextConst ENU='text', DEU='text';
+      prec(4, seq(
+        field('name', $._identifier_or_quoted),
+        ':',
+        field('type', alias(kw('textconst'), $.basic_type)),
+        $.ml_value_list,
         ';'
       )),
       // Multi-name variable: Name1, Name2, Name3 : Type;
@@ -2511,28 +2552,41 @@ module.exports = grammar({
 
     preproc_if: $ => seq(
       choice($.preproc_open, '#if', '#IF', '#If'),
-      field('condition', choice(
-        $.identifier,
-        $.preproc_not_expression,
-      ))
+      field('condition', $._preproc_expression)
     ),
+
+    _preproc_expression: $ => choice(
+      $.identifier,
+      $.preproc_not_expression,
+      $.preproc_or_expression,
+      $.preproc_and_expression,
+    ),
+
+    preproc_or_expression: $ => prec.left(1, seq(
+      $._preproc_expression,
+      choice(kw('or'), '||'),
+      $._preproc_expression,
+    )),
+
+    preproc_and_expression: $ => prec.left(2, seq(
+      $._preproc_expression,
+      choice(kw('and'), '&&'),
+      $._preproc_expression,
+    )),
 
     preproc_not_expression: $ => seq(
       choice('not', 'NOT', 'Not'),
-      $.identifier
+      $._preproc_expression
     ),
 
     preproc_elif: $ => seq(
       choice('#elif', '#ELIF', '#Elif'),
-      field('condition', choice(
-        $.identifier,
-        $.preproc_not_expression,
-      ))
+      field('condition', $._preproc_expression)
     ),
 
-    preproc_else: $ => choice('#else', '#ELSE', '#Else'),
+    preproc_else: $ => choice('#else', '#ELSE', '#Else', '# else', '# ELSE', '# Else'),
 
-    preproc_endif: $ => choice($.preproc_close, '#endif', '#ENDIF', '#Endif'),
+    preproc_endif: $ => choice($.preproc_close, '#endif', '#ENDIF', '#Endif', '# endif', '# ENDIF', '# Endif'),
 
     // Preprocessor-split if statement: if header varies across #if/#else, body is shared
     // Pattern 1: #if COND / if (expr) then / #else / if (expr) then / #endif / body;
@@ -3292,6 +3346,7 @@ module.exports = grammar({
       $.decimal,
       $.boolean,
       $.string_literal,
+      $.verbatim_string,
       $.datetime_literal,
       $.date_literal,
       $.time_literal,
@@ -3433,6 +3488,8 @@ module.exports = grammar({
       kw('type'),
       kw('version'),
       kw('action'),
+      $.table_keyword,
+      kw('assembly'),
     )),
 
     // Identifiers — Unicode-aware
@@ -3463,6 +3520,18 @@ module.exports = grammar({
           )),
           "'"
         )
+      )
+    ),
+
+    // Verbatim string literal: @'...' — allows newlines and backslash-continuations
+    verbatim_string: $ => token(
+      seq(
+        "@'",
+        repeat(choice(
+          new RustRegex("[^']+"),
+          "''"
+        )),
+        "'"
       )
     ),
 
