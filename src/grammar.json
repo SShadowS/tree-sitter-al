@@ -1760,6 +1760,15 @@
           "name": "property"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "permissions_property"
+          },
+          "named": true,
+          "value": "property"
+        },
+        {
           "type": "SYMBOL",
           "name": "empty_statement"
         },
@@ -1893,6 +1902,35 @@
           "value": ";"
         }
       ]
+    },
+    "permissions_property": {
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "SYMBOL",
+              "name": "property_name"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "="
+          },
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "SYMBOL",
+              "name": "tabledata_permission_list"
+            }
+          }
+        ]
+      }
     },
     "_property_value": {
       "type": "CHOICE",
@@ -3899,40 +3937,36 @@
       }
     },
     "tabledata_permission_list": {
-      "type": "PREC_LEFT",
-      "value": 0,
+      "type": "REPEAT1",
       "content": {
-        "type": "REPEAT1",
-        "content": {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "tabledata_permission"
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": ","
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "SYMBOL",
-              "name": "preproc_conditional_permissions"
-            }
-          ]
-        }
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "tabledata_permission"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_conditional_permissions"
+          }
+        ]
       }
     },
     "preproc_conditional_permissions": {
@@ -3970,8 +4004,17 @@
                     "type": "CHOICE",
                     "members": [
                       {
-                        "type": "STRING",
-                        "value": ","
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": ","
+                          },
+                          {
+                            "type": "STRING",
+                            "value": ";"
+                          }
+                        ]
                       },
                       {
                         "type": "BLANK"
@@ -4024,8 +4067,17 @@
                           "type": "CHOICE",
                           "members": [
                             {
-                              "type": "STRING",
-                              "value": ","
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "STRING",
+                                  "value": ","
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": ";"
+                                }
+                              ]
                             },
                             {
                               "type": "BLANK"
@@ -4082,8 +4134,17 @@
                             "type": "CHOICE",
                             "members": [
                               {
-                                "type": "STRING",
-                                "value": ","
+                                "type": "CHOICE",
+                                "members": [
+                                  {
+                                    "type": "STRING",
+                                    "value": ","
+                                  },
+                                  {
+                                    "type": "STRING",
+                                    "value": ";"
+                                  }
+                                ]
                               },
                               {
                                 "type": "BLANK"
@@ -17678,6 +17739,9 @@
     [
       "preproc_conditional_permissions",
       "preproc_conditional_table_relation"
+    ],
+    [
+      "tabledata_permission_list"
     ],
     [
       "preproc_conditional_link_values",

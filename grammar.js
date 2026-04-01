@@ -143,6 +143,7 @@ module.exports = grammar({
     [$._single_pattern, $._expression],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_table_relation],
     [$.preproc_conditional_permissions, $.preproc_conditional_table_relation],
+    [$.tabledata_permission_list],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$.preproc_conditional_link_values, $.preproc_conditional_impl_values],
     [$.preproc_conditional_controladdin, $.preproc_conditional],
@@ -391,6 +392,7 @@ module.exports = grammar({
 
     _body_element: $ => choice(
       $.property,
+      alias($.permissions_property, $.property),
       $.empty_statement,
       // Table internals
       $.fields_section,
@@ -444,6 +446,17 @@ module.exports = grammar({
       optional(field('value', $._property_value)),
       ';'
     ),
+
+    // --- Permissions property: Name = tabledata_permission_list (no trailing ;) ---
+    // Used when the terminating ';' is consumed inside the permission list's preproc branch.
+    // Pattern: Permissions = tabledata Foo = rimd, tabledata Bar = rimd #if ... ; #endif
+    // The alias ensures the AST node type remains 'property'.
+    // Lower precedence than 'property' so 'property' (with ';') is preferred when ';' follows.
+    permissions_property: $ => prec(-1, seq(
+      field('name', $.property_name),
+      '=',
+      field('value', $.tabledata_permission_list),
+    )),
 
     _property_value: $ => choice(
       // Simple values
@@ -793,25 +806,26 @@ module.exports = grammar({
     // tabledata Customer = R, tabledata "Sales Header" = RIMD
     // Permission list that allows preprocessor conditionals between items
     // Items separated by commas, with preproc blocks interleaved
-    tabledata_permission_list: $ => prec.left(repeat1(choice(
+    tabledata_permission_list: $ => repeat1(choice(
       seq($.tabledata_permission, optional(',')),
       $.preproc_conditional_permissions,
-    ))),
+    )),
 
     // Preprocessor conditionals inside permission lists
     // Comma may appear inside #if when wrapping trailing entries
+    // Semicolon may also appear when the property's terminating ; is inside the #if block
     preproc_conditional_permissions: $ => seq(
       $.preproc_if,
       optional(','),
       repeat(choice(
-        seq($.tabledata_permission, optional(',')),
+        seq($.tabledata_permission, optional(choice(',', ';'))),
         $.preproc_conditional_permissions,
       )),
       repeat(seq(
         $.preproc_elif,
         optional(','),
         repeat(choice(
-          seq($.tabledata_permission, optional(',')),
+          seq($.tabledata_permission, optional(choice(',', ';'))),
           $.preproc_conditional_permissions,
         )),
       )),
@@ -819,7 +833,7 @@ module.exports = grammar({
         $.preproc_else,
         optional(','),
         repeat(choice(
-          seq($.tabledata_permission, optional(',')),
+          seq($.tabledata_permission, optional(choice(',', ';'))),
           $.preproc_conditional_permissions,
         )),
       )),
