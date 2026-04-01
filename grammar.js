@@ -2867,6 +2867,30 @@ module.exports = grammar({
       optional(';'),
     )),
 
+    // Split if-then-begin with #else alternative: #if branch has begin+extra stmts, #else has just if-then
+    // Pattern: #if / [preamble] if EXPR then begin <stmts> / #else / [preamble] if EXPR then / #endif / shared_stmts / #if / end; / #endif
+    // The #if branch wraps shared code in begin/end with extra preamble; #else branch uses bare if-then.
+    preproc_split_if_begin_else: $ => prec(26, seq(
+      $.preproc_if,
+      repeat($._statement),              // optional preamble in #if branch
+      $.if_keyword,
+      field('condition', $._expression),
+      $.then_keyword,
+      kw('begin'),
+      repeat($._statement),              // extra stmts in #if branch after begin
+      $.preproc_else,
+      repeat($._statement),              // optional preamble in #else branch
+      $.if_keyword,
+      field('condition', $._expression),
+      $.then_keyword,
+      $.preproc_endif,
+      repeat($._statement),              // shared statements after #endif
+      $.preproc_if,
+      kw('end'),
+      optional(';'),
+      $.preproc_endif,
+    )),
+
     // Split code_block ending: #if end; #else [stmts] end else begin stmts end; #endif
     // Split call statement: function call where first argument(s) differ across #if/#else
     // Each branch: func_name(arg, arg,   (ends with trailing comma)
@@ -3022,6 +3046,7 @@ module.exports = grammar({
         $.preproc_split_if_else_statement,
         $.preproc_split_if_then_begin,
         $.preproc_split_if_begin_asymmetric,
+        $.preproc_split_if_begin_else,
         $.preproc_guarded_statement,
         $.preproc_split_call_statement,
       ),
