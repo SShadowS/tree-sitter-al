@@ -1,0 +1,37 @@
+==================
+Report with preprocessor conditional in labels section
+==================
+
+report 50100 "My Report"
+{
+    labels
+    {
+        DataRetrievedLbl = 'Data retrieved:';
+#if not CLEAN28
+        OldCaption = 'Old Caption';
+        PageCaption = 'Page';
+#endif
+    }
+}
+
+---
+
+(source_file
+  (report_declaration
+    (integer)
+    (quoted_identifier)
+    (labels_section
+      (label_declaration
+        (identifier)
+        (string_literal))
+      (preproc_conditional_labels
+        (preproc_if
+          (preproc_not_expression
+            (identifier)))
+        (label_declaration
+          (identifier)
+          (string_literal))
+        (label_declaration
+          (identifier)
+          (string_literal))
+        (preproc_endif)))))

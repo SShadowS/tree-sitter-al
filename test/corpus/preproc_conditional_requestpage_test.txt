@@ -1,0 +1,49 @@
+==================
+Report with preprocessor conditional trigger in requestpage
+==================
+
+report 50100 "My Report"
+{
+    requestpage
+    {
+#if not CLEAN28
+        trigger OnQueryClosePage(CloseAction: Action): Boolean
+        begin
+            exit(true);
+        end;
+#endif
+
+        trigger OnClosePage()
+        begin
+        end;
+    }
+}
+
+---
+
+(source_file
+  (report_declaration
+    (integer)
+    (quoted_identifier)
+    (requestpage_section
+      (preproc_conditional_requestpage
+        (preproc_if
+          (preproc_not_expression
+            (identifier)))
+        (trigger_declaration
+          (trigger_name)
+          (parameter_list
+            (parameter
+              (name
+                (identifier))
+              (type_specification
+                (basic_type))))
+          (type_specification
+            (basic_type))
+          (code_block
+            (exit_statement
+              (boolean))))
+        (preproc_endif))
+      (trigger_declaration
+        (trigger_name)
+        (code_block)))))

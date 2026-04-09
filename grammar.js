@@ -2455,7 +2455,8 @@ module.exports = grammar({
     ),
 
     _label_element: $ => choice(
-      $.label_declaration
+      $.label_declaration,
+      $.preproc_conditional_labels
     ),
 
     rendering_section: $ => seq(
@@ -2682,9 +2683,10 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $._page_properties,
-        $.layout_section, 
+        $.layout_section,
         $.actions_section,
-        $.trigger_declaration
+        $.trigger_declaration,
+        $.preproc_conditional_requestpage
       )),
       '}'
     ),
@@ -7416,6 +7418,17 @@ enum_type: $ => prec(1, seq(
 
     // Preprocessor conditional rules for rendering layouts
     preproc_conditional_rendering: _preproc_conditional_block_template($ => $.rendering_layout),
+
+    // Preprocessor conditional rules for label declarations
+    preproc_conditional_labels: _preproc_conditional_block_template($ => $.label_declaration),
+
+    // Preprocessor conditional rules for requestpage content
+    preproc_conditional_requestpage: _preproc_conditional_block_template($ => choice(
+      $._page_properties,
+      $.layout_section,
+      $.actions_section,
+      $.trigger_declaration
+    )),
 
     // Preprocessor conditional rules for analysis views
     preproc_conditional_analysisviews: _preproc_conditional_block_template($ => $.analysisview_definition),

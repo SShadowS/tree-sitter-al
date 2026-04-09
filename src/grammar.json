@@ -9908,6 +9908,10 @@
         {
           "type": "SYMBOL",
           "name": "label_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_labels"
         }
       ]
     },
@@ -11019,6 +11023,10 @@
               {
                 "type": "SYMBOL",
                 "name": "trigger_declaration"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_conditional_requestpage"
               }
             ]
           }
@@ -33804,6 +33812,183 @@
                   "content": {
                     "type": "SYMBOL",
                     "name": "rendering_layout"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_labels": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "label_declaration"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "preproc_elif"
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "label_declaration"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "label_declaration"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_conditional_requestpage": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_page_properties"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "layout_section"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "actions_section"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "trigger_declaration"
+              }
+            ]
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "preproc_elif"
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_page_properties"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "layout_section"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "actions_section"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "trigger_declaration"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_else"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_page_properties"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "layout_section"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "actions_section"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "trigger_declaration"
+                      }
+                    ]
                   }
                 }
               ]
