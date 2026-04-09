@@ -169,6 +169,7 @@ module.exports = grammar({
     [$._literal_value, $._extended_value_choice],  // Filter expression literal range ambiguity
     [$._single_pattern_or_preproc, $.preproc_conditional_case_pattern],  // Preprocessor in case pattern list
     [$._expression, $._single_pattern],  // Identifier in case pattern can be expression or pattern
+    [$.fields, $.preproc_pragma_field],  // GLR: standalone preproc_conditional_fields vs pragma-wrapped field
   ],
 
   // External scanner tokens - order matters! Indices match scanner.c enum TokenType
@@ -7527,12 +7528,12 @@ enum_type: $ => prec(1, seq(
     )),
 
     // Pragma-wrapped field: #if #pragma #endif field(id;name;type) #if #pragma #endif { body }
-    preproc_pragma_field: $ => prec(25, seq(
+    preproc_pragma_field: $ => seq(
       $.preproc_conditional_fields,   // #if...#pragma disable...#endif
       $._table_field_header,          // field(id; name; type)
       $.preproc_conditional_fields,   // #if...#pragma restore...#endif
       '{', repeat($._field_properties), '}'
-    )),
+    ),
 
     preproc_if: $ => seq(
       choice('#if', '#IF', '#If'),

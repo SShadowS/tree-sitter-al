@@ -35500,40 +35500,36 @@
       ]
     },
     "preproc_pragma_field": {
-      "type": "PREC",
-      "value": 25,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_fields"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_table_field_header"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_fields"
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
             "type": "SYMBOL",
-            "name": "preproc_conditional_fields"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_table_field_header"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "preproc_conditional_fields"
-          },
-          {
-            "type": "STRING",
-            "value": "{"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_field_properties"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "}"
+            "name": "_field_properties"
           }
-        ]
-      }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
     },
     "preproc_if": {
       "type": "SEQ",
@@ -39628,6 +39624,10 @@
     [
       "_expression",
       "_single_pattern"
+    ],
+    [
+      "fields",
+      "preproc_pragma_field"
     ]
   ],
   "precedences": [],
