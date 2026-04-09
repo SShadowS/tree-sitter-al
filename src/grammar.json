@@ -22807,6 +22807,10 @@
               {
                 "type": "SYMBOL",
                 "name": "preproc_conditional_fields"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "preproc_pragma_field"
               }
             ]
           }
@@ -22817,7 +22821,7 @@
         }
       ]
     },
-    "field_declaration": {
+    "_table_field_header": {
       "type": "SEQ",
       "members": [
         {
@@ -22881,6 +22885,15 @@
         {
           "type": "STRING",
           "value": ")"
+        }
+      ]
+    },
+    "field_declaration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_table_field_header"
         },
         {
           "type": "CHOICE",
@@ -35264,6 +35277,42 @@
           "name": "preproc_endif"
         }
       ]
+    },
+    "preproc_pragma_field": {
+      "type": "PREC",
+      "value": 25,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "preproc_conditional_fields"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_table_field_header"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_conditional_fields"
+          },
+          {
+            "type": "STRING",
+            "value": "{"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_field_properties"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "}"
+          }
+        ]
+      }
     },
     "preproc_if": {
       "type": "SEQ",

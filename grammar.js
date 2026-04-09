@@ -5098,12 +5098,15 @@ enum_type: $ => prec(1, seq(
       repeat(choice(
         seq(repeat($.attribute_item), $.field_declaration),
         seq(repeat($.attribute_item), $.modify_field_declaration),
-        $.preproc_conditional_fields
+        $.preproc_conditional_fields,
+        $.preproc_pragma_field,
       )),
       '}'
     ),
 
-    field_declaration: $ => seq(
+    // Hidden rule for field header: field(id; name; type)
+    // Used by field_declaration and preproc_pragma_field
+    _table_field_header: $ => seq(
       kw('field'),
       '(',
       field('id', $.integer),
@@ -5115,7 +5118,11 @@ enum_type: $ => prec(1, seq(
       token(';'),  // Make semi_colon an explicit token
       // Use the consistent type_specification rule
       field('type', $.type_specification),
-      ')',
+      ')'
+    ),
+
+    field_declaration: $ => seq(
+      $._table_field_header,
       optional(seq(
         '{',
         repeat($._field_properties),
@@ -7483,6 +7490,14 @@ enum_type: $ => prec(1, seq(
     preproc_conditional_fields: _preproc_conditional_block_template($ => choice(
       $.field_declaration,
       $.modify_field_declaration
+    )),
+
+    // Pragma-wrapped field: #if #pragma #endif field(id;name;type) #if #pragma #endif { body }
+    preproc_pragma_field: $ => prec(25, seq(
+      $.preproc_conditional_fields,   // #if...#pragma disable...#endif
+      $._table_field_header,          // field(id; name; type)
+      $.preproc_conditional_fields,   // #if...#pragma restore...#endif
+      '{', repeat($._field_properties), '}'
     )),
 
     preproc_if: $ => seq(

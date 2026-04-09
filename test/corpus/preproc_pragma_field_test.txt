@@ -27,42 +27,34 @@ table 1 T
 
 (source_file
   (table_declaration
-    (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
+    (fields
       (preproc_pragma_field
         (preproc_conditional_fields
           (preproc_if
-            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (pragma)
-          (preproc_endif
-            (preproc_close)))
-        (integer)
-        (identifier)
-        (type_specification
+          (preproc_endif))
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
           (text_type
             length: (integer)))
         (preproc_conditional_fields
           (preproc_if
-            (preproc_open)
             condition: (preproc_not_expression
               (identifier)))
           (pragma)
-          (preproc_endif
-            (preproc_close)))
-        (property
-          name: (property_name)
-          value: (string_literal)))
+          (preproc_endif))
+        (caption_property
+          (string_literal)))
       (field_declaration
         id: (integer)
         name: (quoted_identifier)
         type: (type_specification
           (code_type
             length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+        (caption_property
+          (string_literal))))))
