@@ -2867,6 +2867,7 @@ module.exports = grammar({
       $.layout_section,
       $.actions_section,
       $.views_section,  // Support page views section
+      $.analysisviews_section,  // Support page analysisviews section
       $.procedure,
       // Use prec.dynamic to prefer var_section continuation over split procedures
       prec.dynamic(-50, $.preproc_split_procedure),
@@ -2910,7 +2911,34 @@ module.exports = grammar({
       )),
       '}'
     ),
-    
+
+    // =====================================================================
+    // Analysis views section
+    // =====================================================================
+
+    analysisviews_section: $ => seq(
+      $.analysisviews_keyword,
+      '{',
+      repeat(choice(
+        $.analysisview_definition,
+        $.preproc_conditional_analysisviews,
+      )),
+      '}'
+    ),
+
+    analysisview_definition: $ => seq(
+      $.analysisview_keyword,
+      '(',
+      field('name', $._identifier_choice),
+      ')',
+      '{',
+      repeat(choice(
+        $._universal_properties,
+        $.generic_property,
+      )),
+      '}'
+    ),
+
     modify_views: $ => seq(
       kw('modify'),
       '(',
@@ -7388,6 +7416,9 @@ enum_type: $ => prec(1, seq(
     // Preprocessor conditional rules for rendering layouts
     preproc_conditional_rendering: _preproc_conditional_block_template($ => $.rendering_layout),
 
+    // Preprocessor conditional rules for analysis views
+    preproc_conditional_analysisviews: _preproc_conditional_block_template($ => $.analysisview_definition),
+
     // Preprocessor conditional rules for xmlport properties
     preproc_conditional_xmlport_properties: _preproc_conditional_block_template($ => $._xmlport_properties),
 
@@ -8620,6 +8651,8 @@ enum_type: $ => prec(1, seq(
 
 
     // Centralized case-insensitive keyword patterns for DRY principle
+    analysisviews_keyword: $ => kw('analysisviews'),
+    analysisview_keyword: $ => kw('analysisview'),
     _field_keyword: $ => kw('field'),
     _filter_keyword: $ => kw('filter'),
     _cardpart_keyword: $ => kw('cardpart'),
