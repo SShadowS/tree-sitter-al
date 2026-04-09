@@ -42,7 +42,7 @@ report 1700 "Deferral Summary"
           (string_literal)))
       (preproc_conditional_rendering
         (preproc_if
-          (preproc_not_expression
+          condition: (preproc_not_expression
             (identifier)))
         (rendering_layout
           name: (identifier)
@@ -52,9 +52,11 @@ report 1700 "Deferral Summary"
           (caption_property
             (string_literal))
           (obsolete_state_property
-            value: (identifier))
+            value: (obsolete_state_value))
           (obsolete_reason_property
-            value: (string_literal))
+            value: (obsolete_reason_value
+              (string_literal)))
           (obsolete_tag_property
-            value: (string_literal)))
+            value: (obsolete_tag_value
+              (string_literal))))
         (preproc_endif)))))

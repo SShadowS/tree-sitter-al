@@ -2460,7 +2460,7 @@ module.exports = grammar({
     rendering_section: $ => seq(
       kw('rendering'),
       '{',
-      repeat($.rendering_layout),
+      repeat(choice($.rendering_layout, $.preproc_conditional_rendering)),
       '}'
     ),
 
@@ -7384,6 +7384,9 @@ enum_type: $ => prec(1, seq(
 
     // Preprocessor conditional rules for report columns
     preproc_conditional_report_columns: _preproc_conditional_block_template($ => $.report_column_section),
+
+    // Preprocessor conditional rules for rendering layouts
+    preproc_conditional_rendering: _preproc_conditional_block_template($ => $.rendering_layout),
 
     // Preprocessor conditional rules for xmlport properties
     preproc_conditional_xmlport_properties: _preproc_conditional_block_template($ => $._xmlport_properties),
