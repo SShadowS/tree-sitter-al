@@ -1,0 +1,60 @@
+==================
+Report with preprocessor conditional in rendering section
+==================
+
+report 1700 "Deferral Summary"
+{
+    rendering
+    {
+        layout(ExcelLayout)
+        {
+            Type = Excel;
+            LayoutFile = './Layouts/Summary.xlsx';
+            Caption = 'Summary Excel';
+        }
+#if not CLEAN28
+        layout(RDLCLayout)
+        {
+            Type = RDLC;
+            LayoutFile = './Layouts/Summary.rdlc';
+            Caption = 'Summary RDLC';
+            ObsoleteState = Pending;
+            ObsoleteReason = 'RDLC layout replaced by Excel.';
+            ObsoleteTag = '28.0';
+        }
+#endif
+    }
+}
+
+---
+
+(source_file
+  (report_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (rendering_section
+      (rendering_layout
+        name: (identifier)
+        (rendering_type_property)
+        (layout_file_property
+          value: (string_literal))
+        (caption_property
+          (string_literal)))
+      (preproc_conditional_rendering
+        (preproc_if
+          (preproc_not_expression
+            (identifier)))
+        (rendering_layout
+          name: (identifier)
+          (rendering_type_property)
+          (layout_file_property
+            value: (string_literal))
+          (caption_property
+            (string_literal))
+          (obsolete_state_property
+            value: (identifier))
+          (obsolete_reason_property
+            value: (string_literal))
+          (obsolete_tag_property
+            value: (string_literal)))
+        (preproc_endif)))))
