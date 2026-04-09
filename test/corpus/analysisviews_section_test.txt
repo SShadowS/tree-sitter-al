@@ -1,0 +1,45 @@
+================================================================================
+Page with analysisviews section containing two analysis views
+================================================================================
+
+page 9305 "Sales Order List"
+{
+    analysisviews
+    {
+        analysisview("Expected sales volume")
+        {
+            Caption = 'Expected sales volume';
+            DefinitionFile = './Sales/Document/Expected sales volume.analysis.json';
+            ToolTip = 'Analyse your expected sales volume.';
+        }
+        analysisview("Top customers by amount")
+        {
+            Caption = 'Top customers by amount';
+            DefinitionFile = './Sales/Document/Top customers by amount.analysis.json';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (analysisviews_section
+      (analysisview_definition
+        name: (quoted_identifier)
+        (caption_property
+          value: (string_literal))
+        (generic_property
+          name: (identifier)
+          value: (string_literal))
+        (tool_tip_property
+          value: (string_literal)))
+      (analysisview_definition
+        name: (quoted_identifier)
+        (caption_property
+          value: (string_literal))
+        (generic_property
+          name: (identifier)
+          value: (string_literal))))))
