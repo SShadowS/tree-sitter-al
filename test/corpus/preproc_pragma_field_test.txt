@@ -1,0 +1,68 @@
+========================================================================
+Pragma-wrapped field declaration with body
+========================================================================
+
+table 1 T
+{
+    fields
+    {
+#if not CLEAN27
+#pragma warning disable AS0086
+#endif
+        field(103; "Home Page"; Text[255])
+#if not CLEAN27
+#pragma warning restore AS0086
+#endif
+        {
+            Caption = 'Home Page';
+        }
+        field(107; "No. Series"; Code[20])
+        {
+            Caption = 'No. Series';
+        }
+    }
+}
+
+------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (fields_section
+      (fields_keyword)
+      (preproc_pragma_field
+        (preproc_conditional_fields
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (pragma)
+          (preproc_endif
+            (preproc_close)))
+        (integer)
+        (identifier)
+        (type_specification
+          (text_type
+            length: (integer)))
+        (preproc_conditional_fields
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (pragma)
+          (preproc_endif
+            (preproc_close)))
+        (property
+          name: (property_name)
+          value: (string_literal)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (property
+          name: (property_name)
+          value: (string_literal))))))
