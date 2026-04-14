@@ -4819,6 +4819,10 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "preproc_pragma_field"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "modify_modification"
               }
             ]
@@ -4929,6 +4933,38 @@
         {
           "type": "SYMBOL",
           "name": "preproc_endif"
+        }
+      ]
+    },
+    "preproc_pragma_field": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_fields"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_table_field_header"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_conditional_fields"
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_body_element"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
         }
       ]
     },
@@ -18644,6 +18680,10 @@
     [
       "field_declaration",
       "_table_field_header"
+    ],
+    [
+      "fields_section",
+      "preproc_pragma_field"
     ],
     [
       "_property_value",

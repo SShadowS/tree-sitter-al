@@ -127,6 +127,7 @@ module.exports = grammar({
     [$._field_source, $._field_header],
     [$.page_field, $._field_header],
     [$.field_declaration, $._table_field_header],
+    [$.fields_section, $.preproc_pragma_field],
     [$._property_value, $.option_member, $._namespaced_or_simple_ref],
     [$.addafter_modification, $.addafter_views_modification],
     [$.addbefore_modification, $.addbefore_views_modification],
@@ -990,6 +991,7 @@ module.exports = grammar({
         $.attribute_item,
         $.preproc_conditional_fields,
         $.preproc_split_table_field,
+        $.preproc_pragma_field,
         // Extension modifications inside fields section
         $.modify_modification,
       )),
@@ -1008,6 +1010,14 @@ module.exports = grammar({
         repeat(choice($.field_declaration, $.attribute_item, $.modify_modification)),
       )),
       $.preproc_endif,
+    ),
+
+    // Pragma-wrapped table field: #if #pragma disable #endif field(...) #if #pragma restore #endif { ... }
+    preproc_pragma_field: $ => seq(
+      $.preproc_conditional_fields,   // #if...#pragma disable...#endif
+      $._table_field_header,          // field(id; name; type)
+      $.preproc_conditional_fields,   // #if...#pragma restore...#endif
+      '{', repeat($._body_element), '}'  // field body
     ),
 
     field_declaration: $ => seq(

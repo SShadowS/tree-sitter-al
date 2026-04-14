@@ -1,0 +1,129 @@
+================================================================================
+Pragma-wrapped table field with body
+================================================================================
+
+table 18 Customer
+{
+    fields
+    {
+#if not CLEAN27
+#pragma warning disable AS0086
+#endif
+        field(1; "Home Page"; Text[255])
+#if not CLEAN27
+#pragma warning restore AS0086
+#endif
+        {
+            Caption = 'Home Page';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (fields_section
+      (fields_keyword)
+      (preproc_pragma_field
+        (preproc_conditional_fields
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (pragma)
+          (preproc_endif
+            (preproc_close)))
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (preproc_conditional_fields
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (pragma)
+          (preproc_endif
+            (preproc_close)))
+        (property
+          name: (property_name)
+          value: (string_literal))))))
+
+================================================================================
+Pragma-wrapped table field with multiple properties
+================================================================================
+
+table 50000 "My Table"
+{
+    fields
+    {
+#if not CLEAN25
+#pragma warning disable AS0086
+#endif
+        field(10; Description; Text[100])
+#if not CLEAN25
+#pragma warning restore AS0086
+#endif
+        {
+            Caption = 'Description';
+            DataClassification = CustomerContent;
+        }
+
+        field(20; "No."; Code[20])
+        {
+            Caption = 'No.';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (fields_section
+      (fields_keyword)
+      (preproc_pragma_field
+        (preproc_conditional_fields
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (pragma)
+          (preproc_endif
+            (preproc_close)))
+        id: (integer)
+        name: (identifier)
+        type: (type_specification
+          (text_type
+            length: (integer)))
+        (preproc_conditional_fields
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (pragma)
+          (preproc_endif
+            (preproc_close)))
+        (property
+          name: (property_name)
+          value: (string_literal))
+        (property
+          name: (property_name)
+          value: (identifier)))
+      (field_declaration
+        id: (integer)
+        name: (quoted_identifier)
+        type: (type_specification
+          (code_type
+            length: (integer)))
+        (property
+          name: (property_name)
+          value: (string_literal))))))
