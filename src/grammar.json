@@ -1815,6 +1815,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "analysisviews_section"
+        },
+        {
+          "type": "SYMBOL",
           "name": "dataset_section"
         },
         {
@@ -9427,6 +9431,70 @@
         {
           "type": "SYMBOL",
           "name": "view_keyword"
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_identifier_or_quoted"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_body_element"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "analysisviews_section": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "analysisviews_keyword"
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "analysisview_definition"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "analysisview_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "analysisview_keyword"
         },
         {
           "type": "STRING",
@@ -18363,6 +18431,20 @@
       "content": {
         "type": "PATTERN",
         "value": "(?i)view"
+      }
+    },
+    "analysisviews_keyword": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "(?i)analysisviews"
+      }
+    },
+    "analysisview_keyword": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "(?i)analysisview"
       }
     },
     "_identifier_or_quoted": {

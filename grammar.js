@@ -414,6 +414,7 @@ module.exports = grammar({
       $.layout_section,
       $.actions_section,
       $.views_section,
+      $.analysisviews_section,
       // Report sections
       $.dataset_section,
       $.requestpage_section,
@@ -1984,6 +1985,28 @@ module.exports = grammar({
 
     view_definition: $ => seq(
       $.view_keyword,
+      '(',
+      field('name', $._identifier_or_quoted),
+      ')',
+      '{',
+      repeat($._body_element),
+      '}'
+    ),
+
+    // =====================================================================
+    // Analysis views section
+    // =====================================================================
+
+    // analysisviews { analysisview(Name) { ... } }
+    analysisviews_section: $ => seq(
+      $.analysisviews_keyword,
+      '{',
+      repeat($.analysisview_definition),
+      '}'
+    ),
+
+    analysisview_definition: $ => seq(
+      $.analysisview_keyword,
       '(',
       field('name', $._identifier_or_quoted),
       ')',
@@ -3724,6 +3747,8 @@ module.exports = grammar({
     schema_keyword: $ => kw('schema'),
     views_keyword: $ => kw('views'),
     view_keyword: $ => kw('view'),
+    analysisviews_keyword: $ => kw('analysisviews'),
+    analysisview_keyword: $ => kw('analysisview'),
 
     // =====================================================================
     // Shared rules

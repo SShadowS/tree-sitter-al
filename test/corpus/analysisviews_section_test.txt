@@ -1,0 +1,105 @@
+================================================================================
+Page with analysisviews section
+================================================================================
+
+page 50100 "Sales Analysis"
+{
+    PageType = List;
+    SourceTable = "Sales Line";
+
+    analysisviews
+    {
+        analysisview(BySalesperson)
+        {
+            Caption = 'By Salesperson';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (property
+      name: (property_name)
+      value: (identifier))
+    (property
+      name: (property_name)
+      value: (quoted_identifier))
+    (analysisviews_section
+      (analysisviews_keyword)
+      (analysisview_definition
+        (analysisview_keyword)
+        name: (identifier)
+        (property
+          name: (property_name)
+          value: (string_literal))))))
+
+================================================================================
+Page with multiple analysis views
+================================================================================
+
+page 50101 "Item Analysis"
+{
+    analysisviews
+    {
+        analysisview(ByLocation)
+        {
+            Caption = 'By Location';
+        }
+        analysisview(ByCategory)
+        {
+            Caption = 'By Category';
+            Visible = true;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (analysisviews_section
+      (analysisviews_keyword)
+      (analysisview_definition
+        (analysisview_keyword)
+        name: (identifier)
+        (property
+          name: (property_name)
+          value: (string_literal)))
+      (analysisview_definition
+        (analysisview_keyword)
+        name: (identifier)
+        (property
+          name: (property_name)
+          value: (string_literal))
+        (property
+          name: (property_name)
+          value: (boolean))))))
+
+================================================================================
+Empty analysisviews section
+================================================================================
+
+page 50102 "Empty Analysis"
+{
+    analysisviews
+    {
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (analysisviews_section
+      (analysisviews_keyword))))
