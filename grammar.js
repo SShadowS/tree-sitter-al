@@ -2098,8 +2098,17 @@ module.exports = grammar({
     rendering_section: $ => seq(
       $.rendering_keyword,
       '{',
-      repeat($.rendering_layout),
+      repeat(choice($.rendering_layout, $.preproc_conditional_rendering)),
       '}'
+    ),
+
+    // Preprocessor conditionals at rendering section level (around layouts)
+    preproc_conditional_rendering: $ => seq(
+      $.preproc_if,
+      repeat($.rendering_layout),
+      repeat(seq($.preproc_elif, repeat($.rendering_layout))),
+      optional(seq($.preproc_else, repeat($.rendering_layout))),
+      $.preproc_endif,
     ),
 
     rendering_layout: $ => seq(

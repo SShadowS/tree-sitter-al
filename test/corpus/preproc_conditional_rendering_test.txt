@@ -1,0 +1,117 @@
+================================================================================
+Rendering section with preprocessor conditional layouts
+================================================================================
+
+report 50100 "Customer Report"
+{
+    rendering
+    {
+        layout(DefaultLayout)
+        {
+            Type = RDLC;
+            LayoutFile = './Layouts/Default.rdlc';
+        }
+
+#if not CLEAN26
+        layout(OldLayout)
+        {
+            Type = Word;
+            LayoutFile = './Layouts/Old.docx';
+        }
+#endif
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (rendering_section
+      (rendering_keyword)
+      (rendering_layout
+        (layout_keyword)
+        name: (identifier)
+        (property
+          name: (property_name)
+          value: (identifier))
+        (property
+          name: (property_name)
+          value: (string_literal)))
+      (preproc_conditional_rendering
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (rendering_layout
+          (layout_keyword)
+          name: (identifier)
+          (property
+            name: (property_name)
+            value: (identifier))
+          (property
+            name: (property_name)
+            value: (string_literal)))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+Rendering section with if-else preprocessor
+================================================================================
+
+report 50101 "Flexible Report"
+{
+    rendering
+    {
+#if EXCEL_ENABLED
+        layout(ExcelLayout)
+        {
+            Type = Excel;
+            LayoutFile = './Layouts/Report.xlsx';
+        }
+#else
+        layout(RDLCLayout)
+        {
+            Type = RDLC;
+            LayoutFile = './Layouts/Report.rdlc';
+        }
+#endif
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (rendering_section
+      (rendering_keyword)
+      (preproc_conditional_rendering
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (rendering_layout
+          (layout_keyword)
+          name: (identifier)
+          (property
+            name: (property_name)
+            value: (identifier))
+          (property
+            name: (property_name)
+            value: (string_literal)))
+        (preproc_else)
+        (rendering_layout
+          (layout_keyword)
+          name: (identifier)
+          (property
+            name: (property_name)
+            value: (identifier))
+          (property
+            name: (property_name)
+            value: (string_literal)))
+        (preproc_endif
+          (preproc_close))))))
