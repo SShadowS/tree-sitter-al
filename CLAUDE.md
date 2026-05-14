@@ -201,10 +201,10 @@ python parse_bug_finder.py file.al debug.log
 
 | Metric | Value |
 |--------|-------|
-| parser.c size | 34.9 MB |
-| SYMBOL_COUNT | ~803 |
-| STATE_COUNT | ~15,525 |
-| grammar.js lines | ~3,767 |
+| parser.c size | 26.3 MB |
+| SYMBOL_COUNT | ~809 |
+| STATE_COUNT | ~11,872 |
+| grammar.js lines | ~3,750 |
 | Tests | 1,437 |
 | Production success | 100% (0 errors) |
 | Named keywords | 82 |

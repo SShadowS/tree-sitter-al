@@ -159,6 +159,12 @@ module.exports = grammar({
     [$.if_statement, $._if_statement_no_else],  // dangling-else in case branches
   ],
 
+  // Trivial pass-through wrappers — macro-substituted to drop a layer of indirection.
+  inline: $ => [
+    $._field_source,
+    $._expression_statement,
+  ],
+
   rules: {
     source_file: $ => seq(
       optional($.namespace_declaration),
@@ -2302,10 +2308,7 @@ module.exports = grammar({
     procedure: $ => prec.right(seq(
       optional(field('modifier', $.procedure_modifier)),
       $.procedure_keyword,
-      field('name', $._identifier_or_quoted),
-      '(',
-      optional($.parameter_list),
-      ')',
+      $._procedure_name_and_params,
       optional(choice(
         seq(
           choice(
@@ -2317,17 +2320,28 @@ module.exports = grammar({
       )),
       optional(';'),
       choice(
-        seq(
-          optional(choice(
-            $.var_section,
-            $.preproc_conditional_var_block,
-          )),
-          $.code_block,
-        ),
+        $._routine_regular_body,
         $.preproc_split_procedure_body,
         $.preproc_split_complete_body,
       )
     )),
+
+    // Shared procedure name + parameter list, terminating at the hard ')'
+    _procedure_name_and_params: $ => seq(
+      field('name', $._identifier_or_quoted),
+      '(',
+      optional($.parameter_list),
+      ')',
+    ),
+
+    // Regular routine body: [var section] then code_block — a complete unit
+    _routine_regular_body: $ => seq(
+      optional(choice(
+        $.var_section,
+        $.preproc_conditional_var_block,
+      )),
+      $.code_block,
+    ),
 
     // Preprocessor split procedure body: var+begin+preamble in #if, begin in #else
     // #if / [var] begin [preamble] [if-guard then] / #else / begin / #endif / shared_stmts end;
@@ -2375,11 +2389,7 @@ module.exports = grammar({
       optional(seq($.preproc_else, $._procedure_header)),
       $.preproc_endif,
       optional(';'),
-      optional(choice(
-        $.var_section,
-        $.preproc_conditional_var_block,
-      )),
-      $.code_block,
+      $._routine_regular_body,
     )),
 
     // Procedure preamble: header + optional var section (used in preproc_split_procedure_preamble)
@@ -2407,10 +2417,7 @@ module.exports = grammar({
       repeat($.attribute_item),
       optional(field('modifier', $.procedure_modifier)),
       $.procedure_keyword,
-      field('name', $._identifier_or_quoted),
-      '(',
-      optional($.parameter_list),
-      ')',
+      $._procedure_name_and_params,
       optional(choice(
         seq(
           choice(
@@ -2426,10 +2433,7 @@ module.exports = grammar({
     // Uses prec.dynamic to prefer full procedure when body follows
     interface_procedure: $ => prec.dynamic(-1, prec.right(-5, seq(
       $.procedure_keyword,
-      field('name', $._identifier_or_quoted),
-      '(',
-      optional($.parameter_list),
-      ')',
+      $._procedure_name_and_params,
       optional($.interface_procedure_suffix),
     ))),
 
@@ -2503,13 +2507,7 @@ module.exports = grammar({
       )),
       optional(';'),
       choice(
-        seq(
-          optional(choice(
-            $.var_section,
-            $.preproc_conditional_var_block,
-          )),
-          $.code_block,
-        ),
+        $._routine_regular_body,
         $.preproc_split_complete_body,
       )
     ),
@@ -2723,17 +2721,10 @@ module.exports = grammar({
       repeat(seq($.preproc_elif, $._preproc_if_header)),
       optional(seq($.preproc_else, $._preproc_if_header)),
       $.preproc_endif,
-      field('then_branch', choice(
-        $.code_block,
-        $._statement,
-      )),
+      field('then_branch', $._then_branch),
       optional(seq(
         $.else_keyword,
-        field('else_branch', choice(
-          $.code_block,
-          prec(1, $.if_statement),
-          $._statement,
-        ))
+        field('else_branch', $._else_branch)
       ))
     )),
 
@@ -2752,10 +2743,7 @@ module.exports = grammar({
       $.preproc_if,
       $._preproc_guard_block,
       $.preproc_endif,
-      field('then_branch', choice(
-        $.code_block,
-        $._statement,
-      )),
+      field('then_branch', $._then_branch),
     )),
 
     // Guard block: one or more expression statements followed by an if-then header
@@ -2773,10 +2761,7 @@ module.exports = grammar({
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      field('then_branch', choice(
-        $.code_block,
-        $._statement,
-      )),
+      field('then_branch', $._then_branch),
       $.else_keyword,
       choice(
         // Fragmented: else begin #endif stmts #if end; #endif
@@ -2788,20 +2773,14 @@ module.exports = grammar({
             $.if_keyword,
             field('condition', $._expression),
             $.then_keyword,
-            field('then_branch', choice(
-              $.code_block,
-              $._statement,
-            )),
+            field('then_branch', $._then_branch),
             $.else_keyword,
           )),
           optional(seq($.preproc_else,
             $.if_keyword,
             field('condition', $._expression),
             $.then_keyword,
-            field('then_branch', choice(
-              $.code_block,
-              $._statement,
-            )),
+            field('then_branch', $._then_branch),
             $.else_keyword,
           )),
           $.preproc_endif,
@@ -2816,6 +2795,21 @@ module.exports = grammar({
     // Preprocessor split if-then-begin:
     // #if COND / [preamble] if EXPR then begin / #endif / statements / #if COND / end[;] or end else begin...end; / #endif
     preproc_split_if_then_begin: $ => prec(26, seq(
+      $._preproc_split_then_begin_open,
+      repeat($._statement),
+      $.preproc_if,
+      repeat($._statement),           // allow preamble before end
+      kw('end'),
+      choice(
+        optional(';'),                // Pattern A: just end;
+        $._else_begin_block,          // Pattern B: end else begin ... end;
+      ),
+      $.preproc_endif,
+    )),
+
+    // Complete split-if opening unit: #if [preamble] if EXPR then begin #endif
+    // Ends at #endif — a complete preprocessor-delimited unit, not a mid-construct prefix.
+    _preproc_split_then_begin_open: $ => seq(
       $.preproc_if,
       repeat($._statement),           // allow preamble statements before if
       $.if_keyword,
@@ -2823,33 +2817,29 @@ module.exports = grammar({
       $.then_keyword,
       $.preproc_split_begin,          // 'begin' at depth > 0, before #endif
       $.preproc_endif,
-      repeat($._statement),
+    ),
+
+    // Complete preprocessor-guarded end: #if end [;] #endif
+    _preproc_end_guard: $ => seq(
       $.preproc_if,
-      repeat($._statement),           // allow preamble before end
       kw('end'),
-      choice(
-        optional(';'),                // Pattern A: just end;
-        seq(                          // Pattern B: end else begin ... end;
-          $.else_keyword,
-          kw('begin'),
-          repeat($._statement),
-          kw('end'),
-          optional(';'),
-        ),
-      ),
+      optional(';'),
       $.preproc_endif,
-    )),
+    ),
+
+    // Complete else-branch begin block: else begin stmts end [;] — a complete unit
+    _else_begin_block: $ => seq(
+      $.else_keyword,
+      kw('begin'),
+      repeat($._statement),
+      kw('end'),
+      optional(';'),
+    ),
 
     // Asymmetric if-then-begin: if...then begin is inside #if, but end is outside
     // Pattern: #if / if EXPR then begin / #endif / shared_stmts end;
     preproc_split_if_begin_asymmetric: $ => prec.right(26, seq(
-      $.preproc_if,
-      repeat($._statement),           // allow preamble statements before if
-      $.if_keyword,
-      field('condition', $._expression),
-      $.then_keyword,
-      $.preproc_split_begin,          // 'begin' at depth > 0, immediately before #endif
-      $.preproc_endif,
+      $._preproc_split_then_begin_open,
       repeat($._statement),
       choice($.end_keyword, kw('end')),
       optional(';'),
@@ -2873,10 +2863,7 @@ module.exports = grammar({
       $.then_keyword,
       $.preproc_endif,
       repeat($._statement),              // shared statements after #endif
-      $.preproc_if,
-      kw('end'),
-      optional(';'),
-      $.preproc_endif,
+      $._preproc_end_guard,
     )),
 
     // Split code_block ending: #if end; #else [stmts] end else begin stmts end; #endif
@@ -2890,7 +2877,7 @@ module.exports = grammar({
       optional(seq($.preproc_else, $._preproc_call_prefix)),
       $.preproc_endif,
       // Shared remaining arguments
-      optional(seq($._expression, repeat(seq(',', $._expression)))),
+      optional($._expression_list),
       ')',
       ';'
     )),
@@ -2920,11 +2907,7 @@ module.exports = grammar({
       $.preproc_else,
       repeat($._statement),
       kw('end'),
-      $.else_keyword,
-      kw('begin'),
-      repeat($._statement),
-      kw('end'),
-      optional(';'),
+      $._else_begin_block,
       $.preproc_endif,
     )),
 
@@ -2934,10 +2917,7 @@ module.exports = grammar({
       $.preproc_split_begin,          // 'begin' at depth > 0, before #endif
       $.preproc_endif,
       repeat($._statement),
-      $.preproc_if,
-      kw('end'),
-      optional(';'),
-      $.preproc_endif,
+      $._preproc_end_guard,
     )),
 
     // Preprocessor conditionals in statements context
@@ -3067,17 +3047,10 @@ module.exports = grammar({
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      field('then_branch', choice(
-        $.code_block,
-        $._statement,
-      )),
+      field('then_branch', $._then_branch),
       optional(seq(
         $.else_keyword,
-        field('else_branch', choice(
-          $.code_block,
-          prec(1, $.if_statement),
-          $._statement,
-        ))
+        field('else_branch', $._else_branch)
       ))
     )),
 
@@ -3088,11 +3061,21 @@ module.exports = grammar({
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      field('then_branch', choice(
-        $.code_block,
-        $._statement,
-      )),
+      field('then_branch', $._then_branch),
     )),
+
+    // Shared then-branch body: a complete code_block or single statement
+    _then_branch: $ => choice(
+      $.code_block,
+      $._statement,
+    ),
+
+    // Shared else-branch body: code_block, nested if (else-if chain), or single statement
+    _else_branch: $ => choice(
+      $.code_block,
+      prec(1, $.if_statement),
+      $._statement,
+    ),
 
     // --- Case ---
 
@@ -3492,11 +3475,14 @@ module.exports = grammar({
 
     argument_list: $ => seq(
       '(',
-      optional(seq(
-        $._expression,
-        repeat(seq(',', $._expression))
-      )),
+      optional($._expression_list),
       ')'
+    ),
+
+    // Comma-separated expression list — a complete unit bounded by the caller's delimiter
+    _expression_list: $ => seq(
+      $._expression,
+      repeat(seq(',', $._expression))
     ),
 
     member_expression: $ => prec.left(11, seq(
@@ -3523,10 +3509,7 @@ module.exports = grammar({
 
     list_literal: $ => seq(
       '[',
-      optional(seq(
-        $._expression,
-        repeat(seq(',', $._expression))
-      )),
+      optional($._expression_list),
       ']'
     ),
 

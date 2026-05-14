@@ -13,16 +13,24 @@ Measure with: `grep -E '#define (STATE_COUNT|LARGE_STATE_COUNT|SYMBOL_COUNT)' sr
 |------------|------------:|------------:|-------------:|---------------:|-------------:|-----------------:|----------:|------:|------------------:|
 | **Pre** (orig, pre-`200b1e6`) | 18290 | — | 802 | 40,778,685 | 38.89 | — | 56 | 1437/1437 | 0 |
 | **After pass 1** (`200b1e6`, current) | 15525 | 5265 | 803 | 34,925,072 | 33.31 | 3767 | 53 | 1437/1437 | 0 |
-| After #1 `_procedure_signature` | | | | | | | | | |
-| After #2 `_routine_body` | | | | | | | | | |
-| After #3 preproc complete-unit blocks | | | | | | | | | |
-| After #4 split-if opening units | | | | | | | | | |
-| After #5 `inline` experiment | | | | | | | | | |
-| After #6 `_expression_list` | | | | | | | | | |
-| After #7 operator consolidation | | | | | | | | | |
-| After #8 assignment de-dup | | | | | | | | | |
-| After #9 `_then`/`_else_branch` | | | | | | | | | |
-| After #10 trivial inline cleanup | | | | | | | | | |
+| After #1 `_procedure_name_and_params` | 14851 | 5215 | 804 | 34,051,645 | 32.47 | 3766 | 53 | 1437/1437 | TBD |
+| After #2 `_routine_regular_body` | 13791 | 5106 | 805 | 32,873,110 | 31.35 | 3759 | 53 | 1437/1437 | TBD |
+| After #3 `_else_begin_block` | 12797 | 4727 | 806 | 30,411,455 | 29.00 | 3758 | 53 | 1437/1437 | TBD |
+| After #4 `_preproc_split_then_begin_open` + `_preproc_end_guard` | 12373 | 4529 | 808 | 29,192,796 | 27.84 | 3760 | 53 | 1437/1437 | TBD |
+| After #5 `inline` experiment | 12373 | 4529 | 808 | 29,192,796 | 27.84 | 3760 | 53 | 1437/1437 | — |
+| ↳ #5 result: **REVERTED** — `inline` array *did* bypass the GLR conflict (Gemini correct), but ballooned STATE_COUNT +56 (DevGuide §7 warning confirmed). Net negative. | | | | | | | | | |
+| After #6 `_expression_list` | 12293 | 4505 | 809 | 28,993,640 | 27.65 | 3760 | 53 | 1437/1437 | TBD |
+| After #7 operator consolidation | 12293 | 4505 | 809 | 28,993,640 | 27.65 | 3760 | 53 | — | — |
+| ↳ #7 result: **REVERTED** — `token(choice('and',...))` cut states (−210, would hit 12083) but broke `highlights.scm` (operator literals no longer matchable as `"and"` etc. node types). Breaks query ergonomics = behavior change. Operator consolidation is fundamentally incompatible with literal-operator queries. | | | | | | | | | |
+| After #8 assignment de-dup | 12293 | 4505 | 809 | 28,993,640 | 27.65 | 3760 | 53 | — | — |
+| ↳ #8 result: **REVERTED** — `assignment_statement` / `assignment_expression` are NOT structurally identical: the latter is `prec.right`, the former isn't. A shared `_assignment_body` can't carry per-parent associativity; moving `prec.right` outside the `seq` → unresolved conflict on chained assignment. Gemini's premise was wrong. | | | | | | | | | |
+| After #9 `_then_branch` + `_else_branch` | 11878 | 4247 | 811 | 27,580,022 | 26.30 | 3744 | 53 | 1437/1437 | TBD |
+| After #10 trivial inline cleanup | 11872 | 4244 | 809 | 27,551,493 | 26.28 | 3750 | 53 | 1437/1437 | 0 |
+
+*(BC.History batched once at end of pass per plan; intermediate "TBD" rows were gated on the corpus tests only.)*
+
+**Pass 2 delta (`200b1e6` → here):** STATE_COUNT −3653 (−23.5%) · parser.c −3.32 MiB (−11.2%). Landed: #1 #2 #3 #4 #6 #9 #10. Reverted: #5 (inline balloon), #7 (broke queries), #8 (associativity conflict).
+**Cumulative (orig → here):** STATE_COUNT 18290 → 11872 (−35.1%) · parser.c 38.89 → 26.28 MiB (−32.4%).
 
 **Pass 1 delta:** STATE_COUNT −2765 (−15.1%) · parser.c −5,853,613 bytes (−5.58 MiB, −14.4%) · conflicts −3 · zero behavior change.
 
