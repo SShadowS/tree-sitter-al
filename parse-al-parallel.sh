@@ -5,33 +5,40 @@
 #
 # Description:
 # * Executes `tree-sitter generate` once (in GRAMMAR_DIR, default = ROOT_DIR).
-# * Recursively enumerates *.al files under ROOT_DIR and calls `tree-sitter parse` in parallel.
-# * Adds the full file path to parsed.txt if the parse exit-code is 0, otherwise to errors.txt.
+# * Recursively enumerates *.al files under ROOT_DIR.
+# * Splits the file list into chunks and parses each chunk with a SINGLE
+#   `tree-sitter parse --paths` invocation, run in parallel across chunks.
+#   This loads the parser once per chunk instead of once per file, which is
+#   ~1-2 orders of magnitude faster than spawning a process per file.
+# * Adds the full file path to parsed.txt if the parse succeeded, otherwise to errors.txt.
 # * Writes parsed.txt and errors.txt, and prints a summary.
 #
 # Usage:
-#   ./parse-al-parallel.sh <ROOT_DIR> [GRAMMAR_DIR] [NUM_THREADS]
+#   ./parse-al-parallel.sh <ROOT_DIR> [GRAMMAR_DIR] [NUM_THREADS] [CHUNK_SIZE]
 #
 # Parameters:
 #   ROOT_DIR    - Root folder that contains the AL test files (required)
 #   GRAMMAR_DIR - Folder that contains the grammar (optional, defaults to ROOT_DIR)
 #   NUM_THREADS - Number of parallel threads (optional, defaults to number of CPU cores)
+#   CHUNK_SIZE  - Files per tree-sitter invocation (optional, default 500)
 
 set -e
 
 # Check for help or required parameter
 if [ $# -lt 1 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    echo "Usage: $0 <ROOT_DIR> [GRAMMAR_DIR] [NUM_THREADS]"
+    echo "Usage: $0 <ROOT_DIR> [GRAMMAR_DIR] [NUM_THREADS] [CHUNK_SIZE]"
     echo ""
     echo "  ROOT_DIR    - Root folder that contains the AL test files"
     echo "  GRAMMAR_DIR - Folder that contains the grammar (defaults to ROOT_DIR)"
     echo "  NUM_THREADS - Number of parallel threads (defaults to number of CPU cores)"
+    echo "  CHUNK_SIZE  - Files per tree-sitter invocation (defaults to 500)"
     exit 0
 fi
 
 ROOT_DIR="$1"
 GRAMMAR_DIR="${2:-$ROOT_DIR}"
 NUM_THREADS="${3:-$(nproc)}"
+CHUNK_SIZE="${4:-500}"
 
 # Validate directories exist
 if [ ! -d "$ROOT_DIR" ]; then
@@ -44,72 +51,95 @@ if [ ! -d "$GRAMMAR_DIR" ]; then
     exit 1
 fi
 
-echo "Using $NUM_THREADS threads for parallel processing"
+echo "Using $NUM_THREADS threads, chunk size $CHUNK_SIZE"
 
 # --- 1. (Re)generate the parser ---------------------------------------------
-cd "$GRAMMAR_DIR"
-if ! tree-sitter generate >/dev/null 2>&1; then
-    echo "Error: tree-sitter generate failed"
-    exit 1
+# `tree-sitter generate` takes ~20s. Skip it when src/parser.c is already
+# newer than grammar.js (nothing to regenerate). Set FORCE_GENERATE=1 to override.
+if [ "${FORCE_GENERATE:-0}" != "1" ] \
+   && [ -f "$GRAMMAR_DIR/src/parser.c" ] \
+   && [ -f "$GRAMMAR_DIR/grammar.js" ] \
+   && [ "$GRAMMAR_DIR/src/parser.c" -nt "$GRAMMAR_DIR/grammar.js" ]; then
+    echo "Parser up to date - skipping 'tree-sitter generate' (FORCE_GENERATE=1 to override)"
+else
+    echo "Running 'tree-sitter generate'..."
+    cd "$GRAMMAR_DIR"
+    if ! tree-sitter generate >/dev/null 2>&1; then
+        echo "Error: tree-sitter generate failed"
+        exit 1
+    fi
+    cd - > /dev/null
 fi
-cd - > /dev/null
 
-# --- 2. Gather *.al files -----------------------------------------------------
-al_files=$(find "$ROOT_DIR" -name "*.al" -type f)
-
-if [ -z "$al_files" ]; then
-    echo "Warning: No .al files found under $ROOT_DIR"
-    exit 0
-fi
-
-file_count=$(echo "$al_files" | wc -l)
-echo "Processing $file_count .al files..."
-
-# --- 3. Setup output files ---------------------------------------------------
+# --- 2. Setup temp + output --------------------------------------------------
 parsed_path="$ROOT_DIR/parsed.txt"
 error_path="$ROOT_DIR/errors.txt"
 
-# Clear output files
-> "$parsed_path"
-> "$error_path"
-
-# Create temporary directory for parallel processing
 temp_dir=$(mktemp -d)
-trap "rm -rf $temp_dir" EXIT
+trap 'rm -rf "$temp_dir"' EXIT
 
-# --- 4. Parse each file in parallel ------------------------------------------
-parse_file() {
-    local file="$1"
+# --- 3. Gather *.al files ----------------------------------------------------
+all_files="$temp_dir/all_files.txt"
+find "$ROOT_DIR" -name "*.al" -type f | sort > "$all_files"
+
+file_count=$(wc -l < "$all_files")
+if [ "$file_count" -eq 0 ]; then
+    echo "Warning: No .al files found under $ROOT_DIR"
+    > "$parsed_path"
+    > "$error_path"
+    rm -f "$parsed_path" "$error_path"
+    exit 0
+fi
+echo "Processing $file_count .al files..."
+
+# --- 4. Split into chunks ----------------------------------------------------
+split -l "$CHUNK_SIZE" -d -a 4 "$all_files" "$temp_dir/chunk_"
+
+# --- 5. Parse each chunk in parallel (one tree-sitter process per chunk) ------
+parse_chunk() {
+    local chunk="$1"
     local temp_dir="$2"
-    local thread_id="$$"
-    
-    if tree-sitter parse -q "$file" >/dev/null 2>&1; then
-        echo "$file" >> "$temp_dir/parsed_$thread_id.txt"
-    else
-        echo "$file" >> "$temp_dir/errors_$thread_id.txt"
-    fi
+    local name
+    name=$(basename "$chunk")
+    # In quiet mode tree-sitter only emits a line for files with ERROR/MISSING
+    # nodes (or unreadable files). Capture stdout+stderr for post-processing.
+    tree-sitter parse -q --paths "$chunk" > "$temp_dir/raw_$name.txt" 2>&1 || true
 }
+export -f parse_chunk
 
-export -f parse_file
+find "$temp_dir" -name 'chunk_*' -type f -print0 \
+    | xargs -0 -P "$NUM_THREADS" -I {} bash -c 'parse_chunk "{}" "'"$temp_dir"'"'
 
-# Process files in parallel
-echo "$al_files" | xargs -P "$NUM_THREADS" -I {} bash -c 'parse_file "{}" "'"$temp_dir"'"'
-
-# --- 5. Combine results ------------------------------------------------------
+# --- 6. Combine results ------------------------------------------------------
 echo "Combining results..."
 
-# Combine parsed files
-find "$temp_dir" -name "parsed_*.txt" -exec cat {} \; | sort > "$parsed_path"
+raw_all="$temp_dir/raw_all.txt"
+cat "$temp_dir"/raw_*.txt 2>/dev/null > "$raw_all" || true
 
-# Combine error files
-find "$temp_dir" -name "errors_*.txt" -exec cat {} \; | sort > "$error_path"
+# Extract failing file paths:
+#  - parse-error lines look like: "<path><padding>\tParse: ... (ERROR ...)"
+#  - read-error lines look like:  'Error: Error reading "<path>"'
+errors_unsorted="$temp_dir/errors_unsorted.txt"
+{
+    grep -F $'\tParse:' "$raw_all" 2>/dev/null | cut -f1 | sed 's/[[:space:]]*$//'
+    grep -oE 'Error reading "[^"]+"' "$raw_all" 2>/dev/null | sed -E 's/^Error reading "(.*)"$/\1/'
+} | sed '/^$/d' | sort -u > "$errors_unsorted"
 
-# --- 6. Report & persist -----------------------------------------------------
-# Count results from files
+cp "$errors_unsorted" "$error_path"
+# parsed = all files that are not in the error set
+comm -23 "$all_files" "$errors_unsorted" > "$parsed_path"
+
+# --- 7. Report & persist -----------------------------------------------------
 parsed_final=$(wc -l < "$parsed_path" 2>/dev/null || echo "0")
 error_final=$(wc -l < "$error_path" 2>/dev/null || echo "0")
 total_processed=$((parsed_final + error_final))
-success_rate=$(echo "scale=1; $parsed_final * 100 / $total_processed" | bc 2>/dev/null || echo "0")
+# Integer math (no `bc` dependency): one decimal place.
+if [ "$total_processed" -gt 0 ]; then
+    rate_tenths=$(( parsed_final * 1000 / total_processed ))
+    success_rate="${rate_tenths%?}.${rate_tenths: -1}"
+else
+    success_rate="0.0"
+fi
 
 # Remove empty files
 if [ "$parsed_final" -eq 0 ]; then
@@ -119,7 +149,6 @@ if [ "$error_final" -eq 0 ]; then
     rm -f "$error_path"
 fi
 
-# Print summary
 echo ""
 echo "===== SUMMARY ====="
 echo "Total files  : $file_count"
