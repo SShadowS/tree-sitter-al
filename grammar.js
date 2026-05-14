@@ -124,7 +124,6 @@ module.exports = grammar({
     [$.option_member, $._literal_value],
     [$._body_element, $._procedure_header],
     [$._body_element, $._action_element, $._procedure_header],
-    [$._field_source, $._field_header],
     [$.page_field, $._field_header],
     [$.field_declaration, $._table_field_header],
     [$._property_value, $.option_member, $._namespaced_or_simple_ref],
@@ -152,8 +151,6 @@ module.exports = grammar({
     [$.procedure, $._procedure_header, $.interface_procedure_suffix],
     [$._procedure_header, $.interface_procedure_suffix],
     [$.procedure, $._procedure_header],
-    [$.procedure, $._procedure_preamble],
-    [$.procedure, $._procedure_header, $._procedure_preamble],
     [$.procedure, $._procedure_header, $.interface_procedure],
     [$.preproc_conditional_case, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$.case_branch, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
@@ -2355,29 +2352,20 @@ module.exports = grammar({
     // Example: trigger OnValidate() #if ... var ... begin ... end; #else ... var ... begin ... end; #endif
     preproc_split_complete_body: $ => prec.right(25, seq(
       $.preproc_if,
+      $._preproc_branch_body,
+      repeat(seq($.preproc_elif, $._preproc_branch_body)),
+      optional(seq($.preproc_else, $._preproc_branch_body)),
+      $.preproc_endif,
+    )),
+
+    // Shared body block for a single preprocessor branch: [var] begin stmts end [;]
+    _preproc_branch_body: $ => seq(
       optional($.var_section),
       kw('begin'),
       repeat($._statement),
       kw('end'),
       optional(';'),
-      repeat(seq(
-        $.preproc_elif,
-        optional($.var_section),
-        kw('begin'),
-        repeat($._statement),
-        kw('end'),
-        optional(';'),
-      )),
-      optional(seq(
-        $.preproc_else,
-        optional($.var_section),
-        kw('begin'),
-        repeat($._statement),
-        kw('end'),
-        optional(';'),
-      )),
-      $.preproc_endif,
-    )),
+    ),
 
     // Preprocessor-split procedure: header variants in #if/#else, shared body
     preproc_split_procedure: $ => prec(25, seq(

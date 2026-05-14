@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 100% production file success rate (15,358/15,358 files), 1404 tests passing, 0 errors
+**Current Status**: 100% production file success rate (15,358/15,358 files), 1437 tests passing, 0 errors
 
 ## Git Commit Guidelines
 
@@ -201,11 +201,11 @@ python parse_bug_finder.py file.al debug.log
 
 | Metric | Value |
 |--------|-------|
-| parser.c size | 23.5 MB |
-| SYMBOL_COUNT | ~762 |
-| STATE_COUNT | ~11,705 |
-| grammar.js lines | ~3,400 |
-| Tests | 1,404 |
+| parser.c size | 34.9 MB |
+| SYMBOL_COUNT | ~803 |
+| STATE_COUNT | ~15,525 |
+| grammar.js lines | ~3,767 |
+| Tests | 1,437 |
 | Production success | 100% (0 errors) |
 | Named keywords | 82 |
 | Query files | 5 (highlights, locals, tags, indents, folds) |
