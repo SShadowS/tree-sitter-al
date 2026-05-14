@@ -13,9 +13,9 @@ Validated against **15,358 production AL files** from the Business Central codeb
 | Metric | Value |
 |--------|-------|
 | **Success rate** | **100%** (15,358 / 15,358 files) |
-| Tests | 1,404 |
-| parser.c size | ~11 MB |
-| grammar.js | ~3,100 lines |
+| Tests | 1,437 |
+| parser.c size | ~25 MB |
+| grammar.js | ~3,750 lines |
 | Named keywords | 82 (queryable via highlights/tags) |
 | Scanner tokens | 8 (stateful, depth-tracking) |
 | Query files | 5 (highlights, locals, tags, indents, folds) |
@@ -78,19 +78,19 @@ Download from [GitHub Releases](https://github.com/SShadowS/tree-sitter-al/relea
 
 ## V2 Architecture
 
-The grammar was rewritten from scratch in March 2026, achieving a **10x reduction in parser size** while improving correctness.
+The grammar was rewritten from scratch in March 2026, achieving a **major reduction in parser size** while improving correctness.
 
 ### Before / After
 
-| Metric | V1 | V2 |
+| Metric | V1 | V2 (current) |
 |--------|-----|-----|
-| parser.c | 106 MB (can't push to GitHub) | **10.6 MB** |
+| parser.c | 106 MB (can't push to GitHub) | **~25 MB** |
 | Errors | 14 | **0** |
 | Success rate | 99.91% | **100%** |
-| Symbols | 2,249 | **~740** |
-| States | 29,126 | **~5,300** |
-| grammar.js | 8,500 lines | **~3,100 lines** |
-| Tests | 1,225 | **1,404** |
+| Symbols | 2,249 | **~814** |
+| States | 29,126 | **~10,800** |
+| grammar.js | 8,500 lines | **~3,750 lines** |
+| Tests | 1,225 | **1,437** |
 | Keywords | invisible in queries | **82 named nodes** |
 | Query files | 3 (partial) | **5 (comprehensive)** |
 
@@ -124,6 +124,13 @@ tree-sitter test        # Run test suite
 ./validate-grammar.sh --full # Full: includes production AL file parsing
 ```
 
+For grammar refactors, the parse-tree diff harness proves a change is zero-behavior-change by re-parsing every production file and asserting byte-identical trees:
+
+```bash
+./tools/tree-harness.sh snapshot ./BC.History .snapshots/bc   # baseline
+./tools/tree-harness.sh verify   ./BC.History .snapshots/bc   # verify after a change
+```
+
 ### Parsing AL files
 
 ```bash
@@ -138,7 +145,7 @@ tree-sitter parse path/to/file.al -q    # Quiet (errors only)
 |------|---------|
 | `grammar.js` | Main grammar definition |
 | `src/scanner.c` | External scanner (8 tokens: property, depth tracking, named begin/end, split detection) |
-| `test/corpus/` | Test suite (1,404 tests) |
+| `test/corpus/` | Test suite (1,437 tests) |
 | `queries/` | Syntax highlighting, code navigation, folding, indentation |
 
 ## Contributing
