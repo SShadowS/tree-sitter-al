@@ -50,6 +50,17 @@ Built `tools/tree-harness.sh` (commit `784bcef`): snapshots the s-expression tre
 
 **Cumulative (orig → P3-3):** STATE_COUNT 18290 → 10825 (**−40.8%**) · parser.c 38.89 → 23.82 MiB (**−38.7%**).
 
+### P3-X — expression precedence cascade: **REJECTED (empirical negative result)**
+
+The expression cluster (`_expression` + 9 binary/postfix rules) is ~4,878 states — ~45% of the parser. Both GPT-5.5-pro and Gemini-3-pro designed a hidden-rule precedence cascade (loosest→tightest tiers, pass-through `_expr_*` rules that vanish from output) predicted to slash it while staying tree-identical.
+
+Implemented the full cascade (13 tiers). Empirical result:
+- **STATE_COUNT went UP +64** (10825 → 10889), not down.
+- A corpus test broke (`arr[idx] in [...]` case pattern → ERROR).
+- `_single_pattern`, `filter_value`, `calc_field_reference` genuinely overlap the cascade tiers, each needing a sprawl of exact 2-way GLR conflict declarations (`_single_pattern` alone needs ~10). The GLR-conflict cost exceeds the cascade's structural saving.
+
+**Conclusion:** tree-sitter's GLR + flat `prec.left(N)` already handles this expression grammar near-optimally. The classic LR "precedence cascade cuts states" result does not transfer here, because the specialized value rules that overlap expressions force the conflicts back in. The flat form stays. Experiment stashed (`git stash` "expr-cascade-experiment"). **The harness made this a 1-hour measured rejection instead of a speculative gamble.**
+
 **Hard lesson from first pass:** extracting a *partial prefix* into the `preproc_split_*` family (`_preproc_if_header`, `_preproc_var_begin`) causes "Unresolved conflict" at generate — GLR can't defer the reduction decision when a hidden rule ends mid-construct and is reachable via multiple sibling preproc rules. **Only complete-unit extraction (clear terminator) works as a plain hidden rule.**
 
 This worklist synthesizes recommendations from GPT-5.5, GPT-5.5-pro, and Gemini-3-pro. Run **one candidate per commit**: edit → `tree-sitter generate` → check STATE_COUNT delta → `tree-sitter test` → revert if it conflicts or balloons. Batch BC.History run at the end of the pass.
