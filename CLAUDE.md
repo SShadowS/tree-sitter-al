@@ -15,6 +15,8 @@ Fix XYZ pattern
 
 Run full parse before committing: `./parse-al-parallel.sh ./BC.History/ .`
 
+**Commit all generated files together** — `tree-sitter generate` writes `src/parser.c`, `src/grammar.json`, and `src/node-types.json`; all three are tracked. Stage them as a set or `grammar.json` silently drifts.
+
 ## Quick Reference
 
 **Essential Commands:**
@@ -23,8 +25,13 @@ Run full parse before committing: `./parse-al-parallel.sh ./BC.History/ .`
 ./validate-grammar.sh        # Quick: generation, tests, orphan/duplicate detection
 ./validate-grammar.sh --full # Full: includes production AL file parsing
 
+# Zero-behavior-change gate for grammar refactors (byte-identical parse trees)
+./tools/tree-harness.sh snapshot ./BC.History .snapshots/bc   # baseline (~37s)
+./tools/tree-harness.sh verify   ./BC.History .snapshots/bc   # verify (~18s)
+
 # Standard development cycle
 tree-sitter generate         # Generate parser from grammar.js
+tree-sitter generate --report-states-for-rule -  # Rank rules by parser-state cost
 tree-sitter test            # Run test suite
 tree-sitter test -u         # Update test expectations (only if no ERRORs)
 tree-sitter parse file.al -d > debug.log 2>&1  # Debug specific files
