@@ -27,12 +27,28 @@ Measure with: `grep -E '#define (STATE_COUNT|LARGE_STATE_COUNT|SYMBOL_COUNT)' sr
 | After #9 `_then_branch` + `_else_branch` | 11878 | 4247 | 811 | 27,580,022 | 26.30 | 3744 | 53 | 1437/1437 | TBD |
 | After #10 trivial inline cleanup | 11872 | 4244 | 809 | 27,551,493 | 26.28 | 3750 | 53 | 1437/1437 | 0 |
 
-*(BC.History batched once at end of pass per plan; intermediate "TBD" rows were gated on the corpus tests only.)*
+*(Pass 2: BC.History batched once at end per plan; intermediate "TBD" rows gated on corpus tests only.)*
 
-**Pass 2 delta (`200b1e6` → here):** STATE_COUNT −3653 (−23.5%) · parser.c −3.32 MiB (−11.2%). Landed: #1 #2 #3 #4 #6 #9 #10. Reverted: #5 (inline balloon), #7 (broke queries), #8 (associativity conflict).
-**Cumulative (orig → here):** STATE_COUNT 18290 → 11872 (−35.1%) · parser.c 38.89 → 26.28 MiB (−32.4%).
+**Pass 2 delta (`200b1e6` → `18785e1`):** STATE_COUNT −3653 (−23.5%) · parser.c −3.32 MiB (−11.2%). Landed: #1 #2 #3 #4 #6 #9 #10. Reverted: #5 (inline balloon), #7 (broke queries), #8 (associativity conflict).
 
 **Pass 1 delta:** STATE_COUNT −2765 (−15.1%) · parser.c −5,853,613 bytes (−5.58 MiB, −14.4%) · conflicts −3 · zero behavior change.
+
+---
+
+## Pass 3 — harness-gated extraction
+
+Built `tools/tree-harness.sh` (commit `784bcef`): snapshots the s-expression tree of every BC.History file, verifies later changes produce **byte-identical trees** — strictly stronger than the "0 errors" gate. Every Pass 3 row below is verified tree-identical across all 15,358 production files.
+
+| Checkpoint | STATE_COUNT | LARGE_STATE | SYMBOL_COUNT | parser.c bytes | parser.c MiB | grammar.js lines | conflicts | tests | tree-identical |
+|------------|------------:|------------:|-------------:|---------------:|-------------:|-----------------:|----------:|------:|:--------------:|
+| Pass 2 end (`18785e1`) | 11872 | 4244 | 809 | 27,551,493 | 26.28 | 3750 | 53 | 1437/1437 | baseline |
+| P3-1 `_pspb_if_branch` / `_pspb_else_branch` | 11029 | — | — | — | — | — | 53 | 1437/1437 | ✓ |
+| P3-2 `_permission_branch` / `_permission_item` | 10910 | — | — | — | — | — | 53 | 1437/1437 | ✓ |
+| P3-3 `_tr_branch` | 10825 | 3961 | 814 | 24,972,844 | 23.82 | 3754 | 53 | 1437/1437 | ✓ |
+
+**Pass 3 delta:** STATE_COUNT −1047 (−8.8%) · parser.c −2.46 MiB (−9.4%) · every change proven tree-identical.
+
+**Cumulative (orig → P3-3):** STATE_COUNT 18290 → 10825 (**−40.8%**) · parser.c 38.89 → 23.82 MiB (**−38.7%**).
 
 **Hard lesson from first pass:** extracting a *partial prefix* into the `preproc_split_*` family (`_preproc_if_header`, `_preproc_var_begin`) causes "Unresolved conflict" at generate — GLR can't defer the reduction decision when a hidden rule ends mid-construct and is reachable via multiple sibling preproc rules. **Only complete-unit extraction (clear terminator) works as a plain hidden rule.**
 

@@ -796,16 +796,16 @@ module.exports = grammar({
     // Preprocessor conditionals inside TableRelation value
     preproc_conditional_table_relation: $ => seq(
       $.preproc_if,
-      optional(seq($._table_relation_branch_content, optional(';'))),
-      repeat(seq(
-        $.preproc_elif,
-        optional(seq($._table_relation_branch_content, optional(';'))),
-      )),
-      optional(seq(
-        $.preproc_else,
-        optional(seq($._table_relation_branch_content, optional(';'))),
-      )),
+      optional($._tr_branch),
+      repeat(seq($.preproc_elif, optional($._tr_branch))),
+      optional(seq($.preproc_else, optional($._tr_branch))),
       $.preproc_endif,
+    ),
+
+    // One #if/#elif/#else branch of a TableRelation conditional
+    _tr_branch: $ => seq(
+      $._table_relation_branch_content,
+      optional(';'),
     ),
 
     // Branch content inside preproc_conditional_table_relation.
@@ -861,28 +861,22 @@ module.exports = grammar({
     // Semicolon may also appear when the property's terminating ; is inside the #if block
     preproc_conditional_permissions: $ => seq(
       $.preproc_if,
-      optional(','),
-      repeat(choice(
-        seq($.tabledata_permission, optional(choice(',', ';'))),
-        $.preproc_conditional_permissions,
-      )),
-      repeat(seq(
-        $.preproc_elif,
-        optional(','),
-        repeat(choice(
-          seq($.tabledata_permission, optional(choice(',', ';'))),
-          $.preproc_conditional_permissions,
-        )),
-      )),
-      optional(seq(
-        $.preproc_else,
-        optional(','),
-        repeat(choice(
-          seq($.tabledata_permission, optional(choice(',', ';'))),
-          $.preproc_conditional_permissions,
-        )),
-      )),
+      optional($._permission_branch),
+      repeat(seq($.preproc_elif, optional($._permission_branch))),
+      optional(seq($.preproc_else, optional($._permission_branch))),
       $.preproc_endif,
+    ),
+
+    // One non-empty #if/#elif/#else branch of a permission list:
+    // [,] item*  — the leading comma or at least one item.
+    _permission_branch: $ => choice(
+      seq(',', repeat($._permission_item)),
+      repeat1($._permission_item),
+    ),
+
+    _permission_item: $ => choice(
+      seq($.tabledata_permission, optional(choice(',', ';'))),
+      $.preproc_conditional_permissions,
     ),
 
     tabledata_permission: $ => seq(
@@ -2347,19 +2341,29 @@ module.exports = grammar({
     // #if / [var] begin [preamble] [if-guard then] / #else / begin / #endif / shared_stmts end;
     // The #if branch may end with an if-then guard whose then-branch is the shared code.
     preproc_split_procedure_body: $ => prec.right(25, seq(
+      $._pspb_if_branch,
+      $._pspb_else_branch,
+      repeat($._statement),
+      choice($.end_keyword, kw('end')),
+      optional(';'),
+    )),
+
+    // #if branch of a split procedure body — complete unit ending at #else
+    _pspb_if_branch: $ => seq(
       $.preproc_if,
       optional($.var_section),
       kw('begin'),
       repeat($._statement),
       optional($._preproc_if_header),  // trailing if-then guard (body is shared code)
       $.preproc_else,
+    ),
+
+    // #else branch opener of a split procedure body — complete unit ending at #endif
+    _pspb_else_branch: $ => seq(
       optional($.var_section),
       kw('begin'),
       $.preproc_endif,
-      repeat($._statement),
-      choice($.end_keyword, kw('end')),
-      optional(';'),
-    )),
+    ),
 
     // Preprocessor split complete body: each #if/#else branch has a full var+begin+end body
     // No shared code after #endif — the entire body differs across branches.
