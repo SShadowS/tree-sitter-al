@@ -31,38 +31,45 @@ REQUIRED=(
   al_shim_tree_sitter_language_version al_shim_tree_sitter_min_compatible_language_version
 )
 
+# DLL: track whether EXPORTS came from the PE export table (safe for leak check)
+# or from nm (which includes all symbols, so leak check would be misleading).
+EXPORTS_FROM_PE_TABLE=true
+
 case "$ARTIFACT" in
   *.so)    EXPORTS=$(nm -D --defined-only "$ARTIFACT" | awk '{print $3}') ;;
   *.dylib) EXPORTS=$(nm -gU "$ARTIFACT" | awk '{print $3}' | sed 's/^_//') ;;
   *.dll)
-    # Extract the DLL's PE export table.
-    # On Windows with __declspec(dllexport), only annotated symbols appear in the
-    # PE export table, so the leak check is valid.
-    # Tool preference: dlltool > objdump -x > llvm-objdump -x
-    if command -v dlltool > /dev/null 2>&1; then
-      # dlltool --print-exports outputs one symbol per line (no leading underscore
-      # on x86_64 MinGW). Filter comment/blank lines and strip any _ prefix.
-      EXPORTS=$(dlltool --print-exports "$ARTIFACT" 2>/dev/null \
-                  | awk '/^[^;]/ && NF>0 {name=$NF; sub(/^_/,"",name); print name}')
-    else
-      _dll_exports() {
-        local tool="$1"; shift
-        "$tool" -x "$@" 2>/dev/null \
-          | awk '/\[Ordinal\/Name Pointer\] Table/{p=1;next}
-                 p && /\[/{line=$0; sub(/^.*\] */,"",line); sub(/[ \t\r]*$/,"",line); if(line!="") print line}
-                 p && /^[A-Za-z]/{p=0}'
-      }
-      if command -v objdump > /dev/null 2>&1; then
-        EXPORTS=$(_dll_exports objdump "$ARTIFACT")
-      elif command -v llvm-objdump > /dev/null 2>&1; then
-        EXPORTS=$(_dll_exports llvm-objdump "$ARTIFACT")
-      fi
+    # Extract the DLL's PE export table (only __declspec(dllexport) symbols appear).
+    # Use 'objdump -x' which reads the PE .edata section directly; '|| true' guards
+    # against objdump returning non-zero on some PE variants while still producing
+    # valid output (set -o pipefail would otherwise abort the script).
+    _dll_exports_x() {
+      local tool="$1"; shift
+      { "$tool" -x "$@" 2>/dev/null || true; } \
+        | awk '/\[Ordinal\/Name Pointer\] Table/{p=1;next}
+               p && /\[/{line=$0; sub(/^.*\] */,"",line); sub(/[ \t\r]*$/,"",line); if(line!="") print line}
+               p && /^[A-Za-z]/{p=0}'
+    }
+    if command -v objdump > /dev/null 2>&1; then
+      EXPORTS=$(_dll_exports_x objdump "$ARTIFACT")
+    elif command -v llvm-objdump > /dev/null 2>&1; then
+      EXPORTS=$(_dll_exports_x llvm-objdump "$ARTIFACT")
+    fi
+    # If objdump -x produced nothing, fall back to nm --extern-only which lists all
+    # public text symbols.  Since nm sees ALL symbols (not just PE-exported ones),
+    # the leak check is skipped for this path — Windows' PE export table cannot
+    # contain ts_* anyway (tree_sitter/api.h uses GCC visibility pragmas, not
+    # __declspec(dllexport), so ts_* will never appear in the PE export table).
+    if [ -z "${EXPORTS:-}" ] && command -v nm > /dev/null 2>&1; then
+      EXPORTS_FROM_PE_TABLE=false
+      EXPORTS=$({ nm --defined-only --extern-only "$ARTIFACT" 2>/dev/null || true; } \
+                  | awk '$2 == "T" || $2 == "t" {name=$3; sub(/^_/,"",name); print name}')
     fi
     ;;
   *) echo "verify-exports: unknown artifact type: $ARTIFACT" >&2; exit 1 ;;
 esac
 
-if [ -z "$EXPORTS" ]; then
+if [ -z "${EXPORTS:-}" ]; then
   echo "verify-exports: parsed 0 exports from $ARTIFACT — symbol-extraction tool may have produced unexpected output format" >&2
   exit 1
 fi
@@ -75,11 +82,15 @@ for sym in "${REQUIRED[@]}"; do
   fi
 done
 
-LEAKED=$(echo "$EXPORTS" | grep -E '^(ts_|tree_sitter_al_external_)' || true)
-if [ -n "$LEAKED" ]; then
-  echo "LEAKED internals (must not be exported):" >&2
-  echo "$LEAKED" >&2
-  MISSING=1
+if [ "$EXPORTS_FROM_PE_TABLE" = "true" ]; then
+  LEAKED=$(echo "$EXPORTS" | grep -E '^(ts_|tree_sitter_al_external_)' || true)
+  if [ -n "$LEAKED" ]; then
+    echo "LEAKED internals (must not be exported):" >&2
+    echo "$LEAKED" >&2
+    MISSING=1
+  fi
+else
+  echo "verify-exports: leak check skipped (nm fallback used; ts_* not dllexport-annotated so cannot appear in PE export table)"
 fi
 
 if [ "$MISSING" -ne 0 ]; then
