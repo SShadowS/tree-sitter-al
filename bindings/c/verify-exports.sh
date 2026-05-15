@@ -45,22 +45,17 @@ case "$ARTIFACT" in
     # valid output (set -o pipefail would otherwise abort the script).
     _dll_exports_x() {
       local tool="$1"; shift
-      local raw
-      raw=$({ "$tool" -x "$@" 2>/dev/null || true; })
-      # Debug: show lines around the export table header
-      echo "verify-exports: objdump export table context:" >&2
-      echo "$raw" | grep -A 5 "Ordinal" 2>/dev/null | head -20 >&2 || true
-      echo "$raw" \
-        | awk '/\[Ordinal\/Name Pointer\] Table/{p=1;next}
-               p && /\[/{line=$0; sub(/^.*\] */,"",line); sub(/[ \t\r]*$/,"",line); if(line!="") print line}
-               p && /^[A-Za-z]/{p=0}'
+      "$tool" -x "$@" 2>/dev/null \
+        | awk '
+            /\[Ordinal\/Name Pointer\] Table/ { in_tbl=1; next }
+            in_tbl && NF == 0                { in_tbl=0; next }
+            in_tbl                            { print $NF }
+          '
     }
     if command -v objdump > /dev/null 2>&1; then
       EXPORTS=$(_dll_exports_x objdump "$ARTIFACT")
-      echo "verify-exports: used objdump (found at: $(command -v objdump))" >&2
     elif command -v llvm-objdump > /dev/null 2>&1; then
       EXPORTS=$(_dll_exports_x llvm-objdump "$ARTIFACT")
-      echo "verify-exports: used llvm-objdump" >&2
     fi
     # If objdump -x produced nothing, fall back to nm --extern-only which lists all
     # public text symbols.  Since nm sees ALL symbols (not just PE-exported ones),
@@ -80,9 +75,6 @@ if [ -z "${EXPORTS:-}" ]; then
   echo "verify-exports: parsed 0 exports from $ARTIFACT — symbol-extraction tool may have produced unexpected output format" >&2
   exit 1
 fi
-
-# Debug: show first 5 parsed exports to help diagnose format issues
-echo "verify-exports: first 5 parsed exports: $(echo "$EXPORTS" | head -5 | tr '\n' ' ')" >&2
 
 MISSING=0
 for sym in "${REQUIRED[@]}"; do
