@@ -21,7 +21,7 @@ $Cc = if ($env:CC) { $env:CC } else { "gcc" }
 $Artifact = Join-Path $Out "tree-sitter-al.dll"
 
 Write-Host "Building $Artifact with $Cc..."
-& $Cc -O2 -shared `
+& "$Cc" -O2 -shared `
     -I"$TsDir/lib/include" -I"$TsDir/lib/src" -I"$Root/src" `
     "$TsDir/lib/src/lib.c" `
     "$Root/src/parser.c" `
