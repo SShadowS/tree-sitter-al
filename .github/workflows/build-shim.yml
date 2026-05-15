@@ -1,0 +1,62 @@
+# .github/workflows/build-shim.yml
+# Builds the fat shim on each supported platform and ships artifacts on release.
+name: Build fat shim
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-22.04,   asset: tree-sitter-al-linux-x64.so,      ext: so }
+          - { os: windows-latest, asset: tree-sitter-al-win32-x64.dll,     ext: dll }
+          - { os: macos-13,       asset: tree-sitter-al-darwin-x64.dylib,  ext: dylib }
+          - { os: macos-14,       asset: tree-sitter-al-darwin-arm64.dylib, ext: dylib }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up MinGW (Windows)
+        if: matrix.os == 'windows-latest'
+        run: choco install -y mingw
+
+      - uses: oven-sh/setup-bun@v1
+
+      - name: Build (POSIX)
+        if: matrix.os != 'windows-latest'
+        run: bash bindings/c/build.sh
+
+      - name: Build (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        env:
+          CC: gcc
+        run: pwsh bindings/c/build.ps1
+
+      - name: Rename to asset name
+        shell: bash
+        run: mv dist/tree-sitter-al.${{ matrix.ext }} dist/${{ matrix.asset }}
+
+      - name: Verify exports
+        shell: bash
+        run: bash bindings/c/verify-exports.sh dist/${{ matrix.asset }}
+
+      - name: Verify deps
+        shell: bash
+        run: bash bindings/c/verify-deps.sh dist/${{ matrix.asset }}
+
+      - name: Bun smoke test
+        run: bun run bindings/c/smoke-test.ts dist/${{ matrix.asset }}
+
+      - name: Upload to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/${{ matrix.asset }}
