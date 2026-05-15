@@ -32,12 +32,14 @@ const h = dlopen(lib, {
 const language = h.symbols.al_shim_language();
 const parser = h.symbols.al_shim_parser_new();
 if (h.symbols.al_shim_parser_set_language(parser, language) === 0) {
+  h.symbols.al_shim_parser_delete(parser);
   console.error("smoke: set_language failed");
   process.exit(1);
 }
 const source = new TextEncoder().encode('codeunit 50100 "Test" { procedure Foo() begin end; }');
 const tree = h.symbols.al_shim_parse_utf8(parser, ptr(source), source.byteLength);
 if (!tree) {
+  h.symbols.al_shim_parser_delete(parser);
   console.error("smoke: parse returned null");
   process.exit(1);
 }
@@ -45,6 +47,8 @@ const nodeBuf = new Uint8Array(h.symbols.al_shim_node_size());
 h.symbols.al_shim_tree_root_node(tree, ptr(nodeBuf));
 const rootType = h.symbols.al_shim_node_type(ptr(nodeBuf))?.toString();
 if (rootType !== "source_file") {
+  h.symbols.al_shim_tree_delete(tree);
+  h.symbols.al_shim_parser_delete(parser);
   console.error(`smoke: expected root type 'source_file', got '${rootType}'`);
   process.exit(1);
 }

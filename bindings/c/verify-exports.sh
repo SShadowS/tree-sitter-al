@@ -4,6 +4,16 @@
 set -euo pipefail
 ARTIFACT="$1"
 
+# Pre-flight: .dll inspection needs llvm-objdump or objdump.
+case "$ARTIFACT" in
+  *.dll)
+    if ! command -v llvm-objdump >/dev/null 2>&1 && ! command -v objdump >/dev/null 2>&1; then
+      echo "verify-exports: neither llvm-objdump nor objdump available — install MinGW binutils or LLVM" >&2
+      exit 1
+    fi
+    ;;
+esac
+
 REQUIRED=(
   al_shim_abi_version
   al_shim_parser_new al_shim_parser_delete al_shim_language al_shim_parser_set_language
@@ -35,6 +45,11 @@ case "$ARTIFACT" in
            ) ;;
   *) echo "verify-exports: unknown artifact type: $ARTIFACT" >&2; exit 1 ;;
 esac
+
+if [ -z "$EXPORTS" ]; then
+  echo "verify-exports: parsed 0 exports from $ARTIFACT — symbol-extraction tool may have produced unexpected output format" >&2
+  exit 1
+fi
 
 MISSING=0
 for sym in "${REQUIRED[@]}"; do

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-# Assert the shim doesn't dynamically link against libtree-sitter, libgcc_s,
-# or unexpected C++ runtimes — anything that would break consumers on minimal images.
+# Assert the shim doesn't dynamically link against libtree-sitter (would mean
+# we accidentally dynamic-linked the runtime instead of statically bundling) or
+# C++ runtimes (libstdc++ / libc++abi — our shim is pure C; no C++ runtime
+# should appear). libgcc_s is allowed (MinGW Windows builds depend on
+# libgcc_s_seh-1.dll for unwind support — acceptable baseline).
 # Usage: bash verify-deps.sh <path-to-artifact>
 set -euo pipefail
 ARTIFACT="$1"
