@@ -22,14 +22,21 @@ fi
 CC="${CC:-cc}"
 EXT=".so"
 SO_FLAGS="-shared -fPIC -fvisibility=hidden"
+EXTRA_LDFLAGS=""
 case "$(uname -s)" in
   Darwin)
     EXT=".dylib"
     SO_FLAGS="-dynamiclib -fPIC -fvisibility=hidden"
+    # Restrict exported symbols to al_shim_* only (macOS prefixes C symbols with _)
+    EXTRA_LDFLAGS="-Wl,-exported_symbols_list,$SCRIPT_DIR/al_shim_exports.txt"
     ;;
   MINGW*|MSYS*|CYGWIN*)
     EXT=".dll"
     SO_FLAGS="-shared"   # __declspec on functions handles exports on Windows
+    ;;
+  *)
+    # Linux: use a version script to hard-restrict the dynamic symbol table
+    EXTRA_LDFLAGS="-Wl,--version-script,$SCRIPT_DIR/al_shim.map"
     ;;
 esac
 
@@ -42,6 +49,7 @@ echo "Building $ARTIFACT with $CC..."
   "$ROOT/src/parser.c" \
   "$ROOT/src/scanner.c" \
   "$SCRIPT_DIR/al_shim.c" \
+  $EXTRA_LDFLAGS \
   -o "$ARTIFACT"
 
 # Post-build hardening

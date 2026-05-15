@@ -4,11 +4,11 @@
 set -euo pipefail
 ARTIFACT="$1"
 
-# Pre-flight: .dll inspection needs llvm-objdump or objdump.
+# Pre-flight: .dll inspection needs dlltool, nm, or objdump (all from MinGW binutils).
 case "$ARTIFACT" in
   *.dll)
-    if ! command -v llvm-objdump >/dev/null 2>&1 && ! command -v objdump >/dev/null 2>&1; then
-      echo "verify-exports: neither llvm-objdump nor objdump available — install MinGW binutils or LLVM" >&2
+    if ! command -v dlltool >/dev/null 2>&1 && ! command -v objdump >/dev/null 2>&1 && ! command -v llvm-objdump >/dev/null 2>&1; then
+      echo "verify-exports: dlltool/objdump/llvm-objdump not available — install MinGW binutils or LLVM" >&2
       exit 1
     fi
     ;;
@@ -34,15 +34,31 @@ REQUIRED=(
 case "$ARTIFACT" in
   *.so)    EXPORTS=$(nm -D --defined-only "$ARTIFACT" | awk '{print $3}') ;;
   *.dylib) EXPORTS=$(nm -gU "$ARTIFACT" | awk '{print $3}' | sed 's/^_//') ;;
-  *.dll)   EXPORTS=$(
-             if command -v llvm-objdump > /dev/null 2>&1; then
-               llvm-objdump -p "$ARTIFACT" 2>/dev/null \
-                 | awk '/\[Ordinal\/Name Pointer\] Table/{p=1;next} p && /^\t\[/{print $NF} p && /^[^\t]/{p=0}'
-             else
-               objdump -p "$ARTIFACT" \
-                 | awk '/\[Ordinal\/Name Pointer\] Table/{p=1;next} p && /^\t\[/{print $NF} p && /^[^\t]/{p=0}'
-             fi
-           ) ;;
+  *.dll)
+    # Extract the DLL's PE export table.
+    # On Windows with __declspec(dllexport), only annotated symbols appear in the
+    # PE export table, so the leak check is valid.
+    # Tool preference: dlltool > objdump -x > llvm-objdump -x
+    if command -v dlltool > /dev/null 2>&1; then
+      # dlltool --print-exports outputs one symbol per line (no leading underscore
+      # on x86_64 MinGW). Filter comment/blank lines and strip any _ prefix.
+      EXPORTS=$(dlltool --print-exports "$ARTIFACT" 2>/dev/null \
+                  | awk '/^[^;]/ && NF>0 {name=$NF; sub(/^_/,"",name); print name}')
+    else
+      _dll_exports() {
+        local tool="$1"; shift
+        "$tool" -x "$@" 2>/dev/null \
+          | awk '/\[Ordinal\/Name Pointer\] Table/{p=1;next}
+                 p && /\[/{line=$0; sub(/^.*\] */,"",line); sub(/[ \t\r]*$/,"",line); if(line!="") print line}
+                 p && /^[A-Za-z]/{p=0}'
+      }
+      if command -v objdump > /dev/null 2>&1; then
+        EXPORTS=$(_dll_exports objdump "$ARTIFACT")
+      elif command -v llvm-objdump > /dev/null 2>&1; then
+        EXPORTS=$(_dll_exports llvm-objdump "$ARTIFACT")
+      fi
+    fi
+    ;;
   *) echo "verify-exports: unknown artifact type: $ARTIFACT" >&2; exit 1 ;;
 esac
 
