@@ -217,6 +217,26 @@ python parse_bug_finder.py file.al debug.log
 | Named keywords | 82 |
 | Query files | 5 (highlights, locals, tags, indents, folds) |
 
+## Validating AL Syntax Questions
+
+When uncertain whether the AL compiler accepts a construct (esp. niche or undocumented forms), use the **`al compile`** CLI to test directly — it's the ground truth, not LLM recall or web search.
+
+```bash
+# Minimal probe project
+mkdir -p /tmp/al-probe && cd /tmp/al-probe
+cat > app.json <<'EOF'
+{"id":"11111111-2222-3333-4444-555555555555","name":"Probe","publisher":"Test",
+ "version":"1.0.0.0","platform":"1.0.0.0","application":"1.0.0.0",
+ "idRanges":[{"from":50000,"to":99999}],"runtime":"12.0","target":"OnPrem"}
+EOF
+cat > Test.al <<'EOF'
+codeunit 50100 Probe { trigger OnRun() begin Codeunit.Run(Codeunit::80); end; }
+EOF
+al compile /project:. /out:test.app; echo "EXIT=$?"
+```
+
+Exit `0` + `test.app` written = compiler accepts. Exit `1` with no `test.app` = rejected (errors may be silent — re-run capturing stderr or trim the file to isolate). Example: confirmed `Codeunit::<integer>` is valid AL (old-school soft cross-extension reference) when both LLMs claimed otherwise.
+
 ## Documentation Resources
 
 **Available via MCP:**
@@ -226,6 +246,7 @@ python parse_bug_finder.py file.al debug.log
 **Project docs:**
 - `docs/v2-blog-post-notes.md` — V2 rewrite narrative and data
 - `docs/superpowers/specs/` — Design specs for major changes
+- `docs/database-reference-numeric-id-fix.md` — `Codeunit::N` / `Page::N` numeric ID support
 
 ## Philosophy: No Known Limitations
 

@@ -3550,7 +3550,7 @@ module.exports = grammar({
         $.object_type_keyword
       )),
       '::',
-      field('table_name', $._identifier_or_quoted)
+      field('table_name', choice($._identifier_or_quoted, $.integer))
     )),
 
     // --- Literal values ---

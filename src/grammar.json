@@ -16633,8 +16633,17 @@
             "type": "FIELD",
             "name": "table_name",
             "content": {
-              "type": "SYMBOL",
-              "name": "_identifier_or_quoted"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_identifier_or_quoted"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "integer"
+                }
+              ]
             }
           }
         ]
