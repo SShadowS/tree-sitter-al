@@ -6,6 +6,11 @@ on:
 permissions:
   contents: write
 
+env:
+  # Force Node 24 on transitive v4 actions inside tree-sitter/setup-action/cli@v2
+  # (actions/cache/restore@v4). Remove once upstream bumps.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build-shared-lib:
     name: Build shared library (${{ matrix.os }})
