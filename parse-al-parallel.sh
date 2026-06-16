@@ -79,8 +79,19 @@ temp_dir=$(mktemp -d)
 trap 'rm -rf "$temp_dir"' EXIT
 
 # --- 3. Gather *.al files ----------------------------------------------------
+# IMPORTANT (Windows/MSYS): the native tree-sitter binary cannot read MSYS-style
+# paths (/c/..., /u/...) listed in a --paths file. It fails with `Error reading`
+# on the first such path, ABORTS the rest of that chunk, and every unparsed file
+# in the chunk is then silently counted OK by default — yielding a meaningless
+# "success" number. Convert to native Windows paths when cygpath is present so
+# tree-sitter actually opens the files. No-op on Linux/macOS (no cygpath).
 all_files="$temp_dir/all_files.txt"
-find "$ROOT_DIR" -name "*.al" -type f | sort > "$all_files"
+find "$ROOT_DIR" -name "*.al" -type f | sort > "$temp_dir/all_files_native.txt"
+if command -v cygpath >/dev/null 2>&1; then
+    cygpath -w -f "$temp_dir/all_files_native.txt" | sort > "$all_files"
+else
+    cp "$temp_dir/all_files_native.txt" "$all_files"
+fi
 
 file_count=$(wc -l < "$all_files")
 if [ "$file_count" -eq 0 ]; then
