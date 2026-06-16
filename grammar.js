@@ -104,6 +104,18 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
+    // An empty #if/#endif (pragma-only, pragmas are extras) after a bodiless
+    // field can attach either field-internally (preproc_pragma_only, then `{`
+    // body) or at section level (preproc_conditional_fields). GLR explores both;
+    // the field-internal path is the only one that doesn't orphan the body.
+    [$.field_declaration],
+    // A file-leading pragma-only #if/#endif before the namespace can read as
+    // preproc_pragma_only or an empty preproc_conditional_object; GLR explores
+    // both and the pragma-only path is the one that lets the namespace follow.
+    [$.preproc_pragma_only, $.preproc_conditional_object],
+    // A pragma-only #if between a procedure header and its body can also read as
+    // the body's leading preproc_conditional_var_block; GLR explores both.
+    [$.preproc_pragma_only, $.preproc_conditional_var_block],
     [$._property_value, $.option_member],
     [$._property_value, $.option_member, $._identifier_or_quoted],
     [$.caption_value, $.option_member],
@@ -167,6 +179,9 @@ module.exports = grammar({
 
   rules: {
     source_file: $ => seq(
+      // BC wraps file-leading `#pragma warning disable` in `#if not CLEANxx`
+      // before the namespace. Pragmas are extras, so this block is pragma-only.
+      repeat($.preproc_pragma_only),
       optional($.namespace_declaration),
       repeat(choice(
         $.using_statement,
@@ -416,6 +431,7 @@ module.exports = grammar({
       $.layout_section,
       $.actions_section,
       $.views_section,
+      $.analysisviews_section,
       // Report sections
       $.dataset_section,
       $.requestpage_section,
@@ -561,6 +577,7 @@ module.exports = grammar({
       $.multiplicative_expression,
       $.comparison_expression,
       $.logical_expression,
+      $.ternary_expression,         // DataCaptionExpression = Cond ? A : B
       $.parenthesized_expression,
       $.subscript_expression,
     )),
@@ -944,9 +961,19 @@ module.exports = grammar({
     // Also supports leading/trailing commas for blank entries: ,Sale,"Total Sale"
     option_member_list: $ => prec.right(choice(
       // Standard: Member, Member, ... (also supports empty slots: Member,,Member)
+      // A #if/#endif may wrap comma-terminated members (BC gates legacy
+      // IncludedPermissionSets entries behind `#if not CLEANxx`). The preproc
+      // block is gated behind a comma so a bare `value #if` (next property
+      // guarded) does NOT fork the single-value case.
       seq(
         $.option_member,
-        repeat(seq(',', optional($.option_member)))
+        repeat(seq(
+          ',',
+          choice(
+            optional($.option_member),
+            seq($.preproc_conditional_option_members, optional($.option_member))
+          )
+        ))
       ),
       // With leading commas (blank entries): ,,,Member,Member
       // Used by OptionMembers property and Option type: ,Sale,"Total Sale"
@@ -958,6 +985,26 @@ module.exports = grammar({
         ))
       ),
     )),
+
+    // #if/#endif wrapping comma-terminated option members inside a list value
+    // (e.g. IncludedPermissionSets entries gated by `#if not CLEANxx`). Each
+    // wrapped member keeps its trailing comma so the list continues cleanly.
+    preproc_conditional_option_members: $ => seq(
+      $.preproc_if,
+      repeat(seq($.option_member, ',')),
+      optional($.option_member),
+      repeat(seq(
+        $.preproc_elif,
+        repeat(seq($.option_member, ',')),
+        optional($.option_member),
+      )),
+      optional(seq(
+        $.preproc_else,
+        repeat(seq($.option_member, ',')),
+        optional($.option_member),
+      )),
+      $.preproc_endif,
+    ),
 
     option_member: $ => choice(
       $.identifier,
@@ -1016,7 +1063,13 @@ module.exports = grammar({
       ';',
       field('type', $.type_specification),
       ')',
+      // A pragma-only #if/#endif may sit between the field header and its body
+      // (Microsoft BC wraps `#pragma warning disable/restore ASxxxx` in
+      // `#if not CLEANxx`/`#endif`). It only attaches here when a `{` body
+      // follows, so an #if-wrapped sibling field stays at section level.
+      // Zero preproc → repeat matches nothing → tree is byte-identical.
       optional(seq(
+        repeat($.preproc_pragma_only),
         '{',
         repeat($._body_element),
         '}'
@@ -1322,8 +1375,18 @@ module.exports = grammar({
     labels_section: $ => seq(
       $.labels_keyword,
       '{',
-      repeat($.label_declaration),
+      repeat(choice($.label_declaration, $.preproc_conditional_labels)),
       '}'
+    ),
+
+    // Report `labels { }` with label(s) wrapped in #if/#endif (BC gates legacy
+    // labels behind `#if not CLEANxx`). Mirrors preproc_conditional_fields.
+    preproc_conditional_labels: $ => seq(
+      $.preproc_if,
+      repeat($.label_declaration),
+      repeat(seq($.preproc_elif, repeat($.label_declaration))),
+      optional(seq($.preproc_else, repeat($.label_declaration))),
+      $.preproc_endif,
     ),
 
     // name = 'value', Locked = true, Comment = 'text';
@@ -1918,6 +1981,24 @@ module.exports = grammar({
     // Views section
     // =====================================================================
 
+    // Page `analysisviews { analysisview("Name") { Caption=…; DefinitionFile=…; } }`
+    analysisviews_section: $ => seq(
+      $.analysisviews_keyword,
+      '{',
+      repeat($.analysisview_declaration),
+      '}'
+    ),
+
+    analysisview_declaration: $ => seq(
+      $.analysisview_keyword,
+      '(',
+      field('name', $._identifier_or_quoted),
+      ')',
+      '{',
+      repeat($._body_element),
+      '}'
+    ),
+
     views_section: $ => seq(
       $.views_keyword,
       '{',
@@ -2085,8 +2166,19 @@ module.exports = grammar({
     rendering_section: $ => seq(
       $.rendering_keyword,
       '{',
-      repeat($.rendering_layout),
+      repeat(choice($.rendering_layout, $.preproc_conditional_rendering)),
       '}'
+    ),
+
+    // A report `rendering` whose layout(s) are wrapped in #if/#endif (BC wraps
+    // RDLC layouts in `#if not CLEANxx` as they are phased out). Mirrors
+    // preproc_conditional_fields / preproc_conditional_keys.
+    preproc_conditional_rendering: $ => seq(
+      $.preproc_if,
+      repeat($.rendering_layout),
+      repeat(seq($.preproc_elif, repeat($.rendering_layout))),
+      optional(seq($.preproc_else, repeat($.rendering_layout))),
+      $.preproc_endif,
     ),
 
     rendering_layout: $ => seq(
@@ -2313,6 +2405,9 @@ module.exports = grammar({
         )
       )),
       optional(';'),
+      // Pragma-only #if/#endif between the procedure header and its body
+      // (BC wraps `#pragma warning restore ASxxxx` in `#if not CLEANxx`).
+      repeat($.preproc_pragma_only),
       choice(
         $._routine_regular_body,
         $.preproc_split_procedure_body,
@@ -2683,6 +2778,17 @@ module.exports = grammar({
       field('condition', $._preproc_expression)
     ),
 
+    // A preprocessor conditional whose only content is pragmas/comments (both
+    // are `extras`, so no structural children appear between the directives).
+    // Used where MS BC wraps `#pragma warning disable/restore` in `#if/#endif`
+    // at a construct-internal boundary (e.g. between a field header and body).
+    preproc_pragma_only: $ => seq(
+      $.preproc_if,
+      repeat($.preproc_elif),
+      optional($.preproc_else),
+      $.preproc_endif,
+    ),
+
     _preproc_expression: $ => choice(
       $.identifier,
       $.preproc_not_expression,
@@ -2849,6 +2955,31 @@ module.exports = grammar({
       optional(';'),
     )),
 
+    // Split if-then-begin where BOTH branches end with `then begin` and a single
+    // shared `end;` follows after #endif (BC gates the differing if-header behind
+    // `#if not CLEANxx`/`#else`). The #if-branch begin precedes #else (anonymous);
+    // the #else-branch begin precedes #endif (PREPROC_SPLIT_BEGIN).
+    // Pattern: #if [pre] if A then begin [stmts] #else [pre] if B then begin #endif shared end;
+    preproc_split_if_then_begin_else_shared: $ => prec.right(26, seq(
+      $.preproc_if,
+      repeat($._statement),
+      $.if_keyword,
+      field('condition', $._expression),
+      $.then_keyword,
+      kw('begin'),
+      repeat($._statement),
+      $.preproc_else,
+      repeat($._statement),
+      $.if_keyword,
+      field('condition', $._expression),
+      $.then_keyword,
+      $.preproc_split_begin,
+      $.preproc_endif,
+      repeat($._statement),
+      choice($.end_keyword, kw('end')),
+      optional(';'),
+    )),
+
     // Split if-then-begin with #else alternative: #if branch has begin+extra stmts, #else has just if-then
     // Pattern: #if / [preamble] if EXPR then begin <stmts> / #else / [preamble] if EXPR then / #endif / shared_stmts / #if / end; / #endif
     // The #if branch wraps shared code in begin/end with extra preamble; #else branch uses bare if-then.
@@ -2987,7 +3118,7 @@ module.exports = grammar({
     )),
 
     // Pragma and region directives (extras — can appear anywhere)
-    pragma: $ => new RustRegex('#pragma[^\\n\\r]*'),
+    pragma: $ => new RustRegex('(?i)#pragma[^\\n\\r]*'),
 
     preproc_region: $ => new RustRegex('(?i)#\\s*region[^\\n\\r]*'),
 
@@ -3019,6 +3150,7 @@ module.exports = grammar({
         $.preproc_split_if_then_begin,
         $.preproc_split_if_begin_asymmetric,
         $.preproc_split_if_begin_else,
+        $.preproc_split_if_then_begin_else_shared,
         $.preproc_guarded_statement,
         $.preproc_split_call_statement,
       ),
@@ -3679,6 +3811,8 @@ module.exports = grammar({
     requestpage_keyword: $ => kw('requestpage'),
     schema_keyword: $ => kw('schema'),
     views_keyword: $ => kw('views'),
+    analysisviews_keyword: $ => kw('analysisviews'),
+    analysisview_keyword: $ => kw('analysisview'),
     view_keyword: $ => kw('view'),
 
     // =====================================================================

@@ -1,0 +1,47 @@
+================================================================================
+#if/#endif wrapping a layout inside report rendering (BC CLEANxx pattern)
+================================================================================
+report 50100 MyReport
+{
+    rendering
+    {
+        layout(WordLayout)
+        {
+            Type = Word;
+        }
+#if not CLEAN27
+        layout(RDLCLayout)
+        {
+            Type = RDLC;
+        }
+#endif
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (rendering_section
+      (rendering_keyword)
+      (rendering_layout
+        (layout_keyword)
+        name: (identifier)
+        (property
+          name: (property_name)
+          value: (identifier)))
+      (preproc_conditional_rendering
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (rendering_layout
+          (layout_keyword)
+          name: (identifier)
+          (property
+            name: (property_name)
+            value: (identifier)))
+        (preproc_endif
+          (preproc_close))))))

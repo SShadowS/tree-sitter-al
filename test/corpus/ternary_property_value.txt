@@ -1,0 +1,28 @@
+================================================================================
+Ternary expression as a property value (DataCaptionExpression)
+================================================================================
+page 50100 P
+{
+    DataCaptionExpression = Rec.Authorized ? Format(Rec.Status) : AuthorizeLbl;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (property
+      name: (property_name)
+      value: (property_expression
+        (ternary_expression
+          condition: (member_expression
+            object: (identifier)
+            member: (identifier))
+          then_value: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (member_expression
+                object: (identifier)
+                member: (identifier))))
+          else_value: (identifier))))))

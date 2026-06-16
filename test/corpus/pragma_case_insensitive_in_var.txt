@@ -1,0 +1,44 @@
+================================================================================
+Mixed-case #Pragma between variable declarations (case-insensitive)
+================================================================================
+codeunit 50100 T
+{
+    procedure P()
+    var
+        A: Integer;
+#Pragma warning Disable AA0240
+        B: Integer;
+#Pragma warning Restore AA0240
+        C: Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (procedure
+      (procedure_keyword)
+      name: (identifier)
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (pragma)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (pragma)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (code_block
+        (begin_keyword)
+        (end_keyword)))))

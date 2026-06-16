@@ -1,0 +1,35 @@
+================================================================================
+#if/#endif wrapping a label inside report labels (BC CLEANxx pattern)
+================================================================================
+report 50100 R
+{
+    labels
+    {
+        FooLbl = 'Foo';
+#if not CLEAN27
+        BarLbl = 'Bar';
+#endif
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (labels_section
+      (labels_keyword)
+      (label_declaration
+        name: (identifier)
+        value: (string_literal))
+      (preproc_conditional_labels
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (label_declaration
+          name: (identifier)
+          value: (string_literal))
+        (preproc_endif
+          (preproc_close))))))

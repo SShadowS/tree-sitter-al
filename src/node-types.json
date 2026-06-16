@@ -121,6 +121,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -276,6 +280,10 @@
         },
         {
           "type": "addlast_action_modification",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -444,6 +452,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -653,6 +665,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -881,6 +897,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -1264,6 +1284,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -1641,6 +1665,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -2307,6 +2335,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -2611,6 +2643,159 @@
       "types": [
         {
           "type": "where_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "analysisview_declaration",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisview_keyword",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
+          "type": "assembly_declaration",
+          "named": true
+        },
+        {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "dataset_section",
+          "named": true
+        },
+        {
+          "type": "elements_section",
+          "named": true
+        },
+        {
+          "type": "empty_statement",
+          "named": true
+        },
+        {
+          "type": "enum_value_declaration",
+          "named": true
+        },
+        {
+          "type": "event_declaration",
+          "named": true
+        },
+        {
+          "type": "fieldgroups_section",
+          "named": true
+        },
+        {
+          "type": "fields_section",
+          "named": true
+        },
+        {
+          "type": "keys_section",
+          "named": true
+        },
+        {
+          "type": "labels_section",
+          "named": true
+        },
+        {
+          "type": "layout_section",
+          "named": true
+        },
+        {
+          "type": "modify_modification",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional",
+          "named": true
+        },
+        {
+          "type": "preproc_split_procedure",
+          "named": true
+        },
+        {
+          "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "procedure",
+          "named": true
+        },
+        {
+          "type": "property",
+          "named": true
+        },
+        {
+          "type": "rendering_section",
+          "named": true
+        },
+        {
+          "type": "requestpage_section",
+          "named": true
+        },
+        {
+          "type": "schema_section",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        },
+        {
+          "type": "views_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "analysisviews_section",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "analysisview_declaration",
+          "named": true
+        },
+        {
+          "type": "analysisviews_keyword",
           "named": true
         }
       ]
@@ -4275,6 +4460,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_then_begin_else_shared",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -4921,6 +5110,10 @@
         },
         {
           "type": "preproc_split_if_then_begin",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_then_begin_else_shared",
           "named": true
         },
         {
@@ -5595,6 +5788,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_then_begin_else_shared",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -5696,6 +5893,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -6127,6 +6328,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -6283,6 +6488,10 @@
         },
         {
           "type": "addlast_modification",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -6485,6 +6694,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -6872,6 +7085,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -7009,6 +7226,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -7165,6 +7386,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -7312,6 +7537,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -7797,6 +8026,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -7850,6 +8083,10 @@
         },
         {
           "type": "preproc_conditional",
+          "named": true
+        },
+        {
+          "type": "preproc_pragma_only",
           "named": true
         },
         {
@@ -7949,6 +8186,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -8145,6 +8386,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -8350,6 +8595,10 @@
         },
         {
           "type": "addlast_modification",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -8694,6 +8943,10 @@
           },
           {
             "type": "preproc_split_if_then_begin",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_then_begin_else_shared",
             "named": true
           },
           {
@@ -9358,6 +9611,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_then_begin_else_shared",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -9757,6 +10014,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "area_section",
           "named": true
         },
@@ -9972,6 +10233,10 @@
         },
         {
           "type": "addlast_modification",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -10464,6 +10729,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_then_begin_else_shared",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -10824,6 +11093,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_then_begin_else_shared",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -11077,6 +11350,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -11290,6 +11567,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -11579,6 +11860,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -11691,6 +11976,10 @@
         },
         {
           "type": "labels_keyword",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_labels",
           "named": true
         }
       ]
@@ -12875,6 +13164,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -12998,6 +13291,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -13749,6 +14046,10 @@
         {
           "type": "option_member",
           "named": true
+        },
+        {
+          "type": "preproc_conditional_option_members",
+          "named": true
         }
       ]
     }
@@ -13837,6 +14138,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -14238,6 +14543,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -14375,6 +14684,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -14538,6 +14851,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -15019,6 +15336,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -15156,6 +15477,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -15318,6 +15643,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -15466,6 +15795,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -15996,6 +16329,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -16294,6 +16631,37 @@
     }
   },
   {
+    "type": "preproc_conditional_labels",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "label_declaration",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_layout",
     "named": true,
     "fields": {},
@@ -16434,6 +16802,10 @@
         },
         {
           "type": "addlast_modification",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -16774,6 +17146,37 @@
     }
   },
   {
+    "type": "preproc_conditional_option_members",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "option_member",
+          "named": true
+        },
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_permissions",
     "named": true,
     "fields": {},
@@ -16818,6 +17221,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -16952,6 +17359,37 @@
     }
   },
   {
+    "type": "preproc_conditional_rendering",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "rendering_layout",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_conditional_report",
     "named": true,
     "fields": {},
@@ -16961,6 +17399,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -17406,6 +17848,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_then_begin_else_shared",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -17501,6 +17947,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -17698,6 +18148,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -18187,6 +18641,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_then_begin_else_shared",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -18670,6 +19128,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_then_begin_else_shared",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -18942,6 +19404,33 @@
         },
         {
           "type": "preproc_or_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_pragma_only",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "preproc_elif",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
           "named": true
         }
       ]
@@ -19612,6 +20101,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_then_begin_else_shared",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -20223,6 +20716,10 @@
           },
           {
             "type": "preproc_split_if_then_begin",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_then_begin_else_shared",
             "named": true
           },
           {
@@ -20903,6 +21400,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_then_begin_else_shared",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -21269,6 +21770,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_then_begin_else_shared",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -21372,6 +21877,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -21846,6 +22355,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -22405,6 +22918,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_then_begin_else_shared",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -22897,6 +23414,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_then_begin_else_shared",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -23235,6 +23756,10 @@
           },
           {
             "type": "preproc_split_if_then_begin",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_then_begin_else_shared",
             "named": true
           },
           {
@@ -23595,6 +24120,10 @@
           },
           {
             "type": "preproc_split_if_then_begin",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_then_begin_else_shared",
             "named": true
           },
           {
@@ -23978,6 +24507,10 @@
             "named": true
           },
           {
+            "type": "preproc_split_if_then_begin_else_shared",
+            "named": true
+          },
+          {
             "type": "qualified_enum_value",
             "named": true
           },
@@ -24335,6 +24868,10 @@
           },
           {
             "type": "preproc_split_if_then_begin",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_then_begin_else_shared",
             "named": true
           },
           {
@@ -24866,6 +25403,514 @@
         },
         {
           "type": "preproc_split_if_then_begin",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_then_begin_else_shared",
+          "named": true
+        },
+        {
+          "type": "qualified_enum_value",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        },
+        {
+          "type": "range_expression",
+          "named": true
+        },
+        {
+          "type": "repeat_statement",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        },
+        {
+          "type": "subscript_expression",
+          "named": true
+        },
+        {
+          "type": "ternary_expression",
+          "named": true
+        },
+        {
+          "type": "then_keyword",
+          "named": true
+        },
+        {
+          "type": "time_literal",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        },
+        {
+          "type": "verbatim_string",
+          "named": true
+        },
+        {
+          "type": "while_statement",
+          "named": true
+        },
+        {
+          "type": "with_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_split_if_then_begin_else_shared",
+    "named": true,
+    "fields": {
+      "condition": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "biginteger_literal",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_keyword",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "keyword_identifier",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "ternary_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "verbatim_string",
+            "named": true
+          }
+        ]
+      },
+      "left": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "additive_expression",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "biginteger_literal",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "comparison_expression",
+            "named": true
+          },
+          {
+            "type": "database_reference",
+            "named": true
+          },
+          {
+            "type": "date_literal",
+            "named": true
+          },
+          {
+            "type": "datetime_literal",
+            "named": true
+          },
+          {
+            "type": "decimal",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_keyword",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "keyword_identifier",
+            "named": true
+          },
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "logical_expression",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "multiplicative_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_enum_value",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          },
+          {
+            "type": "ternary_expression",
+            "named": true
+          },
+          {
+            "type": "time_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "verbatim_string",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "in_keyword",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "list_literal",
+            "named": true
+          },
+          {
+            "type": "type_specification",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "additive_expression",
+          "named": true
+        },
+        {
+          "type": "asserterror_statement",
+          "named": true
+        },
+        {
+          "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "assignment_statement",
+          "named": true
+        },
+        {
+          "type": "biginteger_literal",
+          "named": true
+        },
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "break_statement",
+          "named": true
+        },
+        {
+          "type": "call_expression",
+          "named": true
+        },
+        {
+          "type": "case_statement",
+          "named": true
+        },
+        {
+          "type": "comparison_expression",
+          "named": true
+        },
+        {
+          "type": "continue_statement",
+          "named": true
+        },
+        {
+          "type": "database_reference",
+          "named": true
+        },
+        {
+          "type": "date_literal",
+          "named": true
+        },
+        {
+          "type": "datetime_literal",
+          "named": true
+        },
+        {
+          "type": "decimal",
+          "named": true
+        },
+        {
+          "type": "empty_statement",
+          "named": true
+        },
+        {
+          "type": "end_keyword",
+          "named": true
+        },
+        {
+          "type": "exit_statement",
+          "named": true
+        },
+        {
+          "type": "for_statement",
+          "named": true
+        },
+        {
+          "type": "foreach_statement",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "if_keyword",
+          "named": true
+        },
+        {
+          "type": "if_statement",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "keyword_identifier",
+          "named": true
+        },
+        {
+          "type": "list_literal",
+          "named": true
+        },
+        {
+          "type": "logical_expression",
+          "named": true
+        },
+        {
+          "type": "member_expression",
+          "named": true
+        },
+        {
+          "type": "multiplicative_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_else",
+          "named": true
+        },
+        {
+          "type": "preproc_endif",
+          "named": true
+        },
+        {
+          "type": "preproc_guarded_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_if",
+          "named": true
+        },
+        {
+          "type": "preproc_split_begin",
+          "named": true
+        },
+        {
+          "type": "preproc_split_call_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_begin_asymmetric",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_begin_else",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_else_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_statement",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_then_begin",
+          "named": true
+        },
+        {
+          "type": "preproc_split_if_then_begin_else_shared",
           "named": true
         },
         {
@@ -25465,6 +26510,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_then_begin_else_shared",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -25671,6 +26720,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -25855,6 +26908,10 @@
           "named": true
         },
         {
+          "type": "preproc_pragma_only",
+          "named": true
+        },
+        {
           "type": "preproc_split_complete_body",
           "named": true
         },
@@ -25921,6 +26978,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -26065,6 +27126,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -26374,6 +27439,10 @@
           "named": true
         },
         {
+          "type": "ternary_expression",
+          "named": true
+        },
+        {
           "type": "unary_expression",
           "named": true
         }
@@ -26473,6 +27542,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -26625,6 +27698,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -26784,6 +27861,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -26925,6 +28006,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -27356,6 +28441,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -27466,6 +28555,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "preproc_conditional_rendering",
+          "named": true
+        },
         {
           "type": "rendering_keyword",
           "named": true
@@ -27904,6 +28997,10 @@
           "named": true
         },
         {
+          "type": "preproc_split_if_then_begin_else_shared",
+          "named": true
+        },
+        {
           "type": "qualified_enum_value",
           "named": true
         },
@@ -28003,6 +29100,10 @@
         },
         {
           "type": "addlast_modification",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -28476,6 +29577,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -28628,6 +29733,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -28777,6 +29886,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -28934,6 +30047,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -29055,6 +30172,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -29204,6 +30325,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -29448,6 +30573,10 @@
         },
         {
           "type": "preproc_conditional_object",
+          "named": true
+        },
+        {
+          "type": "preproc_pragma_only",
           "named": true
         },
         {
@@ -30031,6 +31160,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -30171,6 +31304,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -30308,6 +31445,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -30595,6 +31736,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -31381,6 +32526,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -31879,6 +33028,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -32159,6 +33312,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -32604,6 +33761,10 @@
           },
           {
             "type": "preproc_split_if_then_begin",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_then_begin_else_shared",
             "named": true
           },
           {
@@ -33111,6 +34272,10 @@
           },
           {
             "type": "preproc_split_if_then_begin",
+            "named": true
+          },
+          {
+            "type": "preproc_split_if_then_begin_else_shared",
             "named": true
           },
           {
@@ -33747,6 +34912,10 @@
           "named": true
         },
         {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
           "type": "assembly_declaration",
           "named": true
         },
@@ -33880,6 +35049,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -34278,6 +35451,10 @@
       "types": [
         {
           "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
           "named": true
         },
         {
@@ -34930,6 +36107,14 @@
   },
   {
     "type": "aggregate_function",
+    "named": true
+  },
+  {
+    "type": "analysisview_keyword",
+    "named": true
+  },
+  {
+    "type": "analysisviews_keyword",
     "named": true
   },
   {

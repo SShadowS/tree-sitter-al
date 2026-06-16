@@ -1,0 +1,31 @@
+================================================================================
+Pragma-only #if/#endif before namespace declaration (BC CLEANxx pattern)
+================================================================================
+#if not CLEAN28
+#pragma warning disable AL0801
+#endif
+namespace Foo.Bar;
+
+codeunit 50100 T
+{
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_pragma_only
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_not_expression
+        (identifier)))
+    (pragma)
+    (preproc_endif
+      (preproc_close)))
+  (namespace_declaration
+    (namespace_keyword)
+    name: (namespace_name
+      (identifier)
+      (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))

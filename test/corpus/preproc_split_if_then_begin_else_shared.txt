@@ -1,0 +1,104 @@
+================================================================================
+Split if-then-begin: begin in both #if/#else branches, shared end (BC CLEANxx)
+================================================================================
+codeunit 50100 T
+{
+    procedure P(Text: Text)
+    var
+        R: Record Item;
+    begin
+        if R.Get() then;
+#if not CLEAN27APP
+        if Page.RunModal(Page::"A", R) = Action::LookupOK then begin
+#else
+        if Page.RunModal(Page::"B", R) = Action::LookupOK then begin
+#endif
+            Text := 'x';
+            exit(true);
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (procedure
+      (procedure_keyword)
+      name: (identifier)
+      (parameter_list
+        (parameter
+          name: (identifier)
+          type: (type_specification
+            (text_type))))
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)))))
+      (code_block
+        (begin_keyword)
+        (if_statement
+          (if_keyword)
+          condition: (call_expression
+            function: (member_expression
+              object: (identifier)
+              member: (identifier))
+            arguments: (argument_list))
+          (then_keyword)
+          then_branch: (empty_statement))
+        (preproc_split_if_then_begin_else_shared
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (if_keyword)
+          condition: (comparison_expression
+            left: (call_expression
+              function: (member_expression
+                object: (keyword_identifier
+                  (page_keyword))
+                member: (identifier))
+              arguments: (argument_list
+                (database_reference
+                  keyword: (object_type_keyword)
+                  table_name: (quoted_identifier))
+                (identifier)))
+            operator: (comparison_operator)
+            right: (qualified_enum_value
+              enum_type: (keyword_identifier)
+              value: (identifier)))
+          (then_keyword)
+          (preproc_else)
+          (if_keyword)
+          condition: (comparison_expression
+            left: (call_expression
+              function: (member_expression
+                object: (keyword_identifier
+                  (page_keyword))
+                member: (identifier))
+              arguments: (argument_list
+                (database_reference
+                  keyword: (object_type_keyword)
+                  table_name: (quoted_identifier))
+                (identifier)))
+            operator: (comparison_operator)
+            right: (qualified_enum_value
+              enum_type: (keyword_identifier)
+              value: (identifier)))
+          (then_keyword)
+          (preproc_split_begin)
+          (preproc_endif
+            (preproc_close))
+          (assignment_statement
+            left: (identifier)
+            right: (string_literal))
+          (exit_statement
+            (exit_keyword)
+            return_value: (boolean))
+          (end_keyword))
+        (end_keyword)))))

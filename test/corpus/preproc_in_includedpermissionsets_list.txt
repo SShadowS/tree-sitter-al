@@ -1,0 +1,37 @@
+================================================================================
+#if/#endif wrapping an entry in IncludedPermissionSets list (BC CLEANxx pattern)
+================================================================================
+permissionset 50100 PS
+{
+    IncludedPermissionSets = "A - Read",
+                             "B - Edit",
+#if not CLEAN28
+                             "C - View",
+#endif
+                             "D - Read";
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (permissionset_declaration
+    (permissionset_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (property
+      name: (property_name)
+      value: (option_member_list
+        (option_member
+          (quoted_identifier))
+        (option_member
+          (quoted_identifier))
+        (preproc_conditional_option_members
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (option_member
+            (quoted_identifier))
+          (preproc_endif
+            (preproc_close)))
+        (option_member
+          (quoted_identifier))))))

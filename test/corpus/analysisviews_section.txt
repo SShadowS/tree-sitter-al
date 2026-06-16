@@ -1,0 +1,32 @@
+================================================================================
+Page analysisviews section with analysisview declaration
+================================================================================
+page 50100 P
+{
+    analysisviews
+    {
+        analysisview("GL By Source")
+        {
+            Caption = 'x';
+            DefinitionFile = './a.json';
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (analysisviews_section
+      (analysisviews_keyword)
+      (analysisview_declaration
+        (analysisview_keyword)
+        name: (quoted_identifier)
+        (property
+          name: (property_name)
+          value: (string_literal))
+        (property
+          name: (property_name)
+          value: (string_literal))))))
