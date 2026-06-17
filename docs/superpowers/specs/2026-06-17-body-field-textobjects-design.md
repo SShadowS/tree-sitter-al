@@ -4,6 +4,10 @@
 **Status:** ✅ Implemented (all constructs)
 **Origin:** GitHub issue #19 — "Allow helix textobject queries" (TheJayMann)
 
+> **Note:** the shared `_body_element` wrapper named `object_body` throughout the
+> Phase-1 sections below was later renamed to **`declaration_body`** (see the
+> follow-up section, Task 8). Read every `object_body` below as `declaration_body`.
+
 ## Problem
 
 Helix textobjects require `@<type>.inside` to match **a single node** equal to the
@@ -243,8 +247,8 @@ modulo intervening preprocessor nodes). No grammar change made.
    `(_ body: (_))` simply does not match it. This is correct (nothing to select) and is
    the ONLY valid shape — replacing `repeat1` with `repeat` to force a 0-width node
    fails `tree-sitter generate` with *"The rule X matches the empty string."*
-2. **Single-statement body → no block node.** `if`/`for`/`foreach`/`while`/`with` bodies
-   are `choice($._statement, $.code_block)`. A bare single-statement body (no `begin`/
+2. **Single-statement body → no block node.** `for`/`foreach`/`while`/`with` bodies
+   (and `if`'s `then_branch`/`else_branch`) are `choice($._statement, $.code_block)`. A bare single-statement body (no `begin`/
    `end`) puts the statement directly in the `body` field — there is no `statement_block`
    wrapper because there is no block. `@function.inside` then selects the statement
    itself. Correct.

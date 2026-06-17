@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
-**Current Status**: 100% production file success rate (15,358/15,358 files), 1437 tests passing, 0 errors
+**Current Status**: 100% production file success rate (15,358/15,358 files), 1451 tests passing, 0 errors
 
 ## Git Commit Guidelines
 
@@ -51,7 +51,7 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 - `grammar.js` - Main grammar definition (~3,400 lines). Never edit `src/parser.c` (auto-generated)
 - `src/scanner.c` - External scanner for property disambiguation and preprocessor patterns
 - `test/corpus/` - Test suite with AL code and expected parse trees (1,404 tests)
-- `queries/` - 5 query files (highlights, locals, tags, indents, folds)
+- `queries/` - 6 query files (highlights, locals, tags, indents, folds, textobjects)
 
 **Key Design Principles (V2 architecture):**
 - **Parse structure, don't validate** — Accept any `Name = Value ;` as a property. Semantic validation belongs in linters/LSP servers, not the parser
