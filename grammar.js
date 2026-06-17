@@ -2624,10 +2624,9 @@ module.exports = grammar({
       ),
     )),
 
-    // Content-only statement run (no begin/end). Shared by code_block,
-    // repeat_statement, and preprocessor-split bodies so every statement
-    // container exposes its inside as a single node. repeat1 (tree-sitter
-    // forbids empty-matching rules) -> wrapped in optional() at each use site.
+    // Content-only statement run (no begin/end) so a statement container can
+    // expose its inside as a single node. repeat1 (tree-sitter forbids
+    // empty-matching rules) -> wrapped in optional() at each use site.
     statement_block: $ => repeat1($._statement),
 
     // =====================================================================
