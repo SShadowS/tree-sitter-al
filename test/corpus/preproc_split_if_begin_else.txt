@@ -60,9 +60,10 @@ codeunit 50100 Test
                 (preproc_close))
               (repeat_statement
                 (repeat_keyword)
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list))
+                body: (statement_block
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
                 (until_keyword)
                 condition: (comparison_expression
                   left: (call_expression

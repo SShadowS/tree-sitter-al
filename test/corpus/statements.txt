@@ -590,9 +590,10 @@ codeunit 50100 Test
           (statement_block
             (repeat_statement
               (repeat_keyword)
-              (assignment_statement
-                (identifier)
-                (integer))
+              (statement_block
+                (assignment_statement
+                  (identifier)
+                  (integer)))
               (until_keyword)
               (comparison_expression
                 (identifier)
@@ -953,18 +954,19 @@ codeunit 50100 Test
           (statement_block
             (repeat_statement
               (repeat_keyword)
-              (if_statement
-                (if_keyword)
-                (comparison_expression
+              (statement_block
+                (if_statement
+                  (if_keyword)
+                  (comparison_expression
+                    (identifier)
+                    (comparison_operator)
+                    (integer))
+                  (then_keyword)
+                  (continue_statement
+                    (continue_keyword)))
+                (assignment_statement
                   (identifier)
-                  (comparison_operator)
-                  (integer))
-                (then_keyword)
-                (continue_statement
-                  (continue_keyword)))
-              (assignment_statement
-                (identifier)
-                (integer))
+                  (integer)))
               (until_keyword)
               (comparison_expression
                 (identifier)

@@ -168,18 +168,19 @@ codeunit 50100 MyCodeunit
                 (statement_block
                   (repeat_statement
                     (repeat_keyword)
-                    (if_statement
-                      (if_keyword)
-                      (call_expression
-                        (member_expression
+                    (statement_block
+                      (if_statement
+                        (if_keyword)
+                        (call_expression
+                          (member_expression
+                            (identifier)
+                            (identifier))
+                          (argument_list))
+                        (then_keyword)
+                        (call_expression
                           (identifier)
-                          (identifier))
-                        (argument_list))
-                      (then_keyword)
-                      (call_expression
-                        (identifier)
-                        (argument_list
-                          (string_literal))))
+                          (argument_list
+                            (string_literal)))))
                     (until_keyword)
                     (comparison_expression
                       (member_expression

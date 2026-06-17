@@ -3453,7 +3453,7 @@ module.exports = grammar({
 
     repeat_statement: $ => seq(
       $.repeat_keyword,
-      repeat($._statement),
+      optional(field('body', $.statement_block)),
       $.until_keyword,
       field('condition', $._expression)
     ),

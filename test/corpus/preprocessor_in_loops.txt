@@ -76,30 +76,31 @@ codeunit 50100 TestPreprocessor
               arguments: (argument_list))
             (repeat_statement
               (repeat_keyword)
-              (assignment_statement
-                left: (member_expression
-                  object: (identifier)
-                  member: (quoted_identifier))
-                right: (member_expression
-                  object: (identifier)
-                  member: (quoted_identifier)))
-              (preproc_conditional_statement
-                (preproc_if
-                  (preproc_open)
-                  condition: (preproc_not_expression
-                    (identifier)))
+              body: (statement_block
+                (assignment_statement
+                  left: (member_expression
+                    object: (identifier)
+                    member: (quoted_identifier))
+                  right: (member_expression
+                    object: (identifier)
+                    member: (quoted_identifier)))
+                (preproc_conditional_statement
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (identifier)
+                      (identifier)))
+                  (preproc_endif
+                    (preproc_close)))
                 (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier)
-                    (identifier)))
-                (preproc_endif
-                  (preproc_close)))
-              (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list))
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list)))
               (until_keyword)
               condition: (comparison_expression
                 left: (call_expression

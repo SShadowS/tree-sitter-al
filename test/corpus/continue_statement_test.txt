@@ -78,8 +78,9 @@ codeunit 50100 Test
           body: (statement_block
             (repeat_statement
               (repeat_keyword)
-              (continue_statement
-                (continue_keyword))
+              body: (statement_block
+                (continue_statement
+                  (continue_keyword)))
               (until_keyword)
               condition: (boolean)))
           (end_keyword))))))

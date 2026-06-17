@@ -90,22 +90,23 @@ codeunit 50000 "Test"
                     (then_keyword)
                     then_branch: (repeat_statement
                       (repeat_keyword)
-                      (assignment_statement
-                        left: (member_expression
-                          object: (identifier)
-                          member: (identifier))
-                        right: (additive_expression
+                      body: (statement_block
+                        (assignment_statement
                           left: (member_expression
                             object: (identifier)
                             member: (identifier))
-                          right: (member_expression
+                          right: (additive_expression
+                            left: (member_expression
+                              object: (identifier)
+                              member: (identifier))
+                            right: (member_expression
+                              object: (identifier)
+                              member: (identifier))))
+                        (call_expression
+                          function: (member_expression
                             object: (identifier)
-                            member: (identifier))))
-                      (call_expression
-                        function: (member_expression
-                          object: (identifier)
-                          member: (identifier))
-                        arguments: (argument_list))
+                            member: (identifier))
+                          arguments: (argument_list)))
                       (until_keyword)
                       condition: (comparison_expression
                         left: (call_expression
@@ -136,22 +137,23 @@ codeunit 50000 "Test"
                   (then_keyword)
                   then_branch: (repeat_statement
                     (repeat_keyword)
-                    (assignment_statement
-                      left: (member_expression
-                        object: (identifier)
-                        member: (identifier))
-                      right: (additive_expression
+                    body: (statement_block
+                      (assignment_statement
                         left: (member_expression
                           object: (identifier)
                           member: (identifier))
-                        right: (member_expression
+                        right: (additive_expression
+                          left: (member_expression
+                            object: (identifier)
+                            member: (identifier))
+                          right: (member_expression
+                            object: (identifier)
+                            member: (identifier))))
+                      (call_expression
+                        function: (member_expression
                           object: (identifier)
-                          member: (identifier))))
-                    (call_expression
-                      function: (member_expression
-                        object: (identifier)
-                        member: (identifier))
-                      arguments: (argument_list))
+                          member: (identifier))
+                        arguments: (argument_list)))
                     (until_keyword)
                     condition: (comparison_expression
                       left: (call_expression
