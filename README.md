@@ -54,7 +54,7 @@ println!("{}", tree.root_node().to_sexp());
 
 Query constants are also available:
 ```rust
-use tree_sitter_al::{HIGHLIGHTS_QUERY, TAGS_QUERY, LOCALS_QUERY, FOLDS_QUERY, INDENTS_QUERY};
+use tree_sitter_al::{HIGHLIGHTS_QUERY, TAGS_QUERY, LOCALS_QUERY, FOLDS_QUERY, INDENTS_QUERY, TEXTOBJECTS_QUERY};
 ```
 
 ### Python (tree-sitter 0.24+)

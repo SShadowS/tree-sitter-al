@@ -5,6 +5,17 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
+## [3.0.1] — 2026-06-17
+
+### Added
+
+- Rust binding now exports `TEXTOBJECTS_QUERY` (alongside `HIGHLIGHTS_QUERY`,
+  `LOCALS_QUERY`, `TAGS_QUERY`, `FOLDS_QUERY`, `INDENTS_QUERY`) so Rust consumers can
+  load `queries/textobjects.scm` directly. The query file shipped in 3.0.0 but was not
+  exposed as a crate constant.
+
+No grammar or parse-tree changes — parser is byte-identical to 3.0.0.
+
 ## [3.0.0] — 2026-06-17
 
 **Breaking parse-tree restructure.** Every scoped construct now exposes its content
