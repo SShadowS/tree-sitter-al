@@ -13,12 +13,26 @@ Validated against **15,358 production AL files** from the Business Central codeb
 | Metric | Value |
 |--------|-------|
 | **Success rate** | **100%** (15,358 / 15,358 files) |
-| Tests | 1,437 |
-| parser.c size | ~25 MB |
-| grammar.js | ~3,750 lines |
+| Tests | 1,451 |
+| parser.c size | ~28 MB |
+| grammar.js | ~3,930 lines |
 | Named keywords | 82 (queryable via highlights/tags) |
 | Scanner tokens | 8 (stateful, depth-tracking) |
-| Query files | 5 (highlights, locals, tags, indents, folds) |
+| Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
+
+## What's new in 3.0.0
+
+**Breaking parse-tree change for editor textobjects and code navigation.** Every
+scoped construct now exposes its content as a single node via a `body` field
+(e.g. `(page_declaration body: (declaration_body …))`,
+`(code_block (begin_keyword) body: (statement_block …) (end_keyword))`), instead of a
+flat list of direct children. This powers Helix / nvim-treesitter textobjects
+(`@class.inside`, `@function.inside`, `@parameter`) via the new
+[`queries/textobjects.scm`](queries/textobjects.scm), plus a `parameters` field on
+procedures/triggers/events.
+
+Tree-walkers and structural queries must descend through the `body` field — see
+[CHANGELOG.md](CHANGELOG.md) for the full migration guide.
 
 ## Installation
 
@@ -88,11 +102,11 @@ The grammar was rewritten from scratch in March 2026, achieving a **major reduct
 | Errors | 14 | **0** |
 | Success rate | 99.91% | **100%** |
 | Symbols | 2,249 | **~814** |
-| States | 29,126 | **~10,800** |
-| grammar.js | 8,500 lines | **~3,750 lines** |
-| Tests | 1,225 | **1,437** |
+| States | 29,126 | **~12,600** |
+| grammar.js | 8,500 lines | **~3,930 lines** |
+| Tests | 1,225 | **1,451** |
 | Keywords | invisible in queries | **82 named nodes** |
-| Query files | 3 (partial) | **5 (comprehensive)** |
+| Query files | 3 (partial) | **6 (comprehensive)** |
 
 ### Key design decisions
 
@@ -145,8 +159,8 @@ tree-sitter parse path/to/file.al -q    # Quiet (errors only)
 |------|---------|
 | `grammar.js` | Main grammar definition |
 | `src/scanner.c` | External scanner (8 tokens: property, depth tracking, named begin/end, split detection) |
-| `test/corpus/` | Test suite (1,437 tests) |
-| `queries/` | Syntax highlighting, code navigation, folding, indentation |
+| `test/corpus/` | Test suite (1,451 tests) |
+| `queries/` | Syntax highlighting, code navigation, folding, indentation, textobjects |
 
 ## Contributing
 
