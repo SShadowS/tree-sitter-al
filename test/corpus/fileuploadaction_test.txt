@@ -28,35 +28,39 @@ page 50006 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (fileuploadaction_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (option_member_list
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))))
-          (trigger_declaration
-            (trigger_keyword)
-            name: (identifier)
-            (parameter_list
-              (parameter
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (fileuploadaction_declaration
                 name: (identifier)
-                type: (type_specification
-                  (list_type
-                    element_type: (type_specification
-                      (basic_type))))))
-            (code_block
-              (begin_keyword)
-              (end_keyword))))))))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (option_member_list
+                      (option_member
+                        (identifier))
+                      (option_member
+                        (identifier))))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    (parameter_list
+                      (parameter
+                        name: (identifier)
+                        type: (type_specification
+                          (list_type
+                            element_type: (type_specification
+                              (basic_type))))))
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword))))))))))))
 
 ================================================================================
 FileUploadAction with all properties
@@ -100,78 +104,82 @@ page 50007 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (fileuploadaction_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (option_member_list
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (trigger_declaration
-            (trigger_keyword)
-            name: (identifier)
-            (parameter_list
-              (parameter
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (fileuploadaction_declaration
                 name: (identifier)
-                type: (type_specification
-                  (list_type
-                    element_type: (type_specification
-                      (basic_type))))))
-            (var_section
-              (var_keyword)
-              (variable_declaration
-                name: (identifier)
-                type: (type_specification
-                  (basic_type)))
-              (variable_declaration
-                name: (identifier)
-                type: (type_specification
-                  (basic_type))))
-            (code_block
-              (begin_keyword)
-              (foreach_statement
-                (foreach_keyword)
-                variable: (identifier)
-                (in_keyword)
-                iterable: (identifier)
-                (do_keyword)
-                body: (code_block
-                  (begin_keyword)
-                  (call_expression
-                    function: (member_expression
-                      object: (identifier)
-                      member: (identifier))
-                    arguments: (argument_list
-                      (identifier)))
-                  (end_keyword)))
-              (end_keyword))))))))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (option_member_list
+                      (option_member
+                        (identifier))
+                      (option_member
+                        (identifier))))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    (parameter_list
+                      (parameter
+                        name: (identifier)
+                        type: (type_specification
+                          (list_type
+                            element_type: (type_specification
+                              (basic_type))))))
+                    (var_section
+                      (var_keyword)
+                      (variable_declaration
+                        name: (identifier)
+                        type: (type_specification
+                          (basic_type)))
+                      (variable_declaration
+                        name: (identifier)
+                        type: (type_specification
+                          (basic_type))))
+                    body: (code_block
+                      (begin_keyword)
+                      (foreach_statement
+                        (foreach_keyword)
+                        variable: (identifier)
+                        (in_keyword)
+                        iterable: (identifier)
+                        (do_keyword)
+                        body: (code_block
+                          (begin_keyword)
+                          (call_expression
+                            function: (member_expression
+                              object: (identifier)
+                              member: (identifier))
+                            arguments: (argument_list
+                              (identifier)))
+                          (end_keyword)))
+                      (end_keyword))))))))))))
 
 ================================================================================
 FileUploadAction case variations
@@ -206,40 +214,45 @@ page 50008 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (fileuploadaction_declaration
-          name: (identifier)
-          (trigger_declaration
-            (trigger_keyword)
-            name: (identifier)
-            (parameter_list
-              (parameter
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (fileuploadaction_declaration
                 name: (identifier)
-                type: (type_specification
-                  (list_type
-                    element_type: (type_specification
-                      (basic_type))))))
-            (code_block
-              (begin_keyword)
-              (end_keyword))))
-        (fileuploadaction_declaration
-          name: (identifier)
-          (trigger_declaration
-            (trigger_keyword)
-            name: (identifier)
-            (parameter_list
-              (parameter
+                body: (object_body
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    (parameter_list
+                      (parameter
+                        name: (identifier)
+                        type: (type_specification
+                          (list_type
+                            element_type: (type_specification
+                              (basic_type))))))
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword)))))
+              (fileuploadaction_declaration
                 name: (identifier)
-                type: (type_specification
-                  (list_type
-                    element_type: (type_specification
-                      (basic_type))))))
-            (code_block
-              (begin_keyword)
-              (end_keyword))))))))
+                body: (object_body
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    (parameter_list
+                      (parameter
+                        name: (identifier)
+                        type: (type_specification
+                          (list_type
+                            element_type: (type_specification
+                              (basic_type))))))
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword))))))))))))
 
 ================================================================================
 FileUploadAction with complex trigger
@@ -282,83 +295,87 @@ page 50009 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (fileuploadaction_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (trigger_declaration
-            (trigger_keyword)
-            name: (identifier)
-            (parameter_list
-              (parameter
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (fileuploadaction_declaration
                 name: (identifier)
-                type: (type_specification
-                  (list_type
-                    element_type: (type_specification
-                      (basic_type))))))
-            (var_section
-              (var_keyword)
-              (variable_declaration
-                name: (identifier)
-                type: (type_specification
-                  (basic_type)))
-              (variable_declaration
-                name: (identifier)
-                type: (type_specification
-                  (basic_type)))
-              (variable_declaration
-                name: (identifier)
-                type: (type_specification
-                  (object_reference_type
-                    object_type: (codeunit_keyword)
-                    reference: (quoted_identifier))))
-              (variable_declaration
-                name: (identifier)
-                type: (type_specification
-                  (text_type))))
-            (code_block
-              (begin_keyword)
-              (foreach_statement
-                (foreach_keyword)
-                variable: (identifier)
-                (in_keyword)
-                iterable: (identifier)
-                (do_keyword)
-                body: (code_block
-                  (begin_keyword)
-                  (assignment_statement
-                    left: (identifier)
-                    right: (call_expression
-                      function: (member_expression
-                        object: (identifier)
-                        member: (identifier))
-                      arguments: (argument_list)))
-                  (call_expression
-                    function: (member_expression
-                      object: (identifier)
-                      member: (identifier))
-                    arguments: (argument_list
-                      (identifier)))
-                  (call_expression
-                    function: (member_expression
-                      object: (identifier)
-                      member: (identifier))
-                    arguments: (argument_list
-                      (identifier)
-                      (identifier)))
-                  (end_keyword)))
-              (end_keyword))))))))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    (parameter_list
+                      (parameter
+                        name: (identifier)
+                        type: (type_specification
+                          (list_type
+                            element_type: (type_specification
+                              (basic_type))))))
+                    (var_section
+                      (var_keyword)
+                      (variable_declaration
+                        name: (identifier)
+                        type: (type_specification
+                          (basic_type)))
+                      (variable_declaration
+                        name: (identifier)
+                        type: (type_specification
+                          (basic_type)))
+                      (variable_declaration
+                        name: (identifier)
+                        type: (type_specification
+                          (object_reference_type
+                            object_type: (codeunit_keyword)
+                            reference: (quoted_identifier))))
+                      (variable_declaration
+                        name: (identifier)
+                        type: (type_specification
+                          (text_type))))
+                    body: (code_block
+                      (begin_keyword)
+                      (foreach_statement
+                        (foreach_keyword)
+                        variable: (identifier)
+                        (in_keyword)
+                        iterable: (identifier)
+                        (do_keyword)
+                        body: (code_block
+                          (begin_keyword)
+                          (assignment_statement
+                            left: (identifier)
+                            right: (call_expression
+                              function: (member_expression
+                                object: (identifier)
+                                member: (identifier))
+                              arguments: (argument_list)))
+                          (call_expression
+                            function: (member_expression
+                              object: (identifier)
+                              member: (identifier))
+                            arguments: (argument_list
+                              (identifier)))
+                          (call_expression
+                            function: (member_expression
+                              object: (identifier)
+                              member: (identifier))
+                            arguments: (argument_list
+                              (identifier)
+                              (identifier)))
+                          (end_keyword)))
+                      (end_keyword))))))))))))
 
 ================================================================================
 FileUploadAction with obsolete properties
@@ -393,41 +410,45 @@ page 50010 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (fileuploadaction_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (option_member_list
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (trigger_declaration
-            (trigger_keyword)
-            name: (identifier)
-            (parameter_list
-              (parameter
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (fileuploadaction_declaration
                 name: (identifier)
-                type: (type_specification
-                  (list_type
-                    element_type: (type_specification
-                      (basic_type))))))
-            (code_block
-              (begin_keyword)
-              (end_keyword))))))))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (option_member_list
+                      (option_member
+                        (identifier))
+                      (option_member
+                        (identifier))))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    (parameter_list
+                      (parameter
+                        name: (identifier)
+                        type: (type_specification
+                          (list_type
+                            element_type: (type_specification
+                              (basic_type))))))
+                    body: (code_block
+                      (begin_keyword)
+                      (end_keyword))))))))))))

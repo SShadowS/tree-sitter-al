@@ -12,9 +12,10 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (boolean))))
+    (object_body
+      (property
+        (property_name)
+        (boolean)))))
 
 ========================================================================
 Simple identifier property
@@ -30,9 +31,10 @@ page 50100 MyPage
     (page_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (identifier))))
+    (object_body
+      (property
+        (property_name)
+        (identifier)))))
 
 ========================================================================
 Simple string property
@@ -48,9 +50,10 @@ page 50100 MyPage
     (page_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (string_literal))))
+    (object_body
+      (property
+        (property_name)
+        (string_literal)))))
 
 ========================================================================
 Simple integer property
@@ -67,12 +70,13 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (boolean))
-    (property
-      (property_name)
-      (integer))))
+    (object_body
+      (property
+        (property_name)
+        (boolean))
+      (property
+        (property_name)
+        (integer)))))
 
 ========================================================================
 Simple quoted identifier property
@@ -88,9 +92,10 @@ page 50100 MyPage
     (page_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (quoted_identifier))))
+    (object_body
+      (property
+        (property_name)
+        (quoted_identifier)))))
 
 ========================================================================
 Decimal property
@@ -106,9 +111,10 @@ page 50100 MyPage
     (page_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (decimal))))
+    (object_body
+      (property
+        (property_name)
+        (decimal)))))
 
 ========================================================================
 Caption with Locked and Comment
@@ -124,14 +130,15 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (caption_value
-        (string_literal)
+    (object_body
+      (property
         (property_name)
-        (boolean)
-        (property_name)
-        (string_literal)))))
+        (caption_value
+          (string_literal)
+          (property_name)
+          (boolean)
+          (property_name)
+          (string_literal))))))
 
 ========================================================================
 Caption with MaxLength
@@ -147,12 +154,13 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (caption_value
-        (string_literal)
+    (object_body
+      (property
         (property_name)
-        (integer)))))
+        (caption_value
+          (string_literal)
+          (property_name)
+          (integer))))))
 
 ========================================================================
 ML property (CaptionML)
@@ -168,18 +176,19 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (ml_value_list
-        (ml_value_pair
-          (identifier)
-          (string_literal))
-        (ml_value_pair
-          (identifier)
-          (string_literal))
-        (ml_value_pair
-          (identifier)
-          (string_literal))))))
+    (object_body
+      (property
+        (property_name)
+        (ml_value_list
+          (ml_value_pair
+            (identifier)
+            (string_literal))
+          (ml_value_pair
+            (identifier)
+            (string_literal))
+          (ml_value_pair
+            (identifier)
+            (string_literal)))))))
 
 ========================================================================
 CalcFormula with sum
@@ -195,18 +204,19 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (aggregate_formula
-        (aggregate_function)
-        (calc_field_reference
-          (quoted_identifier)
-          (identifier))
-        (where_clause
-          (where_conditions
-            (where_condition
-              (quoted_identifier)
-              (quoted_identifier))))))))
+    (object_body
+      (property
+        (property_name)
+        (aggregate_formula
+          (aggregate_function)
+          (calc_field_reference
+            (quoted_identifier)
+            (identifier))
+          (where_clause
+            (where_conditions
+              (where_condition
+                (quoted_identifier)
+                (quoted_identifier)))))))))
 
 ========================================================================
 CalcFormula with lookup
@@ -222,17 +232,18 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (lookup_formula
-        (calc_field_reference
-          (quoted_identifier)
-          (quoted_identifier))
-        (where_clause
-          (where_conditions
-            (where_condition
-              (quoted_identifier)
-              (quoted_identifier))))))))
+    (object_body
+      (property
+        (property_name)
+        (lookup_formula
+          (calc_field_reference
+            (quoted_identifier)
+            (quoted_identifier))
+          (where_clause
+            (where_conditions
+              (where_condition
+                (quoted_identifier)
+                (quoted_identifier)))))))))
 
 ========================================================================
 CalcFormula with count
@@ -248,17 +259,18 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (aggregate_formula
-        (aggregate_function)
-        (calc_field_reference
-          (quoted_identifier))
-        (where_clause
-          (where_conditions
-            (where_condition
-              (quoted_identifier)
-              (quoted_identifier))))))))
+    (object_body
+      (property
+        (property_name)
+        (aggregate_formula
+          (aggregate_function)
+          (calc_field_reference
+            (quoted_identifier))
+          (where_clause
+            (where_conditions
+              (where_condition
+                (quoted_identifier)
+                (quoted_identifier)))))))))
 
 ========================================================================
 TableRelation simple
@@ -274,9 +286,10 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (identifier))))
+    (object_body
+      (property
+        (property_name)
+        (identifier)))))
 
 ========================================================================
 TableRelation with where clause
@@ -292,17 +305,18 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (table_relation_value
-        (table_relation_expression
-          (simple_table_relation
-            (identifier)
-            (where_clause
-              (where_conditions
-                (where_condition
-                  (quoted_identifier)
-                  (quoted_identifier))))))))))
+    (object_body
+      (property
+        (property_name)
+        (table_relation_value
+          (table_relation_expression
+            (simple_table_relation
+              (identifier)
+              (where_clause
+                (where_conditions
+                  (where_condition
+                    (quoted_identifier)
+                    (quoted_identifier)))))))))))
 
 ========================================================================
 TableRelation with if/else
@@ -318,20 +332,21 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (table_relation_value
-        (table_relation_expression
-          (if_table_relation
-            (where_conditions
-              (where_condition
-                (quoted_identifier)
-                (identifier)))
-            (simple_table_relation
-              (identifier))
-            (table_relation_expression
+    (object_body
+      (property
+        (property_name)
+        (table_relation_value
+          (table_relation_expression
+            (if_table_relation
+              (where_conditions
+                (where_condition
+                  (quoted_identifier)
+                  (identifier)))
               (simple_table_relation
-                (identifier)))))))))
+                (identifier))
+              (table_relation_expression
+                (simple_table_relation
+                  (identifier))))))))))
 
 ========================================================================
 Permissions property
@@ -347,15 +362,16 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (tabledata_permission_list
-        (tabledata_permission
-          (identifier)
-          (permission_type))
-        (tabledata_permission
-          (quoted_identifier)
-          (permission_type))))))
+    (object_body
+      (property
+        (property_name)
+        (tabledata_permission_list
+          (tabledata_permission
+            (identifier)
+            (permission_type))
+          (tabledata_permission
+            (quoted_identifier)
+            (permission_type)))))))
 
 ========================================================================
 OrderBy property
@@ -371,12 +387,13 @@ query 50100 MyQuery
     (query_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (order_by_list
-        (order_by_item
-          (quoted_identifier)
-          (identifier))))))
+    (object_body
+      (property
+        (property_name)
+        (order_by_list
+          (order_by_item
+            (quoted_identifier)
+            (identifier)))))))
 
 ========================================================================
 Implementation property
@@ -395,13 +412,14 @@ codeunit 50100 MyCodeunit implements MyInterface
     (implements_clause
       (implements_keyword)
       (identifier))
-    (property
-      (property_name)
-      (property_expression
-        (comparison_expression
-          (identifier)
-          (comparison_operator)
-          (identifier))))))
+    (object_body
+      (property
+        (property_name)
+        (property_expression
+          (comparison_expression
+            (identifier)
+            (comparison_operator)
+            (identifier)))))))
 
 ========================================================================
 Multiple properties in one object
@@ -419,18 +437,19 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (boolean))
-    (property
-      (property_name)
-      (boolean))
-    (property
-      (property_name)
-      (caption_value
-        (string_literal)
+    (object_body
+      (property
         (property_name)
-        (boolean)))))
+        (boolean))
+      (property
+        (property_name)
+        (boolean))
+      (property
+        (property_name)
+        (caption_value
+          (string_literal)
+          (property_name)
+          (boolean))))))
 
 ========================================================================
 CalcFormula with const in where
@@ -446,18 +465,19 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (aggregate_formula
-        (aggregate_function)
-        (calc_field_reference
-          (quoted_identifier)
-          (identifier))
-        (where_clause
-          (where_conditions
-            (where_condition
-              (identifier)
-              (identifier))))))))
+    (object_body
+      (property
+        (property_name)
+        (aggregate_formula
+          (aggregate_function)
+          (calc_field_reference
+            (quoted_identifier)
+            (identifier))
+          (where_clause
+            (where_conditions
+              (where_condition
+                (identifier)
+                (identifier)))))))))
 
 ========================================================================
 Property value list (ApplicationArea)
@@ -473,9 +493,10 @@ page 50100 MyPage
     (page_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (identifier))))
+    (object_body
+      (property
+        (property_name)
+        (identifier)))))
 
 ========================================================================
 OptionMembers property
@@ -491,12 +512,13 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (option_member_list
-        (option_member
-          (identifier))
-        (option_member
-          (identifier))
-        (option_member
-          (string_literal))))))
+    (object_body
+      (property
+        (property_name)
+        (option_member_list
+          (option_member
+            (identifier))
+          (option_member
+            (identifier))
+          (option_member
+            (string_literal)))))))

@@ -22,23 +22,27 @@ page 50100 MyPage
     (page_keyword)
     (integer)
     (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (group_section
-          (group_keyword)
-          (identifier)
-          (page_field
-            (identifier)
-            (member_expression
-              (identifier)
-              (identifier)))
-          (page_field
-            (quoted_identifier)
-            (member_expression
-              (identifier)
-              (quoted_identifier))))))))
+    (object_body
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (group_section
+                (group_keyword)
+                (identifier)
+                (layout_container_body
+                  (page_field
+                    (identifier)
+                    (member_expression
+                      (identifier)
+                      (identifier)))
+                  (page_field
+                    (quoted_identifier)
+                    (member_expression
+                      (identifier)
+                      (quoted_identifier))))))))))))
 
 ========================================================================
 Page with repeater
@@ -63,18 +67,22 @@ page 50100 P
     (page_keyword)
     (integer)
     (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (repeater_section
-          (repeater_keyword)
-          (identifier)
-          (page_field
-            (identifier)
-            (member_expression
-              (identifier)
-              (identifier))))))))
+    (object_body
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (repeater_section
+                (repeater_keyword)
+                (identifier)
+                (layout_container_body
+                  (page_field
+                    (identifier)
+                    (member_expression
+                      (identifier)
+                      (identifier))))))))))))
 
 ========================================================================
 Page with actions
@@ -99,15 +107,19 @@ page 50100 P
     (page_keyword)
     (integer)
     (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_declaration
-          (identifier)
-          (property
-            (property_name)
-            (string_literal)))))))
+    (object_body
+      (actions_section
+        (actions_keyword)
+        (action_body
+          (action_area_section
+            (area_keyword)
+            (action_body
+              (action_declaration
+                (identifier)
+                (object_body
+                  (property
+                    (property_name)
+                    (string_literal)))))))))))
 
 ========================================================================
 Page with layout and actions
@@ -145,28 +157,35 @@ page 50100 P
     (page_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (identifier))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (group_section
-          (group_keyword)
-          (identifier)
-          (page_field
-            (identifier)
-            (identifier)))))
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_declaration
-          (identifier)
-          (property
-            (property_name)
-            (string_literal)))))))
+    (object_body
+      (property
+        (property_name)
+        (identifier))
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (group_section
+                (group_keyword)
+                (identifier)
+                (layout_container_body
+                  (page_field
+                    (identifier)
+                    (identifier))))))))
+      (actions_section
+        (actions_keyword)
+        (action_body
+          (action_area_section
+            (area_keyword)
+            (action_body
+              (action_declaration
+                (identifier)
+                (object_body
+                  (property
+                    (property_name)
+                    (string_literal)))))))))))
 
 ========================================================================
 Action group
@@ -198,23 +217,29 @@ page 50100 P
     (page_keyword)
     (integer)
     (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_group_section
-          (group_keyword)
-          (identifier)
-          (action_declaration
-            (identifier)
-            (property
-              (property_name)
-              (string_literal)))
-          (action_declaration
-            (identifier)
-            (property
-              (property_name)
-              (string_literal))))))))
+    (object_body
+      (actions_section
+        (actions_keyword)
+        (action_body
+          (action_area_section
+            (area_keyword)
+            (action_body
+              (action_group_section
+                (group_keyword)
+                (identifier)
+                (action_group_body
+                  (action_declaration
+                    (identifier)
+                    (object_body
+                      (property
+                        (property_name)
+                        (string_literal))))
+                  (action_declaration
+                    (identifier)
+                    (object_body
+                      (property
+                        (property_name)
+                        (string_literal)))))))))))))
 
 ========================================================================
 Page field without body
@@ -236,13 +261,16 @@ page 50100 P
     (page_keyword)
     (integer)
     (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          (identifier)
-          (identifier))))))
+    (object_body
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (page_field
+                (identifier)
+                (identifier)))))))))
 
 ========================================================================
 Part section
@@ -267,17 +295,21 @@ page 50100 P
     (page_keyword)
     (integer)
     (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (part_section
-          (part_keyword)
-          (identifier)
-          (quoted_identifier)
-          (property
-            (property_name)
-            (string_literal)))))))
+    (object_body
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (part_section
+                (part_keyword)
+                (identifier)
+                (quoted_identifier)
+                (object_body
+                  (property
+                    (property_name)
+                    (string_literal)))))))))))
 
 ========================================================================
 Separator action
@@ -300,10 +332,13 @@ page 50100 P
     (page_keyword)
     (integer)
     (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (separator_action)
-        (action_declaration
-          (identifier))))))
+    (object_body
+      (actions_section
+        (actions_keyword)
+        (action_body
+          (action_area_section
+            (area_keyword)
+            (action_body
+              (separator_action)
+              (action_declaration
+                (identifier)))))))))

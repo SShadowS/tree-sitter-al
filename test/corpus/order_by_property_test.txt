@@ -22,22 +22,24 @@ query 50000 "Test Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (order_by_list
-        (order_by_item
-          (identifier))
-        (order_by_item
-          (identifier))))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (identifier))
+          (order_by_item
+            (identifier))))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)))))))
 
 ==================
 Query with single OrderBy item
@@ -60,17 +62,19 @@ query 50001 "Simple Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (order_by_list
-        (order_by_item
-          (identifier))))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (identifier))))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)))))))
 
 ==================
 Query with mixed case OrderBy
@@ -93,17 +97,19 @@ query 50002 "Mixed Case Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (order_by_list
-        (order_by_item
-          (identifier))
-        (order_by_item
-          (identifier))))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier
-          (table_keyword))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (order_by_list
+          (order_by_item
+            (identifier))
+          (order_by_item
+            (identifier))))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier
+              (table_keyword))))))))

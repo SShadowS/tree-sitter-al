@@ -34,36 +34,38 @@ enum 5580 "Digital Voucher Check Type" implements "Digital Voucher Check"
     (implements_clause
       (implements_keyword)
       interface: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (quoted_identifier)
-          operator: (comparison_operator)
-          right: (quoted_identifier))))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (quoted_identifier)
-          operator: (comparison_operator)
-          right: (quoted_identifier))))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (quoted_identifier)
+    body: (object_body
       (property
         name: (property_name)
-        value: (string_literal))
+        value: (boolean))
       (property
         name: (property_name)
         value: (property_expression
           (comparison_expression
             left: (quoted_identifier)
             operator: (comparison_operator)
-            right: (quoted_identifier)))))))
+            right: (quoted_identifier))))
+      (property
+        name: (property_name)
+        value: (property_expression
+          (comparison_expression
+            left: (quoted_identifier)
+            operator: (comparison_operator)
+            right: (quoted_identifier))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (quoted_identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))
+          (property
+            name: (property_name)
+            value: (property_expression
+              (comparison_expression
+                left: (quoted_identifier)
+                operator: (comparison_operator)
+                right: (quoted_identifier)))))))))
 
 ================================================================================
 Multiple enums with UnknownValueImplementation property
@@ -107,49 +109,52 @@ enum 1445 "Symmetric Algorithm" implements "Symmetric Algorithm"
     (implements_clause
       (implements_keyword)
       interface: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (identifier)
-          operator: (comparison_operator)
-          right: (quoted_identifier))))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (identifier)
-          operator: (comparison_operator)
-          right: (quoted_identifier))))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
+    body: (object_body
       (property
         name: (property_name)
-        value: (string_literal))
+        value: (boolean))
       (property
         name: (property_name)
         value: (property_expression
           (comparison_expression
             left: (identifier)
             operator: (comparison_operator)
-            right: (quoted_identifier)))))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
-      (property
-        name: (property_name)
-        value: (string_literal))
+            right: (quoted_identifier))))
       (property
         name: (property_name)
         value: (property_expression
           (comparison_expression
             left: (identifier)
             operator: (comparison_operator)
-            right: (quoted_identifier)))))))
+            right: (quoted_identifier))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))
+          (property
+            name: (property_name)
+            value: (property_expression
+              (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (quoted_identifier))))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))
+          (property
+            name: (property_name)
+            value: (property_expression
+              (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (quoted_identifier)))))))))
 
 ================================================================================
 UnknownValueImplementation with case variations
@@ -183,16 +188,17 @@ enum 101 TestEnum2 implements ITestInterface
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (identifier)
-          operator: (comparison_operator)
-          right: (quoted_identifier))))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (property_expression
+          (comparison_expression
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (quoted_identifier))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier))))
   (enum_declaration
     (enum_keyword)
     object_id: (integer)
@@ -200,13 +206,14 @@ enum 101 TestEnum2 implements ITestInterface
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (identifier)
-          operator: (comparison_operator)
-          right: (quoted_identifier))))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (property_expression
+          (comparison_expression
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (quoted_identifier))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)))))

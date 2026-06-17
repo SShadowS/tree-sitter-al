@@ -21,20 +21,23 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 MovedTo property in field declaration
@@ -58,17 +61,20 @@ table 50101 "Another Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 Both MovedFrom and MovedTo properties together
@@ -94,19 +100,22 @@ table 50102 "Migration Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))

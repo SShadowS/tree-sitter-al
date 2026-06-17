@@ -21,29 +21,31 @@ report 50000 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (labels_section
-      (labels_keyword)
-      (label_declaration
-        name: (identifier)
-        value: (string_literal))
-      (label_declaration
-        name: (identifier)
-        value: (string_literal)
-        comment: (string_literal))
-      (label_declaration
-        name: (identifier)
-        value: (string_literal)
-        locked: (boolean))
-      (label_declaration
-        name: (identifier)
-        value: (string_literal)
-        maxlength: (integer))
-      (label_declaration
-        name: (identifier)
-        value: (string_literal)
-        comment: (string_literal)
-        locked: (boolean)
-        maxlength: (integer)))))
+    body: (object_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal))
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            comment: (string_literal))
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            locked: (boolean))
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            maxlength: (integer))
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            comment: (string_literal)
+            locked: (boolean)
+            maxlength: (integer)))))))
 
 ==================
 Labels with mixed case properties
@@ -66,19 +68,21 @@ report 50001 "Mixed Case Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (labels_section
-      (labels_keyword)
-      (label_declaration
-        name: (identifier)
-        value: (string_literal)
-        comment: (string_literal))
-      (label_declaration
-        name: (identifier)
-        value: (string_literal)
-        locked: (boolean)
-        comment: (string_literal))
-      (label_declaration
-        name: (identifier)
-        value: (string_literal)
-        maxlength: (integer)
-        locked: (boolean)))))
+    body: (object_body
+      (labels_section
+        (labels_keyword)
+        body: (labels_body
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            comment: (string_literal))
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            locked: (boolean)
+            comment: (string_literal))
+          (label_declaration
+            name: (identifier)
+            value: (string_literal)
+            maxlength: (integer)
+            locked: (boolean)))))))

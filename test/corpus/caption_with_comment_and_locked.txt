@@ -42,69 +42,76 @@ table 123 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (caption_value
-            (string_literal)
-            (property_name)
-            (string_literal))))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (caption_value
-            (string_literal)
-            (property_name)
-            (boolean))))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (caption_value
-            (string_literal)
-            (property_name)
-            (string_literal)
-            (property_name)
-            (boolean))))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (caption_value
-            (string_literal)
-            (property_name)
-            (boolean)
-            (property_name)
-            (string_literal)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (caption_value
+                  (string_literal)
+                  (property_name)
+                  (string_literal)))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (caption_value
+                  (string_literal)
+                  (property_name)
+                  (boolean)))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (caption_value
+                  (string_literal)
+                  (property_name)
+                  (string_literal)
+                  (property_name)
+                  (boolean)))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (caption_value
+                  (string_literal)
+                  (property_name)
+                  (boolean)
+                  (property_name)
+                  (string_literal))))))))))

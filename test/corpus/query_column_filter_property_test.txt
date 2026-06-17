@@ -23,24 +23,28 @@ query 50100 "Test Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (query_filter
-          (filter_keyword)
-          name: (identifier)
-          field_name: (identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (identifier)
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_filter
                 (filter_keyword)
-                value: (filter_value
-                  (identifier))))))))))
+                name: (identifier)
+                field_name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (identifier))))))))))))))
 
 ================================================================================
 Query with ColumnFilter in column section
@@ -78,51 +82,57 @@ query 50101 "Column Filter Test"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (string_literal))))))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (integer)))))
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (integer)
-                  (integer))))))))))
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (string_literal)))))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)))))
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)
+                          (integer))))))))))))))
 
 ================================================================================
 Query with case-insensitive ColumnFilter
@@ -153,34 +163,39 @@ query 50102 "Case Test"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (integer))))))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (integer))))))))))
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)))))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer))))))))))))))
 
 ================================================================================
 Query with ColumnFilter using const values
@@ -217,44 +232,50 @@ query 50103 "Const Filter Test"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (boolean)))))))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (boolean)))))))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (identifier)
-                value: (quoted_identifier)))))))))
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (call_expression
+                          function: (identifier)
+                          arguments: (argument_list
+                            (boolean))))))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (call_expression
+                          function: (identifier)
+                          arguments: (argument_list
+                            (boolean))))))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        value: (quoted_identifier)))))))))))))

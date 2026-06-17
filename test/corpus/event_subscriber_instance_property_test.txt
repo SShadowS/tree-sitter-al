@@ -15,14 +15,15 @@ codeunit 6225225 "CDC PC Workflow Event Handling"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (internal_keyword))))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (internal_keyword))))
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 EventSubscriberInstance property with Static value
@@ -40,9 +41,10 @@ codeunit 12345 "Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 EventSubscriberInstance property with Manual value
@@ -60,6 +62,7 @@ codeunit 54321 "Manual Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier)))))

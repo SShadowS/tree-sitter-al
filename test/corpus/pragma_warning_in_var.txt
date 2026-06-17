@@ -22,24 +22,25 @@ codeunit 50100 "Test Pragma"
     (codeunit_keyword)
     (integer)
     (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (pragma)
-      (variable_declaration
+    (object_body
+      (var_section
+        (var_keyword)
+        (pragma)
+        (variable_declaration
+          (identifier)
+          (basic_type)
+          (string_literal))
+        (pragma)
+        (variable_declaration
+          (identifier)
+          (basic_type)
+          (string_literal)))
+      (procedure
+        (procedure_keyword)
         (identifier)
-        (basic_type)
-        (string_literal))
-      (pragma)
-      (variable_declaration
-        (identifier)
-        (basic_type)
-        (string_literal)))
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+        (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 Pragma warning nested disable/restore in var section
@@ -71,42 +72,43 @@ codeunit 50101 "Test Nested Pragma"
     (codeunit_keyword)
     (integer)
     (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (pragma)
-      (pragma)
-      (variable_declaration
-        (identifier)
-        (basic_type)
-        (string_literal))
-      (pragma)
-      (variable_declaration
-        (identifier)
-        (basic_type)
-        (string_literal))
-      (pragma)
-      (variable_declaration
-        (identifier)
-        (basic_type)
-        (string_literal)
-        (label_attribute
+    (object_body
+      (var_section
+        (var_keyword)
+        (pragma)
+        (pragma)
+        (variable_declaration
           (identifier)
-          (string_literal)))
-      (variable_declaration
-        (identifier)
-        (basic_type)
-        (string_literal)
-        (label_attribute
+          (basic_type)
+          (string_literal))
+        (pragma)
+        (variable_declaration
           (identifier)
-          (string_literal))))
-    (pragma)
-    (pragma)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+          (basic_type)
+          (string_literal))
+        (pragma)
+        (variable_declaration
+          (identifier)
+          (basic_type)
+          (string_literal)
+          (label_attribute
+            (identifier)
+            (string_literal)))
+        (variable_declaration
+          (identifier)
+          (basic_type)
+          (string_literal)
+          (label_attribute
+            (identifier)
+            (string_literal))))
+      (pragma)
+      (pragma)
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 Pragma warning in local var section
@@ -131,21 +133,22 @@ codeunit 50102 "Test Local Pragma"
     (codeunit_keyword)
     (integer)
     (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (var_section
-        (var_keyword)
-        (pragma)
-        (variable_declaration
-          (identifier)
-          (basic_type)
-          (string_literal))
-        (pragma)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (pragma)
+          (variable_declaration
+            (identifier)
+            (basic_type)
+            (string_literal))
+          (pragma)
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type))))
+        (code_block
+          (begin_keyword)
+          (end_keyword))))))

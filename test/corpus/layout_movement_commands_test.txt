@@ -19,11 +19,13 @@ pageextension 123 "Test Extension" extends "Test Page"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (movelast_modification
-        target: (identifier)
-        element: (identifier)))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (movelast_modification
+            target: (identifier)
+            element: (identifier)))))))
 
 ================================================================================
 Layout movement commands - movefirst
@@ -46,11 +48,13 @@ pageextension 124 "Test Extension" extends "Test Page"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (movefirst_modification
-        target: (identifier)
-        element: (quoted_identifier)))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (movefirst_modification
+            target: (identifier)
+            element: (quoted_identifier)))))))
 
 ================================================================================
 Layout movement commands - moveafter
@@ -73,11 +77,13 @@ pageextension 125 "Test Extension" extends "Test Page"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (moveafter_modification
-        target: (identifier)
-        element: (identifier)))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (moveafter_modification
+            target: (identifier)
+            element: (identifier)))))))
 
 ================================================================================
 Layout movement commands - movebefore with quoted identifiers
@@ -100,8 +106,10 @@ pageextension 126 "Test Extension" extends "Test Page"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (movebefore_modification
-        target: (quoted_identifier)
-        element: (quoted_identifier)))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (movebefore_modification
+            target: (quoted_identifier)
+            element: (quoted_identifier)))))))

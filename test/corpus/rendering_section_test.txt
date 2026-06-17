@@ -46,59 +46,66 @@ report 50100 "Customer List Excel"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (quoted_identifier))
-        (property
-          name: (property_name)
-          value: (boolean))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (quoted_identifier))
-          (property
-            name: (property_name)
-            value: (boolean)))))
-    (rendering_section
-      (rendering_keyword)
-      (rendering_layout
-        (layout_keyword)
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal)))
-      (rendering_layout
-        (layout_keyword)
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (quoted_identifier))
+              (property
+                name: (property_name)
+                value: (boolean))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))))))))
+      (rendering_section
+        (rendering_keyword)
+        body: (rendering_body
+          (rendering_layout
+            (layout_keyword)
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal))))
+          (rendering_layout
+            (layout_keyword)
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ==================
 Empty rendering section
@@ -118,5 +125,6 @@ report 50101 "Simple Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (rendering_section
-      (rendering_keyword))))
+    body: (object_body
+      (rendering_section
+        (rendering_keyword)))))

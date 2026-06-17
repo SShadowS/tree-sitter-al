@@ -24,19 +24,22 @@ query 50100 "Item Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (link_value_list
-            (link_value
-              field: (identifier)
-              value: (identifier))))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))))))
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (link_value
+                    field: (identifier)
+                    value: (identifier))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))

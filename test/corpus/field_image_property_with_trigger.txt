@@ -38,60 +38,65 @@ page 123 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (cuegroup_section
-          (cuegroup_keyword)
-          name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (page_field
-            name: (quoted_identifier)
-            source: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list))
-            (property
-              name: (property_name)
-              value: (option_member_list
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))))
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (trigger_declaration
-              (trigger_keyword)
-              name: (identifier)
-              (var_section
-                (var_keyword)
-                (variable_declaration
-                  name: (identifier)
-                  type: (type_specification
-                    (object_reference_type
-                      object_type: (page_keyword)
-                      reference: (quoted_identifier)))))
-              (code_block
-                (begin_keyword)
-                (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list))
-                (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list))
-                (end_keyword)))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (cuegroup_section
+                (cuegroup_keyword)
+                name: (quoted_identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (page_field
+                    name: (quoted_identifier)
+                    source: (call_expression
+                      function: (member_expression
+                        object: (identifier)
+                        member: (identifier))
+                      arguments: (argument_list))
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (option_member_list
+                          (option_member
+                            (identifier))
+                          (option_member
+                            (identifier))))
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (trigger_declaration
+                        (trigger_keyword)
+                        name: (identifier)
+                        (var_section
+                          (var_keyword)
+                          (variable_declaration
+                            name: (identifier)
+                            type: (type_specification
+                              (object_reference_type
+                                object_type: (page_keyword)
+                                reference: (quoted_identifier)))))
+                        body: (code_block
+                          (begin_keyword)
+                          (call_expression
+                            function: (member_expression
+                              object: (identifier)
+                              member: (identifier))
+                            arguments: (argument_list))
+                          (call_expression
+                            function: (member_expression
+                              object: (identifier)
+                              member: (identifier))
+                            arguments: (argument_list))
+                          (end_keyword))))))))))))))

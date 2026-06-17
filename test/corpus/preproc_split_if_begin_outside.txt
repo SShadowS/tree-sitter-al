@@ -15,38 +15,40 @@ codeunit 1 T
     end;
 }
 --------------------------------------------------------------------------------
+
 (source_file
   (codeunit_declaration
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      return_type: (type_specification
-        (basic_type))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (preproc_split_if_begin_asymmetric
-          (preproc_if
-            (preproc_open)
-            condition: (preproc_not_expression
-              (identifier)))
-          (if_keyword)
-          condition: (unary_expression
-            operand: (identifier))
-          (then_keyword)
-          (preproc_split_begin)
-          (preproc_endif
-            (preproc_close))
-          (exit_statement
-            (exit_keyword)
-            return_value: (boolean))
-          (end_keyword))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (preproc_split_if_begin_asymmetric
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (if_keyword)
+            condition: (unary_expression
+              operand: (identifier))
+            (then_keyword)
+            (preproc_split_begin)
+            (preproc_endif
+              (preproc_close))
+            (exit_statement
+              (exit_keyword)
+              return_value: (boolean))
+            (end_keyword))
+          (end_keyword))))))

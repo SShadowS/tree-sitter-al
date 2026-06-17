@@ -24,17 +24,18 @@ codeunit 50100 "Test Codeunit"
     object_id: (integer)
     object_name: (quoted_identifier)
     (multiline_comment)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (multiline_comment)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))))
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (multiline_comment)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (end_keyword))))))
 
 ================================================================================
 Multiline comment with special characters
@@ -63,15 +64,17 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (multiline_comment)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        (multiline_comment)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))))))
 
 ================================================================================
 Multiline comment between statements
@@ -100,23 +103,24 @@ codeunit 50101 "Comment Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (multiline_comment)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (multiline_comment)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (multiline_comment)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (multiline_comment)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (end_keyword))))))

@@ -16,21 +16,22 @@ codeunit 1 T
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          (ml_value_list
-            (ml_value_pair
-              language: (identifier)
-              value: (string_literal)))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            (ml_value_list
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ========================================================================
 TextConst variable with multiple languages
@@ -50,24 +51,25 @@ codeunit 1 T
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          (ml_value_list
-            (ml_value_pair
-              language: (identifier)
-              value: (string_literal))
-            (ml_value_pair
-              language: (identifier)
-              value: (string_literal))
-            (ml_value_pair
-              language: (identifier)
-              value: (string_literal)))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            (ml_value_list
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal))
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal))
+              (ml_value_pair
+                language: (identifier)
+                value: (string_literal)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

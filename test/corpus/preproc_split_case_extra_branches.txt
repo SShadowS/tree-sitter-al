@@ -34,49 +34,50 @@ codeunit 1 T
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          (identifier)
-          (of_keyword)
-          (preproc_split_case_extended
-            (preproc_if
-              (preproc_open)
-              (identifier))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type))))
+        (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            (identifier)
+            (of_keyword)
+            (preproc_split_case_extended
+              (preproc_if
+                (preproc_open)
+                (identifier))
+              (case_branch
+                (integer)
+                (code_block
+                  (call_expression
+                    (identifier)
+                    (argument_list))))
+              (integer)
+              (preproc_else)
+              (integer)
+              (integer)
+              (preproc_endif
+                (preproc_close))
+              (code_block
+                (begin_keyword)
+                (call_expression
+                  (identifier)
+                  (argument_list))
+                (end_keyword)))
             (case_branch
               (integer)
               (code_block
+                (begin_keyword)
                 (call_expression
                   (identifier)
-                  (argument_list))))
-            (integer)
-            (preproc_else)
-            (integer)
-            (integer)
-            (preproc_endif
-              (preproc_close))
-            (code_block
-              (begin_keyword)
-              (call_expression
-                (identifier)
-                (argument_list))
-              (end_keyword)))
-          (case_branch
-            (integer)
-            (code_block
-              (begin_keyword)
-              (call_expression
-                (identifier)
-                (argument_list))
-              (end_keyword))))
-        (end_keyword)))))
+                  (argument_list))
+                (end_keyword))))
+          (end_keyword))))))

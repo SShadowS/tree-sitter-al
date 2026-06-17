@@ -15,9 +15,10 @@ profileextension BlankExt extends BLANK
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    (property
-      name: (property_name)
-      value: (boolean))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean)))))
 
 ================================================================================
 Profile extension with namespace
@@ -44,9 +45,10 @@ profileextension BlankExt extends BLANK
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    (property
-      name: (property_name)
-      value: (boolean))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean)))))
 
 ================================================================================
 Profile extension with multiple properties
@@ -68,18 +70,19 @@ profileextension "My Profile Extension" extends "Business Manager"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (boolean)))))
 
 ================================================================================
 Profile extension with role center
@@ -100,12 +103,13 @@ profileextension MyExt extends "Accountant"
     object_name: (identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal)))))

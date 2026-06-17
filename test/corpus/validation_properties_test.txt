@@ -22,26 +22,29 @@ table 50000 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (keyword_identifier))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (keyword_identifier))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (keyword_identifier))
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (keyword_identifier)))))))))))
 
 ==================
 Field with MinValue and MaxValue properties
@@ -66,19 +69,22 @@ table 50001 "Test Table 2"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (integer))
-        (property
-          name: (property_name)
-          value: (integer))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (integer))
+              (property
+                name: (property_name)
+                value: (integer)))))))))
 
 ==================
 Field with NotBlank and Numeric properties
@@ -106,26 +112,30 @@ table 50002 "Test Table 3"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (boolean))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
 
 ==================
 Mixed case validation properties
@@ -153,25 +163,28 @@ table 50003 "Test Table 4"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (integer))
-        (property
-          name: (property_name)
-          value: (integer))
-        (property
-          name: (property_name)
-          value: (integer))
-        (property
-          name: (property_name)
-          value: (boolean))
-        (property
-          name: (property_name)
-          value: (boolean))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (integer))
+              (property
+                name: (property_name)
+                value: (integer))
+              (property
+                name: (property_name)
+                value: (integer))
+              (property
+                name: (property_name)
+                value: (boolean))
+              (property
+                name: (property_name)
+                value: (boolean)))))))))

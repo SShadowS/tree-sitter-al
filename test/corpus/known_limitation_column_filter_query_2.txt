@@ -25,24 +25,28 @@ query 986 "Time Sheet Line Status Count"
     (query_keyword)
     (integer)
     (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        (identifier)
-        (quoted_identifier)
-        (query_column
-          (column_keyword)
-          (identifier)
-          (property
-            (property_name)
-            (identifier))
-          (comment)
-          (property
-            (property_name)
-            (link_value_list
-              (link_value
+    (object_body
+      (elements_section
+        (elements_keyword)
+        (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            (identifier)
+            (quoted_identifier)
+            (query_body
+              (query_column
+                (column_keyword)
                 (identifier)
-                (filter_keyword)
-                (filter_value
-                  (integer))))))))))
+                (object_body
+                  (property
+                    (property_name)
+                    (identifier))
+                  (comment)
+                  (property
+                    (property_name)
+                    (link_value_list
+                      (link_value
+                        (identifier)
+                        (filter_keyword)
+                        (filter_value
+                          (integer))))))))))))))

@@ -36,39 +36,42 @@ table 50100 "Customer Extension"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer))))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))))
-    (fieldgroups_section
-      (fieldgroups_keyword)
-      (fieldgroup_declaration
-        (fieldgroup_keyword)
-        name: (identifier)
-        fields: (field_list
-          (quoted_identifier)
-          (quoted_identifier)))
-      (fieldgroup_declaration
-        (fieldgroup_keyword)
-        name: (identifier)
-        fields: (field_list
-          (quoted_identifier)
-          (quoted_identifier))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))))
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (quoted_identifier)
+              (quoted_identifier)))
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (quoted_identifier)
+              (quoted_identifier))))))))
 
 ================================================================================
 Fieldgroup with single field
@@ -98,21 +101,24 @@ table 50101 "Item Extension"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))))
-    (fieldgroups_section
-      (fieldgroups_keyword)
-      (fieldgroup_declaration
-        (fieldgroup_keyword)
-        name: (identifier)
-        fields: (field_list
-          (identifier))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                length: (integer))))))
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))))))))
 
 ================================================================================
 Multiple fieldgroups with mixed identifiers
@@ -156,43 +162,46 @@ table 50102 "Mixed Fieldgroups"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer))))
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (text_type
-            length: (integer))))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))))
-    (fieldgroups_section
-      (fieldgroups_keyword)
-      (fieldgroup_declaration
-        (fieldgroup_keyword)
-        name: (identifier)
-        fields: (field_list
-          (quoted_identifier)
-          (identifier)
-          (quoted_identifier)))
-      (fieldgroup_declaration
-        (fieldgroup_keyword)
-        name: (identifier)
-        fields: (field_list
-          (identifier)))
-      (fieldgroup_declaration
-        (fieldgroup_keyword)
-        name: (identifier)
-        fields: (field_list
-          (quoted_identifier)
-          (quoted_identifier))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                length: (integer))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))))
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (quoted_identifier)
+              (identifier)
+              (quoted_identifier)))
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)))
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            name: (identifier)
+            fields: (field_list
+              (quoted_identifier)
+              (quoted_identifier))))))))

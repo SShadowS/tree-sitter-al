@@ -43,56 +43,64 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (identifier)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (identifier))))
-    (keys_section
-      (keys_keyword)
-      (key_declaration
-        (key_keyword)
-        name: (identifier)
-        fields: (field_list
-          (quoted_identifier))
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (key_declaration
-        (key_keyword)
-        name: (identifier)
-        fields: (field_list
-          (quoted_identifier))
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (key_declaration
-        (key_keyword)
-        name: (identifier)
-        fields: (field_list
-          (quoted_identifier)
-          (quoted_identifier))
-        (property
-          name: (property_name)
-          value: (boolean))
-        (property
-          name: (property_name)
-          value: (boolean))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (quoted_identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (quoted_identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (quoted_identifier)
+              (quoted_identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
 
 ================================================================================
 Table key with case-insensitive Unique property
@@ -138,49 +146,57 @@ table 50101 "Case Test"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (identifier))))
-    (keys_section
-      (keys_keyword)
-      (key_declaration
-        (key_keyword)
-        name: (identifier)
-        fields: (field_list
-          (identifier))
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (key_declaration
-        (key_keyword)
-        name: (identifier)
-        fields: (field_list
-          (identifier))
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (key_declaration
-        (key_keyword)
-        name: (identifier)
-        fields: (field_list
-          (identifier)
-          (identifier))
-        (property
-          name: (property_name)
-          value: (boolean))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier)
+              (identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))

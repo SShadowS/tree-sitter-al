@@ -26,24 +26,28 @@ page 50100 TestFlowProperties
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (customaction_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (customaction_declaration
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))
 
 ================================================================================
 Report layout MimeType property test
@@ -70,20 +74,23 @@ report 50200 TestReportLayout
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (rendering_section
-      (rendering_keyword)
-      (rendering_layout
-        (layout_keyword)
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (rendering_section
+        (rendering_keyword)
+        body: (rendering_body
+          (rendering_layout
+            (layout_keyword)
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))

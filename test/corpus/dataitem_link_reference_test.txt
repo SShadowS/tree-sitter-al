@@ -20,15 +20,18 @@ report 50100 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (identifier))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier)))))))))
 
 ================================================================================
 DataItemLinkReference with quoted identifier
@@ -52,15 +55,18 @@ report 50101 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (quoted_identifier))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (quoted_identifier)))))))))
 
 ================================================================================
 DataItemLinkReference case variations
@@ -88,22 +94,26 @@ report 50102 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (identifier)))
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (identifier))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier)))))))))
 
 ================================================================================
 DataItemLinkReference with multiple properties
@@ -129,23 +139,26 @@ report 50103 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (sorting_value
-            (quoted_identifier)))
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (quoted_identifier)))
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier)))))))))))

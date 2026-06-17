@@ -19,30 +19,31 @@ codeunit 50100 T
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (preproc_pragma_only
-        (preproc_if
-          (preproc_open)
-          condition: (preproc_not_expression
-            (identifier)))
-        (pragma)
-        (preproc_endif
-          (preproc_close)))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (codeunit_keyword)
-              reference: (identifier)))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_pragma_only
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (pragma)
+          (preproc_endif
+            (preproc_close)))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (identifier)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

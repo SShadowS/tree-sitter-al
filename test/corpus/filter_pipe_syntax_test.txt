@@ -26,32 +26,36 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (quoted_identifier)
-                value: (integer))
-              (link_value
-                field: (quoted_identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (integer)
-                  (integer)))
-              (link_value
-                field: (quoted_identifier)
-                value: (quoted_identifier)))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (integer))
+                      (link_value
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)
+                          (integer)))
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (quoted_identifier)))))))))))))
 
 ================================================================================
 FILTER with multiple OR conditions
@@ -81,31 +85,35 @@ pageextension 50100 "Test Extension" extends "Customer List"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (addafter_modification
-        target: (identifier)
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (quoted_identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (integer)
-                  (integer)
-                  (integer)
-                  (integer)))
-              (link_value
-                field: (quoted_identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (identifier)
-                  (identifier))))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addafter_modification
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)
+                          (integer)
+                          (integer)
+                          (integer)))
+                      (link_value
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (identifier)
+                          (identifier))))))))))))))
 
 ================================================================================
 FILTER with comparison operators
@@ -133,24 +141,28 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (quoted_identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (string_literal)))
-              (link_value
-                field: (quoted_identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (string_literal))))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (string_literal)))
+                      (link_value
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (string_literal))))))))))))))

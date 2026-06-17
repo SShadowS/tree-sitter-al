@@ -30,29 +30,35 @@ xmlport 50000 "Test Import"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (xmlport_element
-          name: (identifier)
-          source: (quoted_identifier)
-          (xmlport_attribute
+    body: (object_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
             name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (identifier))
-            (property
-              name: (property_name)
-              value: (identifier)))
-          (xmlport_attribute
-            name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (identifier))
-            (property
-              name: (property_name)
-              value: (identifier))))))))
+            body: (xmlport_body
+              (xmlport_element
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (xmlport_body
+                  (xmlport_attribute
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))))
+                  (xmlport_attribute
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
 
 ==================
 XMLPort field attribute with mixed properties
@@ -83,22 +89,27 @@ xmlport 50001 "Complex Import"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (xmlport_element
-          name: (identifier
-            (table_keyword))
-          source: (quoted_identifier)
-          (xmlport_attribute
+    body: (object_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
             name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (string_literal))))))))
+            body: (xmlport_body
+              (xmlport_element
+                name: (identifier
+                  (table_keyword))
+                source: (quoted_identifier)
+                body: (xmlport_body
+                  (xmlport_attribute
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (string_literal)))))))))))))

@@ -29,38 +29,43 @@ page 17 "G/L Account Card" {
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (preproc_conditional
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (property
-              name: (property_name)
-              value: (identifier))
-            (preproc_endif
-              (preproc_close)))
-          (page_field
-            name: (quoted_identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))
-            (property
-              name: (property_name)
-              value: (option_member_list
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (group_section
+                (group_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (property
+                      name: (property_name)
+                      value: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (page_field
+                    name: (quoted_identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (option_member_list
+                          (option_member
+                            (identifier))
+                          (option_member
+                            (identifier)))))))))))))))
 
 ================================================================================
 Preprocessor conditional properties in repeater section
@@ -92,30 +97,35 @@ page 18 "Test List" {
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (repeater_section
-          (repeater_keyword)
-          name: (identifier)
-          (preproc_conditional
-            (preproc_if
-              (preproc_open)
-              condition: (identifier))
-            (property
-              name: (property_name)
-              value: (identifier))
-            (preproc_endif
-              (preproc_close)))
-          (page_field
-            name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (identifier))
-            (property
-              name: (property_name)
-              value: (identifier))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (preproc_conditional
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (property
+                      name: (property_name)
+                      value: (identifier))
+                    (preproc_endif
+                      (preproc_close)))
+                  (page_field
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
 
 ================================================================================
 Mixed preprocessor conditional content in grid section
@@ -150,33 +160,38 @@ page 19 "Test Grid" {
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (grid_section
-          (grid_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (preproc_conditional_layout_mixed
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (property
-              name: (property_name)
-              value: (boolean))
-            (group_section
-              (group_keyword)
-              name: (identifier)
-              (property
-                name: (property_name)
-                value: (string_literal)))
-            (preproc_else)
-            (property
-              name: (property_name)
-              value: (boolean))
-            (preproc_endif
-              (preproc_close))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (grid_section
+                (grid_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (preproc_conditional_layout_mixed
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (property
+                      name: (property_name)
+                      value: (boolean))
+                    (group_section
+                      (group_keyword)
+                      name: (identifier)
+                      body: (layout_container_body
+                        (property
+                          name: (property_name)
+                          value: (string_literal))))
+                    (preproc_else)
+                    (property
+                      name: (property_name)
+                      value: (boolean))
+                    (preproc_endif
+                      (preproc_close))))))))))))

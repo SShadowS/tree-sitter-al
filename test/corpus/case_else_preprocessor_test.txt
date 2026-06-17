@@ -36,90 +36,91 @@ codeunit 50000 "Test Case Else"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer)))))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier))))
-        (preproc_conditional_var
-          (preproc_if
-            (preproc_open)
-            condition: (preproc_not_expression
-              (identifier)))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))
+        (var_section
+          (var_keyword)
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (record_type
                 reference: (quoted_identifier))))
-          (preproc_endif
-            (preproc_close))))
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (integer)
-            body: (assignment_statement
-              left: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              right: (identifier)))
-          (case_branch
-            pattern: (integer)
-            body: (assignment_statement
-              left: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              right: (identifier)))
-          (case_else_branch
-            (else_keyword)
-            (preproc_conditional_statement
-              (preproc_if
-                (preproc_open)
-                condition: (identifier))
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)
-                  (identifier)
-                  (identifier)))
-              (preproc_else)
-              (identifier)
-              (call_expression
-                function: (member_expression
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))
+            (preproc_endif
+              (preproc_close))))
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (integer)
+              body: (assignment_statement
+                left: (member_expression
                   object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (identifier)
-                  (identifier)))
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (identifier)
-                  (identifier)
-                  (identifier)))
-              (identifier)
-              (preproc_endif
-                (preproc_close)))))
-        (end_keyword)))))
+                  member: (quoted_identifier))
+                right: (identifier)))
+            (case_branch
+              pattern: (integer)
+              body: (assignment_statement
+                left: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                right: (identifier)))
+            (case_else_branch
+              (else_keyword)
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (identifier)
+                    (identifier)))
+                (preproc_else)
+                (identifier)
+                (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list
+                    (identifier)
+                    (identifier)
+                    (identifier)))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (identifier)
+                    (identifier)))
+                (identifier)
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
 
 ================================================================================
 Simple case with preprocessor in else
@@ -151,50 +152,51 @@ codeunit 50001 "Simple Case Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (integer)
-            body: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (case_branch
-            pattern: (integer)
-            body: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (case_else_branch
-            (else_keyword)
-            (preproc_conditional_statement
-              (preproc_if
-                (preproc_open)
-                condition: (identifier))
-              (call_expression
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (integer)
+              body: (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal)))
-              (preproc_else)
-              (call_expression
+                  (string_literal))))
+            (case_branch
+              pattern: (integer)
+              body: (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal)))
-              (preproc_endif
-                (preproc_close)))))
-        (end_keyword)))))
+                  (string_literal))))
+            (case_else_branch
+              (else_keyword)
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))
+                (preproc_else)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword))))))
 
 ================================================================================
 Nested case with multiple preprocessor conditions
@@ -249,143 +251,144 @@ codeunit 50002 "Nested Case Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (integer)
-            body: (case_statement
-              (case_keyword)
-              expression: (identifier)
-              (of_keyword)
-              (case_branch
-                pattern: (integer)
-                body: (call_expression
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (integer)
+              body: (case_statement
+                (case_keyword)
+                expression: (identifier)
+                (of_keyword)
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (case_branch
+                  pattern: (integer)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (case_else_branch
+                  (else_keyword)
+                  (preproc_conditional_statement
+                    (preproc_if
+                      (preproc_open)
+                      condition: (identifier))
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))
+                    (preproc_elif
+                      condition: (identifier))
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))
+                    (preproc_else)
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))
+                    (preproc_endif
+                      (preproc_close))))))
+            (case_else_branch
+              (else_keyword)
+              (preproc_conditional_statement
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (identifier)
+                (call_expression
                   function: (identifier)
-                  arguments: (argument_list)))
-              (case_branch
-                pattern: (integer)
-                body: (call_expression
+                  arguments: (argument_list))
+                (call_expression
                   function: (identifier)
-                  arguments: (argument_list)))
-              (case_else_branch
-                (else_keyword)
-                (preproc_conditional_statement
-                  (preproc_if
-                    (preproc_open)
-                    condition: (identifier))
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list))
-                  (preproc_elif
-                    condition: (identifier))
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list))
-                  (preproc_else)
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list))
-                  (preproc_endif
-                    (preproc_close))))))
-          (case_else_branch
-            (else_keyword)
-            (preproc_conditional_statement
-              (preproc_if
-                (preproc_open)
-                condition: (preproc_not_expression
-                  (identifier)))
-              (identifier)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list))
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list))
-              (identifier)
-              (preproc_else)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list))
-              (preproc_endif
-                (preproc_close)))))
-        (end_keyword)))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+                  arguments: (argument_list))
+                (identifier)
+                (preproc_else)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                (preproc_endif
+                  (preproc_close)))))
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

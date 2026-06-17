@@ -16,13 +16,14 @@ table 50000 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (empty_statement)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (empty_statement))
     (comment)))
 
 ================================================================================
@@ -48,18 +49,21 @@ table 50001 "Test Table 2"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (empty_statement)))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (empty_statement))))))))
 
 ================================================================================
 Standalone semicolons in key properties
@@ -84,14 +88,17 @@ table 50002 "Test Table 3"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (keys_section
-      (keys_keyword)
-      (key_declaration
-        (key_keyword)
-        name: (identifier)
-        fields: (field_list
-          (identifier))
-        (property
-          name: (property_name)
-          value: (boolean))
-        (empty_statement)))))
+    body: (object_body
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))
+              (empty_statement))))))))

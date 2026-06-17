@@ -14,9 +14,10 @@ report 50000 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal)))))
 
 ================================================================================
 ExecutionTimeout with days and hours
@@ -35,12 +36,13 @@ report 50001 "Long Running Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (boolean)))))
 
 ================================================================================
 ExecutionTimeout with fractional seconds
@@ -58,9 +60,10 @@ report 50002 "Precise Timeout Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal)))))
 
 ================================================================================
 ExecutionTimeout with full precision
@@ -78,9 +81,10 @@ report 50003 "Full Precision Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal)))))
 
 ================================================================================
 ExecutionTimeout in real report context
@@ -115,41 +119,44 @@ report 50004 "Auto Posting Errors"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (integer))
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (quoted_identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (identifier))))
-        (trigger_declaration
-          (trigger_keyword)
-          name: (identifier)
-          (code_block
-            (begin_keyword)
-            (comment)
-            (end_keyword)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (integer))
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (quoted_identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier))))
+              (trigger_declaration
+                (trigger_keyword)
+                name: (identifier)
+                body: (code_block
+                  (begin_keyword)
+                  (comment)
+                  (end_keyword))))))))))
 
 ================================================================================
 ExecutionTimeout with single digit hours
@@ -167,6 +174,7 @@ report 50005 "Single Hour Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal)))))

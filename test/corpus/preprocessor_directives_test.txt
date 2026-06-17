@@ -29,25 +29,29 @@ pageextension 123 "Test Extension" extends "Base Page"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (preproc_conditional_layout
-        (preproc_if
-          (preproc_open)
-          condition: (identifier))
-        (modify_modification
-          target: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (boolean)))
-        (preproc_else)
-        (modify_modification
-          target: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (boolean)))
-        (preproc_endif
-          (preproc_close))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (preproc_conditional_layout
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (modify_modification
+              target: (quoted_identifier)
+              body: (object_body
+                (property
+                  name: (property_name)
+                  value: (boolean))))
+            (preproc_else)
+            (modify_modification
+              target: (quoted_identifier)
+              body: (object_body
+                (property
+                  name: (property_name)
+                  value: (boolean))))
+            (preproc_endif
+              (preproc_close))))))))
 
 ================================================================================
 Uppercase preprocessor directives in code blocks
@@ -74,31 +78,32 @@ codeunit 123 "Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (preproc_conditional_statement
-          (preproc_if
-            (preproc_open)
-            condition: (identifier))
-          (assignment_statement
-            left: (identifier)
-            right: (boolean))
-          (preproc_else)
-          (assignment_statement
-            left: (identifier)
-            right: (boolean))
-          (preproc_endif
-            (preproc_close)))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (preproc_conditional_statement
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (assignment_statement
+              left: (identifier)
+              right: (boolean))
+            (preproc_else)
+            (assignment_statement
+              left: (identifier)
+              right: (boolean))
+            (preproc_endif
+              (preproc_close)))
+          (end_keyword))))))
 
 ================================================================================
 Mixed case preprocessor directives in code blocks
@@ -125,31 +130,32 @@ codeunit 124 "Test Codeunit Mixed"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (preproc_conditional_statement
-          (preproc_if
-            (preproc_open)
-            condition: (identifier))
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
-          (preproc_else)
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
-          (preproc_endif
-            (preproc_close)))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (preproc_conditional_statement
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (assignment_statement
+              left: (identifier)
+              right: (integer))
+            (preproc_else)
+            (assignment_statement
+              left: (identifier)
+              right: (integer))
+            (preproc_endif
+              (preproc_close)))
+          (end_keyword))))))
 
 ================================================================================
 Uppercase preprocessor directives with complex conditions
@@ -179,38 +185,39 @@ codeunit 125 "Test Complex Preprocessor"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (preproc_conditional_statement
-          (preproc_if
-            (preproc_open)
-            condition: (identifier))
-          (assignment_statement
-            left: (identifier)
-            right: (boolean))
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
-          (preproc_else)
-          (assignment_statement
-            left: (identifier)
-            right: (boolean))
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
-          (preproc_endif
-            (preproc_close)))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (preproc_conditional_statement
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (assignment_statement
+              left: (identifier)
+              right: (boolean))
+            (assignment_statement
+              left: (identifier)
+              right: (integer))
+            (preproc_else)
+            (assignment_statement
+              left: (identifier)
+              right: (boolean))
+            (assignment_statement
+              left: (identifier)
+              right: (integer))
+            (preproc_endif
+              (preproc_close)))
+          (end_keyword))))))

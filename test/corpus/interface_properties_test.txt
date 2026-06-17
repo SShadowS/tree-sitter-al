@@ -17,26 +17,27 @@ interface "Legacy Interface"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (text_type))))))
+    body: (interface_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (text_type)))))))
 
 ================================================================================
 Interface with access and inherent permissions
@@ -56,18 +57,19 @@ interface "Secure Interface"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (internal_keyword))))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))))
+    body: (interface_body
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (internal_keyword))))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))
 
 ================================================================================
 Interface with caption and description
@@ -88,31 +90,32 @@ interface "User Interface"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
+    body: (interface_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (interface_procedure_suffix
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (basic_type)))))))

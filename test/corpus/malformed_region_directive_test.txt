@@ -19,10 +19,11 @@ codeunit 50100 "Test"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))
     (preproc_endregion)))

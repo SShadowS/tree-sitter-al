@@ -20,32 +20,35 @@ table 123 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (identifier))
-            (option_member
-              (identifier))
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier)))))))))))
 
 ================================================================================
 ValuesAllowed property with only string literals
@@ -69,24 +72,27 @@ table 456 StringOnlyTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier)))))))))))
 
 ================================================================================
 ValuesAllowed property with only identifiers
@@ -110,24 +116,27 @@ table 789 IdentifierOnlyTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (identifier))
-            (option_member
-              (identifier))
-            (option_member
-              (identifier))
-            (option_member
-              (identifier))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
 
 ================================================================================
 ValuesAllowed property in page field
@@ -156,30 +165,34 @@ page 101 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (quoted_identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (option_member_list
-              (option_member
-                (quoted_identifier))
-              (option_member
-                (quoted_identifier))
-              (option_member
-                (identifier))
-              (option_member
-                (quoted_identifier))))
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (quoted_identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (option_member_list
+                      (option_member
+                        (quoted_identifier))
+                      (option_member
+                        (quoted_identifier))
+                      (option_member
+                        (identifier))
+                      (option_member
+                        (quoted_identifier))))
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))
 
 ================================================================================
 ValuesAllowed property with single value
@@ -203,13 +216,16 @@ table 999 SingleValueTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (quoted_identifier))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (quoted_identifier)))))))))

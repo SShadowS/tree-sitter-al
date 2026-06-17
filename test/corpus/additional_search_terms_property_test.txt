@@ -16,15 +16,16 @@ report 12345 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (string_literal)))))
 
 ================================================================================
 AdditionalSearchTerms property in page
@@ -44,15 +45,16 @@ page 54321 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal)))))
 
 ================================================================================
 AdditionalSearchTermsML property test
@@ -71,18 +73,19 @@ page 65432 "ML Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (ml_value_list
-        (ml_value_pair
-          language: (identifier)
-          value: (string_literal))
-        (ml_value_pair
-          language: (identifier)
-          value: (string_literal))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal)))))))
 
 ================================================================================
 Report with multiple properties including AdditionalSearchTerms
@@ -108,20 +111,21 @@ report 78910 "Complete Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (dataset_section
-      (dataset_keyword))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (dataset_section
+        (dataset_keyword)))))

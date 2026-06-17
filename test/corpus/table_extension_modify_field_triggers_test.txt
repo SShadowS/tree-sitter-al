@@ -42,77 +42,80 @@ tableextension 50000 "Customer Extension" extends Customer
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (identifier)
-    (modify_modification
-      target: (quoted_identifier)
-      (trigger_declaration
-        (trigger_keyword)
-        name: (identifier)
-        (code_block
-          (begin_keyword)
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (quoted_identifier)
-              operator: (comparison_operator)
-              right: (string_literal))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (end_keyword)))
-      (trigger_declaration
-        (trigger_keyword)
-        name: (identifier)
-        (var_section
-          (var_keyword)
-          (variable_declaration
+    body: (object_body
+      (modify_modification
+        target: (quoted_identifier)
+        body: (object_body
+          (trigger_declaration
+            (trigger_keyword)
             name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                object_type: (page_keyword)
-                reference: (quoted_identifier)))))
-        (code_block
-          (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (boolean)))
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (member_expression
-                object: (identifier)
-                member: (identifier))
-              operator: (comparison_operator)
-              right: (qualified_enum_value
-                enum_type: (keyword_identifier)
-                value: (identifier)))
-            (then_keyword)
-            then_branch: (assignment_statement
-              left: (quoted_identifier)
-              right: (member_expression
-                object: (member_expression
+            body: (code_block
+              (begin_keyword)
+              (if_statement
+                (if_keyword)
+                condition: (comparison_expression
+                  left: (quoted_identifier)
+                  operator: (comparison_operator)
+                  right: (string_literal))
+                (then_keyword)
+                then_branch: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal))))
+              (end_keyword)))
+          (trigger_declaration
+            (trigger_keyword)
+            name: (identifier)
+            (var_section
+              (var_keyword)
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (object_reference_type
+                    object_type: (page_keyword)
+                    reference: (quoted_identifier)))))
+            body: (code_block
+              (begin_keyword)
+              (call_expression
+                function: (member_expression
                   object: (identifier)
                   member: (identifier))
-                member: (quoted_identifier))))
-          (end_keyword))))
-    (modify_modification
-      target: (identifier)
-      (property
-        name: (property_name)
-        value: (string_literal))
-      (trigger_declaration
-        (trigger_keyword)
-        name: (identifier)
-        (code_block
-          (begin_keyword)
-          (assignment_statement
-            left: (quoted_identifier)
-            right: (identifier))
-          (end_keyword))))))
+                arguments: (argument_list
+                  (boolean)))
+              (if_statement
+                (if_keyword)
+                condition: (comparison_expression
+                  left: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  operator: (comparison_operator)
+                  right: (qualified_enum_value
+                    enum_type: (keyword_identifier)
+                    value: (identifier)))
+                (then_keyword)
+                then_branch: (assignment_statement
+                  left: (quoted_identifier)
+                  right: (member_expression
+                    object: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    member: (quoted_identifier))))
+              (end_keyword)))))
+      (modify_modification
+        target: (identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))
+          (trigger_declaration
+            (trigger_keyword)
+            name: (identifier)
+            body: (code_block
+              (begin_keyword)
+              (assignment_statement
+                left: (quoted_identifier)
+                right: (identifier))
+              (end_keyword))))))))
 
 ================================================================================
 Table extension with generic triggers in field modify
@@ -141,32 +144,34 @@ tableextension 50001 "Item Extension" extends Item
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (identifier)
-    (modify_modification
-      target: (quoted_identifier)
-      (trigger_declaration
-        (trigger_keyword)
-        name: (identifier)
-        (var_section
-          (var_keyword)
-          (variable_declaration
+    body: (object_body
+      (modify_modification
+        target: (quoted_identifier)
+        body: (object_body
+          (trigger_declaration
+            (trigger_keyword)
             name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
-        (code_block
-          (begin_keyword)
-          (if_statement
-            (if_keyword)
-            condition: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list
-                (quoted_identifier)))
-            (then_keyword)
-            then_branch: (assignment_statement
-              left: (quoted_identifier)
-              right: (member_expression
-                object: (identifier)
-                member: (identifier))))
-          (end_keyword))))))
+            (var_section
+              (var_keyword)
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (record_type
+                    reference: (quoted_identifier)))))
+            body: (code_block
+              (begin_keyword)
+              (if_statement
+                (if_keyword)
+                condition: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list
+                    (quoted_identifier)))
+                (then_keyword)
+                then_branch: (assignment_statement
+                  left: (quoted_identifier)
+                  right: (member_expression
+                    object: (identifier)
+                    member: (identifier))))
+              (end_keyword))))))))

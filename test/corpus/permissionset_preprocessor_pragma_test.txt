@@ -28,47 +28,48 @@ permissionset 301 "No. Series - Read"
     (permissionset_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (internal_keyword))))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (preproc_conditional_permissions
-          (preproc_if
-            (preproc_open)
-            condition: (preproc_not_expression
-              (identifier)))
-          (pragma)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (internal_keyword))))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (quoted_identifier))
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
           (tabledata_permission
             table_name: (quoted_identifier)
             permission: (permission_type))
           (tabledata_permission
             table_name: (quoted_identifier)
             permission: (permission_type))
-          (pragma)
-          (preproc_endif
-            (preproc_close)))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))))))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (pragma)
+            (tabledata_permission
+              table_name: (quoted_identifier)
+              permission: (permission_type))
+            (tabledata_permission
+              table_name: (quoted_identifier)
+              permission: (permission_type))
+            (pragma)
+            (preproc_endif
+              (preproc_close)))
+          (tabledata_permission
+            table_name: (quoted_identifier)
+            permission: (permission_type))
+          (tabledata_permission
+            table_name: (quoted_identifier)
+            permission: (permission_type)))))))
 
 ================================================================================
 PermissionSet with preprocessor else branch and pragma
@@ -95,30 +96,31 @@ permissionset 50200 "Test Permissions"
     (permissionset_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (preproc_conditional_permissions
-          (preproc_if
-            (preproc_open)
-            condition: (identifier))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              table_name: (quoted_identifier)
+              permission: (permission_type))
+            (preproc_else)
+            (pragma)
+            (tabledata_permission
+              table_name: (quoted_identifier)
+              permission: (permission_type))
+            (tabledata_permission
+              table_name: (quoted_identifier)
+              permission: (permission_type))
+            (pragma)
+            (preproc_endif
+              (preproc_close)))
           (tabledata_permission
             table_name: (quoted_identifier)
-            permission: (permission_type))
-          (preproc_else)
-          (pragma)
-          (tabledata_permission
-            table_name: (quoted_identifier)
-            permission: (permission_type))
-          (tabledata_permission
-            table_name: (quoted_identifier)
-            permission: (permission_type))
-          (pragma)
-          (preproc_endif
-            (preproc_close)))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))))))
+            permission: (permission_type)))))))
 
 ================================================================================
 PermissionSet with multiple pragma directives in preprocessor
@@ -145,29 +147,30 @@ permissionset 50300 "Complex Permissions"
     (permissionset_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (tabledata_permission
-          table_name: (identifier)
-          permission: (permission_type))
-        (preproc_conditional_permissions
-          (preproc_if
-            (preproc_open)
-            condition: (preproc_not_expression
-              (identifier)))
-          (pragma)
-          (pragma)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
           (tabledata_permission
-            table_name: (quoted_identifier)
+            table_name: (identifier)
             permission: (permission_type))
-          (pragma)
-          (pragma)
-          (preproc_endif
-            (preproc_close)))
-        (tabledata_permission
-          table_name: (identifier)
-          permission: (permission_type))))))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (pragma)
+            (pragma)
+            (tabledata_permission
+              table_name: (quoted_identifier)
+              permission: (permission_type))
+            (pragma)
+            (pragma)
+            (preproc_endif
+              (preproc_close)))
+          (tabledata_permission
+            table_name: (identifier)
+            permission: (permission_type)))))))
 
 ================================================================================
 PermissionSet with pragma between every permission in preprocessor
@@ -195,29 +198,30 @@ permissionset 50400 "Pragma Heavy Permissions"
     (permissionset_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (preproc_conditional_permissions
-          (preproc_if
-            (preproc_open)
-            condition: (preproc_not_expression
-              (identifier)))
-          (pragma)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (pragma)
+            (tabledata_permission
+              table_name: (quoted_identifier)
+              permission: (permission_type))
+            (pragma)
+            (tabledata_permission
+              table_name: (quoted_identifier)
+              permission: (permission_type))
+            (pragma)
+            (tabledata_permission
+              table_name: (quoted_identifier)
+              permission: (permission_type))
+            (pragma)
+            (preproc_endif
+              (preproc_close)))
           (tabledata_permission
             table_name: (quoted_identifier)
-            permission: (permission_type))
-          (pragma)
-          (tabledata_permission
-            table_name: (quoted_identifier)
-            permission: (permission_type))
-          (pragma)
-          (tabledata_permission
-            table_name: (quoted_identifier)
-            permission: (permission_type))
-          (pragma)
-          (preproc_endif
-            (preproc_close)))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))))))
+            permission: (permission_type)))))))

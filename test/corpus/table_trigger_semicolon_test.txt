@@ -57,79 +57,82 @@ table 50100 "Sales Forecast"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer))))
-      (field_declaration
-        id: (integer)
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (quoted_identifier)
+              (identifier)))))
+      (trigger_declaration
+        (trigger_keyword)
         name: (identifier)
-        type: (type_specification
-          (basic_type)))
-      (field_declaration
-        id: (integer)
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list))
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
         name: (identifier)
-        type: (type_specification
-          (basic_type))))
-    (keys_section
-      (keys_keyword)
-      (key_declaration
-        (key_keyword)
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list))
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
         name: (identifier)
-        fields: (field_list
-          (quoted_identifier)
-          (identifier))))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list))
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list))
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list))
-        (end_keyword)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (additive_expression
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
             left: (identifier)
-            right: (integer)))
-        (end_keyword)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (integer))
-        (end_keyword)))))
+            right: (additive_expression
+              left: (identifier)
+              right: (integer)))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (integer))
+          (end_keyword))))))
 
 ================================================================================
 Table trigger with var section and semicolon
@@ -170,74 +173,76 @@ table 50101 "Custom Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            member: (identifier))
-          arguments: (argument_list
-            (identifier)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)
-            (member_expression
-              object: (identifier)
-              member: (identifier))))
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            member: (identifier))
-          arguments: (argument_list
-            (identifier)))
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            member: (identifier))
-          arguments: (argument_list
-            (identifier)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)
-            (member_expression
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (member_expression
               object: (identifier)
               member: (identifier))
-            (member_expression
+            arguments: (argument_list
+              (identifier)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)
+              (member_expression
+                object: (identifier)
+                member: (identifier))))
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (member_expression
               object: (identifier)
-              member: (identifier))))
-        (end_keyword)))))
+              member: (identifier))
+            arguments: (argument_list
+              (identifier)))
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              member: (identifier))
+            arguments: (argument_list
+              (identifier)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)
+              (member_expression
+                object: (identifier)
+                member: (identifier))
+              (member_expression
+                object: (identifier)
+                member: (identifier))))
+          (end_keyword))))))

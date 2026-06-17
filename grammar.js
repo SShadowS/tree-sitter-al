@@ -20,7 +20,7 @@ function _object_with_id(keyword_name) {
     field('object_id', $.integer),
     field('object_name', $._identifier_or_quoted),
     '{',
-    repeat($._body_element),
+    optional(field('body', $.object_body)),
     '}'
   );
 }
@@ -31,7 +31,7 @@ function _object_without_id(keyword_name) {
     $[keyword_name + '_keyword'],
     field('object_name', $._identifier_or_quoted),
     '{',
-    repeat($._body_element),
+    optional(field('body', $.object_body)),
     '}'
   );
 }
@@ -45,7 +45,7 @@ function _extension_with_id(keyword_name) {
     $.extends_keyword,
     field('base_object', $._identifier_or_quoted),
     '{',
-    repeat($._body_element),
+    optional(field('body', $.object_body)),
     '}'
   );
 }
@@ -58,7 +58,7 @@ function _extension_without_id(keyword_name) {
     $.extends_keyword,
     field('base_object', $._identifier_or_quoted),
     '{',
-    repeat($._body_element),
+    optional(field('body', $.object_body)),
     '}'
   );
 }
@@ -143,6 +143,10 @@ module.exports = grammar({
     [$.addbefore_modification, $.addbefore_views_modification],
     [$._report_body_element, $.preproc_conditional],
     [$._query_body_element, $.preproc_conditional],
+    // area_section wraps its leading layout content in layout_body, but its
+    // closing brace may be a preproc_split_brace_close (#if-led). GLR must
+    // decide whether a #if continues layout_body or opens the split brace.
+    [$.layout_body],
     [$.preproc_conditional_report, $.preproc_conditional],
     [$.preproc_conditional_query, $.preproc_conditional],
     [$._xmlport_body_element, $.preproc_conditional],
@@ -273,7 +277,7 @@ module.exports = grammar({
       ))),
       $.preproc_endif,
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     )),
 
@@ -291,7 +295,21 @@ module.exports = grammar({
     // --- With ID, no extends ---
 
     table_declaration: _object_with_id('table'),
-    page_declaration: _object_with_id('page'),
+    // Issue #19: content-only body node under `body` field for textobject
+    // queries. Delimiters `{` `}` stay on the declaration; the object_body node
+    // spans exactly the content (no braces) so Helix `@class.inside` can capture
+    // a single node. object_body uses repeat1 (tree-sitter forbids a named rule
+    // that matches the empty string), so it is wrapped in optional(): an empty
+    // `{ }` emits NO body node. Consumers must tolerate the missing node.
+    page_declaration: $ => seq(
+      $.page_keyword,
+      field('object_id', $.integer),
+      field('object_name', $._identifier_or_quoted),
+      '{',
+      optional(field('body', $.object_body)),
+      '}'
+    ),
+    object_body: $ => repeat1($._body_element),
     report_declaration: _object_with_id('report'),
     query_declaration: _object_with_id('query'),
     xmlport_declaration: _object_with_id('xmlport'),
@@ -305,7 +323,7 @@ module.exports = grammar({
       field('object_name', $._identifier_or_quoted),
       optional($.implements_clause),
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -315,7 +333,7 @@ module.exports = grammar({
       field('object_name', $._identifier_or_quoted),
       optional($.implements_clause),
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -333,9 +351,10 @@ module.exports = grammar({
       $.controladdin_keyword,
       field('object_name', $._identifier_or_quoted),
       '{',
-      repeat(choice($._body_element, $.interface_procedure, $.preproc_conditional_controladdin)),
+      optional(field('body', $.controladdin_body)),
       '}'
     ),
+    controladdin_body: $ => repeat1(choice($._body_element, $.interface_procedure, $.preproc_conditional_controladdin)),
 
     // Preprocessor conditional inside controladdin bodies (needs interface_procedure support)
     preproc_conditional_controladdin: $ => seq(
@@ -377,9 +396,10 @@ module.exports = grammar({
         ))
       )),
       '{',
-      repeat(choice($._body_element, $.interface_procedure)),
+      optional(field('body', $.interface_body)),
       '}'
     ),
+    interface_body: $ => repeat1(choice($._body_element, $.interface_procedure)),
 
     // --- Pagecustomization (without ID, uses customizes) ---
 
@@ -389,7 +409,7 @@ module.exports = grammar({
       $.customizes_keyword,
       field('target_page', $._identifier_or_quoted),
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -398,9 +418,10 @@ module.exports = grammar({
     dotnet_declaration: $ => seq(
       $.dotnet_keyword,
       '{',
-      repeat($.assembly_declaration),
+      optional(field('body', $.dotnet_body)),
       '}'
     ),
+    dotnet_body: $ => repeat1($.assembly_declaration),
 
     // --- Implements clause ---
 
@@ -1029,16 +1050,17 @@ module.exports = grammar({
     fields_section: $ => seq(
       $.fields_keyword,
       '{',
-      repeat(choice(
-        $.field_declaration,
-        $.attribute_item,
-        $.preproc_conditional_fields,
-        $.preproc_split_table_field,
-        // Extension modifications inside fields section
-        $.modify_modification,
-      )),
+      optional(field('body', $.fields_body)),
       '}'
     ),
+    fields_body: $ => repeat1(choice(
+      $.field_declaration,
+      $.attribute_item,
+      $.preproc_conditional_fields,
+      $.preproc_split_table_field,
+      // Extension modifications inside fields section
+      $.modify_modification,
+    )),
 
     preproc_conditional_fields: $ => seq(
       $.preproc_if,
@@ -1071,7 +1093,7 @@ module.exports = grammar({
       optional(seq(
         repeat($.preproc_pragma_only),
         '{',
-        repeat($._body_element),
+        optional(field('body', $.object_body)),
         '}'
       ))
     ),
@@ -1081,13 +1103,14 @@ module.exports = grammar({
     keys_section: $ => seq(
       $.keys_keyword,
       '{',
-      repeat(choice(
-        $.key_declaration,
-        $.attribute_item,
-        $.preproc_conditional_keys,
-      )),
+      optional(field('body', $.keys_body)),
       '}'
     ),
+    keys_body: $ => repeat1(choice(
+      $.key_declaration,
+      $.attribute_item,
+      $.preproc_conditional_keys,
+    )),
 
     preproc_conditional_keys: $ => seq(
       $.preproc_if,
@@ -1106,7 +1129,7 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        repeat($._body_element),
+        optional(field('body', $.object_body)),
         '}'
       ))
     ),
@@ -1122,15 +1145,16 @@ module.exports = grammar({
     fieldgroups_section: $ => seq(
       $.fieldgroups_keyword,
       '{',
-      repeat(choice(
-        $.fieldgroup_declaration,
-        $.preproc_conditional_fieldgroups,
-        // Extension modifications for fieldgroups
-        $.addlast_fieldgroup_modification,
-        $.addfirst_fieldgroup_modification,
-      )),
+      optional(field('body', $.fieldgroups_body)),
       '}'
     ),
+    fieldgroups_body: $ => repeat1(choice(
+      $.fieldgroup_declaration,
+      $.preproc_conditional_fieldgroups,
+      // Extension modifications for fieldgroups
+      $.addlast_fieldgroup_modification,
+      $.addfirst_fieldgroup_modification,
+    )),
 
     addlast_fieldgroup_modification: $ => seq(
       kw('addlast'), '(', field('target', $._identifier_or_quoted), ';',
@@ -1161,7 +1185,7 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        repeat($._body_element),
+        optional(field('body', $.object_body)),
         '}'
       ))
     ),
@@ -1364,7 +1388,7 @@ module.exports = grammar({
       field('value_name', choice($._identifier_or_quoted, $.string_literal)),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -1375,9 +1399,10 @@ module.exports = grammar({
     labels_section: $ => seq(
       $.labels_keyword,
       '{',
-      repeat(choice($.label_declaration, $.preproc_conditional_labels)),
+      optional(field('body', $.labels_body)),
       '}'
     ),
+    labels_body: $ => repeat1(choice($.label_declaration, $.preproc_conditional_labels)),
 
     // Report `labels { }` with label(s) wrapped in #if/#endif (BC gates legacy
     // labels behind `#if not CLEANxx`). Mirrors preproc_conditional_fields.
@@ -1412,9 +1437,17 @@ module.exports = grammar({
     layout_section: $ => seq(
       $.layout_keyword,
       '{',
-      repeat($._layout_element),
+      optional(field('body', $.layout_body)),
       '}'
     ),
+    layout_body: $ => repeat1($._layout_element),
+    // Shared body for layout containers (group/repeater/cuegroup/fixed/grid):
+    // they accept properties, nested layout elements, and mixed preproc blocks.
+    layout_container_body: $ => repeat1(choice(
+      $._body_element,
+      $._layout_element,
+      $.preproc_conditional_layout_mixed,
+    )),
 
     _layout_element: $ => choice(
       $.area_section,
@@ -1460,7 +1493,7 @@ module.exports = grammar({
       )),
       ')',
       '{',
-      repeat($._layout_element),
+      optional(field('body', $.layout_body)),
       choice(
         '}',
         // Split closing brace: } inside both #if and #else branches
@@ -1498,11 +1531,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat(choice(
-        $._body_element,
-        $._layout_element,
-        $.preproc_conditional_layout_mixed,
-      )),
+      optional(field('body', $.layout_container_body)),
       '}'
     ),
 
@@ -1513,11 +1542,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat(choice(
-        $._body_element,
-        $._layout_element,
-        $.preproc_conditional_layout_mixed,
-      )),
+      optional(field('body', $.layout_container_body)),
       '}'
     ),
 
@@ -1528,11 +1553,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat(choice(
-        $._body_element,
-        $._layout_element,
-        $.preproc_conditional_layout_mixed,
-      )),
+      optional(field('body', $.layout_container_body)),
       '}'
     ),
 
@@ -1543,11 +1564,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat(choice(
-        $._body_element,
-        $._layout_element,
-        $.preproc_conditional_layout_mixed,
-      )),
+      optional(field('body', $.layout_container_body)),
       '}'
     ),
 
@@ -1558,11 +1575,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat(choice(
-        $._body_element,
-        $._layout_element,
-        $.preproc_conditional_layout_mixed,
-      )),
+      optional(field('body', $.layout_container_body)),
       '}'
     ),
 
@@ -1577,7 +1590,7 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        repeat($._body_element),
+        optional(field('body', $.object_body)),
         '}'
       ))
     ),
@@ -1594,7 +1607,7 @@ module.exports = grammar({
       field('source', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -1607,7 +1620,7 @@ module.exports = grammar({
       field('source', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -1620,7 +1633,7 @@ module.exports = grammar({
       field('source', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -1631,7 +1644,7 @@ module.exports = grammar({
       repeat(seq($.preproc_elif, $._field_header)),
       optional(seq($.preproc_else, $._field_header)),
       $.preproc_endif,
-      optional(seq('{', repeat($._body_element), '}'))
+      optional(seq('{', optional(field('body', $.object_body)), '}'))
     )),
 
     // Table field split: #if field(id; name; type) #else field(id; name; type) #endif { }
@@ -1641,7 +1654,7 @@ module.exports = grammar({
       repeat(seq($.preproc_elif, $._table_field_header)),
       optional(seq($.preproc_else, $._table_field_header)),
       $.preproc_endif,
-      optional(seq('{', repeat($._body_element), '}'))
+      optional(seq('{', optional(field('body', $.object_body)), '}'))
     )),
 
     // Page field header: field(Name; SourceExpression) — used in preproc_split_field
@@ -1673,7 +1686,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -1688,7 +1701,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._layout_element),
+      optional(field('body', $.layout_body)),
       choice(
         '}',
         $.preproc_split_brace_close,
@@ -1702,7 +1715,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._layout_element),
+      optional(field('body', $.layout_body)),
       choice(
         '}',
         $.preproc_split_brace_close,
@@ -1716,7 +1729,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._layout_element),
+      optional(field('body', $.layout_body)),
       choice(
         '}',
         $.preproc_split_brace_close,
@@ -1730,7 +1743,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._layout_element),
+      optional(field('body', $.layout_body)),
       choice(
         '}',
         $.preproc_split_brace_close,
@@ -1745,7 +1758,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     )),
 
@@ -1793,9 +1806,10 @@ module.exports = grammar({
     actions_section: $ => seq(
       $.actions_keyword,
       '{',
-      repeat($._action_element),
+      optional(field('body', $.action_body)),
       '}'
     ),
+    action_body: $ => repeat1($._action_element),
 
     _action_element: $ => choice(
       $.action_area_section,
@@ -1839,7 +1853,7 @@ module.exports = grammar({
       )),
       ')',
       '{',
-      repeat($._action_element),
+      optional(field('body', $.action_body)),
       '}'
     ),
 
@@ -1850,12 +1864,13 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat(choice(
-        $._action_element,
-        $._body_element,
-      )),
+      optional(field('body', $.action_group_body)),
       '}'
     ),
+    action_group_body: $ => repeat1(choice(
+      $._action_element,
+      $._body_element,
+    )),
 
     // action(MyAction) { ... }
     action_declaration: $ => seq(
@@ -1864,7 +1879,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -1873,7 +1888,7 @@ module.exports = grammar({
       kw('separator'),
       optional(seq('(', field('name', $._identifier_or_quoted), ')')),
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -1886,7 +1901,7 @@ module.exports = grammar({
       field('action_name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -1897,7 +1912,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -1908,7 +1923,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -1919,7 +1934,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -1933,7 +1948,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._action_element),
+      optional(field('body', $.action_body)),
       '}'
     ),
 
@@ -1943,7 +1958,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._action_element),
+      optional(field('body', $.action_body)),
       '}'
     ),
 
@@ -1953,7 +1968,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._action_element),
+      optional(field('body', $.action_body)),
       '}'
     ),
 
@@ -1963,7 +1978,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._action_element),
+      optional(field('body', $.action_body)),
       '}'
     ),
 
@@ -1973,7 +1988,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     )),
 
@@ -1985,9 +2000,10 @@ module.exports = grammar({
     analysisviews_section: $ => seq(
       $.analysisviews_keyword,
       '{',
-      repeat($.analysisview_declaration),
+      optional(field('body', $.analysisviews_body)),
       '}'
     ),
+    analysisviews_body: $ => repeat1($.analysisview_declaration),
 
     analysisview_declaration: $ => seq(
       $.analysisview_keyword,
@@ -1995,41 +2011,42 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
     views_section: $ => seq(
       $.views_keyword,
       '{',
-      repeat(choice(
-        $.view_definition,
-        // Extension modifications for views (with or without target)
-        $.addfirst_modification,
-        $.addlast_modification,
-        $.addafter_modification,
-        $.addbefore_modification,
-        $.modify_modification,
-        $.addfirst_views_modification,
-        $.addlast_views_modification,
-        $.addafter_views_modification,
-        $.addbefore_views_modification,
-      )),
+      optional(field('body', $.views_body)),
       '}'
     ),
+    views_body: $ => repeat1(choice(
+      $.view_definition,
+      // Extension modifications for views (with or without target)
+      $.addfirst_modification,
+      $.addlast_modification,
+      $.addafter_modification,
+      $.addbefore_modification,
+      $.modify_modification,
+      $.addfirst_views_modification,
+      $.addlast_views_modification,
+      $.addafter_views_modification,
+      $.addbefore_views_modification,
+    )),
 
     // Views extensions without target: addfirst { view(...) { } }
     addfirst_views_modification: $ => seq(
       kw('addfirst'),
       '{',
-      repeat($.view_definition),
+      optional(field('body', $.views_mod_body)),
       '}'
     ),
 
     addlast_views_modification: $ => seq(
       kw('addlast'),
       '{',
-      repeat($.view_definition),
+      optional(field('body', $.views_mod_body)),
       '}'
     ),
 
@@ -2038,7 +2055,7 @@ module.exports = grammar({
       kw('addafter'),
       '(', field('target', $._identifier_or_quoted), ')',
       '{',
-      repeat($.view_definition),
+      optional(field('body', $.views_mod_body)),
       '}'
     ),
 
@@ -2046,9 +2063,11 @@ module.exports = grammar({
       kw('addbefore'),
       '(', field('target', $._identifier_or_quoted), ')',
       '{',
-      repeat($.view_definition),
+      optional(field('body', $.views_mod_body)),
       '}'
     ),
+
+    views_mod_body: $ => repeat1($.view_definition),
 
     view_definition: $ => seq(
       $.view_keyword,
@@ -2056,7 +2075,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -2068,20 +2087,21 @@ module.exports = grammar({
     dataset_section: $ => seq(
       $.dataset_keyword,
       '{',
-      repeat(choice(
-        $.report_dataitem,
-        $.attribute_item,
-        $.preproc_conditional_dataset,
-        // Extension modifications for dataset
-        $.addfirst_dataset_modification,
-        $.addlast_dataset_modification,
-        $.addafter_dataset_modification,
-        $.addbefore_dataset_modification,
-        $.add_dataset_modification,
-        $.modify_modification,
-      )),
+      optional(field('body', $.dataset_body)),
       '}'
     ),
+    dataset_body: $ => repeat1(choice(
+      $.report_dataitem,
+      $.attribute_item,
+      $.preproc_conditional_dataset,
+      // Extension modifications for dataset
+      $.addfirst_dataset_modification,
+      $.addlast_dataset_modification,
+      $.addafter_dataset_modification,
+      $.addbefore_dataset_modification,
+      $.add_dataset_modification,
+      $.modify_modification,
+    )),
 
     // Preprocessor conditionals at dataset section level (around dataitems)
     preproc_conditional_dataset: $ => seq(
@@ -2100,9 +2120,10 @@ module.exports = grammar({
       field('table_name', $._namespaced_or_simple_ref),
       ')',
       '{',
-      repeat($._report_body_element),
+      optional(field('body', $.report_body)),
       '}'
     ),
+    report_body: $ => repeat1($._report_body_element),
 
     _report_body_element: $ => choice(
       $.report_column,
@@ -2127,38 +2148,39 @@ module.exports = grammar({
       field('source', $._field_source),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
     // Extension dataset modifications
     add_dataset_modification: $ => seq(
       kw('add'), '(', field('target', $._identifier_or_quoted), ')',
-      '{', repeat(choice($.report_dataitem, $.report_column, $._body_element)), '}'
+      '{', optional(field('body', $.dataset_mod_body)), '}'
     ),
     addfirst_dataset_modification: $ => seq(
       kw('addfirst'),
       optional(seq('(', field('target', $._identifier_or_quoted), ')')),
-      '{', repeat(choice($.report_dataitem, $.report_column, $._body_element)), '}'
+      '{', optional(field('body', $.dataset_mod_body)), '}'
     ),
     addlast_dataset_modification: $ => seq(
       kw('addlast'), '(', field('target', $._identifier_or_quoted), ')',
-      '{', repeat(choice($.report_dataitem, $.report_column, $._body_element)), '}'
+      '{', optional(field('body', $.dataset_mod_body)), '}'
     ),
     addafter_dataset_modification: $ => seq(
       kw('addafter'), '(', field('target', $._identifier_or_quoted), ')',
-      '{', repeat(choice($.report_dataitem, $.report_column, $._body_element)), '}'
+      '{', optional(field('body', $.dataset_mod_body)), '}'
     ),
     addbefore_dataset_modification: $ => seq(
       kw('addbefore'), '(', field('target', $._identifier_or_quoted), ')',
-      '{', repeat(choice($.report_dataitem, $.report_column, $._body_element)), '}'
+      '{', optional(field('body', $.dataset_mod_body)), '}'
     ),
+    dataset_mod_body: $ => repeat1(choice($.report_dataitem, $.report_column, $._body_element)),
 
     // requestpage { layout { ... } actions { ... } }
     requestpage_section: $ => seq(
       $.requestpage_keyword,
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -2166,9 +2188,10 @@ module.exports = grammar({
     rendering_section: $ => seq(
       $.rendering_keyword,
       '{',
-      repeat(choice($.rendering_layout, $.preproc_conditional_rendering)),
+      optional(field('body', $.rendering_body)),
       '}'
     ),
+    rendering_body: $ => repeat1(choice($.rendering_layout, $.preproc_conditional_rendering)),
 
     // A report `rendering` whose layout(s) are wrapped in #if/#endif (BC wraps
     // RDLC layouts in `#if not CLEANxx` as they are phased out). Mirrors
@@ -2187,7 +2210,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -2199,9 +2222,10 @@ module.exports = grammar({
     elements_section: $ => seq(
       $.elements_keyword,
       '{',
-      repeat($.query_dataitem),
+      optional(field('body', $.elements_body)),
       '}'
     ),
+    elements_body: $ => repeat1($.query_dataitem),
 
     query_dataitem: $ => seq(
       $.dataitem_keyword,
@@ -2211,9 +2235,10 @@ module.exports = grammar({
       field('table_name', $._namespaced_or_simple_ref),
       ')',
       '{',
-      repeat($._query_body_element),
+      optional(field('body', $.query_body)),
       '}'
     ),
+    query_body: $ => repeat1($._query_body_element),
 
     _query_body_element: $ => choice(
       $.query_column,
@@ -2246,7 +2271,7 @@ module.exports = grammar({
       ),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -2258,7 +2283,7 @@ module.exports = grammar({
       field('field_name', $._identifier_or_quoted),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -2270,9 +2295,10 @@ module.exports = grammar({
     schema_section: $ => seq(
       $.schema_keyword,
       '{',
-      repeat($.xmlport_element),
+      optional(field('body', $.schema_body)),
       '}'
     ),
+    schema_body: $ => repeat1($.xmlport_element),
 
     // tableelement/fieldelement/textelement(Name; Source) { ... }
     xmlport_element: $ => seq(
@@ -2289,9 +2315,10 @@ module.exports = grammar({
       )),
       ')',
       '{',
-      repeat($._xmlport_body_element),
+      optional(field('body', $.xmlport_body)),
       '}'
     ),
+    xmlport_body: $ => repeat1($._xmlport_body_element),
 
     _xmlport_body_element: $ => choice(
       $.xmlport_element,
@@ -2322,7 +2349,7 @@ module.exports = grammar({
       )),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -2340,13 +2367,14 @@ module.exports = grammar({
       )),
       ')',
       '{',
-      repeat(choice(
-        $.type_declaration,
-        $.property,
-        $.empty_statement,
-      )),
+      optional(field('body', $.assembly_body)),
       '}'
     ),
+    assembly_body: $ => repeat1(choice(
+      $.type_declaration,
+      $.property,
+      $.empty_statement,
+    )),
 
     dotnet_assembly_name: $ => token(seq(
       /[\p{L}_][\p{L}\p{N}_]*/u,
@@ -2369,7 +2397,7 @@ module.exports = grammar({
       )),
       ')',
       '{',
-      repeat($._body_element),
+      optional(field('body', $.object_body)),
       '}'
     ),
 
@@ -2423,13 +2451,17 @@ module.exports = grammar({
       ')',
     ),
 
-    // Regular routine body: [var section] then code_block — a complete unit
+    // Regular routine body: [var section] then code_block — a complete unit.
+    // The code_block is exposed via the `body` field for textobject queries
+    // (issue #19). Unlike brace constructs, begin/end stay inside code_block
+    // (Rust `block` model) since code_block is also reused as a nested
+    // statement block.
     _routine_regular_body: $ => seq(
       optional(choice(
         $.var_section,
         $.preproc_conditional_var_block,
       )),
-      $.code_block,
+      field('body', $.code_block),
     ),
 
     // Preprocessor split procedure body: var+begin+preamble in #if, begin in #else

@@ -18,25 +18,26 @@ page 50200 "API Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (string_literal))
-        (option_member
-          (string_literal))))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (string_literal))
+          (option_member
+            (string_literal))))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 Query with multi-value ApiVersion
@@ -67,38 +68,41 @@ query 50200 "API Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (string_literal))
-        (option_member
-          (string_literal))))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (string_literal))
+          (option_member
+            (string_literal))))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (identifier)))))))))
 
 ================================================================================
 API page with three ApiVersion values
@@ -119,21 +123,22 @@ page 50201 "Multi Version API"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (string_literal))
-        (option_member
-          (string_literal))
-        (option_member
-          (string_literal))))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (string_literal))
+          (option_member
+            (string_literal))
+          (option_member
+            (string_literal))))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal)))))

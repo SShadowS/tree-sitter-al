@@ -19,16 +19,20 @@ page 123 TestPage {
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))
 
 ================================================================================
 Style property with AttentionAccent in repeater
@@ -54,22 +58,27 @@ page 123 TestPage {
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (repeater_section
-          (repeater_keyword)
-          name: (identifier)
-          (page_field
-            name: (identifier)
-            source: (identifier)
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (boolean))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    name: (identifier)
+                    source: (identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (boolean)))))))))))))
 
 ================================================================================
 Style property with case variations of AttentionAccent
@@ -98,25 +107,31 @@ page 123 TestPage {
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))

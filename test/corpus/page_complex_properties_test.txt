@@ -56,96 +56,103 @@ page 30 "Item Card"
     object_id: (integer)
     object_name: (quoted_identifier)
     (pragma)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (quoted_identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (quoted_identifier))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (additive_expression
-                left: (string_literal)
-                right: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list
-                    (quoted_identifier))))))
-          (property
-            name: (property_name)
-            value: (decimal_range_value
-              min: (integer)
-              max: (integer)))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (string_literal)))))
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (trigger_declaration
-            (trigger_keyword)
-            name: (identifier)
-            (code_block
-              (begin_keyword)
-              (if_statement
-                (if_keyword)
-                left: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list))
-                operator: (in_keyword)
-                right: (list_literal
-                  (qualified_enum_value
-                    enum_type: (keyword_identifier)
-                    value: (identifier))
-                  (qualified_enum_value
-                    enum_type: (keyword_identifier)
-                    value: (identifier)))
-                (then_keyword)
-                then_branch: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal))))
-              (end_keyword))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (quoted_identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (additive_expression
+                        left: (string_literal)
+                        right: (call_expression
+                          function: (member_expression
+                            object: (identifier)
+                            member: (identifier))
+                          arguments: (argument_list
+                            (quoted_identifier))))))
+                  (property
+                    name: (property_name)
+                    value: (decimal_range_value
+                      min: (integer)
+                      max: (integer)))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))))))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_declaration
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (if_statement
+                        (if_keyword)
+                        left: (call_expression
+                          function: (member_expression
+                            object: (identifier)
+                            member: (identifier))
+                          arguments: (argument_list))
+                        operator: (in_keyword)
+                        right: (list_literal
+                          (qualified_enum_value
+                            enum_type: (keyword_identifier)
+                            value: (identifier))
+                          (qualified_enum_value
+                            enum_type: (keyword_identifier)
+                            value: (identifier)))
+                        (then_keyword)
+                        then_branch: (call_expression
+                          function: (identifier)
+                          arguments: (argument_list
+                            (string_literal))))
+                      (end_keyword))))))))))))

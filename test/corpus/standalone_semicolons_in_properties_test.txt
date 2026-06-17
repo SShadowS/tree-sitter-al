@@ -29,30 +29,34 @@ pageextension 50100 "Test Extension" extends "Customer Card"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (addlast_modification
-        target: (identifier)
-        (page_field
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (option_member_list
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))))
-          (property
-            name: (property_name)
-            value: (caption_value
-              (string_literal)
-              (property_name)
-              (string_literal)))
-          (empty_statement)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (boolean)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addlast_modification
+            target: (identifier)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (option_member_list
+                      (option_member
+                        (identifier))
+                      (option_member
+                        (identifier))))
+                  (property
+                    name: (property_name)
+                    value: (caption_value
+                      (string_literal)
+                      (property_name)
+                      (string_literal)))
+                  (empty_statement)
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (boolean)))))))))))

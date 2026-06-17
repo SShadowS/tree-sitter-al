@@ -26,29 +26,33 @@ page 50000 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (option_member_list
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (option_member_list
+                      (option_member
+                        (identifier))
+                      (option_member
+                        (identifier))))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))
 
 ================================================================================
 ExtendedDatatype Property Various Values
@@ -91,38 +95,46 @@ page 50001 "Test Extended Datatypes"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (comment))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier)))
+                (comment)))))))))

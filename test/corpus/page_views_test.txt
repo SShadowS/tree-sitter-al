@@ -34,36 +34,41 @@ page 9800 "Users List"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (views_section
-      (views_keyword)
-      (view_definition
-        (view_keyword)
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (where_clause
-            (where_conditions
-              (where_condition
-                field: (identifier)
-                value: (identifier)))))))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (quoted_identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (quoted_identifier)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (view_definition
+            (view_keyword)
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (where_clause
+                  (where_conditions
+                    (where_condition
+                      field: (identifier)
+                      value: (identifier)))))))))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (quoted_identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))))))))))
 
 ================================================================================
 List page with multiple views and different properties
@@ -110,62 +115,68 @@ page 123 "Test List"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (views_section
-      (views_keyword)
-      (view_definition
-        (view_keyword)
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (where_clause
-            (where_conditions
-              (where_condition
-                field: (identifier)
-                value: (quoted_identifier)))))
-        (property
-          name: (property_name)
-          value: (order_by_list
-            (order_by_item
-              (identifier)))))
-      (view_definition
-        (view_keyword)
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (where_clause
-            (where_conditions
-              (where_condition
-                field: (identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (quoted_identifier))))))
-        (property
-          name: (property_name)
-          value: (boolean))
-        (property
-          name: (property_name)
-          value: (boolean))))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (identifier)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (view_definition
+            (view_keyword)
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (where_clause
+                  (where_conditions
+                    (where_condition
+                      field: (identifier)
+                      value: (quoted_identifier)))))
+              (property
+                name: (property_name)
+                value: (order_by_list
+                  (order_by_item
+                    (identifier))))))
+          (view_definition
+            (view_keyword)
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (where_clause
+                  (where_conditions
+                    (where_condition
+                      field: (identifier)
+                      (filter_keyword)
+                      value: (filter_value
+                        (quoted_identifier))))))
+              (property
+                name: (property_name)
+                value: (boolean))
+              (property
+                name: (property_name)
+                value: (boolean))))))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))))))))))
 
 ================================================================================
 Page extension with additional view
@@ -193,28 +204,31 @@ pageextension 50001 "Customer List Ext" extends "Customer List"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (views_section
-      (views_keyword)
-      (view_definition
-        (view_keyword)
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (where_clause
-            (where_conditions
-              (where_condition
-                field: (quoted_identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (string_literal))))))
-        (property
-          name: (property_name)
-          value: (order_by_list
-            (order_by_item
-              (quoted_identifier))))))))
+    body: (object_body
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (view_definition
+            (view_keyword)
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (where_clause
+                  (where_conditions
+                    (where_condition
+                      field: (quoted_identifier)
+                      (filter_keyword)
+                      value: (filter_value
+                        (string_literal))))))
+              (property
+                name: (property_name)
+                value: (order_by_list
+                  (order_by_item
+                    (quoted_identifier)))))))))))
 
 ================================================================================
 Views with CaptionML property
@@ -252,44 +266,49 @@ page 456 "Multilingual List"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (views_section
-      (views_keyword)
-      (view_definition
-        (view_keyword)
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (ml_value_list
-            (ml_value_pair
-              language: (identifier)
-              value: (string_literal))
-            (ml_value_pair
-              language: (identifier)
-              value: (string_literal))))
-        (property
-          name: (property_name)
-          value: (where_clause
-            (where_conditions
-              (where_condition
-                field: (identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (string_literal))))))))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (quoted_identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (quoted_identifier)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (view_definition
+            (view_keyword)
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (ml_value_list
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal))
+                  (ml_value_pair
+                    language: (identifier)
+                    value: (string_literal))))
+              (property
+                name: (property_name)
+                value: (where_clause
+                  (where_conditions
+                    (where_condition
+                      field: (identifier)
+                      (filter_keyword)
+                      value: (filter_value
+                        (string_literal))))))))))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (quoted_identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))))))))))
 
 ================================================================================
 Empty views section
@@ -322,20 +341,23 @@ page 789 "Empty Views List"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (views_section
-      (views_keyword))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (identifier)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (views_section
+        (views_keyword))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))))))))))

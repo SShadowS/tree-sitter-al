@@ -14,9 +14,10 @@ permissionset 8001 "Sub. Billing Objects"
     (permissionset_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (caption_value
-        (string_literal)
-        (property_name)
-        (integer)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (integer))))))

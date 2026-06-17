@@ -39,73 +39,81 @@ page 50103 "Complex StyleExpr Test"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (identifier))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (integer)))))
-        (page_field
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (identifier))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (identifier)))))
-        (page_field
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (identifier))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (parenthesized_expression
-                  (multiplicative_expression
-                    left: (identifier)
-                    right: (decimal)))
-                operator: (comparison_operator)
-                right: (identifier)))))
-        (page_field
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (identifier))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (logical_expression
-                left: (identifier)
-                right: (parenthesized_expression
-                  (comparison_expression
-                    left: (identifier)
-                    operator: (comparison_operator)
-                    right: (qualified_enum_value
-                      enum_type: (identifier)
-                      value: (identifier))))))))
-        (page_field
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (identifier))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (unary_expression
-                operand: (identifier)))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (integer))))))
+              (page_field
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (identifier))))))
+              (page_field
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (parenthesized_expression
+                          (multiplicative_expression
+                            left: (identifier)
+                            right: (decimal)))
+                        operator: (comparison_operator)
+                        right: (identifier))))))
+              (page_field
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (logical_expression
+                        left: (identifier)
+                        right: (parenthesized_expression
+                          (comparison_expression
+                            left: (identifier)
+                            operator: (comparison_operator)
+                            right: (qualified_enum_value
+                              enum_type: (identifier)
+                              value: (identifier)))))))))
+              (page_field
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (unary_expression
+                        operand: (identifier)))))))))))))

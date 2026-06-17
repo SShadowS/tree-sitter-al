@@ -24,19 +24,23 @@ page 50000 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))
 
 ================================================================================
 ShowAs property with Menu value
@@ -70,27 +74,32 @@ page 50001 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (action_declaration
-            name: (identifier)
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (property
-              name: (property_name)
-              value: (identifier))))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (action_declaration
+                    name: (identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
 
 ================================================================================
 ShowAs property case variations
@@ -125,28 +134,34 @@ page 50002 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))
 
 ================================================================================
 Complete action group with ShowAs and other properties
@@ -190,43 +205,48 @@ page 50003 OpportunityList
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (caption_value
-              (string_literal)
-              (property_name)
-              (string_literal)))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (actionref_declaration
-            promoted_name: (identifier)
-            action_name: (identifier))
-          (actionref_declaration
-            promoted_name: (identifier)
-            action_name: (identifier))
-          (action_group_section
-            (group_keyword)
-            name: (identifier)
-            (property
-              name: (property_name)
-              value: (caption_value
-                (string_literal)
-                (property_name)
-                (string_literal)))
-            (property
-              name: (property_name)
-              value: (identifier))
-            (actionref_declaration
-              promoted_name: (identifier)
-              action_name: (identifier))))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (caption_value
+                      (string_literal)
+                      (property_name)
+                      (string_literal)))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (actionref_declaration
+                    promoted_name: (identifier)
+                    action_name: (identifier))
+                  (actionref_declaration
+                    promoted_name: (identifier)
+                    action_name: (identifier))
+                  (action_group_section
+                    (group_keyword)
+                    name: (identifier)
+                    body: (action_group_body
+                      (property
+                        name: (property_name)
+                        value: (caption_value
+                          (string_literal)
+                          (property_name)
+                          (string_literal)))
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (actionref_declaration
+                        promoted_name: (identifier)
+                        action_name: (identifier)))))))))))))
 
 ================================================================================
 ShowAs property with Standard value
@@ -256,22 +276,26 @@ page 50004 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (actionref_declaration
-            promoted_name: (identifier)
-            action_name: (identifier)))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (actionref_declaration
+                    promoted_name: (identifier)
+                    action_name: (identifier)))))))))))
 
 ================================================================================
 ShowAs property with Button value and case variations
@@ -310,31 +334,38 @@ page 50005 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))

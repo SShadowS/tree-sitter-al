@@ -26,25 +26,28 @@ query 986 "Time Sheet Line Status Count"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
 
 ================================================================================
 ReadState with case variations
@@ -63,9 +66,10 @@ query 50000 "Test Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier)))))

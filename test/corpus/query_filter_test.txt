@@ -32,33 +32,37 @@ query 1307 "CF Forecast Entry Dimensions"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (query_filter
-          (filter_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))
-        (query_filter
-          (filter_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (query_body
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))
 
 ================================================================================
 Query with filter elements and caption
@@ -104,47 +108,54 @@ query 100 "Item Sales by Customer"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (query_dataitem
-          (dataitem_keyword)
-          name: (identifier)
-          table_name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (member_expression
-                  object: (identifier)
-                  member: (quoted_identifier)))))
-          (query_filter
-            (filter_keyword)
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
             name: (identifier)
-            field_name: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (string_literal)))
-          (query_filter
-            (filter_keyword)
-            name: (identifier)
-            field_name: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (string_literal)))
-          (query_column
-            (column_keyword)
-            name: (identifier)
-            field_name: (quoted_identifier))
-          (query_column
-            (column_keyword)
-            name: (identifier)
-            field_name: (identifier)
-            (property
-              name: (property_name)
-              value: (identifier))))))))
+            table_name: (quoted_identifier)
+            body: (query_body
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (quoted_identifier)))))
+                  (query_filter
+                    (filter_keyword)
+                    name: (identifier)
+                    field_name: (quoted_identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (string_literal))))
+                  (query_filter
+                    (filter_keyword)
+                    name: (identifier)
+                    field_name: (quoted_identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (string_literal))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (quoted_identifier))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))

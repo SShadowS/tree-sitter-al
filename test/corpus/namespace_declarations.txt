@@ -22,12 +22,13 @@ codeunit 50000 "Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 Namespace with dotted path and page extension
@@ -63,16 +64,20 @@ pageextension 50001 "Test Extension" extends "Base Page"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (addafter_modification
-        target: (identifier)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addafter_modification
+            target: (identifier)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))
 
 ================================================================================
 Namespace with table declaration
@@ -104,17 +109,20 @@ table 50002 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 Long namespace path with multiple dots
@@ -147,15 +155,17 @@ enum 50003 "Sample Enum"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
+    body: (object_body
       (property
         name: (property_name)
-        value: (string_literal)))))
+        value: (boolean))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal)))))))
 
 ================================================================================
 File without namespace (backwards compatibility)
@@ -181,16 +191,19 @@ report 50004 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (identifier))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier)))))))))
 
 ================================================================================
 Namespace with permissionset
@@ -219,17 +232,18 @@ permissionset 50005 "Sample Permissions"
     (permissionset_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (internal_keyword))))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (internal_keyword))))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            table_name: (quoted_identifier)
+            permission: (permission_type)))))))

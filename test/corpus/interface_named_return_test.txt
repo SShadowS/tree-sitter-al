@@ -18,90 +18,91 @@ interface "Price Calculation"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier))))
-        (parameter
-          name: (identifier)
-          type: (type_specification
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier))))
-        (parameter
-          name: (identifier)
-          type: (type_specification
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (basic_type))))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
+            (basic_type)))))))
 
 ================================================================================
 Interface with simple return types (existing support)
@@ -120,29 +121,30 @@ interface "Simple Returns"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (text_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (text_type))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (basic_type)))))))
 
 ================================================================================
 Interface procedures without return types
@@ -162,42 +164,43 @@ interface "No Returns"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (interface_keyword)
-              reference: (quoted_identifier))))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier)))))
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (interface_keyword)
+                reference: (quoted_identifier))))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix)))))

@@ -44,86 +44,93 @@ page 12345 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (part_section
-          (part_keyword)
-          name: (quoted_identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (quoted_identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (integer)))
-              (link_value
-                field: (quoted_identifier)
-                value: (quoted_identifier)))))
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (integer)))))))
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (quoted_identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (integer)))
-              (link_value
-                field: (quoted_identifier)
-                value: (quoted_identifier))
-              (link_value
-                field: (quoted_identifier)
-                value: (string_literal)))))
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (quoted_identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (string_literal)))
-              (link_value
-                field: (quoted_identifier)
-                (filter_keyword)
-                value: (filter_value
-                  (quoted_identifier))))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (quoted_identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)))
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))))))
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (call_expression
+                          function: (identifier)
+                          arguments: (argument_list
+                            (integer))))))))
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)))
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (string_literal))))))
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (string_literal)))
+                      (link_value
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (quoted_identifier))))))))))))))

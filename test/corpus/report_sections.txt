@@ -19,20 +19,23 @@ report 50100 MyReport
     (report_keyword)
     (integer)
     (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        (identifier)
-        (identifier)
-        (report_column
-          (column_keyword)
-          (identifier)
-          (identifier))
-        (report_column
-          (column_keyword)
-          (quoted_identifier)
-          (quoted_identifier))))))
+    (object_body
+      (dataset_section
+        (dataset_keyword)
+        (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            (identifier)
+            (identifier)
+            (report_body
+              (report_column
+                (column_keyword)
+                (identifier)
+                (identifier))
+              (report_column
+                (column_keyword)
+                (quoted_identifier)
+                (quoted_identifier)))))))))
 
 ========================================================================
 Report with nested dataitems
@@ -58,24 +61,28 @@ report 50100 R
     (report_keyword)
     (integer)
     (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        (identifier)
-        (identifier)
-        (report_column
-          (column_keyword)
-          (identifier)
-          (identifier))
-        (report_dataitem
-          (dataitem_keyword)
-          (identifier)
-          (quoted_identifier)
-          (report_column
-            (column_keyword)
+    (object_body
+      (dataset_section
+        (dataset_keyword)
+        (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
             (identifier)
-            (identifier)))))))
+            (identifier)
+            (report_body
+              (report_column
+                (column_keyword)
+                (identifier)
+                (identifier))
+              (report_dataitem
+                (dataitem_keyword)
+                (identifier)
+                (quoted_identifier)
+                (report_body
+                  (report_column
+                    (column_keyword)
+                    (identifier)
+                    (identifier)))))))))))
 
 ========================================================================
 Report with requestpage
@@ -94,11 +101,13 @@ report 50100 R
     (report_keyword)
     (integer)
     (identifier)
-    (requestpage_section
-      (requestpage_keyword)
-      (property
-        (property_name)
-        (string_literal)))))
+    (object_body
+      (requestpage_section
+        (requestpage_keyword)
+        (object_body
+          (property
+            (property_name)
+            (string_literal)))))))
 
 ========================================================================
 Report with rendering
@@ -124,20 +133,24 @@ report 50100 R
     (report_keyword)
     (integer)
     (identifier)
-    (rendering_section
-      (rendering_keyword)
-      (rendering_layout
-        (layout_keyword)
-        (identifier)
-        (property
-          (property_name)
-          (identifier)))
-      (rendering_layout
-        (layout_keyword)
-        (identifier)
-        (property
-          (property_name)
-          (identifier))))))
+    (object_body
+      (rendering_section
+        (rendering_keyword)
+        (rendering_body
+          (rendering_layout
+            (layout_keyword)
+            (identifier)
+            (object_body
+              (property
+                (property_name)
+                (identifier))))
+          (rendering_layout
+            (layout_keyword)
+            (identifier)
+            (object_body
+              (property
+                (property_name)
+                (identifier)))))))))
 
 ========================================================================
 Report with labels
@@ -157,16 +170,18 @@ report 50100 R
     (report_keyword)
     (integer)
     (identifier)
-    (labels_section
-      (labels_keyword)
-      (label_declaration
-        (identifier)
-        (string_literal)
-        (boolean))
-      (label_declaration
-        (identifier)
-        (string_literal)
-        (string_literal)))))
+    (object_body
+      (labels_section
+        (labels_keyword)
+        (labels_body
+          (label_declaration
+            (identifier)
+            (string_literal)
+            (boolean))
+          (label_declaration
+            (identifier)
+            (string_literal)
+            (string_literal)))))))
 
 ========================================================================
 Full report structure
@@ -208,34 +223,41 @@ report 50100 R
     (report_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (string_literal))
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        (identifier)
-        (identifier)
-        (report_column
-          (column_keyword)
-          (identifier)
-          (identifier))))
-    (requestpage_section
-      (requestpage_keyword)
+    (object_body
       (property
         (property_name)
-        (string_literal)))
-    (labels_section
-      (labels_keyword)
-      (label_declaration
-        (identifier)
-        (string_literal)))
-    (rendering_section
-      (rendering_keyword)
-      (rendering_layout
-        (layout_keyword)
-        (identifier)
-        (property
-          (property_name)
-          (identifier))))))
+        (string_literal))
+      (dataset_section
+        (dataset_keyword)
+        (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            (identifier)
+            (identifier)
+            (report_body
+              (report_column
+                (column_keyword)
+                (identifier)
+                (identifier))))))
+      (requestpage_section
+        (requestpage_keyword)
+        (object_body
+          (property
+            (property_name)
+            (string_literal))))
+      (labels_section
+        (labels_keyword)
+        (labels_body
+          (label_declaration
+            (identifier)
+            (string_literal))))
+      (rendering_section
+        (rendering_keyword)
+        (rendering_body
+          (rendering_layout
+            (layout_keyword)
+            (identifier)
+            (object_body
+              (property
+                (property_name)
+                (identifier)))))))))

@@ -21,20 +21,23 @@ report 50100 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (quoted_identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (sorting_value
-            (identifier)
-            (identifier)))
-        (property
-          name: (property_name)
-          value: (boolean))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (quoted_identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (identifier)
+                  (identifier)))
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
 
 ================================================================================
 UseTemporary property with false value
@@ -59,22 +62,25 @@ report 50101 "Another Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (boolean))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (identifier))))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (boolean))
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier)))))))))))
 
 ================================================================================
 UseTemporary in XMLPort tableelement
@@ -105,25 +111,28 @@ xmlport 50100 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (quoted_identifier)
-        source: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (boolean))
-        (xmlport_element
-          name: (identifier)
-          source: (member_expression
-            object: (quoted_identifier)
-            member: (quoted_identifier)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            name: (quoted_identifier)
+            source: (quoted_identifier)
+            body: (xmlport_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (boolean))
+              (xmlport_element
+                name: (identifier)
+                source: (member_expression
+                  object: (quoted_identifier)
+                  member: (quoted_identifier))))))))))
 
 ================================================================================
 UseTemporary with mixed properties in report dataitem
@@ -150,30 +159,33 @@ report 50102 "Complex Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (quoted_identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (sorting_value
-            (identifier)
-            (identifier)))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (boolean))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (quoted_identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (identifier)
+                  (identifier)))
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
 
 ================================================================================
 UseTemporary case variations
@@ -207,26 +219,31 @@ report 50103 "Case Test"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (boolean))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))

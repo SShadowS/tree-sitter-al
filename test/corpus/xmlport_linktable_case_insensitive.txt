@@ -43,63 +43,68 @@ xmlport 1405 "Import Export Workflow"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        source: (identifier)
-        (xmlport_element
-          name: (quoted_identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier))))))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (xmlport_attribute
-            name: (identifier)
-            source: (member_expression
-              object: (quoted_identifier)
-              member: (identifier)))
+    body: (object_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
           (xmlport_element
-            name: (quoted_identifier)
-            source: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (link_value_list
-                (link_value
-                  field: (quoted_identifier)
-                  value: (quoted_identifier))
-                (link_value
-                  field: (quoted_identifier)
-                  value: (identifier))))
-            (property
-              name: (property_name)
-              value: (quoted_identifier))
-            (property
-              name: (property_name)
-              value: (identifier))
-            (xmlport_attribute
-              name: (identifier)
-              source: (member_expression
-                object: (quoted_identifier)
-                member: (identifier)))
-            (xmlport_attribute
-              name: (identifier)
-              source: (member_expression
-                object: (quoted_identifier)
-                member: (quoted_identifier)))))))))
+            name: (identifier)
+            source: (identifier)
+            body: (xmlport_body
+              (xmlport_element
+                name: (quoted_identifier)
+                source: (quoted_identifier)
+                body: (xmlport_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (call_expression
+                          function: (identifier)
+                          arguments: (argument_list
+                            (identifier))))))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (xmlport_attribute
+                    name: (identifier)
+                    source: (member_expression
+                      object: (quoted_identifier)
+                      member: (identifier)))
+                  (xmlport_element
+                    name: (quoted_identifier)
+                    source: (quoted_identifier)
+                    body: (xmlport_body
+                      (property
+                        name: (property_name)
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            value: (quoted_identifier))
+                          (link_value
+                            field: (quoted_identifier)
+                            value: (identifier))))
+                      (property
+                        name: (property_name)
+                        value: (quoted_identifier))
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (xmlport_attribute
+                        name: (identifier)
+                        source: (member_expression
+                          object: (quoted_identifier)
+                          member: (identifier)))
+                      (xmlport_attribute
+                        name: (identifier)
+                        source: (member_expression
+                          object: (quoted_identifier)
+                          member: (quoted_identifier))))))))))))))
 
 ================================================================================
 XMLPort LinkTable with various case variations
@@ -129,23 +134,27 @@ xmlport 50000 "Test LinkTable Cases"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        source: (identifier)
-        (xmlport_element
-          name: (quoted_identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            name: (identifier)
+            source: (identifier)
+            body: (xmlport_body
+              (xmlport_element
+                name: (quoted_identifier)
+                source: (quoted_identifier)
+                body: (xmlport_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))

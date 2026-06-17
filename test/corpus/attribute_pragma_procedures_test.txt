@@ -30,93 +30,94 @@ codeunit 50100 "Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (attribute_item
-      attribute: (attribute_content
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier))
+              (string_literal)
+              (string_literal)
+              (boolean)
+              (boolean)))))
+      (pragma)
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            (database_reference
-              keyword: (object_type_keyword)
-              table_name: (quoted_identifier))
-            (string_literal)
-            (string_literal)
-            (boolean)
-            (boolean)))))
-    (pragma)
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                length: (integer))))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (identifier))
+          (assignment_statement
+            left: (identifier)
+            right: (parenthesized_expression
+              (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (string_literal))))
+          (end_keyword)))
+      (attribute_item
+        attribute: (attribute_content
           name: (identifier)
-          type: (type_specification
-            (text_type
-              length: (integer))))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (identifier))
-        (assignment_statement
-          left: (identifier)
-          right: (parenthesized_expression
-            (comparison_expression
-              left: (identifier)
-              operator: (comparison_operator)
-              right: (string_literal))))
-        (end_keyword)))
-    (attribute_item
-      attribute: (attribute_content
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier))
+              (string_literal)
+              (string_literal)
+              (boolean)
+              (boolean)))))
+      (pragma)
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            (database_reference
-              keyword: (object_type_keyword)
-              table_name: (quoted_identifier))
-            (string_literal)
-            (string_literal)
-            (boolean)
-            (boolean)))))
-    (pragma)
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (identifier))
-        (assignment_statement
-          left: (identifier)
-          right: (boolean))
-        (end_keyword)))))
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (identifier))
+          (assignment_statement
+            left: (identifier)
+            right: (boolean))
+          (end_keyword))))))

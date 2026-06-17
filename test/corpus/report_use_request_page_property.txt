@@ -26,25 +26,28 @@ report 50000 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier)))))))))
 
 ================================================================================
 Report with UseRequestPage property false
@@ -73,22 +76,25 @@ report 50001 "No Request Page Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier)))))))))
 
 ================================================================================
 Report with only UseRequestPage property
@@ -116,19 +122,22 @@ report 50002 "Simple Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier)))))))))
 
 ================================================================================
 Report with mixed properties including UseRequestPage
@@ -175,44 +184,48 @@ report 50003 "Complex Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (identifier))))
-    (requestpage_section
-      (requestpage_keyword)
-      (layout_section
-        (layout_keyword)))
-    (labels_section
-      (labels_keyword))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier))))))
+      (requestpage_section
+        (requestpage_keyword)
+        body: (object_body
+          (layout_section
+            (layout_keyword))))
+      (labels_section
+        (labels_keyword)))))
 
 ================================================================================
 Report with UseRequestPage and case variations
@@ -241,19 +254,22 @@ report 50004 "Case Test"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier)))))))))

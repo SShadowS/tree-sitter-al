@@ -25,26 +25,29 @@ report 50000 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))))
-        (property
-          name: (property_name)
-          value: (boolean))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))))
+              (property
+                name: (property_name)
+                value: (boolean))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier)))))))))
 
 ================================================================================
 Multiple properties with PrintOnlyIfDetail
@@ -86,64 +89,69 @@ report 50001 "Complex Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (sorting_value
-            (quoted_identifier)
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (identifier)
-                  value: (identifier))))))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (identifier))
-            (option_member
-              (quoted_identifier))))
-        (property
-          name: (property_name)
-          value: (boolean))
-        (property
-          name: (property_name)
-          value: (integer))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (boolean)))
-        (report_dataitem
-          (dataitem_keyword)
-          name: (identifier)
-          table_name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (quoted_identifier))))))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (report_column
-            (column_keyword)
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
             name: (identifier)
-            source: (quoted_identifier)))))))
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (quoted_identifier)
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        value: (identifier))))))
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))))
+              (property
+                name: (property_name)
+                value: (boolean))
+              (property
+                name: (property_name)
+                value: (integer))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))))
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (call_expression
+                          function: (identifier)
+                          arguments: (argument_list
+                            (quoted_identifier))))))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (report_column
+                    (column_keyword)
+                    name: (identifier)
+                    source: (quoted_identifier)))))))))))
 
 ================================================================================
 PrintOnlyIfDetail used as field name in RequestFilterFields
@@ -172,23 +180,26 @@ report 50002 "Edge Case Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (identifier))
-            (option_member
-              (quoted_identifier))))
-        (property
-          name: (property_name)
-          value: (boolean))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))))
+              (property
+                name: (property_name)
+                value: (boolean))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier)))))))))

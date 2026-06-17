@@ -22,28 +22,31 @@ table 352 "Default Dimension"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (identifier))
-            (option_member
-              (identifier))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
 
 ================================================================================
 OptionMembers with all string literals
@@ -67,22 +70,25 @@ table 50001 "Test Options"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier)))))))))))
 
 ================================================================================
 OptionMembers with mixed string literals and identifiers
@@ -117,58 +123,66 @@ table 50100 "Test Document"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (quoted_identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
-      (property
-        name: (property_name)
-        value: (string_literal))))
+    body: (object_body
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (quoted_identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))))
   (table_declaration
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (identifier))
-            (option_member
-              (quoted_identifier)))))
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (identifier))
-            (option_member
-              (identifier))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))))))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
 
 ================================================================================
 OptionMembers with quoted identifiers
@@ -187,19 +201,20 @@ page 50100 "Test Options Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (option_type
-            (option_member_list
-              (option_member
-                (quoted_identifier))
-              (option_member
-                (quoted_identifier))
-              (option_member
-                (quoted_identifier)))))))))
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (option_type
+              (option_member_list
+                (option_member
+                  (quoted_identifier))
+                (option_member
+                  (quoted_identifier))
+                (option_member
+                  (quoted_identifier))))))))))
 
 ================================================================================
 OptionMembers single string literal edge case
@@ -223,13 +238,16 @@ table 50200 "Single Option"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (quoted_identifier))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (quoted_identifier)))))))))

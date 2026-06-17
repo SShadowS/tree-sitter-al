@@ -27,30 +27,35 @@ report 38 "Trial Balance by Period"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (quoted_identifier)
-        table_name: (quoted_identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (subscript_expression
-            object: (identifier)
-            index: (integer))
-          (property
-            name: (property_name)
-            value: (boolean)))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (subscript_expression
-            object: (identifier)
-            index: (integer))
-          (property
-            name: (property_name)
-            value: (boolean)))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (quoted_identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (subscript_expression
+                  object: (identifier)
+                  index: (integer))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (subscript_expression
+                  object: (identifier)
+                  index: (integer))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean)))))))))))
 
 ================================================================================
 AutoCalcField with case variations
@@ -81,23 +86,28 @@ report 50000 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (boolean)))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (boolean)))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean)))))))))))

@@ -24,16 +24,20 @@ page 50000 Test
     (page_keyword)
     (integer)
     (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (cuegroup_section
-          (cuegroup_keyword)
-          (identifier)
-          (property
-            (property_name)
-            (boolean))
-          (property
-            (property_name)
-            (identifier)))))))
+    (object_body
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (cuegroup_section
+                (cuegroup_keyword)
+                (identifier)
+                (layout_container_body
+                  (property
+                    (property_name)
+                    (boolean))
+                  (property
+                    (property_name)
+                    (identifier)))))))))))

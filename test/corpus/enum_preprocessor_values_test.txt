@@ -37,52 +37,57 @@ enum 50100 "Payment Transaction Type"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
+    body: (object_body
       (property
         name: (property_name)
-        value: (string_literal)))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
+        value: (string_literal))
       (property
         name: (property_name)
-        value: (string_literal)))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
+        value: (boolean))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (string_literal)))
-      (preproc_endif
-        (preproc_close)))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))))
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (enum_value_declaration
+          value_id: (integer)
+          value_name: (identifier)
+          body: (object_body
+            (property
+              name: (property_name)
+              value: (string_literal))
+            (property
+              name: (property_name)
+              value: (string_literal))
+            (property
+              name: (property_name)
+              value: (identifier))
+            (property
+              name: (property_name)
+              value: (string_literal))))
+        (preproc_endif
+          (preproc_close)))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal)))))))
 
 ================================================================================
 Enum with multiple conditional blocks
@@ -119,37 +124,42 @@ enum 50101 "Test Enum"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
+    body: (object_body
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        (property
-          name: (property_name)
-          value: (string_literal)))
-      (preproc_else)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (enum_value_declaration
+          value_id: (integer)
+          value_name: (identifier)
+          body: (object_body
+            (property
+              name: (property_name)
+              value: (string_literal))))
+        (preproc_else)
+        (enum_value_declaration
+          value_id: (integer)
+          value_name: (identifier)
+          body: (object_body
+            (property
+              name: (property_name)
+              value: (string_literal))
+            (property
+              name: (property_name)
+              value: (identifier))))
+        (preproc_endif
+          (preproc_close)))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (identifier)))
-      (preproc_endif
-        (preproc_close)))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))))
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal)))))))

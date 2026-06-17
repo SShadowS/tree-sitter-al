@@ -19,28 +19,29 @@ codeunit 50100 TestRustStyleAttribute
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (boolean)
-            (boolean)))))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (parameter_list
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block))
-      (preproc_endif
-        (preproc_close)))))
+    body: (object_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (boolean)))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          body: (code_block))
+        (preproc_endif
+          (preproc_close))))))
 
 ========================================================================
 Phase 3: Attribute before preprocessor with procedure in table extension
@@ -65,23 +66,24 @@ tableextension 50100 MyTableExt extends Customer
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (boolean)
-            (boolean)))))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (code_block))
-      (preproc_endif
-        (preproc_close)))))
+    body: (object_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (boolean)))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_endif
+          (preproc_close))))))
 
 ========================================================================
 Phase 3: Multiple attributes before preprocessor
@@ -105,26 +107,27 @@ codeunit 50100 TestMultipleAttrs
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (string_literal)))))
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (boolean)
-            (boolean)))))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (code_block))
-      (preproc_endif
-        (preproc_close)))))
+    body: (object_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (boolean)))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_endif
+          (preproc_close))))))

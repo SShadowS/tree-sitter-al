@@ -14,34 +14,35 @@ controladdin "Microsoft.Dynamics.Nav.Client.PowerBIManagement"
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (quoted_identifier)
-    (attribute_item
-      attribute: (attribute_content
+    body: (controladdin_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (string_literal)))))
+      (interface_procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (string_literal)
-            (string_literal)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      (interface_procedure_suffix))))
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (interface_procedure_suffix)))))
 
 ================================================================================
 ControlAddin with multiple attributed procedures
@@ -73,73 +74,74 @@ controladdin "Test Control"
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (integer))
-    (attribute_item
-      attribute: (attribute_content
+    body: (controladdin_body
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (integer))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (string_literal)))))
+      (interface_procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (string_literal)
-            (string_literal)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      (interface_procedure_suffix))
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)))
-    (attribute_item
-      attribute: (attribute_content
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (interface_procedure_suffix))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (interface_procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (string_literal)
-            (string_literal)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (attribute_item
+        attribute: (attribute_content
           name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))))
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (string_literal)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix)))))
 
 ================================================================================
 ControlAddin with preprocessor conditional attributes
@@ -161,36 +163,37 @@ controladdin "Conditional Control"
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (quoted_identifier)
-    (preproc_conditional_controladdin
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (attribute_item
-        attribute: (attribute_content
-          name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)
-              (string_literal)))))
-      (preproc_else)
-      (attribute_item
-        attribute: (attribute_content
-          name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)
-              (string_literal)))))
-      (preproc_endif
-        (preproc_close)))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      (interface_procedure_suffix))))
+    body: (controladdin_body
+      (preproc_conditional_controladdin
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (preproc_else)
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (preproc_endif
+          (preproc_close)))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (interface_procedure_suffix)))))
 
 ================================================================================
 Real-world ControlAddin with Obsolete procedures
@@ -227,101 +230,102 @@ controladdin "Microsoft.Dynamics.Nav.Client.PowerBIManagement"
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (string_literal))
-        (option_member
-          (string_literal))))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (event_declaration
-      (event_keyword)
-      name: (identifier))
-    (event_declaration
-      (event_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))))
-    (attribute_item
-      attribute: (attribute_content
+    body: (controladdin_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (string_literal))
+          (option_member
+            (string_literal))))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (event_declaration
+        (event_keyword)
+        name: (identifier))
+      (event_declaration
+        (event_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (string_literal)
-            (string_literal)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))))
+      (attribute_item
+        attribute: (attribute_content
           name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      (interface_procedure_suffix))))
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (string_literal)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (interface_procedure_suffix)))))

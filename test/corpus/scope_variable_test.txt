@@ -16,18 +16,19 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        (identifier)
-        (basic_type)
-        (string_literal))
-      (variable_declaration
-        (identifier)
-        (type_specification
-          (option_type
-            (option_member_list
-              (option_member
-                (keyword_identifier))
-              (option_member
-                (identifier)))))))))
+    (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          (identifier)
+          (basic_type)
+          (string_literal))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (option_type
+              (option_member_list
+                (option_member
+                  (keyword_identifier))
+                (option_member
+                  (identifier))))))))))

@@ -24,30 +24,33 @@ table 50100 MyTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (preproc_conditional_fields
-        (preproc_if
-          (preproc_open)
-          condition: (preproc_not_expression
-            (identifier)))
-        (pragma)
-        (preproc_endif
-          (preproc_close)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (preproc_pragma_only
-          (preproc_if
-            (preproc_open)
-            condition: (preproc_not_expression
-              (identifier)))
-          (pragma)
-          (preproc_endif
-            (preproc_close)))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (preproc_conditional_fields
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (pragma)
+            (preproc_endif
+              (preproc_close)))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            (preproc_pragma_only
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (pragma)
+              (preproc_endif
+                (preproc_close)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))

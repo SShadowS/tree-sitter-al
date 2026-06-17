@@ -22,10 +22,11 @@ codeunit 50100 "Test Codeunit"
       (codeunit_keyword)
       object_id: (integer)
       object_name: (quoted_identifier)
-      (trigger_declaration
-        (trigger_keyword)
-        name: (identifier)
-        (code_block)))
+      body: (object_body
+        (trigger_declaration
+          (trigger_keyword)
+          name: (identifier)
+          body: (code_block))))
     (preproc_endif
       (preproc_close))))
 
@@ -56,17 +57,19 @@ page 50100 "On-Prem Page"
       (page_keyword)
       object_id: (integer)
       object_name: (quoted_identifier)
-      (property
-        name: (property_name)
-        value: (identifier)))
+      body: (object_body
+        (property
+          name: (property_name)
+          value: (identifier))))
     (preproc_else)
     (page_declaration
       (page_keyword)
       object_id: (integer)
       object_name: (quoted_identifier)
-      (property
-        name: (property_name)
-        value: (identifier)))
+      body: (object_body
+        (property
+          name: (property_name)
+          value: (identifier))))
     (preproc_endif
       (preproc_close))))
 
@@ -113,13 +116,15 @@ table 50100 "Test Table"
       (table_keyword)
       object_id: (integer)
       object_name: (quoted_identifier)
-      (fields_section
-        (fields_keyword)
-        (field_declaration
-          id: (integer)
-          name: (quoted_identifier)
-          type: (type_specification
-            (code_type
-              length: (integer))))))
+      body: (object_body
+        (fields_section
+          (fields_keyword)
+          body: (fields_body
+            (field_declaration
+              id: (integer)
+              name: (quoted_identifier)
+              type: (type_specification
+                (code_type
+                  length: (integer))))))))
     (preproc_endif
       (preproc_close))))

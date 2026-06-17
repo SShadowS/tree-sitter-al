@@ -20,30 +20,33 @@ table 50100 "IC Setup"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (code_type
-            (integer)))
-        (property
-          (property_name)
-          (table_relation_value
-            (table_relation_expression
-              (simple_table_relation
-                (quoted_identifier)
-                (identifier)
-                (where_clause
-                  (where_conditions
-                    (where_condition
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (code_type
+                (integer)))
+            (object_body
+              (property
+                (property_name)
+                (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
                       (quoted_identifier)
-                      (filter_keyword)
-                      (filter_value
-                        (qualified_enum_value
-                          (quoted_identifier)
-                          (identifier))))))))))))))
+                      (identifier)
+                      (where_clause
+                        (where_conditions
+                          (where_condition
+                            (quoted_identifier)
+                            (filter_keyword)
+                            (filter_value
+                              (qualified_enum_value
+                                (quoted_identifier)
+                                (identifier)))))))))))))))))
 
 ================================================================================
 Filter with keyword identifier
@@ -67,27 +70,30 @@ table 50101 "Workflow Rule"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (basic_type))
-        (property
-          (property_name)
-          (table_relation_value
-            (table_relation_expression
-              (simple_table_relation
-                (identifier)
-                (quoted_identifier)
-                (where_clause
-                  (where_conditions
-                    (where_condition
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (basic_type))
+            (object_body
+              (property
+                (property_name)
+                (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      (identifier)
                       (quoted_identifier)
-                      (filter_keyword)
-                      (filter_value
-                        (identifier)))))))))))))
+                      (where_clause
+                        (where_conditions
+                          (where_condition
+                            (quoted_identifier)
+                            (filter_keyword)
+                            (filter_value
+                              (identifier))))))))))))))))
 
 ================================================================================
 Filter with const identifier
@@ -111,25 +117,28 @@ table 50102 "Test Filter"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (option_type))
-        (property
-          (property_name)
-          (table_relation_value
-            (table_relation_expression
-              (simple_table_relation
-                (quoted_identifier)
-                (identifier)
-                (where_clause
-                  (where_conditions
-                    (where_condition
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (option_type))
+            (object_body
+              (property
+                (property_name)
+                (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      (quoted_identifier)
                       (identifier)
-                      (identifier))))))))))))
+                      (where_clause
+                        (where_conditions
+                          (where_condition
+                            (identifier)
+                            (identifier)))))))))))))))
 
 ================================================================================
 Filter with enum member using double colon
@@ -153,30 +162,33 @@ table 50103 "Integration Setup"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (object_reference_type
-            (enum_keyword)
-            (quoted_identifier)))
-        (property
-          (property_name)
-          (table_relation_value
-            (table_relation_expression
-              (simple_table_relation
-                (quoted_identifier)
-                (where_clause
-                  (where_conditions
-                    (where_condition
-                      (identifier)
-                      (filter_keyword)
-                      (filter_value
-                        (qualified_enum_value
-                          (quoted_identifier)
-                          (identifier))
-                        (qualified_enum_value
-                          (quoted_identifier)
-                          (identifier))))))))))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (object_reference_type
+                (enum_keyword)
+                (quoted_identifier)))
+            (object_body
+              (property
+                (property_name)
+                (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      (quoted_identifier)
+                      (where_clause
+                        (where_conditions
+                          (where_condition
+                            (identifier)
+                            (filter_keyword)
+                            (filter_value
+                              (qualified_enum_value
+                                (quoted_identifier)
+                                (identifier))
+                              (qualified_enum_value
+                                (quoted_identifier)
+                                (identifier)))))))))))))))))

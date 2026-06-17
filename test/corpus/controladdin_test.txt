@@ -28,49 +28,50 @@ controladdin "Test.ControlAddin"
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (string_literal))
-        (option_member
-          (string_literal))))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (event_declaration
-      (event_keyword)
-      name: (identifier))
-    (event_declaration
-      (event_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      (interface_procedure_suffix))))
+    body: (controladdin_body
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (string_literal))
+          (option_member
+            (string_literal))))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (event_declaration
+        (event_keyword)
+        name: (identifier))
+      (event_declaration
+        (event_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (interface_procedure_suffix)))))

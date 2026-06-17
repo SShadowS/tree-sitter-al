@@ -24,23 +24,27 @@ page 50100 "Job WIP Cockpit"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (quoted_identifier)
-                value: (quoted_identifier))
-              (link_value
-                field: (quoted_identifier)
-                value: (boolean)))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (boolean)))))))))))))
 
 ================================================================================
 RunPageLink with multiline field mappings with comma
@@ -69,26 +73,30 @@ page 50101 "Job WIP G/L Entries"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (object_reference_value
-              (page_keyword)
-              (quoted_identifier)))
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (quoted_identifier)
-                value: (quoted_identifier))
-              (link_value
-                field: (identifier)
-                value: (boolean)))))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_declaration
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (quoted_identifier)))
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        value: (boolean)))))))))))))
 
 ================================================================================
 Mixed multiline and comma-separated syntax
@@ -116,23 +124,27 @@ page 50102 "Mixed Links"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (quoted_identifier)
-                value: (quoted_identifier))
-              (link_value
-                field: (quoted_identifier)
-                value: (identifier))
-              (link_value
-                field: (quoted_identifier)
-                value: (boolean)))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier))
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (boolean)))))))))))))

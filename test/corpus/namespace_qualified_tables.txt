@@ -20,19 +20,22 @@ query 123 "Test Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        table_name: (identifier)
-        table_name: (identifier)
-        table_name: (quoted_identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))))))
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            table_name: (identifier)
+            table_name: (identifier)
+            table_name: (quoted_identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
 
 ================================================================================
 Query with multiple namespace levels
@@ -56,19 +59,22 @@ query 124 "Multi Level Namespace"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        table_name: (identifier)
-        table_name: (identifier)
-        table_name: (identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))))))
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            table_name: (identifier)
+            table_name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
 
 ================================================================================
 Query with simple table name (backwards compatibility)
@@ -92,16 +98,19 @@ query 125 "Simple Table"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))))))
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
 
 ================================================================================
 Report with namespace-qualified dataitem
@@ -125,16 +134,19 @@ report 126 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        table_name: (identifier)
-        table_name: (identifier)
-        table_name: (quoted_identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            table_name: (identifier)
+            table_name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier)))))))))

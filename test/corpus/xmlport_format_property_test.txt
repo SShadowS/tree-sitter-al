@@ -14,9 +14,10 @@ xmlport 123 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 XMLPort Format property with FixedText
@@ -34,9 +35,10 @@ xmlport 124 "Fixed XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 XMLPort Format property with original values
@@ -54,9 +56,10 @@ xmlport 125 "Original XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 XMLPort Format property case variations
@@ -74,6 +77,7 @@ xmlport 126 "Case Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier)))))

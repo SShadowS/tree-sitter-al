@@ -31,49 +31,50 @@ codeunit 50100 "End Edge Cases"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (array_type
-              sizes: (integer)
-              element_type: (type_specification
-                (basic_type))))))
-      (code_block
-        (begin_keyword)
-        (comment)
-        (assignment_statement
-          left: (identifier)
-          right: (string_literal))
-        (comment)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (identifier)))
-        (comment)
-        (assignment_statement
-          left: (subscript_expression
-            object: (identifier)
-            index: (integer))
-          right: (integer))
-        (comment)
-        (if_statement
-          (if_keyword)
-          condition: (comparison_expression
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                sizes: (integer)
+                element_type: (type_specification
+                  (basic_type))))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          (assignment_statement
             left: (identifier)
-            operator: (comparison_operator)
             right: (string_literal))
-          (then_keyword)
-          then_branch: (call_expression
+          (comment)
+          (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))
-        (end_keyword)))))
+              (identifier)))
+          (comment)
+          (assignment_statement
+            left: (subscript_expression
+              object: (identifier)
+              index: (integer))
+            right: (integer))
+          (comment)
+          (if_statement
+            (if_keyword)
+            condition: (comparison_expression
+              left: (identifier)
+              operator: (comparison_operator)
+              right: (string_literal))
+            (then_keyword)
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword))))))

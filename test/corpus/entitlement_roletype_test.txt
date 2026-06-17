@@ -24,18 +24,19 @@ entitlement "Delegated BC Admin agent - Partner APIV2"
   (entitlement_declaration
     (entitlement_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier)))))
 
 ================================================================================
 Entitlement with RoleType property - case variations
@@ -54,17 +55,18 @@ entitlement TestEntitlement
   (entitlement_declaration
     (entitlement_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (local_keyword))))
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (local_keyword))))
+      (property
+        name: (property_name)
+        value: (string_literal)))))
 
 ================================================================================
 Complete entitlement with all properties
@@ -90,39 +92,40 @@ entitlement CompleteEntitlement
   (entitlement_declaration
     (entitlement_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (quoted_identifier))
-        (option_member
-          (quoted_identifier))
-        (option_member
-          (quoted_identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (quoted_identifier)))))))
 
 ================================================================================
 Entitlement with custom RoleType identifier
@@ -141,12 +144,13 @@ entitlement CustomRoleType
   (entitlement_declaration
     (entitlement_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal)))))

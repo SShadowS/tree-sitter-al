@@ -28,70 +28,71 @@ page 50000 "Test Page Triggers"
     object_id: (integer)
     object_name: (quoted_identifier)
     (comment)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (comment)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (comment)
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

@@ -34,60 +34,63 @@ table 23 "Vendor"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (preproc_conditional_permissions
-          (preproc_if
-            (preproc_open)
-            condition: (preproc_not_expression
-              (identifier)))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
           (tabledata_permission
             table_name: (quoted_identifier)
             permission: (permission_type))
           (tabledata_permission
             table_name: (quoted_identifier)
             permission: (permission_type))
-          (preproc_endif
-            (preproc_close)))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          table_name: (identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+          (tabledata_permission
+            table_name: (quoted_identifier)
+            permission: (permission_type))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (tabledata_permission
+              table_name: (quoted_identifier)
+              permission: (permission_type))
+            (tabledata_permission
+              table_name: (quoted_identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close)))
+          (tabledata_permission
+            table_name: (quoted_identifier)
+            permission: (permission_type))
+          (tabledata_permission
+            table_name: (quoted_identifier)
+            permission: (permission_type))
+          (tabledata_permission
+            table_name: (identifier)
+            permission: (permission_type))
+          (tabledata_permission
+            table_name: (quoted_identifier)
+            permission: (permission_type))))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 Simple Permissions property without preprocessor
@@ -106,12 +109,13 @@ table 24 "Simple Vendor"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            table_name: (quoted_identifier)
+            permission: (permission_type))
+          (tabledata_permission
+            table_name: (quoted_identifier)
+            permission: (permission_type)))))))

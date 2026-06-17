@@ -23,18 +23,30 @@ codeunit 50000 "Conditional Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (attribute_item
-        attribute: (attribute_content
+    body: (object_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (procedure
+          (procedure_keyword)
           name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)
-              (string_literal)))))
+          (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (option_type))))
+          body: (code_block))
+        (preproc_endif
+          (preproc_close)))
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -42,18 +54,7 @@ codeunit 50000 "Conditional Test"
           (parameter
             name: (identifier)
             type: (type_specification
-              (option_type))))
-        (code_block))
-      (preproc_endif
-        (preproc_close)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

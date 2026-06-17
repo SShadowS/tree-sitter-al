@@ -22,22 +22,25 @@ table 12345 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (identifier))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (identifier)))))))))
 
 ================================================================================
 SubType property with existing values (Install, Upgrade, Test)
@@ -59,15 +62,16 @@ codeunit 23456 TestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 SubType property case variations with UserDefined
@@ -99,32 +103,37 @@ table 34567 CaseTestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (identifier)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (identifier)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (identifier))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier)))))))))
 
 ================================================================================
 SubType property mixed with other BLOB field properties
@@ -151,25 +160,28 @@ table 45678 ComprehensiveTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 SubType property in different object types (codeunit vs table)
@@ -198,20 +210,24 @@ table 67890 BlobTable
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (identifier)))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))))
   (table_declaration
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (identifier))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier)))))))))

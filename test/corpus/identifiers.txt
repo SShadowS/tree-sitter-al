@@ -19,13 +19,15 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type))))))))
 
 ==================
 Field identifiers
@@ -54,22 +56,24 @@ table 50105 "Field Test Table"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (basic_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (text_type
-            (integer))))
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (code_type
-            (integer)))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (basic_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (text_type
+                (integer))))
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (code_type
+                (integer)))))))))

@@ -22,16 +22,17 @@ codeunit 50100 "Test Codeunit"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (end_keyword))))
     (preproc_endregion)))
 
 ================================================================================
@@ -58,13 +59,14 @@ codeunit 50101 "Another Codeunit"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (comment)
-        (end_keyword)))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          (end_keyword))))
     (preproc_endregion)))
 
 ================================================================================
@@ -100,27 +102,28 @@ codeunit 50102 "Nested Regions"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))
-    (preproc_region)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (end_keyword)))
+      (preproc_region)
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (end_keyword))))
     (preproc_endregion)
     (preproc_endregion)))
 
@@ -154,20 +157,22 @@ table 50100 "Test Table"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (code_type
-            length: (integer))))
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))))))
     (preproc_endregion)))
 
 ================================================================================
@@ -207,41 +212,42 @@ codeunit 50103 "Complex Region"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type))))
-    (preproc_region)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
+    body: (object_body
       (var_section
         (var_keyword)
         (variable_declaration
           name: (identifier)
           type: (type_specification
-            (text_type))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (string_literal))
-        (end_keyword)))
-    (preproc_endregion)
-    (preproc_region)
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (integer))
-        (end_keyword)))
+            (basic_type))))
+      (preproc_region)
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (string_literal))
+          (end_keyword)))
+      (preproc_endregion)
+      (preproc_region)
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (integer))
+          (end_keyword))))
     (preproc_endregion)))
 
 ================================================================================
@@ -271,23 +277,24 @@ codeunit 50104 "Test Region After Var"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (preproc_region)
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        type: (type_specification
-          (basic_type))))
-    (preproc_region)
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list))
-        (end_keyword)))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list))
+          (end_keyword))))
     (preproc_endregion)))

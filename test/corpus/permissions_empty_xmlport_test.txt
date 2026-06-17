@@ -16,14 +16,15 @@ page 123 "Code Coverage"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name))
+      (property
+        name: (property_name)
+        value: (quoted_identifier)))))
 
 ================================================================================
 XMLport type in variable declaration
@@ -49,44 +50,45 @@ codeunit 50100 "XMLport Example"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (xmlport_keyword)
-              reference: (quoted_identifier)))))
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            member: (identifier))
-          arguments: (argument_list
-            (quoted_identifier)
-            (integer)
-            (integer)))
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            member: (identifier))
-          arguments: (argument_list
-            (identifier)))
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            member: (identifier))
-          arguments: (argument_list))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (xmlport_keyword)
+                reference: (quoted_identifier)))))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              member: (identifier))
+            arguments: (argument_list
+              (quoted_identifier)
+              (integer)
+              (integer)))
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              member: (identifier))
+            arguments: (argument_list
+              (identifier)))
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              member: (identifier))
+            arguments: (argument_list))
+          (end_keyword))))))
 
 ================================================================================
 XMLport type with integer reference
@@ -109,22 +111,23 @@ page 50200 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (xmlport_keyword)
-              reference: (integer)))))
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            member: (identifier))
-          arguments: (argument_list))
-        (end_keyword)))))
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (xmlport_keyword)
+                reference: (integer)))))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              member: (identifier))
+            arguments: (argument_list))
+          (end_keyword))))))

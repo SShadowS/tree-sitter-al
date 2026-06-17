@@ -37,38 +37,39 @@ interface DataUpgradeSAFT
     (comment)
     (comment)
     (comment)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (comment)
-    (comment)
-    (comment)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (text_type))))
-    (comment)
-    (comment)
-    (comment)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier))
-    (comment)
-    (comment)
-    (comment)
-    (comment)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (basic_type))))))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (basic_type))))
+      (comment)
+      (comment)
+      (comment)
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (text_type))))
+      (comment)
+      (comment)
+      (comment)
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier))
+      (comment)
+      (comment)
+      (comment)
+      (comment)
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
+            (basic_type)))))))
 
 ================================================================================
 Interface procedures with semicolons (backward compatibility)
@@ -87,23 +88,24 @@ interface "My Interface"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (basic_type))))))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (basic_type))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
+            (basic_type)))))))
 
 ================================================================================
 Interface procedures with attributes without semicolons
@@ -124,34 +126,35 @@ interface TestInterface
   (interface_declaration
     (interface_keyword)
     object_name: (identifier)
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (string_literal)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (boolean)
-            (boolean)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
+    body: (interface_body
+      (attribute_item
+        attribute: (attribute_content
           name: (identifier)
-          type: (type_specification
-            (basic_type)))))))
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (basic_type))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (boolean)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
 
 ================================================================================
 Interface with namespace and mixed semicolons
@@ -178,19 +181,20 @@ interface DataExport
   (interface_declaration
     (interface_keyword)
     object_name: (identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (text_type))))))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (basic_type))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
+            (text_type)))))))

@@ -37,44 +37,50 @@ page 6127 "E-Document Activities"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (cuegroup_section
-          (cuegroup_keyword)
-          name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (boolean))
-          (cuegroup_section
-            (cuegroup_keyword)
-            name: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (page_field
-              name: (identifier)
-              source: (identifier)
-              (property
-                name: (property_name)
-                value: (option_member_list
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))))
-              (property
-                name: (property_name)
-                value: (string_literal))
-              (property
-                name: (property_name)
-                value: (string_literal)))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (cuegroup_section
+                (cuegroup_keyword)
+                name: (quoted_identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (cuegroup_section
+                    (cuegroup_keyword)
+                    name: (quoted_identifier)
+                    body: (layout_container_body
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (page_field
+                        name: (identifier)
+                        source: (identifier)
+                        body: (object_body
+                          (property
+                            name: (property_name)
+                            value: (option_member_list
+                              (option_member
+                                (identifier))
+                              (option_member
+                                (identifier))))
+                          (property
+                            name: (property_name)
+                            value: (string_literal))
+                          (property
+                            name: (property_name)
+                            value: (string_literal)))))))))))))))
 
 ================================================================================
 Multiple nested cuegroups
@@ -131,58 +137,67 @@ page 50100 "Dashboard"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (cuegroup_section
-          (cuegroup_keyword)
-          name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (cuegroup_section
-            (cuegroup_keyword)
-            name: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (page_field
-              name: (identifier)
-              source: (identifier)
-              (property
-                name: (property_name)
-                value: (identifier))
-              (property
-                name: (property_name)
-                value: (string_literal)))
-            (page_field
-              name: (identifier)
-              source: (identifier)
-              (property
-                name: (property_name)
-                value: (identifier))
-              (property
-                name: (property_name)
-                value: (string_literal))))
-          (cuegroup_section
-            (cuegroup_keyword)
-            name: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (page_field
-              name: (identifier)
-              source: (identifier)
-              (property
-                name: (property_name)
-                value: (identifier))
-              (property
-                name: (property_name)
-                value: (string_literal)))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (cuegroup_section
+                (cuegroup_keyword)
+                name: (quoted_identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (cuegroup_section
+                    (cuegroup_keyword)
+                    name: (quoted_identifier)
+                    body: (layout_container_body
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (page_field
+                        name: (identifier)
+                        source: (identifier)
+                        body: (object_body
+                          (property
+                            name: (property_name)
+                            value: (identifier))
+                          (property
+                            name: (property_name)
+                            value: (string_literal))))
+                      (page_field
+                        name: (identifier)
+                        source: (identifier)
+                        body: (object_body
+                          (property
+                            name: (property_name)
+                            value: (identifier))
+                          (property
+                            name: (property_name)
+                            value: (string_literal))))))
+                  (cuegroup_section
+                    (cuegroup_keyword)
+                    name: (quoted_identifier)
+                    body: (layout_container_body
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (page_field
+                        name: (identifier)
+                        source: (identifier)
+                        body: (object_body
+                          (property
+                            name: (property_name)
+                            value: (identifier))
+                          (property
+                            name: (property_name)
+                            value: (string_literal)))))))))))))))
 
 ================================================================================
 Cuegroup with properties and nested cuegroups
@@ -231,61 +246,68 @@ page 50101 "Activity Cues"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (cuegroup_section
-          (cuegroup_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (cuegroup_section
-            (cuegroup_keyword)
-            name: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (page_field
-              name: (identifier)
-              source: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              (property
-                name: (property_name)
-                value: (option_member_list
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))))
-              (property
-                name: (property_name)
-                value: (quoted_identifier))
-              (property
-                name: (property_name)
-                value: (string_literal))))
-          (page_field
-            name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))
-            (property
-              name: (property_name)
-              value: (option_member_list
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))))
-            (property
-              name: (property_name)
-              value: (string_literal))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (quoted_identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (cuegroup_section
+                (cuegroup_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (cuegroup_section
+                    (cuegroup_keyword)
+                    name: (quoted_identifier)
+                    body: (layout_container_body
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (page_field
+                        name: (identifier)
+                        source: (member_expression
+                          object: (identifier)
+                          member: (quoted_identifier))
+                        body: (object_body
+                          (property
+                            name: (property_name)
+                            value: (option_member_list
+                              (option_member
+                                (identifier))
+                              (option_member
+                                (identifier))))
+                          (property
+                            name: (property_name)
+                            value: (quoted_identifier))
+                          (property
+                            name: (property_name)
+                            value: (string_literal))))))
+                  (page_field
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (option_member_list
+                          (option_member
+                            (identifier))
+                          (option_member
+                            (identifier))))
+                      (property
+                        name: (property_name)
+                        value: (string_literal)))))))))))))

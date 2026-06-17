@@ -27,33 +27,37 @@ page 50000 "Test Page"
     (page_keyword)
     (integer)
     (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          (identifier)
-          (identifier)
-          (property
-            (property_name)
-            (identifier))
-          (trigger_declaration
-            (trigger_keyword)
-            (identifier)
-            (parameter_list
-              (parameter
-                (var_keyword)
+    (object_body
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (page_field
                 (identifier)
-                (type_specification
-                  (text_type))))
-            (type_specification
-              (basic_type))
-            (code_block
-              (begin_keyword)
-              (exit_statement
-                (exit_keyword)
-                (boolean))
-              (end_keyword))))))))
+                (identifier)
+                (object_body
+                  (property
+                    (property_name)
+                    (identifier))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    (identifier)
+                    (parameter_list
+                      (parameter
+                        (var_keyword)
+                        (identifier)
+                        (type_specification
+                          (text_type))))
+                    (type_specification
+                      (basic_type))
+                    (code_block
+                      (begin_keyword)
+                      (exit_statement
+                        (exit_keyword)
+                        (boolean))
+                      (end_keyword))))))))))))
 
 ================================================================================
 Field trigger with parameters and return type - OnLookup without semicolon
@@ -84,33 +88,37 @@ page 50001 "Test Page 2"
     (page_keyword)
     (integer)
     (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          (identifier)
-          (identifier)
-          (property
-            (property_name)
-            (identifier))
-          (trigger_declaration
-            (trigger_keyword)
-            (identifier)
-            (parameter_list
-              (parameter
-                (var_keyword)
+    (object_body
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (page_field
                 (identifier)
-                (type_specification
-                  (text_type))))
-            (type_specification
-              (basic_type))
-            (code_block
-              (begin_keyword)
-              (exit_statement
-                (exit_keyword)
-                (boolean))
-              (end_keyword))))))))
+                (identifier)
+                (object_body
+                  (property
+                    (property_name)
+                    (identifier))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    (identifier)
+                    (parameter_list
+                      (parameter
+                        (var_keyword)
+                        (identifier)
+                        (type_specification
+                          (text_type))))
+                    (type_specification
+                      (basic_type))
+                    (code_block
+                      (begin_keyword)
+                      (exit_statement
+                        (exit_keyword)
+                        (boolean))
+                      (end_keyword))))))))))))
 
 ================================================================================
 Field trigger with multiple parameters and return type
@@ -144,50 +152,54 @@ page 50002 "Test Page 3"
     (page_keyword)
     (integer)
     (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          (identifier)
-          (identifier)
-          (property
-            (property_name)
-            (identifier))
-          (trigger_declaration
-            (trigger_keyword)
-            (identifier)
-            (parameter_list
-              (parameter
-                (var_keyword)
+    (object_body
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (page_field
                 (identifier)
-                (type_specification
-                  (record_type
-                    (quoted_identifier))))
-              (parameter
-                (var_keyword)
                 (identifier)
-                (type_specification
-                  (record_type
-                    (quoted_identifier)))))
-            (type_specification
-              (basic_type))
-            (var_section
-              (var_keyword)
-              (variable_declaration
-                (identifier)
-                (type_specification
-                  (text_type
-                    (integer)))))
-            (code_block
-              (begin_keyword)
-              (assignment_statement
-                (identifier)
-                (string_literal))
-              (exit_statement
-                (exit_keyword)
-                (boolean))
-              (end_keyword))))))))
+                (object_body
+                  (property
+                    (property_name)
+                    (identifier))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    (identifier)
+                    (parameter_list
+                      (parameter
+                        (var_keyword)
+                        (identifier)
+                        (type_specification
+                          (record_type
+                            (quoted_identifier))))
+                      (parameter
+                        (var_keyword)
+                        (identifier)
+                        (type_specification
+                          (record_type
+                            (quoted_identifier)))))
+                    (type_specification
+                      (basic_type))
+                    (var_section
+                      (var_keyword)
+                      (variable_declaration
+                        (identifier)
+                        (type_specification
+                          (text_type
+                            (integer)))))
+                    (code_block
+                      (begin_keyword)
+                      (assignment_statement
+                        (identifier)
+                        (string_literal))
+                      (exit_statement
+                        (exit_keyword)
+                        (boolean))
+                      (end_keyword))))))))))))
 
 ================================================================================
 Field trigger without parameters but with return type
@@ -218,27 +230,31 @@ page 50003 "Test Page 4"
     (page_keyword)
     (integer)
     (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          (identifier)
-          (identifier)
-          (property
-            (property_name)
-            (identifier))
-          (trigger_declaration
-            (trigger_keyword)
-            (identifier)
-            (type_specification
-              (basic_type))
-            (code_block
-              (begin_keyword)
-              (exit_statement
-                (exit_keyword)
-                (boolean))
-              (end_keyword))))))))
+    (object_body
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (page_field
+                (identifier)
+                (identifier)
+                (object_body
+                  (property
+                    (property_name)
+                    (identifier))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    (identifier)
+                    (type_specification
+                      (basic_type))
+                    (code_block
+                      (begin_keyword)
+                      (exit_statement
+                        (exit_keyword)
+                        (boolean))
+                      (end_keyword))))))))))))
 
 ================================================================================
 Field trigger compatibility with basic triggers
@@ -280,50 +296,54 @@ page 50004 "Test Page 5"
     (page_keyword)
     (integer)
     (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          (identifier)
-          (identifier)
-          (property
-            (property_name)
-            (identifier))
-          (trigger_declaration
-            (trigger_keyword)
-            (identifier)
-            (code_block
-              (begin_keyword)
-              (call_expression
+    (object_body
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (page_field
                 (identifier)
-                (argument_list
-                  (string_literal)))
-              (end_keyword)))
-          (trigger_declaration
-            (trigger_keyword)
-            (identifier)
-            (parameter_list
-              (parameter
-                (var_keyword)
                 (identifier)
-                (type_specification
-                  (text_type))))
-            (type_specification
-              (basic_type))
-            (code_block
-              (begin_keyword)
-              (exit_statement
-                (exit_keyword)
-                (boolean))
-              (end_keyword)))
-          (trigger_declaration
-            (trigger_keyword)
-            (identifier)
-            (code_block
-              (begin_keyword)
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal)))
-              (end_keyword))))))))
+                (object_body
+                  (property
+                    (property_name)
+                    (identifier))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    (identifier)
+                    (code_block
+                      (begin_keyword)
+                      (call_expression
+                        (identifier)
+                        (argument_list
+                          (string_literal)))
+                      (end_keyword)))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    (identifier)
+                    (parameter_list
+                      (parameter
+                        (var_keyword)
+                        (identifier)
+                        (type_specification
+                          (text_type))))
+                    (type_specification
+                      (basic_type))
+                    (code_block
+                      (begin_keyword)
+                      (exit_statement
+                        (exit_keyword)
+                        (boolean))
+                      (end_keyword)))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    (identifier)
+                    (code_block
+                      (begin_keyword)
+                      (call_expression
+                        (identifier)
+                        (argument_list
+                          (string_literal)))
+                      (end_keyword))))))))))))

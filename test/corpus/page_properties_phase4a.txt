@@ -34,42 +34,46 @@ page 50100 "Test Phase 4A Properties"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (tabledata_permission
-          table_name: (identifier)
-          permission: (permission_type))))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (group_section
-          (group_keyword)
-          name: (identifier)
-          (page_field
-            name: (quoted_identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            table_name: (identifier)
+            permission: (permission_type))))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (group_section
+                (group_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    name: (quoted_identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))))))))))))

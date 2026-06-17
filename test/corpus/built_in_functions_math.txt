@@ -24,52 +24,53 @@ codeunit 50100 "Built-in Functions Test"
     (codeunit_keyword)
     (integer)
     (quoted_identifier)
-    (procedure
-      (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type)))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
+    (object_body
+      (procedure
+        (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type))))
+        (code_block
+          (begin_keyword)
+          (assignment_statement
+            (identifier)
+            (call_expression
+              (identifier)
+              (argument_list
+                (integer))))
           (call_expression
             (identifier)
             (argument_list
-              (integer))))
-        (call_expression
-          (identifier)
-          (argument_list
-            (integer)))
-        (assignment_statement
-          (identifier)
-          (call_expression
+              (integer)))
+          (assignment_statement
             (identifier)
-            (argument_list
-              (decimal)
-              (decimal))))
-        (assignment_statement
-          (identifier)
-          (call_expression
+            (call_expression
+              (identifier)
+              (argument_list
+                (decimal)
+                (decimal))))
+          (assignment_statement
             (identifier)
-            (argument_list
-              (unary_expression
-                (integer)))))
-        (assignment_statement
-          (identifier)
-          (call_expression
+            (call_expression
+              (identifier)
+              (argument_list
+                (unary_expression
+                  (integer)))))
+          (assignment_statement
             (identifier)
-            (argument_list
-              (integer)
-              (integer))))
-        (end_keyword)))))
+            (call_expression
+              (identifier)
+              (argument_list
+                (integer)
+                (integer))))
+          (end_keyword))))))

@@ -17,19 +17,20 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (additive_expression
-            (integer)
-            (multiplicative_expression
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
+            (identifier)
+            (additive_expression
               (integer)
-              (integer))))
-        (end_keyword)))))
+              (multiplicative_expression
+                (integer)
+                (integer))))
+          (end_keyword))))))
 
 ========================================================================
 Division and modulo operators
@@ -51,22 +52,23 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (multiplicative_expression
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
             (identifier)
-            (integer)))
-        (assignment_statement
-          (identifier)
-          (multiplicative_expression
+            (multiplicative_expression
+              (identifier)
+              (integer)))
+          (assignment_statement
             (identifier)
-            (integer)))
-        (end_keyword)))))
+            (multiplicative_expression
+              (identifier)
+              (integer)))
+          (end_keyword))))))
 
 ========================================================================
 Comparison expressions
@@ -92,39 +94,40 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (if_statement
-          (if_keyword)
-          (comparison_expression
-            (identifier)
-            (comparison_operator)
-            (integer))
-          (then_keyword)
-          (exit_statement
-            (exit_keyword)))
-        (if_statement
-          (if_keyword)
-          (comparison_expression
-            (identifier)
-            (comparison_operator)
-            (identifier))
-          (then_keyword)
-          (exit_statement
-            (exit_keyword)))
-        (if_statement
-          (if_keyword)
-          (comparison_expression
-            (identifier)
-            (comparison_operator)
-            (integer))
-          (then_keyword)
-          (exit_statement
-            (exit_keyword)))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (if_statement
+            (if_keyword)
+            (comparison_expression
+              (identifier)
+              (comparison_operator)
+              (integer))
+            (then_keyword)
+            (exit_statement
+              (exit_keyword)))
+          (if_statement
+            (if_keyword)
+            (comparison_expression
+              (identifier)
+              (comparison_operator)
+              (identifier))
+            (then_keyword)
+            (exit_statement
+              (exit_keyword)))
+          (if_statement
+            (if_keyword)
+            (comparison_expression
+              (identifier)
+              (comparison_operator)
+              (integer))
+            (then_keyword)
+            (exit_statement
+              (exit_keyword)))
+          (end_keyword))))))
 
 ========================================================================
 Logical expressions
@@ -148,35 +151,36 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (if_statement
-          (if_keyword)
-          (logical_expression
-            (parenthesized_expression
-              (comparison_expression
-                (identifier)
-                (comparison_operator)
-                (integer)))
-            (parenthesized_expression
-              (comparison_expression
-                (identifier)
-                (comparison_operator)
-                (integer))))
-          (then_keyword)
-          (exit_statement
-            (exit_keyword)))
-        (if_statement
-          (if_keyword)
-          (unary_expression
-            (identifier))
-          (then_keyword)
-          (exit_statement
-            (exit_keyword)))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (if_statement
+            (if_keyword)
+            (logical_expression
+              (parenthesized_expression
+                (comparison_expression
+                  (identifier)
+                  (comparison_operator)
+                  (integer)))
+              (parenthesized_expression
+                (comparison_expression
+                  (identifier)
+                  (comparison_operator)
+                  (integer))))
+            (then_keyword)
+            (exit_statement
+              (exit_keyword)))
+          (if_statement
+            (if_keyword)
+            (unary_expression
+              (identifier))
+            (then_keyword)
+            (exit_statement
+              (exit_keyword)))
+          (end_keyword))))))
 
 ========================================================================
 String concatenation
@@ -197,19 +201,20 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (additive_expression
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
+            (identifier)
             (additive_expression
-              (string_literal)
-              (string_literal))
-            (string_literal)))
-        (end_keyword)))))
+              (additive_expression
+                (string_literal)
+                (string_literal))
+              (string_literal)))
+          (end_keyword))))))
 
 ========================================================================
 Member access chain
@@ -231,22 +236,23 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (member_expression
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
             (identifier)
-            (identifier)))
-        (assignment_statement
-          (identifier)
-          (member_expression
+            (member_expression
+              (identifier)
+              (identifier)))
+          (assignment_statement
             (identifier)
-            (quoted_identifier)))
-        (end_keyword)))))
+            (member_expression
+              (identifier)
+              (quoted_identifier)))
+          (end_keyword))))))
 
 ========================================================================
 Function call with multiple arguments
@@ -267,18 +273,19 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          (identifier)
-          (argument_list
-            (string_literal)
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (call_expression
             (identifier)
-            (identifier)))
-        (end_keyword)))))
+            (argument_list
+              (string_literal)
+              (identifier)
+              (identifier)))
+          (end_keyword))))))
 
 ========================================================================
 Subscript expression
@@ -300,24 +307,25 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (subscript_expression
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
             (identifier)
-            (integer)))
-        (assignment_statement
-          (identifier)
-          (subscript_expression
-            (identifier)
-            (additive_expression
+            (subscript_expression
               (identifier)
-              (integer))))
-        (end_keyword)))))
+              (integer)))
+          (assignment_statement
+            (identifier)
+            (subscript_expression
+              (identifier)
+              (additive_expression
+                (identifier)
+                (integer))))
+          (end_keyword))))))
 
 ========================================================================
 Parenthesized expression
@@ -338,20 +346,21 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (multiplicative_expression
-            (parenthesized_expression
-              (additive_expression
-                (identifier)
-                (identifier)))
-            (identifier)))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
+            (identifier)
+            (multiplicative_expression
+              (parenthesized_expression
+                (additive_expression
+                  (identifier)
+                  (identifier)))
+              (identifier)))
+          (end_keyword))))))
 
 ========================================================================
 Qualified enum value
@@ -372,17 +381,18 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (qualified_enum_value
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
             (identifier)
-            (identifier)))
-        (end_keyword)))))
+            (qualified_enum_value
+              (identifier)
+              (identifier)))
+          (end_keyword))))))
 
 ========================================================================
 Qualified enum with quoted identifiers
@@ -403,17 +413,18 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (qualified_enum_value
-            (quoted_identifier)
-            (identifier)))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
+            (identifier)
+            (qualified_enum_value
+              (quoted_identifier)
+              (identifier)))
+          (end_keyword))))))
 
 ========================================================================
 In expression
@@ -435,23 +446,24 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (if_statement
-          (if_keyword)
-          (identifier)
-          (in_keyword)
-          (list_literal
-            (integer)
-            (integer)
-            (integer))
-          (then_keyword)
-          (exit_statement
-            (exit_keyword)))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (if_statement
+            (if_keyword)
+            (identifier)
+            (in_keyword)
+            (list_literal
+              (integer)
+              (integer)
+              (integer))
+            (then_keyword)
+            (exit_statement
+              (exit_keyword)))
+          (end_keyword))))))
 
 ========================================================================
 Unary negation
@@ -473,20 +485,21 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (unary_expression
-            (identifier)))
-        (assignment_statement
-          (identifier)
-          (unary_expression
-            (identifier)))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
+            (identifier)
+            (unary_expression
+              (identifier)))
+          (assignment_statement
+            (identifier)
+            (unary_expression
+              (identifier)))
+          (end_keyword))))))
 
 ========================================================================
 Range expression
@@ -508,23 +521,24 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (if_statement
-          (if_keyword)
-          (identifier)
-          (in_keyword)
-          (list_literal
-            (range_expression
-              (integer)
-              (integer)))
-          (then_keyword)
-          (exit_statement
-            (exit_keyword)))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (if_statement
+            (if_keyword)
+            (identifier)
+            (in_keyword)
+            (list_literal
+              (range_expression
+                (integer)
+                (integer)))
+            (then_keyword)
+            (exit_statement
+              (exit_keyword)))
+          (end_keyword))))))
 
 ========================================================================
 Database reference
@@ -545,17 +559,18 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (database_reference
-            (object_type_keyword)
-            (quoted_identifier)))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
+            (identifier)
+            (database_reference
+              (object_type_keyword)
+              (quoted_identifier)))
+          (end_keyword))))))
 
 ========================================================================
 Chained method calls
@@ -577,24 +592,25 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          (member_expression
-            (identifier)
-            (identifier))
-          (argument_list
-            (quoted_identifier)
-            (string_literal)))
-        (call_expression
-          (member_expression
-            (identifier)
-            (identifier))
-          (argument_list))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (argument_list
+              (quoted_identifier)
+              (string_literal)))
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (argument_list))
+          (end_keyword))))))
 
 ========================================================================
 Nested function calls
@@ -615,21 +631,22 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (call_expression
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
             (identifier)
-            (argument_list
-              (call_expression
-                (identifier)
-                (argument_list
-                  (identifier))))))
-        (end_keyword)))))
+            (call_expression
+              (identifier)
+              (argument_list
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (identifier))))))
+          (end_keyword))))))
 
 ========================================================================
 XOR expression
@@ -651,20 +668,21 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (if_statement
-          (if_keyword)
-          (logical_expression
-            (identifier)
-            (identifier))
-          (then_keyword)
-          (exit_statement
-            (exit_keyword)))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (if_statement
+            (if_keyword)
+            (logical_expression
+              (identifier)
+              (identifier))
+            (then_keyword)
+            (exit_statement
+              (exit_keyword)))
+          (end_keyword))))))
 
 ========================================================================
 Complex expression precedence
@@ -685,23 +703,24 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (additive_expression
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
+            (identifier)
             (additive_expression
-              (identifier)
+              (additive_expression
+                (identifier)
+                (multiplicative_expression
+                  (identifier)
+                  (identifier)))
               (multiplicative_expression
                 (identifier)
-                (identifier)))
-            (multiplicative_expression
-              (identifier)
-              (identifier))))
-        (end_keyword)))))
+                (identifier))))
+          (end_keyword))))))
 
 ========================================================================
 Empty argument list
@@ -722,15 +741,16 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          (identifier)
-          (argument_list))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (call_expression
+            (identifier)
+            (argument_list))
+          (end_keyword))))))
 
 ========================================================================
 Boolean literal in expression
@@ -752,18 +772,19 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          (identifier)
-          (boolean))
-        (assignment_statement
-          (identifier)
-          (boolean))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (assignment_statement
+            (identifier)
+            (boolean))
+          (assignment_statement
+            (identifier)
+            (boolean))
+          (end_keyword))))))
 
 ========================================================================
 Or expression
@@ -785,17 +806,18 @@ codeunit 50100 Test
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (if_statement
-          (if_keyword)
-          (logical_expression
-            (identifier)
-            (identifier))
-          (then_keyword)
-          (exit_statement
-            (exit_keyword)))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (if_statement
+            (if_keyword)
+            (logical_expression
+              (identifier)
+              (identifier))
+            (then_keyword)
+            (exit_statement
+              (exit_keyword)))
+          (end_keyword))))))

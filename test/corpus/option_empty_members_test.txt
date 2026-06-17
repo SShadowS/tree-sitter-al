@@ -15,23 +15,24 @@ codeunit 50100 "Test Option Empty Members"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (option_type
-            (option_member_list
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))
-              (option_member
-                (identifier)))))))))
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (option_type
+              (option_member_list
+                (option_member
+                  (identifier))
+                (option_member
+                  (identifier))
+                (option_member
+                  (identifier))
+                (option_member
+                  (identifier))
+                (option_member
+                  (identifier))))))))))
 
 ================================================================================
 Option type with all empty members
@@ -55,16 +56,19 @@ table 50100 "Test All Empty"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (option_member_list))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (option_member_list)))))))))
 
 ================================================================================
 Option type with mixed empty and non-empty members
@@ -84,30 +88,31 @@ page 50100 "Test Mixed Options"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (option_type
-            (option_member_list
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))))))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (option_type
-            (option_member_list
-              (option_member
-                (string_literal))
-              (option_member
-                (string_literal))
-              (option_member
-                (string_literal)))))))))
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (option_type
+              (option_member_list
+                (option_member
+                  (identifier))
+                (option_member
+                  (identifier))
+                (option_member
+                  (identifier))))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (option_type
+              (option_member_list
+                (option_member
+                  (string_literal))
+                (option_member
+                  (string_literal))
+                (option_member
+                  (string_literal))))))))))
 
 ================================================================================
 OptionMembers property with consecutive commas
@@ -131,23 +136,26 @@ table 50100 "Test Option Property"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (option_type))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (identifier))
-            (option_member
-              (identifier))
-            (option_member
-              (identifier))
-            (option_member
-              (identifier))
-            (option_member
-              (identifier))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))

@@ -24,70 +24,71 @@ codeunit 1 T
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (preproc_split_procedure_preamble
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier))))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer)))))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier)))))
-      (preproc_else)
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer)))))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier)))))
-      (preproc_endif
-        (preproc_close))
-      (code_block
-        (begin_keyword)
-        (if_statement
-          (if_keyword)
-          condition: (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)))
-          (then_keyword)
-          then_branch: (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list)))
-        (end_keyword)))))
+    body: (object_body
+      (preproc_split_procedure_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier))))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (preproc_endif
+          (preproc_close))
+        (code_block
+          (begin_keyword)
+          (if_statement
+            (if_keyword)
+            condition: (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (identifier)))
+            (then_keyword)
+            then_branch: (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list)))
+          (end_keyword))))))
 
 ================================================================================
 Procedure with header split (no var) across #if/#else, shared body after #endif
@@ -110,37 +111,38 @@ codeunit 1 T
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (preproc_split_procedure
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier)))))
-      (preproc_else)
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (preproc_endif
-        (preproc_close))
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            member: (identifier))
-          arguments: (argument_list))
-        (end_keyword)))))
+    body: (object_body
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier)))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              member: (identifier))
+            arguments: (argument_list))
+          (end_keyword))))))
 
 ================================================================================
 Procedure with modifier, header and var both split across #if/#else
@@ -167,52 +169,53 @@ codeunit 1 T
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (preproc_split_procedure_preamble
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      modifier: (procedure_modifier
-        (internal_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier)))))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier)))))
-      (preproc_else)
-      modifier: (procedure_modifier
-        (internal_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier)))))
-      (preproc_endif
-        (preproc_close))
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (member_expression
-            object: (identifier)
-            member: (identifier))
-          arguments: (argument_list))
-        (end_keyword)))))
+    body: (object_body
+      (preproc_split_procedure_preamble
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        modifier: (procedure_modifier
+          (internal_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier)))))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (preproc_else)
+        modifier: (procedure_modifier
+          (internal_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (preproc_endif
+          (preproc_close))
+        (code_block
+          (begin_keyword)
+          (call_expression
+            function: (member_expression
+              object: (identifier)
+              member: (identifier))
+            arguments: (argument_list))
+          (end_keyword))))))

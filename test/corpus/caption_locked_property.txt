@@ -14,12 +14,13 @@ page 50000 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (caption_value
-        (string_literal)
-        (property_name)
-        (boolean)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (boolean))))))
 
 ================================================================================
 Caption property with empty string and Locked
@@ -37,12 +38,13 @@ page 50001 "Empty Caption Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (caption_value
-        (string_literal)
-        (property_name)
-        (boolean)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (boolean))))))
 
 ================================================================================
 Caption property with Locked false
@@ -60,12 +62,13 @@ page 50002 "Unlocked Caption Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (caption_value
-        (string_literal)
-        (property_name)
-        (boolean)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (boolean))))))
 
 ================================================================================
 Caption property without Locked attribute
@@ -83,9 +86,10 @@ page 50003 "Regular Caption Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal)))))
 
 ================================================================================
 Caption property with different case Locked attribute
@@ -111,26 +115,29 @@ table 50000 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (caption_value
-        (string_literal)
-        (property_name)
-        (boolean)))
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (caption_value
-            (string_literal)
-            (property_name)
-            (boolean)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (boolean)))
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (caption_value
+                  (string_literal)
+                  (property_name)
+                  (boolean))))))))))
 
 ================================================================================
 Multiple properties with Caption and Locked
@@ -149,12 +156,13 @@ codeunit 50000 "Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (caption_value
-        (string_literal)
-        (property_name)
-        (boolean)))
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (boolean)))
+      (property
+        name: (property_name)
+        value: (string_literal)))))

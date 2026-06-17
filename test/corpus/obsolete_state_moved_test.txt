@@ -51,54 +51,61 @@ page 50002 "Test Page"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type)))))))
   (codeunit_declaration
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))))
   (page_declaration
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (group_section
-          (group_keyword)
-          name: (identifier)
-          (page_field
-            name: (quoted_identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (quoted_identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (group_section
+                (group_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    name: (quoted_identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))))))))))))

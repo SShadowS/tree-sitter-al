@@ -22,35 +22,36 @@ controladdin "Test Label"
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (string_literal))
-        (option_member
-          (string_literal))))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (integer))
-    (event_declaration
-      (event_keyword)
-      name: (identifier))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))))
+    body: (controladdin_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (string_literal))
+          (option_member
+            (string_literal))))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (integer))
+      (event_declaration
+        (event_keyword)
+        name: (identifier))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))
 
 ================================================================================
 ControlAddIn with ObsoleteState Removed
@@ -73,21 +74,22 @@ controladdin "Removed Control"
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (event_declaration
-      (event_keyword)
-      name: (identifier))))
+    body: (controladdin_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (event_declaration
+        (event_keyword)
+        name: (identifier)))))
 
 ================================================================================
 ControlAddIn with only ObsoleteState property
@@ -109,19 +111,20 @@ controladdin SimpleObsolete
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (integer))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))))
+    body: (controladdin_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (integer))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))
 
 ================================================================================
 ControlAddIn with case variations of obsolete state
@@ -143,18 +146,19 @@ controladdin "Case Test"
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (integer))
-    (event_declaration
-      (event_keyword)
-      name: (identifier))))
+    body: (controladdin_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (integer))
+      (event_declaration
+        (event_keyword)
+        name: (identifier)))))
 
 ================================================================================
 ControlAddIn mixing obsolete and normal properties
@@ -179,38 +183,39 @@ controladdin "Mixed Properties"
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (event_declaration
-      (event_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))))
+    body: (controladdin_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (event_declaration
+        (event_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix)))))

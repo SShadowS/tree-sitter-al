@@ -16,16 +16,17 @@ codeunit 50100 TestInterface
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (type_specification
-        (object_reference_type
-          (interface_keyword)
-          (quoted_identifier)))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (type_specification
+          (object_reference_type
+            (interface_keyword)
+            (quoted_identifier)))
+        (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 Namespace-Qualified Interface Type
@@ -45,19 +46,20 @@ codeunit 50100 TestInterface
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (type_specification
-        (object_reference_type
-          (interface_keyword)
-          (identifier)
-          (identifier)
-          (identifier)
-          (quoted_identifier)))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (type_specification
+          (object_reference_type
+            (interface_keyword)
+            (identifier)
+            (identifier)
+            (identifier)
+            (quoted_identifier)))
+        (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 Interface Type in Variable Declaration
@@ -81,28 +83,29 @@ codeunit 50100 TestInterface
     (codeunit_keyword)
     (integer)
     (identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
+    (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (object_reference_type
+              (interface_keyword)
+              (quoted_identifier))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (object_reference_type
+              (interface_keyword)
+              (identifier)
+              (identifier)
+              (quoted_identifier)))))
+      (procedure
+        (procedure_keyword)
         (identifier)
-        (type_specification
-          (object_reference_type
-            (interface_keyword)
-            (quoted_identifier))))
-      (variable_declaration
-        (identifier)
-        (type_specification
-          (object_reference_type
-            (interface_keyword)
-            (identifier)
-            (identifier)
-            (quoted_identifier)))))
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+        (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 Interface Type in Parameter
@@ -122,22 +125,23 @@ codeunit 50100 TestInterface
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_keyword)
-      (identifier)
-      (parameter_list
-        (parameter
-          (identifier)
-          (type_specification
-            (object_reference_type
-              (interface_keyword)
-              (identifier)
-              (identifier)
-              (quoted_identifier))))
-        (parameter
-          (identifier)
-          (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_keyword)
+        (identifier)
+        (parameter_list
+          (parameter
+            (identifier)
+            (type_specification
+              (object_reference_type
+                (interface_keyword)
+                (identifier)
+                (identifier)
+                (quoted_identifier))))
+          (parameter
+            (identifier)
+            (type_specification
+              (basic_type))))
+        (code_block
+          (begin_keyword)
+          (end_keyword))))))

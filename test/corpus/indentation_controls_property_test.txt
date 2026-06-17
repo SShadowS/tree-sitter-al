@@ -27,22 +27,26 @@ page 60001 TestIndentationPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (repeater_section
-          (repeater_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (page_field
-            name: (identifier)
-            source: (identifier)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (page_field
+                    name: (identifier)
+                    source: (identifier)))))))))))
 
 ================================================================================
 IndentationControls property with quoted identifier value
@@ -74,25 +78,30 @@ page 60002 TestQuotedIndentationPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (repeater_section
-          (repeater_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (quoted_identifier))
-          (property
-            name: (property_name)
-            value: (quoted_identifier))
-          (page_field
-            name: (quoted_identifier)
-            source: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (identifier))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (quoted_identifier))
+                  (property
+                    name: (property_name)
+                    value: (quoted_identifier))
+                  (page_field
+                    name: (quoted_identifier)
+                    source: (quoted_identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
 
 ================================================================================
 IndentationControls in G/L Account hierarchy list context
@@ -137,49 +146,56 @@ page 60003 "GL Account Selections"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (repeater_section
-          (repeater_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (page_field
-            name: (identifier)
-            source: (identifier)
-            (property
-              name: (property_name)
-              value: (identifier)))
-          (page_field
-            name: (quoted_identifier)
-            source: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (identifier)))
-          (page_field
-            name: (identifier)
-            source: (identifier)
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (identifier))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (page_field
+                    name: (identifier)
+                    source: (identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))))
+                  (page_field
+                    name: (quoted_identifier)
+                    source: (quoted_identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))))
+                  (page_field
+                    name: (identifier)
+                    source: (identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
 
 ================================================================================
 IndentationControls with mixed properties in complex repeater
@@ -220,43 +236,49 @@ page 60004 ComplexHierarchyPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (repeater_section
-          (repeater_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (quoted_identifier))
-          (property
-            name: (property_name)
-            value: (quoted_identifier))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (page_field
-            name: (identifier)
-            source: (identifier)
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (boolean)))
-          (page_field
-            name: (quoted_identifier)
-            source: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (identifier))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (quoted_identifier))
+                  (property
+                    name: (property_name)
+                    value: (quoted_identifier))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (page_field
+                    name: (identifier)
+                    source: (identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (boolean))))
+                  (page_field
+                    name: (quoted_identifier)
+                    source: (quoted_identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))

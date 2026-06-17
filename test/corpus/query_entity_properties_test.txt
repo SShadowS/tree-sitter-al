@@ -48,70 +48,77 @@ query 50100 "Customer Sales API"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (string_literal)))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal)))
-        (query_dataitem
-          (dataitem_keyword)
-          name: (identifier)
-          table_name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (member_expression
-                  object: (identifier)
-                  member: (quoted_identifier)))))
-          (query_column
-            (column_keyword)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
             name: (identifier)
-            field_name: (identifier)
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (property
-              name: (property_name)
-              value: (identifier))))))))
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (quoted_identifier)))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))

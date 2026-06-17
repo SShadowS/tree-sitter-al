@@ -13,12 +13,13 @@ enum 50100 MyEnum
     (enum_keyword)
     (integer)
     (identifier)
-    (enum_value_declaration
-      (integer)
-      (quoted_identifier))
-    (enum_value_declaration
-      (integer)
-      (identifier))))
+    (object_body
+      (enum_value_declaration
+        (integer)
+        (quoted_identifier))
+      (enum_value_declaration
+        (integer)
+        (identifier)))))
 
 ========================================================================
 Enum values with properties
@@ -41,18 +42,21 @@ enum 50100 Status
     (enum_keyword)
     (integer)
     (identifier)
-    (enum_value_declaration
-      (integer)
-      (quoted_identifier)
-      (property
-        (property_name)
-        (string_literal)))
-    (enum_value_declaration
-      (integer)
-      (identifier)
-      (property
-        (property_name)
-        (string_literal)))))
+    (object_body
+      (enum_value_declaration
+        (integer)
+        (quoted_identifier)
+        (object_body
+          (property
+            (property_name)
+            (string_literal))))
+      (enum_value_declaration
+        (integer)
+        (identifier)
+        (object_body
+          (property
+            (property_name)
+            (string_literal)))))))
 
 ========================================================================
 Enum extension with values
@@ -73,9 +77,11 @@ enumextension 50100 StatusExt extends Status
     (identifier)
     (extends_keyword)
     (identifier)
-    (enum_value_declaration
-      (integer)
-      (identifier)
-      (property
-        (property_name)
-        (string_literal)))))
+    (object_body
+      (enum_value_declaration
+        (integer)
+        (identifier)
+        (object_body
+          (property
+            (property_name)
+            (string_literal)))))))

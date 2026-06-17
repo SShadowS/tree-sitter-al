@@ -16,57 +16,58 @@ interface "E-Document Integration"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (attribute_item
-      attribute: (attribute_content
+    body: (interface_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (string_literal)))))
+      (interface_procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (string_literal)
-            (string_literal)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier))))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (codeunit_keyword)
-              reference: (quoted_identifier))))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier))))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))))
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (quoted_identifier))))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix)))))
 
 ================================================================================
 Interface with multiple attributed procedures
@@ -92,71 +93,72 @@ interface IDocumentService
   (interface_declaration
     (interface_keyword)
     object_name: (identifier)
-    (attribute_item
-      attribute: (attribute_content
+    body: (interface_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (string_literal)))))
+      (interface_procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (string_literal)
-            (string_literal)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (attribute_item
-      attribute: (attribute_content
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (string_literal)))))
+      (interface_procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (string_literal)
-            (string_literal)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        (interface_procedure_suffix))
+      (attribute_item
+        attribute: (attribute_content
           name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier)))))
-      (interface_procedure_suffix))
-    (attribute_item
-      attribute: (attribute_content
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (boolean)))))
+      (interface_procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (boolean)
-            (boolean)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (object_reference_type
-            object_type: (enum_keyword)
-            reference: (quoted_identifier)))))))
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (object_reference_type
+              object_type: (enum_keyword)
+              reference: (quoted_identifier))))))))
 
 ================================================================================
 Interface with mixed attributed and non-attributed procedures
@@ -183,93 +185,94 @@ interface IPaymentProvider
   (interface_declaration
     (interface_keyword)
     object_name: (identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier)))))
-      (interface_procedure_suffix))
-    (attribute_item
-      attribute: (attribute_content
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (string_literal)
-            (string_literal)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (interface_procedure_suffix))
+      (attribute_item
+        attribute: (attribute_content
           name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer)))))
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer))))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (attribute_item
-      attribute: (attribute_content
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (string_literal)))))
+      (interface_procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (boolean)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier)))))
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))
+        (interface_procedure_suffix
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (basic_type))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier)))))
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix)))))

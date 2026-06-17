@@ -18,21 +18,22 @@ page 50100 "Test RecordID"
     (page_keyword)
     (integer)
     (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (variable_declaration
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (variable_declaration
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (variable_declaration
-        (identifier)
-        (type_specification
-          (basic_type))))))
+    (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))))))

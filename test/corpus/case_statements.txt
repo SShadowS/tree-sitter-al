@@ -28,42 +28,43 @@ table 50001 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            body: (code_block
-              (begin_keyword)
-              (assignment_statement
-                left: (identifier)
-                right: (integer))
-              (assignment_statement
-                left: (identifier)
-                right: (integer))
-              (end_keyword)))
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            body: (code_block
-              (begin_keyword)
-              (assignment_statement
-                left: (identifier)
-                right: (integer))
-              (assignment_statement
-                left: (identifier)
-                right: (integer))
-              (end_keyword))))
-        (end_keyword)))))
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              body: (code_block
+                (begin_keyword)
+                (assignment_statement
+                  left: (identifier)
+                  right: (integer))
+                (assignment_statement
+                  left: (identifier)
+                  right: (integer))
+                (end_keyword)))
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              body: (code_block
+                (begin_keyword)
+                (assignment_statement
+                  left: (identifier)
+                  right: (integer))
+                (assignment_statement
+                  left: (identifier)
+                  right: (integer))
+                (end_keyword))))
+          (end_keyword))))))
 
 ==================
 Case with string literals
@@ -89,26 +90,27 @@ table 50002 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (string_literal)
-            body: (assignment_statement
-              left: (identifier)
-              right: (integer)))
-          (case_branch
-            pattern: (string_literal)
-            body: (assignment_statement
-              left: (identifier)
-              right: (integer))))
-        (end_keyword)))))
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (string_literal)
+              body: (assignment_statement
+                left: (identifier)
+                right: (integer)))
+            (case_branch
+              pattern: (string_literal)
+              body: (assignment_statement
+                left: (identifier)
+                right: (integer))))
+          (end_keyword))))))
 
 ==================
 Case with multiple patterns per branch
@@ -137,45 +139,46 @@ table 50003 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            body: (assignment_statement
-              left: (identifier)
-              right: (integer)))
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            body: (code_block
-              (begin_keyword)
-              (assignment_statement
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              body: (assignment_statement
                 left: (identifier)
-                right: (integer))
-              (assignment_statement
-                left: (identifier)
-                right: (string_literal))
-              (end_keyword))))
-        (end_keyword)))))
+                right: (integer)))
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              body: (code_block
+                (begin_keyword)
+                (assignment_statement
+                  left: (identifier)
+                  right: (integer))
+                (assignment_statement
+                  left: (identifier)
+                  right: (string_literal))
+                (end_keyword))))
+          (end_keyword))))))
 
 ==================
 Case with else clause
@@ -203,31 +206,32 @@ table 50004 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (string_literal)
-            body: (assignment_statement
-              left: (identifier)
-              right: (integer)))
-          (case_branch
-            pattern: (string_literal)
-            body: (assignment_statement
-              left: (identifier)
-              right: (integer)))
-          (case_else_branch
-            (else_keyword)
-            (assignment_statement
-              left: (identifier)
-              right: (integer))))
-        (end_keyword)))))
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (string_literal)
+              body: (assignment_statement
+                left: (identifier)
+                right: (integer)))
+            (case_branch
+              pattern: (string_literal)
+              body: (assignment_statement
+                left: (identifier)
+                right: (integer)))
+            (case_else_branch
+              (else_keyword)
+              (assignment_statement
+                left: (identifier)
+                right: (integer))))
+          (end_keyword))))))
 
 ==================
 Case with else block
@@ -255,31 +259,32 @@ table 50005 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            body: (assignment_statement
-              left: (identifier)
-              right: (integer)))
-          (case_else_branch
-            (else_keyword)
-            (code_block
-              (begin_keyword)
-              (assignment_statement
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              body: (assignment_statement
                 left: (identifier)
-                right: (integer))
-              (assignment_statement
-                left: (identifier)
-                right: (string_literal))
-              (end_keyword))))
-        (end_keyword)))))
+                right: (integer)))
+            (case_else_branch
+              (else_keyword)
+              (code_block
+                (begin_keyword)
+                (assignment_statement
+                  left: (identifier)
+                  right: (integer))
+                (assignment_statement
+                  left: (identifier)
+                  right: (string_literal))
+                (end_keyword))))
+          (end_keyword))))))

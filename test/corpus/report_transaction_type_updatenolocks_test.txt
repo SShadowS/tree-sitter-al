@@ -26,28 +26,31 @@ report 50100 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (trigger_declaration
-          (trigger_keyword)
-          name: (identifier)
-          (code_block
-            (begin_keyword)
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))
-            (end_keyword)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (trigger_declaration
+                (trigger_keyword)
+                name: (identifier)
+                body: (code_block
+                  (begin_keyword)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal)))
+                  (end_keyword))))))))))
 
 ================================================================================
 Report with various TransactionType values
@@ -80,27 +83,31 @@ report 50104 "Case Insensitive"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier)))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))))
   (report_declaration
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier)))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))))
   (report_declaration
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier)))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))))
   (report_declaration
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier)))))

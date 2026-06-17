@@ -23,22 +23,26 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (quoted_identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (quoted_identifier))
-          (property
-            name: (property_name)
-            value: (table_relation_value
-              (table_relation_expression
-                (simple_table_relation
-                  table: (identifier)
-                  table: (quoted_identifier))))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (quoted_identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          table: (identifier)
+                          table: (quoted_identifier))))))))))))))
 
 ================================================================================
 StyleExpr with member expression
@@ -65,22 +69,26 @@ page 50101 "Test Page 2"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (identifier))
-          (property
-            name: (property_name)
-            value: (table_relation_value
-              (table_relation_expression
-                (simple_table_relation
-                  table: (identifier)
-                  table: (identifier))))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (table_relation_value
+                      (table_relation_expression
+                        (simple_table_relation
+                          table: (identifier)
+                          table: (identifier))))))))))))))
 
 ================================================================================
 StyleExpr with complex expressions
@@ -115,48 +123,54 @@ page 50102 "Test Page 3"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (identifier))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list)))))
-        (page_field
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (identifier))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (integer)))))
-        (page_field
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (identifier))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (member_expression
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (member_expression
                   object: (identifier)
                   member: (identifier))
-                operator: (comparison_operator)
-                right: (qualified_enum_value
-                  enum_type: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  value: (identifier))))))))))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (call_expression
+                        function: (identifier)
+                        arguments: (argument_list))))))
+              (page_field
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (integer))))))
+              (page_field
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (member_expression
+                          object: (identifier)
+                          member: (identifier))
+                        operator: (comparison_operator)
+                        right: (qualified_enum_value
+                          enum_type: (member_expression
+                            object: (identifier)
+                            member: (identifier))
+                          value: (identifier))))))))))))))

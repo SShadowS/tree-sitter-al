@@ -33,49 +33,52 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (attribute_item
-        attribute: (attribute_content
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (procedure
+          (procedure_keyword)
           name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)
-              (string_literal)))))
+          body: (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))
+        (preproc_endif
+          (preproc_close)))
       (procedure
         (procedure_keyword)
         name: (identifier)
-        (code_block
+        body: (code_block
+          (begin_keyword)
           (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal)))))
-      (preproc_endif
-        (preproc_close)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))))
+              (string_literal)))
+          (end_keyword))))))
 
 ================================================================================
 Table with multiple preprocessor conditional procedures
@@ -117,100 +120,101 @@ table 50101 "VAT Amount Line"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (attribute_item
-        attribute: (attribute_content
+    body: (object_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (procedure
+          (procedure_keyword)
           name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)
-              (string_literal)))))
+          (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (code_type
+                  length: (integer))))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          body: (code_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list))
+            (assignment_statement
+              left: (member_expression
+                object: (identifier)
+                member: (quoted_identifier))
+              right: (identifier))
+            (assignment_statement
+              left: (member_expression
+                object: (identifier)
+                member: (quoted_identifier))
+              right: (identifier))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list))))
+        (preproc_endif
+          (preproc_close)))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          body: (code_block
+            (assignment_statement
+              left: (quoted_identifier)
+              right: (identifier))
+            (assignment_statement
+              left: (quoted_identifier)
+              right: (identifier))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))))
+        (preproc_endif
+          (preproc_close)))
       (procedure
         (procedure_keyword)
         name: (identifier)
-        (parameter_list
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                length: (integer))))
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list))
-          (assignment_statement
-            left: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))
-            right: (identifier))
-          (assignment_statement
-            left: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))
-            right: (identifier))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list))))
-      (preproc_endif
-        (preproc_close)))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (attribute_item
-        attribute: (attribute_content
-          name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)
-              (string_literal)))))
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (parameter_list
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (code_block
-          (assignment_statement
-            left: (quoted_identifier)
-            right: (identifier))
-          (assignment_statement
-            left: (quoted_identifier)
-            right: (identifier))
+        body: (code_block
+          (begin_keyword)
           (call_expression
             function: (identifier)
-            arguments: (argument_list))))
-      (preproc_endif
-        (preproc_close)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))))
+            arguments: (argument_list
+              (string_literal)))
+          (end_keyword))))))
 
 ================================================================================
 Table with preprocessor else branch procedures
@@ -239,36 +243,37 @@ table 50102 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))))
-      (preproc_else)
-      (attribute_item
-        attribute: (attribute_content
+    body: (object_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
           name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)
-              (string_literal)))))
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))))
-      (preproc_endif
-        (preproc_close)))))
+          body: (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))
+        (preproc_else)
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))
+        (preproc_endif
+          (preproc_close))))))
 
 ================================================================================
 Table with mixed procedures and triggers in preprocessor
@@ -310,52 +315,55 @@ table 50103 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (trigger_declaration
+          (trigger_keyword)
+          name: (identifier)
+          body: (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list))))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (comment)))
+        (preproc_endif
+          (preproc_close)))
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list))))
-      (attribute_item
-        attribute: (attribute_content
-          name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)
-              (string_literal)))))
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (code_block
-          (comment)))
-      (preproc_endif
-        (preproc_close)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (boolean))
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (boolean))
+          (end_keyword))))))
 
 ================================================================================
 Table with procedure without attributes in preprocessor
@@ -378,18 +386,19 @@ table 50104 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (code_block
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))))
-      (preproc_endif
-        (preproc_close)))))
+    body: (object_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))
+        (preproc_endif
+          (preproc_close))))))

@@ -13,13 +13,14 @@ interface "Test Interface"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (code_type
-            length: (integer)))))))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (code_type
+              length: (integer))))))))
 
 ================================================================================
 Interface procedures with various typed returns including lengths
@@ -42,71 +43,72 @@ interface "Reminder Action"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (code_type
-            length: (integer)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (text_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer))))
-        (parameter
-          name: (identifier)
-          type: (type_specification
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
             (code_type
               length: (integer)))))
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (text_type
-            length: (integer)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (code_type
-            length: (integer)))))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (text_type))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (basic_type))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (text_type
+              length: (integer)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (code_type
+              length: (integer))))))))
 
 ================================================================================
 Interface with named return values and typed lengths
@@ -125,34 +127,35 @@ interface "Complex Interface"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (code_type
-            length: (integer)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (text_type
-            length: (integer)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix
-        return_value: (identifier)
-        return_type: (type_specification
-          (basic_type))))))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
+            (code_type
+              length: (integer)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
+            (text_type
+              length: (integer)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix
+          return_value: (identifier)
+          return_type: (type_specification
+            (basic_type)))))))
 
 ================================================================================
 Interface with various AL types including arrays
@@ -173,38 +176,39 @@ interface "Type Examples"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (code_type
-            length: (integer)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (text_type
-            length: (integer)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (option_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (identifier))))))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (code_type
+              length: (integer)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (text_type
+              length: (integer)))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (basic_type))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (option_type))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (identifier)))))))
 
 ================================================================================
 Real-world ReminderAction interface
@@ -246,85 +250,86 @@ interface "Reminder Action"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (code_type
-            length: (integer)))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (text_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer))))
-        (parameter
-          name: (identifier)
-          type: (type_specification
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
             (code_type
               length: (integer)))))
-      (interface_procedure_suffix
-        return_type: (type_specification
-          (basic_type))))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix
+          return_type: (type_specification
+            (text_type))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))
+        (interface_procedure_suffix
+          return_type: (type_specification
             (basic_type))))
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))

@@ -24,18 +24,22 @@ xmlport 1501 "Test XMLPort"
     (xmlport_keyword)
     (integer)
     (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        (identifier)
-        (xmlport_attribute
-          (identifier)
-          (property
-            (property_name)
-            (identifier))
-          (property
-            (property_name)
-            (identifier)))))))
+    (object_body
+      (schema_section
+        (schema_keyword)
+        (schema_body
+          (xmlport_element
+            (identifier)
+            (xmlport_body
+              (xmlport_attribute
+                (identifier)
+                (object_body
+                  (property
+                    (property_name)
+                    (identifier))
+                  (property
+                    (property_name)
+                    (identifier)))))))))))
 
 ================================================================================
 XMLPort textattribute with TextType = Text
@@ -62,15 +66,19 @@ xmlport 50100 "Simple XMLPort"
     (xmlport_keyword)
     (integer)
     (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        (identifier)
-        (xmlport_attribute
-          (identifier)
-          (property
-            (property_name)
-            (identifier)))))))
+    (object_body
+      (schema_section
+        (schema_keyword)
+        (schema_body
+          (xmlport_element
+            (identifier)
+            (xmlport_body
+              (xmlport_attribute
+                (identifier)
+                (object_body
+                  (property
+                    (property_name)
+                    (identifier)))))))))))
 
 ================================================================================
 XMLPort textattribute with multiple properties including TextType
@@ -103,24 +111,29 @@ xmlport 50101 "Complex XMLPort"
     (xmlport_keyword)
     (integer)
     (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        (identifier)
-        (xmlport_element
-          (identifier)
-          (identifier)
-          (xmlport_attribute
+    (object_body
+      (schema_section
+        (schema_keyword)
+        (schema_body
+          (xmlport_element
             (identifier)
-            (property
-              (property_name)
-              (string_literal))
-            (property
-              (property_name)
-              (identifier))
-            (property
-              (property_name)
-              (identifier))
-            (property
-              (property_name)
-              (string_literal))))))))
+            (xmlport_body
+              (xmlport_element
+                (identifier)
+                (identifier)
+                (xmlport_body
+                  (xmlport_attribute
+                    (identifier)
+                    (object_body
+                      (property
+                        (property_name)
+                        (string_literal))
+                      (property
+                        (property_name)
+                        (identifier))
+                      (property
+                        (property_name)
+                        (identifier))
+                      (property
+                        (property_name)
+                        (string_literal)))))))))))))

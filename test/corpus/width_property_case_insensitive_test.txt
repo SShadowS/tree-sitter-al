@@ -30,30 +30,35 @@ page 6000 "Profile Import Diagnostics"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (repeater_section
-          (repeater_keyword)
-          name: (identifier)
-          (page_field
-            name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (identifier))
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (integer))
-            (property
-              name: (property_name)
-              value: (string_literal))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (page_field
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (integer))
+                      (property
+                        name: (property_name)
+                        value: (string_literal)))))))))))))
 
 ================================================================================
 Width property with mixed case
@@ -88,28 +93,34 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (integer)))
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (integer)))
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (integer)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (integer))))
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (integer))))
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (integer)))))))))))
 
 ================================================================================
 Width as variable name
@@ -134,26 +145,27 @@ codeunit 50100 "Layout Manager"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        type: (type_specification
-          (basic_type)))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type))))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      return_type: (type_specification
-        (basic_type))
-      (code_block
-        (begin_keyword)
-        (exit_statement
-          (exit_keyword)
-          return_value: (multiplicative_expression
-            left: (identifier)
-            right: (identifier)))
-        (end_keyword)))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          (exit_statement
+            (exit_keyword)
+            return_value: (multiplicative_expression
+              left: (identifier)
+              right: (identifier)))
+          (end_keyword))))))

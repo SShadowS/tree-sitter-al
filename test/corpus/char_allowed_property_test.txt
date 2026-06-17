@@ -26,22 +26,26 @@ page 50001 "Test Page"
     (page_keyword)
     (integer)
     (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          (identifier)
-          (identifier)
-          (property
-            (property_name)
-            (identifier))
-          (property
-            (property_name)
-            (string_literal))
-          (property
-            (property_name)
-            (string_literal))
-          (property
-            (property_name)
-            (string_literal)))))))
+    (object_body
+      (layout_section
+        (layout_keyword)
+        (layout_body
+          (area_section
+            (area_keyword)
+            (layout_body
+              (page_field
+                (identifier)
+                (identifier)
+                (object_body
+                  (property
+                    (property_name)
+                    (identifier))
+                  (property
+                    (property_name)
+                    (string_literal))
+                  (property
+                    (property_name)
+                    (string_literal))
+                  (property
+                    (property_name)
+                    (string_literal)))))))))))

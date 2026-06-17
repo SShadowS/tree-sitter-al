@@ -34,33 +34,37 @@ xmlport 1 "Consolidation Import/Export"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (identifier))
-        (xmlport_attribute
-          name: (identifier)
-          (trigger_declaration
-            (trigger_keyword)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
             name: (identifier)
-            (code_block
-              (begin_keyword)
-              (comment)
-              (end_keyword))))
-        (xmlport_attribute
-          name: (identifier))))))
+            body: (xmlport_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (identifier))
+              (xmlport_attribute
+                name: (identifier)
+                body: (object_body
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (comment)
+                      (end_keyword)))))
+              (xmlport_attribute
+                name: (identifier)))))))))
 
 ================================================================================
 XMLPort text attribute with multiple triggers and properties
@@ -97,30 +101,34 @@ xmlport 50100 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (xmlport_attribute
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (trigger_declaration
-            (trigger_keyword)
+    body: (object_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
             name: (identifier)
-            (code_block
-              (begin_keyword)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list))
-              (end_keyword)))
-          (trigger_declaration
-            (trigger_keyword)
-            name: (identifier)
-            (code_block
-              (begin_keyword)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list))
-              (end_keyword))))))))
+            body: (xmlport_body
+              (xmlport_attribute
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (call_expression
+                        function: (identifier)
+                        arguments: (argument_list))
+                      (end_keyword)))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (call_expression
+                        function: (identifier)
+                        arguments: (argument_list))
+                      (end_keyword))))))))))))

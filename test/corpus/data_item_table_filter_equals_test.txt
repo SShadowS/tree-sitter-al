@@ -36,58 +36,62 @@ query 500 "Item By Lot No Filter"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (link_value_list
-            (link_value
-              field: (quoted_identifier)
-              (filter_keyword)
-              value: (filter_value
-                (string_literal)))
-            (link_value
-              field: (identifier)
-              (filter_keyword)
-              value: (filter_value
-                (boolean)))))
-        (query_filter
-          (filter_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))
-        (query_filter
-          (filter_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (link_value_list
-              (link_value
-                field: (identifier)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (link_value
+                    field: (quoted_identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (string_literal)))
+                  (link_value
+                    field: (identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (boolean)))))
+              (query_filter
                 (filter_keyword)
-                value: (filter_value
-                  (integer)))))
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)))))
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))
 
 ================================================================================
 DataItemTableFilter with various filter expressions
@@ -130,71 +134,76 @@ query 501 "Complex Filters"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (link_value_list
-            (link_value
-              field: (identifier)
-              (filter_keyword)
-              value: (filter_value
-                (integer)))
-            (link_value
-              field: (identifier)
-              (filter_keyword)
-              value: (filter_value
-                (boolean)))))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier)))
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (link_value_list
-            (link_value
-              field: (identifier)
-              (filter_keyword)
-              value: (filter_value
-                (string_literal)))
-            (link_value
-              field: (quoted_identifier)
-              (filter_keyword)
-              value: (filter_value
-                (integer)))))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier)))
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (link_value_list
-            (link_value
-              field: (identifier)
-              (filter_keyword)
-              value: (filter_value
-                (identifier)))
-            (link_value
-              field: (identifier)
-              (filter_keyword)
-              value: (filter_value
-                (integer)))))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))))))
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (link_value
+                    field: (identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (integer)))
+                  (link_value
+                    field: (identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (boolean)))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))))
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (link_value
+                    field: (identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (string_literal)))
+                  (link_value
+                    field: (quoted_identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (integer)))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))))
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (link_value
+                    field: (identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (identifier)))
+                  (link_value
+                    field: (identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (integer)))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier)))))))))
 
 ================================================================================
 DataItemTableFilter with single equals filter
@@ -223,25 +232,28 @@ query 502 "Simple Equals Filter"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (link_value_list
-            (link_value
-              field: (identifier)
-              (filter_keyword)
-              value: (filter_value
-                (boolean)))))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (identifier))))))
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (link_value_list
+                  (link_value
+                    field: (identifier)
+                    (filter_keyword)
+                    value: (filter_value
+                      (boolean)))))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (identifier)))))))))

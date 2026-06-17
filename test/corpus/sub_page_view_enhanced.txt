@@ -26,29 +26,33 @@ pageextension 123 TestExt extends TestPage
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    (layout_section
-      (layout_keyword)
-      (addlast_modification
-        target: (identifier)
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (sorting_value
-              (quoted_identifier)
-              (quoted_identifier)
-              (where_clause
-                (where_conditions
-                  (where_condition
-                    field: (quoted_identifier)
-                    value: (integer))
-                  (where_condition
-                    field: (quoted_identifier)
-                    (filter_keyword)
-                    value: (filter_value
-                      (string_literal))))))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addlast_modification
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (sorting_value
+                      (quoted_identifier)
+                      (quoted_identifier)
+                      (where_clause
+                        (where_conditions
+                          (where_condition
+                            field: (quoted_identifier)
+                            value: (integer))
+                          (where_condition
+                            field: (quoted_identifier)
+                            (filter_keyword)
+                            value: (filter_value
+                              (string_literal))))))))))))))))
 
 ================================================================================
 SubPageView with simple sorting only
@@ -77,19 +81,23 @@ pageextension 456 SimpleExt extends SimplePage
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    (layout_section
-      (layout_keyword)
-      (addlast_modification
-        target: (identifier)
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (sorting_value
-              (quoted_identifier)
-              (quoted_identifier))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addlast_modification
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (sorting_value
+                      (quoted_identifier)
+                      (quoted_identifier))))))))))))
 
 ================================================================================
 SubPageView with where clause only
@@ -118,26 +126,30 @@ pageextension 789 WhereExt extends WherePage
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    (layout_section
-      (layout_keyword)
-      (addafter_modification
-        target: (identifier)
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  value: (identifier))
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (identifier)))))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addafter_modification
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (where_clause
+                      (where_conditions
+                        (where_condition
+                          field: (quoted_identifier)
+                          value: (identifier))
+                        (where_condition
+                          field: (quoted_identifier)
+                          (filter_keyword)
+                          value: (filter_value
+                            (identifier)))))))))))))))
 
 ================================================================================
 SubPageView with string literal value
@@ -166,17 +178,21 @@ pageextension 101 StringExt extends StringPage
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    (layout_section
-      (layout_keyword)
-      (addlast_modification
-        target: (identifier)
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addlast_modification
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))
 
 ================================================================================
 SubPageView with identifier value
@@ -205,14 +221,18 @@ pageextension 202 IdentExt extends IdentPage
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    (layout_section
-      (layout_keyword)
-      (addlast_modification
-        target: (identifier)
-        (part_section
-          (part_keyword)
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (addlast_modification
+            target: (identifier)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))

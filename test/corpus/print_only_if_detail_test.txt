@@ -24,19 +24,22 @@ report 50000 "Test Report"
     (report_keyword)
     (integer)
     (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        (identifier)
-        (identifier)
-        (property
-          (property_name)
-          (boolean))
-        (report_column
-          (column_keyword)
-          (identifier)
-          (quoted_identifier))))))
+    (object_body
+      (dataset_section
+        (dataset_keyword)
+        (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            (identifier)
+            (identifier)
+            (report_body
+              (property
+                (property_name)
+                (boolean))
+              (report_column
+                (column_keyword)
+                (identifier)
+                (quoted_identifier)))))))))
 
 ================================================================================
 Report dataitem with PrintOnlyIfDetail false
@@ -65,26 +68,29 @@ report 50001 "Test Report 2"
     (report_keyword)
     (integer)
     (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        (identifier)
-        (quoted_identifier)
-        (property
-          (property_name)
-          (boolean))
-        (property
-          (property_name)
-          (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))))
-        (report_column
-          (column_keyword)
-          (identifier)
-          (quoted_identifier))))))
+    (object_body
+      (dataset_section
+        (dataset_keyword)
+        (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            (identifier)
+            (quoted_identifier)
+            (report_body
+              (property
+                (property_name)
+                (boolean))
+              (property
+                (property_name)
+                (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))))
+              (report_column
+                (column_keyword)
+                (identifier)
+                (quoted_identifier)))))))))
 
 ================================================================================
 Report dataitem with PrintOnlyIfDetail case variations
@@ -114,29 +120,33 @@ report 50002 "Test Report 3"
     (report_keyword)
     (integer)
     (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        (identifier)
-        (identifier)
-        (property
-          (property_name)
-          (boolean))
-        (report_dataitem
-          (dataitem_keyword)
-          (identifier)
-          (quoted_identifier)
-          (property
-            (property_name)
-            (boolean))
-          (property
-            (property_name)
-            (property_expression
-              (comparison_expression
+    (object_body
+      (dataset_section
+        (dataset_keyword)
+        (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            (identifier)
+            (identifier)
+            (report_body
+              (property
+                (property_name)
+                (boolean))
+              (report_dataitem
+                (dataitem_keyword)
+                (identifier)
                 (quoted_identifier)
-                (comparison_operator)
-                (call_expression
-                  (identifier)
-                  (argument_list
-                    (quoted_identifier)))))))))))
+                (report_body
+                  (property
+                    (property_name)
+                    (boolean))
+                  (property
+                    (property_name)
+                    (property_expression
+                      (comparison_expression
+                        (quoted_identifier)
+                        (comparison_operator)
+                        (call_expression
+                          (identifier)
+                          (argument_list
+                            (quoted_identifier)))))))))))))))

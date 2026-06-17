@@ -18,17 +18,18 @@ codeunit 50000 "Test Empty Attributes"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attribute_item
-      attribute: (attribute_content
+    body: (object_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments)))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (comment)
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          (end_keyword))))))
 
 ================================================================================
 Multiple attributes with empty and non-empty arguments
@@ -51,32 +52,33 @@ codeunit 50001 "Test Mixed Attributes"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attribute_item
-      attribute: (attribute_content
+    body: (object_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments)))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier))
+              (string_literal)
+              (string_literal)
+              (boolean)
+              (boolean)))))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments)))
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            (database_reference
-              keyword: (object_type_keyword)
-              table_name: (quoted_identifier))
-            (string_literal)
-            (string_literal)
-            (boolean)
-            (boolean)))))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (comment)
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          (end_keyword))))))
 
 ================================================================================
 NonDebuggable with empty arguments
@@ -98,14 +100,15 @@ codeunit 50002 "Test NonDebuggable"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attribute_item
-      attribute: (attribute_content
+    body: (object_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments)))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (comment)
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          (end_keyword))))))

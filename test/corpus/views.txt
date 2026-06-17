@@ -19,8 +19,10 @@ page 50100 MyPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (views_section
-      (views_keyword)
-      (view_definition
-        (view_keyword)
-        name: (identifier)))))
+    body: (object_body
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (view_definition
+            (view_keyword)
+            name: (identifier)))))))

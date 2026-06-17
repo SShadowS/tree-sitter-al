@@ -15,15 +15,16 @@ entitlement "Azure AD Application Api"
   (entitlement_declaration
     (entitlement_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier)))))
 
 ================================================================================
 Entitlement with PerUserServicePlan
@@ -42,15 +43,16 @@ entitlement "Dynamics 365 Business Central Essentials"
   (entitlement_declaration
     (entitlement_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier)))))
 
 ================================================================================
 Entitlement with namespace
@@ -77,15 +79,16 @@ entitlement "Internal Administrator API"
   (entitlement_declaration
     (entitlement_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier)))))
 
 ================================================================================
 Entitlement with multiple ObjectEntitlements
@@ -104,21 +107,22 @@ entitlement "Premium Features"
   (entitlement_declaration
     (entitlement_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (quoted_identifier))
-        (option_member
-          (quoted_identifier))
-        (option_member
-          (quoted_identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (quoted_identifier)))))))
 
 ================================================================================
 Entitlement with case variations
@@ -137,15 +141,16 @@ ENTITLEMENT "Test Entitlement"
   (entitlement_declaration
     (entitlement_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 Entitlement with universal properties
@@ -168,24 +173,25 @@ entitlement "Obsolete Entitlement"
   (entitlement_declaration
     (entitlement_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier)))))

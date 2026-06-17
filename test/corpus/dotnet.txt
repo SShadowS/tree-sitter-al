@@ -17,11 +17,13 @@ dotnet
 (source_file
   (dotnet_declaration
     (dotnet_keyword)
-    (assembly_declaration
-      name: (quoted_identifier)
-      (type_declaration
-        dotnet_type: (quoted_identifier)
-        al_name: (quoted_identifier)))))
+    body: (dotnet_body
+      (assembly_declaration
+        name: (quoted_identifier)
+        body: (assembly_body
+          (type_declaration
+            dotnet_type: (quoted_identifier)
+            al_name: (quoted_identifier)))))))
 
 ========================================================================
 DotNet assembly with dotnet name
@@ -39,5 +41,6 @@ dotnet
 (source_file
   (dotnet_declaration
     (dotnet_keyword)
-    (assembly_declaration
-      name: (dotnet_assembly_name))))
+    body: (dotnet_body
+      (assembly_declaration
+        name: (dotnet_assembly_name)))))

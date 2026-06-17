@@ -17,20 +17,22 @@ codeunit 50000 X
     (codeunit_keyword)
     (integer)
     (identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          (member_expression
-            (keyword_identifier (codeunit_keyword))
-            (identifier))
-          (argument_list
-            (database_reference
-              (object_type_keyword)
-              (integer))))
-        (end_keyword)))))
+    (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (call_expression
+            (member_expression
+              (keyword_identifier
+                (codeunit_keyword))
+              (identifier))
+            (argument_list
+              (database_reference
+                (object_type_keyword)
+                (integer))))
+          (end_keyword))))))
 
 ==================
 database_reference: numeric Page id
@@ -51,20 +53,22 @@ codeunit 50001 Y
     (codeunit_keyword)
     (integer)
     (identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          (member_expression
-            (keyword_identifier (page_keyword))
-            (identifier))
-          (argument_list
-            (database_reference
-              (object_type_keyword)
-              (integer))))
-        (end_keyword)))))
+    (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (call_expression
+            (member_expression
+              (keyword_identifier
+                (page_keyword))
+              (identifier))
+            (argument_list
+              (database_reference
+                (object_type_keyword)
+                (integer))))
+          (end_keyword))))))
 
 ==================
 database_reference: numeric Report id
@@ -85,20 +89,22 @@ codeunit 50002 Z
     (codeunit_keyword)
     (integer)
     (identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          (member_expression
-            (keyword_identifier (report_keyword))
-            (identifier))
-          (argument_list
-            (database_reference
-              (object_type_keyword)
-              (integer))))
-        (end_keyword)))))
+    (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (call_expression
+            (member_expression
+              (keyword_identifier
+                (report_keyword))
+              (identifier))
+            (argument_list
+              (database_reference
+                (object_type_keyword)
+                (integer))))
+          (end_keyword))))))
 
 ==================
 database_reference: numeric Database id
@@ -121,23 +127,24 @@ codeunit 50003 W
     (codeunit_keyword)
     (integer)
     (identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (call_expression
-          (member_expression
+    (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
             (identifier)
-            (identifier))
-          (argument_list
-            (database_reference
-              (object_type_keyword)
-              (integer))))
-        (end_keyword)))))
+            (type_specification
+              (basic_type))))
+        (code_block
+          (begin_keyword)
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (argument_list
+              (database_reference
+                (object_type_keyword)
+                (integer))))
+          (end_keyword))))))

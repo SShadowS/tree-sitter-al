@@ -27,30 +27,34 @@ page 12345 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (unary_expression
-                operand: (identifier))))
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (unary_expression
+                        operand: (identifier))))
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))
 
 ================================================================================
 StyleExpr with 'not' lowercase unary expression
@@ -77,18 +81,22 @@ page 23456 LowerCasePage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (property_expression
-              (unary_expression
-                operand: (identifier)))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (unary_expression
+                        operand: (identifier)))))))))))))
 
 ================================================================================
 StyleExpr with minus unary expression
@@ -115,18 +123,22 @@ page 34567 MinusPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (property_expression
-              (unary_expression
-                operand: (identifier)))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (unary_expression
+                        operand: (identifier)))))))))))))
 
 ================================================================================
 StyleExpr with boolean literal (existing functionality)
@@ -153,16 +165,20 @@ page 45678 BooleanPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (boolean)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean)))))))))))
 
 ================================================================================
 StyleExpr with identifier (existing functionality)
@@ -189,13 +205,17 @@ page 56789 IdentifierPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))

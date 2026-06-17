@@ -17,20 +17,21 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (text_type)))
-      (variable_declaration
-        name: (identifier)
-        type: (basic_type)
-        value: (string_literal))
-      (variable_declaration
-        name: (identifier)
-        type: (basic_type)
-        value: (string_literal)))))
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (basic_type)
+          value: (string_literal))
+        (variable_declaration
+          name: (identifier)
+          type: (basic_type)
+          value: (string_literal))))))
 
 ================================================================================
 Contextual keywords in codeunit var section with mixed types
@@ -54,39 +55,40 @@ codeunit 50100 "Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (text_type)))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (text_type
-            length: (integer))))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (option_type
-            (option_member_list
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))))))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type)))
-      (variable_declaration
-        name: (identifier)
-        type: (basic_type)
-        value: (string_literal))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (object_reference_type
-            object_type: (enum_keyword)
-            reference: (quoted_identifier)))))))
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type
+              length: (integer))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (option_type
+              (option_member_list
+                (option_member
+                  (identifier))
+                (option_member
+                  (identifier))
+                (option_member
+                  (identifier))))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (basic_type)
+          value: (string_literal))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (object_reference_type
+              object_type: (enum_keyword)
+              reference: (quoted_identifier))))))))

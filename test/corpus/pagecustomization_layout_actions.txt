@@ -26,18 +26,22 @@ pagecustomization "Business Manager Evaluation RC" customizes "Business Manager 
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (modify_modification
-        target: (identifier)
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (modify_modification
-        target: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (boolean))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (modify_modification
+            target: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (modify_modification
+            target: (quoted_identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
 
 ================================================================================
 Page customization with actions section
@@ -71,23 +75,28 @@ pagecustomization "My Page Customization" customizes "Customer List"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    (actions_section
-      (actions_keyword)
-      (modify_action_modification
-        target: (identifier)
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (addafter_action_modification
-        target: (identifier)
-        (action_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (modify_action_modification
+            target: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (addafter_action_modification
+            target: (identifier)
+            body: (action_body
+              (action_declaration
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))
 
 ================================================================================
 Page customization with layout and actions sections
@@ -134,25 +143,30 @@ pagecustomization "Business Manager Evaluation RC" customizes "Business Manager 
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (modify_modification
-        target: (identifier)
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (modify_modification
-        target: (identifier)
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (modify_modification
-        target: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (boolean))))
-    (actions_section
-      (actions_keyword))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (modify_modification
+            target: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (modify_modification
+            target: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (modify_modification
+            target: (quoted_identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))))
+      (actions_section
+        (actions_keyword)))))
 
 ================================================================================
 Page customization with views section
@@ -182,24 +196,28 @@ pagecustomization "Sales Order Processor Views" customizes "Sales Order List"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    (views_section
-      (views_keyword)
-      (addfirst_views_modification
-        (view_definition
-          (view_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (order_by_list
-              (order_by_item
-                (quoted_identifier))))
-          (property
-            name: (property_name)
-            value: (where_clause
-              (where_conditions
-                (where_condition
-                  field: (identifier)
-                  value: (identifier))))))))))
+    body: (object_body
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (addfirst_views_modification
+            body: (views_mod_body
+              (view_definition
+                (view_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (order_by_list
+                      (order_by_item
+                        (quoted_identifier))))
+                  (property
+                    name: (property_name)
+                    value: (where_clause
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          value: (identifier))))))))))))))

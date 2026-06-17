@@ -20,27 +20,28 @@ codeunit 123 "Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (for_statement
-          (for_keyword)
-          variable: (identifier)
-          start: (integer)
-          direction: (downto_keyword)
-          end: (integer)
-          (do_keyword)
-          body: (assignment_statement
-            left: (identifier)
-            right: (additive_expression
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (for_statement
+            (for_keyword)
+            variable: (identifier)
+            start: (integer)
+            direction: (downto_keyword)
+            end: (integer)
+            (do_keyword)
+            body: (assignment_statement
               left: (identifier)
-              right: (integer))))
-        (end_keyword)))))
+              right: (additive_expression
+                left: (identifier)
+                right: (integer))))
+          (end_keyword))))))

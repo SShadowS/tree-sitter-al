@@ -21,25 +21,28 @@ report 123 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (sorting_value
-            (quoted_identifier)
-            (quoted_identifier)
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (identifier)
-                    (quoted_identifier)))))))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (quoted_identifier)
+                  (quoted_identifier)
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (identifier)
+                          (quoted_identifier))))))))))))))
 
 ================================================================================
 Report dataitem with RequestFilterFields property
@@ -63,21 +66,24 @@ report 123 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier)))))))))))
 
 ================================================================================
 Report dataitem with RequestFilterHeading property
@@ -101,15 +107,18 @@ report 123 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 Report dataitem with all three properties combined
@@ -135,33 +144,36 @@ report 123 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (sorting_value
-            (quoted_identifier)
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (string_literal)))))))
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (quoted_identifier)
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (string_literal)))))))
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 Report dataitem with case variations
@@ -186,19 +198,22 @@ report 123 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))

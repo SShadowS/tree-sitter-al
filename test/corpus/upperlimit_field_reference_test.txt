@@ -34,74 +34,79 @@ table 2632 "Statistical Account"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (aggregate_formula
-            function: (aggregate_function)
-            target: (calc_field_reference
-              (quoted_identifier)
-              (identifier))
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  value: (quoted_identifier))
-                (where_condition
-                  field: (quoted_identifier)
-                  value: (quoted_identifier))))))
-        (property
-          name: (property_name)
-          value: (identifier)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (aggregate_formula
-            function: (aggregate_function)
-            target: (calc_field_reference
-              (quoted_identifier)
-              (identifier))
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  value: (quoted_identifier))
-                (where_condition
-                  field: (quoted_identifier)
-                  value: (quoted_identifier))))))
-        (property
-          name: (property_name)
-          value: (identifier)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (aggregate_formula
-            function: (aggregate_function)
-            target: (calc_field_reference
-              (quoted_identifier)
-              (identifier))
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  value: (quoted_identifier))
-                (where_condition
-                  field: (quoted_identifier)
-                  value: (quoted_identifier))))))
-        (property
-          name: (property_name)
-          value: (identifier))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (identifier))
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))
+                      (where_condition
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))))))
+              (property
+                name: (property_name)
+                value: (identifier))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (identifier))
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))
+                      (where_condition
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))))))
+              (property
+                name: (property_name)
+                value: (identifier))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (identifier))
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))
+                      (where_condition
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))))))
+              (property
+                name: (property_name)
+                value: (identifier)))))))))

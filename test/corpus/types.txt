@@ -25,63 +25,65 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type))))))))
 
 ========================================================================
 Parameterized text and code types
@@ -103,30 +105,32 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (text_type
-            (integer))))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (code_type
-            (integer))))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (text_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (code_type))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (text_type
+                (integer))))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (code_type
+                (integer))))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (text_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (code_type))))))))
 
 ========================================================================
 Record type
@@ -146,20 +150,22 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (record_type
-            (identifier))))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (record_type
-            (quoted_identifier)))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (record_type
+                (identifier))))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (record_type
+                (quoted_identifier)))))))))
 
 ========================================================================
 Object reference types
@@ -180,29 +186,31 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (object_reference_type
-            (codeunit_keyword)
-            (quoted_identifier))))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (object_reference_type
-            (page_keyword)
-            (quoted_identifier))))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (object_reference_type
-            (enum_keyword)
-            (quoted_identifier)))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (object_reference_type
+                (codeunit_keyword)
+                (quoted_identifier))))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (object_reference_type
+                (page_keyword)
+                (quoted_identifier))))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (object_reference_type
+                (enum_keyword)
+                (quoted_identifier)))))))))
 
 ========================================================================
 Array type
@@ -222,26 +230,28 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (array_type
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
             (integer)
+            (identifier)
             (type_specification
-              (basic_type)))))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (array_type
+              (array_type
+                (integer)
+                (type_specification
+                  (basic_type)))))
+          (field_declaration
             (integer)
-            (integer)
+            (identifier)
             (type_specification
-              (text_type
-                (integer)))))))))
+              (array_type
+                (integer)
+                (integer)
+                (type_specification
+                  (text_type
+                    (integer)))))))))))
 
 ========================================================================
 List and Dictionary types
@@ -261,24 +271,26 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (list_type
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (identifier)
             (type_specification
-              (basic_type)))))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (dictionary_type
+              (list_type
+                (type_specification
+                  (basic_type)))))
+          (field_declaration
+            (integer)
+            (identifier)
             (type_specification
-              (text_type))
-            (type_specification
-              (basic_type))))))))
+              (dictionary_type
+                (type_specification
+                  (text_type))
+                (type_specification
+                  (basic_type))))))))))
 
 ========================================================================
 Option type with members
@@ -298,25 +310,27 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (option_type)))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (option_type
-            (option_member_list
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))
-              (option_member
-                (identifier)))))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (option_type)))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
 
 ========================================================================
 Identifier fallback for unknown types
@@ -335,10 +349,12 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type))))))))

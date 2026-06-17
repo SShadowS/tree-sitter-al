@@ -45,59 +45,64 @@ page 50001 "Test Page Actions"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_group_section
-          (group_keyword)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (quoted_identifier))
+                  (action_declaration
+                    name: (identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (keyword_identifier))
+                      (trigger_declaration
+                        (trigger_keyword)
+                        name: (identifier)
+                        body: (code_block
+                          (begin_keyword)
+                          (comment)
+                          (end_keyword)))))))))))
+      (var_section
+        (var_keyword)
+        (variable_declaration
           name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (quoted_identifier))
-          (action_declaration
-            name: (identifier)
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (keyword_identifier))
-            (trigger_declaration
-              (trigger_keyword)
-              name: (identifier)
-              (code_block
-                (begin_keyword)
-                (comment)
-                (end_keyword)))))))
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type)))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type))))))
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))))))

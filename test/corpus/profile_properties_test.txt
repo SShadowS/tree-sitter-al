@@ -15,15 +15,16 @@ profile "SALES AND RELATIONSHIP MANAGER"
   (profile_declaration
     (profile_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (integer))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (integer)))))
 
 ==================
 Profile with Customizations property
@@ -42,19 +43,20 @@ profile "ACCOUNTANT"
   (profile_declaration
     (profile_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (identifier))
-        (option_member
-          (identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (identifier))
+          (option_member
+            (identifier)))))))
 
 ==================
 Profile with mixed case properties
@@ -73,12 +75,13 @@ profile "TEST PROFILE"
   (profile_declaration
     (profile_keyword)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier)))))

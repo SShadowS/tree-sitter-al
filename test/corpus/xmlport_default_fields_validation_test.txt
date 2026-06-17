@@ -29,35 +29,39 @@ xmlport 50000 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (xmlport_element
-          name: (identifier)
-          source: (identifier)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
           (xmlport_element
             name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier)))
-          (xmlport_element
-            name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (identifier))))))))
+            body: (xmlport_body
+              (xmlport_element
+                name: (identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier))))))))))))
 
 ================================================================================
 XMLPort with DefaultFieldsValidation true
@@ -80,13 +84,15 @@ xmlport 50001 "Test XMLPort True"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            name: (identifier)))))))
 
 ================================================================================
 XMLPort from BCPTLogEntries with DefaultFieldsValidation
@@ -124,50 +130,54 @@ xmlport 149000 "BCPT Log Entries"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (xmlport_element
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (sorting_value
-              (quoted_identifier)
-              (quoted_identifier)
-              (quoted_identifier)))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
           (xmlport_element
             name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier)))
-          (xmlport_element
-            name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))))))))
+            body: (xmlport_body
+              (xmlport_element
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (xmlport_body
+                  (property
+                    name: (property_name)
+                    value: (sorting_value
+                      (quoted_identifier)
+                      (quoted_identifier)
+                      (quoted_identifier)))
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))))))))))))

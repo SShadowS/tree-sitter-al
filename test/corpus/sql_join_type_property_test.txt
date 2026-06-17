@@ -32,39 +32,43 @@ query 134 "OCR Vendor Bank Accounts"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (identifier))
-        (query_dataitem
-          (dataitem_keyword)
-          name: (identifier)
-          table_name: (identifier)
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (member_expression
-                  object: (identifier)
-                  member: (quoted_identifier)))))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (query_column
-            (column_keyword)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
             name: (identifier)
-            field_name: (identifier)))))))
+            table_name: (quoted_identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (quoted_identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
 
 ================================================================================
 Query with SqlJoinType LeftOuterJoin
@@ -101,39 +105,43 @@ query 50001 "Customer Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))
-        (query_dataitem
-          (dataitem_keyword)
-          name: (identifier)
-          table_name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (member_expression
-                  object: (identifier)
-                  member: (quoted_identifier)))))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (query_column
-            (column_keyword)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
             name: (identifier)
-            field_name: (identifier)))))))
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (quoted_identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)))))))))))
 
 ================================================================================
 Query with SqlJoinType CrossJoin
@@ -166,27 +174,31 @@ query 50002 "Dimension Cross Join"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (identifier))
-        (query_dataitem
-          (dataitem_keyword)
-          name: (identifier)
-          table_name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (query_column
-            (column_keyword)
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
             name: (identifier)
-            field_name: (quoted_identifier)))))))
+            table_name: (quoted_identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (identifier))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (quoted_identifier)))))))))))
 
 ================================================================================
 Report dataitem with SqlJoinType
@@ -221,36 +233,40 @@ report 50003 "Sales Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier))
-        (report_dataitem
-          (dataitem_keyword)
-          name: (identifier)
-          table_name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (member_expression
-                  object: (identifier)
-                  member: (quoted_identifier)))))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (report_column
-            (column_keyword)
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
             name: (identifier)
-            source: (quoted_identifier)))))))
+            table_name: (identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier))
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (member_expression
+                          object: (identifier)
+                          member: (quoted_identifier)))))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (report_column
+                    (column_keyword)
+                    name: (identifier)
+                    source: (quoted_identifier)))))))))))
 
 ================================================================================
 Mixed case SqlJoinType property
@@ -285,30 +301,36 @@ query 50004 "Test Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (query_dataitem
-          (dataitem_keyword)
-          name: (identifier)
-          table_name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (query_dataitem
-          (dataitem_keyword)
-          name: (identifier)
-          table_name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))
-        (query_dataitem
-          (dataitem_keyword)
-          name: (identifier)
-          table_name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))

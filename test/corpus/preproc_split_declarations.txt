@@ -42,17 +42,18 @@ codeunit 50100 "Test Impl" implements Interface2
       interface: (identifier))
     (preproc_endif
       (preproc_close))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (internal_keyword))))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (internal_keyword))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ========================================================================
 Preprocessor-split enum with different implements clauses
@@ -94,12 +95,13 @@ enum 50100 TestEnum implements Interface2
       interface: (identifier))
     (preproc_endif
       (preproc_close))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)))))
 
 ========================================================================
 Preprocessor-split field section with different names
@@ -132,23 +134,27 @@ page 50100 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (preproc_split_field
-          (preproc_if
-            (preproc_open)
-            condition: (identifier))
-          (pragma)
-          name: (quoted_identifier)
-          source: (identifier)
-          (pragma)
-          (preproc_else)
-          name: (quoted_identifier)
-          source: (identifier)
-          (preproc_endif
-            (preproc_close))
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (preproc_split_field
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (pragma)
+                name: (quoted_identifier)
+                source: (identifier)
+                (pragma)
+                (preproc_else)
+                name: (quoted_identifier)
+                source: (identifier)
+                (preproc_endif
+                  (preproc_close))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))

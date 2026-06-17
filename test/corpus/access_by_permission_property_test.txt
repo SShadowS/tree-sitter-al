@@ -22,22 +22,25 @@ page 123 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (actions_section
-      (actions_keyword)
-      (action_declaration
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (tabledata_permission_list
-            (tabledata_permission
-              table_name: (identifier)
-              permission: (permission_type))))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_declaration
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (tabledata_permission_list
+                  (tabledata_permission
+                    table_name: (identifier)
+                    permission: (permission_type))))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 AccessByPermission property with quoted table name
@@ -63,22 +66,25 @@ page 124 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (actions_section
-      (actions_keyword)
-      (action_declaration
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (tabledata_permission_list
-            (tabledata_permission
-              table_name: (quoted_identifier)
-              permission: (permission_type))))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_declaration
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (tabledata_permission_list
+                  (tabledata_permission
+                    table_name: (quoted_identifier)
+                    permission: (permission_type))))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 AccessByPermission property in field sections
@@ -107,25 +113,29 @@ page 125 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (tabledata_permission_list
-              (tabledata_permission
-                table_name: (quoted_identifier)
-                permission: (permission_type))))
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (tabledata_permission_list
+                      (tabledata_permission
+                        table_name: (quoted_identifier)
+                        permission: (permission_type))))
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))
 
 ================================================================================
 AccessByPermission property with different permission types
@@ -165,45 +175,52 @@ page 126 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (actions_section
-      (actions_keyword)
-      (action_declaration
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (tabledata_permission_list
-            (tabledata_permission
-              table_name: (identifier)
-              permission: (permission_type)))))
-      (action_declaration
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (tabledata_permission_list
-            (tabledata_permission
-              table_name: (identifier)
-              permission: (permission_type)))))
-      (action_declaration
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (tabledata_permission_list
-            (tabledata_permission
-              table_name: (identifier)
-              permission: (permission_type)))))
-      (action_declaration
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (tabledata_permission_list
-            (tabledata_permission
-              table_name: (identifier)
-              permission: (permission_type)))))
-      (action_declaration
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (tabledata_permission_list
-            (tabledata_permission
-              table_name: (identifier)
-              permission: (permission_type))))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_declaration
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (tabledata_permission_list
+                  (tabledata_permission
+                    table_name: (identifier)
+                    permission: (permission_type))))))
+          (action_declaration
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (tabledata_permission_list
+                  (tabledata_permission
+                    table_name: (identifier)
+                    permission: (permission_type))))))
+          (action_declaration
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (tabledata_permission_list
+                  (tabledata_permission
+                    table_name: (identifier)
+                    permission: (permission_type))))))
+          (action_declaration
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (tabledata_permission_list
+                  (tabledata_permission
+                    table_name: (identifier)
+                    permission: (permission_type))))))
+          (action_declaration
+            name: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (tabledata_permission_list
+                  (tabledata_permission
+                    table_name: (identifier)
+                    permission: (permission_type)))))))))))

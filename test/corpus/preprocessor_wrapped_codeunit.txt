@@ -23,14 +23,15 @@ codeunit 50000 "Test Codeunit"
       (codeunit_keyword)
       (integer)
       (quoted_identifier)
-      (property
-        (property_name)
-        (string_literal))
-      (property
-        (property_name)
-        (identifier))
-      (property
-        (property_name)
-        (string_literal)))
+      (object_body
+        (property
+          (property_name)
+          (string_literal))
+        (property
+          (property_name)
+          (identifier))
+        (property
+          (property_name)
+          (string_literal))))
     (preproc_endif
       (preproc_close))))

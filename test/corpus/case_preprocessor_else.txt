@@ -24,35 +24,36 @@ page 50100 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            body: (call_expression
-              function: (identifier)
-              arguments: (argument_list)))
-          (preproc_conditional_case
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (case_else_branch
-              (else_keyword)
-              (call_expression
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              body: (call_expression
                 function: (identifier)
                 arguments: (argument_list)))
-            (preproc_endif
-              (preproc_close))))
-        (end_keyword)))))
+            (preproc_conditional_case
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (case_else_branch
+                (else_keyword)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
 
 ================================================================================
 Complex case with multiple branches and preprocessor else
@@ -89,67 +90,68 @@ codeunit 50100 TestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (preproc_conditional_var
-          (preproc_if
-            (preproc_open)
-            condition: (preproc_not_expression
-              (identifier)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)
-                reference: (identifier)
-                reference: (identifier)
-                reference: (quoted_identifier))))
-          (preproc_endif
-            (preproc_close)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (database_reference
-              keyword: (object_type_keyword)
-              table_name: (quoted_identifier))
-            body: (code_block
-              (begin_keyword)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal)))
-              (end_keyword)))
-          (case_branch
-            pattern: (database_reference
-              keyword: (object_type_keyword)
-              table_name: (quoted_identifier))
-            body: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (preproc_conditional_case
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (preproc_conditional_var
             (preproc_if
               (preproc_open)
               condition: (preproc_not_expression
                 (identifier)))
-            (case_else_branch
-              (else_keyword)
-              (call_expression
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (identifier)
+                  reference: (identifier)
+                  reference: (identifier)
+                  reference: (quoted_identifier))))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier))
+              body: (code_block
+                (begin_keyword)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))
+                (end_keyword)))
+            (case_branch
+              pattern: (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier))
+              body: (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (identifier)
-                  (identifier))))
-            (preproc_endif
-              (preproc_close))))
-        (end_keyword)))))
+                  (string_literal))))
+            (preproc_conditional_case
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (case_else_branch
+                (else_keyword)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (identifier))))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))

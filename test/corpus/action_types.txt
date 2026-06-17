@@ -22,13 +22,16 @@ page 50100 MyPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (actionref_declaration
-          promoted_name: (identifier)
-          action_name: (identifier))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (actionref_declaration
+                promoted_name: (identifier)
+                action_name: (identifier)))))))))
 
 ========================================================================
 Systemaction declaration
@@ -54,12 +57,15 @@ page 50100 MyPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (systemaction_declaration
-          name: (identifier))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (systemaction_declaration
+                name: (identifier)))))))))
 
 ========================================================================
 Customaction declaration
@@ -85,12 +91,15 @@ page 50100 MyPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (customaction_declaration
-          name: (identifier))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (customaction_declaration
+                name: (identifier)))))))))
 
 ========================================================================
 Fileuploadaction declaration
@@ -116,9 +125,12 @@ page 50100 MyPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (fileuploadaction_declaration
-          name: (identifier))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (fileuploadaction_declaration
+                name: (identifier)))))))))

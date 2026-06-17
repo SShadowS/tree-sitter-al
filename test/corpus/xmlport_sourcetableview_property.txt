@@ -34,44 +34,48 @@ xmlport 9611 "Code Coverage Detailed"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (xmlport_element
-          name: (quoted_identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  value: (identifier))
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (integer))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
           (xmlport_element
             name: (identifier)
-            source: (member_expression
-              object: (quoted_identifier)
-              member: (quoted_identifier)))
-          (xmlport_element
-            name: (identifier)
-            source: (member_expression
-              object: (quoted_identifier)
-              member: (quoted_identifier))))))))
+            body: (xmlport_body
+              (xmlport_element
+                name: (quoted_identifier)
+                source: (quoted_identifier)
+                body: (xmlport_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (where_clause
+                      (where_conditions
+                        (where_condition
+                          field: (quoted_identifier)
+                          value: (identifier))
+                        (where_condition
+                          field: (quoted_identifier)
+                          (filter_keyword)
+                          value: (filter_value
+                            (integer))))))
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (quoted_identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (quoted_identifier)
+                      member: (quoted_identifier))))))))))))
 
 ================================================================================
 XMLPort with complex SourceTableView
@@ -99,27 +103,30 @@ xmlport 50000 "Test Complex View"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        source: (identifier)
-        (property
-          name: (property_name)
-          value: (sorting_value
-            (quoted_identifier)
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (integer)))
-                (where_condition
-                  field: (quoted_identifier)
-                  value: (string_literal))))))
-        (xmlport_element
-          name: (identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (quoted_identifier)))))))
+    body: (object_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            name: (identifier)
+            source: (identifier)
+            body: (xmlport_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (quoted_identifier)
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)))
+                      (where_condition
+                        field: (quoted_identifier)
+                        value: (string_literal))))))
+              (xmlport_element
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))))))))))

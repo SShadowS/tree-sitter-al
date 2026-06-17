@@ -22,48 +22,49 @@ codeunit 123 TestBackslash
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      return_type: (type_specification
-        (text_type))
-      (code_block
-        (begin_keyword)
-        (exit_statement
-          (exit_keyword)
-          return_value: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier)
-              (string_literal)
-              (string_literal))))
-        (end_keyword)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      return_type: (type_specification
-        (text_type))
-      (code_block
-        (begin_keyword)
-        (exit_statement
-          (exit_keyword)
-          return_value: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier)
-              (string_literal)
-              (string_literal))))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        return_type: (type_specification
+          (text_type))
+        body: (code_block
+          (begin_keyword)
+          (exit_statement
+            (exit_keyword)
+            return_value: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)
+                (string_literal)
+                (string_literal))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        return_type: (type_specification
+          (text_type))
+        body: (code_block
+          (begin_keyword)
+          (exit_statement
+            (exit_keyword)
+            return_value: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)
+                (string_literal)
+                (string_literal))))
+          (end_keyword))))))
 
 ================================================================================
 String literals with various special characters
@@ -91,44 +92,45 @@ codeunit 456 TestSpecialChars
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (end_keyword))))))
 
 ================================================================================
 String literals in complex expressions
@@ -154,58 +156,59 @@ codeunit 789 TestComplexStrings
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
-      return_type: (type_specification
-        (text_type))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier)
-              (string_literal)
-              (string_literal))))
-        (assignment_statement
-          left: (identifier)
-          right: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier)
-              (string_literal)
-              (string_literal))))
-        (if_statement
-          (if_keyword)
-          condition: (comparison_expression
-            left: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (identifier)
-                (string_literal)))
-            operator: (comparison_operator)
-            right: (integer))
-          (then_keyword)
-          then_branch: (exit_statement
-            (exit_keyword)
-            return_value: (call_expression
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        return_type: (type_specification
+          (text_type))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (call_expression
               function: (identifier)
               arguments: (argument_list
                 (identifier)
                 (string_literal)
                 (string_literal))))
-          (else_keyword)
-          else_branch: (exit_statement
-            (exit_keyword)
-            return_value: (identifier)))
-        (end_keyword)))))
+          (assignment_statement
+            left: (identifier)
+            right: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)
+                (string_literal)
+                (string_literal))))
+          (if_statement
+            (if_keyword)
+            condition: (comparison_expression
+              left: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (string_literal)))
+              operator: (comparison_operator)
+              right: (integer))
+            (then_keyword)
+            then_branch: (exit_statement
+              (exit_keyword)
+              return_value: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (string_literal)
+                  (string_literal))))
+            (else_keyword)
+            else_branch: (exit_statement
+              (exit_keyword)
+              return_value: (identifier)))
+          (end_keyword))))))
 
 ================================================================================
 Mixed string literals and function calls
@@ -226,20 +229,21 @@ codeunit 999 TestMixed
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      return_type: (type_specification
-        (text_type))
-      (code_block
-        (begin_keyword)
-        (exit_statement
-          (exit_keyword)
-          return_value: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)
-              (string_literal)
-              (string_literal)
-              (string_literal))))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (text_type))
+        body: (code_block
+          (begin_keyword)
+          (exit_statement
+            (exit_keyword)
+            return_value: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)
+                (string_literal)
+                (string_literal)
+                (string_literal))))
+          (end_keyword))))))

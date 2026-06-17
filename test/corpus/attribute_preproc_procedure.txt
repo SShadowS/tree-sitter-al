@@ -28,68 +28,69 @@ table 50000 "Test"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (record_type
-            reference: (quoted_identifier))))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (object_reference_type
-            object_type: (codeunit_keyword)
-            reference: (quoted_identifier))))
-      (preproc_split_procedure
-        (preproc_if
-          (preproc_open)
-          condition: (preproc_not_expression
-            (identifier)))
-        (attribute_item
-          attribute: (attribute_content
-            name: (identifier)
-            arguments: (attribute_arguments
-              (attribute_argument_list
-                (string_literal)
-                (string_literal)))))
-        (procedure_keyword)
-        name: (identifier)
-        (parameter_list
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (text_type
-                length: (integer)))))
-        return_value: (identifier)
-        return_type: (type_specification
-          (text_type))
-        (preproc_else)
-        (procedure_keyword)
-        name: (identifier)
-        (parameter_list
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (text_type
-                length: (integer)))))
-        return_value: (identifier)
-        return_type: (type_specification
-          (text_type))
-        (preproc_endif
-          (preproc_close))
-        (var_section
-          (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
-        (code_block
-          (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (identifier))
-          (end_keyword))))))
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (object_reference_type
+              object_type: (codeunit_keyword)
+              reference: (quoted_identifier))))
+        (preproc_split_procedure
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (attribute_item
+            attribute: (attribute_content
+              name: (identifier)
+              arguments: (attribute_arguments
+                (attribute_argument_list
+                  (string_literal)
+                  (string_literal)))))
+          (procedure_keyword)
+          name: (identifier)
+          (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  length: (integer)))))
+          return_value: (identifier)
+          return_type: (type_specification
+            (text_type))
+          (preproc_else)
+          (procedure_keyword)
+          name: (identifier)
+          (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  length: (integer)))))
+          return_value: (identifier)
+          return_type: (type_specification
+            (text_type))
+          (preproc_endif
+            (preproc_close))
+          (var_section
+            (var_keyword)
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type))))
+          body: (code_block
+            (begin_keyword)
+            (assignment_statement
+              left: (identifier)
+              right: (identifier))
+            (end_keyword)))))))
 
 ================================================================================
 Multiple attributes in preprocessor branch
@@ -123,53 +124,55 @@ table 50000 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))))
-    (preproc_split_procedure
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (attribute_item
-        attribute: (attribute_content
-          name: (identifier)))
-      (attribute_item
-        attribute: (attribute_content
-          name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)))))
-      (attribute_item
-        attribute: (attribute_content
-          name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)
-              (string_literal)))))
-      (procedure_keyword)
-      name: (identifier)
-      (preproc_else)
-      (attribute_item
-        attribute: (attribute_content
-          name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)))))
-      (procedure_keyword)
-      name: (identifier)
-      (preproc_endif
-        (preproc_close))
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type)))))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)))))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_else)
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)))))
+        (procedure_keyword)
+        name: (identifier)
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (end_keyword))))))
 
 ================================================================================
 Attribute with split procedure header
@@ -198,51 +201,52 @@ table 50000 "Test"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (record_type
-            reference: (quoted_identifier)))))
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (boolean)
-            (boolean)))))
-    (preproc_split_procedure
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier))))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (preproc_else)
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
           name: (identifier)
           type: (type_specification
             (record_type
               reference: (quoted_identifier)))))
-      (preproc_endif
-        (preproc_close))
-      (code_block
-        (begin_keyword)
-        (comment)
-        (end_keyword)))))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (boolean)))))
+      (preproc_split_procedure
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier))))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_else)
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)))))
+        (preproc_endif
+          (preproc_close))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          (end_keyword))))))

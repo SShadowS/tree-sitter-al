@@ -26,22 +26,26 @@ page 50000 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (group_section
+                (group_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))
 
 ================================================================================
 InstructionalTextML property in page group
@@ -71,28 +75,32 @@ page 50001 "ML Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (ml_value_list
-              (ml_value_pair
-                language: (identifier)
-                value: (string_literal))
-              (ml_value_pair
-                language: (identifier)
-                value: (string_literal)))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (group_section
+                (group_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (ml_value_list
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal))
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal)))))))))))))
 
 ================================================================================
 InstructionalText in wizard page pattern
@@ -132,37 +140,43 @@ page 50002 "Wizard Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (group_section
-            (group_keyword)
-            name: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (property
-              name: (property_name)
-              value: (identifier))
-            (group_section
-              (group_keyword)
-              name: (identifier)
-              (property
-                name: (property_name)
-                value: (boolean))
-              (property
-                name: (property_name)
-                value: (string_literal)))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (group_section
+                (group_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (group_section
+                    (group_keyword)
+                    name: (quoted_identifier)
+                    body: (layout_container_body
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (group_section
+                        (group_keyword)
+                        name: (identifier)
+                        body: (layout_container_body
+                          (property
+                            name: (property_name)
+                            value: (boolean))
+                          (property
+                            name: (property_name)
+                            value: (string_literal)))))))))))))))

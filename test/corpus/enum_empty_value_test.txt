@@ -15,18 +15,21 @@ enum 264 "Test Enum"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (quoted_identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (quoted_identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))))
+    body: (object_body
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (quoted_identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (quoted_identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal)))))))
 
 ================================================================================
 Enum wrapped in preprocessor conditional with empty value
@@ -69,41 +72,45 @@ enum 264 "Intrastat Source Type"
       (enum_keyword)
       object_id: (integer)
       object_name: (quoted_identifier)
-      (property
-        name: (property_name)
-        value: (boolean))
-      (property
-        name: (property_name)
-        value: (boolean))
-      (property
-        name: (property_name)
-        value: (identifier))
-      (pragma)
-      (property
-        name: (property_name)
-        value: (string_literal))
-      (pragma)
-      (property
-        name: (property_name)
-        value: (string_literal))
-      (enum_value_declaration
-        value_id: (integer)
-        value_name: (quoted_identifier)
+      body: (object_body
         (property
           name: (property_name)
-          value: (string_literal)))
-      (enum_value_declaration
-        value_id: (integer)
-        value_name: (quoted_identifier)
+          value: (boolean))
         (property
           name: (property_name)
-          value: (string_literal)))
-      (enum_value_declaration
-        value_id: (integer)
-        value_name: (quoted_identifier)
+          value: (boolean))
         (property
           name: (property_name)
-          value: (string_literal))))
+          value: (identifier))
+        (pragma)
+        (property
+          name: (property_name)
+          value: (string_literal))
+        (pragma)
+        (property
+          name: (property_name)
+          value: (string_literal))
+        (enum_value_declaration
+          value_id: (integer)
+          value_name: (quoted_identifier)
+          body: (object_body
+            (property
+              name: (property_name)
+              value: (string_literal))))
+        (enum_value_declaration
+          value_id: (integer)
+          value_name: (quoted_identifier)
+          body: (object_body
+            (property
+              name: (property_name)
+              value: (string_literal))))
+        (enum_value_declaration
+          value_id: (integer)
+          value_name: (quoted_identifier)
+          body: (object_body
+            (property
+              name: (property_name)
+              value: (string_literal))))))
     (preproc_endif
       (preproc_close))))
 
@@ -127,36 +134,42 @@ enum 100 "Value Name Formats"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (quoted_identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (quoted_identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (quoted_identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (string_literal)
-      (property
-        name: (property_name)
-        value: (string_literal)))))
+    body: (object_body
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (quoted_identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (quoted_identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (quoted_identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (string_literal)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal)))))))
 
 ================================================================================
 Enum with properties between values
@@ -181,21 +194,23 @@ enum 500 "Mixed Content"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (quoted_identifier)
+    body: (object_body
       (property
         name: (property_name)
-        value: (string_literal)))))
+        value: (boolean))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (quoted_identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (quoted_identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal)))))))

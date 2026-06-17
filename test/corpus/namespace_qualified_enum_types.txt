@@ -20,21 +20,24 @@ table 123 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (object_reference_type
-            object_type: (enum_keyword)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (quoted_identifier)))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (quoted_identifier)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 Multiple namespace-qualified enum fields
@@ -63,38 +66,40 @@ table 124 MultiEnumTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (object_reference_type
-            object_type: (enum_keyword)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (quoted_identifier))))
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (object_reference_type
-            object_type: (enum_keyword)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (quoted_identifier))))
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (object_reference_type
-            object_type: (enum_keyword)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (quoted_identifier)))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (quoted_identifier))))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (quoted_identifier))))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (quoted_identifier)))))))))
 
 ================================================================================
 Namespace-qualified enum with unquoted identifier
@@ -117,18 +122,20 @@ table 125 UnquotedEnum
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (object_reference_type
-            object_type: (enum_keyword)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)))))))))
 
 ================================================================================
 Namespace-qualified enum in variable declaration
@@ -152,32 +159,33 @@ codeunit 126 TestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (object_reference_type
+              object_type: (enum_keyword)
+              reference: (identifier)
+              reference: (identifier)
+              reference: (identifier)
+              reference: (quoted_identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (object_reference_type
+              object_type: (enum_keyword)
+              reference: (identifier)
+              reference: (identifier)
+              reference: (identifier)
+              reference: (quoted_identifier)))))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        type: (type_specification
-          (object_reference_type
-            object_type: (enum_keyword)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (quoted_identifier))))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (object_reference_type
-            object_type: (enum_keyword)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (quoted_identifier)))))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 Namespace-qualified enum in procedure parameter
@@ -197,19 +205,20 @@ codeunit 127 ParamTest
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (identifier)
-              reference: (identifier)
-              reference: (identifier)
-              reference: (quoted_identifier)))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (quoted_identifier)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

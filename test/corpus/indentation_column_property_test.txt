@@ -27,22 +27,27 @@ page 60855 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (repeater_section
-          (repeater_keyword)
-          name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (integer))
-          (page_field
-            name: (identifier)
-            source: (identifier)
-            (property
-              name: (property_name)
-              value: (identifier))))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (quoted_identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (integer))
+                  (page_field
+                    name: (identifier)
+                    source: (identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier)))))))))))))
 
 ================================================================================
 IndentationColumn property with different values
@@ -74,22 +79,27 @@ page 50001 "Test Page 2"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (repeater_section
-          (repeater_keyword)
-          name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (integer)))
-        (repeater_section
-          (repeater_keyword)
-          name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (integer))
-          (property
-            name: (property_name)
-            value: (quoted_identifier)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (repeater_section
+                (repeater_keyword)
+                name: (quoted_identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (integer))))
+              (repeater_section
+                (repeater_keyword)
+                name: (quoted_identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (integer))
+                  (property
+                    name: (property_name)
+                    value: (quoted_identifier)))))))))))

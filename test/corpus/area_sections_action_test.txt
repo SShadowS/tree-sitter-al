@@ -66,95 +66,107 @@ page 123 "Test RoleCenter"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (action_declaration
-            name: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (property
-              name: (property_name)
-              value: (object_reference_value
-                (page_keyword)
-                (quoted_identifier))))
-          (action_declaration
-            name: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (property
-              name: (property_name)
-              value: (object_reference_value
-                (page_keyword)
-                (quoted_identifier)))))
-        (action_group_section
-          (group_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (action_declaration
-            name: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (property
-              name: (property_name)
-              value: (object_reference_value
-                (page_keyword)
-                (quoted_identifier))))
-          (action_declaration
-            name: (identifier)
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (property
-              name: (property_name)
-              value: (object_reference_value
-                (page_keyword)
-                (quoted_identifier))))))
-      (action_area_section
-        (area_keyword)
-        (action_group_section
-          (group_keyword)
-          name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (action_declaration
-            name: (quoted_identifier)
-            (property
-              name: (property_name)
-              value: (identifier))
-            (property
-              name: (property_name)
-              value: (string_literal))
-            (property
-              name: (property_name)
-              value: (object_reference_value
-                (report_keyword)
-                (quoted_identifier)))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (action_declaration
+                    name: (quoted_identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (property
+                        name: (property_name)
+                        value: (object_reference_value
+                          (page_keyword)
+                          (quoted_identifier)))))
+                  (action_declaration
+                    name: (quoted_identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (property
+                        name: (property_name)
+                        value: (object_reference_value
+                          (page_keyword)
+                          (quoted_identifier)))))))
+              (action_group_section
+                (group_keyword)
+                name: (identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (action_declaration
+                    name: (quoted_identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (property
+                        name: (property_name)
+                        value: (object_reference_value
+                          (page_keyword)
+                          (quoted_identifier)))))
+                  (action_declaration
+                    name: (identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (property
+                        name: (property_name)
+                        value: (object_reference_value
+                          (page_keyword)
+                          (quoted_identifier)))))))))
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_group_section
+                (group_keyword)
+                name: (quoted_identifier)
+                body: (action_group_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (action_declaration
+                    name: (quoted_identifier)
+                    body: (object_body
+                      (property
+                        name: (property_name)
+                        value: (identifier))
+                      (property
+                        name: (property_name)
+                        value: (string_literal))
+                      (property
+                        name: (property_name)
+                        value: (object_reference_value
+                          (report_keyword)
+                          (quoted_identifier))))))))))))))

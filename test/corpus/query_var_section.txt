@@ -31,35 +31,38 @@ query 50100 "Test Query Var"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (query_column
-          (column_keyword)
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))))))
+      (var_section
+        (var_keyword)
+        (variable_declaration
           name: (identifier)
-          field_name: (quoted_identifier))))
-    (var_section
-      (var_keyword)
-      (variable_declaration
+          type: (basic_type)
+          value: (string_literal))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type))))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        type: (basic_type)
-        value: (string_literal))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type))))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (integer))
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (integer))
+          (end_keyword))))))
 
 ================================================================================
 Query with var section and global label
@@ -99,50 +102,53 @@ query 5506 "Email Related Record"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (internal_keyword))))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (query_column
-          (column_keyword)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (internal_keyword))))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (identifier))))))
+      (var_section
+        (var_keyword)
+        (variable_declaration
           name: (identifier)
-          field_name: (quoted_identifier))
-        (query_filter
-          (filter_keyword)
-          name: (identifier)
-          field_name: (identifier))))
-    (var_section
-      (var_keyword)
-      (variable_declaration
+          type: (basic_type)
+          value: (string_literal)))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        type: (basic_type)
-        value: (string_literal)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      return_type: (type_specification
-        (list_type
-          element_type: (type_specification
-            (text_type))))
-      (code_block
-        (begin_keyword)
-        (exit_statement
-          (exit_keyword)
-          return_value: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (integer))))
-        (end_keyword)))))
+        return_type: (type_specification
+          (list_type
+            element_type: (type_specification
+              (text_type))))
+        body: (code_block
+          (begin_keyword)
+          (exit_statement
+            (exit_keyword)
+            return_value: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (integer))))
+          (end_keyword))))))
 
 ================================================================================
 Query with conditional var section
@@ -185,58 +191,61 @@ query 50101 "Query with Conditional Var"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))))))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))))
+        (preproc_else)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        table_name: (identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type
-              length: (integer)))))
-      (preproc_else)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer)))))
-      (preproc_endif
-        (preproc_close)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      return_type: (type_specification
-        (text_type))
-      (code_block
-        (begin_keyword)
-        (preproc_conditional_statement
-          (preproc_if
-            (preproc_open)
-            condition: (identifier))
-          (exit_statement
-            (exit_keyword)
-            return_value: (identifier))
-          (preproc_else)
-          (exit_statement
-            (exit_keyword)
-            return_value: (identifier))
-          (preproc_endif
-            (preproc_close)))
-        (end_keyword)))))
+        return_type: (type_specification
+          (text_type))
+        body: (code_block
+          (begin_keyword)
+          (preproc_conditional_statement
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (exit_statement
+              (exit_keyword)
+              return_value: (identifier))
+            (preproc_else)
+            (exit_statement
+              (exit_keyword)
+              return_value: (identifier))
+            (preproc_endif
+              (preproc_close)))
+          (end_keyword))))))
 
 ================================================================================
 Query with mixed global and local var sections
@@ -280,56 +289,59 @@ query 50102 "Mixed Var Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))))
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (text_type)))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type))))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))))))
       (var_section
         (var_keyword)
         (variable_declaration
           name: (identifier)
           type: (type_specification
-            (record_type
-              reference: (identifier))))
+            (text_type)))
         (variable_declaration
           name: (identifier)
           type: (type_specification
-            (text_type
-              length: (integer)))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (integer))
-        (assignment_statement
-          left: (identifier)
-          right: (identifier))
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (integer))
-        (end_keyword)))))
+            (basic_type))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (integer))
+          (assignment_statement
+            left: (identifier)
+            right: (identifier))
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (integer))
+          (end_keyword))))))

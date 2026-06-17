@@ -17,25 +17,27 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (code_type
-            (integer))))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (text_type
-            (integer))))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (basic_type))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (code_type
+                (integer))))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (text_type
+                (integer))))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (basic_type))))))))
 
 ========================================================================
 Field with properties
@@ -58,20 +60,23 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (code_type
-            (integer)))
-        (property
-          (property_name)
-          (string_literal))
-        (property
-          (property_name)
-          (identifier))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (code_type
+                (integer)))
+            (object_body
+              (property
+                (property_name)
+                (string_literal))
+              (property
+                (property_name)
+                (identifier)))))))))
 
 ========================================================================
 Keys section
@@ -91,22 +96,25 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (keys_section
-      (keys_keyword)
-      (key_declaration
-        (key_keyword)
-        (identifier)
-        (field_list
-          (quoted_identifier))
-        (property
-          (property_name)
-          (boolean)))
-      (key_declaration
-        (key_keyword)
-        (identifier)
-        (field_list
-          (identifier)
-          (quoted_identifier))))))
+    (object_body
+      (keys_section
+        (keys_keyword)
+        (keys_body
+          (key_declaration
+            (key_keyword)
+            (identifier)
+            (field_list
+              (quoted_identifier))
+            (object_body
+              (property
+                (property_name)
+                (boolean))))
+          (key_declaration
+            (key_keyword)
+            (identifier)
+            (field_list
+              (identifier)
+              (quoted_identifier))))))))
 
 ========================================================================
 Fieldgroups section
@@ -126,21 +134,23 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (fieldgroups_section
-      (fieldgroups_keyword)
-      (fieldgroup_declaration
-        (fieldgroup_keyword)
-        (identifier)
-        (field_list
-          (quoted_identifier)
-          (identifier)))
-      (fieldgroup_declaration
-        (fieldgroup_keyword)
-        (identifier)
-        (field_list
-          (quoted_identifier)
-          (identifier)
-          (identifier))))))
+    (object_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            (identifier)
+            (field_list
+              (quoted_identifier)
+              (identifier)))
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            (identifier)
+            (field_list
+              (quoted_identifier)
+              (identifier)
+              (identifier))))))))
 
 ========================================================================
 Table with fields keys and fieldgroups
@@ -168,38 +178,43 @@ table 50100 MyTable
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (code_type
-            (integer))))
-      (field_declaration
-        (integer)
-        (identifier)
-        (type_specification
-          (text_type
-            (integer)))))
-    (keys_section
-      (keys_keyword)
-      (key_declaration
-        (key_keyword)
-        (identifier)
-        (field_list
-          (quoted_identifier))
-        (property
-          (property_name)
-          (boolean))))
-    (fieldgroups_section
-      (fieldgroups_keyword)
-      (fieldgroup_declaration
-        (fieldgroup_keyword)
-        (identifier)
-        (field_list
-          (quoted_identifier)
-          (identifier))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (code_type
+                (integer))))
+          (field_declaration
+            (integer)
+            (identifier)
+            (type_specification
+              (text_type
+                (integer))))))
+      (keys_section
+        (keys_keyword)
+        (keys_body
+          (key_declaration
+            (key_keyword)
+            (identifier)
+            (field_list
+              (quoted_identifier))
+            (object_body
+              (property
+                (property_name)
+                (boolean))))))
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        (fieldgroups_body
+          (fieldgroup_declaration
+            (fieldgroup_keyword)
+            (identifier)
+            (field_list
+              (quoted_identifier)
+              (identifier))))))))
 
 ========================================================================
 Field without body block
@@ -218,11 +233,13 @@ table 50100 T
     (table_keyword)
     (integer)
     (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (code_type
-            (integer)))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (code_type
+                (integer)))))))))

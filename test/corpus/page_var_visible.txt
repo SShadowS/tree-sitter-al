@@ -17,20 +17,21 @@ page 50100 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type)))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type)))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type))))))
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))))))
 
 ================================================================================
 Page with Visible property and Visible variable
@@ -53,19 +54,20 @@ page 50100 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type)))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (basic_type))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (basic_type)))))))

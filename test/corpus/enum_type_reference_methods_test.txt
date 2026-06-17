@@ -19,30 +19,31 @@ codeunit 12345 TestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
-              function: (member_expression
-                object: (qualified_enum_value
-                  enum_type: (keyword_identifier
-                    (enum_keyword))
-                  value: (quoted_identifier))
-                member: (identifier))
-              arguments: (argument_list))
-            member: (identifier)))
-        (end_keyword)))))
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (qualified_enum_value
+                    enum_type: (keyword_identifier
+                      (enum_keyword))
+                    value: (quoted_identifier))
+                  member: (identifier))
+                arguments: (argument_list))
+              member: (identifier)))
+          (end_keyword))))))
 
 ================================================================================
 Enum type reference with Names method call
@@ -65,30 +66,31 @@ codeunit 23456 NamesTestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (list_type
-              element_type: (type_specification
-                (text_type))))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (call_expression
-            function: (member_expression
-              object: (qualified_enum_value
-                enum_type: (keyword_identifier
-                  (enum_keyword))
-                value: (quoted_identifier))
-              member: (identifier))
-            arguments: (argument_list)))
-        (end_keyword)))))
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (list_type
+                element_type: (type_specification
+                  (text_type))))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (call_expression
+              function: (member_expression
+                object: (qualified_enum_value
+                  enum_type: (keyword_identifier
+                    (enum_keyword))
+                  value: (quoted_identifier))
+                member: (identifier))
+              arguments: (argument_list)))
+          (end_keyword))))))
 
 ================================================================================
 Multiple enum type references with different methods
@@ -115,60 +117,61 @@ codeunit 34567 MultiEnumCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (list_type
-              element_type: (type_specification
-                (text_type))))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (list_type
+                element_type: (type_specification
+                  (text_type))))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (qualified_enum_value
+                    enum_type: (keyword_identifier
+                      (enum_keyword))
+                    value: (quoted_identifier))
+                  member: (identifier))
+                arguments: (argument_list))
+              member: (identifier)))
+          (assignment_statement
+            left: (identifier)
+            right: (call_expression
               function: (member_expression
                 object: (qualified_enum_value
                   enum_type: (keyword_identifier
                     (enum_keyword))
                   value: (quoted_identifier))
                 member: (identifier))
-              arguments: (argument_list))
-            member: (identifier)))
-        (assignment_statement
-          left: (identifier)
-          right: (call_expression
-            function: (member_expression
-              object: (qualified_enum_value
-                enum_type: (keyword_identifier
-                  (enum_keyword))
-                value: (quoted_identifier))
-              member: (identifier))
-            arguments: (argument_list)))
-        (assignment_statement
-          left: (identifier)
-          right: (call_expression
-            function: (member_expression
-              object: (qualified_enum_value
-                enum_type: (keyword_identifier
-                  (enum_keyword))
-                value: (quoted_identifier))
-              member: (identifier))
-            arguments: (argument_list)))
-        (end_keyword)))))
+              arguments: (argument_list)))
+          (assignment_statement
+            left: (identifier)
+            right: (call_expression
+              function: (member_expression
+                object: (qualified_enum_value
+                  enum_type: (keyword_identifier
+                    (enum_keyword))
+                  value: (quoted_identifier))
+                member: (identifier))
+              arguments: (argument_list)))
+          (end_keyword))))))
 
 ================================================================================
 Enum type reference with case variations
@@ -193,54 +196,55 @@ codeunit 45678 CaseVariationCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
-              function: (member_expression
-                object: (qualified_enum_value
-                  enum_type: (keyword_identifier
-                    (enum_keyword))
-                  value: (quoted_identifier))
-                member: (identifier))
-              arguments: (argument_list))
-            member: (identifier)))
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
-              function: (member_expression
-                object: (qualified_enum_value
-                  enum_type: (keyword_identifier
-                    (enum_keyword))
-                  value: (quoted_identifier))
-                member: (identifier))
-              arguments: (argument_list))
-            member: (identifier)))
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
-              function: (member_expression
-                object: (qualified_enum_value
-                  enum_type: (keyword_identifier
-                    (enum_keyword))
-                  value: (quoted_identifier))
-                member: (identifier))
-              arguments: (argument_list))
-            member: (identifier)))
-        (end_keyword)))))
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (qualified_enum_value
+                    enum_type: (keyword_identifier
+                      (enum_keyword))
+                    value: (quoted_identifier))
+                  member: (identifier))
+                arguments: (argument_list))
+              member: (identifier)))
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (qualified_enum_value
+                    enum_type: (keyword_identifier
+                      (enum_keyword))
+                    value: (quoted_identifier))
+                  member: (identifier))
+                arguments: (argument_list))
+              member: (identifier)))
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (qualified_enum_value
+                    enum_type: (keyword_identifier
+                      (enum_keyword))
+                    value: (quoted_identifier))
+                  member: (identifier))
+                arguments: (argument_list))
+              member: (identifier)))
+          (end_keyword))))))
 
 ================================================================================
 Enum type reference with unquoted identifier
@@ -263,27 +267,28 @@ codeunit 56789 UnquotedEnumCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (member_expression
-            object: (call_expression
-              function: (member_expression
-                object: (qualified_enum_value
-                  enum_type: (keyword_identifier
-                    (enum_keyword))
-                  value: (identifier))
-                member: (identifier))
-              arguments: (argument_list))
-            member: (identifier)))
-        (end_keyword)))))
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (qualified_enum_value
+                    enum_type: (keyword_identifier
+                      (enum_keyword))
+                    value: (identifier))
+                  member: (identifier))
+                arguments: (argument_list))
+              member: (identifier)))
+          (end_keyword))))))

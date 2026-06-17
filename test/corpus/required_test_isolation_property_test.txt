@@ -15,12 +15,13 @@ codeunit 50104 "Required Isolation Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 Codeunit with RequiredTestIsolation None
@@ -39,12 +40,13 @@ codeunit 50105 "No Isolation"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 Codeunit with RequiredTestIsolation Function
@@ -63,12 +65,13 @@ codeunit 50106 "Function Isolation"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 Codeunit with RequiredTestIsolation case insensitive
@@ -87,9 +90,10 @@ codeunit 50107 "Case Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier)))))

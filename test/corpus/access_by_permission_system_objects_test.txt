@@ -25,21 +25,25 @@ page 50001 "System Permission Test"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))))
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (tabledata_permission_list
-              (tabledata_permission
-                table_name: (quoted_identifier)
-                permission: (permission_type)))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            table_name: (quoted_identifier)
+            permission: (permission_type))))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_declaration
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (tabledata_permission_list
+                      (tabledata_permission
+                        table_name: (quoted_identifier)
+                        permission: (permission_type)))))))))))))

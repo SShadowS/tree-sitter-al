@@ -35,30 +35,31 @@ enum 6110 "E-Doc. Proc. Customizations" implements
       interface: (identifier)
       interface: (identifier)
       interface: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (implementation_value_list
-        (implementation_value
-          interface: (identifier)
-          implementation: (quoted_identifier))
-        (implementation_value
-          interface: (identifier)
-          implementation: (quoted_identifier))
-        (implementation_value
-          interface: (identifier)
-          implementation: (quoted_identifier))
-        (implementation_value
-          interface: (identifier)
-          implementation: (quoted_identifier))
-        (implementation_value
-          interface: (identifier)
-          implementation: (quoted_identifier))))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier))
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier))
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier))
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier))
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)))))
 
 ================================================================================
 DefaultImplementation mixed quoted and unquoted
@@ -83,18 +84,19 @@ enum 200 TestEnum implements "ITest1", ITest2
       (implements_keyword)
       interface: (quoted_identifier)
       interface: (identifier))
-    (property
-      name: (property_name)
-      value: (implementation_value_list
-        (implementation_value
-          interface: (quoted_identifier)
-          implementation: (identifier))
-        (implementation_value
-          interface: (identifier)
-          implementation: (quoted_identifier))))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (implementation_value_list
+          (implementation_value
+            interface: (quoted_identifier)
+            implementation: (identifier))
+          (implementation_value
+            interface: (identifier)
+            implementation: (quoted_identifier))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)))))
 
 ================================================================================
 DefaultImplementation case variations with multiple values
@@ -122,25 +124,26 @@ enum 300 "Case Test" implements Interface1, Interface2, Interface3
       interface: (identifier)
       interface: (identifier)
       interface: (identifier))
-    (property
-      name: (property_name)
-      value: (implementation_value_list
-        (implementation_value
-          interface: (identifier)
-          implementation: (identifier))
-        (implementation_value
-          interface: (identifier)
-          implementation: (identifier))
-        (implementation_value
-          interface: (identifier)
-          implementation: (identifier))))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (identifier)
-          operator: (comparison_operator)
-          right: (identifier))))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (implementation_value_list
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier))
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier))
+          (implementation_value
+            interface: (identifier)
+            implementation: (identifier))))
+      (property
+        name: (property_name)
+        value: (property_expression
+          (comparison_expression
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (identifier))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)))))

@@ -28,52 +28,53 @@ codeunit 123 TestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier)))))
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (qualified_enum_value
-                enum_type: (keyword_identifier
-                  (enum_keyword))
-                value: (quoted_identifier))
-              value: (identifier))
-            body: (code_block
-              (begin_keyword)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal)))
-              (end_keyword)))
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (qualified_enum_value
-                enum_type: (keyword_identifier
-                  (enum_keyword))
-                value: (quoted_identifier))
-              value: (identifier))
-            body: (code_block
-              (begin_keyword)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal)))
-              (end_keyword))))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier)))))
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (qualified_enum_value
+                  enum_type: (keyword_identifier
+                    (enum_keyword))
+                  value: (quoted_identifier))
+                value: (identifier))
+              body: (code_block
+                (begin_keyword)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))
+                (end_keyword)))
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (qualified_enum_value
+                  enum_type: (keyword_identifier
+                    (enum_keyword))
+                  value: (quoted_identifier))
+                value: (identifier))
+              body: (code_block
+                (begin_keyword)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))
+                (end_keyword))))
+          (end_keyword))))))
 
 ================================================================================
 Simple enum case pattern test
@@ -99,32 +100,33 @@ codeunit 124 SimpleTest
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier)))))
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (qualified_enum_value
-                enum_type: (keyword_identifier
-                  (enum_keyword))
-                value: (quoted_identifier))
-              value: (identifier))
-            body: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier)))))
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (qualified_enum_value
+                  enum_type: (keyword_identifier
+                    (enum_keyword))
+                  value: (quoted_identifier))
+                value: (identifier))
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))))
+          (end_keyword))))))

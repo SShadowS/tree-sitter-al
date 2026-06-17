@@ -19,18 +19,19 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (basic_type)
+          value: (string_literal)))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        type: (basic_type)
-        value: (string_literal)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ========================================================================
 Label variable with attributes
@@ -53,24 +54,25 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (basic_type)
+          value: (string_literal)
+          (label_attribute
+            name: (identifier)
+            value: (boolean))
+          (label_attribute
+            name: (identifier)
+            value: (string_literal))))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        type: (basic_type)
-        value: (string_literal)
-        (label_attribute
-          name: (identifier)
-          value: (boolean))
-        (label_attribute
-          name: (identifier)
-          value: (string_literal))))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ========================================================================
 Record type with temporary
@@ -93,17 +95,18 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier)
+              (temporary_keyword)))))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        type: (type_specification
-          (record_type
-            reference: (identifier)
-            (temporary_keyword)))))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

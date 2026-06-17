@@ -37,82 +37,83 @@ table 1234 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (dotnet_type
-              (dotnet_keyword)
-              reference: (identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (comment)
-        (assignment_statement
-          left: (identifier)
-          right: (keyword_identifier
-            (enum_keyword)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (keyword_identifier
-                  (enum_keyword))))))
-        (if_statement
-          (if_keyword)
-          condition: (comparison_expression
-            left: (keyword_identifier
-              (enum_keyword))
-            operator: (comparison_operator)
-            right: (integer))
-          (then_keyword)
-          then_branch: (exit_statement
-            (exit_keyword)))
-        (comment)
-        (assignment_statement
-          left: (identifier)
-          right: (call_expression
-            function: (member_expression
-              object: (keyword_identifier
-                (enum_keyword))
-              member: (identifier))
-            arguments: (argument_list)))
-        (comment)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (keyword_identifier
-              (enum_keyword))))
-        (comment)
-        (assignment_statement
-          left: (identifier)
-          right: (additive_expression
-            left: (integer)
-            right: (multiplicative_expression
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                (dotnet_keyword)
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          (assignment_statement
+            left: (identifier)
+            right: (keyword_identifier
+              (enum_keyword)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (keyword_identifier
+                    (enum_keyword))))))
+          (if_statement
+            (if_keyword)
+            condition: (comparison_expression
               left: (keyword_identifier
                 (enum_keyword))
-              right: (integer))))
-        (end_keyword)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+              operator: (comparison_operator)
+              right: (integer))
+            (then_keyword)
+            then_branch: (exit_statement
+              (exit_keyword)))
+          (comment)
+          (assignment_statement
+            left: (identifier)
+            right: (call_expression
+              function: (member_expression
+                object: (keyword_identifier
+                  (enum_keyword))
+                member: (identifier))
+              arguments: (argument_list)))
+          (comment)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (keyword_identifier
+                (enum_keyword))))
+          (comment)
+          (assignment_statement
+            left: (identifier)
+            right: (additive_expression
+              left: (integer)
+              right: (multiplicative_expression
+                left: (keyword_identifier
+                  (enum_keyword))
+                right: (integer))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ==========================================
 Enum type reference still works
@@ -138,42 +139,43 @@ codeunit 50100 "Test Enum Types"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (comment)
-        (assignment_statement
-          left: (identifier)
-          right: (call_expression
-            function: (member_expression
-              object: (qualified_enum_value
-                enum_type: (qualified_enum_value
-                  enum_type: (keyword_identifier
-                    (enum_keyword))
-                  value: (quoted_identifier))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          (assignment_statement
+            left: (identifier)
+            right: (call_expression
+              function: (member_expression
+                object: (qualified_enum_value
+                  enum_type: (qualified_enum_value
+                    enum_type: (keyword_identifier
+                      (enum_keyword))
+                    value: (quoted_identifier))
+                  value: (identifier))
+                member: (identifier))
+              arguments: (argument_list)))
+          (assignment_statement
+            left: (identifier)
+            right: (qualified_enum_value
+              enum_type: (qualified_enum_value
+                enum_type: (keyword_identifier
+                  (enum_keyword))
                 value: (identifier))
-              member: (identifier))
-            arguments: (argument_list)))
-        (assignment_statement
-          left: (identifier)
-          right: (qualified_enum_value
-            enum_type: (qualified_enum_value
-              enum_type: (keyword_identifier
-                (enum_keyword))
-              value: (identifier))
-            value: (identifier)))
-        (end_keyword)))))
+              value: (identifier)))
+          (end_keyword))))))

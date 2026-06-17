@@ -22,32 +22,33 @@ codeunit 50000 "Test BigInteger"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (biginteger_literal))
-        (assignment_statement
-          left: (identifier)
-          right: (biginteger_literal))
-        (assignment_statement
-          left: (identifier)
-          right: (unary_expression
-            operand: (biginteger_literal)))
-        (assignment_statement
-          left: (identifier)
-          right: (biginteger_literal))
-        (comment)
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (biginteger_literal))
+          (assignment_statement
+            left: (identifier)
+            right: (biginteger_literal))
+          (assignment_statement
+            left: (identifier)
+            right: (unary_expression
+              operand: (biginteger_literal)))
+          (assignment_statement
+            left: (identifier)
+            right: (biginteger_literal))
+          (comment)
+          (end_keyword))))))
 
 ================================================================================
 BigInteger literal in comparison
@@ -71,29 +72,30 @@ codeunit 50001 "Test BigInteger Compare"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (if_statement
-          (if_keyword)
-          condition: (comparison_expression
-            left: (identifier)
-            operator: (comparison_operator)
-            right: (biginteger_literal))
-          (then_keyword)
-          then_branch: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (if_statement
+            (if_keyword)
+            condition: (comparison_expression
+              left: (identifier)
+              operator: (comparison_operator)
+              right: (biginteger_literal))
+            (then_keyword)
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword))))))
 
 ================================================================================
 BigInteger literal with lowercase l
@@ -117,24 +119,25 @@ codeunit 50002 "Test BigInteger Lowercase"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (integer))
-        (identifier)
-        (assignment_statement
-          left: (identifier)
-          right: (unary_expression
-            operand: (integer)))
-        (identifier)
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (integer))
+          (identifier)
+          (assignment_statement
+            left: (identifier)
+            right: (unary_expression
+              operand: (integer)))
+          (identifier)
+          (end_keyword))))))

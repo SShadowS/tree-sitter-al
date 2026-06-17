@@ -42,81 +42,85 @@ page 7335 "Warehouse Pick Summary"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier)))))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list)))
-        (end_keyword)))
-    (var_section
-      (var_keyword)
-      (variable_declaration
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))))))))
+      (trigger_declaration
+        (trigger_keyword)
         name: (identifier)
-        type: (type_specification
-          (text_type)))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (text_type))))
-    (procedure
-      modifier: (procedure_modifier
-        (internal_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier)
-              (temporary_keyword))))
-        (parameter
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
+            left: (identifier)
+            right: (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list)))
+          (end_keyword)))
+      (var_section
+        (var_keyword)
+        (variable_declaration
           name: (identifier)
           type: (type_specification
             (text_type)))
-        (parameter
+        (variable_declaration
           name: (identifier)
           type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (identifier)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (identifier)))
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (identifier)))
-        (end_keyword)))))
+            (text_type))))
+      (procedure
+        modifier: (procedure_modifier
+          (internal_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)
+                (temporary_keyword))))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)))
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)))
+          (end_keyword))))))
 
 ================================================================================
 Page with protected var section
@@ -136,18 +140,19 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (var_section
-      (protected_keyword)
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (text_type)))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (record_type
-            reference: (identifier)))))))
+    body: (object_body
+      (var_section
+        (protected_keyword)
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (record_type
+              reference: (identifier))))))))
 
 ================================================================================
 Page with var section after procedures
@@ -174,33 +179,34 @@ page 50101 "Order Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))
-    (var_section
-      (var_keyword)
-      (variable_declaration
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        type: (type_specification
-          (option_type
-            (option_member_list
-              (option_member
-                (quoted_identifier))
-              (option_member
-                (quoted_identifier))
-              (option_member
-                (quoted_identifier))))))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (text_type))))))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (end_keyword)))
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (option_type
+              (option_member_list
+                (option_member
+                  (quoted_identifier))
+                (option_member
+                  (quoted_identifier))
+                (option_member
+                  (quoted_identifier))))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (text_type)))))))

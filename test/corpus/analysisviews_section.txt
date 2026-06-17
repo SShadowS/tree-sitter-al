@@ -19,14 +19,17 @@ page 50100 P
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (analysisviews_section
-      (analysisviews_keyword)
-      (analysisview_declaration
-        (analysisview_keyword)
-        name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (analysisviews_section
+        (analysisviews_keyword)
+        body: (analysisviews_body
+          (analysisview_declaration
+            (analysisview_keyword)
+            name: (quoted_identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))

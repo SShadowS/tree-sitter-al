@@ -34,85 +34,86 @@ codeunit 50100 "Test Asserterror Assignment"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer)))))
-      (code_block
-        (begin_keyword)
-        (assignment_statement
-          left: (identifier)
-          right: (string_literal))
-        (assignment_statement
-          left: (identifier)
-          right: (string_literal))
-        (comment)
-        (asserterror_statement
-          (asserterror_keyword)
-          body: (assignment_expression
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))
+        body: (code_block
+          (begin_keyword)
+          (assignment_statement
             left: (identifier)
-            right: (call_expression
+            right: (string_literal))
+          (assignment_statement
+            left: (identifier)
+            right: (string_literal))
+          (comment)
+          (asserterror_statement
+            (asserterror_keyword)
+            body: (assignment_expression
+              left: (identifier)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (identifier)))))
+          (comment)
+          (if_statement
+            (if_keyword)
+            condition: (comparison_expression
+              left: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              operator: (comparison_operator)
+              right: (string_literal))
+            (then_keyword)
+            then_branch: (call_expression
               function: (identifier)
               arguments: (argument_list
-                (identifier)
-                (identifier)))))
-        (comment)
-        (if_statement
-          (if_keyword)
-          condition: (comparison_expression
-            left: (call_expression
-              function: (identifier)
-              arguments: (argument_list))
-            operator: (comparison_operator)
-            right: (string_literal))
-          (then_keyword)
-          then_branch: (call_expression
+                (string_literal))))
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))
+        return_type: (type_specification
+          (code_type
+            length: (integer)))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
             function: (identifier)
             arguments: (argument_list
-              (string_literal))))
-        (end_keyword)))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer))))
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer)))))
-      return_type: (type_specification
-        (code_type
-          length: (integer)))
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))))
+              (string_literal)))
+          (end_keyword))))))
 
 ================================================================================
 Multiple asserterror assignment patterns
@@ -156,107 +157,108 @@ codeunit 50200 "Complex Asserterror Tests"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier)))))
-      (code_block
-        (begin_keyword)
-        (comment)
-        (asserterror_statement
-          (asserterror_keyword)
-          body: (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (integer)
-              right: (integer))))
-        (comment)
-        (asserterror_statement
-          (asserterror_keyword)
-          body: (assignment_expression
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list))))
-        (comment)
-        (asserterror_statement
-          (asserterror_keyword)
-          body: (assignment_expression
-            left: (identifier)
-            right: (multiplicative_expression
-              left: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (integer)))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          (asserterror_statement
+            (asserterror_keyword)
+            body: (assignment_expression
+              left: (identifier)
+              right: (multiplicative_expression
+                left: (integer)
+                right: (integer))))
+          (comment)
+          (asserterror_statement
+            (asserterror_keyword)
+            body: (assignment_expression
+              left: (identifier)
               right: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (integer))))))
-        (end_keyword)))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      return_type: (type_specification
-        (basic_type))
-      (code_block
-        (begin_keyword)
-        (if_statement
-          (if_keyword)
-          condition: (comparison_expression
-            left: (identifier)
-            operator: (comparison_operator)
-            right: (integer))
-          (then_keyword)
-          then_branch: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal))))
-        (exit_statement
-          (exit_keyword)
-          return_value: (multiplicative_expression
-            left: (identifier)
-            right: (integer)))
-        (end_keyword)))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      return_type: (type_specification
-        (basic_type))
-      (code_block
-        (begin_keyword)
-        (exit_statement
-          (exit_keyword)
-          return_value: (multiplicative_expression
-            left: (identifier)
-            right: (integer)))
-        (end_keyword)))))
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list))))
+          (comment)
+          (asserterror_statement
+            (asserterror_keyword)
+            body: (assignment_expression
+              left: (identifier)
+              right: (multiplicative_expression
+                left: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer)))
+                right: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (integer))))))
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          (if_statement
+            (if_keyword)
+            condition: (comparison_expression
+              left: (identifier)
+              operator: (comparison_operator)
+              right: (integer))
+            (then_keyword)
+            then_branch: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (exit_statement
+            (exit_keyword)
+            return_value: (multiplicative_expression
+              left: (identifier)
+              right: (integer)))
+          (end_keyword)))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          (exit_statement
+            (exit_keyword)
+            return_value: (multiplicative_expression
+              left: (identifier)
+              right: (integer)))
+          (end_keyword))))))

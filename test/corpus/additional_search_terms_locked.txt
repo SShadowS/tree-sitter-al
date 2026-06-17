@@ -14,12 +14,13 @@ page 50000 "AppSource Product List"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (caption_value
-        (string_literal)
-        (property_name)
-        (boolean)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (boolean))))))
 
 ================================================================================
 AdditionalSearchTerms property without Locked
@@ -37,9 +38,10 @@ page 50001 "Simple Search Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal)))))
 
 ================================================================================
 AdditionalSearchTerms with Locked = false
@@ -57,12 +59,13 @@ page 50002 "Translatable Search Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (caption_value
-        (string_literal)
-        (property_name)
-        (boolean)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (boolean))))))
 
 ================================================================================
 AdditionalSearchTerms with empty string and Locked
@@ -80,12 +83,13 @@ page 50003 "Empty Search Terms"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (caption_value
-        (string_literal)
-        (property_name)
-        (boolean)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (boolean))))))
 
 ================================================================================
 AdditionalSearchTerms case insensitive
@@ -103,9 +107,10 @@ page 50004 "Case Test"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (caption_value
-        (string_literal)
-        (property_name)
-        (boolean)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (caption_value
+          (string_literal)
+          (property_name)
+          (boolean))))))

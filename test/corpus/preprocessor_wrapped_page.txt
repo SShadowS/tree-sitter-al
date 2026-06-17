@@ -33,12 +33,13 @@ page 36962 "Purchasing Scorecard"
       (page_keyword)
       (integer)
       (quoted_identifier)
-      (property
-        (property_name)
-        (string_literal))
-      (property
-        (property_name)
-        (identifier)))
+      (object_body
+        (property
+          (property_name)
+          (string_literal))
+        (property
+          (property_name)
+          (identifier))))
     (preproc_endif
       (preproc_close)))
   (pragma))
@@ -85,19 +86,21 @@ codeunit 50100 "Legacy Implementation"
       (codeunit_keyword)
       (integer)
       (quoted_identifier)
-      (procedure
-        (procedure_keyword)
-        (identifier)
-        (code_block)))
+      (object_body
+        (procedure
+          (procedure_keyword)
+          (identifier)
+          (code_block))))
     (preproc_else)
     (codeunit_declaration
       (codeunit_keyword)
       (integer)
       (quoted_identifier)
-      (procedure
-        (procedure_keyword)
-        (identifier)
-        (code_block)))
+      (object_body
+        (procedure
+          (procedure_keyword)
+          (identifier)
+          (code_block))))
     (preproc_endif
       (preproc_close)))
   (pragma))
@@ -136,17 +139,20 @@ table 50000 MyTable
       (table_keyword)
       (integer)
       (identifier)
-      (fields_section
-        (fields_keyword)
-        (field_declaration
-          (integer)
-          (quoted_identifier)
-          (type_specification
-            (code_type
-              (integer)))
-          (property
-            (property_name)
-            (string_literal)))))
+      (object_body
+        (fields_section
+          (fields_keyword)
+          (fields_body
+            (field_declaration
+              (integer)
+              (quoted_identifier)
+              (type_specification
+                (code_type
+                  (integer)))
+              (object_body
+                (property
+                  (property_name)
+                  (string_literal))))))))
     (preproc_endif
       (preproc_close)))
   (pragma)

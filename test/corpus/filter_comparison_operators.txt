@@ -20,27 +20,30 @@ table 50100 "Test Table"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (basic_type))
-        (property
-          (property_name)
-          (table_relation_value
-            (table_relation_expression
-              (if_table_relation
-                (where_conditions
-                  (where_condition
-                    (identifier)
-                    (filter_keyword)
-                    (filter_value
-                      (integer))))
-                (simple_table_relation
-                  (identifier)
-                  (quoted_identifier))))))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (basic_type))
+            (object_body
+              (property
+                (property_name)
+                (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (where_conditions
+                        (where_condition
+                          (identifier)
+                          (filter_keyword)
+                          (filter_value
+                            (integer))))
+                      (simple_table_relation
+                        (identifier)
+                        (quoted_identifier)))))))))))))
 
 ================================================================================
 Filter with greater than operator
@@ -64,27 +67,30 @@ table 50100 "Test Table"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (basic_type))
-        (property
-          (property_name)
-          (table_relation_value
-            (table_relation_expression
-              (if_table_relation
-                (where_conditions
-                  (where_condition
-                    (identifier)
-                    (filter_keyword)
-                    (filter_value
-                      (integer))))
-                (simple_table_relation
-                  (identifier)
-                  (quoted_identifier))))))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (basic_type))
+            (object_body
+              (property
+                (property_name)
+                (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (where_conditions
+                        (where_condition
+                          (identifier)
+                          (filter_keyword)
+                          (filter_value
+                            (integer))))
+                      (simple_table_relation
+                        (identifier)
+                        (quoted_identifier)))))))))))))
 
 ================================================================================
 Filter with less than or equal operator
@@ -108,27 +114,30 @@ table 50100 "Test Table"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (basic_type))
-        (property
-          (property_name)
-          (table_relation_value
-            (table_relation_expression
-              (if_table_relation
-                (where_conditions
-                  (where_condition
-                    (identifier)
-                    (filter_keyword)
-                    (filter_value
-                      (integer))))
-                (simple_table_relation
-                  (quoted_identifier)
-                  (identifier))))))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (basic_type))
+            (object_body
+              (property
+                (property_name)
+                (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (where_conditions
+                        (where_condition
+                          (identifier)
+                          (filter_keyword)
+                          (filter_value
+                            (integer))))
+                      (simple_table_relation
+                        (quoted_identifier)
+                        (identifier)))))))))))))
 
 ================================================================================
 Filter with greater than or equal operator
@@ -152,24 +161,27 @@ table 50100 "Test Table"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        (integer)
-        (quoted_identifier)
-        (type_specification
-          (basic_type))
-        (property
-          (property_name)
-          (table_relation_value
-            (table_relation_expression
-              (if_table_relation
-                (where_conditions
-                  (where_condition
-                    (identifier)
-                    (filter_keyword)
-                    (filter_value
-                      (integer))))
-                (simple_table_relation
-                  (quoted_identifier)
-                  (identifier))))))))))
+    (object_body
+      (fields_section
+        (fields_keyword)
+        (fields_body
+          (field_declaration
+            (integer)
+            (quoted_identifier)
+            (type_specification
+              (basic_type))
+            (object_body
+              (property
+                (property_name)
+                (table_relation_value
+                  (table_relation_expression
+                    (if_table_relation
+                      (where_conditions
+                        (where_condition
+                          (identifier)
+                          (filter_keyword)
+                          (filter_value
+                            (integer))))
+                      (simple_table_relation
+                        (quoted_identifier)
+                        (identifier)))))))))))))

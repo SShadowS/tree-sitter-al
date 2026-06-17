@@ -32,36 +32,42 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (text_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))))
-    (keys_section
-      (keys_keyword)
-      (key_declaration
-        (key_keyword)
-        name: (quoted_identifier)
-        fields: (field_list
-          (quoted_identifier))
-        (property
-          name: (property_name)
-          value: (boolean))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (quoted_identifier)
+            fields: (field_list
+              (quoted_identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
 
 ================================================================================
 Table with multiple keys using quoted and unquoted identifiers
@@ -106,56 +112,64 @@ table 361 "Analysis by Dim. Parameters"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (quoted_identifier)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))))
-    (keys_section
-      (keys_keyword)
-      (key_declaration
-        (key_keyword)
-        name: (quoted_identifier)
-        fields: (field_list
-          (quoted_identifier))
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (key_declaration
-        (key_keyword)
-        name: (identifier)
-        fields: (field_list
-          (quoted_identifier)
-          (quoted_identifier))
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (key_declaration
-        (key_keyword)
-        name: (quoted_identifier)
-        fields: (field_list
-          (quoted_identifier))
-        (property
-          name: (property_name)
-          value: (boolean))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (quoted_identifier))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (quoted_identifier)
+            fields: (field_list
+              (quoted_identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (key_declaration
+            (key_keyword)
+            name: (identifier)
+            fields: (field_list
+              (quoted_identifier)
+              (quoted_identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (key_declaration
+            (key_keyword)
+            name: (quoted_identifier)
+            fields: (field_list
+              (quoted_identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
 
 ================================================================================
 Key with spaces and special characters in quoted name
@@ -198,49 +212,56 @@ table 50101 "Complex Key Names"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (string_literal)))
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))
-        (property
-          name: (property_name)
-          value: (string_literal))))
-    (keys_section
-      (keys_keyword)
-      (key_declaration
-        (key_keyword)
-        name: (quoted_identifier)
-        fields: (field_list
-          (identifier))
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (key_declaration
-        (key_keyword)
-        name: (quoted_identifier)
-        fields: (field_list
-          (identifier)
-          (identifier)))
-      (key_declaration
-        (key_keyword)
-        name: (quoted_identifier)
-        fields: (field_list
-          (identifier))
-        (property
-          name: (property_name)
-          value: (boolean))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (quoted_identifier)
+            fields: (field_list
+              (identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (key_declaration
+            (key_keyword)
+            name: (quoted_identifier)
+            fields: (field_list
+              (identifier)
+              (identifier)))
+          (key_declaration
+            (key_keyword)
+            name: (quoted_identifier)
+            fields: (field_list
+              (identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean)))))))))
 
 ================================================================================
 Key with preprocessor conditionals
@@ -279,42 +300,47 @@ table 50102 "Test Preprocessor Keys"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (string_literal))))
-    (keys_section
-      (keys_keyword)
-      (key_declaration
-        (key_keyword)
-        name: (quoted_identifier)
-        fields: (field_list
-          (quoted_identifier))
-        (property
-          name: (property_name)
-          value: (boolean))
-        (preproc_conditional
-          (preproc_if
-            (preproc_open)
-            condition: (identifier))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (preproc_else)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (preproc_endif
-            (preproc_close)))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal))))))
+      (keys_section
+        (keys_keyword)
+        body: (keys_body
+          (key_declaration
+            (key_keyword)
+            name: (quoted_identifier)
+            fields: (field_list
+              (quoted_identifier))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))
+              (preproc_conditional
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (property
+                  name: (property_name)
+                  value: (identifier))
+                (property
+                  name: (property_name)
+                  value: (string_literal))
+                (preproc_else)
+                (property
+                  name: (property_name)
+                  value: (identifier))
+                (property
+                  name: (property_name)
+                  value: (string_literal))
+                (preproc_endif
+                  (preproc_close))))))))))

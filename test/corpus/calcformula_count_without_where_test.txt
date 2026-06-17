@@ -25,32 +25,35 @@ table 50100 "User Status"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer))))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (property_expression
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (quoted_identifier)))))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (identifier))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (quoted_identifier)))))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (identifier)))))))))
 
 ================================================================================
 CalcFormula count with WHERE clause
@@ -80,42 +83,46 @@ table 50200 "Statistics"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (aggregate_formula
-            function: (aggregate_function)
-            target: (calc_field_reference
-              (identifier))
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (identifier)
-                  value: (identifier))))))
-        (property
-          name: (property_name)
-          value: (identifier)))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (property_expression
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (quoted_identifier)))))
-        (property
-          name: (property_name)
-          value: (identifier))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (identifier))
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        value: (identifier))))))
+              (property
+                name: (property_name)
+                value: (identifier))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (quoted_identifier)))))
+              (property
+                name: (property_name)
+                value: (identifier)))))))))
 
 ================================================================================
 CalcFormula count case variations
@@ -143,35 +150,39 @@ table 50300 "Count Test"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (property_expression
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (quoted_identifier))))))
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (aggregate_formula
-            function: (aggregate_function)
-            target: (calc_field_reference
-              (identifier))
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (string_literal)))))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (quoted_identifier)))))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (identifier))
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (string_literal))))))))))))))

@@ -23,58 +23,59 @@ codeunit 6466 "Serv. Page Management"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (var_section
-        (var_keyword)
-        (variable_declaration
+    body: (object_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (preproc_endif
+          (preproc_close)))
+      (attribute_item
+        attribute: (attribute_content
           name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (codeunit_keyword)
-              reference: (quoted_identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (preproc_endif
-        (preproc_close)))
-    (attribute_item
-      attribute: (attribute_content
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              (database_reference
+                keyword: (object_type_keyword)
+                table_name: (quoted_identifier))
+              (string_literal)
+              (string_literal)
+              (boolean)
+              (boolean)))))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
         name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            (database_reference
-              keyword: (object_type_keyword)
-              table_name: (quoted_identifier))
-            (string_literal)
-            (string_literal)
-            (boolean)
-            (boolean)))))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 Page with conditional var section with else clause
@@ -108,36 +109,39 @@ page 123 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (codeunit_keyword)
-              reference: (quoted_identifier)))))
-      (preproc_else)
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (codeunit_keyword)
-              reference: (quoted_identifier)))))
-      (preproc_endif
-        (preproc_close)))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (quoted_identifier)
-          source: (identifier))))))
+    body: (object_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (quoted_identifier)))))
+        (preproc_else)
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (quoted_identifier)))))
+        (preproc_endif
+          (preproc_close)))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (quoted_identifier)
+                source: (identifier)))))))))
 
 ================================================================================
 Table with conditional var section
@@ -167,32 +171,34 @@ table 50001 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (codeunit_keyword)
-              reference: (quoted_identifier)))))
-      (preproc_endif
-        (preproc_close)))
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (quoted_identifier)
-        type: (type_specification
-          (code_type
-            length: (integer)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (quoted_identifier)))))
+        (preproc_endif
+          (preproc_close)))
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))))))))
 
 ================================================================================
 Report with conditional var section
@@ -226,37 +232,40 @@ report 50001 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (codeunit_keyword)
-              reference: (quoted_identifier)))))
-      (preproc_endif
-        (preproc_close)))
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (quoted_identifier)))))
+        (preproc_endif
+          (preproc_close)))
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier)))))))))
 
 ================================================================================
 XMLPort with conditional var section
@@ -286,24 +295,26 @@ xmlport 50001 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (codeunit_keyword)
-              reference: (quoted_identifier)))))
-      (preproc_endif
-        (preproc_close)))
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (var_section
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (quoted_identifier)))))
+        (preproc_endif
+          (preproc_close)))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            name: (identifier)))))))

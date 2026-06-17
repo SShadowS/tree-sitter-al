@@ -47,102 +47,106 @@ xmlport 50000 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (ml_value_list
-        (ml_value_pair
-          language: (identifier)
-          value: (string_literal))
-        (ml_value_pair
-          language: (identifier)
-          value: (string_literal))))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (xmlport_element
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
             value: (string_literal))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (property_expression
-              (comparison_expression
-                left: (quoted_identifier)
-                operator: (comparison_operator)
-                right: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (quoted_identifier))))))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (option_member_list
-              (option_member
-                (quoted_identifier))
-              (option_member
-                (identifier))))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (ml_value_list
-              (ml_value_pair
-                language: (identifier)
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            name: (identifier)
+            body: (xmlport_body
+              (property
+                name: (property_name)
                 value: (string_literal))
-              (ml_value_pair
-                language: (identifier)
-                value: (string_literal)))))))))
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (xmlport_element
+                name: (identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (call_expression
+                          function: (identifier)
+                          arguments: (argument_list
+                            (quoted_identifier))))))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (option_member_list
+                      (option_member
+                        (quoted_identifier))
+                      (option_member
+                        (identifier))))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (ml_value_list
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal))
+                      (ml_value_pair
+                        language: (identifier)
+                        value: (string_literal)))))))))))))

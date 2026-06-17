@@ -21,19 +21,22 @@ report 50003 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (quoted_identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (sorting_value
-            (identifier)))
-        (property
-          name: (property_name)
-          value: (integer))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (quoted_identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (identifier)))
+              (property
+                name: (property_name)
+                value: (integer)))))))))
 
 ================================================================================
 MaxIteration property with different case variations
@@ -59,21 +62,24 @@ report 50004 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (integer))
-        (property
-          name: (property_name)
-          value: (integer))
-        (property
-          name: (property_name)
-          value: (integer))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (integer))
+              (property
+                name: (property_name)
+                value: (integer))
+              (property
+                name: (property_name)
+                value: (integer)))))))))
 
 ================================================================================
 MaxIteration property with large integer values
@@ -97,12 +103,15 @@ report 50005 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (integer))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (integer)))))))))

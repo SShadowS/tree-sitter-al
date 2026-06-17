@@ -34,78 +34,29 @@ controladdin PowerBIManagement
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (integer))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (string_literal))
-        (option_member
-          (string_literal))))
-    (event_declaration
-      (event_keyword)
-      name: (identifier))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))
-    (preproc_conditional_controladdin
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (attribute_item
-        attribute: (attribute_content
-          name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)
-              (string_literal)))))
-      (interface_procedure
-        (procedure_keyword)
-        name: (identifier)
-        (parameter_list
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
-        (interface_procedure_suffix))
-      (preproc_endif
-        (preproc_close)))
-    (preproc_conditional_controladdin
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (interface_procedure
-        (procedure_keyword)
-        name: (identifier)
-        (parameter_list
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
-        (interface_procedure_suffix))
+    body: (controladdin_body
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (integer))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (string_literal))
+          (option_member
+            (string_literal))))
+      (event_declaration
+        (event_keyword)
+        name: (identifier))
       (interface_procedure
         (procedure_keyword)
         name: (identifier)
@@ -115,8 +66,58 @@ controladdin PowerBIManagement
             type: (type_specification
               (basic_type))))
         (interface_procedure_suffix))
-      (preproc_endif
-        (preproc_close)))))
+      (preproc_conditional_controladdin
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (attribute_item
+          attribute: (attribute_content
+            name: (identifier)
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (interface_procedure
+          (procedure_keyword)
+          name: (identifier)
+          (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type))))
+          (interface_procedure_suffix))
+        (preproc_endif
+          (preproc_close)))
+      (preproc_conditional_controladdin
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (interface_procedure
+          (procedure_keyword)
+          name: (identifier)
+          (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type)))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          (interface_procedure_suffix))
+        (interface_procedure
+          (procedure_keyword)
+          name: (identifier)
+          (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (basic_type))))
+          (interface_procedure_suffix))
+        (preproc_endif
+          (preproc_close))))))
 
 ================================================================================
 ControlAddIn with nested preprocessor blocks
@@ -143,36 +144,37 @@ controladdin TestAddin
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (integer))
-    (preproc_conditional_controladdin
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
-      (interface_procedure
-        (procedure_keyword)
-        name: (identifier)
-        (interface_procedure_suffix))
-      (preproc_else)
+    body: (controladdin_body
+      (property
+        name: (property_name)
+        value: (integer))
       (preproc_conditional_controladdin
         (preproc_if
           (preproc_open)
-          condition: (preproc_not_expression
-            (identifier)))
+          condition: (identifier))
         (interface_procedure
           (procedure_keyword)
           name: (identifier)
           (interface_procedure_suffix))
         (preproc_else)
-        (interface_procedure
-          (procedure_keyword)
-          name: (identifier)
-          (interface_procedure_suffix))
+        (preproc_conditional_controladdin
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (interface_procedure
+            (procedure_keyword)
+            name: (identifier)
+            (interface_procedure_suffix))
+          (preproc_else)
+          (interface_procedure
+            (procedure_keyword)
+            name: (identifier)
+            (interface_procedure_suffix))
+          (preproc_endif
+            (preproc_close)))
         (preproc_endif
-          (preproc_close)))
-      (preproc_endif
-        (preproc_close)))))
+          (preproc_close))))))
 
 ================================================================================
 ControlAddIn ending with preprocessor block
@@ -208,33 +210,13 @@ controladdin PowerBIManagement
   (controladdin_declaration
     (controladdin_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (integer))
-    (event_declaration
-      (event_keyword)
-      name: (identifier))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))
-    (preproc_conditional_controladdin
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (attribute_item
-        attribute: (attribute_content
-          name: (identifier)
-          arguments: (attribute_arguments
-            (attribute_argument_list
-              (string_literal)
-              (string_literal)))))
+    body: (controladdin_body
+      (property
+        name: (property_name)
+        value: (integer))
+      (event_declaration
+        (event_keyword)
+        name: (identifier))
       (interface_procedure
         (procedure_keyword)
         name: (identifier)
@@ -242,32 +224,53 @@ controladdin PowerBIManagement
           (parameter
             name: (identifier)
             type: (type_specification
-              (text_type)))
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
+              (basic_type))))
         (interface_procedure_suffix))
-      (interface_procedure
-        (procedure_keyword)
-        name: (identifier)
-        (parameter_list
-          (parameter
+      (preproc_conditional_controladdin
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (attribute_item
+          attribute: (attribute_content
             name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (parameter
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
-        (interface_procedure_suffix))
-      (preproc_endif
-        (preproc_close)))))
+            arguments: (attribute_arguments
+              (attribute_argument_list
+                (string_literal)
+                (string_literal)))))
+        (interface_procedure
+          (procedure_keyword)
+          name: (identifier)
+          (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type)))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type)))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type))))
+          (interface_procedure_suffix))
+        (interface_procedure
+          (procedure_keyword)
+          name: (identifier)
+          (parameter_list
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type)))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type)))
+            (parameter
+              name: (identifier)
+              type: (type_specification
+                (text_type))))
+          (interface_procedure_suffix))
+        (preproc_endif
+          (preproc_close))))))

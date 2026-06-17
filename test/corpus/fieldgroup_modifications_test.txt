@@ -21,12 +21,14 @@ tableextension 50100 "Customer Extension" extends Customer
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (identifier)
-    (fieldgroups_section
-      (fieldgroups_keyword)
-      (addlast_fieldgroup_modification
-        target: (identifier)
-        fields: (field_list
-          (quoted_identifier))))))
+    body: (object_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            target: (identifier)
+            fields: (field_list
+              (quoted_identifier))))))))
 
 ================================================================================
 Fieldgroup addfirst modification
@@ -51,12 +53,14 @@ tableextension 50101 "Item Extension" extends Item
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (identifier)
-    (fieldgroups_section
-      (fieldgroups_keyword)
-      (addfirst_fieldgroup_modification
-        target: (identifier)
-        fields: (field_list
-          (quoted_identifier))))))
+    body: (object_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addfirst_fieldgroup_modification
+            target: (identifier)
+            fields: (field_list
+              (quoted_identifier))))))))
 
 ================================================================================
 Multiple fieldgroup modifications
@@ -85,14 +89,16 @@ tableextension 50104 "Mixed Fieldgroup Extension" extends "Base Table"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (fieldgroups_section
-      (fieldgroups_keyword)
-      (addlast_fieldgroup_modification
-        target: (identifier)
-        fields: (field_list
-          (quoted_identifier)
-          (quoted_identifier)))
-      (addfirst_fieldgroup_modification
-        target: (identifier)
-        fields: (field_list
-          (quoted_identifier))))))
+    body: (object_body
+      (fieldgroups_section
+        (fieldgroups_keyword)
+        body: (fieldgroups_body
+          (addlast_fieldgroup_modification
+            target: (identifier)
+            fields: (field_list
+              (quoted_identifier)
+              (quoted_identifier)))
+          (addfirst_fieldgroup_modification
+            target: (identifier)
+            fields: (field_list
+              (quoted_identifier))))))))

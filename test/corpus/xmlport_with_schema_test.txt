@@ -33,19 +33,23 @@ xmlport 12 "IC Outbox Imp/Exp"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (xmlport_element
-          name: (identifier)
-          source: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
+          (xmlport_element
+            name: (identifier)
+            body: (xmlport_body
+              (xmlport_element
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (xmlport_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))

@@ -16,23 +16,24 @@ codeunit 123 Test
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (array_type
-              sizes: (integer)
-              sizes: (integer)
-              element_type: (type_specification
-                (text_type
-                  length: (integer)))))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                sizes: (integer)
+                sizes: (integer)
+                element_type: (type_specification
+                  (text_type
+                    length: (integer)))))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 Single-dimensional array for comparison
@@ -52,22 +53,23 @@ codeunit 123 Test
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (array_type
-              sizes: (integer)
-              element_type: (type_specification
-                (text_type
-                  length: (integer)))))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                sizes: (integer)
+                element_type: (type_specification
+                  (text_type
+                    length: (integer)))))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 Three-dimensional array
@@ -87,20 +89,21 @@ codeunit 123 Test
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (array_type
-              sizes: (integer)
-              sizes: (integer)
-              sizes: (integer)
-              element_type: (type_specification
-                (basic_type))))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (array_type
+                sizes: (integer)
+                sizes: (integer)
+                sizes: (integer)
+                element_type: (type_specification
+                  (basic_type))))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

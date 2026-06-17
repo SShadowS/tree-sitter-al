@@ -39,46 +39,50 @@ xmlport 50100 "Export Item Data"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (xmlport_element
-          name: (identifier)
-          source: (identifier)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
           (xmlport_element
             name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier)))
-          (xmlport_element
-            name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (identifier)))
-          (preproc_conditional_xmlport
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (xmlport_element
-              name: (identifier)
-              source: (member_expression
-                object: (identifier)
-                member: (quoted_identifier)))
-            (preproc_endif
-              (preproc_close)))
-          (xmlport_element
-            name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))))))))
+            body: (xmlport_body
+              (xmlport_element
+                name: (identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (identifier)))
+                  (preproc_conditional_xmlport
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (xmlport_element
+                      name: (identifier)
+                      source: (member_expression
+                        object: (identifier)
+                        member: (quoted_identifier)))
+                    (preproc_endif
+                      (preproc_close)))
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))))))))))))
 
 ================================================================================
 XMLPort with multiple preprocessor conditionals
@@ -130,71 +134,78 @@ xmlport 50101 "Import Data"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (preproc_conditional_xmlport
-          (preproc_if
-            (preproc_open)
-            condition: (identifier))
+    body: (object_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
           (xmlport_element
             name: (identifier)
-            source: (identifier)
-            (xmlport_element
-              name: (identifier)
-              source: (member_expression
-                object: (identifier)
-                member: (quoted_identifier)))
-            (xmlport_element
-              name: (identifier)
-              source: (member_expression
-                object: (identifier)
-                member: (identifier))))
-          (preproc_else)
-          (xmlport_element
-            name: (identifier)
-            source: (identifier)
-            (xmlport_element
-              name: (identifier)
-              source: (member_expression
-                object: (identifier)
-                member: (quoted_identifier)))
-            (xmlport_element
-              name: (identifier)
-              source: (member_expression
-                object: (identifier)
-                member: (identifier))))
-          (preproc_endif
-            (preproc_close)))
-        (xmlport_element
-          name: (identifier)
-          source: (identifier)
-          (preproc_conditional_xmlport
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (xmlport_element
-              name: (identifier)
-              source: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              (trigger_declaration
-                (trigger_keyword)
+            body: (xmlport_body
+              (preproc_conditional_xmlport
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (xmlport_element
+                  name: (identifier)
+                  source: (identifier)
+                  body: (xmlport_body
+                    (xmlport_element
+                      name: (identifier)
+                      source: (member_expression
+                        object: (identifier)
+                        member: (quoted_identifier)))
+                    (xmlport_element
+                      name: (identifier)
+                      source: (member_expression
+                        object: (identifier)
+                        member: (identifier)))))
+                (preproc_else)
+                (xmlport_element
+                  name: (identifier)
+                  source: (identifier)
+                  body: (xmlport_body
+                    (xmlport_element
+                      name: (identifier)
+                      source: (member_expression
+                        object: (identifier)
+                        member: (quoted_identifier)))
+                    (xmlport_element
+                      name: (identifier)
+                      source: (member_expression
+                        object: (identifier)
+                        member: (identifier)))))
+                (preproc_endif
+                  (preproc_close)))
+              (xmlport_element
                 name: (identifier)
-                (code_block
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (string_literal))))))
-            (preproc_endif
-              (preproc_close)))
-          (xmlport_element
-            name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))))))))
+                source: (identifier)
+                body: (xmlport_body
+                  (preproc_conditional_xmlport
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (xmlport_element
+                      name: (identifier)
+                      source: (member_expression
+                        object: (identifier)
+                        member: (quoted_identifier))
+                      body: (xmlport_body
+                        (trigger_declaration
+                          (trigger_keyword)
+                          name: (identifier)
+                          body: (code_block
+                            (call_expression
+                              function: (identifier)
+                              arguments: (argument_list
+                                (string_literal)))))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))))))))))))
 
 ================================================================================
 XMLPort with nested preprocessor conditionals
@@ -234,38 +245,43 @@ xmlport 50102 "Complex Export"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (xmlport_element
-          name: (identifier)
-          source: (quoted_identifier)
-          (preproc_conditional_xmlport
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (xmlport_element
-              name: (identifier)
-              source: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              (preproc_conditional_xmlport
-                (preproc_if
-                  (preproc_open)
-                  condition: (identifier))
-                (trigger_declaration
-                  (trigger_keyword)
-                  name: (identifier)
-                  (code_block
-                    (comment)))
-                (preproc_endif
-                  (preproc_close))))
-            (preproc_endif
-              (preproc_close)))
+    body: (object_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
           (xmlport_element
             name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))))))))
+            body: (xmlport_body
+              (xmlport_element
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (xmlport_body
+                  (preproc_conditional_xmlport
+                    (preproc_if
+                      (preproc_open)
+                      condition: (preproc_not_expression
+                        (identifier)))
+                    (xmlport_element
+                      name: (identifier)
+                      source: (member_expression
+                        object: (identifier)
+                        member: (quoted_identifier))
+                      body: (xmlport_body
+                        (preproc_conditional
+                          (preproc_if
+                            (preproc_open)
+                            condition: (identifier))
+                          (trigger_declaration
+                            (trigger_keyword)
+                            name: (identifier)
+                            body: (code_block
+                              (comment)))
+                          (preproc_endif
+                            (preproc_close)))))
+                    (preproc_endif
+                      (preproc_close)))
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))))))))))))

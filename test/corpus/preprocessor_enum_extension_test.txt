@@ -33,30 +33,34 @@ enumextension 50100 "Payment Method Type Ext" extends "Payment Method Type"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (identifier))
+    body: (object_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (enum_value_declaration
+          value_id: (integer)
+          value_name: (quoted_identifier)
+          body: (object_body
+            (property
+              name: (property_name)
+              value: (string_literal))))
+        (preproc_else)
+        (enum_value_declaration
+          value_id: (integer)
+          value_name: (quoted_identifier)
+          body: (object_body
+            (property
+              name: (property_name)
+              value: (string_literal))))
+        (preproc_endif
+          (preproc_close)))
+      (preproc_region)
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (string_literal)))
-      (preproc_else)
-      (enum_value_declaration
-        value_id: (integer)
-        value_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (string_literal)))
-      (preproc_endif
-        (preproc_close)))
-    (preproc_region)
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (quoted_identifier)
-      (property
-        name: (property_name)
-        value: (string_literal)))
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal)))))
     (preproc_endregion)))

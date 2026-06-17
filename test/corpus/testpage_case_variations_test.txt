@@ -32,67 +32,68 @@ codeunit 50100 "Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              reference: (integer)))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              reference: (integer)))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              reference: (integer)))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              reference: (integer)))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                reference: (integer)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                reference: (integer)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                reference: (integer)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                reference: (integer)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

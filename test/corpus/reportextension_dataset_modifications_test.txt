@@ -31,25 +31,29 @@ reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (add_dataset_modification
-        target: (identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier)))
-      (modify_modification
-        target: (identifier)
-        (trigger_declaration
-          (trigger_keyword)
-          name: (identifier)
-          (code_block
-            (begin_keyword)
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list))
-            (end_keyword)))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (add_dataset_modification
+            target: (identifier)
+            body: (dataset_mod_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier))))
+          (modify_modification
+            target: (identifier)
+            body: (object_body
+              (trigger_declaration
+                (trigger_keyword)
+                name: (identifier)
+                body: (code_block
+                  (begin_keyword)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))
+                  (end_keyword))))))))))
 
 ================================================================================
 Report extension with rendering section
@@ -85,38 +89,42 @@ reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (rendering_section
-      (rendering_keyword)
-      (rendering_layout
-        (layout_keyword)
-        name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal)))
-      (rendering_layout
-        (layout_keyword)
-        name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (identifier))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (rendering_section
+        (rendering_keyword)
+        body: (rendering_body
+          (rendering_layout
+            (layout_keyword)
+            name: (quoted_identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal))))
+          (rendering_layout
+            (layout_keyword)
+            name: (quoted_identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 Report extension with complex dataset modifications
@@ -173,66 +181,72 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (add_dataset_modification
-        target: (identifier)
-        (report_column
-          (column_keyword)
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (add_dataset_modification
+            target: (identifier)
+            body: (dataset_mod_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier))))
+          (addafter_dataset_modification
+            target: (identifier)
+            body: (dataset_mod_body
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (identifier)
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (integer))
+                  (property
+                    name: (property_name)
+                    value: (sorting_value
+                      (identifier)))
+                  (report_column
+                    (column_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))
+                  (report_column
+                    (column_keyword)
+                    name: (identifier)
+                    source: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier)))))))
+          (modify_modification
+            target: (identifier)
+            body: (object_body
+              (trigger_declaration
+                (trigger_keyword)
+                name: (identifier)
+                body: (code_block
+                  (begin_keyword)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))
+                  (end_keyword)))))))
+      (var_section
+        (var_keyword)
+        (variable_declaration
           name: (identifier)
-          source: (quoted_identifier))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier)))
-      (addafter_dataset_modification
-        target: (identifier)
-        (report_dataitem
-          (dataitem_keyword)
-          name: (identifier)
-          table_name: (identifier)
-          (property
-            name: (property_name)
-            value: (integer))
-          (property
-            name: (property_name)
-            value: (sorting_value
-              (identifier)))
-          (report_column
-            (column_keyword)
-            name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier)))
-          (report_column
-            (column_keyword)
-            name: (identifier)
-            source: (member_expression
-              object: (identifier)
-              member: (quoted_identifier)))))
-      (modify_modification
-        target: (identifier)
-        (trigger_declaration
-          (trigger_keyword)
-          name: (identifier)
-          (code_block
-            (begin_keyword)
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list))
-            (end_keyword)))))
-    (var_section
-      (var_keyword)
-      (variable_declaration
+          type: (type_specification
+            (record_type
+              reference: (quoted_identifier)
+              (temporary_keyword)))))
+      (procedure
+        (procedure_keyword)
         name: (identifier)
-        type: (type_specification
-          (record_type
-            reference: (quoted_identifier)
-            (temporary_keyword)))))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (comment)
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (comment)
+          (end_keyword))))))

@@ -22,20 +22,23 @@ report 50000 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (quoted_identifier)
-        table_name: (quoted_identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list)))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (quoted_identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list))))))))))
 
 ================================================================================
 Report column with function call
@@ -61,21 +64,24 @@ report 50001 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (quoted_identifier)
-        table_name: (quoted_identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier)
-              (integer)
-              (integer))))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (quoted_identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (integer)
+                    (integer)))))))))))
 
 ================================================================================
 Report column with field caption
@@ -101,18 +107,21 @@ report 50002 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (quoted_identifier))))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list
+                    (quoted_identifier)))))))))))

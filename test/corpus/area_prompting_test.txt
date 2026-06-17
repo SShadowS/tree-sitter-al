@@ -29,30 +29,34 @@ page 7221104 "Modify Marketing Text"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (trigger_declaration
-            (trigger_keyword)
-            name: (identifier)
-            (code_block
-              (begin_keyword)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list))
-              (end_keyword))))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_declaration
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (call_expression
+                        function: (identifier)
+                        arguments: (argument_list))
+                      (end_keyword))))))))))))
 
 ================================================================================
 BankAccReconciliationList with area(Prompting)
@@ -87,30 +91,34 @@ page 50100 "Bank Acc. Reconciliation List"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (property
-            name: (property_name)
-            value: (boolean))
-          (trigger_declaration
-            (trigger_keyword)
-            name: (identifier)
-            (code_block
-              (begin_keyword)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list))
-              (end_keyword))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_declaration
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (property
+                    name: (property_name)
+                    value: (boolean))
+                  (trigger_declaration
+                    (trigger_keyword)
+                    name: (identifier)
+                    body: (code_block
+                      (begin_keyword)
+                      (call_expression
+                        function: (identifier)
+                        arguments: (argument_list))
+                      (end_keyword))))))))))))

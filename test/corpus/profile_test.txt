@@ -15,15 +15,16 @@ profile TestProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier))
+      (property
+        name: (property_name)
+        value: (string_literal)))))
 
 ================================================================================
 Profile with customizations list
@@ -43,24 +44,25 @@ profile DocumentCapture
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (quoted_identifier))
-        (option_member
-          (quoted_identifier))
-        (option_member
-          (quoted_identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (quoted_identifier)))))))
 
 ================================================================================
 Profile with single customization
@@ -79,15 +81,16 @@ profile SimpleProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier))
+      (property
+        name: (property_name)
+        value: (quoted_identifier)))))
 
 ================================================================================
 Profile with unquoted identifiers
@@ -107,22 +110,23 @@ profile UnquotedProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (identifier))
-        (option_member
-          (identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (identifier))
+          (option_member
+            (identifier)))))))
 
 ================================================================================
 Profile with minimal properties
@@ -140,12 +144,13 @@ profile MinimalProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier)))))
 
 ================================================================================
 Profile with extended properties
@@ -166,21 +171,22 @@ profile ExtendedProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (boolean))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier))
+      (property
+        name: (property_name)
+        value: (boolean)))))
 
 ================================================================================
 Profile with mixed property types
@@ -202,28 +208,29 @@ profile MixedProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (quoted_identifier))
-        (option_member
-          (quoted_identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (quoted_identifier)))))))
 
 ================================================================================
 Profile with empty customizations
@@ -243,14 +250,15 @@ profile EmptyCustomizationsProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))
-    (property
-      name: (property_name))
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier))
+      (property
+        name: (property_name))
+      (property
+        name: (property_name)
+        value: (string_literal)))))

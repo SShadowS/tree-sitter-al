@@ -28,15 +28,16 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     (integer)
     (identifier)
-    (property
-      (property_name)
-      (identifier))
-    (property
-      (property_name)
-      (identifier))
-    (property
-      (property_name)
-      (boolean))))
+    (object_body
+      (property
+        (property_name)
+        (identifier))
+      (property
+        (property_name)
+        (identifier))
+      (property
+        (property_name)
+        (boolean)))))
 
 ==================
 Variable Declarations
@@ -57,33 +58,34 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     (integer)
     (identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (variable_declaration
-        (identifier)
-        (type_specification
-          (text_type
-            (integer))))
-      (variable_declaration
-        (identifier)
-        (type_specification
-          (basic_type)))
-      (variable_declaration
-        (identifier)
-        (type_specification
-          (record_type
-            (identifier))))
-      (variable_declaration
-        (identifier)
-        (type_specification
-          (array_type
-            (integer)
-            (type_specification
-              (text_type))))))))
+    (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (text_type
+              (integer))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (basic_type)))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (record_type
+              (identifier))))
+        (variable_declaration
+          (identifier)
+          (type_specification
+            (array_type
+              (integer)
+              (type_specification
+                (text_type)))))))))
 
 ==================
 Basic Procedure
@@ -102,29 +104,30 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      (identifier)
-      (parameter_list
-        (parameter
-          (identifier)
-          (type_specification
-            (basic_type)))
-        (parameter
-          (var_keyword)
-          (identifier)
-          (type_specification
-            (text_type))))
-      (type_specification
-        (basic_type))
-      (code_block
-        (begin_keyword)
-        (exit_statement
-          (exit_keyword)
-          (boolean))
-        (end_keyword)))))
+    (object_body
+      (procedure
+        (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        (identifier)
+        (parameter_list
+          (parameter
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (parameter
+            (var_keyword)
+            (identifier)
+            (type_specification
+              (text_type))))
+        (type_specification
+          (basic_type))
+        (code_block
+          (begin_keyword)
+          (exit_statement
+            (exit_keyword)
+            (boolean))
+          (end_keyword))))))
 
 ==================
 Basic Trigger
@@ -143,16 +146,17 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     (integer)
     (identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          (identifier)
-          (argument_list
-            (string_literal)))
-        (end_keyword)))))
+    (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        (identifier)
+        (code_block
+          (begin_keyword)
+          (call_expression
+            (identifier)
+            (argument_list
+              (string_literal)))
+          (end_keyword))))))
 
 ==================
 Procedure With Var Section
@@ -175,39 +179,40 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     (integer)
     (identifier)
-    (procedure
-      (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      (identifier)
-      (parameter_list
-        (parameter
-          (identifier)
-          (type_specification
-            (code_type
-              (integer)))))
-      (var_section
-        (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (record_type
-              (identifier))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
-      (code_block
-        (begin_keyword)
-        (call_expression
-          (member_expression
+    (object_body
+      (procedure
+        (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        (identifier)
+        (parameter_list
+          (parameter
             (identifier)
-            (identifier))
-          (argument_list
-            (identifier)))
-        (assignment_statement
-          (identifier)
-          (member_expression
+            (type_specification
+              (code_type
+                (integer)))))
+        (var_section
+          (var_keyword)
+          (variable_declaration
             (identifier)
-            (quoted_identifier)))
-        (end_keyword)))))
+            (type_specification
+              (record_type
+                (identifier))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type))))
+        (code_block
+          (begin_keyword)
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (argument_list
+              (identifier)))
+          (assignment_statement
+            (identifier)
+            (member_expression
+              (identifier)
+              (quoted_identifier)))
+          (end_keyword))))))

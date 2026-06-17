@@ -22,27 +22,28 @@ table 50000 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (case_statement
-          (case_keyword)
-          expression: (identifier)
-          (of_keyword)
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            body: (assignment_statement
-              left: (identifier)
-              right: (integer)))
-          (case_branch
-            pattern: (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier))
-            body: (assignment_statement
-              left: (identifier)
-              right: (integer))))
-        (end_keyword)))))
+    body: (object_body
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (case_statement
+            (case_keyword)
+            expression: (identifier)
+            (of_keyword)
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              body: (assignment_statement
+                left: (identifier)
+                right: (integer)))
+            (case_branch
+              pattern: (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier))
+              body: (assignment_statement
+                left: (identifier)
+                right: (integer))))
+          (end_keyword))))))

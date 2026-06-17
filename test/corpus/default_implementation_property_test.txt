@@ -22,19 +22,20 @@ enum 204 "Alt. Cust. VAT Reg. Consist." implements "Alt. Cust. VAT Reg. Consist.
     (implements_clause
       (implements_keyword)
       interface: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (quoted_identifier)
-          operator: (comparison_operator)
-          right: (quoted_identifier))))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (property_expression
+          (comparison_expression
+            left: (quoted_identifier)
+            operator: (comparison_operator)
+            right: (quoted_identifier))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)))))
 
 ================================================================================
 DefaultImplementation property with case variations
@@ -61,26 +62,27 @@ enum 100 "Test Enum" implements "ITestInterface"
     (implements_clause
       (implements_keyword)
       interface: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (quoted_identifier)
-          operator: (comparison_operator)
-          right: (quoted_identifier))))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (quoted_identifier)
-          operator: (comparison_operator)
-          right: (quoted_identifier))))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (property_expression
+          (comparison_expression
+            left: (quoted_identifier)
+            operator: (comparison_operator)
+            right: (quoted_identifier))))
+      (property
+        name: (property_name)
+        value: (property_expression
+          (comparison_expression
+            left: (quoted_identifier)
+            operator: (comparison_operator)
+            right: (quoted_identifier))))
+      (property
+        name: (property_name)
+        value: (boolean))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)))))
 
 ================================================================================
 DefaultImplementation property with unquoted identifiers
@@ -106,19 +108,20 @@ enum 150 "Simple Enum" implements SimpleInterface
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (identifier)
-          operator: (comparison_operator)
-          right: (identifier))))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (property_expression
+          (comparison_expression
+            left: (identifier)
+            operator: (comparison_operator)
+            right: (identifier))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)))))
 
 ================================================================================
 Enum with multiple properties including DefaultImplementation
@@ -159,31 +162,34 @@ enum 200 "Complex Enum" implements "IComplexInterface"
     (implements_clause
       (implements_keyword)
       interface: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (property_expression
-        (comparison_expression
-          left: (quoted_identifier)
-          operator: (comparison_operator)
-          right: (quoted_identifier))))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
+    body: (object_body
       (property
         name: (property_name)
-        value: (string_literal)))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)
+        value: (string_literal))
       (property
         name: (property_name)
-        value: (string_literal)))))
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (property_expression
+          (comparison_expression
+            left: (quoted_identifier)
+            operator: (comparison_operator)
+            right: (quoted_identifier))))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal))))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)
+        body: (object_body
+          (property
+            name: (property_name)
+            value: (string_literal)))))))

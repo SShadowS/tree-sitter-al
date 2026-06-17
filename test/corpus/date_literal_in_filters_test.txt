@@ -20,26 +20,29 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (aggregate_formula
-            function: (aggregate_function)
-            target: (calc_field_reference
-              (quoted_identifier))
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (date_literal)))))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier))
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (date_literal))))))))))))))
 
 ================================================================================
 Date literal in filter expressions - specific date
@@ -63,26 +66,29 @@ table 50101 "Date Filter Test"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (aggregate_formula
-            function: (aggregate_function)
-            target: (calc_field_reference
-              (quoted_identifier))
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (date_literal)))))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier))
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (date_literal))))))))))))))
 
 ================================================================================
 Date literals in various filter contexts
@@ -109,38 +115,41 @@ table 50102 "Complex Date Filters"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (aggregate_formula
-            function: (aggregate_function)
-            target: (calc_field_reference
-              (quoted_identifier))
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (date_literal)
-                    (date_literal)))
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (date_literal)))
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (integer)
-                    (identifier)))))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier))
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (date_literal)
+                          (date_literal)))
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (date_literal)))
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)
+                          (identifier))))))))))))))
 
 ================================================================================
 Date literal with time and datetime literals
@@ -167,33 +176,36 @@ table 50103 "Mixed Date Time Filters"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (aggregate_formula
-            function: (aggregate_function)
-            target: (calc_field_reference
-              (quoted_identifier))
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (date_literal)))
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (time_literal)))
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (datetime_literal)))))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier))
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (date_literal)))
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (time_literal)))
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (datetime_literal))))))))))))))

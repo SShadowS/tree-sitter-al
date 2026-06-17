@@ -35,37 +35,44 @@ report 123 "Caption Test"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (boolean)))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (boolean)))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (boolean)))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (boolean)))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean))))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (boolean)))))))))))

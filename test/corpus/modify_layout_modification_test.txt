@@ -36,28 +36,34 @@ pageextension 123 "Test Extension" extends "Test Page"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (layout_section
-      (layout_keyword)
-      (modify_modification
-        target: (identifier)
-        (property
-          name: (property_name)
-          value: (boolean)))
-      (modify_modification
-        target: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (boolean))
-        (property
-          name: (property_name)
-          value: (property_expression
-            (unary_expression
-              operand: (identifier)))))
-      (addafter_modification
-        target: (quoted_identifier)
-        (page_field
-          name: (identifier)
-          source: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (modify_modification
+            target: (identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))))
+          (modify_modification
+            target: (quoted_identifier)
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (boolean))
+              (property
+                name: (property_name)
+                value: (property_expression
+                  (unary_expression
+                    operand: (identifier))))))
+          (addafter_modification
+            target: (quoted_identifier)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))

@@ -21,18 +21,19 @@ interface "Cost Adjustment With Params" extends "Inventory Adjustment"
     (comment)
     (comment)
     (comment)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (codeunit_keyword)
-              reference: (quoted_identifier)))))
-      (interface_procedure_suffix))))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (quoted_identifier)))))
+        (interface_procedure_suffix)))))
 
 ================================================================================
 Interface extends with access modifier
@@ -52,10 +53,11 @@ interface "My Interface" extends MyBaseInterface access = Internal
     (extends_keyword)
     extends_interface: (identifier)
     access_value: (internal_keyword)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix)))))
 
 ================================================================================
 Simple interface without extends
@@ -73,16 +75,17 @@ interface "Simple Interface"
   (interface_declaration
     (interface_keyword)
     object_name: (quoted_identifier)
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (interface_procedure_suffix))
-    (interface_procedure
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (interface_procedure_suffix))))
+    body: (interface_body
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (interface_procedure_suffix))
+      (interface_procedure
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (interface_procedure_suffix)))))

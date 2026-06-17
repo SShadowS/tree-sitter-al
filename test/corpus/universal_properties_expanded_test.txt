@@ -23,28 +23,30 @@ query 50100 "Customer Query"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (boolean)))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (boolean))))
   (query_declaration
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 InstructionalText properties in pages and fields
@@ -75,33 +77,37 @@ page 50101 "Setup Wizard"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (ml_value_list
-        (ml_value_pair
-          language: (identifier)
-          value: (string_literal))
-        (ml_value_pair
-          language: (identifier)
-          value: (string_literal))))
-    (layout_section
-      (layout_keyword)
-      (area_section
-        (area_keyword)
-        (page_field
-          name: (quoted_identifier)
-          source: (member_expression
-            object: (identifier)
-            member: (quoted_identifier))
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (page_field
+                name: (quoted_identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))
 
 ================================================================================
 AdditionalSearchTerms in pages and reports
@@ -128,34 +134,36 @@ report 50102 "Sales Report"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (ml_value_list
-        (ml_value_pair
-          language: (identifier)
-          value: (string_literal))
-        (ml_value_pair
-          language: (identifier)
-          value: (string_literal))))
-    (property
-      name: (property_name)
-      value: (string_literal)))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (ml_value_list
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))
+          (ml_value_pair
+            language: (identifier)
+            value: (string_literal))))
+      (property
+        name: (property_name)
+        value: (string_literal))))
   (report_declaration
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 Extensible property in multiple object types
@@ -188,36 +196,39 @@ page 50103 "Setup Page"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (quoted_identifier))
-        (option_member
-          (identifier)))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (identifier))))))
   (enum_declaration
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier)))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier))))
   (page_declaration
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (boolean))
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean))
+      (property
+        name: (property_name)
+        value: (identifier)))))

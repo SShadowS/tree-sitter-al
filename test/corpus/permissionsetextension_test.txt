@@ -16,9 +16,10 @@ permissionsetextension 20766 "D365 AUTOMATION - APIV2" extends "D365 AUTOMATION"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (quoted_identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (quoted_identifier)))))
 
 ================================================================================
 PermissionSetExtension with namespace
@@ -54,9 +55,10 @@ permissionsetextension 50100 "My Permission Ext" extends "Base Application"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (quoted_identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (quoted_identifier)))))
 
 ================================================================================
 PermissionSetExtension with multiple included permission sets
@@ -76,15 +78,16 @@ permissionsetextension 50101 "Extended Permissions" extends BasePermissions
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (identifier)
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (quoted_identifier))
-        (option_member
-          (quoted_identifier))
-        (option_member
-          (identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (identifier)))))))
 
 ================================================================================
 PermissionSetExtension with permissions
@@ -107,24 +110,25 @@ permissionsetextension 50102 "Table Access Extension" extends "D365 READ"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (tabledata_permission
-          (table_keyword)
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          (page_keyword)
-          table_name: (quoted_identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          (codeunit_keyword)
-          table_name: (quoted_identifier)
-          permission: (permission_type))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            (table_keyword)
+            table_name: (quoted_identifier)
+            permission: (permission_type))
+          (tabledata_permission
+            table_name: (quoted_identifier)
+            permission: (permission_type))
+          (tabledata_permission
+            (page_keyword)
+            table_name: (quoted_identifier)
+            permission: (permission_type))
+          (tabledata_permission
+            (codeunit_keyword)
+            table_name: (quoted_identifier)
+            permission: (permission_type)))))))
 
 ================================================================================
 PermissionSetExtension with mixed properties
@@ -151,28 +155,29 @@ permissionsetextension 50103 "Mixed Properties Ext" extends "Base Permissions"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (identifier))
-    (property
-      name: (property_name)
-      value: (string_literal))
-    (property
-      name: (property_name)
-      value: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (tabledata_permission
-          table_name: (identifier)
-          permission: (permission_type))
-        (tabledata_permission
-          (page_keyword)
-          table_name: (quoted_identifier)
-          permission: (permission_type))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (identifier))
+      (property
+        name: (property_name)
+        value: (string_literal))
+      (property
+        name: (property_name)
+        value: (quoted_identifier))
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
+          (tabledata_permission
+            table_name: (identifier)
+            permission: (permission_type))
+          (tabledata_permission
+            (page_keyword)
+            table_name: (quoted_identifier)
+            permission: (permission_type)))))))
 
 ================================================================================
 PermissionSetExtension case variations
@@ -192,9 +197,10 @@ PERMISSIONSETEXTENSION 50104 MyExtension EXTENDS BaseSet
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 PermissionSetExtension with excluded permission sets
@@ -215,13 +221,14 @@ permissionsetextension 50105 "Restricted Extension" extends "Full Access"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (quoted_identifier))
-    (property
-      name: (property_name)
-      value: (option_member_list
-        (option_member
-          (quoted_identifier))
-        (option_member
-          (quoted_identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (quoted_identifier))
+      (property
+        name: (property_name)
+        value: (option_member_list
+          (option_member
+            (quoted_identifier))
+          (option_member
+            (quoted_identifier)))))))

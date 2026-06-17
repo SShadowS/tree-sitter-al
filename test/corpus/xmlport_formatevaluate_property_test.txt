@@ -14,9 +14,10 @@ xmlport 12 "IC Outbox Imp/Exp"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 XMLPort with lowercase formatevaluate
@@ -34,9 +35,10 @@ xmlport 50100 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier)))))
 
 ================================================================================
 XMLPort with C/SIDE format evaluate
@@ -54,9 +56,10 @@ xmlport 50101 "Another Test"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (property_expression
-        (multiplicative_expression
-          left: (identifier)
-          right: (identifier))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (property_expression
+          (multiplicative_expression
+            left: (identifier)
+            right: (identifier)))))))

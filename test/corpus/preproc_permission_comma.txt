@@ -18,18 +18,19 @@ permissionset 1 "Test"
     (permissionset_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (tabledata_permission_list
-        (tabledata_permission
-          table_name: (identifier)
-          permission: (permission_type))
-        (preproc_conditional_permissions
-          (preproc_if
-            (preproc_open)
-            condition: (identifier))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (tabledata_permission_list
           (tabledata_permission
             table_name: (identifier)
             permission: (permission_type))
-          (preproc_endif
-            (preproc_close)))))))
+          (preproc_conditional_permissions
+            (preproc_if
+              (preproc_open)
+              condition: (identifier))
+            (tabledata_permission
+              table_name: (identifier)
+              permission: (permission_type))
+            (preproc_endif
+              (preproc_close))))))))

@@ -29,36 +29,40 @@ page 9027 "Bookkeeper Role Center"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (action_declaration
-          name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (option_member_list
-              (option_member
-                (identifier))
-              (option_member
-                (identifier))))
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (object_reference_value
-              (page_keyword)
-              (quoted_identifier)))
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (action_declaration
+                name: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (option_member_list
+                      (option_member
+                        (identifier))
+                      (option_member
+                        (identifier))))
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (object_reference_value
+                      (page_keyword)
+                      (quoted_identifier)))
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))
 
 ================================================================================
 Area section with ToolTip property - processing
@@ -89,24 +93,28 @@ page 50000 "Test Role Center"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (action_declaration
-          name: (quoted_identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (identifier)))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (action_declaration
+                name: (quoted_identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (identifier)))))))))))
 
 ================================================================================
 Area section with ToolTip and multiple actions
@@ -146,33 +154,40 @@ page 50001 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (property
-          name: (property_name)
-          value: (string_literal))
-        (action_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal)))
-        (action_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal)))
-        (separator_action
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal)))
-        (action_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (property
+                name: (property_name)
+                value: (string_literal))
+              (action_declaration
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))))
+              (action_declaration
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))))
+              (separator_action
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))))
+              (action_declaration
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))
 
 ================================================================================
 Area section without ToolTip property (backward compatibility)
@@ -201,18 +216,22 @@ page 50002 "Legacy Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (actions_section
-      (actions_keyword)
-      (action_area_section
-        (area_keyword)
-        (action_declaration
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (identifier))
-          (property
-            name: (property_name)
-            value: (string_literal)))))))
+    body: (object_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_area_section
+            (area_keyword)
+            body: (action_body
+              (action_declaration
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (identifier))
+                  (property
+                    name: (property_name)
+                    value: (string_literal)))))))))))

@@ -30,9 +30,10 @@ page 50100 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal)))))
 
 ================================================================================
 Preprocessor conditional with namespace and using statements
@@ -75,13 +76,15 @@ table 50100 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (basic_type))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
 
 ================================================================================
 Preprocessor conditional with namespace and pragmas
@@ -119,12 +122,13 @@ codeunit 50100 TestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+    body: (object_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
 
 ================================================================================
 Nested preprocessor conditionals with namespace
@@ -172,12 +176,13 @@ enum 50100 TestEnum
     (enum_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier))
-    (enum_value_declaration
-      value_id: (integer)
-      value_name: (identifier))))
+    body: (object_body
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier))
+      (enum_value_declaration
+        value_id: (integer)
+        value_name: (identifier)))))
 
 ================================================================================
 Traditional file with objects after namespace in preprocessor
@@ -213,15 +218,17 @@ page 50102 OuterPage
       (page_keyword)
       object_id: (integer)
       object_name: (identifier)
-      (property
-        name: (property_name)
-        value: (identifier)))
+      body: (object_body
+        (property
+          name: (property_name)
+          value: (identifier))))
     (preproc_endif
       (preproc_close)))
   (page_declaration
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (property
-      name: (property_name)
-      value: (string_literal))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (string_literal)))))

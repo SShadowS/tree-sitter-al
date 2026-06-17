@@ -23,22 +23,23 @@ table 50000 "Known Limitation"
     object_id: (integer)
     object_name: (quoted_identifier)
     (comment)
-    (preproc_conditional
-      (preproc_if
-        (preproc_open)
-        condition: (preproc_not_expression
-          (identifier)))
-      (var_section
-        (protected_keyword)
-        (var_keyword)
-        (variable_declaration
+    body: (object_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (var_section
+          (protected_keyword)
+          (var_keyword)
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        (procedure
+          (procedure_keyword)
           name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier)))))
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (code_block))
-      (preproc_endif
-        (preproc_close)))))
+          body: (code_block))
+        (preproc_endif
+          (preproc_close))))))

@@ -18,24 +18,27 @@ table 1 T
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (basic_type))
-        (property
-          name: (property_name)
-          value: (aggregate_formula
-            function: (aggregate_function)
-            target: (calc_field_reference
-              (quoted_identifier))
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  value: (datetime_literal))))))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (basic_type))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier))
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        value: (datetime_literal)))))))))))))
 
 ========================================================================
 Assembly used as variable name
@@ -52,11 +55,12 @@ codeunit 1 T
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (dotnet_type
-            (dotnet_keyword)
-            reference: (quoted_identifier)))))))
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              (dotnet_keyword)
+              reference: (quoted_identifier))))))))

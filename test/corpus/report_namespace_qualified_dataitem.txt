@@ -22,18 +22,21 @@ report 1234 "Test Report"
     (report_keyword)
     (integer)
     (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        (identifier)
-        (identifier)
-        (identifier)
-        (identifier)
-        (report_column
-          (column_keyword)
-          (identifier)
-          (identifier))))))
+    (object_body
+      (dataset_section
+        (dataset_keyword)
+        (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            (identifier)
+            (identifier)
+            (identifier)
+            (identifier)
+            (report_body
+              (report_column
+                (column_keyword)
+                (identifier)
+                (identifier)))))))))
 
 ================================================================================
 Report with nested namespace-qualified dataitems
@@ -67,32 +70,36 @@ report 5678 "Complex Report"
     (report_keyword)
     (integer)
     (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        (identifier)
-        (identifier)
-        (property
-          (property_name)
-          (quoted_identifier))
-        (report_dataitem
-          (dataitem_keyword)
-          (identifier)
-          (identifier)
-          (identifier)
-          (identifier)
-          (property
-            (property_name)
-            (sorting_value
-              (identifier)))
-          (property
-            (property_name)
-            (integer))
-          (report_column
-            (column_keyword)
+    (object_body
+      (dataset_section
+        (dataset_keyword)
+        (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
             (identifier)
-            (identifier)))))))
+            (identifier)
+            (report_body
+              (property
+                (property_name)
+                (quoted_identifier))
+              (report_dataitem
+                (dataitem_keyword)
+                (identifier)
+                (identifier)
+                (identifier)
+                (identifier)
+                (report_body
+                  (property
+                    (property_name)
+                    (sorting_value
+                      (identifier)))
+                  (property
+                    (property_name)
+                    (integer))
+                  (report_column
+                    (column_keyword)
+                    (identifier)
+                    (identifier)))))))))))
 
 ================================================================================
 Report with simple table reference
@@ -118,13 +125,16 @@ report 999 "Simple Report"
     (report_keyword)
     (integer)
     (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        (identifier)
-        (identifier)
-        (report_column
-          (column_keyword)
-          (identifier)
-          (quoted_identifier))))))
+    (object_body
+      (dataset_section
+        (dataset_keyword)
+        (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            (identifier)
+            (identifier)
+            (report_body
+              (report_column
+                (column_keyword)
+                (identifier)
+                (quoted_identifier)))))))))

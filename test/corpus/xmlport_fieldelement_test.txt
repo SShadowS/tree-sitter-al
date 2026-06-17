@@ -28,23 +28,27 @@ xmlport 50000 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (xmlport_element
-          name: (quoted_identifier)
-          source: (quoted_identifier)
+    body: (object_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
           (xmlport_element
             name: (identifier)
-            source: (member_expression
-              object: (quoted_identifier)
-              member: (quoted_identifier)))
-          (xmlport_element
-            name: (identifier)
-            source: (member_expression
-              object: (quoted_identifier)
-              member: (quoted_identifier))))))))
+            body: (xmlport_body
+              (xmlport_element
+                name: (quoted_identifier)
+                source: (quoted_identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (quoted_identifier)
+                      member: (quoted_identifier)))
+                  (xmlport_element
+                    name: (identifier)
+                    source: (member_expression
+                      object: (quoted_identifier)
+                      member: (quoted_identifier))))))))))))
 
 ================================================================================
 XMLPort fieldelement with simple table reference
@@ -73,13 +77,17 @@ xmlport 50001 "Simple XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (schema_section
-      (schema_keyword)
-      (xmlport_element
-        name: (identifier)
-        (xmlport_element
-          name: (quoted_identifier)
-          source: (identifier)
+    body: (object_body
+      (schema_section
+        (schema_keyword)
+        body: (schema_body
           (xmlport_element
             name: (identifier)
-            source: (quoted_identifier)))))))
+            body: (xmlport_body
+              (xmlport_element
+                name: (quoted_identifier)
+                source: (identifier)
+                body: (xmlport_body
+                  (xmlport_element
+                    name: (identifier)
+                    source: (quoted_identifier)))))))))))

@@ -28,35 +28,38 @@ query 50145 "Delayed Prod Orders by Cost"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (identifier))
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (identifier))
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (query_body
+              (query_filter
+                (filter_keyword)
+                name: (identifier)
+                field_name: (identifier))
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))))))
+      (trigger_declaration
+        (trigger_keyword)
         name: (identifier)
-        table_name: (quoted_identifier)
-        (query_filter
-          (filter_keyword)
-          name: (identifier)
-          field_name: (identifier))
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (identifier)
-            (string_literal)
-            (identifier)))
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)
+              (string_literal)
+              (identifier)))
+          (end_keyword))))))
 
 ================================================================================
 Query with multiple triggers
@@ -90,33 +93,36 @@ query 50000 "Test Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_column
+                (column_keyword)
+                name: (identifier)
+                field_name: (quoted_identifier))))))
+      (trigger_declaration
+        (trigger_keyword)
         name: (identifier)
-        table_name: (identifier)
-        (query_column
-          (column_keyword)
-          name: (identifier)
-          field_name: (quoted_identifier))))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))
-    (trigger_declaration
-      (trigger_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (call_expression
-          function: (identifier)
-          arguments: (argument_list
-            (string_literal)))
-        (end_keyword)))))
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (end_keyword)))
+      (trigger_declaration
+        (trigger_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal)))
+          (end_keyword))))))

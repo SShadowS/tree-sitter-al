@@ -14,9 +14,10 @@ page 50300 "ShowFilter Test"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (boolean))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (boolean)))))
 
 ================================================================================
 BASELINE: DataItemTableView property (source_table_view_value pattern)
@@ -40,23 +41,26 @@ report 50700 "DataItemTableView Test"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (sorting_value
-            (quoted_identifier)
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (identifier)))))))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (quoted_identifier)
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (identifier))))))))))))))
 
 ================================================================================
 BASELINE: SourceTableView property (source_table_view_value pattern)
@@ -74,15 +78,16 @@ page 50800 "SourceTableView Test"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (property
-      name: (property_name)
-      value: (sorting_value
-        (quoted_identifier)
-        (where_clause
-          (where_conditions
-            (where_condition
-              field: (quoted_identifier)
-              value: (boolean))))))))
+    body: (object_body
+      (property
+        name: (property_name)
+        value: (sorting_value
+          (quoted_identifier)
+          (where_clause
+            (where_conditions
+              (where_condition
+                field: (quoted_identifier)
+                value: (boolean)))))))))
 
 ================================================================================
 BASELINE: filters_property simple usage (mixed pattern)
@@ -106,15 +111,18 @@ query 50500 "Filters Test"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (elements_section
-      (elements_keyword)
-      (query_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (quoted_identifier))))))
+    body: (object_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (query_body
+              (property
+                name: (property_name)
+                value: (quoted_identifier)))))))))
 
 ================================================================================
 BASELINE: FILTER function with range (detailed pattern)
@@ -138,24 +146,27 @@ report 50600 "FilterRange Test"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (sorting_value
-            (identifier)
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (integer)
-                    (integer)))))))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (identifier)
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)
+                          (integer))))))))))))))
 
 ================================================================================
 BASELINE: FILTER function with identifier (detailed pattern)
@@ -179,20 +190,23 @@ report 50650 "FilterIdentifier Test"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (quoted_identifier)
-        (property
-          name: (property_name)
-          value: (sorting_value
-            (quoted_identifier)
-            (where_clause
-              (where_conditions
-                (where_condition
-                  field: (quoted_identifier)
-                  (filter_keyword)
-                  value: (filter_value
-                    (identifier)))))))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (quoted_identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (sorting_value
+                  (quoted_identifier)
+                  (where_clause
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (identifier))))))))))))))

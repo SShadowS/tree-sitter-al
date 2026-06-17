@@ -27,27 +27,30 @@ report 50100 "Customer Balance Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (identifier))
-            (option_member
-              (quoted_identifier))))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (identifier))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier)))))))))
 
 ================================================================================
 CalcFields with single field
@@ -75,19 +78,22 @@ report 50101 "Simple Balance"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (identifier))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier)))))))))
 
 ================================================================================
 CalcFields with multiple quoted fields
@@ -118,26 +124,29 @@ report 50102 "Item Statistics"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    (dataset_section
-      (dataset_keyword)
-      (report_dataitem
-        (dataitem_keyword)
-        name: (identifier)
-        table_name: (identifier)
-        (property
-          name: (property_name)
-          value: (option_member_list
-            (option_member
-              (identifier))
-            (option_member
-              (quoted_identifier))
-            (option_member
-              (quoted_identifier))))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (quoted_identifier))
-        (report_column
-          (column_keyword)
-          name: (identifier)
-          source: (identifier))))))
+    body: (object_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (quoted_identifier))
+              (report_column
+                (column_keyword)
+                name: (identifier)
+                source: (identifier)))))))))

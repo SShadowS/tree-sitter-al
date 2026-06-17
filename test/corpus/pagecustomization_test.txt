@@ -25,22 +25,26 @@ pagecustomization "Test Page Customization" customizes "Target Page"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    (views_section
-      (views_keyword)
-      (addfirst_views_modification
-        (view_definition
-          (view_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (where_clause
-              (where_conditions
-                (where_condition
-                  field: (identifier)
-                  value: (identifier))))))))))
+    body: (object_body
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (addfirst_views_modification
+            body: (views_mod_body
+              (view_definition
+                (view_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (where_clause
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          value: (identifier))))))))))))))
 
 ================================================================================
 Page customization with addlast views
@@ -69,22 +73,26 @@ pagecustomization "Test Customization" customizes "Base Page"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    (views_section
-      (views_keyword)
-      (addlast_views_modification
-        (view_definition
-          (view_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (where_clause
-              (where_conditions
-                (where_condition
-                  field: (identifier)
-                  value: (identifier))))))))))
+    body: (object_body
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (addlast_views_modification
+            body: (views_mod_body
+              (view_definition
+                (view_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (where_clause
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          value: (identifier))))))))))))))
 
 ================================================================================
 Page customization with addafter views
@@ -113,23 +121,27 @@ pagecustomization "Enhanced Page" customizes "Original Page"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    (views_section
-      (views_keyword)
-      (addafter_views_modification
-        target: (identifier)
-        (view_definition
-          (view_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (where_clause
-              (where_conditions
-                (where_condition
-                  field: (identifier)
-                  value: (identifier))))))))))
+    body: (object_body
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (addafter_views_modification
+            target: (identifier)
+            body: (views_mod_body
+              (view_definition
+                (view_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (where_clause
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          value: (identifier))))))))))))))
 
 ================================================================================
 Page customization with multiple views
@@ -163,32 +175,37 @@ pagecustomization "Multi View Page" customizes "Base Page"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    (views_section
-      (views_keyword)
-      (addfirst_views_modification
-        (view_definition
-          (view_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (where_clause
-              (where_conditions
-                (where_condition
-                  field: (identifier)
-                  value: (identifier))))))
-        (view_definition
-          (view_keyword)
-          name: (identifier)
-          (property
-            name: (property_name)
-            value: (string_literal))
-          (property
-            name: (property_name)
-            value: (where_clause
-              (where_conditions
-                (where_condition
-                  field: (identifier)
-                  value: (identifier))))))))))
+    body: (object_body
+      (views_section
+        (views_keyword)
+        body: (views_body
+          (addfirst_views_modification
+            body: (views_mod_body
+              (view_definition
+                (view_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (where_clause
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          value: (identifier)))))))
+              (view_definition
+                (view_keyword)
+                name: (identifier)
+                body: (object_body
+                  (property
+                    name: (property_name)
+                    value: (string_literal))
+                  (property
+                    name: (property_name)
+                    value: (where_clause
+                      (where_conditions
+                        (where_condition
+                          field: (identifier)
+                          value: (identifier))))))))))))))

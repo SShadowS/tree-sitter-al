@@ -29,69 +29,70 @@ tableextension 50002 "Multiple Attributes Extension" extends Customer
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (identifier)
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (boolean)
-            (boolean)))))
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (string_literal)
-            (string_literal)))))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
+    body: (object_body
+      (attribute_item
+        attribute: (attribute_content
           name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier)))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (attribute_item
-      attribute: (attribute_content
-        name: (identifier)
-        arguments: (attribute_arguments
-          (attribute_argument_list
-            (qualified_enum_value
-              enum_type: (identifier)
-              value: (identifier
-                (table_keyword)))
-            (database_reference
-              keyword: (object_type_keyword)
-              table_name: (identifier))
-            (string_literal)
-            (string_literal)
-            (boolean)
-            (boolean)))))
-    (procedure
-      modifier: (procedure_modifier
-        (local_keyword))
-      (procedure_keyword)
-      name: (identifier)
-      (parameter_list
-        (parameter
-          modifier: (var_keyword)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (boolean)
+              (boolean)))))
+      (attribute_item
+        attribute: (attribute_content
           name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier)))))
-      (code_block
-        (begin_keyword)
-        (end_keyword)))
-    (procedure
-      (procedure_keyword)
-      name: (identifier)
-      (code_block
-        (begin_keyword)
-        (end_keyword)))))
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (string_literal)
+              (string_literal)))))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (attribute_item
+        attribute: (attribute_content
+          name: (identifier)
+          arguments: (attribute_arguments
+            (attribute_argument_list
+              (qualified_enum_value
+                enum_type: (identifier)
+                value: (identifier
+                  (table_keyword)))
+              (database_reference
+                keyword: (object_type_keyword)
+                table_name: (identifier))
+              (string_literal)
+              (string_literal)
+              (boolean)
+              (boolean)))))
+      (procedure
+        modifier: (procedure_modifier
+          (local_keyword))
+        (procedure_keyword)
+        name: (identifier)
+        (parameter_list
+          (parameter
+            modifier: (var_keyword)
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

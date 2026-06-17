@@ -17,29 +17,30 @@ table 123 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (dotnet_type
-            (dotnet_keyword)
-            reference: (identifier)
-            reference: (identifier))))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (dotnet_type
-            (dotnet_keyword)
-            reference: (identifier))))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (dotnet_type
-            (dotnet_keyword)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)))))))
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              (dotnet_keyword)
+              reference: (identifier)
+              reference: (identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              (dotnet_keyword)
+              reference: (identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              (dotnet_keyword)
+              reference: (identifier)
+              reference: (identifier)
+              reference: (identifier))))))))
 
 ================================================================================
 DotNet types in field declarations
@@ -63,20 +64,23 @@ table 456 TestTable2
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (fields_section
-      (fields_keyword)
-      (field_declaration
-        id: (integer)
-        name: (identifier)
-        type: (type_specification
-          (dotnet_type
-            (dotnet_keyword)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)))
-        (property
-          name: (property_name)
-          value: (string_literal))))))
+    body: (object_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                (dotnet_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)))
+            body: (object_body
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
 
 ================================================================================
 Multiple DotNet namespace levels
@@ -96,22 +100,23 @@ codeunit 789 TestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    (var_section
-      (var_keyword)
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (dotnet_type
-            (dotnet_keyword)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier))))
-      (variable_declaration
-        name: (identifier)
-        type: (type_specification
-          (dotnet_type
-            (dotnet_keyword)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)
-            reference: (identifier)))))))
+    body: (object_body
+      (var_section
+        (var_keyword)
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              (dotnet_keyword)
+              reference: (identifier)
+              reference: (identifier)
+              reference: (identifier))))
+        (variable_declaration
+          name: (identifier)
+          type: (type_specification
+            (dotnet_type
+              (dotnet_keyword)
+              reference: (identifier)
+              reference: (identifier)
+              reference: (identifier)
+              reference: (identifier))))))))
