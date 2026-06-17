@@ -63,64 +63,66 @@ codeunit 123 "Character Validation Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (for_statement
-            (for_keyword)
-            variable: (identifier)
-            start: (integer)
-            direction: (to_keyword)
-            end: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (identifier)))
-            (do_keyword)
-            body: (code_block
-              (begin_keyword)
-              (case_statement
-                (case_keyword)
-                expression: (boolean)
-                (of_keyword)
-                body: (case_body
-                  (case_branch
-                    left: (subscript_expression
-                      object: (identifier)
-                      index: (identifier))
-                    operator: (in_keyword)
-                    right: (list_literal
-                      (range_expression
-                        left: (string_literal)
-                        right: (string_literal)))
-                    body: (assignment_statement
-                      left: (identifier)
-                      right: (boolean)))
-                  (case_branch
-                    left: (subscript_expression
-                      object: (identifier)
-                      index: (identifier))
-                    operator: (in_keyword)
-                    right: (list_literal
-                      (range_expression
-                        left: (string_literal)
-                        right: (string_literal)))
-                    body: (assignment_statement
-                      left: (identifier)
-                      right: (boolean)))
-                  (case_branch
-                    left: (subscript_expression
-                      object: (identifier)
-                      index: (identifier))
-                    operator: (in_keyword)
-                    right: (list_literal
-                      (range_expression
-                        left: (string_literal)
-                        right: (string_literal)))
-                    body: (assignment_statement
-                      left: (identifier)
-                      right: (boolean))))
-                (case_else_branch
-                  (else_keyword)
-                  (code_block
-                    (begin_keyword)
-                    (comment)
-                    (end_keyword))))
-              (end_keyword)))
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              direction: (to_keyword)
+              end: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)))
+              (do_keyword)
+              body: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (case_statement
+                    (case_keyword)
+                    expression: (boolean)
+                    (of_keyword)
+                    body: (case_body
+                      (case_branch
+                        left: (subscript_expression
+                          object: (identifier)
+                          index: (identifier))
+                        operator: (in_keyword)
+                        right: (list_literal
+                          (range_expression
+                            left: (string_literal)
+                            right: (string_literal)))
+                        body: (assignment_statement
+                          left: (identifier)
+                          right: (boolean)))
+                      (case_branch
+                        left: (subscript_expression
+                          object: (identifier)
+                          index: (identifier))
+                        operator: (in_keyword)
+                        right: (list_literal
+                          (range_expression
+                            left: (string_literal)
+                            right: (string_literal)))
+                        body: (assignment_statement
+                          left: (identifier)
+                          right: (boolean)))
+                      (case_branch
+                        left: (subscript_expression
+                          object: (identifier)
+                          index: (identifier))
+                        operator: (in_keyword)
+                        right: (list_literal
+                          (range_expression
+                            left: (string_literal)
+                            right: (string_literal)))
+                        body: (assignment_statement
+                          left: (identifier)
+                          right: (boolean))))
+                    (case_else_branch
+                      (else_keyword)
+                      (code_block
+                        (begin_keyword)
+                        (comment)
+                        (end_keyword)))))
+                (end_keyword))))
           (end_keyword))))))

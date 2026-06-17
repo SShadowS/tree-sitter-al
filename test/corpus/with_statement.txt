@@ -36,18 +36,20 @@ codeunit 50000 "WITH Test"
                 reference: (identifier)))))
         body: (code_block
           (begin_keyword)
-          (with_statement
-            (with_keyword)
-            record: (identifier)
-            (do_keyword)
-            body: (code_block
-              (begin_keyword)
-              (identifier)
-              (assignment_statement
-                left: (identifier)
-                right: (string_literal))
-              (identifier)
-              (end_keyword)))
+          body: (statement_block
+            (with_statement
+              (with_keyword)
+              record: (identifier)
+              (do_keyword)
+              body: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (identifier)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (string_literal))
+                  (identifier))
+                (end_keyword))))
           (end_keyword))))))
 
 ================================================================================
@@ -85,11 +87,12 @@ codeunit 50001 "WITH Single Test"
                 reference: (identifier)))))
         body: (code_block
           (begin_keyword)
-          (with_statement
-            (with_keyword)
-            record: (identifier)
-            (do_keyword)
-            body: (identifier))
+          body: (statement_block
+            (with_statement
+              (with_keyword)
+              record: (identifier)
+              (do_keyword)
+              body: (identifier)))
           (end_keyword))))))
 
 ================================================================================
@@ -138,25 +141,28 @@ codeunit 50002 "Nested WITH Test"
                 reference: (quoted_identifier)))))
         body: (code_block
           (begin_keyword)
-          (with_statement
-            (with_keyword)
-            record: (identifier)
-            (do_keyword)
-            body: (code_block
-              (begin_keyword)
-              (identifier)
-              (with_statement
-                (with_keyword)
-                record: (identifier)
-                (do_keyword)
-                body: (code_block
-                  (begin_keyword)
+          body: (statement_block
+            (with_statement
+              (with_keyword)
+              record: (identifier)
+              (do_keyword)
+              body: (code_block
+                (begin_keyword)
+                body: (statement_block
                   (identifier)
-                  (assignment_statement
-                    left: (quoted_identifier)
-                    right: (member_expression
-                      object: (identifier)
-                      member: (quoted_identifier)))
-                  (end_keyword)))
-              (end_keyword)))
+                  (with_statement
+                    (with_keyword)
+                    record: (identifier)
+                    (do_keyword)
+                    body: (code_block
+                      (begin_keyword)
+                      body: (statement_block
+                        (identifier)
+                        (assignment_statement
+                          left: (quoted_identifier)
+                          right: (member_expression
+                            object: (identifier)
+                            member: (quoted_identifier))))
+                      (end_keyword))))
+                (end_keyword))))
           (end_keyword))))))

@@ -24,16 +24,17 @@ codeunit 50100 Test
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            left: (identifier)
-            right: (type_specification
-              (identifier))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              left: (identifier)
+              right: (type_specification
+                (identifier))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))))
           (end_keyword))))))
 
 ================================================================================
@@ -61,11 +62,12 @@ codeunit 50101 Test2
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            left: (identifier)
-            right: (type_specification
-              (identifier)))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              left: (identifier)
+              right: (type_specification
+                (identifier))))
           (end_keyword))))))
 
 ================================================================================
@@ -94,21 +96,22 @@ codeunit 50102 Test3
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            condition: (logical_expression
-              left: (parenthesized_expression
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (logical_expression
+                left: (parenthesized_expression
+                  left: (identifier)
+                  right: (type_specification
+                    (identifier)))
+                right: (parenthesized_expression
+                  left: (identifier)
+                  right: (type_specification
+                    (identifier))))
+              (then_keyword)
+              then_branch: (assignment_statement
+                left: (identifier)
                 left: (identifier)
                 right: (type_specification
-                  (identifier)))
-              right: (parenthesized_expression
-                left: (identifier)
-                right: (type_specification
-                  (identifier))))
-            (then_keyword)
-            then_branch: (assignment_statement
-              left: (identifier)
-              left: (identifier)
-              right: (type_specification
-                (identifier))))
+                  (identifier)))))
           (end_keyword))))))

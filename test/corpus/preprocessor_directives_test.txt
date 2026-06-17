@@ -90,19 +90,20 @@ codeunit 123 "Test Codeunit"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (preproc_conditional_statement
-            (preproc_if
-              (preproc_open)
-              condition: (identifier))
-            (assignment_statement
-              left: (identifier)
-              right: (boolean))
-            (preproc_else)
-            (assignment_statement
-              left: (identifier)
-              right: (boolean))
-            (preproc_endif
-              (preproc_close)))
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (assignment_statement
+                left: (identifier)
+                right: (boolean))
+              (preproc_else)
+              (assignment_statement
+                left: (identifier)
+                right: (boolean))
+              (preproc_endif
+                (preproc_close))))
           (end_keyword))))))
 
 ================================================================================
@@ -142,19 +143,20 @@ codeunit 124 "Test Codeunit Mixed"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (preproc_conditional_statement
-            (preproc_if
-              (preproc_open)
-              condition: (identifier))
-            (assignment_statement
-              left: (identifier)
-              right: (integer))
-            (preproc_else)
-            (assignment_statement
-              left: (identifier)
-              right: (integer))
-            (preproc_endif
-              (preproc_close)))
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (assignment_statement
+                left: (identifier)
+                right: (integer))
+              (preproc_else)
+              (assignment_statement
+                left: (identifier)
+                right: (integer))
+              (preproc_endif
+                (preproc_close))))
           (end_keyword))))))
 
 ================================================================================
@@ -201,23 +203,24 @@ codeunit 125 "Test Complex Preprocessor"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (preproc_conditional_statement
-            (preproc_if
-              (preproc_open)
-              condition: (identifier))
-            (assignment_statement
-              left: (identifier)
-              right: (boolean))
-            (assignment_statement
-              left: (identifier)
-              right: (integer))
-            (preproc_else)
-            (assignment_statement
-              left: (identifier)
-              right: (boolean))
-            (assignment_statement
-              left: (identifier)
-              right: (integer))
-            (preproc_endif
-              (preproc_close)))
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (assignment_statement
+                left: (identifier)
+                right: (boolean))
+              (assignment_statement
+                left: (identifier)
+                right: (integer))
+              (preproc_else)
+              (assignment_statement
+                left: (identifier)
+                right: (boolean))
+              (assignment_statement
+                left: (identifier)
+                right: (integer))
+              (preproc_endif
+                (preproc_close))))
           (end_keyword))))))

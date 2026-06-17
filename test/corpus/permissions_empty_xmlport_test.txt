@@ -69,25 +69,26 @@ codeunit 50100 "XMLport Example"
                 reference: (quoted_identifier)))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (integer)
-              (integer)))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list))
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)
+                (integer)
+                (integer)))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (identifier)))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list)))
           (end_keyword))))))
 
 ================================================================================
@@ -125,9 +126,10 @@ page 50200 "Test Page"
                 reference: (integer)))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list))
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list)))
           (end_keyword))))))

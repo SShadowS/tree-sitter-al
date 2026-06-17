@@ -13043,11 +13043,20 @@
             ]
           },
           {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_statement"
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "body",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "statement_block"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
           {
             "type": "CHOICE",
@@ -13092,6 +13101,13 @@
             ]
           }
         ]
+      }
+    },
+    "statement_block": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_statement"
       }
     },
     "trigger_declaration": {
@@ -19869,6 +19885,9 @@
     [
       "if_statement",
       "_if_statement_no_else"
+    ],
+    [
+      "statement_block"
     ]
   ],
   "precedences": [],

@@ -30,30 +30,31 @@ page 50100 TestPage
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            expression: (identifier)
-            (of_keyword)
-            body: (case_body
-              (case_branch
-                pattern: (qualified_enum_value
-                  enum_type: (identifier)
-                  value: (identifier))
-                body: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list)))
-              (preproc_conditional_case
-                (preproc_if
-                  (preproc_open)
-                  condition: (preproc_not_expression
-                    (identifier)))
-                (case_else_branch
-                  (else_keyword)
-                  (call_expression
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (qualified_enum_value
+                    enum_type: (identifier)
+                    value: (identifier))
+                  body: (call_expression
                     function: (identifier)
                     arguments: (argument_list)))
-                (preproc_endif
-                  (preproc_close)))))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (case_else_branch
+                    (else_keyword)
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
+                  (preproc_endif
+                    (preproc_close))))))
           (end_keyword))))))
 
 ================================================================================
@@ -118,42 +119,44 @@ codeunit 50100 TestCodeunit
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            expression: (identifier)
-            (of_keyword)
-            body: (case_body
-              (case_branch
-                pattern: (database_reference
-                  keyword: (object_type_keyword)
-                  table_name: (quoted_identifier))
-                body: (code_block
-                  (begin_keyword)
-                  (call_expression
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (database_reference
+                    keyword: (object_type_keyword)
+                    table_name: (quoted_identifier))
+                  body: (code_block
+                    (begin_keyword)
+                    body: (statement_block
+                      (call_expression
+                        function: (identifier)
+                        arguments: (argument_list
+                          (string_literal))))
+                    (end_keyword)))
+                (case_branch
+                  pattern: (database_reference
+                    keyword: (object_type_keyword)
+                    table_name: (quoted_identifier))
+                  body: (call_expression
                     function: (identifier)
                     arguments: (argument_list
-                      (string_literal)))
-                  (end_keyword)))
-              (case_branch
-                pattern: (database_reference
-                  keyword: (object_type_keyword)
-                  table_name: (quoted_identifier))
-                body: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal))))
-              (preproc_conditional_case
-                (preproc_if
-                  (preproc_open)
-                  condition: (preproc_not_expression
-                    (identifier)))
-                (case_else_branch
-                  (else_keyword)
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (identifier)
-                      (identifier))))
-                (preproc_endif
-                  (preproc_close)))))
+                      (string_literal))))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (case_else_branch
+                    (else_keyword)
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (identifier)
+                        (identifier))))
+                  (preproc_endif
+                    (preproc_close))))))
           (end_keyword))))))

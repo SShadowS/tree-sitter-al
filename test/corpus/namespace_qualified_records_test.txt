@@ -57,26 +57,27 @@ codeunit 123 "Test Codeunit"
                 reference: (identifier)))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (string_literal)))
-          (if_statement
-            (if_keyword)
-            condition: (call_expression
+          body: (statement_block
+            (call_expression
               function: (member_expression
                 object: (identifier)
                 member: (identifier))
-              arguments: (argument_list))
-            (then_keyword)
-            then_branch: (assignment_statement
-              left: (member_expression
-                object: (identifier)
-                member: (identifier))
-              right: (member_expression
-                object: (identifier)
-                member: (identifier))))
+              arguments: (argument_list
+                (quoted_identifier)
+                (string_literal)))
+            (if_statement
+              (if_keyword)
+              condition: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list))
+              (then_keyword)
+              then_branch: (assignment_statement
+                left: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                right: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))
           (end_keyword))))))

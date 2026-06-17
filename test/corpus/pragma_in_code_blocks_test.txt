@@ -36,21 +36,23 @@ codeunit 50100 TestUnit
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            condition: (identifier)
-            (then_keyword)
-            then_branch: (code_block
-              (begin_keyword)
-              (pragma)
-              (assignment_statement
-                left: (identifier)
-                right: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list
-                    (boolean))))
-              (pragma)
-              (end_keyword)))
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                (pragma)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (call_expression
+                      function: (member_expression
+                        object: (identifier)
+                        member: (identifier))
+                      arguments: (argument_list
+                        (boolean)))))
+                (pragma)
+                (end_keyword))))
           (end_keyword))))))

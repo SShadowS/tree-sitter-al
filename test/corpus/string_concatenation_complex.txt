@@ -41,11 +41,12 @@ codeunit 50000 "Test Codeunit"
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (additive_expression
-              left: (additive_expression
-                left: (identifier)
-                right: (string_literal))
-              right: (identifier)))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (additive_expression
+                left: (additive_expression
+                  left: (identifier)
+                  right: (string_literal))
+                right: (identifier))))
           (end_keyword))))))

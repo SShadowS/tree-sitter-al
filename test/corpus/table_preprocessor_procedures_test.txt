@@ -63,10 +63,11 @@ table 50100 "Test Table"
           (procedure_keyword)
           name: (identifier)
           body: (code_block
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))))
+            body: (statement_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))))
         (preproc_endif
           (preproc_close)))
       (procedure
@@ -74,10 +75,11 @@ table 50100 "Test Table"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
           (end_keyword))))))
 
 ================================================================================
@@ -147,26 +149,27 @@ table 50101 "VAT Amount Line"
               type: (type_specification
                 (basic_type))))
           body: (code_block
-            (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list))
-            (assignment_statement
-              left: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              right: (identifier))
-            (assignment_statement
-              left: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              right: (identifier))
-            (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list))))
+            body: (statement_block
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list))
+              (assignment_statement
+                left: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                right: (identifier))
+              (assignment_statement
+                left: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                right: (identifier))
+              (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list)))))
         (preproc_endif
           (preproc_close)))
       (preproc_conditional
@@ -194,15 +197,16 @@ table 50101 "VAT Amount Line"
               type: (type_specification
                 (basic_type))))
           body: (code_block
-            (assignment_statement
-              left: (quoted_identifier)
-              right: (identifier))
-            (assignment_statement
-              left: (quoted_identifier)
-              right: (identifier))
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list))))
+            body: (statement_block
+              (assignment_statement
+                left: (quoted_identifier)
+                right: (identifier))
+              (assignment_statement
+                left: (quoted_identifier)
+                right: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list)))))
         (preproc_endif
           (preproc_close)))
       (procedure
@@ -210,10 +214,11 @@ table 50101 "VAT Amount Line"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
           (end_keyword))))))
 
 ================================================================================
@@ -252,10 +257,11 @@ table 50102 "Test Table"
           (procedure_keyword)
           name: (identifier)
           body: (code_block
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))))
+            body: (statement_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))))
         (preproc_else)
         (attribute_item
           attribute: (attribute_content
@@ -268,10 +274,11 @@ table 50102 "Test Table"
           (procedure_keyword)
           name: (identifier)
           body: (code_block
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))))
+            body: (statement_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))))
         (preproc_endif
           (preproc_close))))))
 
@@ -338,9 +345,10 @@ table 50103 "Test Table"
           (trigger_keyword)
           name: (identifier)
           body: (code_block
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list))))
+            body: (statement_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list)))))
         (attribute_item
           attribute: (attribute_content
             name: (identifier)
@@ -360,9 +368,10 @@ table 50103 "Test Table"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (boolean))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (boolean)))
           (end_keyword))))))
 
 ================================================================================
@@ -396,9 +405,10 @@ table 50104 "Test Table"
           (procedure_keyword)
           name: (identifier)
           body: (code_block
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))))
+            body: (statement_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))))
         (preproc_endif
           (preproc_close))))))

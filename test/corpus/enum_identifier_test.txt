@@ -56,52 +56,53 @@ table 1234 "Test Table"
         body: (code_block
           (begin_keyword)
           (comment)
-          (assignment_statement
-            left: (identifier)
-            right: (keyword_identifier
-              (enum_keyword)))
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (keyword_identifier
-                    (enum_keyword))))))
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (keyword_identifier
-                (enum_keyword))
-              operator: (comparison_operator)
-              right: (integer))
-            (then_keyword)
-            then_branch: (exit_statement
-              (exit_keyword)))
-          (comment)
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (keyword_identifier
-                  (enum_keyword))
-                member: (identifier))
-              arguments: (argument_list)))
-          (comment)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (keyword_identifier
-                (enum_keyword))))
-          (comment)
-          (assignment_statement
-            left: (identifier)
-            right: (additive_expression
-              left: (integer)
-              right: (multiplicative_expression
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (keyword_identifier
+                (enum_keyword)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (keyword_identifier
+                      (enum_keyword))))))
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
                 left: (keyword_identifier
                   (enum_keyword))
-                right: (integer))))
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword)))
+            (comment)
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (enum_keyword))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (comment)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (keyword_identifier
+                  (enum_keyword))))
+            (comment)
+            (assignment_statement
+              left: (identifier)
+              right: (additive_expression
+                left: (integer)
+                right: (multiplicative_expression
+                  left: (keyword_identifier
+                    (enum_keyword))
+                  right: (integer)))))
           (end_keyword)))
       (procedure
         (procedure_keyword)
@@ -158,24 +159,25 @@ codeunit 50100 "Test Enum Types"
         body: (code_block
           (begin_keyword)
           (comment)
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (qualified_enum_value
-                  enum_type: (qualified_enum_value
-                    enum_type: (keyword_identifier
-                      (enum_keyword))
-                    value: (quoted_identifier))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (member_expression
+                  object: (qualified_enum_value
+                    enum_type: (qualified_enum_value
+                      enum_type: (keyword_identifier
+                        (enum_keyword))
+                      value: (quoted_identifier))
+                    value: (identifier))
+                  member: (identifier))
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              right: (qualified_enum_value
+                enum_type: (qualified_enum_value
+                  enum_type: (keyword_identifier
+                    (enum_keyword))
                   value: (identifier))
-                member: (identifier))
-              arguments: (argument_list)))
-          (assignment_statement
-            left: (identifier)
-            right: (qualified_enum_value
-              enum_type: (qualified_enum_value
-                enum_type: (keyword_identifier
-                  (enum_keyword))
-                value: (identifier))
-              value: (identifier)))
+                value: (identifier))))
           (end_keyword))))))

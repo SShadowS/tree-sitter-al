@@ -45,24 +45,25 @@ codeunit 123 "Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (unary_expression
-              operand: (integer)))
-          (assignment_statement
-            left: (identifier)
-            right: (unary_expression
-              operand: (integer)))
-          (assignment_statement
-            left: (identifier)
-            right: (unary_expression
-              operand: (boolean)))
-          (assignment_statement
-            left: (identifier)
-            right: (unary_expression
-              operand: (boolean)))
-          (assignment_statement
-            left: (identifier)
-            right: (unary_expression
-              operand: (boolean)))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (unary_expression
+                operand: (integer)))
+            (assignment_statement
+              left: (identifier)
+              right: (unary_expression
+                operand: (integer)))
+            (assignment_statement
+              left: (identifier)
+              right: (unary_expression
+                operand: (boolean)))
+            (assignment_statement
+              left: (identifier)
+              right: (unary_expression
+                operand: (boolean)))
+            (assignment_statement
+              left: (identifier)
+              right: (unary_expression
+                operand: (boolean))))
           (end_keyword))))))

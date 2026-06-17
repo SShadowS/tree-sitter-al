@@ -47,9 +47,10 @@ codeunit 50100 "Return Types Test"
           (basic_type))
         (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            (integer))
+          (statement_block
+            (exit_statement
+              (exit_keyword)
+              (integer)))
           (end_keyword)))
       (procedure
         (procedure_keyword)
@@ -59,12 +60,13 @@ codeunit 50100 "Return Types Test"
           (basic_type))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (integer))
-          (exit_statement
-            (exit_keyword)
-            (identifier))
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (integer))
+            (exit_statement
+              (exit_keyword)
+              (identifier)))
           (end_keyword)))
       (procedure
         (procedure_keyword)
@@ -74,9 +76,10 @@ codeunit 50100 "Return Types Test"
             (identifier)))
         (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            (identifier))
+          (statement_block
+            (exit_statement
+              (exit_keyword)
+              (identifier)))
           (end_keyword)))
       (procedure
         (procedure_keyword)
@@ -87,20 +90,22 @@ codeunit 50100 "Return Types Test"
             (identifier)))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (identifier))
-          (exit_statement
-            (exit_keyword)
-            (identifier))
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (identifier))
+            (exit_statement
+              (exit_keyword)
+              (identifier)))
           (end_keyword)))
       (procedure
         (procedure_keyword)
         (identifier)
         (code_block
           (begin_keyword)
-          (call_expression
-            (identifier)
-            (argument_list
-              (string_literal)))
+          (statement_block
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal))))
           (end_keyword))))))

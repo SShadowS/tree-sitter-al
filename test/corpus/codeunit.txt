@@ -28,10 +28,11 @@ codeunit 50100 "My Test Codeunit"
         (identifier)
         (code_block
           (begin_keyword)
-          (call_expression
-            (identifier)
-            (argument_list
-              (string_literal)))
+          (statement_block
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal))))
           (end_keyword)))
       (procedure
         (procedure_keyword)
@@ -49,9 +50,10 @@ codeunit 50100 "My Test Codeunit"
           (basic_type))
         (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            (additive_expression
-              (identifier)
-              (identifier)))
+          (statement_block
+            (exit_statement
+              (exit_keyword)
+              (additive_expression
+                (identifier)
+                (identifier))))
           (end_keyword))))))

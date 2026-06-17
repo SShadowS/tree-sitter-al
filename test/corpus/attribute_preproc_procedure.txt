@@ -87,9 +87,10 @@ table 50000 "Test"
                 (text_type))))
           body: (code_block
             (begin_keyword)
-            (assignment_statement
-              left: (identifier)
-              right: (identifier))
+            body: (statement_block
+              (assignment_statement
+                left: (identifier)
+                right: (identifier)))
             (end_keyword)))))))
 
 ================================================================================
@@ -168,10 +169,11 @@ table 50000 "Test Table"
           (preproc_close))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
           (end_keyword))))))
 
 ================================================================================

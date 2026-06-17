@@ -43,8 +43,9 @@ codeunit 50200 "Exit Statements Test"
         (identifier)
         (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword))
+          (statement_block
+            (exit_statement
+              (exit_keyword)))
           (comment)
           (end_keyword)))
       (procedure
@@ -54,9 +55,10 @@ codeunit 50200 "Exit Statements Test"
           (basic_type))
         (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            (integer))
+          (statement_block
+            (exit_statement
+              (exit_keyword)
+              (integer)))
           (comment)
           (end_keyword)))
       (procedure
@@ -72,12 +74,13 @@ codeunit 50200 "Exit Statements Test"
               (basic_type))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (integer))
-          (exit_statement
-            (exit_keyword)
-            (identifier))
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (integer))
+            (exit_statement
+              (exit_keyword)
+              (identifier)))
           (comment)
           (end_keyword)))
       (procedure
@@ -95,8 +98,9 @@ codeunit 50200 "Exit Statements Test"
                 (identifier)))))
         (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            (identifier))
+          (statement_block
+            (exit_statement
+              (exit_keyword)
+              (identifier)))
           (comment)
           (end_keyword))))))

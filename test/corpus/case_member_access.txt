@@ -28,25 +28,26 @@ table 50006 "Test Table"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            expression: (quoted_identifier)
-            (of_keyword)
-            body: (case_body
-              (case_branch
-                pattern: (qualified_enum_value
-                  enum_type: (quoted_identifier)
-                  value: (identifier))
-                body: (assignment_statement
-                  left: (quoted_identifier)
-                  right: (string_literal)))
-              (case_branch
-                pattern: (qualified_enum_value
-                  enum_type: (quoted_identifier)
-                  value: (quoted_identifier))
-                body: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (quoted_identifier)
-                    (string_literal))))))
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (quoted_identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (qualified_enum_value
+                    enum_type: (quoted_identifier)
+                    value: (identifier))
+                  body: (assignment_statement
+                    left: (quoted_identifier)
+                    right: (string_literal)))
+                (case_branch
+                  pattern: (qualified_enum_value
+                    enum_type: (quoted_identifier)
+                    value: (quoted_identifier))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (quoted_identifier)
+                      (string_literal)))))))
           (end_keyword))))))

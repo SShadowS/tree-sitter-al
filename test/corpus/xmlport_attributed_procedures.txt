@@ -94,11 +94,12 @@ xmlport 50100 "Test XMLPort"
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)
-              (identifier)))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)
+                (identifier))))
           (end_keyword))))))
 
 ================================================================================
@@ -271,18 +272,20 @@ xmlport 50102 "Mixed Content XMLPort"
                 name: (identifier)
                 body: (code_block
                   (begin_keyword)
-                  (assignment_statement
-                    left: (identifier)
-                    right: (string_literal))
+                  body: (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      right: (string_literal)))
                   (end_keyword)))))))
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
           (end_keyword)))
       (attribute_item
         attribute: (attribute_content

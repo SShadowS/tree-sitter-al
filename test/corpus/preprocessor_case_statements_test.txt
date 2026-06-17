@@ -51,35 +51,36 @@ codeunit 50100 TestUnit
                     (identifier)))))))
         body: (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            expression: (identifier)
-            (of_keyword)
-            body: (case_body
-              (case_branch
-                pattern: (qualified_enum_value
-                  enum_type: (identifier)
-                  value: (identifier))
-                body: (code_block
-                  (begin_keyword)
-                  (comment)
-                  (end_keyword)))
-              (preproc_conditional_case
-                (preproc_if
-                  (preproc_open)
-                  condition: (identifier))
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
                 (case_branch
                   pattern: (qualified_enum_value
                     enum_type: (identifier)
                     value: (identifier))
                   body: (code_block
-                    (comment)))
-                (preproc_endif
-                  (preproc_close))))
-            (case_else_branch
-              (else_keyword)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (quoted_identifier)))))
+                    (begin_keyword)
+                    (comment)
+                    (end_keyword)))
+                (preproc_conditional_case
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (case_branch
+                    pattern: (qualified_enum_value
+                      enum_type: (identifier)
+                      value: (identifier))
+                    body: (code_block
+                      (comment)))
+                  (preproc_endif
+                    (preproc_close))))
+              (case_else_branch
+                (else_keyword)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (quoted_identifier))))))
           (end_keyword))))))

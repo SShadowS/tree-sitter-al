@@ -51,30 +51,31 @@ codeunit 50100 "End Edge Cases"
         body: (code_block
           (begin_keyword)
           (comment)
-          (assignment_statement
-            left: (identifier)
-            right: (string_literal))
-          (comment)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier)))
-          (comment)
-          (assignment_statement
-            left: (subscript_expression
-              object: (identifier)
-              index: (integer))
-            right: (integer))
-          (comment)
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
+          body: (statement_block
+            (assignment_statement
               left: (identifier)
-              operator: (comparison_operator)
               right: (string_literal))
-            (then_keyword)
-            then_branch: (call_expression
+            (comment)
+            (call_expression
               function: (identifier)
               arguments: (argument_list
-                (string_literal))))
+                (identifier)))
+            (comment)
+            (assignment_statement
+              left: (subscript_expression
+                object: (identifier)
+                index: (integer))
+              right: (integer))
+            (comment)
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (string_literal))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))))
           (end_keyword))))))

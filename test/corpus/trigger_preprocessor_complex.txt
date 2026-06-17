@@ -63,49 +63,51 @@ table 5880 "Test Table"
                 reference: (quoted_identifier)))))
         body: (code_block
           (begin_keyword)
-          (preproc_split_if_else_statement
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (if_keyword)
-            condition: (unary_expression
-              operand: (call_expression
-                function: (identifier)
-                arguments: (argument_list)))
-            (then_keyword)
-            then_branch: (code_block
-              (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list))
-              (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list)))
-            (else_keyword)
-            (preproc_fragmented_else_tail
-              (preproc_split_begin)
-              (preproc_endif
-                (preproc_close))
-              (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list))
-              (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list))
+          body: (statement_block
+            (preproc_split_if_else_statement
               (preproc_if
                 (preproc_open)
                 condition: (preproc_not_expression
                   (identifier)))
-              (preproc_endif
-                (preproc_close))))
+              (if_keyword)
+              condition: (unary_expression
+                operand: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (then_keyword)
+              then_branch: (code_block
+                body: (statement_block
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list))
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list))))
+              (else_keyword)
+              (preproc_fragmented_else_tail
+                (preproc_split_begin)
+                (preproc_endif
+                  (preproc_close))
+                (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list))
+                (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list))
+                (preproc_if
+                  (preproc_open)
+                  condition: (preproc_not_expression
+                    (identifier)))
+                (preproc_endif
+                  (preproc_close)))))
           (end_keyword)))
       (var_section
         (var_keyword)

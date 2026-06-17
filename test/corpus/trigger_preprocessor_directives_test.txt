@@ -62,10 +62,11 @@ report 50100 "Test Report"
                     (preproc_close)))
                 body: (code_block
                   (begin_keyword)
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (string_literal)))
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (string_literal))))
                   (end_keyword))))))))))
 
 ================================================================================
@@ -144,9 +145,10 @@ table 50100 "Test Table"
                     (preproc_close)))
                 body: (code_block
                   (begin_keyword)
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list))
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
                   (end_keyword))))))))))
 
 ================================================================================
@@ -217,7 +219,8 @@ page 50100 "Test Page"
             (preproc_close)))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
           (end_keyword))))))

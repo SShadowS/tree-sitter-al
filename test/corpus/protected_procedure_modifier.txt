@@ -42,9 +42,10 @@ codeunit 50100 "Test Codeunit"
           (basic_type))
         body: (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            return_value: (boolean))
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (boolean)))
           (end_keyword)))
       (procedure
         modifier: (procedure_modifier

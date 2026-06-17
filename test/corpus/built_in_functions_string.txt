@@ -42,36 +42,37 @@ codeunit 50100 "Built-in Functions Test"
               (basic_type))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (call_expression
+          (statement_block
+            (assignment_statement
               (identifier)
-              (argument_list
-                (string_literal))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (string_literal)
-                (integer)
-                (integer))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal)
+                  (integer)
+                  (integer))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (string_literal))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (string_literal))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (integer))))
+              (call_expression
+                (identifier)
+                (argument_list
+                  (integer)))))
           (end_keyword))))))

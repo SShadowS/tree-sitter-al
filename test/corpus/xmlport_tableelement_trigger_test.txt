@@ -48,31 +48,33 @@ xmlport 50000 "Test Import"
                     name: (identifier)
                     body: (code_block
                       (begin_keyword)
-                      (if_statement
-                        (if_keyword)
-                        condition: (call_expression
-                          function: (member_expression
-                            object: (identifier)
-                            member: (identifier))
-                          arguments: (argument_list
-                            (member_expression
+                      body: (statement_block
+                        (if_statement
+                          (if_keyword)
+                          condition: (call_expression
+                            function: (member_expression
                               object: (identifier)
-                              member: (identifier))))
-                        (then_keyword)
-                        then_branch: (call_expression
-                          function: (member_expression
-                            object: (identifier)
-                            member: (identifier))
-                          arguments: (argument_list)))
+                              member: (identifier))
+                            arguments: (argument_list
+                              (member_expression
+                                object: (identifier)
+                                member: (identifier))))
+                          (then_keyword)
+                          then_branch: (call_expression
+                            function: (member_expression
+                              object: (identifier)
+                              member: (identifier))
+                            arguments: (argument_list))))
                       (end_keyword)))
                   (trigger_declaration
                     (trigger_keyword)
                     name: (identifier)
                     body: (code_block
                       (begin_keyword)
-                      (call_expression
-                        function: (identifier)
-                        arguments: (argument_list))
+                      body: (statement_block
+                        (call_expression
+                          function: (identifier)
+                          arguments: (argument_list)))
                       (end_keyword))))))))))))
 
 ================================================================================
@@ -133,9 +135,10 @@ xmlport 50001 "Customer Import"
                     name: (identifier)
                     body: (code_block
                       (begin_keyword)
-                      (call_expression
-                        function: (identifier)
-                        arguments: (argument_list))
+                      body: (statement_block
+                        (call_expression
+                          function: (identifier)
+                          arguments: (argument_list)))
                       (end_keyword)))
                   (xmlport_attribute
                     name: (identifier)

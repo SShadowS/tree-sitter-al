@@ -118,55 +118,56 @@ table 6175314 "CDO Extension App Page"
                         reference: (quoted_identifier)))))
                 body: (code_block
                   (begin_keyword)
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (quoted_identifier)))
-                  (call_expression
-                    function: (member_expression
-                      object: (identifier)
-                      member: (identifier))
-                    arguments: (argument_list
-                      (quoted_identifier)))
-                  (if_statement
-                    (if_keyword)
-                    condition: (comparison_expression
-                      left: (quoted_identifier)
-                      operator: (comparison_operator)
-                      right: (integer))
-                    (then_keyword)
-                    then_branch: (assignment_statement
-                      left: (quoted_identifier)
-                      right: (call_expression
-                        function: (member_expression
-                          object: (identifier)
-                          member: (identifier))
-                        arguments: (argument_list))))
-                  (if_statement
-                    (if_keyword)
-                    condition: (comparison_expression
-                      left: (quoted_identifier)
-                      operator: (comparison_operator)
-                      right: (string_literal))
-                    (then_keyword)
-                    then_branch: (assignment_statement
-                      left: (quoted_identifier)
-                      right: (call_expression
-                        function: (identifier)
-                        arguments: (argument_list
-                          (additive_expression
-                            left: (call_expression
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (quoted_identifier)))
+                    (call_expression
+                      function: (member_expression
+                        object: (identifier)
+                        member: (identifier))
+                      arguments: (argument_list
+                        (quoted_identifier)))
+                    (if_statement
+                      (if_keyword)
+                      condition: (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (integer))
+                      (then_keyword)
+                      then_branch: (assignment_statement
+                        left: (quoted_identifier)
+                        right: (call_expression
+                          function: (member_expression
+                            object: (identifier)
+                            member: (identifier))
+                          arguments: (argument_list))))
+                    (if_statement
+                      (if_keyword)
+                      condition: (comparison_expression
+                        left: (quoted_identifier)
+                        operator: (comparison_operator)
+                        right: (string_literal))
+                      (then_keyword)
+                      then_branch: (assignment_statement
+                        left: (quoted_identifier)
+                        right: (call_expression
+                          function: (identifier)
+                          arguments: (argument_list
+                            (additive_expression
+                              left: (call_expression
+                                function: (identifier)
+                                arguments: (argument_list
+                                  (quoted_identifier)
+                                  (string_literal)
+                                  (string_literal)))
+                              right: (string_literal))
+                            (integer)
+                            (call_expression
                               function: (identifier)
                               arguments: (argument_list
-                                (quoted_identifier)
-                                (string_literal)
-                                (string_literal)))
-                            right: (string_literal))
-                          (integer)
-                          (call_expression
-                            function: (identifier)
-                            arguments: (argument_list
-                              (quoted_identifier)))))))
+                                (quoted_identifier))))))))
                   (end_keyword)))))
           (field_declaration
             id: (integer)

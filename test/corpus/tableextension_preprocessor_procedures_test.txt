@@ -47,10 +47,11 @@ tableextension 123 "Test Extension" extends Item
           (procedure_keyword)
           name: (identifier)
           body: (code_block
-            (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))))
+            body: (statement_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))))
         (preproc_endif
           (preproc_close)))
       (preproc_conditional

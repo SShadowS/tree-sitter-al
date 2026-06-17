@@ -119,16 +119,18 @@ xmlport 50100 "Test XMLPort"
                     name: (identifier)
                     body: (code_block
                       (begin_keyword)
-                      (call_expression
-                        function: (identifier)
-                        arguments: (argument_list))
+                      body: (statement_block
+                        (call_expression
+                          function: (identifier)
+                          arguments: (argument_list)))
                       (end_keyword)))
                   (trigger_declaration
                     (trigger_keyword)
                     name: (identifier)
                     body: (code_block
                       (begin_keyword)
-                      (call_expression
-                        function: (identifier)
-                        arguments: (argument_list))
+                      body: (statement_block
+                        (call_expression
+                          function: (identifier)
+                          arguments: (argument_list)))
                       (end_keyword))))))))))))

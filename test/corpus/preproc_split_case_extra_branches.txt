@@ -46,39 +46,43 @@ codeunit 1 T
               (basic_type))))
         (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            (identifier)
-            (of_keyword)
-            (case_body
-              (preproc_split_case_extended
-                (preproc_if
-                  (preproc_open)
-                  (identifier))
+          (statement_block
+            (case_statement
+              (case_keyword)
+              (identifier)
+              (of_keyword)
+              (case_body
+                (preproc_split_case_extended
+                  (preproc_if
+                    (preproc_open)
+                    (identifier))
+                  (case_branch
+                    (integer)
+                    (code_block
+                      (statement_block
+                        (call_expression
+                          (identifier)
+                          (argument_list)))))
+                  (integer)
+                  (preproc_else)
+                  (integer)
+                  (integer)
+                  (preproc_endif
+                    (preproc_close))
+                  (code_block
+                    (begin_keyword)
+                    (statement_block
+                      (call_expression
+                        (identifier)
+                        (argument_list)))
+                    (end_keyword)))
                 (case_branch
                   (integer)
                   (code_block
-                    (call_expression
-                      (identifier)
-                      (argument_list))))
-                (integer)
-                (preproc_else)
-                (integer)
-                (integer)
-                (preproc_endif
-                  (preproc_close))
-                (code_block
-                  (begin_keyword)
-                  (call_expression
-                    (identifier)
-                    (argument_list))
-                  (end_keyword)))
-              (case_branch
-                (integer)
-                (code_block
-                  (begin_keyword)
-                  (call_expression
-                    (identifier)
-                    (argument_list))
-                  (end_keyword)))))
+                    (begin_keyword)
+                    (statement_block
+                      (call_expression
+                        (identifier)
+                        (argument_list)))
+                    (end_keyword))))))
           (end_keyword))))))

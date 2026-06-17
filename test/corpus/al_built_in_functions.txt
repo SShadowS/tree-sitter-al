@@ -85,117 +85,118 @@ codeunit 50000 "AL Built-in Functions Test"
         body: (code_block
           (begin_keyword)
           (comment)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (identifier)))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)))
-          (comment)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (string_literal)
-              (string_literal)))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)
-              (string_literal)))
-          (comment)
-          (if_statement
-            (if_keyword)
-            condition: (member_expression
-              object: (identifier)
-              member: (identifier))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (if_statement
-            (if_keyword)
-            condition: (member_expression
-              object: (identifier)
-              member: (identifier))
-            (then_keyword)
-            then_branch: (repeat_statement
-              (repeat_keyword)
-              (comment)
-              (until_keyword)
-              condition: (comparison_expression
-                left: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                operator: (comparison_operator)
-                right: (integer))))
-          (comment)
-          (if_statement
-            (if_keyword)
-            condition: (unary_expression
-              operand: (member_expression
-                object: (identifier)
-                member: (identifier)))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (comment)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (string_literal)
-              (string_literal)
-              (string_literal)))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)
-              (string_literal)))
-          (comment)
-          (member_expression
-            object: (identifier)
-            member: (identifier))
-          (comment)
-          (assignment_statement
-            left: (identifier)
-            right: (member_expression
-              object: (identifier)
-              member: (identifier)))
-          (comment)
-          (member_expression
-            object: (call_expression
+          body: (statement_block
+            (call_expression
               function: (member_expression
-                object: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list
-                    (identifier)))
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)
+                (identifier)))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (identifier)))
+            (comment)
+            (call_expression
+              function: (member_expression
+                object: (identifier)
                 member: (identifier))
               arguments: (argument_list
                 (quoted_identifier)
                 (string_literal)
                 (string_literal)))
-            member: (identifier))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (identifier)
+                (string_literal)))
+            (comment)
+            (if_statement
+              (if_keyword)
+              condition: (member_expression
+                object: (identifier)
+                member: (identifier))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (if_statement
+              (if_keyword)
+              condition: (member_expression
+                object: (identifier)
+                member: (identifier))
+              (then_keyword)
+              then_branch: (repeat_statement
+                (repeat_keyword)
+                (comment)
+                (until_keyword)
+                condition: (comparison_expression
+                  left: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  operator: (comparison_operator)
+                  right: (integer))))
+            (comment)
+            (if_statement
+              (if_keyword)
+              condition: (unary_expression
+                operand: (member_expression
+                  object: (identifier)
+                  member: (identifier)))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (comment)
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)
+                (string_literal)
+                (string_literal)
+                (string_literal)))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (identifier)
+                (string_literal)))
+            (comment)
+            (member_expression
+              object: (identifier)
+              member: (identifier))
+            (comment)
+            (assignment_statement
+              left: (identifier)
+              right: (member_expression
+                object: (identifier)
+                member: (identifier)))
+            (comment)
+            (member_expression
+              object: (call_expression
+                function: (member_expression
+                  object: (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list
+                      (identifier)))
+                  member: (identifier))
+                arguments: (argument_list
+                  (quoted_identifier)
+                  (string_literal)
+                  (string_literal)))
+              member: (identifier)))
           (end_keyword)))
       (procedure
         (procedure_keyword)
@@ -210,59 +211,60 @@ codeunit 50000 "AL Built-in Functions Test"
         body: (code_block
           (begin_keyword)
           (comment)
-          (if_statement
-            (if_keyword)
-            condition: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal)))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (comment)
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (call_expression
-                function: (member_expression
-                  object: (keyword_identifier
-                    (page_keyword))
-                  member: (identifier))
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (call_expression
+                function: (identifier)
                 arguments: (argument_list
-                  (database_reference
-                    keyword: (object_type_keyword)
-                    table_name: (quoted_identifier))
-                  (identifier)))
-              operator: (comparison_operator)
-              right: (qualified_enum_value
-                enum_type: (keyword_identifier)
-                value: (identifier)))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (identifier)
+                  (string_literal)))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (comment)
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (call_expression
+                  function: (member_expression
+                    object: (keyword_identifier
+                      (page_keyword))
+                    member: (identifier))
+                  arguments: (argument_list
+                    (database_reference
+                      keyword: (object_type_keyword)
+                      table_name: (quoted_identifier))
+                    (identifier)))
+                operator: (comparison_operator)
+                right: (qualified_enum_value
+                  enum_type: (keyword_identifier)
+                  value: (identifier)))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (comment)
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
               arguments: (argument_list
-                (string_literal))))
-          (comment)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (string_literal)
-              (string_literal)))
-          (call_expression
-            function: (member_expression
-              object: (keyword_identifier
-                (report_keyword))
-              member: (identifier))
-            arguments: (argument_list
-              (database_reference
-                keyword: (object_type_keyword)
-                table_name: (quoted_identifier))
-              (identifier)))
+                (quoted_identifier)
+                (string_literal)
+                (string_literal)))
+            (call_expression
+              function: (member_expression
+                object: (keyword_identifier
+                  (report_keyword))
+                member: (identifier))
+              arguments: (argument_list
+                (database_reference
+                  keyword: (object_type_keyword)
+                  table_name: (quoted_identifier))
+                (identifier))))
           (end_keyword)))
       (var_section
         (var_keyword)

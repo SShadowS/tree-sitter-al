@@ -32,9 +32,10 @@ codeunit 50000 "Test Codeunit"
             length: (integer)))
         body: (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            return_value: (string_literal))
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (string_literal)))
           (end_keyword)))
       (procedure
         (procedure_keyword)
@@ -44,9 +45,10 @@ codeunit 50000 "Test Codeunit"
           (basic_type))
         body: (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            return_value: (decimal))
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (decimal)))
           (end_keyword))))))
 
 ================================================================================
@@ -77,7 +79,8 @@ codeunit 50001 "Another Codeunit"
           (basic_type))
         body: (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            return_value: (integer))
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (integer)))
           (end_keyword))))))

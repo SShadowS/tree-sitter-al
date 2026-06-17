@@ -75,16 +75,17 @@ codeunit 50111 "Enum Assignment Test"
                 (identifier)))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (qualified_enum_value
-              (quoted_identifier)
-              (identifier)))
-          (assignment_statement
-            (identifier)
-            (qualified_enum_value
+          (statement_block
+            (assignment_statement
               (identifier)
-              (identifier)))
+              (qualified_enum_value
+                (quoted_identifier)
+                (identifier)))
+            (assignment_statement
+              (identifier)
+              (qualified_enum_value
+                (identifier)
+                (identifier))))
           (end_keyword))))))
 
 ==================
@@ -128,37 +129,38 @@ codeunit 50112 "Enum Comparison Test"
                 (quoted_identifier)))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (qualified_enum_value
-              (quoted_identifier)
-              (identifier)))
-          (if_statement
-            (if_keyword)
-            (comparison_expression
+          (statement_block
+            (assignment_statement
               (identifier)
-              (comparison_operator)
               (qualified_enum_value
                 (quoted_identifier)
                 (identifier)))
-            (then_keyword)
-            (call_expression
-              (identifier)
-              (argument_list
-                (string_literal))))
-          (if_statement
-            (if_keyword)
-            (comparison_expression
-              (identifier)
-              (comparison_operator)
-              (qualified_enum_value
-                (quoted_identifier)
-                (identifier)))
-            (then_keyword)
-            (call_expression
-              (identifier)
-              (argument_list
-                (string_literal))))
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (identifier)))
+              (then_keyword)
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal))))
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (identifier)))
+              (then_keyword)
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal)))))
           (end_keyword))))))
 
 ==================
@@ -205,40 +207,41 @@ codeunit 50113 "Enum Case Test"
                 (quoted_identifier)))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (qualified_enum_value
-              (quoted_identifier)
-              (identifier)))
-          (case_statement
-            (case_keyword)
-            (identifier)
-            (of_keyword)
-            (case_body
-              (case_branch
-                (qualified_enum_value
-                  (quoted_identifier)
-                  (identifier))
-                (call_expression
-                  (identifier)
-                  (argument_list
-                    (string_literal))))
-              (case_branch
-                (qualified_enum_value
-                  (quoted_identifier)
-                  (identifier))
-                (call_expression
-                  (identifier)
-                  (argument_list
-                    (string_literal))))
-              (case_branch
-                (qualified_enum_value
-                  (quoted_identifier)
-                  (identifier))
-                (call_expression
-                  (identifier)
-                  (argument_list
-                    (string_literal))))))
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (qualified_enum_value
+                (quoted_identifier)
+                (identifier)))
+            (case_statement
+              (case_keyword)
+              (identifier)
+              (of_keyword)
+              (case_body
+                (case_branch
+                  (qualified_enum_value
+                    (quoted_identifier)
+                    (identifier))
+                  (call_expression
+                    (identifier)
+                    (argument_list
+                      (string_literal))))
+                (case_branch
+                  (qualified_enum_value
+                    (quoted_identifier)
+                    (identifier))
+                  (call_expression
+                    (identifier)
+                    (argument_list
+                      (string_literal))))
+                (case_branch
+                  (qualified_enum_value
+                    (quoted_identifier)
+                    (identifier))
+                  (call_expression
+                    (identifier)
+                    (argument_list
+                      (string_literal)))))))
           (end_keyword))))))
 
 ==================
@@ -288,53 +291,54 @@ codeunit 50114 "Quoted Enum Values Test"
                 (quoted_identifier)))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (qualified_enum_value
-              (quoted_identifier)
-              (quoted_identifier)))
-          (if_statement
-            (if_keyword)
-            (comparison_expression
+          (statement_block
+            (assignment_statement
               (identifier)
-              (comparison_operator)
               (qualified_enum_value
                 (quoted_identifier)
                 (quoted_identifier)))
-            (then_keyword)
-            (call_expression
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (quoted_identifier)))
+              (then_keyword)
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal))))
+            (case_statement
+              (case_keyword)
               (identifier)
-              (argument_list
-                (string_literal))))
-          (case_statement
-            (case_keyword)
-            (identifier)
-            (of_keyword)
-            (case_body
-              (case_branch
-                (qualified_enum_value
-                  (quoted_identifier)
-                  (quoted_identifier))
-                (call_expression
-                  (identifier)
-                  (argument_list
-                    (string_literal))))
-              (case_branch
-                (qualified_enum_value
-                  (quoted_identifier)
-                  (quoted_identifier))
-                (call_expression
-                  (identifier)
-                  (argument_list
-                    (string_literal))))
-              (case_branch
-                (qualified_enum_value
-                  (quoted_identifier)
-                  (quoted_identifier))
-                (call_expression
-                  (identifier)
-                  (argument_list
-                    (string_literal))))))
+              (of_keyword)
+              (case_body
+                (case_branch
+                  (qualified_enum_value
+                    (quoted_identifier)
+                    (quoted_identifier))
+                  (call_expression
+                    (identifier)
+                    (argument_list
+                      (string_literal))))
+                (case_branch
+                  (qualified_enum_value
+                    (quoted_identifier)
+                    (quoted_identifier))
+                  (call_expression
+                    (identifier)
+                    (argument_list
+                      (string_literal))))
+                (case_branch
+                  (qualified_enum_value
+                    (quoted_identifier)
+                    (quoted_identifier))
+                  (call_expression
+                    (identifier)
+                    (argument_list
+                      (string_literal)))))))
           (end_keyword))))))
 
 ==================
@@ -372,11 +376,12 @@ codeunit 50115 "Enum Return Test"
             (quoted_identifier)))
         (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            (qualified_enum_value
-              (quoted_identifier)
-              (identifier)))
+          (statement_block
+            (exit_statement
+              (exit_keyword)
+              (qualified_enum_value
+                (quoted_identifier)
+                (identifier))))
           (end_keyword)))
       (procedure
         (procedure_keyword)
@@ -388,14 +393,15 @@ codeunit 50115 "Enum Return Test"
             (quoted_identifier)))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (qualified_enum_value
-              (quoted_identifier)
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (qualified_enum_value
+                (quoted_identifier)
+                (identifier)))
+            (exit_statement
+              (exit_keyword)
               (identifier)))
-          (exit_statement
-            (exit_keyword)
-            (identifier))
           (end_keyword))))))
 
 ==================
@@ -437,33 +443,34 @@ codeunit 50116 "Enum Parameter Test"
                 (quoted_identifier)))))
         (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            (identifier)
-            (of_keyword)
-            (case_body
-              (case_branch
-                (qualified_enum_value
-                  (quoted_identifier)
-                  (identifier))
-                (call_expression
-                  (identifier)
-                  (argument_list
-                    (string_literal))))
-              (case_branch
-                (qualified_enum_value
-                  (quoted_identifier)
-                  (identifier))
-                (call_expression
-                  (identifier)
-                  (argument_list
-                    (string_literal))))
-              (case_branch
-                (qualified_enum_value
-                  (quoted_identifier)
-                  (identifier))
-                (call_expression
-                  (identifier)
-                  (argument_list
-                    (string_literal))))))
+          (statement_block
+            (case_statement
+              (case_keyword)
+              (identifier)
+              (of_keyword)
+              (case_body
+                (case_branch
+                  (qualified_enum_value
+                    (quoted_identifier)
+                    (identifier))
+                  (call_expression
+                    (identifier)
+                    (argument_list
+                      (string_literal))))
+                (case_branch
+                  (qualified_enum_value
+                    (quoted_identifier)
+                    (identifier))
+                  (call_expression
+                    (identifier)
+                    (argument_list
+                      (string_literal))))
+                (case_branch
+                  (qualified_enum_value
+                    (quoted_identifier)
+                    (identifier))
+                  (call_expression
+                    (identifier)
+                    (argument_list
+                      (string_literal)))))))
           (end_keyword))))))

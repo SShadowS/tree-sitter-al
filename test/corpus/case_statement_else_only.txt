@@ -34,15 +34,16 @@ codeunit 50000 Test
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            expression: (identifier)
-            (of_keyword)
-            (case_else_branch
-              (else_keyword)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list))))
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              (case_else_branch
+                (else_keyword)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))))
           (end_keyword))))))
 
 ================================================================================
@@ -104,47 +105,48 @@ codeunit 50001 Test
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                member: (identifier))
-              arguments: (argument_list
-                (integer))))
-          (if_statement
-            (if_keyword)
-            condition: (call_expression
-              function: (member_expression
-                object: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                member: (identifier))
-              arguments: (argument_list
-                (string_literal)))
-            (then_keyword)
-            then_branch: (assignment_statement
+          body: (statement_block
+            (assignment_statement
               left: (identifier)
               right: (call_expression
                 function: (member_expression
-                  object: (identifier)
+                  object: (member_expression
+                    object: (identifier)
+                    member: (identifier))
                   member: (identifier))
                 arguments: (argument_list
-                  (string_literal)))))
-          (case_statement
-            (case_keyword)
-            expression: (identifier)
-            (of_keyword)
-            (case_else_branch
-              (else_keyword)
-              (call_expression
-                function: (identifier)
+                  (integer))))
+            (if_statement
+              (if_keyword)
+              condition: (call_expression
+                function: (member_expression
+                  object: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  member: (identifier))
                 arguments: (argument_list
-                  (identifier)
-                  (identifier)
-                  (identifier)))))
+                  (string_literal)))
+              (then_keyword)
+              then_branch: (assignment_statement
+                left: (identifier)
+                right: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list
+                    (string_literal)))))
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              (case_else_branch
+                (else_keyword)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (identifier)
+                    (identifier))))))
           (end_keyword))))))
 
 ================================================================================
@@ -187,25 +189,26 @@ codeunit 50002 Test
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            expression: (identifier)
-            (of_keyword)
-            body: (case_body
-              (case_branch
-                pattern: (string_literal)
-                body: (call_expression
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (string_literal)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list)))
+                (case_branch
+                  pattern: (string_literal)
+                  pattern: (string_literal)
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list))))
+              (case_else_branch
+                (else_keyword)
+                (call_expression
                   function: (identifier)
-                  arguments: (argument_list)))
-              (case_branch
-                pattern: (string_literal)
-                pattern: (string_literal)
-                body: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list))))
-            (case_else_branch
-              (else_keyword)
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list))))
+                  arguments: (argument_list)))))
           (end_keyword))))))

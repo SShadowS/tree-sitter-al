@@ -117,12 +117,13 @@ codeunit 50000 "TestRequestPage Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)))
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (identifier))))
           (end_keyword)))
       (attribute_item
         attribute: (attribute_content

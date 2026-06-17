@@ -39,24 +39,25 @@ codeunit 50100 "Test"
         (code_block
           (begin_keyword)
           (comment)
-          (assignment_statement
-            (subscript_expression
-              (identifier)
-              (integer))
-            (qualified_enum_value
+          (statement_block
+            (assignment_statement
               (subscript_expression
                 (identifier)
                 (integer))
-              (identifier)))
-          (assignment_statement
-            (subscript_expression
-              (identifier)
-              (integer))
-            (qualified_enum_value
+              (qualified_enum_value
+                (subscript_expression
+                  (identifier)
+                  (integer))
+                (identifier)))
+            (assignment_statement
               (subscript_expression
                 (identifier)
                 (integer))
-              (quoted_identifier)))
+              (qualified_enum_value
+                (subscript_expression
+                  (identifier)
+                  (integer))
+                (quoted_identifier))))
           (end_keyword))))))
 
 ================================================================================
@@ -100,22 +101,23 @@ codeunit 50101 "Test"
         body: (code_block
           (begin_keyword)
           (comment)
-          (assignment_statement
-            left: (subscript_expression
-              object: (identifier)
-              index: (integer))
-            right: (qualified_enum_value
-              enum_type: (subscript_expression
+          body: (statement_block
+            (assignment_statement
+              left: (subscript_expression
                 object: (identifier)
                 index: (integer))
-              value: (identifier)))
-          (assignment_statement
-            left: (subscript_expression
-              object: (identifier)
-              index: (integer))
-            right: (qualified_enum_value
-              enum_type: (subscript_expression
+              right: (qualified_enum_value
+                enum_type: (subscript_expression
+                  object: (identifier)
+                  index: (integer))
+                value: (identifier)))
+            (assignment_statement
+              left: (subscript_expression
                 object: (identifier)
                 index: (integer))
-              value: (quoted_identifier)))
+              right: (qualified_enum_value
+                enum_type: (subscript_expression
+                  object: (identifier)
+                  index: (integer))
+                value: (quoted_identifier))))
           (end_keyword))))))

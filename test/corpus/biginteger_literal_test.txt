@@ -34,19 +34,20 @@ codeunit 50000 "Test BigInteger"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (biginteger_literal))
-          (assignment_statement
-            left: (identifier)
-            right: (biginteger_literal))
-          (assignment_statement
-            left: (identifier)
-            right: (unary_expression
-              operand: (biginteger_literal)))
-          (assignment_statement
-            left: (identifier)
-            right: (biginteger_literal))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (biginteger_literal))
+            (assignment_statement
+              left: (identifier)
+              right: (biginteger_literal))
+            (assignment_statement
+              left: (identifier)
+              right: (unary_expression
+                operand: (biginteger_literal)))
+            (assignment_statement
+              left: (identifier)
+              right: (biginteger_literal)))
           (comment)
           (end_keyword))))))
 
@@ -84,17 +85,18 @@ codeunit 50001 "Test BigInteger Compare"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (identifier)
-              operator: (comparison_operator)
-              right: (biginteger_literal))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (biginteger_literal))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))))
           (end_keyword))))))
 
 ================================================================================
@@ -131,13 +133,14 @@ codeunit 50002 "Test BigInteger Lowercase"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
-          (identifier)
-          (assignment_statement
-            left: (identifier)
-            right: (unary_expression
-              operand: (integer)))
-          (identifier)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (integer))
+            (identifier)
+            (assignment_statement
+              left: (identifier)
+              right: (unary_expression
+                operand: (integer)))
+            (identifier))
           (end_keyword))))))

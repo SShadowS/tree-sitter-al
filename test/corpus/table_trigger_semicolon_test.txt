@@ -91,47 +91,52 @@ table 50100 "Sales Forecast"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
           (end_keyword)))
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
           (end_keyword)))
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
           (end_keyword)))
       (procedure
         (procedure_keyword)
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (additive_expression
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (additive_expression
+                left: (identifier)
+                right: (integer))))
+          (end_keyword)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
               left: (identifier)
               right: (integer)))
-          (end_keyword)))
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        body: (code_block
-          (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
           (end_keyword))))))
 
 ================================================================================
@@ -194,19 +199,20 @@ table 50101 "Custom Table"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)))
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)
-              (member_expression
+          body: (statement_block
+            (call_expression
+              function: (member_expression
                 object: (identifier)
-                member: (identifier))))
+                member: (identifier))
+              arguments: (argument_list
+                (identifier)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)
+                (member_expression
+                  object: (identifier)
+                  member: (identifier)))))
           (end_keyword)))
       (trigger_declaration
         (trigger_keyword)
@@ -223,26 +229,27 @@ table 50101 "Custom Table"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)))
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)
-              (member_expression
+          body: (statement_block
+            (call_expression
+              function: (member_expression
                 object: (identifier)
                 member: (identifier))
-              (member_expression
+              arguments: (argument_list
+                (identifier)))
+            (call_expression
+              function: (member_expression
                 object: (identifier)
-                member: (identifier))))
+                member: (identifier))
+              arguments: (argument_list
+                (identifier)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)
+                (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                (member_expression
+                  object: (identifier)
+                  member: (identifier)))))
           (end_keyword))))))

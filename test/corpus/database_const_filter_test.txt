@@ -152,45 +152,46 @@ codeunit 50200 "Database References"
         body: (code_block
           (begin_keyword)
           (comment)
-          (assignment_statement
-            left: (identifier)
-            right: (database_reference
-              keyword: (object_type_keyword)
-              table_name: (quoted_identifier)))
-          (comment)
-          (case_statement
-            (case_keyword)
-            expression: (identifier)
-            (of_keyword)
-            body: (case_body
-              (case_branch
-                pattern: (database_reference
-                  keyword: (object_type_keyword)
-                  table_name: (identifier))
-                body: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal))))
-              (case_branch
-                pattern: (database_reference
-                  keyword: (object_type_keyword)
-                  table_name: (quoted_identifier))
-                body: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal))))))
-          (comment)
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
+          body: (statement_block
+            (assignment_statement
               left: (identifier)
-              operator: (comparison_operator)
               right: (database_reference
                 keyword: (object_type_keyword)
-                table_name: (identifier)))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
+                table_name: (quoted_identifier)))
+            (comment)
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (database_reference
+                    keyword: (object_type_keyword)
+                    table_name: (identifier))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal))))
+                (case_branch
+                  pattern: (database_reference
+                    keyword: (object_type_keyword)
+                    table_name: (quoted_identifier))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal))))))
+            (comment)
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (database_reference
+                  keyword: (object_type_keyword)
+                  table_name: (identifier)))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))))
           (end_keyword))))))

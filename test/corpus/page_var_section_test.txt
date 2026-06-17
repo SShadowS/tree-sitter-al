@@ -67,13 +67,14 @@ page 7335 "Warehouse Pick Summary"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list)))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list))))
           (end_keyword)))
       (var_section
         (var_keyword)
@@ -108,18 +109,19 @@ page 7335 "Warehouse Pick Summary"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier)))
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier)))
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier)))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier))))
           (end_keyword))))))
 
 ================================================================================
@@ -188,10 +190,11 @@ page 50101 "Order Page"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
           (end_keyword)))
       (var_section
         (var_keyword)

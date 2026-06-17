@@ -89,14 +89,15 @@ page 123 "Test Page"
                                 reference: (quoted_identifier)))))
                         body: (code_block
                           (begin_keyword)
-                          (call_expression
-                            function: (member_expression
-                              object: (identifier)
-                              member: (identifier))
-                            arguments: (argument_list))
-                          (call_expression
-                            function: (member_expression
-                              object: (identifier)
-                              member: (identifier))
-                            arguments: (argument_list))
+                          body: (statement_block
+                            (call_expression
+                              function: (member_expression
+                                object: (identifier)
+                                member: (identifier))
+                              arguments: (argument_list))
+                            (call_expression
+                              function: (member_expression
+                                object: (identifier)
+                                member: (identifier))
+                              arguments: (argument_list)))
                           (end_keyword))))))))))))))

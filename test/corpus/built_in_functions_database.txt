@@ -59,33 +59,34 @@ codeunit 50100 "Built-in Functions Test"
               (text_type))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (call_expression
-              (member_expression
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (call_expression
+                (member_expression
+                  (identifier)
+                  (identifier))
+                (argument_list)))
+            (assignment_statement
+              (identifier)
+              (call_expression
                 (identifier)
-                (identifier))
-              (argument_list)))
-          (assignment_statement
-            (identifier)
-            (call_expression
+                (argument_list
+                  (member_expression
+                    (identifier)
+                    (quoted_identifier)))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (member_expression
-                  (identifier)
-                  (quoted_identifier)))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (member_expression
+                    (identifier)
+                    (quoted_identifier)))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (member_expression
-                  (identifier)
-                  (quoted_identifier)))))
-          (assignment_statement
-            (identifier)
-            (call_expression
-              (identifier)
-              (argument_list
-                (identifier))))
+              (call_expression
+                (identifier)
+                (argument_list
+                  (identifier)))))
           (end_keyword))))))

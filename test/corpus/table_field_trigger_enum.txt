@@ -40,27 +40,28 @@ table 50000 "Test Table"
                 name: (identifier)
                 body: (code_block
                   (begin_keyword)
-                  (if_statement
-                    (if_keyword)
-                    condition: (logical_expression
-                      left: (parenthesized_expression
-                        (comparison_expression
-                          left: (quoted_identifier)
-                          operator: (comparison_operator)
-                          right: (string_literal)))
-                      right: (parenthesized_expression
-                        (comparison_expression
-                          left: (quoted_identifier)
-                          operator: (comparison_operator)
-                          right: (qualified_enum_value
+                  body: (statement_block
+                    (if_statement
+                      (if_keyword)
+                      condition: (logical_expression
+                        left: (parenthesized_expression
+                          (comparison_expression
+                            left: (quoted_identifier)
+                            operator: (comparison_operator)
+                            right: (string_literal)))
+                        right: (parenthesized_expression
+                          (comparison_expression
+                            left: (quoted_identifier)
+                            operator: (comparison_operator)
+                            right: (qualified_enum_value
+                              enum_type: (identifier)
+                              value: (quoted_identifier)))))
+                      (then_keyword)
+                      then_branch: (call_expression
+                        function: (identifier)
+                        arguments: (argument_list
+                          (quoted_identifier)
+                          (qualified_enum_value
                             enum_type: (identifier)
-                            value: (quoted_identifier)))))
-                    (then_keyword)
-                    then_branch: (call_expression
-                      function: (identifier)
-                      arguments: (argument_list
-                        (quoted_identifier)
-                        (qualified_enum_value
-                          enum_type: (identifier)
-                          value: (identifier)))))
+                            value: (identifier))))))
                   (end_keyword))))))))))

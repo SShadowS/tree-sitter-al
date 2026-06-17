@@ -265,32 +265,34 @@ page 1518 "My Notifications"
                         (identifier)
                         (code_block
                           (begin_keyword)
-                          (if_statement
-                            (if_keyword)
-                            (comparison_expression
-                              (member_expression
-                                (identifier)
-                                (identifier))
-                              (comparison_operator)
-                              (member_expression
-                                (identifier)
-                                (identifier)))
-                            (then_keyword)
-                            (code_block
-                              (begin_keyword)
-                              (assignment_statement
-                                (identifier)
-                                (call_expression
-                                  (member_expression
-                                    (identifier)
-                                    (identifier))
-                                  (argument_list)))
-                              (call_expression
+                          (statement_block
+                            (if_statement
+                              (if_keyword)
+                              (comparison_expression
                                 (member_expression
                                   (identifier)
                                   (identifier))
-                                (argument_list))
-                              (end_keyword)))
+                                (comparison_operator)
+                                (member_expression
+                                  (identifier)
+                                  (identifier)))
+                              (then_keyword)
+                              (code_block
+                                (begin_keyword)
+                                (statement_block
+                                  (assignment_statement
+                                    (identifier)
+                                    (call_expression
+                                      (member_expression
+                                        (identifier)
+                                        (identifier))
+                                      (argument_list)))
+                                  (call_expression
+                                    (member_expression
+                                      (identifier)
+                                      (identifier))
+                                    (argument_list)))
+                                (end_keyword))))
                           (end_keyword)))))
                   (page_field
                     (identifier)
@@ -307,42 +309,45 @@ page 1518 "My Notifications"
                         (identifier)
                         (code_block
                           (begin_keyword)
-                          (if_statement
-                            (if_keyword)
-                            (call_expression
-                              (member_expression
-                                (identifier)
-                                (identifier))
-                              (argument_list))
-                            (then_keyword)
-                            (code_block
-                              (begin_keyword)
-                              (assignment_statement
-                                (identifier)
-                                (call_expression
-                                  (member_expression
-                                    (identifier)
-                                    (identifier))
-                                  (argument_list)))
+                          (statement_block
+                            (if_statement
+                              (if_keyword)
                               (call_expression
                                 (member_expression
                                   (identifier)
                                   (identifier))
                                 (argument_list))
-                              (end_keyword)))
+                              (then_keyword)
+                              (code_block
+                                (begin_keyword)
+                                (statement_block
+                                  (assignment_statement
+                                    (identifier)
+                                    (call_expression
+                                      (member_expression
+                                        (identifier)
+                                        (identifier))
+                                      (argument_list)))
+                                  (call_expression
+                                    (member_expression
+                                      (identifier)
+                                      (identifier))
+                                    (argument_list)))
+                                (end_keyword))))
                           (end_keyword)))))))))))
       (trigger_declaration
         (trigger_keyword)
         (identifier)
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (call_expression
-              (member_expression
-                (identifier)
-                (identifier))
-              (argument_list)))
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (call_expression
+                (member_expression
+                  (identifier)
+                  (identifier))
+                (argument_list))))
           (end_keyword)))
       (var_section
         (var_keyword)

@@ -46,10 +46,11 @@ report 50100 "Test Report"
                 name: (identifier)
                 body: (code_block
                   (begin_keyword)
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (string_literal)))
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (string_literal))))
                   (end_keyword))))))))))
 
 ================================================================================

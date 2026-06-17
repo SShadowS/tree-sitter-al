@@ -55,37 +55,38 @@ codeunit 50117 "Array Indexing Test"
                   (basic_type))))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (subscript_expression
-              (identifier)
-              (integer))
-            (integer))
-          (assignment_statement
-            (subscript_expression
-              (identifier)
-              (integer))
-            (integer))
-          (assignment_statement
-            (subscript_expression
-              (identifier)
-              (integer))
-            (integer))
-          (assignment_statement
-            (subscript_expression
-              (identifier)
-              (integer))
-            (additive_expression
+          (statement_block
+            (assignment_statement
               (subscript_expression
                 (identifier)
                 (integer))
-              (integer)))
-          (assignment_statement
-            (subscript_expression
-              (identifier)
               (integer))
-            (multiplicative_expression
+            (assignment_statement
               (subscript_expression
                 (identifier)
                 (integer))
-              (integer)))
+              (integer))
+            (assignment_statement
+              (subscript_expression
+                (identifier)
+                (integer))
+              (integer))
+            (assignment_statement
+              (subscript_expression
+                (identifier)
+                (integer))
+              (additive_expression
+                (subscript_expression
+                  (identifier)
+                  (integer))
+                (integer)))
+            (assignment_statement
+              (subscript_expression
+                (identifier)
+                (integer))
+              (multiplicative_expression
+                (subscript_expression
+                  (identifier)
+                  (integer))
+                (integer))))
           (end_keyword))))))

@@ -164,21 +164,23 @@ page 50007 TestPage
                           (basic_type))))
                     body: (code_block
                       (begin_keyword)
-                      (foreach_statement
-                        (foreach_keyword)
-                        variable: (identifier)
-                        (in_keyword)
-                        iterable: (identifier)
-                        (do_keyword)
-                        body: (code_block
-                          (begin_keyword)
-                          (call_expression
-                            function: (member_expression
-                              object: (identifier)
-                              member: (identifier))
-                            arguments: (argument_list
-                              (identifier)))
-                          (end_keyword)))
+                      body: (statement_block
+                        (foreach_statement
+                          (foreach_keyword)
+                          variable: (identifier)
+                          (in_keyword)
+                          iterable: (identifier)
+                          (do_keyword)
+                          body: (code_block
+                            (begin_keyword)
+                            body: (statement_block
+                              (call_expression
+                                function: (member_expression
+                                  object: (identifier)
+                                  member: (identifier))
+                                arguments: (argument_list
+                                  (identifier))))
+                            (end_keyword))))
                       (end_keyword))))))))))))
 
 ================================================================================
@@ -346,35 +348,37 @@ page 50009 TestPage
                           (text_type))))
                     body: (code_block
                       (begin_keyword)
-                      (foreach_statement
-                        (foreach_keyword)
-                        variable: (identifier)
-                        (in_keyword)
-                        iterable: (identifier)
-                        (do_keyword)
-                        body: (code_block
-                          (begin_keyword)
-                          (assignment_statement
-                            left: (identifier)
-                            right: (call_expression
-                              function: (member_expression
-                                object: (identifier)
-                                member: (identifier))
-                              arguments: (argument_list)))
-                          (call_expression
-                            function: (member_expression
-                              object: (identifier)
-                              member: (identifier))
-                            arguments: (argument_list
-                              (identifier)))
-                          (call_expression
-                            function: (member_expression
-                              object: (identifier)
-                              member: (identifier))
-                            arguments: (argument_list
-                              (identifier)
-                              (identifier)))
-                          (end_keyword)))
+                      body: (statement_block
+                        (foreach_statement
+                          (foreach_keyword)
+                          variable: (identifier)
+                          (in_keyword)
+                          iterable: (identifier)
+                          (do_keyword)
+                          body: (code_block
+                            (begin_keyword)
+                            body: (statement_block
+                              (assignment_statement
+                                left: (identifier)
+                                right: (call_expression
+                                  function: (member_expression
+                                    object: (identifier)
+                                    member: (identifier))
+                                  arguments: (argument_list)))
+                              (call_expression
+                                function: (member_expression
+                                  object: (identifier)
+                                  member: (identifier))
+                                arguments: (argument_list
+                                  (identifier)))
+                              (call_expression
+                                function: (member_expression
+                                  object: (identifier)
+                                  member: (identifier))
+                                arguments: (argument_list
+                                  (identifier)
+                                  (identifier))))
+                            (end_keyword))))
                       (end_keyword))))))))))))
 
 ================================================================================

@@ -50,10 +50,11 @@ codeunit 50000 "Test Codeunit"
             (preproc_close)))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
           (end_keyword))))))
 
 ==================
@@ -100,6 +101,7 @@ codeunit 50001 "Test Codeunit"
             (preproc_close)))
         body: (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword))
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)))
           (end_keyword))))))

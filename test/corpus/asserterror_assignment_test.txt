@@ -57,36 +57,37 @@ codeunit 50100 "Test Asserterror Assignment"
                 length: (integer)))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (string_literal))
-          (assignment_statement
-            left: (identifier)
-            right: (string_literal))
-          (comment)
-          (asserterror_statement
-            (asserterror_keyword)
-            body: (assignment_expression
+          body: (statement_block
+            (assignment_statement
               left: (identifier)
-              right: (call_expression
+              right: (string_literal))
+            (assignment_statement
+              left: (identifier)
+              right: (string_literal))
+            (comment)
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (assignment_expression
+                left: (identifier)
+                right: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (identifier)))))
+            (comment)
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))
+                operator: (comparison_operator)
+                right: (string_literal))
+              (then_keyword)
+              then_branch: (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (identifier)
-                  (identifier)))))
-          (comment)
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (call_expression
-                function: (identifier)
-                arguments: (argument_list))
-              operator: (comparison_operator)
-              right: (string_literal))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
+                  (string_literal)))))
           (end_keyword)))
       (procedure
         modifier: (procedure_modifier
@@ -109,10 +110,11 @@ codeunit 50100 "Test Asserterror Assignment"
             length: (integer)))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
           (end_keyword))))))
 
 ================================================================================
@@ -179,37 +181,38 @@ codeunit 50200 "Complex Asserterror Tests"
         body: (code_block
           (begin_keyword)
           (comment)
-          (asserterror_statement
-            (asserterror_keyword)
-            body: (assignment_expression
-              left: (identifier)
-              right: (multiplicative_expression
-                left: (integer)
-                right: (integer))))
-          (comment)
-          (asserterror_statement
-            (asserterror_keyword)
-            body: (assignment_expression
-              left: (identifier)
-              right: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list))))
-          (comment)
-          (asserterror_statement
-            (asserterror_keyword)
-            body: (assignment_expression
-              left: (identifier)
-              right: (multiplicative_expression
-                left: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (integer)))
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (assignment_expression
+                left: (identifier)
+                right: (multiplicative_expression
+                  left: (integer)
+                  right: (integer))))
+            (comment)
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (assignment_expression
+                left: (identifier)
                 right: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (integer))))))
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list))))
+            (comment)
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (assignment_expression
+                left: (identifier)
+                right: (multiplicative_expression
+                  left: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (integer)))
+                  right: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (integer)))))))
           (end_keyword)))
       (procedure
         modifier: (procedure_modifier
@@ -225,22 +228,23 @@ codeunit 50200 "Complex Asserterror Tests"
           (basic_type))
         body: (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (identifier)
-              operator: (comparison_operator)
-              right: (integer))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
-          (exit_statement
-            (exit_keyword)
-            return_value: (multiplicative_expression
-              left: (identifier)
-              right: (integer)))
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (exit_statement
+              (exit_keyword)
+              return_value: (multiplicative_expression
+                left: (identifier)
+                right: (integer))))
           (end_keyword)))
       (procedure
         modifier: (procedure_modifier
@@ -256,9 +260,10 @@ codeunit 50200 "Complex Asserterror Tests"
           (basic_type))
         body: (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            return_value: (multiplicative_expression
-              left: (identifier)
-              right: (integer)))
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (multiplicative_expression
+                left: (identifier)
+                right: (integer))))
           (end_keyword))))))

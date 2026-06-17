@@ -68,13 +68,14 @@ query 100 "Test Query"
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)
-              (identifier)))
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (identifier)
+                (identifier))))
           (end_keyword))))))
 
 ================================================================================
@@ -311,112 +312,113 @@ query 7308 CalcOutstandQtyOnWhseActLine
                 reference: (quoted_identifier)))))
         body: (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              operator: (comparison_operator)
-              right: (string_literal))
-            (then_keyword)
-            then_branch: (if_statement
+          body: (statement_block
+            (if_statement
               (if_keyword)
-              condition: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
+              condition: (comparison_expression
+                left: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                operator: (comparison_operator)
+                right: (string_literal))
               (then_keyword)
-              then_branch: (call_expression
-                function: (member_expression
+              then_branch: (if_statement
+                (if_keyword)
+                condition: (member_expression
                   object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (member_expression
+                  member: (quoted_identifier))
+                (then_keyword)
+                then_branch: (call_expression
+                  function: (member_expression
                     object: (identifier)
-                    member: (quoted_identifier))))
-              (else_keyword)
-              else_branch: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (string_literal)
-                  (member_expression
+                    member: (identifier))
+                  arguments: (argument_list
+                    (identifier)
+                    (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))))
+                (else_keyword)
+                else_branch: (call_expression
+                  function: (member_expression
                     object: (identifier)
-                    member: (quoted_identifier))
-                  (string_literal)))))
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              operator: (comparison_operator)
-              right: (string_literal))
-            (then_keyword)
-            then_branch: (if_statement
+                    member: (identifier))
+                  arguments: (argument_list
+                    (identifier)
+                    (string_literal)
+                    (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    (string_literal)))))
+            (if_statement
               (if_keyword)
-              condition: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
+              condition: (comparison_expression
+                left: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                operator: (comparison_operator)
+                right: (string_literal))
               (then_keyword)
-              then_branch: (call_expression
-                function: (member_expression
+              then_branch: (if_statement
+                (if_keyword)
+                condition: (member_expression
                   object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (member_expression
+                  member: (quoted_identifier))
+                (then_keyword)
+                then_branch: (call_expression
+                  function: (member_expression
                     object: (identifier)
-                    member: (quoted_identifier))))
-              (else_keyword)
-              else_branch: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (string_literal)
-                  (member_expression
+                    member: (identifier))
+                  arguments: (argument_list
+                    (identifier)
+                    (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))))
+                (else_keyword)
+                else_branch: (call_expression
+                  function: (member_expression
                     object: (identifier)
-                    member: (quoted_identifier))
-                  (string_literal)))))
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              operator: (comparison_operator)
-              right: (string_literal))
-            (then_keyword)
-            then_branch: (if_statement
+                    member: (identifier))
+                  arguments: (argument_list
+                    (identifier)
+                    (string_literal)
+                    (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    (string_literal)))))
+            (if_statement
               (if_keyword)
-              condition: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
+              condition: (comparison_expression
+                left: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                operator: (comparison_operator)
+                right: (string_literal))
               (then_keyword)
-              then_branch: (call_expression
-                function: (member_expression
+              then_branch: (if_statement
+                (if_keyword)
+                condition: (member_expression
                   object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (member_expression
+                  member: (quoted_identifier))
+                (then_keyword)
+                then_branch: (call_expression
+                  function: (member_expression
                     object: (identifier)
-                    member: (quoted_identifier))))
-              (else_keyword)
-              else_branch: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list
-                  (identifier)
-                  (string_literal)
-                  (member_expression
+                    member: (identifier))
+                  arguments: (argument_list
+                    (identifier)
+                    (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))))
+                (else_keyword)
+                else_branch: (call_expression
+                  function: (member_expression
                     object: (identifier)
-                    member: (quoted_identifier))
-                  (string_literal)))))
+                    member: (identifier))
+                  arguments: (argument_list
+                    (identifier)
+                    (string_literal)
+                    (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    (string_literal))))))
           (end_keyword))))))

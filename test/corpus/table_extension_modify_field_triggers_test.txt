@@ -51,17 +51,18 @@ tableextension 50000 "Customer Extension" extends Customer
             name: (identifier)
             body: (code_block
               (begin_keyword)
-              (if_statement
-                (if_keyword)
-                condition: (comparison_expression
-                  left: (quoted_identifier)
-                  operator: (comparison_operator)
-                  right: (string_literal))
-                (then_keyword)
-                then_branch: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal))))
+              body: (statement_block
+                (if_statement
+                  (if_keyword)
+                  condition: (comparison_expression
+                    left: (quoted_identifier)
+                    operator: (comparison_operator)
+                    right: (string_literal))
+                  (then_keyword)
+                  then_branch: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal)))))
               (end_keyword)))
           (trigger_declaration
             (trigger_keyword)
@@ -76,30 +77,31 @@ tableextension 50000 "Customer Extension" extends Customer
                     reference: (quoted_identifier)))))
             body: (code_block
               (begin_keyword)
-              (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list
-                  (boolean)))
-              (if_statement
-                (if_keyword)
-                condition: (comparison_expression
-                  left: (member_expression
+              body: (statement_block
+                (call_expression
+                  function: (member_expression
                     object: (identifier)
                     member: (identifier))
-                  operator: (comparison_operator)
-                  right: (qualified_enum_value
-                    enum_type: (keyword_identifier)
-                    value: (identifier)))
-                (then_keyword)
-                then_branch: (assignment_statement
-                  left: (quoted_identifier)
-                  right: (member_expression
-                    object: (member_expression
+                  arguments: (argument_list
+                    (boolean)))
+                (if_statement
+                  (if_keyword)
+                  condition: (comparison_expression
+                    left: (member_expression
                       object: (identifier)
                       member: (identifier))
-                    member: (quoted_identifier))))
+                    operator: (comparison_operator)
+                    right: (qualified_enum_value
+                      enum_type: (keyword_identifier)
+                      value: (identifier)))
+                  (then_keyword)
+                  then_branch: (assignment_statement
+                    left: (quoted_identifier)
+                    right: (member_expression
+                      object: (member_expression
+                        object: (identifier)
+                        member: (identifier))
+                      member: (quoted_identifier)))))
               (end_keyword)))))
       (modify_modification
         target: (identifier)
@@ -112,9 +114,10 @@ tableextension 50000 "Customer Extension" extends Customer
             name: (identifier)
             body: (code_block
               (begin_keyword)
-              (assignment_statement
-                left: (quoted_identifier)
-                right: (identifier))
+              body: (statement_block
+                (assignment_statement
+                  left: (quoted_identifier)
+                  right: (identifier)))
               (end_keyword))))))))
 
 ================================================================================
@@ -160,18 +163,19 @@ tableextension 50001 "Item Extension" extends Item
                     reference: (quoted_identifier)))))
             body: (code_block
               (begin_keyword)
-              (if_statement
-                (if_keyword)
-                condition: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list
-                    (quoted_identifier)))
-                (then_keyword)
-                then_branch: (assignment_statement
-                  left: (quoted_identifier)
-                  right: (member_expression
-                    object: (identifier)
-                    member: (identifier))))
+              body: (statement_block
+                (if_statement
+                  (if_keyword)
+                  condition: (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list
+                      (quoted_identifier)))
+                  (then_keyword)
+                  then_branch: (assignment_statement
+                    left: (quoted_identifier)
+                    right: (member_expression
+                      object: (identifier)
+                      member: (identifier)))))
               (end_keyword))))))))

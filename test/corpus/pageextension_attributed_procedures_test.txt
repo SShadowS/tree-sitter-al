@@ -52,13 +52,14 @@ pageextension 6085592 "CDC General Ledger Entries" extends "General Ledger Entri
                 length: (integer)))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (identifier)))
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (quoted_identifier)
+                (identifier))))
           (end_keyword)))
       (attribute_item
         attribute: (attribute_content

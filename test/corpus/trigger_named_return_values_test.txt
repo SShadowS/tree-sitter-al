@@ -41,27 +41,28 @@ page 50100 "Item Turnover Lines"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (identifier))
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list
-                (identifier)
-                (identifier)
-                (identifier)
-                (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list)))))
-          (assignment_statement
-            left: (identifier)
-            right: (identifier))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (identifier))
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (identifier)
+                  (identifier)
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list)))))
+            (assignment_statement
+              left: (identifier)
+              right: (identifier)))
           (end_keyword))))))
 
 ================================================================================
@@ -107,27 +108,28 @@ page 50101 "Test Page"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (identifier))
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list
-                (identifier)
-                (identifier)
-                (identifier)
-                (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list)))))
-          (assignment_statement
-            left: (identifier)
-            right: (identifier))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (identifier))
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (identifier)
+                  (identifier)
+                  (identifier)
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list)))))
+            (assignment_statement
+              left: (identifier)
+              right: (identifier)))
           (end_keyword))))))
 
 ================================================================================
@@ -181,15 +183,16 @@ table 50100 "Test Table"
                   (basic_type))
                 body: (code_block
                   (begin_keyword)
-                  (assignment_statement
-                    left: (identifier)
-                    right: (call_expression
-                      function: (identifier)
-                      arguments: (argument_list
-                        (identifier))))
-                  (exit_statement
-                    (exit_keyword)
-                    return_value: (identifier))
+                  body: (statement_block
+                    (assignment_statement
+                      left: (identifier)
+                      right: (call_expression
+                        function: (identifier)
+                        arguments: (argument_list
+                          (identifier))))
+                    (exit_statement
+                      (exit_keyword)
+                      return_value: (identifier)))
                   (end_keyword))))))))))
 
 ================================================================================
@@ -220,12 +223,13 @@ page 50102 "Test Page"
           (basic_type))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (quoted_identifier)
-            right: (unary_expression
-              operand: (call_expression
-                function: (identifier)
-                arguments: (argument_list))))
+          body: (statement_block
+            (assignment_statement
+              left: (quoted_identifier)
+              right: (unary_expression
+                operand: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))))
           (end_keyword))))))
 
 ================================================================================
@@ -270,11 +274,12 @@ page 50103 "Test Page"
                 reference: (identifier)))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list)))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list))))
           (end_keyword))))))

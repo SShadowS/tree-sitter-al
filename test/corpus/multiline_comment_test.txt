@@ -31,10 +31,11 @@ codeunit 50100 "Test Codeunit"
         body: (code_block
           (begin_keyword)
           (multiline_comment)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
           (end_keyword))))))
 
 ================================================================================
@@ -109,18 +110,19 @@ codeunit 50101 "Comment Test"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
-          (multiline_comment)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
-          (multiline_comment)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (string_literal)))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))
+            (multiline_comment)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))
+            (multiline_comment)
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
           (end_keyword))))))

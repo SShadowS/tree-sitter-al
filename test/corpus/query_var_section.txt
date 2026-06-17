@@ -59,9 +59,10 @@ query 50100 "Test Query Var"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (integer)))
           (end_keyword))))))
 
 ================================================================================
@@ -142,12 +143,13 @@ query 5506 "Email Related Record"
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            return_value: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (integer))))
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (integer)))))
           (end_keyword))))))
 
 ================================================================================
@@ -232,19 +234,20 @@ query 50101 "Query with Conditional Var"
           (text_type))
         body: (code_block
           (begin_keyword)
-          (preproc_conditional_statement
-            (preproc_if
-              (preproc_open)
-              condition: (identifier))
-            (exit_statement
-              (exit_keyword)
-              return_value: (identifier))
-            (preproc_else)
-            (exit_statement
-              (exit_keyword)
-              return_value: (identifier))
-            (preproc_endif
-              (preproc_close)))
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (exit_statement
+                (exit_keyword)
+                return_value: (identifier))
+              (preproc_else)
+              (exit_statement
+                (exit_keyword)
+                return_value: (identifier))
+              (preproc_endif
+                (preproc_close))))
           (end_keyword))))))
 
 ================================================================================
@@ -329,19 +332,21 @@ query 50102 "Mixed Var Query"
                 length: (integer)))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
-          (assignment_statement
-            left: (identifier)
-            right: (identifier))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              right: (identifier)))
           (end_keyword)))
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (integer)))
           (end_keyword))))))

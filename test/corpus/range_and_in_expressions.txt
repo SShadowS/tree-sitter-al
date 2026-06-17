@@ -36,14 +36,15 @@ codeunit 50000 "Range Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            left: (identifier)
-            operator: (in_keyword)
-            right: (list_literal
-              (range_expression
-                left: (string_literal)
-                right: (string_literal))))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              left: (identifier)
+              operator: (in_keyword)
+              right: (list_literal
+                (range_expression
+                  left: (string_literal)
+                  right: (string_literal)))))
           (end_keyword))))))
 
 ================================================================================
@@ -84,20 +85,21 @@ codeunit 50001 "Multiple Range Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            left: (identifier)
-            operator: (in_keyword)
-            right: (list_literal
-              (range_expression
-                left: (string_literal)
-                right: (string_literal))
-              (range_expression
-                left: (string_literal)
-                right: (string_literal))
-              (range_expression
-                left: (string_literal)
-                right: (string_literal))))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              left: (identifier)
+              operator: (in_keyword)
+              right: (list_literal
+                (range_expression
+                  left: (string_literal)
+                  right: (string_literal))
+                (range_expression
+                  left: (string_literal)
+                  right: (string_literal))
+                (range_expression
+                  left: (string_literal)
+                  right: (string_literal)))))
           (end_keyword))))))
 
 ================================================================================
@@ -138,16 +140,17 @@ codeunit 50002 "Value List Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            left: (identifier)
-            operator: (in_keyword)
-            right: (list_literal
-              (integer)
-              (integer)
-              (integer)
-              (integer)
-              (integer)))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              left: (identifier)
+              operator: (in_keyword)
+              right: (list_literal
+                (integer)
+                (integer)
+                (integer)
+                (integer)
+                (integer))))
           (end_keyword))))))
 
 ================================================================================
@@ -197,21 +200,22 @@ codeunit 50003 "Range Context Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
-          (for_statement
-            (for_keyword)
-            variable: (identifier)
-            start: (integer)
-            direction: (to_keyword)
-            end: (integer)
-            (do_keyword)
-            body: (assignment_statement
+          body: (statement_block
+            (assignment_statement
               left: (identifier)
-              right: (additive_expression
+              right: (integer))
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (assignment_statement
                 left: (identifier)
-                right: (identifier))))
+                right: (additive_expression
+                  left: (identifier)
+                  right: (identifier)))))
           (end_keyword)))
       (procedure
         (procedure_keyword)
@@ -224,9 +228,10 @@ codeunit 50003 "Range Context Test"
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (string_literal))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (string_literal)))
           (end_keyword))))))
 
 ================================================================================
@@ -268,15 +273,16 @@ codeunit 50004 "Field Access Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            left: (member_expression
-              object: (identifier)
-              member: (identifier))
-            operator: (in_keyword)
-            right: (list_literal
-              (range_expression
-                left: (string_literal)
-                right: (string_literal))
-              (string_literal)))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              left: (member_expression
+                object: (identifier)
+                member: (identifier))
+              operator: (in_keyword)
+              right: (list_literal
+                (range_expression
+                  left: (string_literal)
+                  right: (string_literal))
+                (string_literal))))
           (end_keyword))))))

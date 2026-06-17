@@ -54,9 +54,10 @@ page 50000 "Test Page"
                       (basic_type))
                     (code_block
                       (begin_keyword)
-                      (exit_statement
-                        (exit_keyword)
-                        (boolean))
+                      (statement_block
+                        (exit_statement
+                          (exit_keyword)
+                          (boolean)))
                       (end_keyword))))))))))))
 
 ================================================================================
@@ -115,9 +116,10 @@ page 50001 "Test Page 2"
                       (basic_type))
                     (code_block
                       (begin_keyword)
-                      (exit_statement
-                        (exit_keyword)
-                        (boolean))
+                      (statement_block
+                        (exit_statement
+                          (exit_keyword)
+                          (boolean)))
                       (end_keyword))))))))))))
 
 ================================================================================
@@ -193,12 +195,13 @@ page 50002 "Test Page 3"
                             (integer)))))
                     (code_block
                       (begin_keyword)
-                      (assignment_statement
-                        (identifier)
-                        (string_literal))
-                      (exit_statement
-                        (exit_keyword)
-                        (boolean))
+                      (statement_block
+                        (assignment_statement
+                          (identifier)
+                          (string_literal))
+                        (exit_statement
+                          (exit_keyword)
+                          (boolean)))
                       (end_keyword))))))))))))
 
 ================================================================================
@@ -251,9 +254,10 @@ page 50003 "Test Page 4"
                       (basic_type))
                     (code_block
                       (begin_keyword)
-                      (exit_statement
-                        (exit_keyword)
-                        (boolean))
+                      (statement_block
+                        (exit_statement
+                          (exit_keyword)
+                          (boolean)))
                       (end_keyword))))))))))))
 
 ================================================================================
@@ -315,10 +319,11 @@ page 50004 "Test Page 5"
                     (identifier)
                     (code_block
                       (begin_keyword)
-                      (call_expression
-                        (identifier)
-                        (argument_list
-                          (string_literal)))
+                      (statement_block
+                        (call_expression
+                          (identifier)
+                          (argument_list
+                            (string_literal))))
                       (end_keyword)))
                   (trigger_declaration
                     (trigger_keyword)
@@ -333,17 +338,19 @@ page 50004 "Test Page 5"
                       (basic_type))
                     (code_block
                       (begin_keyword)
-                      (exit_statement
-                        (exit_keyword)
-                        (boolean))
+                      (statement_block
+                        (exit_statement
+                          (exit_keyword)
+                          (boolean)))
                       (end_keyword)))
                   (trigger_declaration
                     (trigger_keyword)
                     (identifier)
                     (code_block
                       (begin_keyword)
-                      (call_expression
-                        (identifier)
-                        (argument_list
-                          (string_literal)))
+                      (statement_block
+                        (call_expression
+                          (identifier)
+                          (argument_list
+                            (string_literal))))
                       (end_keyword))))))))))))

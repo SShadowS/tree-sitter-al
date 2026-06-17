@@ -61,9 +61,10 @@ codeunit 50000 "Continue Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (boolean))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (boolean)))
           (end_keyword))))))
 
 ================================================================================
@@ -98,15 +99,16 @@ codeunit 50000 "Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (for_statement
-            (for_keyword)
-            variable: (identifier)
-            start: (integer)
-            direction: (to_keyword)
-            end: (integer)
-            (do_keyword)
-            body: (continue_statement
-              (continue_keyword)))
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (continue_statement
+                (continue_keyword))))
           (end_keyword))))))
 
 ================================================================================
@@ -149,24 +151,26 @@ codeunit 50000 "Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (boolean))
-          (for_statement
-            (for_keyword)
-            variable: (identifier)
-            start: (integer)
-            direction: (to_keyword)
-            end: (integer)
-            (do_keyword)
-            body: (code_block
-              (begin_keyword)
-              (assignment_statement
-                left: (identifier)
-                right: (boolean))
-              (continue_statement
-                (continue_keyword))
-              (end_keyword)))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (boolean))
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (boolean))
+                  (continue_statement
+                    (continue_keyword)))
+                (end_keyword))))
           (end_keyword))))))
 
 ================================================================================
@@ -201,11 +205,12 @@ codeunit 50000 "Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            condition: (unary_expression
-              operand: (identifier))
-            (then_keyword)
-            then_branch: (exit_statement
-              (exit_keyword)))
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (unary_expression
+                operand: (identifier))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword))))
           (end_keyword))))))

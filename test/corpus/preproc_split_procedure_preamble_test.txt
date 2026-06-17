@@ -74,20 +74,21 @@ codeunit 1 T
           (preproc_close))
         (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            condition: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list
-                (identifier)))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list)))
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (identifier)))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list))))
           (end_keyword))))))
 
 ================================================================================
@@ -137,11 +138,12 @@ codeunit 1 T
           (preproc_close))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list))
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list)))
           (end_keyword))))))
 
 ================================================================================
@@ -213,9 +215,10 @@ codeunit 1 T
           (preproc_close))
         (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list))
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list)))
           (end_keyword))))))

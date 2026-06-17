@@ -62,23 +62,24 @@ codeunit 50100 "Enum Variable Test"
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (keyword_identifier
-              (enum_keyword))
-            right: (string_literal))
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (keyword_identifier
-                  (enum_keyword))
-                member: (identifier))
-              arguments: (argument_list
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier)))
-                (string_literal))))
+          body: (statement_block
+            (assignment_statement
+              left: (keyword_identifier
+                (enum_keyword))
+              right: (string_literal))
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (enum_keyword))
+                  member: (identifier))
+                arguments: (argument_list
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (identifier)))
+                  (string_literal)))))
           (end_keyword))))))
 
 ================================================================================
@@ -155,35 +156,36 @@ codeunit 50101 "X509 Certificate Handler"
                 reference: (identifier)))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (keyword_identifier
-                  (enum_keyword))
-                member: (identifier))
-              arguments: (argument_list
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier)))
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (identifier))))))
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list
-                (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list
-                    (identifier))))))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (member_expression
+                  object: (keyword_identifier
+                    (enum_keyword))
+                  member: (identifier))
+                arguments: (argument_list
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (identifier)))
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (identifier))))))
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list
+                      (identifier)))))))
           (end_keyword))))))
 
 ================================================================================
@@ -252,19 +254,20 @@ codeunit 50102 "Case Test"
               (option_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (keyword_identifier
-              (enum_keyword))
-            right: (integer))
-          (assignment_statement
-            left: (keyword_identifier
-              (enum_keyword))
-            right: (string_literal))
-          (assignment_statement
-            left: (keyword_identifier
-              (enum_keyword))
-            right: (boolean))
-          (assignment_statement
-            left: (identifier)
-            right: (decimal))
+          body: (statement_block
+            (assignment_statement
+              left: (keyword_identifier
+                (enum_keyword))
+              right: (integer))
+            (assignment_statement
+              left: (keyword_identifier
+                (enum_keyword))
+              right: (string_literal))
+            (assignment_statement
+              left: (keyword_identifier
+                (enum_keyword))
+              right: (boolean))
+            (assignment_statement
+              left: (identifier)
+              right: (decimal)))
           (end_keyword))))))

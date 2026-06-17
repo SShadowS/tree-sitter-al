@@ -53,9 +53,10 @@ page 7221104 "Modify Marketing Text"
                     name: (identifier)
                     body: (code_block
                       (begin_keyword)
-                      (call_expression
-                        function: (identifier)
-                        arguments: (argument_list))
+                      body: (statement_block
+                        (call_expression
+                          function: (identifier)
+                          arguments: (argument_list)))
                       (end_keyword))))))))))))
 
 ================================================================================
@@ -118,7 +119,8 @@ page 50100 "Bank Acc. Reconciliation List"
                     name: (identifier)
                     body: (code_block
                       (begin_keyword)
-                      (call_expression
-                        function: (identifier)
-                        arguments: (argument_list))
+                      body: (statement_block
+                        (call_expression
+                          function: (identifier)
+                          arguments: (argument_list)))
                       (end_keyword))))))))))))

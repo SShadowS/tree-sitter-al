@@ -36,12 +36,13 @@ codeunit 50100 TestTernary
               (basic_type))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (ternary_expression
+          (statement_block
+            (assignment_statement
               (identifier)
-              (integer)
-              (integer)))
+              (ternary_expression
+                (identifier)
+                (integer)
+                (integer))))
           (end_keyword))))))
 
 ================================================================================
@@ -84,20 +85,21 @@ codeunit 50100 NestedTernary
               (basic_type))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (ternary_expression
+          (statement_block
+            (assignment_statement
               (identifier)
-              (parenthesized_expression
-                (ternary_expression
-                  (identifier)
-                  (integer)
-                  (integer)))
-              (parenthesized_expression
-                (ternary_expression
-                  (identifier)
-                  (integer)
-                  (integer)))))
+              (ternary_expression
+                (identifier)
+                (parenthesized_expression
+                  (ternary_expression
+                    (identifier)
+                    (integer)
+                    (integer)))
+                (parenthesized_expression
+                  (ternary_expression
+                    (identifier)
+                    (integer)
+                    (integer))))))
           (end_keyword))))))
 
 ================================================================================
@@ -154,29 +156,30 @@ codeunit 50100 ComplexTernary
                 (identifier)))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (ternary_expression
-              (comparison_expression
-                (identifier)
-                (comparison_operator)
-                (integer))
-              (multiplicative_expression
-                (identifier)
-                (integer))
-              (unary_expression
-                (identifier))))
-          (assignment_statement
-            (subscript_expression
+          (statement_block
+            (assignment_statement
               (identifier)
-              (identifier))
-            (ternary_expression
-              (member_expression
+              (ternary_expression
+                (comparison_expression
+                  (identifier)
+                  (comparison_operator)
+                  (integer))
+                (multiplicative_expression
+                  (identifier)
+                  (integer))
+                (unary_expression
+                  (identifier))))
+            (assignment_statement
+              (subscript_expression
                 (identifier)
-                (quoted_identifier))
-              (unary_expression
-                (integer))
-              (integer)))
+                (identifier))
+              (ternary_expression
+                (member_expression
+                  (identifier)
+                  (quoted_identifier))
+                (unary_expression
+                  (integer))
+                (integer))))
           (end_keyword))))))
 
 ================================================================================
@@ -215,21 +218,22 @@ codeunit 50100 TernaryInCalls
               (basic_type))))
         (code_block
           (begin_keyword)
-          (call_expression
-            (identifier)
-            (argument_list
-              (ternary_expression
-                (identifier)
+          (statement_block
+            (call_expression
+              (identifier)
+              (argument_list
+                (ternary_expression
+                  (identifier)
+                  (string_literal)
+                  (string_literal))))
+            (call_expression
+              (identifier)
+              (argument_list
                 (string_literal)
-                (string_literal))))
-          (call_expression
-            (identifier)
-            (argument_list
-              (string_literal)
-              (ternary_expression
-                (identifier)
-                (integer)
-                (integer))))
+                (ternary_expression
+                  (identifier)
+                  (integer)
+                  (integer)))))
           (end_keyword)))
       (procedure
         (procedure_keyword)

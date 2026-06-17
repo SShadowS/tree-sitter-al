@@ -50,9 +50,10 @@ reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
                 name: (identifier)
                 body: (code_block
                   (begin_keyword)
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list))
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
                   (end_keyword))))))))))
 
 ================================================================================
@@ -231,9 +232,10 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
                 name: (identifier)
                 body: (code_block
                   (begin_keyword)
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list))
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list)))
                   (end_keyword)))))))
       (var_section
         (var_keyword)

@@ -69,16 +69,17 @@ codeunit 50100 "Test Codeunit"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (identifier))
-          (assignment_statement
-            left: (identifier)
-            right: (parenthesized_expression
-              (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (string_literal))))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (identifier))
+            (assignment_statement
+              left: (identifier)
+              right: (parenthesized_expression
+                (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (string_literal)))))
           (end_keyword)))
       (attribute_item
         attribute: (attribute_content
@@ -114,10 +115,11 @@ codeunit 50100 "Test Codeunit"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (identifier))
-          (assignment_statement
-            left: (identifier)
-            right: (boolean))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (identifier))
+            (assignment_statement
+              left: (identifier)
+              right: (boolean)))
           (end_keyword))))))

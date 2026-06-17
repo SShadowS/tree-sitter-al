@@ -23,12 +23,13 @@ codeunit 50100 "Test Asserterror"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (asserterror_statement
-            (asserterror_keyword)
-            body: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))))
           (end_keyword))))))
 
 ================================================================================
@@ -65,15 +66,16 @@ codeunit 50101 "Test Asserterror Methods"
                 reference: (identifier)))))
         body: (code_block
           (begin_keyword)
-          (asserterror_statement
-            (asserterror_keyword)
-            body: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list
-                (quoted_identifier)
-                (string_literal))))
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (quoted_identifier)
+                  (string_literal)))))
           (end_keyword))))))
 
 ================================================================================
@@ -117,17 +119,18 @@ codeunit 50102 "Test Asserterror Enum"
                 reference: (quoted_identifier)))))
         body: (code_block
           (begin_keyword)
-          (asserterror_statement
-            (asserterror_keyword)
-            body: (call_expression
-              function: (member_expression
-                object: (identifier)
-                member: (identifier))
-              arguments: (argument_list
-                (quoted_identifier)
-                (qualified_enum_value
-                  enum_type: (identifier)
-                  value: (identifier)))))
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list
+                  (quoted_identifier)
+                  (qualified_enum_value
+                    enum_type: (identifier)
+                    value: (identifier))))))
           (end_keyword))))))
 
 ================================================================================
@@ -175,18 +178,19 @@ codeunit 50103 "Unit Test Example"
                 reference: (identifier)))))
         body: (code_block
           (begin_keyword)
-          (asserterror_statement
-            (asserterror_keyword)
-            body: (call_expression
-              function: (identifier)
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
               arguments: (argument_list
                 (string_literal))))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (string_literal)))
           (end_keyword))))))
 
 ================================================================================
@@ -226,16 +230,18 @@ codeunit 50104 "Test Asserterror Block"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (asserterror_statement
-            (asserterror_keyword)
-            body: (code_block
-              (begin_keyword)
-              (assignment_statement
-                left: (identifier)
-                right: (integer))
-              (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (quoted_identifier)))
-              (end_keyword)))
+          body: (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              body: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (quoted_identifier))))
+                (end_keyword))))
           (end_keyword))))))

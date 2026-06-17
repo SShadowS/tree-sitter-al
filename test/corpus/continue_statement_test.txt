@@ -31,22 +31,23 @@ codeunit 50100 Test
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (for_statement
-            (for_keyword)
-            variable: (identifier)
-            start: (integer)
-            direction: (to_keyword)
-            end: (integer)
-            (do_keyword)
-            body: (if_statement
-              (if_keyword)
-              condition: (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (integer))
-              (then_keyword)
-              then_branch: (continue_statement
-                (continue_keyword))))
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (if_statement
+                (if_keyword)
+                condition: (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (integer))
+                (then_keyword)
+                then_branch: (continue_statement
+                  (continue_keyword)))))
           (end_keyword))))))
 
 ========================================================================
@@ -74,12 +75,13 @@ codeunit 50100 Test
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (repeat_statement
-            (repeat_keyword)
-            (continue_statement
-              (continue_keyword))
-            (until_keyword)
-            condition: (boolean))
+          body: (statement_block
+            (repeat_statement
+              (repeat_keyword)
+              (continue_statement
+                (continue_keyword))
+              (until_keyword)
+              condition: (boolean)))
           (end_keyword))))))
 
 ========================================================================
@@ -105,6 +107,7 @@ codeunit 50100 Test
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (continue_statement
-            (continue_keyword))
+          body: (statement_block
+            (continue_statement
+              (continue_keyword)))
           (end_keyword))))))

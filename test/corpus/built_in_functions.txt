@@ -95,21 +95,22 @@ codeunit 50100 "Built-in Functions Test"
         (identifier)
         (code_block
           (begin_keyword)
-          (call_expression
-            (identifier)
-            (argument_list))
-          (call_expression
-            (identifier)
-            (argument_list))
-          (call_expression
-            (identifier)
-            (argument_list))
-          (call_expression
-            (identifier)
-            (argument_list))
-          (call_expression
-            (identifier)
-            (argument_list))
+          (statement_block
+            (call_expression
+              (identifier)
+              (argument_list))
+            (call_expression
+              (identifier)
+              (argument_list))
+            (call_expression
+              (identifier)
+              (argument_list))
+            (call_expression
+              (identifier)
+              (argument_list))
+            (call_expression
+              (identifier)
+              (argument_list)))
           (end_keyword)))
       (procedure
         (procedure_modifier
@@ -132,36 +133,37 @@ codeunit 50100 "Built-in Functions Test"
               (basic_type))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (identifier))
-          (assignment_statement
-            (identifier)
-            (identifier))
-          (assignment_statement
-            (identifier)
-            (identifier))
-          (assignment_statement
-            (identifier)
-            (identifier))
-          (assignment_statement
-            (identifier)
-            (identifier))
-          (assignment_statement
-            (identifier)
-            (call_expression
+          (statement_block
+            (assignment_statement
               (identifier)
-              (argument_list
+              (identifier))
+            (assignment_statement
+              (identifier)
+              (identifier))
+            (assignment_statement
+              (identifier)
+              (identifier))
+            (assignment_statement
+              (identifier)
+              (identifier))
+            (assignment_statement
+              (identifier)
+              (identifier))
+            (assignment_statement
+              (identifier)
+              (call_expression
                 (identifier)
-                (identifier))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+                (argument_list
+                  (identifier)
+                  (identifier))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (integer)
-                (integer)
-                (integer))))
+              (call_expression
+                (identifier)
+                (argument_list
+                  (integer)
+                  (integer)
+                  (integer)))))
           (end_keyword)))
       (procedure
         (procedure_modifier
@@ -192,21 +194,22 @@ codeunit 50100 "Built-in Functions Test"
               (text_type))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (identifier))
-          (assignment_statement
-            (identifier)
-            (identifier))
-          (assignment_statement
-            (identifier)
-            (identifier))
-          (assignment_statement
-            (keyword_identifier)
-            (identifier))
-          (assignment_statement
-            (identifier)
-            (identifier))
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (identifier))
+            (assignment_statement
+              (identifier)
+              (identifier))
+            (assignment_statement
+              (identifier)
+              (identifier))
+            (assignment_statement
+              (keyword_identifier)
+              (identifier))
+            (assignment_statement
+              (identifier)
+              (identifier)))
           (end_keyword)))
       (procedure
         (procedure_modifier
@@ -225,37 +228,38 @@ codeunit 50100 "Built-in Functions Test"
               (basic_type))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (call_expression
+                (identifier)
+                (argument_list
+                  (integer))))
             (call_expression
               (identifier)
               (argument_list
-                (integer))))
-          (call_expression
-            (identifier)
-            (argument_list
-              (integer)))
-          (assignment_statement
-            (identifier)
-            (call_expression
+                (integer)))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (decimal)
-                (decimal))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (decimal)
+                  (decimal))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (unary_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (unary_expression
+                    (integer)))))
+            (assignment_statement
+              (identifier)
+              (call_expression
+                (identifier)
+                (argument_list
+                  (integer)
                   (integer)))))
-          (assignment_statement
-            (identifier)
-            (call_expression
-              (identifier)
-              (argument_list
-                (integer)
-                (integer))))
           (end_keyword)))
       (procedure
         (procedure_modifier
@@ -274,38 +278,39 @@ codeunit 50100 "Built-in Functions Test"
               (basic_type))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (call_expression
+          (statement_block
+            (assignment_statement
               (identifier)
-              (argument_list
-                (string_literal))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (string_literal)
-                (integer)
-                (integer))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal)
+                  (integer)
+                  (integer))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (string_literal))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (string_literal))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (string_literal))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (integer))))
+              (call_expression
+                (identifier)
+                (argument_list
+                  (integer)))))
           (end_keyword)))
       (procedure
         (procedure_modifier
@@ -339,32 +344,33 @@ codeunit 50100 "Built-in Functions Test"
               (text_type))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (call_expression
+          (statement_block
+            (assignment_statement
               (identifier)
-              (argument_list
-                (identifier))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (identifier))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (member_expression
-                  (identifier)
-                  (quoted_identifier)))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (member_expression
+                    (identifier)
+                    (quoted_identifier)))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (member_expression
-                  (identifier)
-                  (quoted_identifier)))))
-          (assignment_statement
-            (identifier)
-            (call_expression
+              (call_expression
+                (identifier)
+                (argument_list
+                  (member_expression
+                    (identifier)
+                    (quoted_identifier)))))
+            (assignment_statement
               (identifier)
-              (argument_list
-                (identifier))))
+              (call_expression
+                (identifier)
+                (argument_list
+                  (identifier)))))
           (end_keyword))))))

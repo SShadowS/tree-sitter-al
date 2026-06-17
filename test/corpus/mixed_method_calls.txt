@@ -42,47 +42,49 @@ codeunit 50100 MyCodeunit
         (identifier)
         (code_block
           (begin_keyword)
-          (call_expression
-            (identifier)
-            (argument_list
-              (string_literal)))
-          (call_expression
-            (member_expression
+          (statement_block
+            (call_expression
               (identifier)
-              (identifier))
-            (argument_list
-              (string_literal)))
-          (assignment_statement
-            (identifier)
-            (integer))
-          (call_expression
-            (identifier)
-            (argument_list
-              (string_literal)
-              (identifier)))
-          (call_expression
-            (member_expression
-              (identifier)
-              (identifier))
-            (argument_list
-              (quoted_identifier)
-              (string_literal)
-              (string_literal)))
-          (if_statement
-            (if_keyword)
+              (argument_list
+                (string_literal)))
             (call_expression
               (member_expression
                 (identifier)
                 (identifier))
-              (argument_list))
-            (then_keyword)
-            (code_block
-              (begin_keyword)
-              (call_expression
+              (argument_list
+                (string_literal)))
+            (assignment_statement
+              (identifier)
+              (integer))
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal)
+                (identifier)))
+            (call_expression
+              (member_expression
                 (identifier)
-                (argument_list
-                  (string_literal)))
-              (end_keyword)))
+                (identifier))
+              (argument_list
+                (quoted_identifier)
+                (string_literal)
+                (string_literal)))
+            (if_statement
+              (if_keyword)
+              (call_expression
+                (member_expression
+                  (identifier)
+                  (identifier))
+                (argument_list))
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (call_expression
+                    (identifier)
+                    (argument_list
+                      (string_literal))))
+                (end_keyword))))
           (end_keyword))))))
 
 ==================
@@ -122,32 +124,34 @@ codeunit 50100 MyCodeunit
         (identifier)
         (code_block
           (begin_keyword)
-          (call_expression
-            (identifier)
-            (argument_list
-              (string_literal)
-              (member_expression
-                (identifier)
-                (quoted_identifier))
-              (member_expression
-                (identifier)
-                (quoted_identifier))))
-          (if_statement
-            (if_keyword)
+          (statement_block
             (call_expression
-              (member_expression
-                (identifier)
-                (identifier))
+              (identifier)
               (argument_list
+                (string_literal)
+                (member_expression
+                  (identifier)
+                  (quoted_identifier))
                 (member_expression
                   (identifier)
                   (quoted_identifier))))
-            (then_keyword)
-            (code_block
-              (begin_keyword)
+            (if_statement
+              (if_keyword)
               (call_expression
-                (identifier)
+                (member_expression
+                  (identifier)
+                  (identifier))
                 (argument_list
-                  (string_literal)))
-              (end_keyword)))
+                  (member_expression
+                    (identifier)
+                    (quoted_identifier))))
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (call_expression
+                    (identifier)
+                    (argument_list
+                      (string_literal))))
+                (end_keyword))))
           (end_keyword))))))

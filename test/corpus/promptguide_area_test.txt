@@ -70,9 +70,10 @@ page 332 "No. Series Generation"
                         name: (identifier)
                         body: (code_block
                           (begin_keyword)
-                          (assignment_statement
-                            left: (identifier)
-                            right: (identifier))
+                          body: (statement_block
+                            (assignment_statement
+                              left: (identifier)
+                              right: (identifier)))
                           (end_keyword))))))))))))))
 
 ================================================================================
@@ -227,10 +228,11 @@ page 500 "Copilot Assistant"
                         name: (identifier)
                         body: (code_block
                           (begin_keyword)
-                          (call_expression
-                            function: (identifier)
-                            arguments: (argument_list
-                              (string_literal)))
+                          body: (statement_block
+                            (call_expression
+                              function: (identifier)
+                              arguments: (argument_list
+                                (string_literal))))
                           (end_keyword)))))))
               (action_group_section
                 (group_keyword)

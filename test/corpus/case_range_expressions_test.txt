@@ -45,24 +45,25 @@ codeunit 123 "Test Range Case"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            expression: (subscript_expression
-              object: (identifier)
-              index: (identifier))
-            (of_keyword)
-            body: (case_body
-              (case_branch
-                pattern: (range_expression
-                  left: (string_literal)
-                  right: (string_literal))
-                pattern: (range_expression
-                  left: (string_literal)
-                  right: (string_literal))
-                body: (exit_statement
-                  (exit_keyword)))
-              (case_branch
-                pattern: (string_literal)
-                body: (exit_statement
-                  (exit_keyword)))))
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (subscript_expression
+                object: (identifier)
+                index: (identifier))
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (range_expression
+                    left: (string_literal)
+                    right: (string_literal))
+                  pattern: (range_expression
+                    left: (string_literal)
+                    right: (string_literal))
+                  body: (exit_statement
+                    (exit_keyword)))
+                (case_branch
+                  pattern: (string_literal)
+                  body: (exit_statement
+                    (exit_keyword))))))
           (end_keyword))))))

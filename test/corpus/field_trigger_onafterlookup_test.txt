@@ -64,22 +64,23 @@ page 116 "Sales Cr. Memo Subform"
                     name: (identifier)
                     body: (code_block
                       (begin_keyword)
-                      (if_statement
-                        (if_keyword)
-                        condition: (comparison_expression
-                          left: (member_expression
-                            object: (identifier)
-                            member: (quoted_identifier))
-                          operator: (comparison_operator)
-                          right: (member_expression
-                            object: (identifier)
-                            member: (quoted_identifier)))
-                        (then_keyword)
-                        then_branch: (exit_statement
-                          (exit_keyword)))
-                      (call_expression
-                        function: (identifier)
-                        arguments: (argument_list))
+                      body: (statement_block
+                        (if_statement
+                          (if_keyword)
+                          condition: (comparison_expression
+                            left: (member_expression
+                              object: (identifier)
+                              member: (quoted_identifier))
+                            operator: (comparison_operator)
+                            right: (member_expression
+                              object: (identifier)
+                              member: (quoted_identifier)))
+                          (then_keyword)
+                          then_branch: (exit_statement
+                            (exit_keyword)))
+                        (call_expression
+                          function: (identifier)
+                          arguments: (argument_list)))
                       (end_keyword)))
                   (trigger_declaration
                     (trigger_keyword)
@@ -91,12 +92,13 @@ page 116 "Sales Cr. Memo Subform"
                           (basic_type))))
                     body: (code_block
                       (begin_keyword)
-                      (call_expression
-                        function: (member_expression
-                          object: (identifier)
-                          member: (identifier))
-                        arguments: (argument_list
-                          (identifier)))
+                      body: (statement_block
+                        (call_expression
+                          function: (member_expression
+                            object: (identifier)
+                            member: (identifier))
+                          arguments: (argument_list
+                            (identifier))))
                       (end_keyword))))))))))))
 
 ================================================================================
@@ -156,10 +158,11 @@ page 50000 "Test Page"
                           (basic_type))))
                     body: (code_block
                       (begin_keyword)
-                      (call_expression
-                        function: (identifier)
-                        arguments: (argument_list
-                          (identifier)))
+                      body: (statement_block
+                        (call_expression
+                          function: (identifier)
+                          arguments: (argument_list
+                            (identifier))))
                       (end_keyword)))))
               (page_field
                 name: (identifier)

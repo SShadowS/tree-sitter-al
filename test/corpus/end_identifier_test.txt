@@ -37,10 +37,11 @@ codeunit 50100 "End Test"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
-          (assignment_statement
-            left: (identifier)
-            right: (time_literal))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              right: (time_literal)))
           (end_keyword))))))

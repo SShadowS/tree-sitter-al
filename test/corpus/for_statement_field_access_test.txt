@@ -34,27 +34,28 @@ codeunit 50000 "Test For Loop"
                 reference: (quoted_identifier)))))
         body: (code_block
           (begin_keyword)
-          (for_statement
-            (for_keyword)
-            variable: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))
-            start: (qualified_enum_value
-              enum_type: (member_expression
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (member_expression
                 object: (identifier)
                 member: (quoted_identifier))
-              value: (identifier))
-            direction: (to_keyword)
-            end: (qualified_enum_value
-              enum_type: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              value: (identifier))
-            (do_keyword)
-            body: (code_block
-              (begin_keyword)
-              (comment)
-              (end_keyword)))
+              start: (qualified_enum_value
+                enum_type: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                value: (identifier))
+              direction: (to_keyword)
+              end: (qualified_enum_value
+                enum_type: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                value: (identifier))
+              (do_keyword)
+              body: (code_block
+                (begin_keyword)
+                (comment)
+                (end_keyword))))
           (end_keyword))))))
 
 ================================================================================
@@ -93,21 +94,22 @@ codeunit 50001 "Test Member Loop"
                 reference: (identifier)))))
         body: (code_block
           (begin_keyword)
-          (for_statement
-            (for_keyword)
-            variable: (member_expression
-              object: (identifier)
-              member: (identifier))
-            start: (integer)
-            direction: (to_keyword)
-            end: (member_expression
-              object: (identifier)
-              member: (identifier))
-            (do_keyword)
-            body: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (member_expression
-                  object: (identifier)
-                  member: (identifier)))))
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (member_expression
+                object: (identifier)
+                member: (identifier))
+              start: (integer)
+              direction: (to_keyword)
+              end: (member_expression
+                object: (identifier)
+                member: (identifier))
+              (do_keyword)
+              body: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (member_expression
+                    object: (identifier)
+                    member: (identifier))))))
           (end_keyword))))))

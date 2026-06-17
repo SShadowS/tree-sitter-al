@@ -52,23 +52,24 @@ table 50020 "Test Table"
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (additive_expression
+          body: (statement_block
+            (assignment_statement
               left: (identifier)
-              right: (integer)))
-          (assignment_statement
-            left: (subscript_expression
-              object: (identifier)
-              index: (identifier)
-              (integer))
-            right: (identifier))
-          (assignment_statement
-            left: (subscript_expression
-              object: (identifier)
-              index: (identifier)
-              (integer))
-            right: (identifier))
+              right: (additive_expression
+                left: (identifier)
+                right: (integer)))
+            (assignment_statement
+              left: (subscript_expression
+                object: (identifier)
+                index: (identifier)
+                (integer))
+              right: (identifier))
+            (assignment_statement
+              left: (subscript_expression
+                object: (identifier)
+                index: (identifier)
+                (integer))
+              right: (identifier)))
           (end_keyword))))))
 
 ==================
@@ -115,31 +116,32 @@ table 50021 "Test Table"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (additive_expression
-              left: (subscript_expression
-                object: (identifier)
-                index: (integer)
-                (integer))
-              right: (subscript_expression
-                object: (identifier)
-                index: (integer)
-                (integer))))
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (subscript_expression
-                object: (identifier)
-                index: (integer)
-                (integer))
-              operator: (comparison_operator)
-              right: (integer))
-            (then_keyword)
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (string_literal))))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (additive_expression
+                left: (subscript_expression
+                  object: (identifier)
+                  index: (integer)
+                  (integer))
+                right: (subscript_expression
+                  object: (identifier)
+                  index: (integer)
+                  (integer))))
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (subscript_expression
+                  object: (identifier)
+                  index: (integer)
+                  (integer))
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))))
           (end_keyword))))))
 
 ==================
@@ -180,13 +182,14 @@ table 50022 "Test Table"
                   (basic_type))))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (subscript_expression
-              object: (identifier)
-              index: (integer)
-              (integer)
-              (integer))
-            right: (decimal))
+          body: (statement_block
+            (assignment_statement
+              left: (subscript_expression
+                object: (identifier)
+                index: (integer)
+                (integer)
+                (integer))
+              right: (decimal)))
           (end_keyword))))))
 
 ==================
@@ -233,23 +236,24 @@ table 50023 "Test Table"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (subscript_expression
-              object: (identifier)
-              index: (identifier)
-              (identifier))
-            right: (string_literal))
-          (assignment_statement
-            left: (subscript_expression
-              object: (identifier)
-              index: (additive_expression
-                left: (identifier)
-                right: (integer))
-              (additive_expression
-                left: (identifier)
-                right: (integer)))
-            right: (subscript_expression
-              object: (identifier)
-              index: (identifier)
-              (identifier)))
+          body: (statement_block
+            (assignment_statement
+              left: (subscript_expression
+                object: (identifier)
+                index: (identifier)
+                (identifier))
+              right: (string_literal))
+            (assignment_statement
+              left: (subscript_expression
+                object: (identifier)
+                index: (additive_expression
+                  left: (identifier)
+                  right: (integer))
+                (additive_expression
+                  left: (identifier)
+                  right: (integer)))
+              right: (subscript_expression
+                object: (identifier)
+                index: (identifier)
+                (identifier))))
           (end_keyword))))))

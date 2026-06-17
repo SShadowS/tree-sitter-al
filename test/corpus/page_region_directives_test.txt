@@ -108,28 +108,29 @@ page 50100 "Manufacturing Factbox"
           (basic_type))
         body: (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              operator: (comparison_operator)
-              right: (string_literal))
-            (then_keyword)
-            then_branch: (exit_statement
-              (exit_keyword)
-              return_value: (call_expression
-                function: (member_expression
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (member_expression
                   object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list
-                  (member_expression
+                  member: (quoted_identifier))
+                operator: (comparison_operator)
+                right: (string_literal))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword)
+                return_value: (call_expression
+                  function: (member_expression
                     object: (identifier)
-                    member: (quoted_identifier))))))
-          (exit_statement
-            (exit_keyword)
-            return_value: (boolean))
+                    member: (identifier))
+                  arguments: (argument_list
+                    (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))))))
+            (exit_statement
+              (exit_keyword)
+              return_value: (boolean)))
           (end_keyword)))
       (procedure
         modifier: (procedure_modifier
@@ -141,23 +142,24 @@ page 50100 "Manufacturing Factbox"
             length: (integer)))
         body: (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            condition: (comparison_expression
-              left: (member_expression
-                object: (identifier)
-                member: (quoted_identifier))
-              operator: (comparison_operator)
-              right: (string_literal))
-            (then_keyword)
-            then_branch: (exit_statement
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (member_expression
+                  object: (identifier)
+                  member: (quoted_identifier))
+                operator: (comparison_operator)
+                right: (string_literal))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword)
+                return_value: (string_literal)))
+            (exit_statement
               (exit_keyword)
-              return_value: (string_literal)))
-          (exit_statement
-            (exit_keyword)
-            return_value: (member_expression
-              object: (identifier)
-              member: (quoted_identifier)))
+              return_value: (member_expression
+                object: (identifier)
+                member: (quoted_identifier))))
           (end_keyword)))
       (preproc_endregion)
       (preproc_region)
@@ -166,8 +168,9 @@ page 50100 "Manufacturing Factbox"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (identifier)
-            arguments: (argument_list))
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
           (end_keyword))))
     (preproc_endregion)))

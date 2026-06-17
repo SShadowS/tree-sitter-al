@@ -30,9 +30,10 @@ codeunit 50100 "Prepare Sales Line For Copying"
             (temporary_keyword)))
         body: (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            return_value: (identifier))
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (identifier)))
           (end_keyword)))
       (var_section
         (var_keyword)
@@ -75,21 +76,22 @@ codeunit 50200 "Temporary Record Handler"
             (temporary_keyword)))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list))
-          (assignment_statement
-            left: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))
-            right: (string_literal))
-          (assignment_statement
-            left: (member_expression
-              object: (identifier)
-              member: (identifier))
-            right: (string_literal))
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list))
+            (assignment_statement
+              left: (member_expression
+                object: (identifier)
+                member: (quoted_identifier))
+              right: (string_literal))
+            (assignment_statement
+              left: (member_expression
+                object: (identifier)
+                member: (identifier))
+              right: (string_literal)))
           (end_keyword))))))
 
 ================================================================================
@@ -141,21 +143,22 @@ codeunit 50300 "Temp Record Processor"
                 (temporary_keyword)))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list))
-          (assignment_statement
-            left: (member_expression
-              object: (identifier)
-              member: (quoted_identifier))
-            right: (member_expression
-              object: (identifier)
-              member: (quoted_identifier)))
-          (exit_statement
-            (exit_keyword)
-            return_value: (identifier))
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list))
+            (assignment_statement
+              left: (member_expression
+                object: (identifier)
+                member: (quoted_identifier))
+              right: (member_expression
+                object: (identifier)
+                member: (quoted_identifier)))
+            (exit_statement
+              (exit_keyword)
+              return_value: (identifier)))
           (end_keyword))))))
 
 ================================================================================

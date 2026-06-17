@@ -50,37 +50,38 @@ codeunit 123 "Test Compound Assignment"
               (text_type))))
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
-          (assignment_statement
-            left: (identifier)
-            right: (decimal))
-          (assignment_statement
-            left: (identifier)
-            right: (integer))
-          (assignment_statement
-            left: (identifier)
-            right: (string_literal))
-          (comment)
-          (assignment_statement
-            left: (identifier)
-            right: (parenthesized_expression
-              (additive_expression
-                left: (integer)
-                right: (integer))))
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (identifier)
-              arguments: (argument_list)))
-          (assignment_statement
-            left: (identifier)
-            right: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (identifier))))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              right: (decimal))
+            (assignment_statement
+              left: (identifier)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              right: (string_literal))
+            (comment)
+            (assignment_statement
+              left: (identifier)
+              right: (parenthesized_expression
+                (additive_expression
+                  left: (integer)
+                  right: (integer))))
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list)))
+            (assignment_statement
+              left: (identifier)
+              right: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)))))
           (end_keyword))))))

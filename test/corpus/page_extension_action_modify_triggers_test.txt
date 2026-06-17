@@ -57,12 +57,13 @@ pageextension 50000 "AL Test Tool Ext" extends "AL Test Tool"
                         reference: (quoted_identifier)))))
                 body: (code_block
                   (begin_keyword)
-                  (call_expression
-                    function: (member_expression
-                      object: (identifier)
-                      member: (identifier))
-                    arguments: (argument_list
-                      (quoted_identifier)))
+                  body: (statement_block
+                    (call_expression
+                      function: (member_expression
+                        object: (identifier)
+                        member: (identifier))
+                      arguments: (argument_list
+                        (quoted_identifier))))
                   (end_keyword)))))
           (modify_action_modification
             target: (identifier)
@@ -80,12 +81,13 @@ pageextension 50000 "AL Test Tool Ext" extends "AL Test Tool"
                         reference: (quoted_identifier)))))
                 body: (code_block
                   (begin_keyword)
-                  (call_expression
-                    function: (member_expression
-                      object: (identifier)
-                      member: (identifier))
-                    arguments: (argument_list
-                      (quoted_identifier)))
+                  body: (statement_block
+                    (call_expression
+                      function: (member_expression
+                        object: (identifier)
+                        member: (identifier))
+                      arguments: (argument_list
+                        (quoted_identifier))))
                   (end_keyword))))))))))
 
 ================================================================================
@@ -134,10 +136,11 @@ pageextension 50001 "Mixed Action Ext" extends "Base Page"
                 name: (identifier)
                 body: (code_block
                   (begin_keyword)
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (string_literal)))
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (string_literal))))
                   (end_keyword)))
               (property
                 name: (property_name)

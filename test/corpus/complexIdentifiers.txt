@@ -158,12 +158,13 @@ codeunit 50104 "Business Logic"
               (text_type))))
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (call_expression
+          (statement_block
+            (assignment_statement
               (identifier)
-              (argument_list
-                (identifier))))
+              (call_expression
+                (identifier)
+                (argument_list
+                  (identifier)))))
           (end_keyword)))
       (procedure
         (procedure_keyword)

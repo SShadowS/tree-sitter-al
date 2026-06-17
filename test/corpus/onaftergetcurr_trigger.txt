@@ -23,9 +23,10 @@ page 50000 "Test OnAfterGetCurrRecord"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (assignment_statement
-            left: (identifier)
-            right: (member_expression
-              object: (identifier)
-              member: (identifier)))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (member_expression
+                object: (identifier)
+                member: (identifier))))
           (end_keyword))))))

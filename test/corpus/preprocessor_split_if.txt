@@ -26,31 +26,32 @@ codeunit 50000 "Test Split If"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (preproc_split_if_statement
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (if_keyword)
-            condition: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (identifier)
-                (identifier)))
-            (then_keyword)
-            (preproc_endif
-              (preproc_close))
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (identifier)
-                (identifier)
-                (identifier)
-                (additive_expression
-                  left: (identifier)
-                  right: (integer))
-                (identifier)
-                (identifier))))
+          body: (statement_block
+            (preproc_split_if_statement
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (if_keyword)
+              condition: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (identifier)))
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (identifier)
+                  (identifier)
+                  (additive_expression
+                    left: (identifier)
+                    right: (integer))
+                  (identifier)
+                  (identifier)))))
           (end_keyword))))))
 
 ================================================================================
@@ -107,98 +108,99 @@ codeunit 50001 "Multiple Split If"
               (basic_type))))
         body: (code_block
           (begin_keyword)
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (quoted_identifier)
-              (member_expression
-                object: (identifier)
-                member: (quoted_identifier))))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)
-              (qualified_enum_value
-                enum_type: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                value: (identifier))))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)
-              (member_expression
-                object: (identifier)
-                member: (identifier))))
-          (if_statement
-            (if_keyword)
-            condition: (call_expression
+          body: (statement_block
+            (call_expression
               function: (member_expression
                 object: (identifier)
                 member: (identifier))
               arguments: (argument_list))
-            (then_keyword)
-            then_branch: (exit_statement
-              (exit_keyword)))
-          (preproc_split_if_statement
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (if_keyword)
-            condition: (call_expression
-              function: (identifier)
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
               arguments: (argument_list
+                (quoted_identifier)
                 (member_expression
                   object: (identifier)
-                  member: (identifier))
+                  member: (quoted_identifier))))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (identifier)
+                (qualified_enum_value
+                  enum_type: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  value: (identifier))))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (identifier)
                 (member_expression
                   object: (identifier)
                   member: (identifier))))
-            (then_keyword)
-            (preproc_endif
-              (preproc_close))
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (identifier)
-                (identifier)
-                (identifier)
-                (additive_expression
-                  left: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  right: (integer))
-                (member_expression
+            (if_statement
+              (if_keyword)
+              condition: (call_expression
+                function: (member_expression
                   object: (identifier)
                   member: (identifier))
-                (member_expression
-                  object: (identifier)
-                  member: (identifier)))))
-          (preproc_split_if_statement
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
-            (if_keyword)
-            condition: (call_expression
-              function: (identifier)
-              arguments: (argument_list))
-            (then_keyword)
-            (preproc_endif
-              (preproc_close))
-            then_branch: (call_expression
-              function: (identifier)
-              arguments: (argument_list)))
+                arguments: (argument_list))
+              (then_keyword)
+              then_branch: (exit_statement
+                (exit_keyword)))
+            (preproc_split_if_statement
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (if_keyword)
+              condition: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  (member_expression
+                    object: (identifier)
+                    member: (identifier))))
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (identifier)
+                  (identifier)
+                  (additive_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    right: (integer))
+                  (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  (member_expression
+                    object: (identifier)
+                    member: (identifier)))))
+            (preproc_split_if_statement
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (if_keyword)
+              condition: (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (then_keyword)
+              (preproc_endif
+                (preproc_close))
+              then_branch: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
           (end_keyword))))))

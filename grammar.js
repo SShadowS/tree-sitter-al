@@ -173,6 +173,8 @@ module.exports = grammar({
     [$.case_branch, $.preproc_split_case_branch, $.preproc_conditional_case_patterns, $.preproc_split_case_extended],
     [$._preproc_guard_block, $._statement],
     [$.if_statement, $._if_statement_no_else],  // dangling-else in case branches
+    // statement_block vs preproc_split_code_block_end after the statement run
+    [$.statement_block],
   ],
 
   // Trivial pass-through wrappers — macro-substituted to drop a layer of indirection.
@@ -2613,7 +2615,7 @@ module.exports = grammar({
     // At depth > 0: scanner declines, kw() anonymous regex handles it
     code_block: $ => prec.right(seq(
       choice($.begin_keyword, kw('begin')),
-      repeat($._statement),
+      optional(field('body', $.statement_block)),
       choice(
         seq(choice($.end_keyword, kw('end')), optional(';')),
         // Split ending: 'end' is inside #if, with different structure in #else
@@ -2621,6 +2623,12 @@ module.exports = grammar({
         $.preproc_split_code_block_end,
       ),
     )),
+
+    // Content-only statement run (no begin/end). Shared by code_block,
+    // repeat_statement, and preprocessor-split bodies so every statement
+    // container exposes its inside as a single node. repeat1 (tree-sitter
+    // forbids empty-matching rules) -> wrapped in optional() at each use site.
+    statement_block: $ => repeat1($._statement),
 
     // =====================================================================
     // Triggers

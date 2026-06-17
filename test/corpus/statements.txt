@@ -23,9 +23,10 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (integer))
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (integer)))
           (end_keyword))))))
 
 ========================================================================
@@ -56,18 +57,19 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (integer))
-          (assignment_statement
-            (identifier)
-            (integer))
-          (assignment_statement
-            (identifier)
-            (integer))
-          (assignment_statement
-            (identifier)
-            (integer))
+          (statement_block
+            (assignment_statement
+              (identifier)
+              (integer))
+            (assignment_statement
+              (identifier)
+              (integer))
+            (assignment_statement
+              (identifier)
+              (integer))
+            (assignment_statement
+              (identifier)
+              (integer)))
           (end_keyword))))))
 
 ========================================================================
@@ -95,11 +97,12 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (member_expression
-              (identifier)
-              (identifier))
-            (string_literal))
+          (statement_block
+            (assignment_statement
+              (member_expression
+                (identifier)
+                (identifier))
+              (string_literal)))
           (end_keyword))))))
 
 ========================================================================
@@ -128,16 +131,17 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            (comparison_expression
-              (identifier)
-              (comparison_operator)
-              (integer))
-            (then_keyword)
-            (assignment_statement
-              (identifier)
-              (integer)))
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (then_keyword)
+              (assignment_statement
+                (identifier)
+                (integer))))
           (end_keyword))))))
 
 ========================================================================
@@ -168,20 +172,21 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            (comparison_expression
-              (identifier)
-              (comparison_operator)
-              (integer))
-            (then_keyword)
-            (assignment_statement
-              (identifier)
-              (integer))
-            (else_keyword)
-            (assignment_statement
-              (identifier)
-              (integer)))
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (then_keyword)
+              (assignment_statement
+                (identifier)
+                (integer))
+              (else_keyword)
+              (assignment_statement
+                (identifier)
+                (integer))))
           (end_keyword))))))
 
 ========================================================================
@@ -214,29 +219,32 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            (comparison_expression
-              (identifier)
-              (comparison_operator)
-              (integer))
-            (then_keyword)
-            (code_block
-              (begin_keyword)
-              (assignment_statement
+          (statement_block
+            (if_statement
+              (if_keyword)
+              (comparison_expression
                 (identifier)
+                (comparison_operator)
                 (integer))
-              (assignment_statement
-                (identifier)
-                (integer))
-              (end_keyword))
-            (else_keyword)
-            (code_block
-              (begin_keyword)
-              (assignment_statement
-                (identifier)
-                (integer))
-              (end_keyword)))
+              (then_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (assignment_statement
+                    (identifier)
+                    (integer)))
+                (end_keyword))
+              (else_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (integer)))
+                (end_keyword))))
           (end_keyword))))))
 
 ========================================================================
@@ -269,17 +277,7 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (if_statement
-            (if_keyword)
-            (comparison_expression
-              (identifier)
-              (comparison_operator)
-              (integer))
-            (then_keyword)
-            (assignment_statement
-              (identifier)
-              (string_literal))
-            (else_keyword)
+          (statement_block
             (if_statement
               (if_keyword)
               (comparison_expression
@@ -291,9 +289,20 @@ codeunit 50100 Test
                 (identifier)
                 (string_literal))
               (else_keyword)
-              (assignment_statement
-                (identifier)
-                (string_literal))))
+              (if_statement
+                (if_keyword)
+                (comparison_expression
+                  (identifier)
+                  (comparison_operator)
+                  (integer))
+                (then_keyword)
+                (assignment_statement
+                  (identifier)
+                  (string_literal))
+                (else_keyword)
+                (assignment_statement
+                  (identifier)
+                  (string_literal)))))
           (end_keyword))))))
 
 ========================================================================
@@ -328,27 +337,28 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            (identifier)
-            (of_keyword)
-            (case_body
-              (case_branch
-                (integer)
+          (statement_block
+            (case_statement
+              (case_keyword)
+              (identifier)
+              (of_keyword)
+              (case_body
+                (case_branch
+                  (integer)
+                  (assignment_statement
+                    (identifier)
+                    (string_literal)))
+                (case_branch
+                  (integer)
+                  (integer)
+                  (assignment_statement
+                    (identifier)
+                    (string_literal))))
+              (case_else_branch
+                (else_keyword)
                 (assignment_statement
                   (identifier)
-                  (string_literal)))
-              (case_branch
-                (integer)
-                (integer)
-                (assignment_statement
-                  (identifier)
-                  (string_literal))))
-            (case_else_branch
-              (else_keyword)
-              (assignment_statement
-                (identifier)
-                (string_literal))))
+                  (string_literal)))))
           (end_keyword))))))
 
 ========================================================================
@@ -379,18 +389,19 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            (identifier)
-            (of_keyword)
-            (case_body
-              (case_branch
-                (range_expression
-                  (integer)
-                  (integer))
-                (assignment_statement
-                  (identifier)
-                  (string_literal)))))
+          (statement_block
+            (case_statement
+              (case_keyword)
+              (identifier)
+              (of_keyword)
+              (case_body
+                (case_branch
+                  (range_expression
+                    (integer)
+                    (integer))
+                  (assignment_statement
+                    (identifier)
+                    (string_literal))))))
           (end_keyword))))))
 
 ========================================================================
@@ -419,16 +430,17 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (for_statement
-            (for_keyword)
-            (identifier)
-            (integer)
-            (to_keyword)
-            (integer)
-            (do_keyword)
-            (assignment_statement
+          (statement_block
+            (for_statement
+              (for_keyword)
               (identifier)
-              (identifier)))
+              (integer)
+              (to_keyword)
+              (integer)
+              (do_keyword)
+              (assignment_statement
+                (identifier)
+                (identifier))))
           (end_keyword))))))
 
 ========================================================================
@@ -457,16 +469,17 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (for_statement
-            (for_keyword)
-            (identifier)
-            (integer)
-            (downto_keyword)
-            (integer)
-            (do_keyword)
-            (assignment_statement
+          (statement_block
+            (for_statement
+              (for_keyword)
               (identifier)
-              (identifier)))
+              (integer)
+              (downto_keyword)
+              (integer)
+              (do_keyword)
+              (assignment_statement
+                (identifier)
+                (identifier))))
           (end_keyword))))))
 
 ========================================================================
@@ -495,16 +508,17 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (foreach_statement
-            (foreach_keyword)
-            (identifier)
-            (in_keyword)
-            (identifier)
-            (do_keyword)
-            (call_expression
+          (statement_block
+            (foreach_statement
+              (foreach_keyword)
               (identifier)
-              (argument_list
-                (identifier))))
+              (in_keyword)
+              (identifier)
+              (do_keyword)
+              (call_expression
+                (identifier)
+                (argument_list
+                  (identifier)))))
           (end_keyword))))))
 
 ========================================================================
@@ -533,16 +547,17 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (while_statement
-            (while_keyword)
-            (comparison_expression
-              (identifier)
-              (comparison_operator)
-              (integer))
-            (do_keyword)
-            (assignment_statement
-              (identifier)
-              (integer)))
+          (statement_block
+            (while_statement
+              (while_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))
+              (do_keyword)
+              (assignment_statement
+                (identifier)
+                (integer))))
           (end_keyword))))))
 
 ========================================================================
@@ -572,16 +587,17 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (repeat_statement
-            (repeat_keyword)
-            (assignment_statement
-              (identifier)
-              (integer))
-            (until_keyword)
-            (comparison_expression
-              (identifier)
-              (comparison_operator)
-              (integer)))
+          (statement_block
+            (repeat_statement
+              (repeat_keyword)
+              (assignment_statement
+                (identifier)
+                (integer))
+              (until_keyword)
+              (comparison_expression
+                (identifier)
+                (comparison_operator)
+                (integer))))
           (end_keyword))))))
 
 ========================================================================
@@ -611,16 +627,18 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (with_statement
-            (with_keyword)
-            (identifier)
-            (do_keyword)
-            (code_block
-              (begin_keyword)
-              (assignment_statement
-                (identifier)
-                (string_literal))
-              (end_keyword)))
+          (statement_block
+            (with_statement
+              (with_keyword)
+              (identifier)
+              (do_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (string_literal)))
+                (end_keyword))))
           (end_keyword))))))
 
 ========================================================================
@@ -648,8 +666,9 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword))
+          (statement_block
+            (exit_statement
+              (exit_keyword)))
           (end_keyword))))))
 
 ========================================================================
@@ -677,9 +696,10 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (exit_statement
-            (exit_keyword)
-            (boolean))
+          (statement_block
+            (exit_statement
+              (exit_keyword)
+              (boolean)))
           (end_keyword))))))
 
 ========================================================================
@@ -707,13 +727,14 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (asserterror_statement
-            (asserterror_keyword)
-            (call_expression
-              (member_expression
-                (identifier)
-                (identifier))
-              (argument_list)))
+          (statement_block
+            (asserterror_statement
+              (asserterror_keyword)
+              (call_expression
+                (member_expression
+                  (identifier)
+                  (identifier))
+                (argument_list))))
           (end_keyword))))))
 
 ========================================================================
@@ -767,11 +788,12 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (call_expression
-            (identifier)
-            (argument_list
-              (string_literal)
-              (identifier)))
+          (statement_block
+            (call_expression
+              (identifier)
+              (argument_list
+                (string_literal)
+                (identifier))))
           (end_keyword))))))
 
 ========================================================================
@@ -799,14 +821,15 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (call_expression
-            (member_expression
-              (identifier)
-              (identifier))
-            (argument_list
-              (quoted_identifier)
-              (string_literal)
-              (string_literal)))
+          (statement_block
+            (call_expression
+              (member_expression
+                (identifier)
+                (identifier))
+              (argument_list
+                (quoted_identifier)
+                (string_literal)
+                (string_literal))))
           (end_keyword))))))
 
 ========================================================================
@@ -836,17 +859,18 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (assignment_statement
-            (identifier)
-            (integer))
-          (assignment_statement
-            (identifier)
-            (integer))
-          (assignment_statement
-            (identifier)
-            (additive_expression
+          (statement_block
+            (assignment_statement
               (identifier)
-              (identifier)))
+              (integer))
+            (assignment_statement
+              (identifier)
+              (integer))
+            (assignment_statement
+              (identifier)
+              (additive_expression
+                (identifier)
+                (identifier))))
           (end_keyword))))))
 
 ========================================================================
@@ -877,22 +901,24 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (for_statement
-            (for_keyword)
-            (identifier)
-            (integer)
-            (to_keyword)
-            (integer)
-            (do_keyword)
-            (code_block
-              (begin_keyword)
-              (assignment_statement
-                (identifier)
-                (identifier))
-              (assignment_statement
-                (identifier)
-                (integer))
-              (end_keyword)))
+          (statement_block
+            (for_statement
+              (for_keyword)
+              (identifier)
+              (integer)
+              (to_keyword)
+              (integer)
+              (do_keyword)
+              (code_block
+                (begin_keyword)
+                (statement_block
+                  (assignment_statement
+                    (identifier)
+                    (identifier))
+                  (assignment_statement
+                    (identifier)
+                    (integer)))
+                (end_keyword))))
           (end_keyword))))))
 
 ========================================================================
@@ -924,25 +950,26 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (repeat_statement
-            (repeat_keyword)
-            (if_statement
-              (if_keyword)
+          (statement_block
+            (repeat_statement
+              (repeat_keyword)
+              (if_statement
+                (if_keyword)
+                (comparison_expression
+                  (identifier)
+                  (comparison_operator)
+                  (integer))
+                (then_keyword)
+                (continue_statement
+                  (continue_keyword)))
+              (assignment_statement
+                (identifier)
+                (integer))
+              (until_keyword)
               (comparison_expression
                 (identifier)
                 (comparison_operator)
-                (integer))
-              (then_keyword)
-              (continue_statement
-                (continue_keyword)))
-            (assignment_statement
-              (identifier)
-              (integer))
-            (until_keyword)
-            (comparison_expression
-              (identifier)
-              (comparison_operator)
-              (integer)))
+                (integer))))
           (end_keyword))))))
 
 ========================================================================
@@ -975,20 +1002,22 @@ codeunit 50100 Test
         (identifier)
         (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            (identifier)
-            (of_keyword)
-            (case_body
-              (case_branch
-                (integer)
-                (code_block
-                  (begin_keyword)
-                  (assignment_statement
-                    (identifier)
-                    (string_literal))
-                  (assignment_statement
-                    (identifier)
-                    (integer))
-                  (end_keyword)))))
+          (statement_block
+            (case_statement
+              (case_keyword)
+              (identifier)
+              (of_keyword)
+              (case_body
+                (case_branch
+                  (integer)
+                  (code_block
+                    (begin_keyword)
+                    (statement_block
+                      (assignment_statement
+                        (identifier)
+                        (string_literal))
+                      (assignment_statement
+                        (identifier)
+                        (integer)))
+                    (end_keyword))))))
           (end_keyword))))))

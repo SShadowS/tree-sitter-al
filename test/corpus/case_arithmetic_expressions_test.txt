@@ -30,39 +30,40 @@ codeunit 123 "Test Codeunit"
         name: (identifier)
         body: (code_block
           (begin_keyword)
-          (case_statement
-            (case_keyword)
-            expression: (identifier)
-            (of_keyword)
-            body: (case_body
-              (case_branch
-                pattern: (additive_expression
-                  left: (database_reference
-                    keyword: (object_type_keyword)
-                    table_name: (quoted_identifier))
-                  right: (integer))
-                body: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal))))
-              (case_branch
-                pattern: (additive_expression
-                  left: (database_reference
-                    keyword: (object_type_keyword)
-                    table_name: (quoted_identifier))
-                  right: (integer))
-                body: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal))))
-              (case_branch
-                pattern: (multiplicative_expression
-                  left: (database_reference
-                    keyword: (object_type_keyword)
-                    table_name: (quoted_identifier))
-                  right: (integer))
-                body: (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal))))))
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (additive_expression
+                    left: (database_reference
+                      keyword: (object_type_keyword)
+                      table_name: (quoted_identifier))
+                    right: (integer))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal))))
+                (case_branch
+                  pattern: (additive_expression
+                    left: (database_reference
+                      keyword: (object_type_keyword)
+                      table_name: (quoted_identifier))
+                    right: (integer))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal))))
+                (case_branch
+                  pattern: (multiplicative_expression
+                    left: (database_reference
+                      keyword: (object_type_keyword)
+                      table_name: (quoted_identifier))
+                    right: (integer))
+                  body: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal)))))))
           (end_keyword))))))
