@@ -2472,7 +2472,7 @@ module.exports = grammar({
     preproc_split_procedure_body: $ => prec.right(25, seq(
       $._pspb_if_branch,
       $._pspb_else_branch,
-      repeat($._statement),
+      optional(field('body', $.statement_block)),
       choice($.end_keyword, kw('end')),
       optional(';'),
     )),
@@ -2482,7 +2482,7 @@ module.exports = grammar({
       $.preproc_if,
       optional($.var_section),
       kw('begin'),
-      repeat($._statement),
+      optional(field('body', $.statement_block)),
       optional($._preproc_if_header),  // trailing if-then guard (body is shared code)
       $.preproc_else,
     ),
@@ -2509,7 +2509,7 @@ module.exports = grammar({
     _preproc_branch_body: $ => seq(
       optional($.var_section),
       kw('begin'),
-      repeat($._statement),
+      optional(field('body', $.statement_block)),
       kw('end'),
       optional(';'),
     ),

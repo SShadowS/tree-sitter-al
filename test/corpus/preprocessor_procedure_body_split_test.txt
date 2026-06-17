@@ -49,14 +49,16 @@ codeunit 134 "No. Series Setup Impl."
               name: (identifier)
               type: (type_specification
                 (basic_type))))
-          (assignment_statement
-            left: (identifier)
-            right: (boolean))
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (boolean)))
           (pragma)
           (preproc_else)
           (preproc_endif
             (preproc_close))
-          (exit_statement
-            (exit_keyword)
-            return_value: (boolean))
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (boolean)))
           (end_keyword))))))

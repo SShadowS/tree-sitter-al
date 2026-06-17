@@ -54,14 +54,15 @@ page 50000 MyPage {
                       type: (type_specification
                         (record_type
                           reference: (quoted_identifier)))))
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (qualified_enum_value
-                        enum_type: (member_expression
-                          object: (identifier)
-                          member: (identifier))
-                        value: (identifier))))
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (qualified_enum_value
+                          enum_type: (member_expression
+                            object: (identifier)
+                            member: (identifier))
+                          value: (identifier)))))
                   (preproc_else)
                   (var_section
                     (var_keyword)
@@ -70,14 +71,15 @@ page 50000 MyPage {
                       type: (type_specification
                         (record_type
                           reference: (quoted_identifier)))))
-                  (call_expression
-                    function: (identifier)
-                    arguments: (argument_list
-                      (qualified_enum_value
-                        enum_type: (member_expression
-                          object: (identifier)
-                          member: (identifier))
-                        value: (identifier))))
+                  body: (statement_block
+                    (call_expression
+                      function: (identifier)
+                      arguments: (argument_list
+                        (qualified_enum_value
+                          enum_type: (member_expression
+                            object: (identifier)
+                            member: (identifier))
+                          value: (identifier)))))
                   (preproc_endif
                     (preproc_close)))))))))))
 
@@ -132,13 +134,14 @@ codeunit 50000 MyCodeunit {
                 (object_reference_type
                   object_type: (codeunit_keyword)
                   reference: (quoted_identifier)))))
-          (call_expression
-            function: (member_expression
-              object: (identifier)
-              member: (identifier))
-            arguments: (argument_list
-              (identifier)
-              (identifier)))
+          body: (statement_block
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (argument_list
+                (identifier)
+                (identifier))))
           (preproc_else)
           (preproc_endif
             (preproc_close)))))))
