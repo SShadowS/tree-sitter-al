@@ -193,3 +193,69 @@ tree-sitter parse sample.al    # inspect body node shape
 ./validate-grammar.sh --full
 ./parse-al-parallel.sh ./BC.History/ .   # must stay 0 errors
 ```
+
+---
+
+# Follow-up: query-ergonomics sibling fixes (2026-06-17)
+
+After the #19 fan-out we audited the grammar (with a Gemini 3.1 Pro cross-check)
+for the *siblings* of the same mistake — places still built to parse but not to be
+queried/navigated. Plan: `docs/superpowers/plans/2026-06-17-query-ergonomics-fixes.md`.
+Executed on branch `feature/query-ergonomics-fixes`.
+
+## What changed
+
+| Task | Change | Node/field |
+|------|--------|-----------|
+| 1 | `parameters` field on procedure/trigger/event params | `field('parameters', $.parameter_list)` |
+| 2 | `case_statement` branches wrapped | `body: (case_body)` |
+| 3 | content-only statement run extracted inside `code_block` | `code_block` now has `body: (statement_block)`; begin/end stay code_block children |
+| 4 | `repeat_statement` body | `body: (statement_block)` |
+| 5 | preproc-split routine bodies (`preproc_split_procedure_body`, `_pspb_if_branch`, `_preproc_branch_body`) | `body: (statement_block)` |
+| 6 | `var_section` variables wrapped | `body: (var_body)` (added conflict `[$.var_body]`) |
+| 7 | `case` closing `end` exposed | `choice($.end_keyword, kw('end'))` (named at depth 0) |
+| 8 | shared `_body_element` wrapper renamed | `object_body` → `declaration_body` |
+
+New conflicts added across the follow-up: `[$.statement_block]` (T3), `[$.var_body]` (T6).
+STATE_COUNT after the follow-up: **12,616** (no >2% growth at any step; T3 actually
+decreased it).
+
+## Decision (Task 9): attributes stay siblings
+
+`attribute_item` remains a *sibling* of its target declaration, NOT a child/field, and
+this is deliberate — not an oversight of the #19 lesson:
+- Preprocessor directives can legally sit *between* an attribute and its declaration
+  (`[Obsolete(...)] #if not CLEAN24 procedure … #endif`); attaching the attribute as a
+  child would fight the preprocessor machinery.
+- The first-class-statement model (Rust/C# pattern) is documented in
+  `.claude/rules/attributes.md`.
+- Associating attributes with their target is a post-parse / LSP concern, not the
+  parser's job ("parse structure, don't validate").
+
+Re-association by consumers is by position (attribute immediately precedes its target,
+modulo intervening preprocessor nodes). No grammar change made.
+
+## Inherent limitations (Task 10) — documented, not bugs
+
+1. **Empty body → no node.** tree-sitter forbids a named rule that matches the empty
+   string, so every body rule is `repeat1(...)` wrapped in `optional(field('body', …))`.
+   An empty `{ }` / `begin end` / empty `var` therefore emits NO body node, and
+   `(_ body: (_))` simply does not match it. This is correct (nothing to select) and is
+   the ONLY valid shape — replacing `repeat1` with `repeat` to force a 0-width node
+   fails `tree-sitter generate` with *"The rule X matches the empty string."*
+2. **Single-statement body → no block node.** `if`/`for`/`foreach`/`while`/`with` bodies
+   are `choice($._statement, $.code_block)`. A bare single-statement body (no `begin`/
+   `end`) puts the statement directly in the `body` field — there is no `statement_block`
+   wrapper because there is no block. `@function.inside` then selects the statement
+   itself. Correct.
+3. **`repeat_statement` always wraps in `statement_block`.** Unlike the other loops,
+   `repeat … until` has no `do` delimiter and is syntactically always a statement *list*,
+   so its body is always a `statement_block` (never a bare statement). Query
+   `(repeat_statement body: (statement_block))` differs from
+   `(while_statement body: (_))` by design.
+
+## Follow-up validation
+- `tree-sitter test` — 1451/1451 pass; 0 ERROR/MISSING.
+- `./parse-al-parallel.sh ./BC.History/ .` — **15,358 / 15,358, 0 errors (100%)** (re-run
+  at Tasks 3, 5, 7, 8).
+- STATE_COUNT 12,616; no new orphaned/duplicate rules.
