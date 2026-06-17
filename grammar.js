@@ -2410,7 +2410,7 @@ module.exports = grammar({
       $.event_keyword,
       field('name', $._identifier_or_quoted),
       '(',
-      optional($.parameter_list),
+      optional(field('parameters', $.parameter_list)),
       ')',
       optional(';')
     )),
@@ -2447,7 +2447,7 @@ module.exports = grammar({
     _procedure_name_and_params: $ => seq(
       field('name', $._identifier_or_quoted),
       '(',
-      optional($.parameter_list),
+      optional(field('parameters', $.parameter_list)),
       ')',
     ),
 
@@ -2630,7 +2630,7 @@ module.exports = grammar({
       $.trigger_keyword,
       field('name', $._trigger_name),
       '(',
-      optional($.parameter_list),
+      optional(field('parameters', $.parameter_list)),
       ')',
       optional(choice(
         $._procedure_return_specification,

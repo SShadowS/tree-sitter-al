@@ -5668,18 +5668,24 @@
             "named": true
           }
         ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_list",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
           "type": "event_keyword",
-          "named": true
-        },
-        {
-          "type": "parameter_list",
           "named": true
         }
       ]
@@ -8708,6 +8714,16 @@
             "named": true
           }
         ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_list",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
@@ -8716,10 +8732,6 @@
       "types": [
         {
           "type": "interface_procedure_suffix",
-          "named": true
-        },
-        {
-          "type": "parameter_list",
           "named": true
         },
         {
@@ -22371,6 +22383,16 @@
           }
         ]
       },
+      "parameters": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_list",
+            "named": true
+          }
+        ]
+      },
       "return_type": {
         "multiple": true,
         "required": false,
@@ -22402,10 +22424,6 @@
       "types": [
         {
           "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "parameter_list",
           "named": true
         },
         {
@@ -22971,6 +22989,16 @@
           }
         ]
       },
+      "parameters": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_list",
+            "named": true
+          }
+        ]
+      },
       "return_type": {
         "multiple": true,
         "required": false,
@@ -23006,10 +23034,6 @@
         },
         {
           "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "parameter_list",
           "named": true
         },
         {
@@ -23153,6 +23177,16 @@
           }
         ]
       },
+      "parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_list",
+            "named": true
+          }
+        ]
+      },
       "return_type": {
         "multiple": false,
         "required": false,
@@ -23182,10 +23216,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "parameter_list",
-          "named": true
-        },
         {
           "type": "preproc_conditional_var_block",
           "named": true
@@ -27196,6 +27226,16 @@
           }
         ]
       },
+      "parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parameter_list",
+            "named": true
+          }
+        ]
+      },
       "return_type": {
         "multiple": false,
         "required": false,
@@ -27225,10 +27265,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "parameter_list",
-          "named": true
-        },
         {
           "type": "preproc_conditional_var_block",
           "named": true

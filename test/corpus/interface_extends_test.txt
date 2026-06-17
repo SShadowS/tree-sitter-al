@@ -25,7 +25,7 @@ interface "Cost Adjustment With Params" extends "Inventory Adjustment"
       (interface_procedure
         (procedure_keyword)
         name: (identifier)
-        (parameter_list
+        parameters: (parameter_list
           (parameter
             modifier: (var_keyword)
             name: (identifier)
@@ -83,7 +83,7 @@ interface "Simple Interface"
       (interface_procedure
         (procedure_keyword)
         name: (identifier)
-        (parameter_list
+        parameters: (parameter_list
           (parameter
             name: (identifier)
             type: (type_specification
