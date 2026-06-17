@@ -62,7 +62,8 @@ codeunit 50100 Test
                         (integer)))
                     (end_keyword))))
               (case_else_branch
-                (else_keyword))))
+                (else_keyword))
+              (end_keyword)))
           (end_keyword))))))
 
 ========================================================================
@@ -127,7 +128,8 @@ codeunit 50100 Test
                     (integer))
                   (assignment_statement
                     (identifier)
-                    (integer))))))
+                    (integer))))
+              (end_keyword)))
           (end_keyword))))))
 
 ========================================================================
@@ -187,5 +189,6 @@ codeunit 50100 Test
                     (quoted_identifier))
                   (assignment_statement
                     (identifier)
-                    (integer))))))
+                    (integer))))
+              (end_keyword)))
           (end_keyword))))))

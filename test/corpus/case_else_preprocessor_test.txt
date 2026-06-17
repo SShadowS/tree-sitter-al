@@ -122,7 +122,8 @@ codeunit 50000 "Test Case Else"
                       (identifier)))
                   (identifier)
                   (preproc_endif
-                    (preproc_close))))))
+                    (preproc_close))))
+              (end_keyword)))
           (end_keyword))))))
 
 ================================================================================
@@ -200,7 +201,8 @@ codeunit 50001 "Simple Case Test"
                     arguments: (argument_list
                       (string_literal)))
                   (preproc_endif
-                    (preproc_close))))))
+                    (preproc_close))))
+              (end_keyword)))
           (end_keyword))))))
 
 ================================================================================
@@ -313,7 +315,8 @@ codeunit 50002 "Nested Case Test"
                           function: (identifier)
                           arguments: (argument_list))
                         (preproc_endif
-                          (preproc_close)))))))
+                          (preproc_close))))
+                    (end_keyword))))
               (case_else_branch
                 (else_keyword)
                 (preproc_conditional_statement
@@ -334,7 +337,8 @@ codeunit 50002 "Nested Case Test"
                     function: (identifier)
                     arguments: (argument_list))
                   (preproc_endif
-                    (preproc_close))))))
+                    (preproc_close))))
+              (end_keyword)))
           (end_keyword)))
       (procedure
         modifier: (procedure_modifier

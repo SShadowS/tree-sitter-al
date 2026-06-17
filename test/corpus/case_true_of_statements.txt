@@ -59,7 +59,8 @@ table 50010 "Test Table"
                       object: (identifier)
                       member: (identifier))
                     arguments: (argument_list
-                      (identifier)))))))
+                      (identifier)))))
+              (end_keyword)))
           (end_keyword))))))
 
 ==================
@@ -113,7 +114,8 @@ table 50011 "Test Table"
                     right: (integer))
                   body: (call_expression
                     function: (identifier)
-                    arguments: (argument_list))))))
+                    arguments: (argument_list))))
+              (end_keyword)))
           (end_keyword))))))
 
 ==================
@@ -163,5 +165,6 @@ table 50012 "Test Table"
                 (else_keyword)
                 (call_expression
                   function: (identifier)
-                  arguments: (argument_list)))))
+                  arguments: (argument_list)))
+              (end_keyword)))
           (end_keyword))))))

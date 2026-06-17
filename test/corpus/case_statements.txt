@@ -67,7 +67,8 @@ table 50001 "Test Table"
                       (assignment_statement
                         left: (identifier)
                         right: (integer)))
-                    (end_keyword))))))
+                    (end_keyword))))
+              (end_keyword)))
           (end_keyword))))))
 
 ==================
@@ -115,7 +116,8 @@ table 50002 "Test Table"
                   pattern: (string_literal)
                   body: (assignment_statement
                     left: (identifier)
-                    right: (integer))))))
+                    right: (integer))))
+              (end_keyword)))
           (end_keyword))))))
 
 ==================
@@ -186,7 +188,8 @@ table 50003 "Test Table"
                       (assignment_statement
                         left: (identifier)
                         right: (string_literal)))
-                    (end_keyword))))))
+                    (end_keyword))))
+              (end_keyword)))
           (end_keyword))))))
 
 ==================
@@ -241,7 +244,8 @@ table 50004 "Test Table"
                 (else_keyword)
                 (assignment_statement
                   left: (identifier)
-                  right: (integer)))))
+                  right: (integer)))
+              (end_keyword)))
           (end_keyword))))))
 
 ==================
@@ -300,5 +304,6 @@ table 50005 "Test Table"
                     (assignment_statement
                       left: (identifier)
                       right: (string_literal)))
-                  (end_keyword)))))
+                  (end_keyword)))
+              (end_keyword)))
           (end_keyword))))))

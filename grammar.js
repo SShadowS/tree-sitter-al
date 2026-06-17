@@ -3264,7 +3264,7 @@ module.exports = grammar({
       $.of_keyword,
       optional(field('body', $.case_body)),
       optional($.case_else_branch),
-      kw('end')
+      choice($.end_keyword, kw('end'))
     )),
 
     case_body: $ => repeat1(choice(

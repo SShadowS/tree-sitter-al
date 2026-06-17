@@ -243,7 +243,8 @@ codeunit 50100 TestDivInCase
                     left: (identifier)
                     right: (multiplicative_expression
                       left: (integer)
-                      right: (integer)))))))
+                      right: (integer)))))
+              (end_keyword)))
           (end_keyword))))))
 
 ================================================================================
@@ -424,5 +425,6 @@ table 50100 TestTable
                           right: (member_expression
                             object: (identifier)
                             member: (quoted_identifier))))
-                      right: (integer)))))))
+                      right: (integer)))))
+              (end_keyword)))
           (end_keyword))))))

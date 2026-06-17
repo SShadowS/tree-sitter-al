@@ -44,7 +44,8 @@ codeunit 50000 Test
                 (else_keyword)
                 (call_expression
                   function: (identifier)
-                  arguments: (argument_list)))))
+                  arguments: (argument_list)))
+              (end_keyword)))
           (end_keyword))))))
 
 ================================================================================
@@ -148,7 +149,8 @@ codeunit 50001 Test
                   arguments: (argument_list
                     (identifier)
                     (identifier)
-                    (identifier))))))
+                    (identifier))))
+              (end_keyword)))
           (end_keyword))))))
 
 ================================================================================
@@ -213,5 +215,6 @@ codeunit 50002 Test
                 (else_keyword)
                 (call_expression
                   function: (identifier)
-                  arguments: (argument_list)))))
+                  arguments: (argument_list)))
+              (end_keyword)))
           (end_keyword))))))
