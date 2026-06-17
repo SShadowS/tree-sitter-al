@@ -61,16 +61,29 @@
 (trigger_declaration) @function.around
 (interface_procedure) @function.around
 
-(procedure body: (code_block) @function.inside)
-(trigger_declaration body: (code_block) @function.inside)
+; Inside = the statement run only (excludes begin/end). The code_block now nests
+; a content-only statement_block (no delimiters); target it for a clean inside.
+(procedure body: (code_block body: (statement_block) @function.inside))
+(trigger_declaration body: (code_block body: (statement_block) @function.inside))
 
-; Parameters
-(parameter_list) @parameter.inside
+; Parameters — each parameter selectable individually
+(parameter) @parameter.inside
+(parameter) @parameter.around
 
 ; =============================================================================
-; Sections, fields, actions  ->  generic body capture
-; A single rule covers every construct that exposes a `body` field, so any new
-; body-bearing construct works without editing this query.
+; Statement containers (loops / case)  ->  block.inside / function.inside
+; repeat/while/for/foreach/with bodies and the case branch list.
+; =============================================================================
+
+(repeat_statement body: (statement_block) @function.inside)
+(case_statement body: (case_body) @block.inside)
+
+; =============================================================================
+; Sections, fields, actions, var, loops  ->  generic body capture
+; A single rule covers every construct that exposes a `body` field
+; (declaration_body, fields_body, layout_body, action_body, var_body,
+; case_body, statement_block, …), so any new body-bearing construct works
+; without editing this query.
 ; =============================================================================
 
 (_ body: (_) @block.inside) @block.around

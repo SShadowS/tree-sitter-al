@@ -210,12 +210,12 @@ python parse_bug_finder.py file.al debug.log
 |--------|-------|
 | parser.c size | 23.8 MB |
 | SYMBOL_COUNT | ~814 |
-| STATE_COUNT | ~10,825 |
-| grammar.js lines | ~3,754 |
-| Tests | 1,437 |
+| STATE_COUNT | ~12,616 |
+| grammar.js lines | ~3,933 |
+| Tests | 1,451 |
 | Production success | 100% (0 errors) |
 | Named keywords | 82 |
-| Query files | 5 (highlights, locals, tags, indents, folds) |
+| Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
 
 ## Validating AL Syntax Questions
 
