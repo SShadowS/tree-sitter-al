@@ -46,34 +46,35 @@ codeunit 123 TestCodeunit
             (case_keyword)
             expression: (identifier)
             (of_keyword)
-            (case_branch
-              pattern: (qualified_enum_value
-                enum_type: (qualified_enum_value
-                  enum_type: (keyword_identifier
-                    (enum_keyword))
-                  value: (quoted_identifier))
-                value: (identifier))
-              body: (code_block
-                (begin_keyword)
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal)))
-                (end_keyword)))
-            (case_branch
-              pattern: (qualified_enum_value
-                enum_type: (qualified_enum_value
-                  enum_type: (keyword_identifier
-                    (enum_keyword))
-                  value: (quoted_identifier))
-                value: (identifier))
-              body: (code_block
-                (begin_keyword)
-                (call_expression
-                  function: (identifier)
-                  arguments: (argument_list
-                    (string_literal)))
-                (end_keyword))))
+            body: (case_body
+              (case_branch
+                pattern: (qualified_enum_value
+                  enum_type: (qualified_enum_value
+                    enum_type: (keyword_identifier
+                      (enum_keyword))
+                    value: (quoted_identifier))
+                  value: (identifier))
+                body: (code_block
+                  (begin_keyword)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal)))
+                  (end_keyword)))
+              (case_branch
+                pattern: (qualified_enum_value
+                  enum_type: (qualified_enum_value
+                    enum_type: (keyword_identifier
+                      (enum_keyword))
+                    value: (quoted_identifier))
+                  value: (identifier))
+                body: (code_block
+                  (begin_keyword)
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (string_literal)))
+                  (end_keyword)))))
           (end_keyword))))))
 
 ================================================================================
@@ -118,15 +119,16 @@ codeunit 124 SimpleTest
             (case_keyword)
             expression: (identifier)
             (of_keyword)
-            (case_branch
-              pattern: (qualified_enum_value
-                enum_type: (qualified_enum_value
-                  enum_type: (keyword_identifier
-                    (enum_keyword))
-                  value: (quoted_identifier))
-                value: (identifier))
-              body: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal)))))
+            body: (case_body
+              (case_branch
+                pattern: (qualified_enum_value
+                  enum_type: (qualified_enum_value
+                    enum_type: (keyword_identifier
+                      (enum_keyword))
+                    value: (quoted_identifier))
+                  value: (identifier))
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal))))))
           (end_keyword))))))

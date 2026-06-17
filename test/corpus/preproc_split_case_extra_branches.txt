@@ -50,34 +50,35 @@ codeunit 1 T
             (case_keyword)
             (identifier)
             (of_keyword)
-            (preproc_split_case_extended
-              (preproc_if
-                (preproc_open)
-                (identifier))
+            (case_body
+              (preproc_split_case_extended
+                (preproc_if
+                  (preproc_open)
+                  (identifier))
+                (case_branch
+                  (integer)
+                  (code_block
+                    (call_expression
+                      (identifier)
+                      (argument_list))))
+                (integer)
+                (preproc_else)
+                (integer)
+                (integer)
+                (preproc_endif
+                  (preproc_close))
+                (code_block
+                  (begin_keyword)
+                  (call_expression
+                    (identifier)
+                    (argument_list))
+                  (end_keyword)))
               (case_branch
                 (integer)
                 (code_block
+                  (begin_keyword)
                   (call_expression
                     (identifier)
-                    (argument_list))))
-              (integer)
-              (preproc_else)
-              (integer)
-              (integer)
-              (preproc_endif
-                (preproc_close))
-              (code_block
-                (begin_keyword)
-                (call_expression
-                  (identifier)
-                  (argument_list))
-                (end_keyword)))
-            (case_branch
-              (integer)
-              (code_block
-                (begin_keyword)
-                (call_expression
-                  (identifier)
-                  (argument_list))
-                (end_keyword))))
+                    (argument_list))
+                  (end_keyword)))))
           (end_keyword))))))

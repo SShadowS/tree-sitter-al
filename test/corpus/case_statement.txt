@@ -37,26 +37,27 @@ codeunit 50100 Test
             (case_keyword)
             (identifier)
             (of_keyword)
-            (case_branch
-              (database_reference
-                (object_type_keyword)
-                (identifier))
-              (code_block
-                (begin_keyword)
-                (assignment_statement
-                  (identifier)
-                  (integer))
-                (end_keyword)))
-            (case_branch
-              (database_reference
-                (object_type_keyword)
-                (identifier))
-              (code_block
-                (begin_keyword)
-                (assignment_statement
-                  (identifier)
-                  (integer))
-                (end_keyword)))
+            (case_body
+              (case_branch
+                (database_reference
+                  (object_type_keyword)
+                  (identifier))
+                (code_block
+                  (begin_keyword)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)))
+              (case_branch
+                (database_reference
+                  (object_type_keyword)
+                  (identifier))
+                (code_block
+                  (begin_keyword)
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword))))
             (case_else_branch
               (else_keyword)))
           (end_keyword))))))
@@ -107,20 +108,21 @@ codeunit 50100 Test
             (case_keyword)
             (identifier)
             (of_keyword)
-            (case_branch
-              (subscript_expression
-                (identifier)
-                (integer))
-              (assignment_statement
-                (identifier)
-                (integer)))
-            (case_branch
-              (subscript_expression
-                (identifier)
-                (integer))
-              (assignment_statement
-                (identifier)
-                (integer))))
+            (case_body
+              (case_branch
+                (subscript_expression
+                  (identifier)
+                  (integer))
+                (assignment_statement
+                  (identifier)
+                  (integer)))
+              (case_branch
+                (subscript_expression
+                  (identifier)
+                  (integer))
+                (assignment_statement
+                  (identifier)
+                  (integer)))))
           (end_keyword))))))
 
 ========================================================================
@@ -159,24 +161,25 @@ codeunit 50100 Test
             (case_keyword)
             (identifier)
             (of_keyword)
-            (case_branch
-              (database_reference
-                (object_type_keyword)
-                (quoted_identifier))
-              (preproc_conditional_case_patterns
-                (preproc_if
-                  (preproc_open)
-                  (preproc_not_expression
-                    (identifier)))
+            (case_body
+              (case_branch
                 (database_reference
                   (object_type_keyword)
                   (quoted_identifier))
-                (preproc_endif
-                  (preproc_close)))
-              (database_reference
-                (object_type_keyword)
-                (quoted_identifier))
-              (assignment_statement
-                (identifier)
-                (integer))))
+                (preproc_conditional_case_patterns
+                  (preproc_if
+                    (preproc_open)
+                    (preproc_not_expression
+                      (identifier)))
+                  (database_reference
+                    (object_type_keyword)
+                    (quoted_identifier))
+                  (preproc_endif
+                    (preproc_close)))
+                (database_reference
+                  (object_type_keyword)
+                  (quoted_identifier))
+                (assignment_statement
+                  (identifier)
+                  (integer)))))
           (end_keyword))))))

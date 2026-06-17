@@ -15877,24 +15877,20 @@
             "name": "of_keyword"
           },
           {
-            "type": "REPEAT",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "body",
+                "content": {
                   "type": "SYMBOL",
-                  "name": "case_branch"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_conditional_case"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_split_case_extended"
+                  "name": "case_body"
                 }
-              ]
-            }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
           {
             "type": "CHOICE",
@@ -15914,6 +15910,26 @@
               "type": "PATTERN",
               "value": "(?i)end"
             }
+          }
+        ]
+      }
+    },
+    "case_body": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "case_branch"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_conditional_case"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_split_case_extended"
           }
         ]
       }

@@ -214,30 +214,31 @@ codeunit 50113 "Enum Case Test"
             (case_keyword)
             (identifier)
             (of_keyword)
-            (case_branch
-              (qualified_enum_value
-                (quoted_identifier)
-                (identifier))
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal))))
-            (case_branch
-              (qualified_enum_value
-                (quoted_identifier)
-                (identifier))
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal))))
-            (case_branch
-              (qualified_enum_value
-                (quoted_identifier)
-                (identifier))
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal)))))
+            (case_body
+              (case_branch
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal))))
+              (case_branch
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal))))
+              (case_branch
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal))))))
           (end_keyword))))))
 
 ==================
@@ -309,30 +310,31 @@ codeunit 50114 "Quoted Enum Values Test"
             (case_keyword)
             (identifier)
             (of_keyword)
-            (case_branch
-              (qualified_enum_value
-                (quoted_identifier)
-                (quoted_identifier))
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal))))
-            (case_branch
-              (qualified_enum_value
-                (quoted_identifier)
-                (quoted_identifier))
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal))))
-            (case_branch
-              (qualified_enum_value
-                (quoted_identifier)
-                (quoted_identifier))
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal)))))
+            (case_body
+              (case_branch
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (quoted_identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal))))
+              (case_branch
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (quoted_identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal))))
+              (case_branch
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (quoted_identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal))))))
           (end_keyword))))))
 
 ==================
@@ -439,28 +441,29 @@ codeunit 50116 "Enum Parameter Test"
             (case_keyword)
             (identifier)
             (of_keyword)
-            (case_branch
-              (qualified_enum_value
-                (quoted_identifier)
-                (identifier))
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal))))
-            (case_branch
-              (qualified_enum_value
-                (quoted_identifier)
-                (identifier))
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal))))
-            (case_branch
-              (qualified_enum_value
-                (quoted_identifier)
-                (identifier))
-              (call_expression
-                (identifier)
-                (argument_list
-                  (string_literal)))))
+            (case_body
+              (case_branch
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal))))
+              (case_branch
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal))))
+              (case_branch
+                (qualified_enum_value
+                  (quoted_identifier)
+                  (identifier))
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (string_literal))))))
           (end_keyword))))))

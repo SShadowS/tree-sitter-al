@@ -32,32 +32,33 @@ table 50010 "Test Table"
             (case_keyword)
             expression: (boolean)
             (of_keyword)
-            (case_branch
-              pattern: (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (database_reference
-                  keyword: (object_type_keyword)
-                  table_name: (identifier)))
-              body: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list
-                  (identifier))))
-            (case_branch
-              pattern: (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (database_reference
-                  keyword: (object_type_keyword)
-                  table_name: (identifier)))
-              body: (call_expression
-                function: (member_expression
-                  object: (identifier)
-                  member: (identifier))
-                arguments: (argument_list
-                  (identifier)))))
+            body: (case_body
+              (case_branch
+                pattern: (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (database_reference
+                    keyword: (object_type_keyword)
+                    table_name: (identifier)))
+                body: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list
+                    (identifier))))
+              (case_branch
+                pattern: (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (database_reference
+                    keyword: (object_type_keyword)
+                    table_name: (identifier)))
+                body: (call_expression
+                  function: (member_expression
+                    object: (identifier)
+                    member: (identifier))
+                  arguments: (argument_list
+                    (identifier))))))
           (end_keyword))))))
 
 ==================
@@ -94,22 +95,23 @@ table 50011 "Test Table"
             (case_keyword)
             expression: (boolean)
             (of_keyword)
-            (case_branch
-              pattern: (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (integer))
-              body: (call_expression
-                function: (identifier)
-                arguments: (argument_list)))
-            (case_branch
-              pattern: (comparison_expression
-                left: (identifier)
-                operator: (comparison_operator)
-                right: (integer))
-              body: (call_expression
-                function: (identifier)
-                arguments: (argument_list))))
+            body: (case_body
+              (case_branch
+                pattern: (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (integer))
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (case_branch
+                pattern: (comparison_expression
+                  left: (identifier)
+                  operator: (comparison_operator)
+                  right: (integer))
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))))
           (end_keyword))))))
 
 ==================
@@ -146,13 +148,14 @@ table 50012 "Test Table"
             (case_keyword)
             expression: (boolean)
             (of_keyword)
-            (case_branch
-              pattern: (unary_expression
-                operand: (identifier))
-              body: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal))))
+            body: (case_body
+              (case_branch
+                pattern: (unary_expression
+                  operand: (identifier))
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal)))))
             (case_else_branch
               (else_keyword)
               (call_expression

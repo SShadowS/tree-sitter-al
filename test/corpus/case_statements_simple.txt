@@ -32,18 +32,19 @@ table 50000 "Test Table"
             (case_keyword)
             expression: (identifier)
             (of_keyword)
-            (case_branch
-              pattern: (qualified_enum_value
-                enum_type: (identifier)
-                value: (identifier))
-              body: (assignment_statement
-                left: (identifier)
-                right: (integer)))
-            (case_branch
-              pattern: (qualified_enum_value
-                enum_type: (identifier)
-                value: (identifier))
-              body: (assignment_statement
-                left: (identifier)
-                right: (integer))))
+            body: (case_body
+              (case_branch
+                pattern: (qualified_enum_value
+                  enum_type: (identifier)
+                  value: (identifier))
+                body: (assignment_statement
+                  left: (identifier)
+                  right: (integer)))
+              (case_branch
+                pattern: (qualified_enum_value
+                  enum_type: (identifier)
+                  value: (identifier))
+                body: (assignment_statement
+                  left: (identifier)
+                  right: (integer)))))
           (end_keyword))))))

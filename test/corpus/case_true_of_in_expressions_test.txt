@@ -79,42 +79,43 @@ codeunit 123 "Character Validation Test"
                 (case_keyword)
                 expression: (boolean)
                 (of_keyword)
-                (case_branch
-                  left: (subscript_expression
-                    object: (identifier)
-                    index: (identifier))
-                  operator: (in_keyword)
-                  right: (list_literal
-                    (range_expression
-                      left: (string_literal)
-                      right: (string_literal)))
-                  body: (assignment_statement
-                    left: (identifier)
-                    right: (boolean)))
-                (case_branch
-                  left: (subscript_expression
-                    object: (identifier)
-                    index: (identifier))
-                  operator: (in_keyword)
-                  right: (list_literal
-                    (range_expression
-                      left: (string_literal)
-                      right: (string_literal)))
-                  body: (assignment_statement
-                    left: (identifier)
-                    right: (boolean)))
-                (case_branch
-                  left: (subscript_expression
-                    object: (identifier)
-                    index: (identifier))
-                  operator: (in_keyword)
-                  right: (list_literal
-                    (range_expression
-                      left: (string_literal)
-                      right: (string_literal)))
-                  body: (assignment_statement
-                    left: (identifier)
-                    right: (boolean)))
+                body: (case_body
+                  (case_branch
+                    left: (subscript_expression
+                      object: (identifier)
+                      index: (identifier))
+                    operator: (in_keyword)
+                    right: (list_literal
+                      (range_expression
+                        left: (string_literal)
+                        right: (string_literal)))
+                    body: (assignment_statement
+                      left: (identifier)
+                      right: (boolean)))
+                  (case_branch
+                    left: (subscript_expression
+                      object: (identifier)
+                      index: (identifier))
+                    operator: (in_keyword)
+                    right: (list_literal
+                      (range_expression
+                        left: (string_literal)
+                        right: (string_literal)))
+                    body: (assignment_statement
+                      left: (identifier)
+                      right: (boolean)))
+                  (case_branch
+                    left: (subscript_expression
+                      object: (identifier)
+                      index: (identifier))
+                    operator: (in_keyword)
+                    right: (list_literal
+                      (range_expression
+                        left: (string_literal)
+                        right: (string_literal)))
+                    body: (assignment_statement
+                      left: (identifier)
+                      right: (boolean))))
                 (case_else_branch
                   (else_keyword)
                   (code_block

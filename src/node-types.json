@@ -2840,6 +2840,29 @@
     }
   },
   {
+    "type": "case_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "case_branch",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_case",
+          "named": true
+        },
+        {
+          "type": "preproc_split_case_extended",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "case_branch",
     "named": true,
     "fields": {
@@ -3720,6 +3743,16 @@
     "type": "case_statement",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "case_body",
+            "named": true
+          }
+        ]
+      },
       "expression": {
         "multiple": true,
         "required": true,
@@ -3994,10 +4027,6 @@
       "required": true,
       "types": [
         {
-          "type": "case_branch",
-          "named": true
-        },
-        {
           "type": "case_else_branch",
           "named": true
         },
@@ -4007,14 +4036,6 @@
         },
         {
           "type": "of_keyword",
-          "named": true
-        },
-        {
-          "type": "preproc_conditional_case",
-          "named": true
-        },
-        {
-          "type": "preproc_split_case_extended",
           "named": true
         }
       ]

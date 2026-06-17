@@ -55,26 +55,27 @@ codeunit 50100 TestUnit
             (case_keyword)
             expression: (identifier)
             (of_keyword)
-            (case_branch
-              pattern: (qualified_enum_value
-                enum_type: (identifier)
-                value: (identifier))
-              body: (code_block
-                (begin_keyword)
-                (comment)
-                (end_keyword)))
-            (preproc_conditional_case
-              (preproc_if
-                (preproc_open)
-                condition: (identifier))
+            body: (case_body
               (case_branch
                 pattern: (qualified_enum_value
                   enum_type: (identifier)
                   value: (identifier))
                 body: (code_block
-                  (comment)))
-              (preproc_endif
-                (preproc_close)))
+                  (begin_keyword)
+                  (comment)
+                  (end_keyword)))
+              (preproc_conditional_case
+                (preproc_if
+                  (preproc_open)
+                  condition: (identifier))
+                (case_branch
+                  pattern: (qualified_enum_value
+                    enum_type: (identifier)
+                    value: (identifier))
+                  body: (code_block
+                    (comment)))
+                (preproc_endif
+                  (preproc_close))))
             (case_else_branch
               (else_keyword)
               (call_expression

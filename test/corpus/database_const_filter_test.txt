@@ -162,22 +162,23 @@ codeunit 50200 "Database References"
             (case_keyword)
             expression: (identifier)
             (of_keyword)
-            (case_branch
-              pattern: (database_reference
-                keyword: (object_type_keyword)
-                table_name: (identifier))
-              body: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal))))
-            (case_branch
-              pattern: (database_reference
-                keyword: (object_type_keyword)
-                table_name: (quoted_identifier))
-              body: (call_expression
-                function: (identifier)
-                arguments: (argument_list
-                  (string_literal)))))
+            body: (case_body
+              (case_branch
+                pattern: (database_reference
+                  keyword: (object_type_keyword)
+                  table_name: (identifier))
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal))))
+              (case_branch
+                pattern: (database_reference
+                  keyword: (object_type_keyword)
+                  table_name: (quoted_identifier))
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal))))))
           (comment)
           (if_statement
             (if_keyword)

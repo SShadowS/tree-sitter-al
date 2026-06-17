@@ -226,13 +226,14 @@ codeunit 50100 TestDivInCase
             (case_keyword)
             expression: (boolean)
             (of_keyword)
-            (case_branch
-              pattern: (boolean)
-              body: (assignment_statement
-                left: (identifier)
-                right: (multiplicative_expression
-                  left: (integer)
-                  right: (integer)))))
+            body: (case_body
+              (case_branch
+                pattern: (boolean)
+                body: (assignment_statement
+                  left: (identifier)
+                  right: (multiplicative_expression
+                    left: (integer)
+                    right: (integer))))))
           (end_keyword))))))
 
 ================================================================================
@@ -361,52 +362,53 @@ table 50100 TestTable
             (case_keyword)
             expression: (boolean)
             (of_keyword)
-            (case_branch
-              pattern: (logical_expression
-                left: (unary_expression
-                  operand: (call_expression
+            body: (case_body
+              (case_branch
+                pattern: (logical_expression
+                  left: (unary_expression
+                    operand: (call_expression
+                      function: (member_expression
+                        object: (identifier)
+                        member: (identifier))
+                      arguments: (argument_list)))
+                  right: (call_expression
                     function: (member_expression
                       object: (identifier)
                       member: (identifier))
                     arguments: (argument_list)))
-                right: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list)))
-              body: (assignment_statement
-                left: (member_expression
-                  object: (identifier)
-                  member: (quoted_identifier))
-                right: (multiplicative_expression
+                body: (assignment_statement
                   left: (member_expression
                     object: (identifier)
                     member: (quoted_identifier))
-                  right: (integer))))
-            (case_branch
-              pattern: (logical_expression
-                left: (call_expression
-                  function: (member_expression
+                  right: (multiplicative_expression
+                    left: (member_expression
+                      object: (identifier)
+                      member: (quoted_identifier))
+                    right: (integer))))
+              (case_branch
+                pattern: (logical_expression
+                  left: (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list))
+                  right: (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      member: (identifier))
+                    arguments: (argument_list)))
+                body: (assignment_statement
+                  left: (member_expression
                     object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list))
-                right: (call_expression
-                  function: (member_expression
-                    object: (identifier)
-                    member: (identifier))
-                  arguments: (argument_list)))
-              body: (assignment_statement
-                left: (member_expression
-                  object: (identifier)
-                  member: (quoted_identifier))
-                right: (multiplicative_expression
-                  left: (parenthesized_expression
-                    (additive_expression
-                      left: (member_expression
-                        object: (identifier)
-                        member: (quoted_identifier))
-                      right: (member_expression
-                        object: (identifier)
-                        member: (quoted_identifier))))
-                  right: (integer)))))
+                    member: (quoted_identifier))
+                  right: (multiplicative_expression
+                    left: (parenthesized_expression
+                      (additive_expression
+                        left: (member_expression
+                          object: (identifier)
+                          member: (quoted_identifier))
+                        right: (member_expression
+                          object: (identifier)
+                          member: (quoted_identifier))))
+                    right: (integer))))))
           (end_keyword))))))

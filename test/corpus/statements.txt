@@ -332,17 +332,18 @@ codeunit 50100 Test
             (case_keyword)
             (identifier)
             (of_keyword)
-            (case_branch
-              (integer)
-              (assignment_statement
-                (identifier)
-                (string_literal)))
-            (case_branch
-              (integer)
-              (integer)
-              (assignment_statement
-                (identifier)
-                (string_literal)))
+            (case_body
+              (case_branch
+                (integer)
+                (assignment_statement
+                  (identifier)
+                  (string_literal)))
+              (case_branch
+                (integer)
+                (integer)
+                (assignment_statement
+                  (identifier)
+                  (string_literal))))
             (case_else_branch
               (else_keyword)
               (assignment_statement
@@ -382,13 +383,14 @@ codeunit 50100 Test
             (case_keyword)
             (identifier)
             (of_keyword)
-            (case_branch
-              (range_expression
-                (integer)
-                (integer))
-              (assignment_statement
-                (identifier)
-                (string_literal))))
+            (case_body
+              (case_branch
+                (range_expression
+                  (integer)
+                  (integer))
+                (assignment_statement
+                  (identifier)
+                  (string_literal)))))
           (end_keyword))))))
 
 ========================================================================
@@ -977,15 +979,16 @@ codeunit 50100 Test
             (case_keyword)
             (identifier)
             (of_keyword)
-            (case_branch
-              (integer)
-              (code_block
-                (begin_keyword)
-                (assignment_statement
-                  (identifier)
-                  (string_literal))
-                (assignment_statement
-                  (identifier)
-                  (integer))
-                (end_keyword))))
+            (case_body
+              (case_branch
+                (integer)
+                (code_block
+                  (begin_keyword)
+                  (assignment_statement
+                    (identifier)
+                    (string_literal))
+                  (assignment_statement
+                    (identifier)
+                    (integer))
+                  (end_keyword)))))
           (end_keyword))))))

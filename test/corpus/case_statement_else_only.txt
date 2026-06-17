@@ -191,17 +191,18 @@ codeunit 50002 Test
             (case_keyword)
             expression: (identifier)
             (of_keyword)
-            (case_branch
-              pattern: (string_literal)
-              body: (call_expression
-                function: (identifier)
-                arguments: (argument_list)))
-            (case_branch
-              pattern: (string_literal)
-              pattern: (string_literal)
-              body: (call_expression
-                function: (identifier)
-                arguments: (argument_list)))
+            body: (case_body
+              (case_branch
+                pattern: (string_literal)
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list)))
+              (case_branch
+                pattern: (string_literal)
+                pattern: (string_literal)
+                body: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list))))
             (case_else_branch
               (else_keyword)
               (call_expression

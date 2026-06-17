@@ -51,17 +51,18 @@ codeunit 123 "Test Range Case"
               object: (identifier)
               index: (identifier))
             (of_keyword)
-            (case_branch
-              pattern: (range_expression
-                left: (string_literal)
-                right: (string_literal))
-              pattern: (range_expression
-                left: (string_literal)
-                right: (string_literal))
-              body: (exit_statement
-                (exit_keyword)))
-            (case_branch
-              pattern: (string_literal)
-              body: (exit_statement
-                (exit_keyword))))
+            body: (case_body
+              (case_branch
+                pattern: (range_expression
+                  left: (string_literal)
+                  right: (string_literal))
+                pattern: (range_expression
+                  left: (string_literal)
+                  right: (string_literal))
+                body: (exit_statement
+                  (exit_keyword)))
+              (case_branch
+                pattern: (string_literal)
+                body: (exit_statement
+                  (exit_keyword)))))
           (end_keyword))))))

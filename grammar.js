@@ -3251,13 +3251,15 @@ module.exports = grammar({
       $.case_keyword,
       field('expression', $._expression),
       $.of_keyword,
-      repeat(choice(
-        $.case_branch,
-        $.preproc_conditional_case,
-        $.preproc_split_case_extended,
-      )),
+      optional(field('body', $.case_body)),
       optional($.case_else_branch),
       kw('end')
+    )),
+
+    case_body: $ => repeat1(choice(
+      $.case_branch,
+      $.preproc_conditional_case,
+      $.preproc_split_case_extended,
     )),
 
     // Preprocessor conditionals inside case statements
