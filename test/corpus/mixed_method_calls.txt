@@ -28,15 +28,16 @@ codeunit 50100 MyCodeunit
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (record_type
-              (identifier))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (record_type
+                (identifier))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))))
       (trigger_declaration
         (trigger_keyword)
         (identifier)
@@ -114,11 +115,12 @@ codeunit 50100 MyCodeunit
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (record_type
-              (identifier)))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (record_type
+                (identifier))))))
       (trigger_declaration
         (trigger_keyword)
         (identifier)

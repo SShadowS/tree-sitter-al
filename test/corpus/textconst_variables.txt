@@ -22,13 +22,14 @@ codeunit 1 T
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (basic_type)
-            (ml_value_list
-              (ml_value_pair
-                language: (identifier)
-                value: (string_literal)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (basic_type)
+              (ml_value_list
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))))))
         body: (code_block
           (begin_keyword)
           (end_keyword))))))
@@ -57,19 +58,20 @@ codeunit 1 T
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (basic_type)
-            (ml_value_list
-              (ml_value_pair
-                language: (identifier)
-                value: (string_literal))
-              (ml_value_pair
-                language: (identifier)
-                value: (string_literal))
-              (ml_value_pair
-                language: (identifier)
-                value: (string_literal)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (basic_type)
+              (ml_value_list
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))
+                (ml_value_pair
+                  language: (identifier)
+                  value: (string_literal))))))
         body: (code_block
           (begin_keyword)
           (end_keyword))))))

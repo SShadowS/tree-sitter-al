@@ -18,21 +18,22 @@ codeunit 50100 "Test Option Empty Members"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (option_type
-              (option_member_list
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
 
 ================================================================================
 Option type with all empty members
@@ -91,28 +92,29 @@ page 50100 "Test Mixed Options"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (option_type
-              (option_member_list
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (option_type
-              (option_member_list
-                (option_member
-                  (string_literal))
-                (option_member
-                  (string_literal))
-                (option_member
-                  (string_literal))))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (string_literal))
+                  (option_member
+                    (string_literal))
+                  (option_member
+                    (string_literal)))))))))))
 
 ================================================================================
 OptionMembers property with consecutive commas

@@ -98,25 +98,26 @@ codeunit 50100 TestCodeunit
         name: (identifier)
         (var_section
           (var_keyword)
-          (preproc_conditional_var
-            (preproc_if
-              (preproc_open)
-              condition: (preproc_not_expression
-                (identifier)))
+          body: (var_body
+            (preproc_conditional_var
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (record_type
+                    reference: (identifier)
+                    reference: (identifier)
+                    reference: (identifier)
+                    reference: (quoted_identifier))))
+              (preproc_endif
+                (preproc_close)))
             (variable_declaration
               name: (identifier)
               type: (type_specification
-                (record_type
-                  reference: (identifier)
-                  reference: (identifier)
-                  reference: (identifier)
-                  reference: (quoted_identifier))))
-            (preproc_endif
-              (preproc_close)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

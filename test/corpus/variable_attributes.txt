@@ -24,18 +24,19 @@ page 50100 "Test Page"
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (text_type)))
-        (var_attribute_item
-          (var_attribute_open)
-          (attribute_content
-            (identifier)))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (text_type))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (text_type)))
+          (var_attribute_item
+            (var_attribute_open)
+            (attribute_content
+              (identifier)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (text_type)))))
       (procedure
         (procedure_keyword)
         (identifier)
@@ -70,26 +71,27 @@ codeunit 50100 "Test DotNet"
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (record_type
-              (quoted_identifier)
-              (temporary_keyword))))
-        (var_attribute_item
-          (var_attribute_open)
-          (attribute_content
-            (identifier)))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (dotnet_type
-              (dotnet_keyword)
-              (identifier))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (record_type
+                (quoted_identifier)
+                (temporary_keyword))))
+          (var_attribute_item
+            (var_attribute_open)
+            (attribute_content
+              (identifier)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (dotnet_type
+                (dotnet_keyword)
+                (identifier))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))))
       (procedure
         (procedure_keyword)
         (identifier)
@@ -124,24 +126,25 @@ page 50101 "Test Multiple Attrs"
     (object_body
       (var_section
         (var_keyword)
-        (var_attribute_item
-          (var_attribute_open)
-          (attribute_content
-            (identifier)))
-        (var_attribute_item
-          (var_attribute_open)
-          (attribute_content
-            (identifier)))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (dotnet_type
-              (dotnet_keyword)
-              (identifier))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
+        (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            (attribute_content
+              (identifier)))
+          (var_attribute_item
+            (var_attribute_open)
+            (attribute_content
+              (identifier)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (dotnet_type
+                (dotnet_keyword)
+                (identifier))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))))
       (procedure
         (procedure_keyword)
         (identifier)
@@ -177,18 +180,19 @@ codeunit 50102 "Test Local Attr"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (text_type)))
-          (var_attribute_item
-            (var_attribute_open)
-            (attribute_content
-              (identifier)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (text_type))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (text_type)))
+            (var_attribute_item
+              (var_attribute_open)
+              (attribute_content
+                (identifier)))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (text_type)))))
         (code_block
           (begin_keyword)
           (end_keyword))))))
@@ -219,18 +223,19 @@ page 50103 "Test InDataSet"
     (object_body
       (var_section
         (var_keyword)
-        (var_attribute_item
-          (var_attribute_open)
-          (attribute_content
-            (identifier)))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type)))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
+        (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            (attribute_content
+              (identifier)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))))
       (procedure
         (procedure_keyword)
         (identifier)

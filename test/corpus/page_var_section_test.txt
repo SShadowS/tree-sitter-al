@@ -78,14 +78,15 @@ page 7335 "Warehouse Pick Summary"
           (end_keyword)))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))))
       (procedure
         modifier: (procedure_modifier
           (internal_keyword))
@@ -146,15 +147,16 @@ page 50100 "Test Page"
       (var_section
         (protected_keyword)
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier)))))))))
 
 ================================================================================
 Page with var section after procedures
@@ -198,18 +200,19 @@ page 50101 "Order Page"
           (end_keyword)))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (option_type
-              (option_member_list
-                (option_member
-                  (quoted_identifier))
-                (option_member
-                  (quoted_identifier))
-                (option_member
-                  (quoted_identifier))))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type))))))))

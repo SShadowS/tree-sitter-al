@@ -45,11 +45,12 @@ codeunit 1 T
                 length: (integer)))))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))))
         (preproc_else)
         (procedure_keyword)
         name: (identifier)
@@ -65,11 +66,12 @@ codeunit 1 T
                 length: (integer)))))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))))
         (preproc_endif
           (preproc_close))
         (code_block
@@ -189,11 +191,12 @@ codeunit 1 T
                 reference: (quoted_identifier)))))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))))
         (preproc_else)
         modifier: (procedure_modifier
           (internal_keyword))
@@ -206,11 +209,12 @@ codeunit 1 T
               (basic_type))))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))))
         (preproc_endif
           (preproc_close))
         (code_block

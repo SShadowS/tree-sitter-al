@@ -20,36 +20,37 @@ codeunit 123 TestOptionEnums
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (option_type
-              (option_member_list
-                (option_member
-                  (quoted_identifier))
-                (option_member
-                  (quoted_identifier))
-                (option_member
-                  (quoted_identifier))))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (option_type
-              (option_member_list
-                (option_member
-                  (quoted_identifier))
-                (option_member
-                  (quoted_identifier))
-                (option_member
-                  (quoted_identifier))))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (option_type
-              (option_member_list
-                (option_member
-                  (quoted_identifier))
-                (option_member
-                  (quoted_identifier))
-                (option_member
-                  (quoted_identifier))))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier)))))))))))

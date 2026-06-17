@@ -44,18 +44,19 @@ codeunit 50000 "Test"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)
-                (temporary_keyword))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                object_type: (codeunit_keyword)
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier)
+                  (temporary_keyword))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (codeunit_keyword)
+                  reference: (quoted_identifier))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

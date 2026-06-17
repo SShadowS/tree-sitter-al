@@ -66,13 +66,15 @@ codeunit 50100 "Test Codeunit"
       (var_section
         (protected_keyword)
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type))))))))

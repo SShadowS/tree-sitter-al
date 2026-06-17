@@ -23,10 +23,11 @@ codeunit 1 T
             (identifier)))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         (preproc_endif
           (preproc_close))))))
 
@@ -55,10 +56,11 @@ codeunit 1 T
             (identifier)))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         (preproc_endif
           (preproc_close))))))
 
@@ -85,8 +87,9 @@ codeunit 1 T
           condition: (identifier))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         (preproc_endif)))))

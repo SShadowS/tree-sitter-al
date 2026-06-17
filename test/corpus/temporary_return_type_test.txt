@@ -37,12 +37,13 @@ codeunit 50100 "Prepare Sales Line For Copying"
           (end_keyword)))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier)
-              (temporary_keyword))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)
+                (temporary_keyword)))))))))
 
 ================================================================================
 Procedure with named return value and temporary
@@ -135,12 +136,13 @@ codeunit 50300 "Temp Record Processor"
             (temporary_keyword)))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)
-                (temporary_keyword)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier)
+                  (temporary_keyword))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

@@ -18,10 +18,11 @@ page 50000 TestPage
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (text_type)))))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (text_type))))))))
 
 ================================================================================
 filters (lowercase) as variable name
@@ -43,11 +44,12 @@ page 50001 TestPage
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (text_type
-              (integer))))))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (text_type
+                (integer)))))))))
 
 ================================================================================
 FILTERS (uppercase) as variable name
@@ -69,11 +71,12 @@ page 50002 TestPage
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (record_type
-              (identifier))))))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (record_type
+                (identifier)))))))))
 
 ================================================================================
 Filters property in page repeater control
@@ -143,10 +146,11 @@ page 50003 TestPage
                         (boolean))))))))))
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (text_type)))))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (text_type))))))))
 
 ================================================================================
 Filters property in query dataitem
@@ -351,7 +355,8 @@ page 1518 "My Notifications"
           (end_keyword)))
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (text_type)))))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (text_type))))))))

@@ -23,12 +23,13 @@ codeunit 50100 "Test Codeunit"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (codeunit_keyword)
-              reference: (identifier)))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (codeunit_keyword)
+                reference: (identifier))))))
       (attribute_item
         attribute: (attribute_content
           name: (identifier)))
@@ -65,10 +66,11 @@ codeunit 50101 "Test Multi Attr"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
       (attribute_item
         attribute: (attribute_content
           name: (identifier)))
@@ -112,18 +114,19 @@ codeunit 50102 "Test Mixed Attrs"
     body: (object_body
       (var_section
         (var_keyword)
-        (var_attribute_item
-          (var_attribute_open)
-          attribute: (attribute_content
-            name: (identifier)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
+        body: (var_body
+          (var_attribute_item
+            (var_attribute_open)
+            attribute: (attribute_content
+              name: (identifier)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
       (attribute_item
         attribute: (attribute_content
           name: (identifier)))
@@ -159,12 +162,13 @@ codeunit 50103 "Test Multi Var"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          name: (identifier)
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            name: (identifier)
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
       (attribute_item
         attribute: (attribute_content
           name: (identifier)))

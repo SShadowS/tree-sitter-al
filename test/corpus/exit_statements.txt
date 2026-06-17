@@ -68,10 +68,11 @@ codeunit 50200 "Exit Statements Test"
           (basic_type))
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
         (code_block
           (begin_keyword)
           (statement_block
@@ -91,11 +92,12 @@ codeunit 50200 "Exit Statements Test"
             (identifier)))
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (record_type
-                (identifier)))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (record_type
+                  (identifier))))))
         (code_block
           (begin_keyword)
           (statement_block

@@ -154,14 +154,15 @@ page 50007 TestPage
                               (basic_type))))))
                     (var_section
                       (var_keyword)
-                      (variable_declaration
-                        name: (identifier)
-                        type: (type_specification
-                          (basic_type)))
-                      (variable_declaration
-                        name: (identifier)
-                        type: (type_specification
-                          (basic_type))))
+                      body: (var_body
+                        (variable_declaration
+                          name: (identifier)
+                          type: (type_specification
+                            (basic_type)))
+                        (variable_declaration
+                          name: (identifier)
+                          type: (type_specification
+                            (basic_type)))))
                     body: (code_block
                       (begin_keyword)
                       body: (statement_block
@@ -328,24 +329,25 @@ page 50009 TestPage
                               (basic_type))))))
                     (var_section
                       (var_keyword)
-                      (variable_declaration
-                        name: (identifier)
-                        type: (type_specification
-                          (basic_type)))
-                      (variable_declaration
-                        name: (identifier)
-                        type: (type_specification
-                          (basic_type)))
-                      (variable_declaration
-                        name: (identifier)
-                        type: (type_specification
-                          (object_reference_type
-                            object_type: (codeunit_keyword)
-                            reference: (quoted_identifier))))
-                      (variable_declaration
-                        name: (identifier)
-                        type: (type_specification
-                          (text_type))))
+                      body: (var_body
+                        (variable_declaration
+                          name: (identifier)
+                          type: (type_specification
+                            (basic_type)))
+                        (variable_declaration
+                          name: (identifier)
+                          type: (type_specification
+                            (basic_type)))
+                        (variable_declaration
+                          name: (identifier)
+                          type: (type_specification
+                            (object_reference_type
+                              object_type: (codeunit_keyword)
+                              reference: (quoted_identifier))))
+                        (variable_declaration
+                          name: (identifier)
+                          type: (type_specification
+                            (text_type)))))
                     body: (code_block
                       (begin_keyword)
                       body: (statement_block

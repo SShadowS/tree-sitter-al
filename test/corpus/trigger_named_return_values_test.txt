@@ -35,10 +35,11 @@ page 50100 "Item Turnover Lines"
           (basic_type))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -102,10 +103,11 @@ page 50101 "Test Page"
           (basic_type))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -267,11 +269,12 @@ page 50103 "Test Page"
           (basic_type))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (identifier))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

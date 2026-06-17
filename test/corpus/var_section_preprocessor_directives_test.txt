@@ -31,36 +31,37 @@ codeunit 50100 "Test Codeunit"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (preproc_conditional_var
-            (preproc_if
-              (preproc_open)
-              condition: (identifier))
+          body: (var_body
             (variable_declaration
               name: (identifier)
               type: (type_specification
                 (record_type
                   reference: (quoted_identifier))))
-            (preproc_endif
-              (preproc_close)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))
+            (preproc_conditional_var
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (record_type
+                    reference: (quoted_identifier))))
+              (preproc_endif
+                (preproc_close)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           (comment)

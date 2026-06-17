@@ -56,11 +56,12 @@ codeunit 50000 "TestRequestPage Test"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  reference: (quoted_identifier))))))
         body: (code_block
           (begin_keyword)
           (end_keyword)))
@@ -72,11 +73,12 @@ codeunit 50000 "TestRequestPage Test"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                reference: (identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  reference: (identifier))))))
         body: (code_block
           (begin_keyword)
           (end_keyword)))
@@ -88,11 +90,12 @@ codeunit 50000 "TestRequestPage Test"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                reference: (integer)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  reference: (integer))))))
         body: (code_block
           (begin_keyword)
           (end_keyword)))
@@ -111,10 +114,11 @@ codeunit 50000 "TestRequestPage Test"
                 reference: (quoted_identifier)))))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

@@ -86,20 +86,21 @@ codeunit 50100 TestInterface
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (object_reference_type
-              (interface_keyword)
-              (quoted_identifier))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (object_reference_type
-              (interface_keyword)
-              (identifier)
-              (identifier)
-              (quoted_identifier)))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (object_reference_type
+                (interface_keyword)
+                (quoted_identifier))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (object_reference_type
+                (interface_keyword)
+                (identifier)
+                (identifier)
+                (quoted_identifier))))))
       (procedure
         (procedure_keyword)
         (identifier)

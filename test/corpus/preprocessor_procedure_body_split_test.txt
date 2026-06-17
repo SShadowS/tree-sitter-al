@@ -45,10 +45,11 @@ codeunit 134 "No. Series Setup Impl."
           (pragma)
           (var_section
             (var_keyword)
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (basic_type))))
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
           body: (statement_block
             (assignment_statement
               left: (identifier)

@@ -25,10 +25,11 @@ codeunit 50100 TestDiv
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -66,10 +67,11 @@ codeunit 50100 TestMod
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -109,12 +111,13 @@ codeunit 50100 TestDivCases
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            name: (identifier)
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              name: (identifier)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -164,12 +167,13 @@ codeunit 50100 TestModCases
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            name: (identifier)
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              name: (identifier)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -220,10 +224,11 @@ codeunit 50100 TestDivInCase
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -270,10 +275,11 @@ codeunit 50100 TestComplexDivMod
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -352,16 +358,17 @@ table 50100 TestTable
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

@@ -22,37 +22,38 @@ page 123 "Test Page"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (code_type
-              length: (integer))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (option_type
-              (option_member_list
-                (option_member
-                  (identifier))
-                (option_member
-                  (quoted_identifier))
-                (option_member
-                  (identifier))
-                (option_member
-                  (quoted_identifier))
-                (option_member
-                  (quoted_identifier))
-                (option_member
-                  (quoted_identifier))))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal))
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))
+                  (option_member
+                    (quoted_identifier))))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal)))))))

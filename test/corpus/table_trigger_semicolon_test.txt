@@ -193,10 +193,11 @@ table 50101 "Custom Table"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -219,14 +220,15 @@ table 50101 "Custom Table"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

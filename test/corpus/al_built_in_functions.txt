@@ -77,11 +77,12 @@ codeunit 50000 "AL Built-in Functions Test"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (identifier))))))
         body: (code_block
           (begin_keyword)
           (comment)
@@ -203,11 +204,12 @@ codeunit 50000 "AL Built-in Functions Test"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (identifier))))))
         body: (code_block
           (begin_keyword)
           (comment)
@@ -268,7 +270,8 @@ codeunit 50000 "AL Built-in Functions Test"
           (end_keyword)))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type))))))))

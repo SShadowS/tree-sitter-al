@@ -13360,28 +13360,44 @@
             "name": "var_keyword"
           },
           {
-            "type": "REPEAT",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "body",
+                "content": {
                   "type": "SYMBOL",
-                  "name": "variable_declaration"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "var_attribute_item"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_conditional_var"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_split_procedure"
+                  "name": "var_body"
                 }
-              ]
-            }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "var_body": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "variable_declaration"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "var_attribute_item"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_conditional_var"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "preproc_split_procedure"
           }
         ]
       }
@@ -19924,6 +19940,9 @@
     ],
     [
       "statement_block"
+    ],
+    [
+      "var_body"
     ]
   ],
   "precedences": [],

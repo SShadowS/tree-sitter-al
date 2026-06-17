@@ -27,25 +27,27 @@ table 50000 "Test Table"
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type)))
-        (preproc_conditional_var
-          (preproc_if
-            (preproc_open)
-            (preproc_not_expression
-              (identifier)))
-          (var_section
-            (protected_keyword)
-            (var_keyword)
-            (variable_declaration
-              (identifier)
-              (type_specification
-                (record_type
-                  (identifier)))))
-          (preproc_endif
-            (preproc_close))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              (preproc_not_expression
+                (identifier)))
+            (var_section
+              (protected_keyword)
+              (var_keyword)
+              (var_body
+                (variable_declaration
+                  (identifier)
+                  (type_specification
+                    (record_type
+                      (identifier))))))
+            (preproc_endif
+              (preproc_close)))))
       (procedure
         (procedure_keyword)
         (identifier)
@@ -82,38 +84,41 @@ table 50001 "Sales Price"
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (basic_type)
-          (string_literal))
-        (preproc_conditional_var
-          (preproc_if
-            (preproc_open)
-            (preproc_not_expression
-              (identifier)))
-          (var_section
-            (protected_keyword)
-            (var_keyword)
-            (variable_declaration
-              (identifier)
-              (type_specification
-                (record_type
-                  (identifier))))
-            (variable_declaration
-              (identifier)
-              (type_specification
-                (record_type
-                  (identifier)))))
-          (preproc_endif
-            (preproc_close))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (basic_type)
+            (string_literal))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              (preproc_not_expression
+                (identifier)))
+            (var_section
+              (protected_keyword)
+              (var_keyword)
+              (var_body
+                (variable_declaration
+                  (identifier)
+                  (type_specification
+                    (record_type
+                      (identifier))))
+                (variable_declaration
+                  (identifier)
+                  (type_specification
+                    (record_type
+                      (identifier))))))
+            (preproc_endif
+              (preproc_close)))))
       (var_section
         (protected_keyword)
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (record_type
-              (identifier))))))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (record_type
+                (identifier)))))))))
 
 ================================================================================
 Protected var in preprocessor with pragmas
@@ -143,23 +148,25 @@ table 50002 "Test Table"
       (var_section
         (var_keyword)
         (pragma)
-        (variable_declaration
-          (identifier)
-          (basic_type)
-          (string_literal))
-        (pragma)
-        (preproc_conditional_var
-          (preproc_if
-            (preproc_open)
-            (preproc_not_expression
-              (identifier)))
-          (var_section
-            (protected_keyword)
-            (var_keyword)
-            (variable_declaration
-              (identifier)
-              (type_specification
-                (record_type
-                  (identifier)))))
-          (preproc_endif
-            (preproc_close)))))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (basic_type)
+            (string_literal))
+          (pragma)
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              (preproc_not_expression
+                (identifier)))
+            (var_section
+              (protected_keyword)
+              (var_keyword)
+              (var_body
+                (variable_declaration
+                  (identifier)
+                  (type_specification
+                    (record_type
+                      (identifier))))))
+            (preproc_endif
+              (preproc_close))))))))

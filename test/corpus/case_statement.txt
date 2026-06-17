@@ -97,14 +97,15 @@ codeunit 50100 Test
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (array_type
-                (integer)
-                (type_specification
-                  (code_type
-                    (integer)))))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (array_type
+                  (integer)
+                  (type_specification
+                    (code_type
+                      (integer))))))))
         (code_block
           (begin_keyword)
           (statement_block

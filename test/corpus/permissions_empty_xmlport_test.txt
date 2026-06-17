@@ -56,17 +56,18 @@ codeunit 50100 "XMLport Example"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (quoted_identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                object_type: (xmlport_keyword)
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (quoted_identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (xmlport_keyword)
+                  reference: (quoted_identifier))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -118,12 +119,13 @@ page 50200 "Test Page"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                object_type: (xmlport_keyword)
-                reference: (integer)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (xmlport_keyword)
+                  reference: (integer))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

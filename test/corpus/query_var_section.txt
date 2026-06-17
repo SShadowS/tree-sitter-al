@@ -46,14 +46,15 @@ query 50100 "Test Query Var"
                 field_name: (quoted_identifier))))))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -130,10 +131,11 @@ query 5506 "Email Related Record"
                 field_name: (identifier))))))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal)))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal))))
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -212,19 +214,21 @@ query 50101 "Query with Conditional Var"
           condition: (identifier))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type
-                length: (integer)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  length: (integer))))))
         (preproc_else)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                length: (integer)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (code_type
+                  length: (integer))))))
         (preproc_endif
           (preproc_close)))
       (procedure
@@ -307,29 +311,31 @@ query 50102 "Mixed Var Query"
                 field_name: (quoted_identifier))))))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
       (procedure
         (procedure_keyword)
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type
-                length: (integer)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type
+                  length: (integer))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

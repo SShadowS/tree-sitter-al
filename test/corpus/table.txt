@@ -118,10 +118,11 @@ table 50100 "My Test Table"
                 (boolean))))))
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))))
       (trigger_declaration
         (trigger_keyword)
         (identifier)

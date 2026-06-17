@@ -175,6 +175,8 @@ module.exports = grammar({
     [$.if_statement, $._if_statement_no_else],  // dangling-else in case branches
     // statement_block vs preproc_split_code_block_end after the statement run
     [$.statement_block],
+    // var_body run terminates at the following begin (no closing delimiter)
+    [$.var_body],
   ],
 
   // Trivial pass-through wrappers — macro-substituted to drop a layer of indirection.
@@ -2678,12 +2680,14 @@ module.exports = grammar({
     var_section: $ => prec.right(seq(
       optional(choice($.protected_keyword, $.local_keyword)),
       $.var_keyword,
-      repeat(choice(
-        $.variable_declaration,
-        $.var_attribute_item,
-        $.preproc_conditional_var,
-        $.preproc_split_procedure,
-      )),
+      optional(field('body', $.var_body)),
+    )),
+
+    var_body: $ => repeat1(choice(
+      $.variable_declaration,
+      $.var_attribute_item,
+      $.preproc_conditional_var,
+      $.preproc_split_procedure,
     )),
 
     // Attribute inside a var section — uses scanner token to ensure the attribute

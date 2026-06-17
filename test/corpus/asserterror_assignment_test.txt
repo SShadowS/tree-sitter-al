@@ -40,21 +40,22 @@ codeunit 50100 "Test Asserterror Assignment"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                length: (integer))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                length: (integer))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                length: (integer)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (code_type
+                  length: (integer))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (code_type
+                  length: (integer))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (code_type
+                  length: (integer))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -165,19 +166,20 @@ codeunit 50200 "Complex Asserterror Tests"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (identifier))))))
         body: (code_block
           (begin_keyword)
           (comment)

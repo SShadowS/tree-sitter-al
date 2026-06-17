@@ -35,17 +35,19 @@ codeunit 50000 "Test Codeunit"
               (identifier)))
           (var_section
             (var_keyword)
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (basic_type))))
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
           (preproc_else)
           (var_section
             (var_keyword)
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (text_type))))
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (text_type)))))
           (preproc_endif
             (preproc_close)))
         body: (code_block
@@ -93,10 +95,11 @@ codeunit 50001 "Test Codeunit"
               (identifier)))
           (var_section
             (var_keyword)
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (basic_type))))
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
           (preproc_endif
             (preproc_close)))
         body: (code_block

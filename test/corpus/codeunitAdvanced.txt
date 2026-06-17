@@ -61,31 +61,32 @@ codeunit 50100 MyCodeunit
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type)))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (text_type
-              (integer))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type)))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (record_type
-              (identifier))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (array_type
-              (integer)
-              (type_specification
-                (text_type)))))))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (text_type
+                (integer))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (record_type
+                (identifier))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (array_type
+                (integer)
+                (type_specification
+                  (text_type))))))))))
 
 ==================
 Basic Procedure
@@ -195,15 +196,16 @@ codeunit 50100 MyCodeunit
                 (integer)))))
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (record_type
-                (identifier))))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (record_type
+                  (identifier))))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
         (code_block
           (begin_keyword)
           (statement_block

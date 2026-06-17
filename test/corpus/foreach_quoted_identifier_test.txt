@@ -28,18 +28,19 @@ codeunit 50100 "Test Foreach"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (quoted_identifier)
-            type: (type_specification
-              (text_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dictionary_type
-                key_type: (type_specification
-                  (text_type))
-                value_type: (type_specification
-                  (text_type))))))
+          body: (var_body
+            (variable_declaration
+              name: (quoted_identifier)
+              type: (type_specification
+                (text_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (dictionary_type
+                  key_type: (type_specification
+                    (text_type))
+                  value_type: (type_specification
+                    (text_type)))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -91,11 +92,12 @@ codeunit 50101 "Test Foreach Standard"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (record_type
-                reference: (identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (identifier))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -165,18 +167,19 @@ codeunit 50102 "Dictionary Operations"
                   (text_type))))))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (quoted_identifier)
-            type: (type_specification
-              (text_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
+          body: (var_body
+            (variable_declaration
+              name: (quoted_identifier)
+              type: (type_specification
+                (text_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

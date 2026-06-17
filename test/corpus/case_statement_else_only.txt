@@ -28,10 +28,11 @@ codeunit 50000 Test
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -83,26 +84,27 @@ codeunit 50001 Test
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                (dotnet_keyword)
-                reference: (identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                (dotnet_keyword)
-                reference: (identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (dotnet_type
+                  (dotnet_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (dotnet_type
+                  (dotnet_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -183,10 +185,11 @@ codeunit 50002 Test
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

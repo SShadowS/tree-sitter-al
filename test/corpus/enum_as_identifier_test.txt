@@ -29,27 +29,7 @@ codeunit 50100 "Enum Variable Test"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (dotnet_type
-              (dotnet_keyword)
-              reference: (identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
-      (procedure
-        (procedure_keyword)
-        name: (identifier)
-        (var_section
-          (var_keyword)
+        body: (var_body
           (variable_declaration
             name: (identifier)
             type: (type_specification
@@ -59,7 +39,29 @@ codeunit 50100 "Enum Variable Test"
           (variable_declaration
             name: (identifier)
             type: (type_specification
-              (text_type))))
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (dotnet_type
+                  (dotnet_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -136,24 +138,25 @@ codeunit 50101 "X509 Certificate Handler"
               (text_type))))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                (dotnet_keyword)
-                reference: (identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                (dotnet_keyword)
-                reference: (identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                (dotnet_keyword)
-                reference: (identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (dotnet_type
+                  (dotnet_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (dotnet_type
+                  (dotnet_keyword)
+                  reference: (identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (dotnet_type
+                  (dotnet_keyword)
+                  reference: (identifier))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -222,36 +225,38 @@ codeunit 50102 "Case Test"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
       (procedure
         (procedure_keyword)
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (code_type
-                length: (integer))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (option_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (code_type
+                  length: (integer))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (option_type)))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

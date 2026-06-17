@@ -31,16 +31,17 @@ codeunit 6466 "Serv. Page Management"
             (identifier)))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                object_type: (codeunit_keyword)
-                reference: (quoted_identifier))))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (codeunit_keyword)
+                  reference: (quoted_identifier))))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         (preproc_endif
           (preproc_close)))
       (attribute_item
@@ -116,21 +117,23 @@ page 123 "Test Page"
           condition: (identifier))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                object_type: (codeunit_keyword)
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (codeunit_keyword)
+                  reference: (quoted_identifier))))))
         (preproc_else)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                object_type: (codeunit_keyword)
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (codeunit_keyword)
+                  reference: (quoted_identifier))))))
         (preproc_endif
           (preproc_close)))
       (layout_section
@@ -182,12 +185,13 @@ table 50001 "Test Table"
             (identifier)))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                object_type: (codeunit_keyword)
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (codeunit_keyword)
+                  reference: (quoted_identifier))))))
         (preproc_endif
           (preproc_close)))
       (fields_section
@@ -246,12 +250,13 @@ report 50001 "Test Report"
             (identifier)))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                object_type: (codeunit_keyword)
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (codeunit_keyword)
+                  reference: (quoted_identifier))))))
         (preproc_endif
           (preproc_close)))
       (dataset_section
@@ -305,12 +310,13 @@ xmlport 50001 "Test XMLPort"
           condition: (identifier))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (object_reference_type
-                object_type: (codeunit_keyword)
-                reference: (quoted_identifier)))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (object_reference_type
+                  object_type: (codeunit_keyword)
+                  reference: (quoted_identifier))))))
         (preproc_endif
           (preproc_close)))
       (schema_section

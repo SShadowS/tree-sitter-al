@@ -25,13 +25,14 @@ codeunit 50118 "Simple Array Indexing Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (array_type
-                (integer)
-                (type_specification
-                  (basic_type))))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (array_type
+                  (integer)
+                  (type_specification
+                    (basic_type)))))))
         (code_block
           (begin_keyword)
           (statement_block

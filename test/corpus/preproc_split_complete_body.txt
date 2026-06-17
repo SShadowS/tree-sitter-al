@@ -49,11 +49,12 @@ page 50000 MyPage {
                       (identifier)))
                   (var_section
                     (var_keyword)
-                    (variable_declaration
-                      name: (identifier)
-                      type: (type_specification
-                        (record_type
-                          reference: (quoted_identifier)))))
+                    body: (var_body
+                      (variable_declaration
+                        name: (identifier)
+                        type: (type_specification
+                          (record_type
+                            reference: (quoted_identifier))))))
                   body: (statement_block
                     (call_expression
                       function: (identifier)
@@ -66,11 +67,12 @@ page 50000 MyPage {
                   (preproc_else)
                   (var_section
                     (var_keyword)
-                    (variable_declaration
-                      name: (identifier)
-                      type: (type_specification
-                        (record_type
-                          reference: (quoted_identifier)))))
+                    body: (var_body
+                      (variable_declaration
+                        name: (identifier)
+                        type: (type_specification
+                          (record_type
+                            reference: (quoted_identifier))))))
                   body: (statement_block
                     (call_expression
                       function: (identifier)
@@ -128,12 +130,13 @@ codeunit 50000 MyCodeunit {
             condition: (identifier))
           (var_section
             (var_keyword)
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (object_reference_type
-                  object_type: (codeunit_keyword)
-                  reference: (quoted_identifier)))))
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (object_reference_type
+                    object_type: (codeunit_keyword)
+                    reference: (quoted_identifier))))))
           body: (statement_block
             (call_expression
               function: (member_expression

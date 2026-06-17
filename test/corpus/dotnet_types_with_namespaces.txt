@@ -20,27 +20,28 @@ table 123 TestTable
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (dotnet_type
-              (dotnet_keyword)
-              reference: (identifier)
-              reference: (identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (dotnet_type
-              (dotnet_keyword)
-              reference: (identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (dotnet_type
-              (dotnet_keyword)
-              reference: (identifier)
-              reference: (identifier)
-              reference: (identifier))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                (dotnet_keyword)
+                reference: (identifier)
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                (dotnet_keyword)
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                (dotnet_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)))))))))
 
 ================================================================================
 DotNet types in field declarations
@@ -103,20 +104,21 @@ codeunit 789 TestCodeunit
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (dotnet_type
-              (dotnet_keyword)
-              reference: (identifier)
-              reference: (identifier)
-              reference: (identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (dotnet_type
-              (dotnet_keyword)
-              reference: (identifier)
-              reference: (identifier)
-              reference: (identifier)
-              reference: (identifier))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                (dotnet_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                (dotnet_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)))))))))

@@ -21,29 +21,30 @@ page 123 "Context Sensitive Test"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (option_type
-              (option_member_list
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
 
 ================================================================================
 High precedence variables work with standard identifiers
@@ -67,15 +68,16 @@ page 456 "High Precedence Test"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))

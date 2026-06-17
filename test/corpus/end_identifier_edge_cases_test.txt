@@ -37,17 +37,18 @@ codeunit 50100 "End Edge Cases"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (array_type
-                sizes: (integer)
-                element_type: (type_specification
-                  (basic_type))))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  sizes: (integer)
+                  element_type: (type_specification
+                    (basic_type)))))))
         body: (code_block
           (begin_keyword)
           (comment)

@@ -44,10 +44,11 @@ page 50000 "Test Page"
                   (string_literal))))))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         (preproc_endif
           (preproc_close))))))
 
@@ -167,16 +168,17 @@ page 30114 "Shpfy Order Attributes"
           name: (identifier)
           (var_section
             (var_keyword)
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (record_type
-                  reference: (quoted_identifier))))
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (record_type
-                  reference: (quoted_identifier)))))
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (record_type
+                    reference: (quoted_identifier))))
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (record_type
+                    reference: (quoted_identifier))))))
           body: (code_block
             body: (statement_block
               (if_statement
@@ -208,10 +210,11 @@ page 30114 "Shpfy Order Attributes"
                       member: (quoted_identifier))))))))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         (preproc_endif
           (preproc_close))))))
 
@@ -312,10 +315,11 @@ page 50001 "Complex Page"
           name: (identifier)
           (var_section
             (var_keyword)
-            (variable_declaration
-              name: (identifier)
-              type: (type_specification
-                (basic_type))))
+            body: (var_body
+              (variable_declaration
+                name: (identifier)
+                type: (type_specification
+                  (basic_type)))))
           body: (code_block
             body: (statement_block
               (assignment_statement
@@ -333,14 +337,15 @@ page 50001 "Complex Page"
             (comment)))
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (text_type)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (basic_type))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
         (preproc_endif
           (preproc_close)))
       (procedure

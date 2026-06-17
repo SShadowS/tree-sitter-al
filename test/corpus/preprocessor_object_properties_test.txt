@@ -35,10 +35,11 @@ codeunit 6086078 "Test Codeunit"
           (preproc_close)))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
 
 ================================================================================
 Codeunit with mixed properties and preprocessor conditionals

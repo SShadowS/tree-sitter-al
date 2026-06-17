@@ -27,30 +27,31 @@ page 12345 "Test Page"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal))
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal))
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal))
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal))
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal))
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal)))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal))))
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)

@@ -58,9 +58,10 @@ codeunit 1 T
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (dotnet_type
-              (dotnet_keyword)
-              reference: (quoted_identifier))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                (dotnet_keyword)
+                reference: (quoted_identifier)))))))))

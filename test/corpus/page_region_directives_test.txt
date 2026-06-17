@@ -93,11 +93,12 @@ page 50100 "Manufacturing Factbox"
                     value: (identifier))))))))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier)))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier))))))
       (preproc_region)
       (procedure
         modifier: (procedure_modifier

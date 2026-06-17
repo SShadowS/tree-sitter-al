@@ -260,14 +260,15 @@ codeunit 50100 Test
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
         (code_block
           (begin_keyword)
           (end_keyword))))))
@@ -314,11 +315,12 @@ codeunit 50100 Test
           (basic_type))
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (record_type
-                (quoted_identifier)))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (record_type
+                  (quoted_identifier))))))
         (code_block
           (begin_keyword)
           (end_keyword))))))
@@ -375,10 +377,11 @@ table 50100 MyTable
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
         (code_block
           (begin_keyword)
           (end_keyword))))))
@@ -405,21 +408,22 @@ codeunit 50100 Test
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (record_type
-              (quoted_identifier))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (basic_type)))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (list_type
-              (type_specification
-                (text_type)))))))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (record_type
+                (quoted_identifier))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (basic_type)))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (list_type
+                (type_specification
+                  (text_type))))))))))
 
 ========================================================================
 Attribute before procedure
@@ -593,10 +597,11 @@ codeunit 50100 Test
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (quoted_identifier)
-          (type_specification
-            (basic_type)))))))
+        (var_body
+          (variable_declaration
+            (quoted_identifier)
+            (type_specification
+              (basic_type))))))))
 
 ========================================================================
 Trigger with parameters

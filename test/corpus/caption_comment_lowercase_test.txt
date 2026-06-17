@@ -49,11 +49,12 @@ page 50000 "Test Page"
                     value: (string_literal))))))))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type
-              length: (integer))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))))))))
 
 ================================================================================
 Caption with different case comment variations
@@ -116,8 +117,9 @@ page 50001 "Another Page"
                       (string_literal)))))))))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          name: (identifier)
-          type: (type_specification
-            (text_type)))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            name: (identifier)
+            type: (type_specification
+              (text_type))))))))

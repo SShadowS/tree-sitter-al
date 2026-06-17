@@ -119,18 +119,19 @@ codeunit 50100 "Built-in Functions Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
         (code_block
           (begin_keyword)
           (statement_block
@@ -172,26 +173,27 @@ codeunit 50100 "Built-in Functions Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (text_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (text_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (text_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (text_type))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (text_type)))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (text_type)))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (text_type)))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (text_type)))))
         (code_block
           (begin_keyword)
           (statement_block
@@ -218,14 +220,15 @@ codeunit 50100 "Built-in Functions Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
         (code_block
           (begin_keyword)
           (statement_block
@@ -268,14 +271,15 @@ codeunit 50100 "Built-in Functions Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (text_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (text_type)))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
         (code_block
           (begin_keyword)
           (statement_block
@@ -319,29 +323,30 @@ codeunit 50100 "Built-in Functions Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (record_type
-                (identifier))))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type)))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (code_type
-                (integer))))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (code_type
-                (integer))))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (text_type))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (record_type
+                  (identifier))))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (code_type
+                  (integer))))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (code_type
+                  (integer))))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (text_type)))))
         (code_block
           (begin_keyword)
           (statement_block

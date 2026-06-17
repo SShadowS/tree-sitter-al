@@ -22,10 +22,11 @@ codeunit 50100 MyCodeunit
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal)))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal))))
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -57,16 +58,17 @@ codeunit 50100 MyCodeunit
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal)
-          (label_attribute
+        body: (var_body
+          (variable_declaration
             name: (identifier)
-            value: (boolean))
-          (label_attribute
-            name: (identifier)
-            value: (string_literal))))
+            type: (basic_type)
+            value: (string_literal)
+            (label_attribute
+              name: (identifier)
+              value: (boolean))
+            (label_attribute
+              name: (identifier)
+              value: (string_literal)))))
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -98,12 +100,13 @@ codeunit 50100 MyCodeunit
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (identifier)
-              (temporary_keyword)))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (identifier)
+                (temporary_keyword))))))
       (procedure
         (procedure_keyword)
         name: (identifier)

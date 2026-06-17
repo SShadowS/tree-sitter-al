@@ -20,18 +20,19 @@ page 50100 TestPage
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
 
 ================================================================================
 Page with Visible property and Visible variable
@@ -63,11 +64,12 @@ page 50100 TestPage
         value: (boolean))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))

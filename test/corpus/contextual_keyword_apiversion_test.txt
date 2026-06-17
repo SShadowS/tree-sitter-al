@@ -19,14 +19,15 @@ page 50100 "Test Page"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
 
 ================================================================================
 ApiVersion with other contextual keywords in var section
@@ -50,21 +51,22 @@ page 50101 "API Test"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal)
-          (label_attribute
+        body: (var_body
+          (variable_declaration
             name: (identifier)
-            value: (string_literal)))))))
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal)
+            (label_attribute
+              name: (identifier)
+              value: (string_literal))))))))
 
 ================================================================================
 Var section with ApiVersion and preprocessor conditionals
@@ -92,33 +94,34 @@ page 50102 "Shop Card"
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type)))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))
-        (preproc_conditional_var
-          (preproc_if
-            (preproc_open)
-            condition: (preproc_not_expression
-              (identifier)))
+        body: (var_body
           (variable_declaration
             name: (identifier)
             type: (type_specification
               (basic_type)))
-          (preproc_endif
-            (preproc_close)))
-        (variable_declaration
-          name: (identifier)
-          type: (basic_type)
-          value: (string_literal)
-          (label_attribute
+          (variable_declaration
             name: (identifier)
-            value: (string_literal)))))))
+            type: (type_specification
+              (text_type)))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))
+          (preproc_conditional_var
+            (preproc_if
+              (preproc_open)
+              condition: (preproc_not_expression
+                (identifier)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (preproc_endif
+              (preproc_close)))
+          (variable_declaration
+            name: (identifier)
+            type: (basic_type)
+            value: (string_literal)
+            (label_attribute
+              name: (identifier)
+              value: (string_literal))))))))

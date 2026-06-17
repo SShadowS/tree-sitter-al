@@ -162,24 +162,25 @@ codeunit 126 TestCodeunit
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (identifier)
-              reference: (identifier)
-              reference: (identifier)
-              reference: (quoted_identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (identifier)
-              reference: (identifier)
-              reference: (identifier)
-              reference: (quoted_identifier)))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (identifier)
+                reference: (quoted_identifier))))))
       (procedure
         (procedure_keyword)
         name: (identifier)

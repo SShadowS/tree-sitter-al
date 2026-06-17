@@ -47,12 +47,13 @@ dotnet
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (dotnet_type
-              (dotnet_keyword)
-              reference: (identifier)))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (dotnet_type
+                (dotnet_keyword)
+                reference: (identifier))))))
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)
@@ -69,16 +70,17 @@ dotnet
         name: (identifier)
         (var_section
           (var_keyword)
-          (var_attribute_item
-            (var_attribute_open)
-            attribute: (attribute_content
-              name: (identifier)))
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (dotnet_type
-                (dotnet_keyword)
-                reference: (identifier)))))
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (dotnet_type
+                  (dotnet_keyword)
+                  reference: (identifier))))))
         body: (code_block
           (begin_keyword)
           (comment)

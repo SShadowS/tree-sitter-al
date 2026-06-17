@@ -239,12 +239,13 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
                   (end_keyword)))))))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (record_type
-              reference: (quoted_identifier)
-              (temporary_keyword)))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (record_type
+                reference: (quoted_identifier)
+                (temporary_keyword))))))
       (procedure
         (procedure_keyword)
         name: (identifier)

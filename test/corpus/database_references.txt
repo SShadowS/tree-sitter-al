@@ -37,10 +37,11 @@ codeunit 50100 "Database Reference Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (basic_type))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (basic_type)))))
         (code_block
           (begin_keyword)
           (comment)

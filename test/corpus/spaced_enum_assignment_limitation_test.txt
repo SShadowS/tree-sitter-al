@@ -27,15 +27,16 @@ codeunit 50100 "Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (array_type
-                (integer)
-                (type_specification
-                  (object_reference_type
-                    (enum_keyword)
-                    (quoted_identifier)))))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (array_type
+                  (integer)
+                  (type_specification
+                    (object_reference_type
+                      (enum_keyword)
+                      (quoted_identifier))))))))
         (code_block
           (begin_keyword)
           (comment)
@@ -89,15 +90,16 @@ codeunit 50101 "Test"
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (array_type
-                sizes: (integer)
-                element_type: (type_specification
-                  (object_reference_type
-                    object_type: (enum_keyword)
-                    reference: (quoted_identifier)))))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  sizes: (integer)
+                  element_type: (type_specification
+                    (object_reference_type
+                      object_type: (enum_keyword)
+                      reference: (quoted_identifier))))))))
         body: (code_block
           (begin_keyword)
           (comment)

@@ -38,17 +38,18 @@ codeunit 50100 TestUnit
         name: (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            name: (identifier)
-            type: (type_specification
-              (option_type
-                (option_member_list
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier))
-                  (option_member
-                    (identifier)))))))
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (option_type
+                  (option_member_list
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier))
+                    (option_member
+                      (identifier))))))))
         body: (code_block
           (begin_keyword)
           body: (statement_block

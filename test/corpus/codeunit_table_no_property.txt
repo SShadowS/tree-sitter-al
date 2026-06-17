@@ -124,10 +124,11 @@ codeunit 50003 "Multi Property Codeunit"
         value: (boolean))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type)))))
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)

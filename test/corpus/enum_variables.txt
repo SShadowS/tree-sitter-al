@@ -19,18 +19,19 @@ codeunit 50110 "Enum Variables Test"
     (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (object_reference_type
-              (enum_keyword)
-              (quoted_identifier))))
-        (variable_declaration
-          (identifier)
-          (type_specification
-            (object_reference_type
-              (enum_keyword)
-              (identifier))))))))
+        (var_body
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (object_reference_type
+                (enum_keyword)
+                (quoted_identifier))))
+          (variable_declaration
+            (identifier)
+            (type_specification
+              (object_reference_type
+                (enum_keyword)
+                (identifier)))))))))
 
 ==================
 Enum Variable Assignment
@@ -61,18 +62,19 @@ codeunit 50111 "Enum Assignment Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (object_reference_type
-                (enum_keyword)
-                (quoted_identifier))))
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (object_reference_type
-                (enum_keyword)
-                (identifier)))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (object_reference_type
+                  (enum_keyword)
+                  (quoted_identifier))))
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (object_reference_type
+                  (enum_keyword)
+                  (identifier))))))
         (code_block
           (begin_keyword)
           (statement_block
@@ -121,12 +123,13 @@ codeunit 50112 "Enum Comparison Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (object_reference_type
-                (enum_keyword)
-                (quoted_identifier)))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (object_reference_type
+                  (enum_keyword)
+                  (quoted_identifier))))))
         (code_block
           (begin_keyword)
           (statement_block
@@ -199,12 +202,13 @@ codeunit 50113 "Enum Case Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (object_reference_type
-                (enum_keyword)
-                (quoted_identifier)))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (object_reference_type
+                  (enum_keyword)
+                  (quoted_identifier))))))
         (code_block
           (begin_keyword)
           (statement_block
@@ -283,12 +287,13 @@ codeunit 50114 "Quoted Enum Values Test"
         (identifier)
         (var_section
           (var_keyword)
-          (variable_declaration
-            (identifier)
-            (type_specification
-              (object_reference_type
-                (enum_keyword)
-                (quoted_identifier)))))
+          (var_body
+            (variable_declaration
+              (identifier)
+              (type_specification
+                (object_reference_type
+                  (enum_keyword)
+                  (quoted_identifier))))))
         (code_block
           (begin_keyword)
           (statement_block

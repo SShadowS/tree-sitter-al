@@ -18,12 +18,13 @@ page 50000 TestPage
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier)))))))))
 
 ================================================================================
 TableType as variable name with multiple variables
@@ -47,22 +48,23 @@ page 50000 TestPage
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
 
 ================================================================================
 TableType as variable name with trigger
@@ -96,22 +98,23 @@ page 50000 TestPage
           (end_keyword)))
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (object_reference_type
-              object_type: (enum_keyword)
-              reference: (quoted_identifier))))
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (basic_type)))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (object_reference_type
+                object_type: (enum_keyword)
+                reference: (quoted_identifier))))
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))))))
 
 ================================================================================
 TableType property in table (should still work)
@@ -169,11 +172,12 @@ table 50000 TestTable
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (text_type
-              length: (integer))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (text_type
+                length: (integer)))))))))
 
 ================================================================================
 TableType as variable name in codeunit
@@ -195,12 +199,13 @@ codeunit 50000 TestCodeunit
     body: (object_body
       (var_section
         (var_keyword)
-        (variable_declaration
-          name: (identifier)
-          type: (type_specification
-            (option_type
-              (option_member_list
-                (option_member
-                  (identifier))
-                (option_member
-                  (identifier))))))))))
+        body: (var_body
+          (variable_declaration
+            name: (identifier)
+            type: (type_specification
+              (option_type
+                (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
