@@ -29,7 +29,7 @@ query 50100 "Vendor Ledger Entry Test"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -93,7 +93,7 @@ report 50200 "Link Test"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -165,7 +165,7 @@ xmlport 50300 "Export Test"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (schema_section
         (schema_keyword)
         body: (schema_body

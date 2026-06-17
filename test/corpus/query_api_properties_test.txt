@@ -32,7 +32,7 @@ query 123 "Test API Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -69,7 +69,7 @@ query 123 "Test API Query"
                 (column_keyword)
                 name: (identifier)
                 field_name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal)))))))))))
@@ -107,7 +107,7 @@ query 456 "Mixed Case API Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -141,7 +141,7 @@ query 456 "Mixed Case API Query"
                 (column_keyword)
                 name: (identifier)
                 field_name: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal)))))))))))
@@ -207,7 +207,7 @@ query 30305 "Complete API Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -259,7 +259,7 @@ query 30305 "Complete API Query"
                 (column_keyword)
                 name: (identifier)
                 field_name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))))
@@ -267,7 +267,7 @@ query 30305 "Complete API Query"
                 (column_keyword)
                 name: (identifier)
                 field_name: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))))
@@ -275,7 +275,7 @@ query 30305 "Complete API Query"
                 (column_keyword)
                 name: (identifier)
                 field_name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal)))))))))))

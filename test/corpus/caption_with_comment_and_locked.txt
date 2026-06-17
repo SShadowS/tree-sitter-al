@@ -42,7 +42,7 @@ table 123 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -55,7 +55,7 @@ table 123 "Test Table"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))))
@@ -65,7 +65,7 @@ table 123 "Test Table"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (caption_value
@@ -78,7 +78,7 @@ table 123 "Test Table"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (caption_value
@@ -91,7 +91,7 @@ table 123 "Test Table"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (caption_value
@@ -106,7 +106,7 @@ table 123 "Test Table"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (caption_value

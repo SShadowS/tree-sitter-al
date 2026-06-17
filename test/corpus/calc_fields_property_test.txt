@@ -27,7 +27,7 @@ report 50100 "Customer Balance Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -78,7 +78,7 @@ report 50101 "Simple Balance"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -124,7 +124,7 @@ report 50102 "Item Statistics"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body

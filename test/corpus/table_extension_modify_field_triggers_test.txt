@@ -42,10 +42,10 @@ tableextension 50000 "Customer Extension" extends Customer
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (modify_modification
         target: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (trigger_declaration
             (trigger_keyword)
             name: (identifier)
@@ -106,7 +106,7 @@ tableextension 50000 "Customer Extension" extends Customer
               (end_keyword)))))
       (modify_modification
         target: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))
@@ -148,10 +148,10 @@ tableextension 50001 "Item Extension" extends Item
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (modify_modification
         target: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (trigger_declaration
             (trigger_keyword)
             name: (identifier)

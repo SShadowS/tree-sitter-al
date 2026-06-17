@@ -24,7 +24,7 @@ page 123 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -34,7 +34,7 @@ page 123 "Test Page"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -73,7 +73,7 @@ page 124 "Integer Values"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -83,7 +83,7 @@ page 124 "Integer Values"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (signed_integer_list
@@ -117,7 +117,7 @@ page 125 "Mixed Values"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -127,7 +127,7 @@ page 125 "Mixed Values"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (option_member_list
@@ -166,7 +166,7 @@ table 126 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -175,7 +175,7 @@ table 126 "Test Table"
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -225,7 +225,7 @@ page 127 "Single Value"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -235,7 +235,7 @@ page 127 "Single Value"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (integer)))))))))))
@@ -265,7 +265,7 @@ page 128 "Negative Values"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -275,7 +275,7 @@ page 128 "Negative Values"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (option_member_list
@@ -313,7 +313,7 @@ page 129 "Case Test"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -323,7 +323,7 @@ page 129 "Case Test"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (option_member_list

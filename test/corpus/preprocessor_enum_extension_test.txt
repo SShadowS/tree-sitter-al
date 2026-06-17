@@ -33,7 +33,7 @@ enumextension 50100 "Payment Method Type Ext" extends "Payment Method Type"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (preproc_conditional
         (preproc_if
           (preproc_open)
@@ -41,7 +41,7 @@ enumextension 50100 "Payment Method Type Ext" extends "Payment Method Type"
         (enum_value_declaration
           value_id: (integer)
           value_name: (quoted_identifier)
-          body: (object_body
+          body: (declaration_body
             (property
               name: (property_name)
               value: (string_literal))))
@@ -49,7 +49,7 @@ enumextension 50100 "Payment Method Type Ext" extends "Payment Method Type"
         (enum_value_declaration
           value_id: (integer)
           value_name: (quoted_identifier)
-          body: (object_body
+          body: (declaration_body
             (property
               name: (property_name)
               value: (string_literal))))
@@ -59,7 +59,7 @@ enumextension 50100 "Payment Method Type Ext" extends "Payment Method Type"
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))

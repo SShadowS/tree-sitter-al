@@ -20,7 +20,7 @@ table 50100 "Test Filter And"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -30,7 +30,7 @@ table 50100 "Test Filter And"
             type: (type_specification
               (code_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (table_relation_value
@@ -69,7 +69,7 @@ table 50101 "Test Multiple And"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -79,7 +79,7 @@ table 50101 "Test Multiple And"
             type: (type_specification
               (code_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (table_relation_value
@@ -119,7 +119,7 @@ table 50102 "Test Mixed And"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -128,7 +128,7 @@ table 50102 "Test Mixed And"
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (table_relation_value
@@ -167,7 +167,7 @@ table 50103 "Test And Identifiers"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -177,7 +177,7 @@ table 50103 "Test And Identifiers"
             type: (type_specification
               (code_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (table_relation_value
@@ -216,7 +216,7 @@ table 50104 "Test Complex And"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -225,7 +225,7 @@ table 50104 "Test Complex And"
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (table_relation_value

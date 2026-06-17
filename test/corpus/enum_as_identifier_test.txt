@@ -26,7 +26,7 @@ codeunit 50100 "Enum Variable Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (var_section
         (var_keyword)
         body: (var_body
@@ -109,7 +109,7 @@ codeunit 50101 "X509 Certificate Handler"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (attribute_item
         attribute: (attribute_content
           name: (identifier)))
@@ -222,7 +222,7 @@ codeunit 50102 "Case Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (var_section
         (var_keyword)
         body: (var_body

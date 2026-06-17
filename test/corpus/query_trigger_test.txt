@@ -28,7 +28,7 @@ query 50145 "Delayed Prod Orders by Cost"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -94,7 +94,7 @@ query 50000 "Test Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body

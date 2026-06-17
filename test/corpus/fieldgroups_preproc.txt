@@ -32,7 +32,7 @@ table 50000 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -113,7 +113,7 @@ table 50001 "Test Table 2"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fieldgroups_section
         (fieldgroups_keyword)
         body: (fieldgroups_body
@@ -185,7 +185,7 @@ table 50002 "Test Table 3"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fieldgroups_section
         (fieldgroups_keyword)
         body: (fieldgroups_body
@@ -205,7 +205,7 @@ table 50002 "Test Table 3"
               fields: (field_list
                 (identifier)
                 (identifier))
-              body: (object_body
+              body: (declaration_body
                 (property
                   name: (property_name)
                   value: (string_literal))))

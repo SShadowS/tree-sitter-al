@@ -36,7 +36,7 @@ page 332 "No. Series Generation"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -55,7 +55,7 @@ page 332 "No. Series Generation"
                     value: (string_literal))
                   (action_declaration
                     name: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))
@@ -115,7 +115,7 @@ page 400 "AI Assistant"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -124,7 +124,7 @@ page 400 "AI Assistant"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))))))
@@ -133,7 +133,7 @@ page 400 "AI Assistant"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))))))
@@ -142,7 +142,7 @@ page 400 "AI Assistant"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal)))))))))))
@@ -200,7 +200,7 @@ page 500 "Copilot Assistant"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -219,7 +219,7 @@ page 500 "Copilot Assistant"
                     value: (string_literal))
                   (action_declaration
                     name: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (string_literal))
@@ -243,7 +243,7 @@ page 500 "Copilot Assistant"
                     value: (string_literal))
                   (action_declaration
                     name: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (string_literal))
@@ -255,7 +255,7 @@ page 500 "Copilot Assistant"
             body: (action_body
               (systemaction_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal)))))))))))

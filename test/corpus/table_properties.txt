@@ -43,7 +43,7 @@ table 50000 "Test Table"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (property
         (property_name)
         (option_member_list
@@ -82,7 +82,7 @@ table 50000 "Test Table"
             (type_specification
               (code_type
                 (integer)))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (string_literal))
@@ -95,7 +95,7 @@ table 50000 "Test Table"
             (type_specification
               (text_type
                 (integer)))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (string_literal))))))
@@ -107,7 +107,7 @@ table 50000 "Test Table"
             (identifier)
             (field_list
               (quoted_identifier))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (boolean)))))))))
@@ -147,7 +147,7 @@ table 50001 "Test Table Low Priority"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (property
         (property_name)
         (string_literal))
@@ -199,7 +199,7 @@ table 50001 "Test Table Low Priority"
             (type_specification
               (code_type
                 (integer)))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (ml_value_list
@@ -252,7 +252,7 @@ table 50002 "Test Field Properties"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -262,7 +262,7 @@ table 50002 "Test Field Properties"
             type: (type_specification
               (code_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))

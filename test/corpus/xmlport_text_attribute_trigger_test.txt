@@ -34,7 +34,7 @@ xmlport 1 "Consolidation Import/Export"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -55,7 +55,7 @@ xmlport 1 "Consolidation Import/Export"
                 value: (identifier))
               (xmlport_attribute
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (trigger_declaration
                     (trigger_keyword)
                     name: (identifier)
@@ -101,7 +101,7 @@ xmlport 50100 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (schema_section
         (schema_keyword)
         body: (schema_body
@@ -110,7 +110,7 @@ xmlport 50100 "Test XMLPort"
             body: (xmlport_body
               (xmlport_attribute
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))

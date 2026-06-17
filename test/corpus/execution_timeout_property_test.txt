@@ -14,7 +14,7 @@ report 50000 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal)))))
@@ -36,7 +36,7 @@ report 50001 "Long Running Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -60,7 +60,7 @@ report 50002 "Precise Timeout Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal)))))
@@ -81,7 +81,7 @@ report 50003 "Full Precision Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal)))))
@@ -119,7 +119,7 @@ report 50004 "Auto Posting Errors"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -174,7 +174,7 @@ report 50005 "Single Hour Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal)))))

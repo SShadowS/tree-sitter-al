@@ -29,7 +29,7 @@ page 9027 "Bookkeeper Role Center"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -44,7 +44,7 @@ page 9027 "Bookkeeper Role Center"
                 value: (string_literal))
               (action_declaration
                 name: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (option_member_list
@@ -93,7 +93,7 @@ page 50000 "Test Role Center"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -108,7 +108,7 @@ page 50000 "Test Role Center"
                 value: (string_literal))
               (action_declaration
                 name: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -154,7 +154,7 @@ page 50001 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -166,25 +166,25 @@ page 50001 "Test Page"
                 value: (string_literal))
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))))
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))))
               (separator_action
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))))
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal)))))))))))
@@ -216,7 +216,7 @@ page 50002 "Legacy Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -225,7 +225,7 @@ page 50002 "Legacy Page"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))

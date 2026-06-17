@@ -26,7 +26,7 @@ table 15 "G/L Entry Posting Preview"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -35,7 +35,7 @@ table 15 "G/L Entry Posting Preview"
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -47,7 +47,7 @@ table 15 "G/L Entry Posting Preview"
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -90,7 +90,7 @@ page 50100 "Date Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -103,21 +103,21 @@ page 50100 "Date Test Page"
               (page_field
                 name: (quoted_identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean))))
               (page_field
                 name: (quoted_identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean))))
               (page_field
                 name: (quoted_identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean)))))))))))
@@ -147,7 +147,7 @@ table 50200 "Custom Entry"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -156,7 +156,7 @@ table 50200 "Custom Entry"
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))

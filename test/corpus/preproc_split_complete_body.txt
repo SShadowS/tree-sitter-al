@@ -28,7 +28,7 @@ page 50000 MyPage {
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -38,7 +38,7 @@ page 50000 MyPage {
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (trigger_declaration
                 (trigger_keyword)
                 name: (identifier)
@@ -108,7 +108,7 @@ codeunit 50000 MyCodeunit {
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         modifier: (procedure_modifier
           (local_keyword))

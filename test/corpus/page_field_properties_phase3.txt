@@ -29,7 +29,7 @@ page 50005 "Test Field Properties Phase 3"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -47,7 +47,7 @@ page 50005 "Test Field Properties Phase 3"
                 source: (member_expression
                   object: (identifier)
                   member: (identifier))
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (decimal_range_value

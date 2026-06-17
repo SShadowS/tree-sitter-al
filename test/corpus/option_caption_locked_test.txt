@@ -22,7 +22,7 @@ table 9043 "SAS Parameters"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -31,7 +31,7 @@ table 9043 "SAS Parameters"
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))
@@ -72,7 +72,7 @@ table 50000 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -81,7 +81,7 @@ table 50000 TestTable
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (option_member_list
@@ -125,7 +125,7 @@ table 50001 TestTable2
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -134,7 +134,7 @@ table 50001 TestTable2
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (option_member_list
@@ -172,7 +172,7 @@ table 50002 TestTable3
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -181,7 +181,7 @@ table 50002 TestTable3
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (option_member_list
@@ -232,7 +232,7 @@ table 50003 TestTable4
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -241,7 +241,7 @@ table 50003 TestTable4
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (caption_value
@@ -253,7 +253,7 @@ table 50003 TestTable4
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (caption_value
@@ -265,7 +265,7 @@ table 50003 TestTable4
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (caption_value

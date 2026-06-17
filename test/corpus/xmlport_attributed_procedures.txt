@@ -36,7 +36,7 @@ xmlport 50100 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -138,7 +138,7 @@ xmlport 50101 "Test XMLPort Multiple Events"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (schema_section
         (schema_keyword)
         body: (schema_body
@@ -257,7 +257,7 @@ xmlport 50102 "Mixed Content XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))

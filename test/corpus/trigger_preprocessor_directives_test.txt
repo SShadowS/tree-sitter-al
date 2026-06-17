@@ -28,7 +28,7 @@ report 50100 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -103,7 +103,7 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -113,7 +113,7 @@ table 50100 "Test Table"
             type: (type_specification
               (code_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (trigger_declaration
                 (trigger_keyword)
                 name: (identifier)
@@ -183,7 +183,7 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)

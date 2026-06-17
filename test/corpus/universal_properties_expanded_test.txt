@@ -23,7 +23,7 @@ query 50100 "Customer Query"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -40,7 +40,7 @@ query 50100 "Customer Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -77,7 +77,7 @@ page 50101 "Setup Wizard"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -104,7 +104,7 @@ page 50101 "Setup Wizard"
                 source: (member_expression
                   object: (identifier)
                   member: (quoted_identifier))
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal)))))))))))
@@ -134,7 +134,7 @@ report 50102 "Sales Report"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -157,7 +157,7 @@ report 50102 "Sales Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -196,7 +196,7 @@ page 50103 "Setup Page"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -211,7 +211,7 @@ page 50103 "Setup Page"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -225,7 +225,7 @@ page 50103 "Setup Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))

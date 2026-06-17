@@ -33,7 +33,7 @@ page 50001 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -53,14 +53,14 @@ page 50001 "Test Page"
                   (page_field
                     name: (quoted_identifier)
                     source: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))))
                   (page_field
                     name: (quoted_identifier)
                     source: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier)))))))))))))

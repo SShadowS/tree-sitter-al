@@ -45,7 +45,7 @@ codeunit 50000 "Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -77,7 +77,7 @@ page 50000 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier)))))

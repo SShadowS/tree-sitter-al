@@ -20,7 +20,7 @@ page 50000 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -78,7 +78,7 @@ codeunit 50000 TestVariableNames
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (var_section
         (var_keyword)
         body: (var_body
@@ -151,7 +151,7 @@ table 50000 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))

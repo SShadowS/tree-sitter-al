@@ -36,7 +36,7 @@ page 116 "Sales Cr. Memo Subform"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -48,7 +48,7 @@ page 116 "Sales Cr. Memo Subform"
                 source: (member_expression
                   object: (identifier)
                   member: (quoted_identifier))
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (option_member_list
@@ -136,7 +136,7 @@ page 50000 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -146,7 +146,7 @@ page 50000 "Test Page"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (trigger_declaration
                     (trigger_keyword)
                     name: (identifier)
@@ -167,7 +167,7 @@ page 50000 "Test Page"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (trigger_declaration
                     (trigger_keyword)
                     name: (identifier)

@@ -41,7 +41,7 @@ page 50000 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -100,7 +100,7 @@ page 50000 "Test Page"
                     source: (member_expression
                       object: (identifier)
                       member: (quoted_identifier))
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (string_literal))

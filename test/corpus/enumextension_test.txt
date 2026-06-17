@@ -24,18 +24,18 @@ enumextension 50100 "Payment Method Extension" extends "Payment Method Code"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))
@@ -62,11 +62,11 @@ enumextension 50101 "Document Type Ext" extends "Sales Document Type"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))
@@ -107,11 +107,11 @@ enumextension 50102 MyEnumExt extends BaseEnum
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))
@@ -127,7 +127,7 @@ enumextension 50102 MyEnumExt extends BaseEnum
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))

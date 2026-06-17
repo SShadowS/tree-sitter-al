@@ -34,7 +34,7 @@ page 9800 "Users List"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -47,7 +47,7 @@ page 9800 "Users List"
           (view_definition
             (view_keyword)
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -115,7 +115,7 @@ page 123 "Test List"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -128,7 +128,7 @@ page 123 "Test List"
           (view_definition
             (view_keyword)
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -147,7 +147,7 @@ page 123 "Test List"
           (view_definition
             (view_keyword)
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -204,14 +204,14 @@ pageextension 50001 "Customer List Ext" extends "Customer List"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (views_section
         (views_keyword)
         body: (views_body
           (view_definition
             (view_keyword)
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -266,7 +266,7 @@ page 456 "Multilingual List"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -279,7 +279,7 @@ page 456 "Multilingual List"
           (view_definition
             (view_keyword)
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (ml_value_list
@@ -341,7 +341,7 @@ page 789 "Empty Views List"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))

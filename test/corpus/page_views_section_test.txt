@@ -33,7 +33,7 @@ pageextension 50000 "Test Views" extends "User List"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (views_section
         (views_keyword)
         body: (views_body
@@ -43,7 +43,7 @@ pageextension 50000 "Test Views" extends "User List"
               (view_definition
                 (view_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -60,7 +60,7 @@ pageextension 50000 "Test Views" extends "User List"
               (view_definition
                 (view_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))

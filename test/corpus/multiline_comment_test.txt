@@ -24,7 +24,7 @@ codeunit 50100 "Test Codeunit"
     object_id: (integer)
     object_name: (quoted_identifier)
     (multiline_comment)
-    body: (object_body
+    body: (declaration_body
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)
@@ -65,7 +65,7 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         (multiline_comment)
@@ -104,7 +104,7 @@ codeunit 50101 "Comment Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)

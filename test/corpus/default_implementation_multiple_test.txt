@@ -35,7 +35,7 @@ enum 6110 "E-Doc. Proc. Customizations" implements
       interface: (identifier)
       interface: (identifier)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -84,7 +84,7 @@ enum 200 TestEnum implements "ITest1", ITest2
       (implements_keyword)
       interface: (quoted_identifier)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (implementation_value_list
@@ -124,7 +124,7 @@ enum 300 "Case Test" implements Interface1, Interface2, Interface3
       interface: (identifier)
       interface: (identifier)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (implementation_value_list

@@ -24,14 +24,14 @@ report 50100 MyReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (rendering_section
         (rendering_keyword)
         body: (rendering_body
           (rendering_layout
             (layout_keyword)
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))
@@ -43,7 +43,7 @@ report 50100 MyReport
             (rendering_layout
               (layout_keyword)
               name: (identifier)
-              body: (object_body
+              body: (declaration_body
                 (property
                   name: (property_name)
                   value: (identifier))))

@@ -36,7 +36,7 @@ query 500 "Item By Lot No Filter"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -80,7 +80,7 @@ query 500 "Item By Lot No Filter"
                 (column_keyword)
                 name: (identifier)
                 field_name: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (link_value_list
@@ -134,7 +134,7 @@ query 501 "Complex Filters"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body
@@ -232,7 +232,7 @@ query 502 "Simple Equals Filter"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body

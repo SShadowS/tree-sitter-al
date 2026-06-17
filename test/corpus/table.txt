@@ -57,7 +57,7 @@ table 50100 "My Test Table"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (property
         (property_name)
         (string_literal))
@@ -73,7 +73,7 @@ table 50100 "My Test Table"
             (type_specification
               (code_type
                 (integer)))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (string_literal))
@@ -86,7 +86,7 @@ table 50100 "My Test Table"
             (type_specification
               (text_type
                 (integer)))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (string_literal))))
@@ -95,7 +95,7 @@ table 50100 "My Test Table"
             (identifier)
             (type_specification
               (basic_type))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (string_literal))
@@ -112,7 +112,7 @@ table 50100 "My Test Table"
             (identifier)
             (field_list
               (quoted_identifier))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (boolean))))))

@@ -24,7 +24,7 @@ table 50100 "Warehouse Request Test"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (keys_section
         (keys_keyword)
         body: (keys_body
@@ -35,7 +35,7 @@ table 50100 "Warehouse Request Test"
               (quoted_identifier)
               (quoted_identifier)
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
@@ -46,7 +46,7 @@ table 50100 "Warehouse Request Test"
               (quoted_identifier)
               (quoted_identifier)
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean)))))))))
@@ -90,7 +90,7 @@ table 50200 "Index Test"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (keys_section
         (keys_keyword)
         body: (keys_body
@@ -99,7 +99,7 @@ table 50200 "Index Test"
             name: (identifier)
             fields: (field_list
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))
@@ -114,7 +114,7 @@ table 50200 "Index Test"
             name: (identifier)
             fields: (field_list
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))
@@ -127,7 +127,7 @@ table 50200 "Index Test"
             fields: (field_list
               (quoted_identifier)
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (option_member_list
@@ -143,7 +143,7 @@ table 50200 "Index Test"
             name: (identifier)
             fields: (field_list
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (quoted_identifier))
@@ -190,7 +190,7 @@ table 50300 "Full Key Test"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (keys_section
         (keys_keyword)
         body: (keys_body
@@ -199,7 +199,7 @@ table 50300 "Full Key Test"
             name: (identifier)
             fields: (field_list
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))
@@ -216,7 +216,7 @@ table 50300 "Full Key Test"
               (quoted_identifier)
               (quoted_identifier)
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))
@@ -241,7 +241,7 @@ table 50300 "Full Key Test"
               (quoted_identifier)
               (quoted_identifier)
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))

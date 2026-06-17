@@ -24,7 +24,7 @@ page 50000 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -36,7 +36,7 @@ page 50000 TestPage
                 source: (member_expression
                   object: (identifier)
                   member: (quoted_identifier))
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -79,7 +79,7 @@ page 50001 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -100,7 +100,7 @@ page 50001 TestPage
                       object: (identifier)
                       member: (quoted_identifier))
                     (pragma)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (option_member_list
@@ -146,7 +146,7 @@ report 50002 TestReport
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -161,7 +161,7 @@ report 50002 TestReport
                 source: (member_expression
                   object: (identifier)
                   member: (identifier))
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal)))))))))))
@@ -192,7 +192,7 @@ table 50004 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -202,7 +202,7 @@ table 50004 TestTable
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))))
@@ -212,7 +212,7 @@ table 50004 TestTable
             type: (type_specification
               (code_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal)))))))))

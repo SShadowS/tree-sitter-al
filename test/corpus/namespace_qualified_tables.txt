@@ -20,7 +20,7 @@ query 123 "Test Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body
@@ -59,7 +59,7 @@ query 124 "Multi Level Namespace"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body
@@ -98,7 +98,7 @@ query 125 "Simple Table"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body
@@ -134,7 +134,7 @@ report 126 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body

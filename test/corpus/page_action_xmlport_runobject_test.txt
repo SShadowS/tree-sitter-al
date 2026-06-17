@@ -25,7 +25,7 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -34,7 +34,7 @@ page 50100 "Test Page"
             body: (action_body
               (action_declaration
                 name: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -88,7 +88,7 @@ page 50101 "Multi Action Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -97,7 +97,7 @@ page 50101 "Multi Action Page"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (object_reference_value
@@ -105,7 +105,7 @@ page 50101 "Multi Action Page"
                       (integer)))))
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (object_reference_value
@@ -113,7 +113,7 @@ page 50101 "Multi Action Page"
                       (quoted_identifier)))))
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (object_reference_value
@@ -121,7 +121,7 @@ page 50101 "Multi Action Page"
                       (integer)))))
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (object_reference_value
@@ -129,7 +129,7 @@ page 50101 "Multi Action Page"
                       (quoted_identifier)))))
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (object_reference_value

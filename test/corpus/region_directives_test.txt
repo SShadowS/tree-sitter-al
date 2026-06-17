@@ -22,7 +22,7 @@ codeunit 50100 "Test Codeunit"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -60,7 +60,7 @@ codeunit 50101 "Another Codeunit"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -103,7 +103,7 @@ codeunit 50102 "Nested Regions"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -160,7 +160,7 @@ table 50100 "Test Table"
     object_id: (integer)
     object_name: (quoted_identifier)
     (preproc_region)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -215,7 +215,7 @@ codeunit 50103 "Complex Region"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (var_section
         (var_keyword)
         body: (var_body
@@ -284,7 +284,7 @@ codeunit 50104 "Test Region After Var"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (var_section
         (var_keyword)
         body: (var_body

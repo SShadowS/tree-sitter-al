@@ -29,7 +29,7 @@ page 17 "G/L Account Card" {
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -58,7 +58,7 @@ page 17 "G/L Account Card" {
                     source: (member_expression
                       object: (identifier)
                       member: (quoted_identifier))
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (option_member_list
@@ -97,7 +97,7 @@ page 18 "Test List" {
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -122,7 +122,7 @@ page 18 "Test List" {
                     source: (member_expression
                       object: (identifier)
                       member: (identifier))
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier)))))))))))))
@@ -160,7 +160,7 @@ page 19 "Test Grid" {
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body

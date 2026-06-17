@@ -25,7 +25,7 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -39,7 +39,7 @@ table 50100 "Test Table"
             name: (identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (aggregate_formula
@@ -82,7 +82,7 @@ table 50101 "Simple Test"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -91,7 +91,7 @@ table 50101 "Simple Test"
             name: (identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (aggregate_formula

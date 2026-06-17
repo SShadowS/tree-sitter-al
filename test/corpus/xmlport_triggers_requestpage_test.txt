@@ -28,7 +28,7 @@ xmlport 50000 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (schema_section
         (schema_keyword)
         body: (schema_body
@@ -96,7 +96,7 @@ xmlport 50001 "Import Export"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -107,7 +107,7 @@ xmlport 50001 "Import Export"
             name: (identifier))))
       (requestpage_section
         (requestpage_keyword)
-        body: (object_body
+        body: (declaration_body
           (layout_section
             (layout_keyword))
           (actions_section

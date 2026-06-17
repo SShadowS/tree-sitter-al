@@ -20,7 +20,7 @@ function _object_with_id(keyword_name) {
     field('object_id', $.integer),
     field('object_name', $._identifier_or_quoted),
     '{',
-    optional(field('body', $.object_body)),
+    optional(field('body', $.declaration_body)),
     '}'
   );
 }
@@ -31,7 +31,7 @@ function _object_without_id(keyword_name) {
     $[keyword_name + '_keyword'],
     field('object_name', $._identifier_or_quoted),
     '{',
-    optional(field('body', $.object_body)),
+    optional(field('body', $.declaration_body)),
     '}'
   );
 }
@@ -45,7 +45,7 @@ function _extension_with_id(keyword_name) {
     $.extends_keyword,
     field('base_object', $._identifier_or_quoted),
     '{',
-    optional(field('body', $.object_body)),
+    optional(field('body', $.declaration_body)),
     '}'
   );
 }
@@ -58,7 +58,7 @@ function _extension_without_id(keyword_name) {
     $.extends_keyword,
     field('base_object', $._identifier_or_quoted),
     '{',
-    optional(field('body', $.object_body)),
+    optional(field('body', $.declaration_body)),
     '}'
   );
 }
@@ -281,7 +281,7 @@ module.exports = grammar({
       ))),
       $.preproc_endif,
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     )),
 
@@ -300,9 +300,9 @@ module.exports = grammar({
 
     table_declaration: _object_with_id('table'),
     // Issue #19: content-only body node under `body` field for textobject
-    // queries. Delimiters `{` `}` stay on the declaration; the object_body node
+    // queries. Delimiters `{` `}` stay on the declaration; the declaration_body node
     // spans exactly the content (no braces) so Helix `@class.inside` can capture
-    // a single node. object_body uses repeat1 (tree-sitter forbids a named rule
+    // a single node. declaration_body uses repeat1 (tree-sitter forbids a named rule
     // that matches the empty string), so it is wrapped in optional(): an empty
     // `{ }` emits NO body node. Consumers must tolerate the missing node.
     page_declaration: $ => seq(
@@ -310,10 +310,10 @@ module.exports = grammar({
       field('object_id', $.integer),
       field('object_name', $._identifier_or_quoted),
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
-    object_body: $ => repeat1($._body_element),
+    declaration_body: $ => repeat1($._body_element),
     report_declaration: _object_with_id('report'),
     query_declaration: _object_with_id('query'),
     xmlport_declaration: _object_with_id('xmlport'),
@@ -327,7 +327,7 @@ module.exports = grammar({
       field('object_name', $._identifier_or_quoted),
       optional($.implements_clause),
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -337,7 +337,7 @@ module.exports = grammar({
       field('object_name', $._identifier_or_quoted),
       optional($.implements_clause),
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -413,7 +413,7 @@ module.exports = grammar({
       $.customizes_keyword,
       field('target_page', $._identifier_or_quoted),
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1097,7 +1097,7 @@ module.exports = grammar({
       optional(seq(
         repeat($.preproc_pragma_only),
         '{',
-        optional(field('body', $.object_body)),
+        optional(field('body', $.declaration_body)),
         '}'
       ))
     ),
@@ -1133,7 +1133,7 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        optional(field('body', $.object_body)),
+        optional(field('body', $.declaration_body)),
         '}'
       ))
     ),
@@ -1189,7 +1189,7 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        optional(field('body', $.object_body)),
+        optional(field('body', $.declaration_body)),
         '}'
       ))
     ),
@@ -1392,7 +1392,7 @@ module.exports = grammar({
       field('value_name', choice($._identifier_or_quoted, $.string_literal)),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1594,7 +1594,7 @@ module.exports = grammar({
       ')',
       optional(seq(
         '{',
-        optional(field('body', $.object_body)),
+        optional(field('body', $.declaration_body)),
         '}'
       ))
     ),
@@ -1611,7 +1611,7 @@ module.exports = grammar({
       field('source', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1624,7 +1624,7 @@ module.exports = grammar({
       field('source', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1637,7 +1637,7 @@ module.exports = grammar({
       field('source', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1648,7 +1648,7 @@ module.exports = grammar({
       repeat(seq($.preproc_elif, $._field_header)),
       optional(seq($.preproc_else, $._field_header)),
       $.preproc_endif,
-      optional(seq('{', optional(field('body', $.object_body)), '}'))
+      optional(seq('{', optional(field('body', $.declaration_body)), '}'))
     )),
 
     // Table field split: #if field(id; name; type) #else field(id; name; type) #endif { }
@@ -1658,7 +1658,7 @@ module.exports = grammar({
       repeat(seq($.preproc_elif, $._table_field_header)),
       optional(seq($.preproc_else, $._table_field_header)),
       $.preproc_endif,
-      optional(seq('{', optional(field('body', $.object_body)), '}'))
+      optional(seq('{', optional(field('body', $.declaration_body)), '}'))
     )),
 
     // Page field header: field(Name; SourceExpression) — used in preproc_split_field
@@ -1690,7 +1690,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1762,7 +1762,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     )),
 
@@ -1883,7 +1883,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1892,7 +1892,7 @@ module.exports = grammar({
       kw('separator'),
       optional(seq('(', field('name', $._identifier_or_quoted), ')')),
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1905,7 +1905,7 @@ module.exports = grammar({
       field('action_name', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1916,7 +1916,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1927,7 +1927,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1938,7 +1938,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -1992,7 +1992,7 @@ module.exports = grammar({
       field('target', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     )),
 
@@ -2015,7 +2015,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -2079,7 +2079,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -2152,7 +2152,7 @@ module.exports = grammar({
       field('source', $._field_source),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -2184,7 +2184,7 @@ module.exports = grammar({
     requestpage_section: $ => seq(
       $.requestpage_keyword,
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -2214,7 +2214,7 @@ module.exports = grammar({
       field('name', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -2275,7 +2275,7 @@ module.exports = grammar({
       ),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -2287,7 +2287,7 @@ module.exports = grammar({
       field('field_name', $._identifier_or_quoted),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -2353,7 +2353,7 @@ module.exports = grammar({
       )),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 
@@ -2401,7 +2401,7 @@ module.exports = grammar({
       )),
       ')',
       '{',
-      optional(field('body', $.object_body)),
+      optional(field('body', $.declaration_body)),
       '}'
     ),
 

@@ -24,7 +24,7 @@ page 50100 "Job WIP Cockpit"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -35,7 +35,7 @@ page 50100 "Job WIP Cockpit"
                 (part_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (link_value_list
@@ -73,7 +73,7 @@ page 50101 "Job WIP G/L Entries"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -82,7 +82,7 @@ page 50101 "Job WIP G/L Entries"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (object_reference_value
@@ -124,7 +124,7 @@ page 50102 "Mixed Links"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -135,7 +135,7 @@ page 50102 "Mixed Links"
                 (part_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (link_value_list

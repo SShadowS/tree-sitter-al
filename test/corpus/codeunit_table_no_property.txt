@@ -18,7 +18,7 @@ codeunit 50000 "Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (quoted_identifier))
@@ -49,7 +49,7 @@ codeunit 50001 "Test Codeunit 2"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -80,7 +80,7 @@ codeunit 50002 "Test Codeunit 3"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (integer))
@@ -115,7 +115,7 @@ codeunit 50003 "Multi Property Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (quoted_identifier))

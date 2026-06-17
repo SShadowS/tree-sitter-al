@@ -28,7 +28,7 @@ tableextension 8052 "Item Ext" extends Item
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -38,7 +38,7 @@ tableextension 8052 "Item Ext" extends Item
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))

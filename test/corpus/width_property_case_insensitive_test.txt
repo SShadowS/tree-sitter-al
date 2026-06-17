@@ -30,7 +30,7 @@ page 6000 "Profile Import Diagnostics"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -49,7 +49,7 @@ page 6000 "Profile Import Diagnostics"
                     source: (member_expression
                       object: (identifier)
                       member: (identifier))
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))
@@ -93,7 +93,7 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -103,21 +103,21 @@ page 50100 "Test Page"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (integer))))
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (integer))))
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (integer)))))))))))
@@ -145,7 +145,7 @@ codeunit 50100 "Layout Manager"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (var_section
         (var_keyword)
         body: (var_body

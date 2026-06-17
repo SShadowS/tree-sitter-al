@@ -43,7 +43,7 @@ xmlport 1405 "Import Export Workflow"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (schema_section
         (schema_keyword)
         body: (schema_body
@@ -134,7 +134,7 @@ xmlport 50000 "Test LinkTable Cases"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (schema_section
         (schema_keyword)
         body: (schema_body

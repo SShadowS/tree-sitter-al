@@ -38,7 +38,7 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -52,26 +52,26 @@ page 50100 "Test Page"
                     (identifier)))
                 (action_declaration
                   name: (identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (string_literal))))
                 (separator_action
                   name: (identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (string_literal))))
                 (action_declaration
                   name: (identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (string_literal))))
                 (preproc_else)
                 (action_declaration
                   name: (identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (string_literal))))
@@ -138,7 +138,7 @@ page 50101 "Sales Manager Role Center"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -165,7 +165,7 @@ page 50101 "Sales Manager Role Center"
                     (identifier)))
                 (action_declaration
                   name: (quoted_identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (identifier))
@@ -183,7 +183,7 @@ page 50101 "Sales Manager Role Center"
                       value: (string_literal))))
                 (separator_action
                   name: (identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (identifier))
@@ -195,7 +195,7 @@ page 50101 "Sales Manager Role Center"
                       value: (string_literal))))
                 (action_declaration
                   name: (quoted_identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (identifier))
@@ -214,7 +214,7 @@ page 50101 "Sales Manager Role Center"
                 (preproc_else)
                 (action_declaration
                   name: (quoted_identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (identifier))
@@ -263,7 +263,7 @@ page 50102 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -272,7 +272,7 @@ page 50102 "Test Page"
             body: (action_body
               (separator_action
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -281,7 +281,7 @@ page 50102 "Test Page"
                     value: (boolean))))
               (separator_action
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -321,7 +321,7 @@ page 50103 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -334,14 +334,14 @@ page 50103 "Test Page"
                   condition: (identifier))
                 (action_declaration
                   name: (identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (string_literal))))
                 (preproc_else)
                 (separator_action
                   name: (identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (string_literal))))

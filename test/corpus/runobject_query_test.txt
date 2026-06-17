@@ -29,7 +29,7 @@ pageextension 5890 ServiceLedgerEntries extends "Service Ledger Entries"
     object_name: (identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -38,7 +38,7 @@ pageextension 5890 ServiceLedgerEntries extends "Service Ledger Entries"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (option_member_list
@@ -97,7 +97,7 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -106,7 +106,7 @@ page 50100 "Test Page"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -117,7 +117,7 @@ page 50100 "Test Page"
                       (integer)))))
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -128,7 +128,7 @@ page 50100 "Test Page"
                       (identifier)))))
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -185,7 +185,7 @@ codeunit 50100 "RunObject Examples"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)

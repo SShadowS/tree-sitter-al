@@ -33,7 +33,7 @@ page 36962 "Purchasing Scorecard"
       (page_keyword)
       (integer)
       (quoted_identifier)
-      (object_body
+      (declaration_body
         (property
           (property_name)
           (string_literal))
@@ -86,7 +86,7 @@ codeunit 50100 "Legacy Implementation"
       (codeunit_keyword)
       (integer)
       (quoted_identifier)
-      (object_body
+      (declaration_body
         (procedure
           (procedure_keyword)
           (identifier)
@@ -96,7 +96,7 @@ codeunit 50100 "Legacy Implementation"
       (codeunit_keyword)
       (integer)
       (quoted_identifier)
-      (object_body
+      (declaration_body
         (procedure
           (procedure_keyword)
           (identifier)
@@ -139,7 +139,7 @@ table 50000 MyTable
       (table_keyword)
       (integer)
       (identifier)
-      (object_body
+      (declaration_body
         (fields_section
           (fields_keyword)
           (fields_body
@@ -149,7 +149,7 @@ table 50000 MyTable
               (type_specification
                 (code_type
                   (integer)))
-              (object_body
+              (declaration_body
                 (property
                   (property_name)
                   (string_literal))))))))

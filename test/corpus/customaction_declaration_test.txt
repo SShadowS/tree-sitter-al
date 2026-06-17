@@ -33,7 +33,7 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -52,7 +52,7 @@ page 50100 "Test Page"
                     value: (identifier))
                   (customaction_declaration
                     name: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (option_member_list
@@ -103,7 +103,7 @@ page 50101 "Flow Test"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -112,7 +112,7 @@ page 50101 "Flow Test"
             body: (action_body
               (customaction_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))

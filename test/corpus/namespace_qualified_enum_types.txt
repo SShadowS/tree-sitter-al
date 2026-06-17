@@ -20,7 +20,7 @@ table 123 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -34,7 +34,7 @@ table 123 TestTable
                 reference: (identifier)
                 reference: (identifier)
                 reference: (quoted_identifier)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal)))))))))
@@ -66,7 +66,7 @@ table 124 MultiEnumTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -122,7 +122,7 @@ table 125 UnquotedEnum
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -159,7 +159,7 @@ codeunit 126 TestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (var_section
         (var_keyword)
         body: (var_body
@@ -206,7 +206,7 @@ codeunit 127 ParamTest
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)

@@ -27,7 +27,7 @@ page 60001 TestIndentationPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -78,7 +78,7 @@ page 60002 TestQuotedIndentationPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -98,7 +98,7 @@ page 60002 TestQuotedIndentationPage
                   (page_field
                     name: (quoted_identifier)
                     source: (quoted_identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier)))))))))))))
@@ -146,7 +146,7 @@ page 60003 "GL Account Selections"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -172,21 +172,21 @@ page 60003 "GL Account Selections"
                   (page_field
                     name: (identifier)
                     source: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))))
                   (page_field
                     name: (quoted_identifier)
                     source: (quoted_identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))))
                   (page_field
                     name: (identifier)
                     source: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))
@@ -236,7 +236,7 @@ page 60004 ComplexHierarchyPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -265,7 +265,7 @@ page 60004 ComplexHierarchyPage
                   (page_field
                     name: (identifier)
                     source: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))
@@ -275,7 +275,7 @@ page 60004 ComplexHierarchyPage
                   (page_field
                     name: (quoted_identifier)
                     source: (quoted_identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))

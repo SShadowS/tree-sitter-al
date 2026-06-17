@@ -24,7 +24,7 @@ enum 50000 "Test Enum"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -34,14 +34,14 @@ enum 50000 "Test Enum"
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))
@@ -67,14 +67,14 @@ enum 50001 "Test Enum False"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))
@@ -106,7 +106,7 @@ enum 50002 ComplexEnum
     (enum_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -119,14 +119,14 @@ enum 50002 ComplexEnum
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))
@@ -152,14 +152,14 @@ enum 50003 "Minimal Enum"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))
@@ -186,7 +186,7 @@ enum 50004 "Case Test"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -196,7 +196,7 @@ enum 50004 "Case Test"
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))

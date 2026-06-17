@@ -35,7 +35,7 @@ report 50000 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -50,7 +50,7 @@ report 50000 "Test Report"
                 source: (identifier))))))
       (requestpage_section
         (requestpage_keyword)
-        body: (object_body
+        body: (declaration_body
           (layout_section
             (layout_keyword)
             body: (layout_body
@@ -60,7 +60,7 @@ report 50000 "Test Report"
                   (page_field
                     name: (identifier)
                     source: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (string_literal))
@@ -97,7 +97,7 @@ page 50000 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -107,14 +107,14 @@ page 50000 "Test Page"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean))))
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean)))))))))))

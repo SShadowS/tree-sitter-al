@@ -28,7 +28,7 @@ table 50100 "SQL Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -37,7 +37,7 @@ table 50100 "SQL Test Table"
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))
@@ -47,7 +47,7 @@ table 50100 "SQL Test Table"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))
@@ -56,7 +56,7 @@ table 50100 "SQL Test Table"
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier)))))))))
@@ -83,7 +83,7 @@ table 50101 "Timestamp Test"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -92,7 +92,7 @@ table 50101 "Timestamp Test"
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean)))))))))
@@ -120,7 +120,7 @@ table 50102 "Test Table Relation"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -130,7 +130,7 @@ table 50102 "Test Table Relation"
             type: (type_specification
               (code_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))

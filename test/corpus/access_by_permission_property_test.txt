@@ -22,13 +22,13 @@ page 123 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
           (action_declaration
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))
@@ -66,13 +66,13 @@ page 124 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
           (action_declaration
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))
@@ -113,7 +113,7 @@ page 125 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -123,7 +123,7 @@ page 125 "Test Page"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -175,13 +175,13 @@ page 126 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
           (action_declaration
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (tabledata_permission_list
@@ -190,7 +190,7 @@ page 126 "Test Page"
                     permission: (permission_type))))))
           (action_declaration
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (tabledata_permission_list
@@ -199,7 +199,7 @@ page 126 "Test Page"
                     permission: (permission_type))))))
           (action_declaration
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (tabledata_permission_list
@@ -208,7 +208,7 @@ page 126 "Test Page"
                     permission: (permission_type))))))
           (action_declaration
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (tabledata_permission_list
@@ -217,7 +217,7 @@ page 126 "Test Page"
                     permission: (permission_type))))))
           (action_declaration
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (tabledata_permission_list

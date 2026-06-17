@@ -31,7 +31,7 @@ page 50000 "Label MultiLine Test"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -40,7 +40,7 @@ page 50000 "Label MultiLine Test"
             body: (layout_body
               (label_section
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -52,7 +52,7 @@ page 50000 "Label MultiLine Test"
                     value: (boolean))))
               (label_section
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))

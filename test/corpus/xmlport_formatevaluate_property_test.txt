@@ -14,7 +14,7 @@ xmlport 12 "IC Outbox Imp/Exp"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier)))))
@@ -35,7 +35,7 @@ xmlport 50100 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier)))))
@@ -56,7 +56,7 @@ xmlport 50101 "Another Test"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (property_expression

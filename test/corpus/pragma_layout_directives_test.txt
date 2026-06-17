@@ -39,7 +39,7 @@ page 50100 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -59,7 +59,7 @@ page 50100 TestPage
                   (page_field
                     name: (identifier)
                     source: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))))
@@ -67,7 +67,7 @@ page 50100 TestPage
                   (page_field
                     name: (identifier)
                     source: (quoted_identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))))
@@ -75,7 +75,7 @@ page 50100 TestPage
                   (page_field
                     name: (identifier)
                     source: (quoted_identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier)))))))))))))

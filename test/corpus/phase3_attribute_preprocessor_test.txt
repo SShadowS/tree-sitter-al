@@ -19,7 +19,7 @@ codeunit 50100 TestRustStyleAttribute
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (attribute_item
         attribute: (attribute_content
           name: (identifier)
@@ -66,7 +66,7 @@ tableextension 50100 MyTableExt extends Customer
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (attribute_item
         attribute: (attribute_content
           name: (identifier)
@@ -107,7 +107,7 @@ codeunit 50100 TestMultipleAttrs
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (attribute_item
         attribute: (attribute_content
           name: (identifier)

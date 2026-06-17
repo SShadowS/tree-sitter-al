@@ -29,7 +29,7 @@ tableextension 50002 "Multiple Attributes Extension" extends Customer
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (attribute_item
         attribute: (attribute_content
           name: (identifier)

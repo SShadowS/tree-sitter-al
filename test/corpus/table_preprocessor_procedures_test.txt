@@ -33,7 +33,7 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -43,7 +43,7 @@ table 50100 "Test Table"
             type: (type_specification
               (code_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))))))
@@ -122,7 +122,7 @@ table 50101 "VAT Amount Line"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (preproc_conditional
         (preproc_if
           (preproc_open)
@@ -248,7 +248,7 @@ table 50102 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (preproc_conditional
         (preproc_if
           (preproc_open)
@@ -322,7 +322,7 @@ table 50103 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -332,7 +332,7 @@ table 50103 "Test Table"
             type: (type_specification
               (code_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))))))
@@ -395,7 +395,7 @@ table 50104 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (preproc_conditional
         (preproc_if
           (preproc_open)

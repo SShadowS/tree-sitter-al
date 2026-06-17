@@ -15,7 +15,7 @@ xmlport 149001 "BCPT Import/Export"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -39,7 +39,7 @@ xmlport 149002 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean)))))
@@ -62,7 +62,7 @@ xmlport 149003 "Full XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))

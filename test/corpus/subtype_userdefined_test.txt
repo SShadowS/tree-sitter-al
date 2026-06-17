@@ -22,7 +22,7 @@ table 12345 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -31,7 +31,7 @@ table 12345 TestTable
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -62,7 +62,7 @@ codeunit 23456 TestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -103,7 +103,7 @@ table 34567 CaseTestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -112,7 +112,7 @@ table 34567 CaseTestTable
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))
@@ -121,7 +121,7 @@ table 34567 CaseTestTable
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))
@@ -130,7 +130,7 @@ table 34567 CaseTestTable
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier)))))))))
@@ -160,7 +160,7 @@ table 45678 ComprehensiveTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -169,7 +169,7 @@ table 45678 ComprehensiveTable
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -210,7 +210,7 @@ table 67890 BlobTable
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))))
@@ -218,7 +218,7 @@ table 67890 BlobTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -227,7 +227,7 @@ table 67890 BlobTable
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier)))))))))

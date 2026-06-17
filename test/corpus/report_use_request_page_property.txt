@@ -26,7 +26,7 @@ report 50000 "Test Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -76,7 +76,7 @@ report 50001 "No Request Page Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -122,7 +122,7 @@ report 50002 "Simple Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -184,7 +184,7 @@ report 50003 "Complex Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -221,7 +221,7 @@ report 50003 "Complex Report"
                 source: (identifier))))))
       (requestpage_section
         (requestpage_keyword)
-        body: (object_body
+        body: (declaration_body
           (layout_section
             (layout_keyword))))
       (labels_section
@@ -254,7 +254,7 @@ report 50004 "Case Test"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))

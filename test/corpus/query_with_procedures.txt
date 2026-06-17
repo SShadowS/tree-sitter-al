@@ -33,7 +33,7 @@ query 100 "Test Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -173,7 +173,7 @@ query 7308 CalcOutstandQtyOnWhseActLine
     (query_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -295,7 +295,7 @@ query 7308 CalcOutstandQtyOnWhseActLine
                     (column_keyword)
                     name: (identifier)
                     field_name: (quoted_identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))))))))))

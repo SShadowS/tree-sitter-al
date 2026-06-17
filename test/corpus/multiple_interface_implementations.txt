@@ -19,7 +19,7 @@ codeunit 123 "Multi Interface Provider" implements IInterface1, IInterface2, IIn
       interface: (identifier)
       interface: (identifier)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (option_member_list
@@ -45,7 +45,7 @@ codeunit 124 "Single Interface Provider" implements ISingleInterface
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier)))))
@@ -71,7 +71,7 @@ codeunit 125 "Quoted Interface Provider" implements "IQuoted Interface", IRegula
       interface: (quoted_identifier)
       interface: (identifier)
       interface: (quoted_identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (option_member_list
@@ -125,7 +125,7 @@ codeunit 127 "Full Provider" implements IInterface1, IInterface2
       (implements_keyword)
       interface: (identifier)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (option_member_list

@@ -15,7 +15,7 @@ page 50000 TestPage
     (page_keyword)
     (integer)
     (identifier)
-    (object_body
+    (declaration_body
       (var_section
         (var_keyword)
         (var_body
@@ -41,7 +41,7 @@ page 50001 TestPage
     (page_keyword)
     (integer)
     (identifier)
-    (object_body
+    (declaration_body
       (var_section
         (var_keyword)
         (var_body
@@ -68,7 +68,7 @@ page 50002 TestPage
     (page_keyword)
     (integer)
     (identifier)
-    (object_body
+    (declaration_body
       (var_section
         (var_keyword)
         (var_body
@@ -114,7 +114,7 @@ page 50003 TestPage
     (page_keyword)
     (integer)
     (identifier)
-    (object_body
+    (declaration_body
       (layout_section
         (layout_keyword)
         (layout_body
@@ -130,14 +130,14 @@ page 50003 TestPage
                     (member_expression
                       (identifier)
                       (identifier))
-                    (object_body
+                    (declaration_body
                       (property
                         (property_name)
                         (identifier))))
                   (page_field
                     (identifier)
                     (identifier)
-                    (object_body
+                    (declaration_body
                       (property
                         (property_name)
                         (string_literal))
@@ -174,7 +174,7 @@ query 50000 TestQuery
     (query_keyword)
     (integer)
     (identifier)
-    (object_body
+    (declaration_body
       (elements_section
         (elements_keyword)
         (elements_body
@@ -244,7 +244,7 @@ page 1518 "My Notifications"
     (page_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (property
         (property_name)
         (identifier))
@@ -263,7 +263,7 @@ page 1518 "My Notifications"
                     (member_expression
                       (identifier)
                       (identifier))
-                    (object_body
+                    (declaration_body
                       (trigger_declaration
                         (trigger_keyword)
                         (identifier)
@@ -301,7 +301,7 @@ page 1518 "My Notifications"
                   (page_field
                     (identifier)
                     (identifier)
-                    (object_body
+                    (declaration_body
                       (property
                         (property_name)
                         (string_literal))

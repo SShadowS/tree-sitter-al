@@ -16,7 +16,7 @@ page 123 "Code Coverage"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -50,7 +50,7 @@ codeunit 50100 "XMLport Example"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -113,7 +113,7 @@ page 50200 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)

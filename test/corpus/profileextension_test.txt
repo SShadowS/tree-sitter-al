@@ -15,7 +15,7 @@ profileextension BlankExt extends BLANK
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean)))))
@@ -45,7 +45,7 @@ profileextension BlankExt extends BLANK
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean)))))
@@ -70,7 +70,7 @@ profileextension "My Profile Extension" extends "Business Manager"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -103,7 +103,7 @@ profileextension MyExt extends "Accountant"
     object_name: (identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (integer))

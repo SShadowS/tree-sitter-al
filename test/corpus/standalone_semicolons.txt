@@ -16,7 +16,7 @@ table 50000 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -49,7 +49,7 @@ table 50001 "Test Table 2"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -59,7 +59,7 @@ table 50001 "Test Table 2"
             type: (type_specification
               (code_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -88,7 +88,7 @@ table 50002 "Test Table 3"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (keys_section
         (keys_keyword)
         body: (keys_body
@@ -97,7 +97,7 @@ table 50002 "Test Table 3"
             name: (identifier)
             fields: (field_list
               (identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))

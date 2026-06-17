@@ -34,7 +34,7 @@ query 1470 "Top 10 Customer Sales"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -69,7 +69,7 @@ query 1470 "Top 10 Customer Sales"
                 (column_keyword)
                 name: (identifier)
                 field_name: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier)))))))))))
@@ -101,7 +101,7 @@ query 50100 "Top Records Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (integer))
@@ -149,7 +149,7 @@ query 50101 "Case Test Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (integer))

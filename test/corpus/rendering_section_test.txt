@@ -46,7 +46,7 @@ report 50100 "Customer List Excel"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -70,7 +70,7 @@ report 50100 "Customer List Excel"
                 source: (member_expression
                   object: (identifier)
                   member: (quoted_identifier))
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean))))))))
@@ -80,7 +80,7 @@ report 50100 "Customer List Excel"
           (rendering_layout
             (layout_keyword)
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))
@@ -96,7 +96,7 @@ report 50100 "Customer List Excel"
           (rendering_layout
             (layout_keyword)
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))
@@ -125,6 +125,6 @@ report 50101 "Simple Report"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (rendering_section
         (rendering_keyword)))))

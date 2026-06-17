@@ -37,7 +37,7 @@ enum 50100 "Payment Transaction Type"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -47,14 +47,14 @@ enum 50100 "Payment Transaction Type"
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
@@ -66,7 +66,7 @@ enum 50100 "Payment Transaction Type"
         (enum_value_declaration
           value_id: (integer)
           value_name: (identifier)
-          body: (object_body
+          body: (declaration_body
             (property
               name: (property_name)
               value: (string_literal))
@@ -84,7 +84,7 @@ enum 50100 "Payment Transaction Type"
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))
@@ -124,11 +124,11 @@ enum 50101 "Test Enum"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
@@ -139,7 +139,7 @@ enum 50101 "Test Enum"
         (enum_value_declaration
           value_id: (integer)
           value_name: (identifier)
-          body: (object_body
+          body: (declaration_body
             (property
               name: (property_name)
               value: (string_literal))))
@@ -147,7 +147,7 @@ enum 50101 "Test Enum"
         (enum_value_declaration
           value_id: (integer)
           value_name: (identifier)
-          body: (object_body
+          body: (declaration_body
             (property
               name: (property_name)
               value: (string_literal))
@@ -159,7 +159,7 @@ enum 50101 "Test Enum"
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))

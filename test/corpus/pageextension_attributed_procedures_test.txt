@@ -24,7 +24,7 @@ pageextension 6085592 "CDC General Ledger Entries" extends "General Ledger Entri
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         modifier: (procedure_modifier
           (local_keyword))
@@ -115,7 +115,7 @@ pageextension 54321 "Test Page Extension" extends "Test Base Page"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (attribute_item
         attribute: (attribute_content
           name: (identifier)

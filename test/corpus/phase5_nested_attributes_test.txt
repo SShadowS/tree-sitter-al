@@ -25,7 +25,7 @@ table 50100 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -71,7 +71,7 @@ codeunit 50101 TestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -118,7 +118,7 @@ enum 50100 MyEnum
     (enum_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (attribute_item
         attribute: (attribute_content
           name: (identifier)
@@ -159,7 +159,7 @@ enum 50101 StatusEnum
     (enum_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (attribute_item
         attribute: (attribute_content
           name: (identifier)
@@ -211,7 +211,7 @@ tableextension 50100 MyTableExt extends Customer
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body

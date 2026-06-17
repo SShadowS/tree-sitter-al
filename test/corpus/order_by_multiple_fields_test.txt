@@ -24,7 +24,7 @@ query 50100 "Test Multiple Fields OrderBy"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -72,7 +72,7 @@ query 50101 "Mixed Fields OrderBy"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (order_by_list
@@ -112,7 +112,7 @@ query 50102 "Quoted Fields OrderBy"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (order_by_list

@@ -24,7 +24,7 @@ page 50000 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -107,7 +107,7 @@ page 30114 "Shpfy Order Attributes"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -132,7 +132,7 @@ page 30114 "Shpfy Order Attributes"
                     source: (member_expression
                       object: (identifier)
                       member: (quoted_identifier))
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))
@@ -149,7 +149,7 @@ page 30114 "Shpfy Order Attributes"
                       source: (member_expression
                         object: (identifier)
                         member: (identifier))
-                      body: (object_body
+                      body: (declaration_body
                         (property
                           name: (property_name)
                           value: (identifier))
@@ -275,7 +275,7 @@ page 50001 "Complex Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -301,7 +301,7 @@ page 50001 "Complex Page"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))))))))

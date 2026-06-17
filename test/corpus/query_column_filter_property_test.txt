@@ -23,7 +23,7 @@ query 50100 "Test Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body
@@ -36,7 +36,7 @@ query 50100 "Test Query"
                 (filter_keyword)
                 name: (identifier)
                 field_name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (link_value_list
@@ -82,7 +82,7 @@ query 50101 "Column Filter Test"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body
@@ -95,7 +95,7 @@ query 50101 "Column Filter Test"
                 (column_keyword)
                 name: (identifier)
                 field_name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (link_value_list
@@ -107,7 +107,7 @@ query 50101 "Column Filter Test"
               (query_column
                 (column_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (link_value_list
@@ -123,7 +123,7 @@ query 50101 "Column Filter Test"
                 (column_keyword)
                 name: (identifier)
                 field_name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (link_value_list
@@ -163,7 +163,7 @@ query 50102 "Case Test"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body
@@ -175,7 +175,7 @@ query 50102 "Case Test"
               (query_column
                 (column_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (link_value_list
@@ -187,7 +187,7 @@ query 50102 "Case Test"
               (query_column
                 (column_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (link_value_list
@@ -232,7 +232,7 @@ query 50103 "Const Filter Test"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body
@@ -244,7 +244,7 @@ query 50103 "Const Filter Test"
               (query_column
                 (column_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (property_expression
@@ -258,7 +258,7 @@ query 50103 "Const Filter Test"
               (query_column
                 (column_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (property_expression
@@ -272,7 +272,7 @@ query 50103 "Const Filter Test"
               (query_column
                 (column_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (link_value_list

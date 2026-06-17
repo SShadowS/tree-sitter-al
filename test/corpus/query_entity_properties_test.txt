@@ -48,7 +48,7 @@ query 50100 "Customer Sales API"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -85,7 +85,7 @@ query 50100 "Customer Sales API"
                 (column_keyword)
                 name: (identifier)
                 field_name: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))))
@@ -93,7 +93,7 @@ query 50100 "Customer Sales API"
                 (column_keyword)
                 name: (identifier)
                 field_name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))))
@@ -115,7 +115,7 @@ query 50100 "Customer Sales API"
                     (column_keyword)
                     name: (identifier)
                     field_name: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (string_literal))

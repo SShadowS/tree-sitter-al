@@ -27,14 +27,14 @@ enum 50200 SendTo implements IAddressProvider
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (property_expression
@@ -45,7 +45,7 @@ enum 50200 SendTo implements IAddressProvider
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (property_expression
@@ -81,11 +81,11 @@ enum 50201 "Communication Method" implements "IMessageProvider"
     (implements_clause
       (implements_keyword)
       interface: (quoted_identifier))
-    body: (object_body
+    body: (declaration_body
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (property_expression
@@ -96,7 +96,7 @@ enum 50201 "Communication Method" implements "IMessageProvider"
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (property_expression
@@ -132,11 +132,11 @@ enum 50202 PaymentMethod implements IPaymentProcessor
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (property_expression
@@ -147,7 +147,7 @@ enum 50202 PaymentMethod implements IPaymentProcessor
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (property_expression
@@ -187,14 +187,14 @@ enum 50203 DocumentType implements IDocumentHandler
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))
@@ -208,7 +208,7 @@ enum 50203 DocumentType implements IDocumentHandler
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (property_expression

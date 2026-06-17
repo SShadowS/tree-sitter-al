@@ -56,7 +56,7 @@ page 30 "Item Card"
     object_id: (integer)
     object_name: (quoted_identifier)
     (pragma)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -89,7 +89,7 @@ page 30 "Item Card"
                 source: (member_expression
                   object: (identifier)
                   member: (quoted_identifier))
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean))
@@ -126,7 +126,7 @@ page 30 "Item Card"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))

@@ -24,7 +24,7 @@ table 50000 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -33,7 +33,7 @@ table 50000 "Test Table"
             name: (identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))
@@ -42,7 +42,7 @@ table 50000 "Test Table"
             name: (identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier)))))))))
@@ -85,7 +85,7 @@ table 50001 "Test Table 2"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -95,7 +95,7 @@ table 50001 "Test Table 2"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))
@@ -105,7 +105,7 @@ table 50001 "Test Table 2"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))
@@ -115,7 +115,7 @@ table 50001 "Test Table 2"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))
@@ -124,7 +124,7 @@ table 50001 "Test Table 2"
             name: (identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))
@@ -134,7 +134,7 @@ table 50001 "Test Table 2"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier)))))))))

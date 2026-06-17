@@ -33,7 +33,7 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -44,7 +44,7 @@ page 50100 "Test Page"
                 (usercontrol_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (preproc_conditional
                     (preproc_if
                       (preproc_open)

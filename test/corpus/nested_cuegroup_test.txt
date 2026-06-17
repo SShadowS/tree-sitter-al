@@ -37,7 +37,7 @@ page 6127 "E-Document Activities"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -67,7 +67,7 @@ page 6127 "E-Document Activities"
                       (page_field
                         name: (identifier)
                         source: (identifier)
-                        body: (object_body
+                        body: (declaration_body
                           (property
                             name: (property_name)
                             value: (option_member_list
@@ -137,7 +137,7 @@ page 50100 "Dashboard"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -164,7 +164,7 @@ page 50100 "Dashboard"
                       (page_field
                         name: (identifier)
                         source: (identifier)
-                        body: (object_body
+                        body: (declaration_body
                           (property
                             name: (property_name)
                             value: (identifier))
@@ -174,7 +174,7 @@ page 50100 "Dashboard"
                       (page_field
                         name: (identifier)
                         source: (identifier)
-                        body: (object_body
+                        body: (declaration_body
                           (property
                             name: (property_name)
                             value: (identifier))
@@ -191,7 +191,7 @@ page 50100 "Dashboard"
                       (page_field
                         name: (identifier)
                         source: (identifier)
-                        body: (object_body
+                        body: (declaration_body
                           (property
                             name: (property_name)
                             value: (identifier))
@@ -246,7 +246,7 @@ page 50101 "Activity Cues"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -281,7 +281,7 @@ page 50101 "Activity Cues"
                         source: (member_expression
                           object: (identifier)
                           member: (quoted_identifier))
-                        body: (object_body
+                        body: (declaration_body
                           (property
                             name: (property_name)
                             value: (option_member_list
@@ -300,7 +300,7 @@ page 50101 "Activity Cues"
                     source: (member_expression
                       object: (identifier)
                       member: (quoted_identifier))
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (option_member_list

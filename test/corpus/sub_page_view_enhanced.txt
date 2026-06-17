@@ -26,7 +26,7 @@ pageextension 123 TestExt extends TestPage
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -37,7 +37,7 @@ pageextension 123 TestExt extends TestPage
                 (part_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (sorting_value
@@ -81,7 +81,7 @@ pageextension 456 SimpleExt extends SimplePage
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -92,7 +92,7 @@ pageextension 456 SimpleExt extends SimplePage
                 (part_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (sorting_value
@@ -126,7 +126,7 @@ pageextension 789 WhereExt extends WherePage
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -137,7 +137,7 @@ pageextension 789 WhereExt extends WherePage
                 (part_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (where_clause
@@ -178,7 +178,7 @@ pageextension 101 StringExt extends StringPage
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -189,7 +189,7 @@ pageextension 101 StringExt extends StringPage
                 (part_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal)))))))))))
@@ -221,7 +221,7 @@ pageextension 202 IdentExt extends IdentPage
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -232,7 +232,7 @@ pageextension 202 IdentExt extends IdentPage
                 (part_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier)))))))))))

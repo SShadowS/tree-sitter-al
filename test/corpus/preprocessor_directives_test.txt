@@ -29,7 +29,7 @@ pageextension 123 "Test Extension" extends "Base Page"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -39,14 +39,14 @@ pageextension 123 "Test Extension" extends "Base Page"
               condition: (identifier))
             (modify_modification
               target: (quoted_identifier)
-              body: (object_body
+              body: (declaration_body
                 (property
                   name: (property_name)
                   value: (boolean))))
             (preproc_else)
             (modify_modification
               target: (quoted_identifier)
-              body: (object_body
+              body: (declaration_body
                 (property
                   name: (property_name)
                   value: (boolean))))
@@ -78,7 +78,7 @@ codeunit 123 "Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -132,7 +132,7 @@ codeunit 124 "Test Codeunit Mixed"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -189,7 +189,7 @@ codeunit 125 "Test Complex Preprocessor"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)

@@ -44,7 +44,7 @@ page 12345 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -55,7 +55,7 @@ page 12345 "Test Page"
                 (part_keyword)
                 name: (quoted_identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -77,7 +77,7 @@ page 12345 "Test Page"
                 (part_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -95,7 +95,7 @@ page 12345 "Test Page"
                 (part_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -117,7 +117,7 @@ page 12345 "Test Page"
                 (part_keyword)
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))

@@ -41,7 +41,7 @@ table 50100 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -81,7 +81,7 @@ table 50100 TestTable
             name: (identifier)
             fields: (field_list
               (identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
@@ -93,7 +93,7 @@ table 50100 TestTable
               (quoted_identifier)
               (quoted_identifier)
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))
@@ -160,7 +160,7 @@ table 50101 AnotherTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -182,7 +182,7 @@ table 50101 AnotherTable
               name: (identifier)
               fields: (field_list
                 (quoted_identifier))
-              body: (object_body
+              body: (declaration_body
                 (property
                   name: (property_name)
                   value: (boolean))
@@ -212,7 +212,7 @@ table 50101 AnotherTable
             name: (identifier)
             fields: (field_list
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean)))))))))

@@ -22,7 +22,7 @@ enum 204 "Alt. Cust. VAT Reg. Consist." implements "Alt. Cust. VAT Reg. Consist.
     (implements_clause
       (implements_keyword)
       interface: (quoted_identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -62,7 +62,7 @@ enum 100 "Test Enum" implements "ITestInterface"
     (implements_clause
       (implements_keyword)
       interface: (quoted_identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (property_expression
@@ -108,7 +108,7 @@ enum 150 "Simple Enum" implements SimpleInterface
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -162,7 +162,7 @@ enum 200 "Complex Enum" implements "IComplexInterface"
     (implements_clause
       (implements_keyword)
       interface: (quoted_identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -182,14 +182,14 @@ enum 200 "Complex Enum" implements "IComplexInterface"
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))

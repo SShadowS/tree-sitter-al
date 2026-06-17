@@ -26,7 +26,7 @@ reportextension 123 "My Report Extension" extends "Standard Sales Quote"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -79,7 +79,7 @@ reportextension 124 "Another Extension" extends "Sales Invoice"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -123,7 +123,7 @@ reportextension 125 "Legacy Extension" extends "Customer List"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -184,13 +184,13 @@ reportextension 126 "Complex Extension" extends "Sales Report"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
           (modify_modification
             target: (identifier)
-            body: (object_body
+            body: (declaration_body
               (trigger_declaration
                 (trigger_keyword)
                 name: (identifier)

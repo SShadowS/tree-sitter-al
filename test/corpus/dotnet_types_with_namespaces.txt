@@ -17,7 +17,7 @@ table 123 TestTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (var_section
         (var_keyword)
         body: (var_body
@@ -65,7 +65,7 @@ table 456 TestTable2
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -78,7 +78,7 @@ table 456 TestTable2
                 reference: (identifier)
                 reference: (identifier)
                 reference: (identifier)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal)))))))))
@@ -101,7 +101,7 @@ codeunit 789 TestCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (var_section
         (var_keyword)
         body: (var_body

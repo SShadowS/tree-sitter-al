@@ -45,7 +45,7 @@ page 50001 "Test Page Actions"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -73,7 +73,7 @@ page 50001 "Test Page Actions"
                     value: (quoted_identifier))
                   (action_declaration
                     name: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))

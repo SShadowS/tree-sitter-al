@@ -36,7 +36,7 @@ page 50200 "New Properties Test"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -48,7 +48,7 @@ page 50200 "New Properties Test"
                 source: (member_expression
                   object: (identifier)
                   member: (identifier))
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean))
@@ -81,7 +81,7 @@ page 50200 "New Properties Test"
                 source: (member_expression
                   object: (identifier)
                   member: (identifier))
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))

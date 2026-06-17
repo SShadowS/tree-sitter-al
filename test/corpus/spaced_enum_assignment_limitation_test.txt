@@ -21,7 +21,7 @@ codeunit 50100 "Test"
     (codeunit_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (procedure
         (procedure_keyword)
         (identifier)
@@ -84,7 +84,7 @@ codeunit 50101 "Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)

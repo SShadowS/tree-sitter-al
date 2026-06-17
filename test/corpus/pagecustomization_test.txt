@@ -25,7 +25,7 @@ pagecustomization "Test Page Customization" customizes "Target Page"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (views_section
         (views_keyword)
         body: (views_body
@@ -34,7 +34,7 @@ pagecustomization "Test Page Customization" customizes "Target Page"
               (view_definition
                 (view_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -73,7 +73,7 @@ pagecustomization "Test Customization" customizes "Base Page"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (views_section
         (views_keyword)
         body: (views_body
@@ -82,7 +82,7 @@ pagecustomization "Test Customization" customizes "Base Page"
               (view_definition
                 (view_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -121,7 +121,7 @@ pagecustomization "Enhanced Page" customizes "Original Page"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (views_section
         (views_keyword)
         body: (views_body
@@ -131,7 +131,7 @@ pagecustomization "Enhanced Page" customizes "Original Page"
               (view_definition
                 (view_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -175,7 +175,7 @@ pagecustomization "Multi View Page" customizes "Base Page"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (views_section
         (views_keyword)
         body: (views_body
@@ -184,7 +184,7 @@ pagecustomization "Multi View Page" customizes "Base Page"
               (view_definition
                 (view_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -198,7 +198,7 @@ pagecustomization "Multi View Page" customizes "Base Page"
               (view_definition
                 (view_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))

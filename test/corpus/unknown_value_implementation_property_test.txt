@@ -34,7 +34,7 @@ enum 5580 "Digital Voucher Check Type" implements "Digital Voucher Check"
     (implements_clause
       (implements_keyword)
       interface: (quoted_identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -55,7 +55,7 @@ enum 5580 "Digital Voucher Check Type" implements "Digital Voucher Check"
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))
@@ -109,7 +109,7 @@ enum 1445 "Symmetric Algorithm" implements "Symmetric Algorithm"
     (implements_clause
       (implements_keyword)
       interface: (quoted_identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -130,7 +130,7 @@ enum 1445 "Symmetric Algorithm" implements "Symmetric Algorithm"
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))
@@ -144,7 +144,7 @@ enum 1445 "Symmetric Algorithm" implements "Symmetric Algorithm"
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))
@@ -188,7 +188,7 @@ enum 101 TestEnum2 implements ITestInterface
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (property_expression
@@ -206,7 +206,7 @@ enum 101 TestEnum2 implements ITestInterface
     (implements_clause
       (implements_keyword)
       interface: (identifier))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (property_expression

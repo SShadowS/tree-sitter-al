@@ -31,7 +31,7 @@ query 50100 "Test Query Var"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body
@@ -104,7 +104,7 @@ query 5506 "Email Related Record"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (option_member_list
@@ -195,7 +195,7 @@ query 50101 "Query with Conditional Var"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body
@@ -296,7 +296,7 @@ query 50102 "Mixed Var Query"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body

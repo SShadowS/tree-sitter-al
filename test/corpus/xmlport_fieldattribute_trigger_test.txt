@@ -34,7 +34,7 @@ xmlport 149031 "AIT Test Suite Import/Export"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (schema_section
         (schema_keyword)
         body: (schema_body
@@ -50,7 +50,7 @@ xmlport 149031 "AIT Test Suite Import/Export"
                     source: (member_expression
                       object: (identifier)
                       member: (identifier))
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier))
@@ -121,7 +121,7 @@ xmlport 50000 "Test XMLPort"
     (xmlport_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (schema_section
         (schema_keyword)
         body: (schema_body
@@ -137,7 +137,7 @@ xmlport 50000 "Test XMLPort"
                     source: (member_expression
                       object: (identifier)
                       member: (quoted_identifier))
-                    body: (object_body
+                    body: (declaration_body
                       (trigger_declaration
                         (trigger_keyword)
                         name: (identifier)

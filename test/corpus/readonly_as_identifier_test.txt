@@ -33,7 +33,7 @@ page 50100 "Text Viewer"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -49,7 +49,7 @@ page 50100 "Text Viewer"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -119,7 +119,7 @@ codeunit 50101 "ReadOnly Test"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -255,7 +255,7 @@ page 50102 "Advanced Viewer"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -266,7 +266,7 @@ page 50102 "Advanced Viewer"
                 (usercontrol_keyword)
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (trigger_declaration
                     (trigger_keyword)
                     name: (identifier)
@@ -386,7 +386,7 @@ table 50103 "Permission Settings"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -397,7 +397,7 @@ table 50103 "Permission Settings"
               (object_reference_type
                 object_type: (enum_keyword)
                 reference: (quoted_identifier)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))))))
@@ -469,7 +469,7 @@ page 50104 "Size Settings"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -485,7 +485,7 @@ page 50104 "Size Settings"
               (page_field
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -495,7 +495,7 @@ page 50104 "Size Settings"
               (page_field
                 name: (identifier)
                 source: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))

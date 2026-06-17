@@ -35,7 +35,7 @@ report 123 "Caption Test"
     (report_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -48,7 +48,7 @@ report 123 "Caption Test"
                 (column_keyword)
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean))))
@@ -56,7 +56,7 @@ report 123 "Caption Test"
                 (column_keyword)
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean))))
@@ -64,7 +64,7 @@ report 123 "Caption Test"
                 (column_keyword)
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean))))
@@ -72,7 +72,7 @@ report 123 "Caption Test"
                 (column_keyword)
                 name: (identifier)
                 source: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (boolean)))))))))))

@@ -26,19 +26,19 @@ pagecustomization "Business Manager Evaluation RC" customizes "Business Manager 
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
           (modify_modification
             target: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
           (modify_modification
             target: (quoted_identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean)))))))))
@@ -75,13 +75,13 @@ pagecustomization "My Page Customization" customizes "Customer List"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
           (modify_action_modification
             target: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
@@ -90,7 +90,7 @@ pagecustomization "My Page Customization" customizes "Customer List"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -143,25 +143,25 @@ pagecustomization "Business Manager Evaluation RC" customizes "Business Manager 
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
           (modify_modification
             target: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
           (modify_modification
             target: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
           (modify_modification
             target: (quoted_identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))))
@@ -196,7 +196,7 @@ pagecustomization "Sales Order Processor Views" customizes "Sales Order List"
     object_name: (quoted_identifier)
     (customizes_keyword)
     target_page: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (views_section
         (views_keyword)
         body: (views_body
@@ -205,7 +205,7 @@ pagecustomization "Sales Order Processor Views" customizes "Sales Order List"
               (view_definition
                 (view_keyword)
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))

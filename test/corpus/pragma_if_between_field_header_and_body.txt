@@ -24,7 +24,7 @@ table 50100 MyTable
     (table_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -50,7 +50,7 @@ table 50100 MyTable
               (pragma)
               (preproc_endif
                 (preproc_close)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal)))))))))

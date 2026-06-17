@@ -28,7 +28,7 @@ permissionset 301 "No. Series - Read"
     (permissionset_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (option_member_list
@@ -96,7 +96,7 @@ permissionset 50200 "Test Permissions"
     (permissionset_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (tabledata_permission_list
@@ -147,7 +147,7 @@ permissionset 50300 "Complex Permissions"
     (permissionset_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (tabledata_permission_list
@@ -198,7 +198,7 @@ permissionset 50400 "Pragma Heavy Permissions"
     (permissionset_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (tabledata_permission_list

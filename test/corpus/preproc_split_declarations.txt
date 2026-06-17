@@ -42,7 +42,7 @@ codeunit 50100 "Test Impl" implements Interface2
       interface: (identifier))
     (preproc_endif
       (preproc_close))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (option_member_list
@@ -95,7 +95,7 @@ enum 50100 TestEnum implements Interface2
       interface: (identifier))
     (preproc_endif
       (preproc_close))
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -134,7 +134,7 @@ page 50100 TestPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (layout_section
         (layout_keyword)
         body: (layout_body
@@ -154,7 +154,7 @@ page 50100 TestPage
                 source: (identifier)
                 (preproc_endif
                   (preproc_close))
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier)))))))))))

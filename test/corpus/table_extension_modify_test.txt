@@ -30,13 +30,13 @@ tableextension 50000 "Test Extension" extends "Base Table"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
           (modify_modification
             target: (quoted_identifier)
-            body: (object_body
+            body: (declaration_body
               (trigger_declaration
                 (trigger_keyword)
                 name: (identifier)
@@ -46,7 +46,7 @@ tableextension 50000 "Test Extension" extends "Base Table"
                   (end_keyword)))))
           (modify_modification
             target: (quoted_identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -82,7 +82,7 @@ tableextension 50001 "Mixed Extension" extends "Base Table"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -92,13 +92,13 @@ tableextension 50001 "Mixed Extension" extends "Base Table"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))))
           (modify_modification
             target: (quoted_identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal)))))))))

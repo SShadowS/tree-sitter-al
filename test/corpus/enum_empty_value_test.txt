@@ -15,18 +15,18 @@ enum 264 "Test Enum"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))
@@ -72,7 +72,7 @@ enum 264 "Intrastat Source Type"
       (enum_keyword)
       object_id: (integer)
       object_name: (quoted_identifier)
-      body: (object_body
+      body: (declaration_body
         (property
           name: (property_name)
           value: (boolean))
@@ -93,21 +93,21 @@ enum 264 "Intrastat Source Type"
         (enum_value_declaration
           value_id: (integer)
           value_name: (quoted_identifier)
-          body: (object_body
+          body: (declaration_body
             (property
               name: (property_name)
               value: (string_literal))))
         (enum_value_declaration
           value_id: (integer)
           value_name: (quoted_identifier)
-          body: (object_body
+          body: (declaration_body
             (property
               name: (property_name)
               value: (string_literal))))
         (enum_value_declaration
           value_id: (integer)
           value_name: (quoted_identifier)
-          body: (object_body
+          body: (declaration_body
             (property
               name: (property_name)
               value: (string_literal))))))
@@ -134,39 +134,39 @@ enum 100 "Value Name Formats"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (string_literal)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))
@@ -194,7 +194,7 @@ enum 500 "Mixed Content"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -210,7 +210,7 @@ enum 500 "Mixed Content"
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal)))))))

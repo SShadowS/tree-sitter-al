@@ -20,7 +20,7 @@ table 50100 "IC Setup"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (fields_section
         (fields_keyword)
         (fields_body
@@ -30,7 +30,7 @@ table 50100 "IC Setup"
             (type_specification
               (code_type
                 (integer)))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (table_relation_value
@@ -70,7 +70,7 @@ table 50101 "Workflow Rule"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (fields_section
         (fields_keyword)
         (fields_body
@@ -79,7 +79,7 @@ table 50101 "Workflow Rule"
             (quoted_identifier)
             (type_specification
               (basic_type))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (table_relation_value
@@ -117,7 +117,7 @@ table 50102 "Test Filter"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (fields_section
         (fields_keyword)
         (fields_body
@@ -126,7 +126,7 @@ table 50102 "Test Filter"
             (quoted_identifier)
             (type_specification
               (option_type))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (table_relation_value
@@ -162,7 +162,7 @@ table 50103 "Integration Setup"
     (table_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (fields_section
         (fields_keyword)
         (fields_body
@@ -173,7 +173,7 @@ table 50103 "Integration Setup"
               (object_reference_type
                 (enum_keyword)
                 (quoted_identifier)))
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (table_relation_value

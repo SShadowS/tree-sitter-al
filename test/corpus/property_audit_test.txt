@@ -26,7 +26,7 @@ page 50100 TestFlowProperties
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -35,7 +35,7 @@ page 50100 TestFlowProperties
             body: (action_body
               (customaction_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -74,14 +74,14 @@ report 50200 TestReportLayout
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (rendering_section
         (rendering_keyword)
         body: (rendering_body
           (rendering_layout
             (layout_keyword)
             name: (identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))

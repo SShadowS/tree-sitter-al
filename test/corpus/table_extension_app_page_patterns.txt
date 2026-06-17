@@ -56,7 +56,7 @@ table 6175314 "CDO Extension App Page"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -71,7 +71,7 @@ table 6175314 "CDO Extension App Page"
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -86,7 +86,7 @@ table 6175314 "CDO Extension App Page"
             name: (quoted_identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -176,7 +176,7 @@ table 6175314 "CDO Extension App Page"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -210,7 +210,7 @@ table 6175314 "CDO Extension App Page"
             fields: (field_list
               (quoted_identifier)
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean)))))))))

@@ -32,7 +32,7 @@ query 1307 "CF Forecast Entry Dimensions"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier))
@@ -59,7 +59,7 @@ query 1307 "CF Forecast Entry Dimensions"
                 (column_keyword)
                 name: (identifier)
                 field_name: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier)))))))))))
@@ -108,7 +108,7 @@ query 100 "Item Sales by Customer"
     (query_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (elements_section
         (elements_keyword)
         body: (elements_body
@@ -135,7 +135,7 @@ query 100 "Item Sales by Customer"
                     (filter_keyword)
                     name: (identifier)
                     field_name: (quoted_identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (string_literal))))
@@ -143,7 +143,7 @@ query 100 "Item Sales by Customer"
                     (filter_keyword)
                     name: (identifier)
                     field_name: (quoted_identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (string_literal))))
@@ -155,7 +155,7 @@ query 100 "Item Sales by Customer"
                     (column_keyword)
                     name: (identifier)
                     field_name: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (identifier)))))))))))))

@@ -43,7 +43,7 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -53,7 +53,7 @@ table 50100 "Test Table"
             type: (type_specification
               (code_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))
@@ -63,7 +63,7 @@ table 50100 "Test Table"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))))
@@ -75,7 +75,7 @@ table 50100 "Test Table"
             name: (identifier)
             fields: (field_list
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
@@ -84,7 +84,7 @@ table 50100 "Test Table"
             name: (identifier)
             fields: (field_list
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
@@ -94,7 +94,7 @@ table 50100 "Test Table"
             fields: (field_list
               (quoted_identifier)
               (quoted_identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))
@@ -146,7 +146,7 @@ table 50101 "Case Test"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -155,7 +155,7 @@ table 50101 "Case Test"
             name: (identifier)
             type: (type_specification
               (basic_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
@@ -165,7 +165,7 @@ table 50101 "Case Test"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))))))
@@ -177,7 +177,7 @@ table 50101 "Case Test"
             name: (identifier)
             fields: (field_list
               (identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
@@ -186,7 +186,7 @@ table 50101 "Case Test"
             name: (identifier)
             fields: (field_list
               (identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
@@ -196,7 +196,7 @@ table 50101 "Case Test"
             fields: (field_list
               (identifier)
               (identifier))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean)))))))))

@@ -23,7 +23,7 @@ pageextension 50000 "Test" extends "Source"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -32,7 +32,7 @@ pageextension 50000 "Test" extends "Source"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (link_value_list

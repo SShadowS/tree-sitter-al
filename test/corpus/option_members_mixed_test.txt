@@ -22,7 +22,7 @@ table 352 "Default Dimension"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -31,7 +31,7 @@ table 352 "Default Dimension"
             name: (quoted_identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (string_literal))
@@ -70,7 +70,7 @@ table 50001 "Test Options"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -79,7 +79,7 @@ table 50001 "Test Options"
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (option_member_list
@@ -123,25 +123,25 @@ table 50100 "Test Document"
     (enum_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (enum_value_declaration
         value_id: (integer)
         value_name: (quoted_identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))
       (enum_value_declaration
         value_id: (integer)
         value_name: (identifier)
-        body: (object_body
+        body: (declaration_body
           (property
             name: (property_name)
             value: (string_literal))))))
@@ -149,7 +149,7 @@ table 50100 "Test Document"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -158,7 +158,7 @@ table 50100 "Test Document"
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (option_member_list
@@ -173,7 +173,7 @@ table 50100 "Test Document"
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (option_member_list
@@ -201,7 +201,7 @@ page 50100 "Test Options Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (var_section
         (var_keyword)
         body: (var_body
@@ -239,7 +239,7 @@ table 50200 "Single Option"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -248,7 +248,7 @@ table 50200 "Single Option"
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (quoted_identifier)))))))))

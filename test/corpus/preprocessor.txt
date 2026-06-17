@@ -19,7 +19,7 @@ codeunit 50100 MyCodeunit
     object_id: (integer)
     object_name: (identifier)
     (pragma)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -49,7 +49,7 @@ codeunit 50100 MyCodeunit
     object_id: (integer)
     object_name: (identifier)
     (preproc_region)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -82,7 +82,7 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (preproc_conditional
         (preproc_if
           (preproc_open)
@@ -119,7 +119,7 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (preproc_conditional
         (preproc_if
           (preproc_open)
@@ -160,7 +160,7 @@ codeunit 50100 MyCodeunit
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (preproc_conditional
         (preproc_if
           (preproc_open)
@@ -210,7 +210,7 @@ codeunit 50100 Test
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -271,7 +271,7 @@ codeunit 50100 Test
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)
@@ -373,7 +373,7 @@ report 50100 Test
     (report_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -421,7 +421,7 @@ codeunit 50100 Test
     (codeunit_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (procedure
         (procedure_keyword)
         name: (identifier)

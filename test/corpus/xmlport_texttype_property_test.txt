@@ -24,7 +24,7 @@ xmlport 1501 "Test XMLPort"
     (xmlport_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (schema_section
         (schema_keyword)
         (schema_body
@@ -33,7 +33,7 @@ xmlport 1501 "Test XMLPort"
             (xmlport_body
               (xmlport_attribute
                 (identifier)
-                (object_body
+                (declaration_body
                   (property
                     (property_name)
                     (identifier))
@@ -66,7 +66,7 @@ xmlport 50100 "Simple XMLPort"
     (xmlport_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (schema_section
         (schema_keyword)
         (schema_body
@@ -75,7 +75,7 @@ xmlport 50100 "Simple XMLPort"
             (xmlport_body
               (xmlport_attribute
                 (identifier)
-                (object_body
+                (declaration_body
                   (property
                     (property_name)
                     (identifier)))))))))))
@@ -111,7 +111,7 @@ xmlport 50101 "Complex XMLPort"
     (xmlport_keyword)
     (integer)
     (quoted_identifier)
-    (object_body
+    (declaration_body
       (schema_section
         (schema_keyword)
         (schema_body
@@ -124,7 +124,7 @@ xmlport 50101 "Complex XMLPort"
                 (xmlport_body
                   (xmlport_attribute
                     (identifier)
-                    (object_body
+                    (declaration_body
                       (property
                         (property_name)
                         (string_literal))

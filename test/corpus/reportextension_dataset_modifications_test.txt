@@ -31,7 +31,7 @@ reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -44,7 +44,7 @@ reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
                 source: (quoted_identifier))))
           (modify_modification
             target: (identifier)
-            body: (object_body
+            body: (declaration_body
               (trigger_declaration
                 (trigger_keyword)
                 name: (identifier)
@@ -90,14 +90,14 @@ reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (rendering_section
         (rendering_keyword)
         body: (rendering_body
           (rendering_layout
             (layout_keyword)
             name: (quoted_identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))
@@ -113,7 +113,7 @@ reportextension 8008 "Contract Sales Invoice" extends "Standard Sales - Invoice"
           (rendering_layout
             (layout_keyword)
             name: (quoted_identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (identifier))
@@ -182,7 +182,7 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (dataset_section
         (dataset_keyword)
         body: (dataset_body
@@ -226,7 +226,7 @@ reportextension 50100 "Extended Sales Report" extends "Sales Invoice"
                       member: (quoted_identifier)))))))
           (modify_modification
             target: (identifier)
-            body: (object_body
+            body: (declaration_body
               (trigger_declaration
                 (trigger_keyword)
                 name: (identifier)

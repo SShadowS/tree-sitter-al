@@ -36,7 +36,7 @@ pageextension 50000 MyPageExt extends "Customer List"
     object_name: (identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -51,7 +51,7 @@ pageextension 50000 MyPageExt extends "Customer List"
                 (actionref_declaration
                   promoted_name: (identifier)
                   action_name: (identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (boolean))
@@ -65,7 +65,7 @@ pageextension 50000 MyPageExt extends "Customer List"
             body: (action_body
               (action_declaration
                 name: (identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (string_literal))
@@ -108,7 +108,7 @@ page 50001 MyPage
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -121,7 +121,7 @@ page 50001 MyPage
               body: (action_body
                 (action_declaration
                   name: (identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (string_literal))))))
@@ -131,7 +131,7 @@ page 50001 MyPage
               body: (action_body
                 (action_declaration
                   name: (identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (string_literal))))))
@@ -181,7 +181,7 @@ pageextension 50002 ComplexActions extends "Item List"
     object_name: (identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -202,7 +202,7 @@ pageextension 50002 ComplexActions extends "Item List"
                       value: (string_literal))
                     (action_declaration
                       name: (identifier)
-                      body: (object_body
+                      body: (declaration_body
                         (property
                           name: (property_name)
                           value: (string_literal))))))
@@ -217,7 +217,7 @@ pageextension 50002 ComplexActions extends "Item List"
                     value: (string_literal))
                   (action_declaration
                     name: (identifier)
-                    body: (object_body
+                    body: (declaration_body
                       (property
                         name: (property_name)
                         value: (string_literal)))))))))))))
@@ -255,7 +255,7 @@ page 50003 MixedCase
     (page_keyword)
     object_id: (integer)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -269,7 +269,7 @@ page 50003 MixedCase
               body: (action_body
                 (action_declaration
                   name: (identifier)
-                  body: (object_body
+                  body: (declaration_body
                     (property
                       name: (property_name)
                       value: (string_literal))))))
@@ -281,7 +281,7 @@ page 50003 MixedCase
               condition: (identifier))
             (modify_action_modification
               target: (identifier)
-              body: (object_body
+              body: (declaration_body
                 (property
                   name: (property_name)
                   value: (boolean))))

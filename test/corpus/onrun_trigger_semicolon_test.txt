@@ -17,7 +17,7 @@ codeunit 50000 "Test Codeunit"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)
@@ -49,7 +49,7 @@ codeunit 50001 "Test Codeunit 2"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)
@@ -83,7 +83,7 @@ codeunit 50002 "Test Codeunit 3"
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (trigger_declaration
         (trigger_keyword)
         name: (identifier)

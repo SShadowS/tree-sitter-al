@@ -39,7 +39,7 @@ page 123 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (actions_section
         (actions_keyword)
         body: (action_body
@@ -48,7 +48,7 @@ page 123 "Test Page"
             body: (action_body
               (action_declaration
                 name: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))
@@ -66,7 +66,7 @@ page 123 "Test Page"
                       (end_keyword)))))
               (action_declaration
                 name: (quoted_identifier)
-                body: (object_body
+                body: (declaration_body
                   (property
                     name: (property_name)
                     value: (identifier))

@@ -2,7 +2,7 @@
 ; Powers editor "select inside / around" commands (Helix, nvim-treesitter).
 ;
 ; Every scoped AL construct exposes its content via a `body` field whose value is
-; a single node (object_body, fields_body, action_body, code_block, ...). That
+; a single node (declaration_body, fields_body, action_body, code_block, ...). That
 ; lets `@*.inside` capture the content as ONE node, with `@*.around` capturing the
 ; whole construct. See docs/superpowers/specs/2026-06-17-body-field-textobjects-design.md
 ; and GitHub issue #19.

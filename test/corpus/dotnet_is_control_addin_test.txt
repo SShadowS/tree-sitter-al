@@ -44,7 +44,7 @@ dotnet
     (codeunit_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (var_section
         (var_keyword)
         body: (var_body
@@ -94,14 +94,14 @@ dotnet
           (type_declaration
             dotnet_type: (quoted_identifier)
             al_name: (quoted_identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean))))
           (type_declaration
             dotnet_type: (quoted_identifier)
             al_name: (quoted_identifier)
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (boolean)))))))))

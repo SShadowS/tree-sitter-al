@@ -19,7 +19,7 @@ report 50100 MyReport
     (report_keyword)
     (integer)
     (identifier)
-    (object_body
+    (declaration_body
       (dataset_section
         (dataset_keyword)
         (dataset_body
@@ -61,7 +61,7 @@ report 50100 R
     (report_keyword)
     (integer)
     (identifier)
-    (object_body
+    (declaration_body
       (dataset_section
         (dataset_keyword)
         (dataset_body
@@ -101,10 +101,10 @@ report 50100 R
     (report_keyword)
     (integer)
     (identifier)
-    (object_body
+    (declaration_body
       (requestpage_section
         (requestpage_keyword)
-        (object_body
+        (declaration_body
           (property
             (property_name)
             (string_literal)))))))
@@ -133,21 +133,21 @@ report 50100 R
     (report_keyword)
     (integer)
     (identifier)
-    (object_body
+    (declaration_body
       (rendering_section
         (rendering_keyword)
         (rendering_body
           (rendering_layout
             (layout_keyword)
             (identifier)
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (identifier))))
           (rendering_layout
             (layout_keyword)
             (identifier)
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (identifier)))))))))
@@ -170,7 +170,7 @@ report 50100 R
     (report_keyword)
     (integer)
     (identifier)
-    (object_body
+    (declaration_body
       (labels_section
         (labels_keyword)
         (labels_body
@@ -223,7 +223,7 @@ report 50100 R
     (report_keyword)
     (integer)
     (identifier)
-    (object_body
+    (declaration_body
       (property
         (property_name)
         (string_literal))
@@ -241,7 +241,7 @@ report 50100 R
                 (identifier))))))
       (requestpage_section
         (requestpage_keyword)
-        (object_body
+        (declaration_body
           (property
             (property_name)
             (string_literal))))
@@ -257,7 +257,7 @@ report 50100 R
           (rendering_layout
             (layout_keyword)
             (identifier)
-            (object_body
+            (declaration_body
               (property
                 (property_name)
                 (identifier)))))))))

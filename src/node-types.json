@@ -123,7 +123,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -378,7 +378,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -1336,7 +1336,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -4104,7 +4104,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -4660,7 +4660,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -4938,6 +4938,121 @@
     }
   },
   {
+    "type": "declaration_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "actions_section",
+          "named": true
+        },
+        {
+          "type": "analysisviews_section",
+          "named": true
+        },
+        {
+          "type": "assembly_declaration",
+          "named": true
+        },
+        {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "dataset_section",
+          "named": true
+        },
+        {
+          "type": "elements_section",
+          "named": true
+        },
+        {
+          "type": "empty_statement",
+          "named": true
+        },
+        {
+          "type": "enum_value_declaration",
+          "named": true
+        },
+        {
+          "type": "event_declaration",
+          "named": true
+        },
+        {
+          "type": "fieldgroups_section",
+          "named": true
+        },
+        {
+          "type": "fields_section",
+          "named": true
+        },
+        {
+          "type": "keys_section",
+          "named": true
+        },
+        {
+          "type": "labels_section",
+          "named": true
+        },
+        {
+          "type": "layout_section",
+          "named": true
+        },
+        {
+          "type": "modify_modification",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional",
+          "named": true
+        },
+        {
+          "type": "preproc_split_procedure",
+          "named": true
+        },
+        {
+          "type": "preproc_split_procedure_preamble",
+          "named": true
+        },
+        {
+          "type": "procedure",
+          "named": true
+        },
+        {
+          "type": "property",
+          "named": true
+        },
+        {
+          "type": "rendering_section",
+          "named": true
+        },
+        {
+          "type": "requestpage_section",
+          "named": true
+        },
+        {
+          "type": "schema_section",
+          "named": true
+        },
+        {
+          "type": "trigger_declaration",
+          "named": true
+        },
+        {
+          "type": "var_section",
+          "named": true
+        },
+        {
+          "type": "views_section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "dictionary_type",
     "named": true,
     "fields": {
@@ -5137,7 +5252,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -5177,7 +5292,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -5236,7 +5351,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -5294,7 +5409,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -5682,7 +5797,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -5761,7 +5876,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -5921,7 +6036,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -8473,7 +8588,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -8701,7 +8816,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -10152,7 +10267,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -10182,7 +10297,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -10673,121 +10788,6 @@
     }
   },
   {
-    "type": "object_body",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "actions_section",
-          "named": true
-        },
-        {
-          "type": "analysisviews_section",
-          "named": true
-        },
-        {
-          "type": "assembly_declaration",
-          "named": true
-        },
-        {
-          "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "dataset_section",
-          "named": true
-        },
-        {
-          "type": "elements_section",
-          "named": true
-        },
-        {
-          "type": "empty_statement",
-          "named": true
-        },
-        {
-          "type": "enum_value_declaration",
-          "named": true
-        },
-        {
-          "type": "event_declaration",
-          "named": true
-        },
-        {
-          "type": "fieldgroups_section",
-          "named": true
-        },
-        {
-          "type": "fields_section",
-          "named": true
-        },
-        {
-          "type": "keys_section",
-          "named": true
-        },
-        {
-          "type": "labels_section",
-          "named": true
-        },
-        {
-          "type": "layout_section",
-          "named": true
-        },
-        {
-          "type": "modify_modification",
-          "named": true
-        },
-        {
-          "type": "preproc_conditional",
-          "named": true
-        },
-        {
-          "type": "preproc_split_procedure",
-          "named": true
-        },
-        {
-          "type": "preproc_split_procedure_preamble",
-          "named": true
-        },
-        {
-          "type": "procedure",
-          "named": true
-        },
-        {
-          "type": "property",
-          "named": true
-        },
-        {
-          "type": "rendering_section",
-          "named": true
-        },
-        {
-          "type": "requestpage_section",
-          "named": true
-        },
-        {
-          "type": "schema_section",
-          "named": true
-        },
-        {
-          "type": "trigger_declaration",
-          "named": true
-        },
-        {
-          "type": "var_section",
-          "named": true
-        },
-        {
-          "type": "views_section",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "object_reference_type",
     "named": true,
     "fields": {
@@ -11034,7 +11034,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -11084,7 +11084,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -11382,7 +11382,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -11459,7 +11459,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -11843,7 +11843,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -11897,7 +11897,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -11966,7 +11966,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -17777,7 +17777,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -17903,7 +17903,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -22251,7 +22251,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -22450,7 +22450,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -22504,7 +22504,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -22943,7 +22943,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -23059,7 +23059,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -23109,7 +23109,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -23480,7 +23480,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -24016,7 +24016,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -24386,7 +24386,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -24450,7 +24450,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -24509,7 +24509,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -24576,7 +24576,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -25662,7 +25662,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -25692,7 +25692,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -25746,7 +25746,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -25943,7 +25943,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -26654,7 +26654,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -27046,7 +27046,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -27275,7 +27275,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -28547,7 +28547,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]
@@ -28972,7 +28972,7 @@
         "required": false,
         "types": [
           {
-            "type": "object_body",
+            "type": "declaration_body",
             "named": true
           }
         ]

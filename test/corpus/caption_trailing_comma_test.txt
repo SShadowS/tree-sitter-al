@@ -14,7 +14,7 @@ page 50100 "Test Page"
     (page_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (caption_value
@@ -42,7 +42,7 @@ table 50100 "Test Table"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -52,7 +52,7 @@ table 50100 "Test Table"
             type: (type_specification
               (text_type
                 length: (integer)))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (caption_value
@@ -85,7 +85,7 @@ table 50101 "Test Options"
     (table_keyword)
     object_id: (integer)
     object_name: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (fields_section
         (fields_keyword)
         body: (fields_body
@@ -94,7 +94,7 @@ table 50101 "Test Options"
             name: (identifier)
             type: (type_specification
               (option_type))
-            body: (object_body
+            body: (declaration_body
               (property
                 name: (property_name)
                 value: (caption_value

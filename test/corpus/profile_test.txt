@@ -15,7 +15,7 @@ profile TestProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -44,7 +44,7 @@ profile DocumentCapture
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -81,7 +81,7 @@ profile SimpleProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -110,7 +110,7 @@ profile UnquotedProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -144,7 +144,7 @@ profile MinimalProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -171,7 +171,7 @@ profile ExtendedProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -208,7 +208,7 @@ profile MixedProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (boolean))
@@ -250,7 +250,7 @@ profile EmptyCustomizationsProfile
   (profile_declaration
     (profile_keyword)
     object_name: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))

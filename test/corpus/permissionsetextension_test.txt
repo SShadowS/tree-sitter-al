@@ -16,7 +16,7 @@ permissionsetextension 20766 "D365 AUTOMATION - APIV2" extends "D365 AUTOMATION"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (quoted_identifier)))))
@@ -55,7 +55,7 @@ permissionsetextension 50100 "My Permission Ext" extends "Base Application"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (quoted_identifier)))))
@@ -78,7 +78,7 @@ permissionsetextension 50101 "Extended Permissions" extends BasePermissions
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (option_member_list
@@ -110,7 +110,7 @@ permissionsetextension 50102 "Table Access Extension" extends "D365 READ"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (tabledata_permission_list
@@ -155,7 +155,7 @@ permissionsetextension 50103 "Mixed Properties Ext" extends "Base Permissions"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (string_literal))
@@ -197,7 +197,7 @@ PERMISSIONSETEXTENSION 50104 MyExtension EXTENDS BaseSet
     object_name: (identifier)
     (extends_keyword)
     base_object: (identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (identifier)))))
@@ -221,7 +221,7 @@ permissionsetextension 50105 "Restricted Extension" extends "Full Access"
     object_name: (quoted_identifier)
     (extends_keyword)
     base_object: (quoted_identifier)
-    body: (object_body
+    body: (declaration_body
       (property
         name: (property_name)
         value: (quoted_identifier))
