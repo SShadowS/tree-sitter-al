@@ -50,7 +50,7 @@ page 50100 TestPage
                       (identifier)))
                   (case_else_branch
                     (else_keyword)
-                    (call_expression
+                    body: (call_expression
                       function: (identifier)
                       arguments: (argument_list)))
                   (preproc_endif
@@ -154,7 +154,7 @@ codeunit 50100 TestCodeunit
                       (identifier)))
                   (case_else_branch
                     (else_keyword)
-                    (call_expression
+                    body: (call_expression
                       function: (identifier)
                       arguments: (argument_list
                         (identifier)

@@ -466,12 +466,13 @@ codeunit 50100 Test
           (statement_block
             (if_statement
               (if_keyword)
-              (identifier)
-              (in_keyword)
-              (list_literal
-                (integer)
-                (integer)
-                (integer))
+              (in_expression
+                (identifier)
+                (in_keyword)
+                (list_literal
+                  (integer)
+                  (integer)
+                  (integer)))
               (then_keyword)
               (exit_statement
                 (exit_keyword))))
@@ -543,12 +544,13 @@ codeunit 50100 Test
           (statement_block
             (if_statement
               (if_keyword)
-              (identifier)
-              (in_keyword)
-              (list_literal
-                (range_expression
-                  (integer)
-                  (integer)))
+              (in_expression
+                (identifier)
+                (in_keyword)
+                (list_literal
+                  (range_expression
+                    (integer)
+                    (integer))))
               (then_keyword)
               (exit_statement
                 (exit_keyword))))

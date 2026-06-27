@@ -42,7 +42,7 @@ codeunit 50000 Test
               (of_keyword)
               (case_else_branch
                 (else_keyword)
-                (call_expression
+                body: (call_expression
                   function: (identifier)
                   arguments: (argument_list)))
               (end_keyword)))
@@ -144,7 +144,7 @@ codeunit 50001 Test
               (of_keyword)
               (case_else_branch
                 (else_keyword)
-                (call_expression
+                body: (call_expression
                   function: (identifier)
                   arguments: (argument_list
                     (identifier)
@@ -213,7 +213,7 @@ codeunit 50002 Test
                     arguments: (argument_list))))
               (case_else_branch
                 (else_keyword)
-                (call_expression
+                body: (call_expression
                   function: (identifier)
                   arguments: (argument_list)))
               (end_keyword)))

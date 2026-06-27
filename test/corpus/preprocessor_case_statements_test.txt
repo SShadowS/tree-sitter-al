@@ -80,7 +80,7 @@ codeunit 50100 TestUnit
                     (preproc_close))))
               (case_else_branch
                 (else_keyword)
-                (call_expression
+                body: (call_expression
                   function: (identifier)
                   arguments: (argument_list
                     (quoted_identifier))))

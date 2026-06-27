@@ -156,6 +156,7 @@ module.exports = grammar({
     [$.calc_field_reference, $._expression],
     [$.option_member, $._identifier_or_quoted],
     [$._single_pattern, $._expression],
+    [$._single_pattern, $.in_expression],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_table_relation],
     [$.preproc_conditional_permissions, $.preproc_conditional_table_relation],
     [$.tabledata_permission_list],
@@ -3398,10 +3399,10 @@ module.exports = grammar({
 
     case_else_branch: $ => prec.left(seq(
       $.else_keyword,
-      choice(
+      field('body', choice(
         $.code_block,
         repeat($._statement),
-      )
+      ))
     )),
 
     // --- For loop ---
@@ -3504,6 +3505,25 @@ module.exports = grammar({
     // Expressions
     // =====================================================================
 
+    // In / Is / As expressions — NAMED so their left/operator/right fields stay
+    // contained on these nodes instead of bleeding onto every node that holds an
+    // _expression (owned-IR consumer request).
+    in_expression: $ => prec.left(5, seq(
+      field('left', $._expression),
+      field('operator', $.in_keyword),
+      field('right', $.list_literal)
+    )),
+    is_expression: $ => prec.left(5, seq(
+      field('left', $._expression),
+      field('operator', kw('is', 5)),
+      field('right', $.type_specification)
+    )),
+    as_expression: $ => prec.left(5, seq(
+      field('left', $._expression),
+      field('operator', kw('as', 5)),
+      field('right', $.type_specification)
+    )),
+
     _expression: $ => choice(
       // Binary operators
       $.range_expression,
@@ -3511,24 +3531,9 @@ module.exports = grammar({
       $.additive_expression,
       $.comparison_expression,
       $.logical_expression,
-      // In expression
-      prec.left(5, seq(
-        field('left', $._expression),
-        field('operator', $.in_keyword),
-        field('right', $.list_literal)
-      )),
-      // Is expression (type checking)
-      prec.left(5, seq(
-        field('left', $._expression),
-        field('operator', kw('is', 5)),
-        field('right', $.type_specification)
-      )),
-      // As expression (type casting)
-      prec.left(5, seq(
-        field('left', $._expression),
-        field('operator', kw('as', 5)),
-        field('right', $.type_specification)
-      )),
+      $.in_expression,
+      $.is_expression,
+      $.as_expression,
       // Other expression forms
       $.qualified_enum_value,
       $.database_reference,

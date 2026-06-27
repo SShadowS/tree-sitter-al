@@ -138,19 +138,20 @@ page 30 "Item Card"
                       body: (statement_block
                         (if_statement
                           (if_keyword)
-                          left: (call_expression
-                            function: (member_expression
-                              object: (identifier)
-                              member: (identifier))
-                            arguments: (argument_list))
-                          operator: (in_keyword)
-                          right: (list_literal
-                            (qualified_enum_value
-                              enum_type: (keyword_identifier)
-                              value: (identifier))
-                            (qualified_enum_value
-                              enum_type: (keyword_identifier)
-                              value: (identifier)))
+                          condition: (in_expression
+                            left: (call_expression
+                              function: (member_expression
+                                object: (identifier)
+                                member: (identifier))
+                              arguments: (argument_list))
+                            operator: (in_keyword)
+                            right: (list_literal
+                              (qualified_enum_value
+                                enum_type: (keyword_identifier)
+                                value: (identifier))
+                              (qualified_enum_value
+                                enum_type: (keyword_identifier)
+                                value: (identifier))))
                           (then_keyword)
                           then_branch: (call_expression
                             function: (identifier)

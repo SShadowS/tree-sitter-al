@@ -163,7 +163,7 @@ table 50012 "Test Table"
                       (string_literal)))))
               (case_else_branch
                 (else_keyword)
-                (call_expression
+                body: (call_expression
                   function: (identifier)
                   arguments: (argument_list)))
               (end_keyword)))
