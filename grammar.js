@@ -156,7 +156,6 @@ module.exports = grammar({
     [$.calc_field_reference, $._expression],
     [$.option_member, $._identifier_or_quoted],
     [$._single_pattern, $._expression],
-    [$._single_pattern, $.in_expression],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_table_relation],
     [$.preproc_conditional_permissions, $.preproc_conditional_table_relation],
     [$.tabledata_permission_list],
@@ -3307,7 +3306,7 @@ module.exports = grammar({
 
     case_branch: $ => choice(
       seq(
-        field('pattern', $._case_pattern),
+        $._case_pattern,
         ':',
         field('body', choice(
           $.code_block,
@@ -3323,18 +3322,18 @@ module.exports = grammar({
     // Case branch where some patterns are conditionally included via preprocessor
     preproc_split_case_branch: $ => prec(25, seq(
       $.preproc_if,
-      repeat(seq($._single_pattern, optional(','))),
+      repeat($._case_pattern_item),
       repeat(seq(
         $.preproc_elif,
-        repeat(seq($._single_pattern, optional(','))),
+        repeat($._case_pattern_item),
       )),
       optional(seq(
         $.preproc_else,
-        repeat(seq($._single_pattern, optional(','))),
+        repeat($._case_pattern_item),
       )),
       $.preproc_endif,
       // Pattern(s) after the preprocessor block, ending with ':'
-      field('pattern', $._case_pattern),
+      $._case_pattern,
       ':',
       field('body', choice(
         $.code_block,
@@ -3347,19 +3346,19 @@ module.exports = grammar({
     // Example: #if DOSMTP  1: begin DoSMTP(); end;  2:  #else  2, 1:  #endif  begin DoEmail(); end;
     preproc_split_case_extended: $ => prec(25, seq(
       $.preproc_if,
-      repeat($.case_branch),             // zero or more complete extra branches
-      field('pattern', $._case_pattern), // header-only for the next branch
+      repeat($.case_branch),  // zero or more complete extra branches
+      $._case_pattern,        // header-only for the next branch
       ':',
       repeat(seq(
         $.preproc_elif,
         repeat($.case_branch),
-        field('pattern', $._case_pattern),
+        $._case_pattern,
         ':',
       )),
       optional(seq(
         $.preproc_else,
         repeat($.case_branch),
-        field('pattern', $._case_pattern),
+        $._case_pattern,
         ':',
       )),
       $.preproc_endif,
@@ -3371,23 +3370,30 @@ module.exports = grammar({
       )),
     )),
 
-    // Case pattern list: supports preprocessor conditionals interleaved with patterns
+    // Case pattern list: supports preprocessor conditionals interleaved with patterns.
     _case_pattern: $ => repeat1(choice(
-      seq($._single_pattern, optional(',')),
+      $._case_pattern_item,
       $.preproc_conditional_case_patterns,
     )),
+
+    // One case-pattern value (+ an optional trailing comma). The `pattern` field lives
+    // HERE, on the value node — never on the `,`/`:` separators. The previous shape
+    // wrapped the whole inlined `_case_pattern` list in `field('pattern', …)`, which
+    // distributed the field over the comma tokens too, so `children_by_field('pattern')`
+    // returned anonymous `,` nodes (the owned-IR lowerer panicked on `case 1, 2:`).
+    _case_pattern_item: $ => seq(field('pattern', $._single_pattern), optional(',')),
 
     // Preprocessor conditional wrapping case pattern entries mid-list
     preproc_conditional_case_patterns: $ => seq(
       $.preproc_if,
-      repeat(seq($._single_pattern, optional(','))),
+      repeat($._case_pattern_item),
       repeat(seq(
         $.preproc_elif,
-        repeat(seq($._single_pattern, optional(','))),
+        repeat($._case_pattern_item),
       )),
       optional(seq(
         $.preproc_else,
-        repeat(seq($._single_pattern, optional(','))),
+        repeat($._case_pattern_item),
       )),
       $.preproc_endif,
     ),
@@ -3410,12 +3416,10 @@ module.exports = grammar({
       $.additive_expression,
       $.multiplicative_expression,
       $.subscript_expression,
-      // In expression as case pattern (case true of: X in [...]: ...)
-      prec.left(5, seq(
-        field('left', $._expression),
-        field('operator', $.in_keyword),
-        field('right', $.list_literal)
-      )),
+      // In expression as case pattern (case true of: X in [...]: ...). The NAMED
+      // `in_expression` (not an inline seq) keeps the `pattern` field a single value
+      // instead of spreading it over left/operator/right.
+      $.in_expression,
     ),
 
     case_else_branch: $ => prec.left(seq(

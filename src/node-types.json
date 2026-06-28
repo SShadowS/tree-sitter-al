@@ -2977,160 +2977,12 @@
           }
         ]
       },
-      "left": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "as_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
-            "type": "biginteger_literal",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "comparison_expression",
-            "named": true
-          },
-          {
-            "type": "database_reference",
-            "named": true
-          },
-          {
-            "type": "date_literal",
-            "named": true
-          },
-          {
-            "type": "datetime_literal",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "in_expression",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "is_expression",
-            "named": true
-          },
-          {
-            "type": "keyword_identifier",
-            "named": true
-          },
-          {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "logical_expression",
-            "named": true
-          },
-          {
-            "type": "member_expression",
-            "named": true
-          },
-          {
-            "type": "multiplicative_expression",
-            "named": true
-          },
-          {
-            "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "qualified_enum_value",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "range_expression",
-            "named": true
-          },
-          {
-            "type": "string_literal",
-            "named": true
-          },
-          {
-            "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
-            "named": true
-          },
-          {
-            "type": "time_literal",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          },
-          {
-            "type": "verbatim_string",
-            "named": true
-          }
-        ]
-      },
-      "operator": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "in_keyword",
-            "named": true
-          }
-        ]
-      },
       "pattern": {
         "multiple": true,
         "required": false,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
             "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "as_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
             "named": true
           },
           {
@@ -3174,23 +3026,11 @@
             "named": true
           },
           {
-            "type": "in_keyword",
-            "named": true
-          },
-          {
             "type": "integer",
             "named": true
           },
           {
-            "type": "is_expression",
-            "named": true
-          },
-          {
             "type": "keyword_identifier",
-            "named": true
-          },
-          {
-            "type": "list_literal",
             "named": true
           },
           {
@@ -3207,10 +3047,6 @@
           },
           {
             "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "preproc_conditional_case_patterns",
             "named": true
           },
           {
@@ -3234,10 +3070,6 @@
             "named": true
           },
           {
-            "type": "ternary_expression",
-            "named": true
-          },
-          {
             "type": "time_literal",
             "named": true
           },
@@ -3247,25 +3079,19 @@
           },
           {
             "type": "verbatim_string",
-            "named": true
-          }
-        ]
-      },
-      "right": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "list_literal",
             "named": true
           }
         ]
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "preproc_conditional_case_patterns",
+          "named": true
+        },
         {
           "type": "preproc_split_case_branch",
           "named": true
@@ -11167,20 +10993,12 @@
     "type": "preproc_conditional_case_patterns",
     "named": true,
     "fields": {
-      "left": {
+      "pattern": {
         "multiple": true,
         "required": false,
         "types": [
           {
             "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "as_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
             "named": true
           },
           {
@@ -11228,15 +11046,7 @@
             "named": true
           },
           {
-            "type": "is_expression",
-            "named": true
-          },
-          {
             "type": "keyword_identifier",
-            "named": true
-          },
-          {
-            "type": "list_literal",
             "named": true
           },
           {
@@ -11276,10 +11086,6 @@
             "named": true
           },
           {
-            "type": "ternary_expression",
-            "named": true
-          },
-          {
             "type": "time_literal",
             "named": true
           },
@@ -11292,96 +11098,12 @@
             "named": true
           }
         ]
-      },
-      "operator": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "in_keyword",
-            "named": true
-          }
-        ]
-      },
-      "right": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "list_literal",
-            "named": true
-          }
-        ]
       }
     },
     "children": {
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "additive_expression",
-          "named": true
-        },
-        {
-          "type": "biginteger_literal",
-          "named": true
-        },
-        {
-          "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "call_expression",
-          "named": true
-        },
-        {
-          "type": "comparison_expression",
-          "named": true
-        },
-        {
-          "type": "database_reference",
-          "named": true
-        },
-        {
-          "type": "date_literal",
-          "named": true
-        },
-        {
-          "type": "datetime_literal",
-          "named": true
-        },
-        {
-          "type": "decimal",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "keyword_identifier",
-          "named": true
-        },
-        {
-          "type": "logical_expression",
-          "named": true
-        },
-        {
-          "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "multiplicative_expression",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
-          "named": true
-        },
         {
           "type": "preproc_elif",
           "named": true
@@ -11396,38 +11118,6 @@
         },
         {
           "type": "preproc_if",
-          "named": true
-        },
-        {
-          "type": "qualified_enum_value",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        },
-        {
-          "type": "range_expression",
-          "named": true
-        },
-        {
-          "type": "string_literal",
-          "named": true
-        },
-        {
-          "type": "subscript_expression",
-          "named": true
-        },
-        {
-          "type": "time_literal",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
-          "named": true
-        },
-        {
-          "type": "verbatim_string",
           "named": true
         }
       ]
@@ -14764,160 +14454,12 @@
           }
         ]
       },
-      "left": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "as_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
-            "type": "biginteger_literal",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "comparison_expression",
-            "named": true
-          },
-          {
-            "type": "database_reference",
-            "named": true
-          },
-          {
-            "type": "date_literal",
-            "named": true
-          },
-          {
-            "type": "datetime_literal",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "in_expression",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "is_expression",
-            "named": true
-          },
-          {
-            "type": "keyword_identifier",
-            "named": true
-          },
-          {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "logical_expression",
-            "named": true
-          },
-          {
-            "type": "member_expression",
-            "named": true
-          },
-          {
-            "type": "multiplicative_expression",
-            "named": true
-          },
-          {
-            "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "qualified_enum_value",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "range_expression",
-            "named": true
-          },
-          {
-            "type": "string_literal",
-            "named": true
-          },
-          {
-            "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
-            "named": true
-          },
-          {
-            "type": "time_literal",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          },
-          {
-            "type": "verbatim_string",
-            "named": true
-          }
-        ]
-      },
-      "operator": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "in_keyword",
-            "named": true
-          }
-        ]
-      },
       "pattern": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
             "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "as_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
             "named": true
           },
           {
@@ -14961,23 +14503,11 @@
             "named": true
           },
           {
-            "type": "in_keyword",
-            "named": true
-          },
-          {
             "type": "integer",
             "named": true
           },
           {
-            "type": "is_expression",
-            "named": true
-          },
-          {
             "type": "keyword_identifier",
-            "named": true
-          },
-          {
-            "type": "list_literal",
             "named": true
           },
           {
@@ -14994,10 +14524,6 @@
           },
           {
             "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "preproc_conditional_case_patterns",
             "named": true
           },
           {
@@ -15021,10 +14547,6 @@
             "named": true
           },
           {
-            "type": "ternary_expression",
-            "named": true
-          },
-          {
             "type": "time_literal",
             "named": true
           },
@@ -15034,16 +14556,6 @@
           },
           {
             "type": "verbatim_string",
-            "named": true
-          }
-        ]
-      },
-      "right": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "list_literal",
             "named": true
           }
         ]
@@ -15054,67 +14566,7 @@
       "required": true,
       "types": [
         {
-          "type": "additive_expression",
-          "named": true
-        },
-        {
-          "type": "biginteger_literal",
-          "named": true
-        },
-        {
-          "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "call_expression",
-          "named": true
-        },
-        {
-          "type": "comparison_expression",
-          "named": true
-        },
-        {
-          "type": "database_reference",
-          "named": true
-        },
-        {
-          "type": "date_literal",
-          "named": true
-        },
-        {
-          "type": "datetime_literal",
-          "named": true
-        },
-        {
-          "type": "decimal",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "keyword_identifier",
-          "named": true
-        },
-        {
-          "type": "logical_expression",
-          "named": true
-        },
-        {
-          "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "multiplicative_expression",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
+          "type": "preproc_conditional_case_patterns",
           "named": true
         },
         {
@@ -15131,38 +14583,6 @@
         },
         {
           "type": "preproc_if",
-          "named": true
-        },
-        {
-          "type": "qualified_enum_value",
-          "named": true
-        },
-        {
-          "type": "quoted_identifier",
-          "named": true
-        },
-        {
-          "type": "range_expression",
-          "named": true
-        },
-        {
-          "type": "string_literal",
-          "named": true
-        },
-        {
-          "type": "subscript_expression",
-          "named": true
-        },
-        {
-          "type": "time_literal",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
-          "named": true
-        },
-        {
-          "type": "verbatim_string",
           "named": true
         }
       ]
@@ -15398,160 +14818,12 @@
           }
         ]
       },
-      "left": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "as_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
-            "named": true
-          },
-          {
-            "type": "biginteger_literal",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "comparison_expression",
-            "named": true
-          },
-          {
-            "type": "database_reference",
-            "named": true
-          },
-          {
-            "type": "date_literal",
-            "named": true
-          },
-          {
-            "type": "datetime_literal",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "in_expression",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "is_expression",
-            "named": true
-          },
-          {
-            "type": "keyword_identifier",
-            "named": true
-          },
-          {
-            "type": "list_literal",
-            "named": true
-          },
-          {
-            "type": "logical_expression",
-            "named": true
-          },
-          {
-            "type": "member_expression",
-            "named": true
-          },
-          {
-            "type": "multiplicative_expression",
-            "named": true
-          },
-          {
-            "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "qualified_enum_value",
-            "named": true
-          },
-          {
-            "type": "quoted_identifier",
-            "named": true
-          },
-          {
-            "type": "range_expression",
-            "named": true
-          },
-          {
-            "type": "string_literal",
-            "named": true
-          },
-          {
-            "type": "subscript_expression",
-            "named": true
-          },
-          {
-            "type": "ternary_expression",
-            "named": true
-          },
-          {
-            "type": "time_literal",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          },
-          {
-            "type": "verbatim_string",
-            "named": true
-          }
-        ]
-      },
-      "operator": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "in_keyword",
-            "named": true
-          }
-        ]
-      },
       "pattern": {
         "multiple": true,
-        "required": true,
+        "required": false,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
             "type": "additive_expression",
-            "named": true
-          },
-          {
-            "type": "as_expression",
-            "named": true
-          },
-          {
-            "type": "assignment_expression",
             "named": true
           },
           {
@@ -15595,23 +14867,11 @@
             "named": true
           },
           {
-            "type": "in_keyword",
-            "named": true
-          },
-          {
             "type": "integer",
             "named": true
           },
           {
-            "type": "is_expression",
-            "named": true
-          },
-          {
             "type": "keyword_identifier",
-            "named": true
-          },
-          {
-            "type": "list_literal",
             "named": true
           },
           {
@@ -15628,10 +14888,6 @@
           },
           {
             "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "preproc_conditional_case_patterns",
             "named": true
           },
           {
@@ -15655,10 +14911,6 @@
             "named": true
           },
           {
-            "type": "ternary_expression",
-            "named": true
-          },
-          {
             "type": "time_literal",
             "named": true
           },
@@ -15668,16 +14920,6 @@
           },
           {
             "type": "verbatim_string",
-            "named": true
-          }
-        ]
-      },
-      "right": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "list_literal",
             "named": true
           }
         ]
@@ -15689,6 +14931,10 @@
       "types": [
         {
           "type": "case_branch",
+          "named": true
+        },
+        {
+          "type": "preproc_conditional_case_patterns",
           "named": true
         },
         {
