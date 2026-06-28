@@ -140,10 +140,12 @@ codeunit 50002 "Test BigInteger Lowercase"
             (assignment_statement
               left: (identifier)
               right: (integer))
-            (identifier)
+            (call_statement
+              function: (identifier))
             (assignment_statement
               left: (identifier)
               right: (unary_expression
                 operand: (integer)))
-            (identifier))
+            (call_statement
+              function: (identifier)))
           (end_keyword))))))

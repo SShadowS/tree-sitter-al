@@ -3172,33 +3172,54 @@ module.exports = grammar({
     // Statements
     // =====================================================================
 
-    _statement: $ => prec.right(seq(
-      choice(
-        $.assignment_statement,
-        $.asserterror_statement,
-        $.if_statement,
-        $.exit_statement,
-        $.continue_statement,
-        $.break_statement,
-        $.case_statement,
-        $.for_statement,
-        $.repeat_statement,
-        $.while_statement,
-        $.foreach_statement,
-        $.with_statement,
-        $._expression_statement,
-        $.empty_statement,
-        $.preproc_conditional_statement,
-        $.preproc_split_if_statement,
-        $.preproc_split_if_else_statement,
-        $.preproc_split_if_then_begin,
-        $.preproc_split_if_begin_asymmetric,
-        $.preproc_split_if_begin_else,
-        $.preproc_split_if_then_begin_else_shared,
-        $.preproc_guarded_statement,
-        $.preproc_split_call_statement,
-      ),
-      optional(';')
+    _statement: $ => prec.right(choice(
+      // A parenless no-arg call (`Initialize;`) — a bare identifier in statement
+      // position that OWNS its terminating `;`. Owning the `;` is what makes a real
+      // parenless call structurally distinct from tree-sitter ERROR-recovery debris
+      // (a bare identifier rescued after a syntax error has no terminator and stays a
+      // raw identifier, never reducing to `call_statement`). The engine lowers a
+      // `call_statement` to a parenless call edge; a bare identifier is treated as
+      // recovery debris / a value statement and is NOT a call. Higher precedence than
+      // the `_expression_statement` branch so `Foo;` deterministically reduces here.
+      $.call_statement,
+      seq(
+        choice(
+          $.assignment_statement,
+          $.asserterror_statement,
+          $.if_statement,
+          $.exit_statement,
+          $.continue_statement,
+          $.break_statement,
+          $.case_statement,
+          $.for_statement,
+          $.repeat_statement,
+          $.while_statement,
+          $.foreach_statement,
+          $.with_statement,
+          $._expression_statement,
+          $.empty_statement,
+          $.preproc_conditional_statement,
+          $.preproc_split_if_statement,
+          $.preproc_split_if_else_statement,
+          $.preproc_split_if_then_begin,
+          $.preproc_split_if_begin_asymmetric,
+          $.preproc_split_if_begin_else,
+          $.preproc_split_if_then_begin_else_shared,
+          $.preproc_guarded_statement,
+          $.preproc_split_call_statement,
+        ),
+        optional(';')
+      )
+    )),
+
+    // Parenless no-arg call statement (`Initialize;`). Requires the `;` terminator —
+    // see the note in `_statement`. Only a bare identifier / quoted identifier is a
+    // parenless call here; `Foo()` stays a `call_expression` and `Rec.Find;` stays a
+    // `member_expression` (unchanged), so this adds no blast to parenful calls or
+    // record operations. prec(13) > call_expression's prec(12) so the reduction wins.
+    call_statement: $ => prec(13, seq(
+      field('function', choice($.identifier, $.quoted_identifier)),
+      ';'
     )),
 
     _expression_statement: $ => $._expression,

@@ -120,7 +120,8 @@ codeunit 50000 "Test Case Else"
                       (identifier)
                       (identifier)
                       (identifier)))
-                  (identifier)
+                  (call_statement
+                    function: (identifier))
                   (preproc_endif
                     (preproc_close))))
               (end_keyword)))
@@ -331,7 +332,8 @@ codeunit 50002 "Nested Case Test"
                   (call_expression
                     function: (identifier)
                     arguments: (argument_list))
-                  (identifier)
+                  (call_statement
+                    function: (identifier))
                   (preproc_else)
                   (call_expression
                     function: (identifier)

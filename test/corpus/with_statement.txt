@@ -45,11 +45,13 @@ codeunit 50000 "WITH Test"
               body: (code_block
                 (begin_keyword)
                 body: (statement_block
-                  (identifier)
+                  (call_statement
+                    function: (identifier))
                   (assignment_statement
                     left: (identifier)
                     right: (string_literal))
-                  (identifier))
+                  (call_statement
+                    function: (identifier)))
                 (end_keyword))))
           (end_keyword))))))
 
@@ -94,7 +96,8 @@ codeunit 50001 "WITH Single Test"
               (with_keyword)
               record: (identifier)
               (do_keyword)
-              body: (identifier)))
+              body: (call_statement
+                function: (identifier))))
           (end_keyword))))))
 
 ================================================================================
@@ -152,7 +155,8 @@ codeunit 50002 "Nested WITH Test"
               body: (code_block
                 (begin_keyword)
                 body: (statement_block
-                  (identifier)
+                  (call_statement
+                    function: (identifier))
                   (with_statement
                     (with_keyword)
                     record: (identifier)
@@ -160,7 +164,8 @@ codeunit 50002 "Nested WITH Test"
                     body: (code_block
                       (begin_keyword)
                       body: (statement_block
-                        (identifier)
+                        (call_statement
+                          function: (identifier))
                         (assignment_statement
                           left: (quoted_identifier)
                           right: (member_expression

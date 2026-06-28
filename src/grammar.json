@@ -15572,116 +15572,155 @@
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "call_statement"
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "assignment_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "asserterror_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "if_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "exit_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "continue_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "break_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "case_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "for_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "repeat_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "while_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "foreach_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "with_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_expression_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "empty_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_conditional_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_split_if_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_split_if_else_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_split_if_then_begin"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_split_if_begin_asymmetric"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_split_if_begin_else"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_split_if_then_begin_else_shared"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_guarded_statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_split_call_statement"
+                  }
+                ]
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ";"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "call_statement": {
+      "type": "PREC",
+      "value": 13,
+      "content": {
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "assignment_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "asserterror_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "if_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "exit_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "continue_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "break_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "case_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "for_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "repeat_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "while_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "foreach_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "with_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_expression_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "empty_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_conditional_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_split_if_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_split_if_else_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_split_if_then_begin"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_split_if_begin_asymmetric"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_split_if_begin_else"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_split_if_then_begin_else_shared"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_guarded_statement"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "preproc_split_call_statement"
-              }
-            ]
+            "type": "FIELD",
+            "name": "function",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "quoted_identifier"
+                }
+              ]
+            }
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": ";"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "STRING",
+            "value": ";"
           }
         ]
       }
