@@ -385,6 +385,11 @@
 ; Trigger names
 (trigger_declaration
   name: [(identifier) (quoted_identifier)] @function.definition)
+; Scoped member-trigger name (`Object::Member`)
+(trigger_declaration
+  name: (member_trigger_name
+    object: [(identifier) (quoted_identifier)] @type
+    member: [(identifier) (quoted_identifier)] @function.definition))
 
 ; Interface procedures
 (interface_procedure

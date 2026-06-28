@@ -85,6 +85,10 @@
 ; Trigger declarations
 (trigger_declaration
   name: [(identifier) (quoted_identifier)] @name) @definition.method
+; Scoped member-trigger name (`Object::Member`) — tag on the member
+(trigger_declaration
+  name: (member_trigger_name
+    member: [(identifier) (quoted_identifier)] @name)) @definition.method
 
 ; Interface procedures
 (interface_procedure
