@@ -9168,6 +9168,40 @@
     }
   },
   {
+    "type": "member_trigger_name",
+    "named": true,
+    "fields": {
+      "member": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      },
+      "object": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "quoted_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "ml_value_list",
     "named": true,
     "fields": {},
@@ -22322,15 +22356,15 @@
         ]
       },
       "name": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "::",
-            "named": false
+            "type": "identifier",
+            "named": true
           },
           {
-            "type": "identifier",
+            "type": "member_trigger_name",
             "named": true
           },
           {

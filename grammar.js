@@ -2667,10 +2667,20 @@ module.exports = grammar({
       $.preproc_endif,
     ),
 
-    // Trigger name: simple name or scoped name (UserTours::ShowTourWizard)
+    // Trigger name: a simple name, or a scoped member-trigger name
+    // (`UserTours::ShowTourWizard`). The scoped form is a single NAMED node so the
+    // `name` field binds one value — never spreading over the `::` token (which would
+    // make `name` `multiple:true` with an anonymous `::` in its type set, and make
+    // `field("name")` return only the object half, dropping the member).
     _trigger_name: $ => choice(
-      seq($._identifier_or_quoted, '::', $._identifier_or_quoted),
+      $.member_trigger_name,
       $._identifier_or_quoted,
+    ),
+
+    member_trigger_name: $ => seq(
+      field('object', $._identifier_or_quoted),
+      '::',
+      field('member', $._identifier_or_quoted),
     ),
 
     // =====================================================================
