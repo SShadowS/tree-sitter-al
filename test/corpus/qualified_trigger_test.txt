@@ -20,8 +20,9 @@ page 50100 "Camera Test"
     body: (declaration_body
       (trigger_declaration
         (trigger_keyword)
-        name: (identifier)
-        name: (identifier)
+        name: (member_trigger_name
+          object: (identifier)
+          member: (identifier))
         parameters: (parameter_list
           (parameter
             name: (identifier)
@@ -73,8 +74,9 @@ page 50200 "Provider Events"
     body: (declaration_body
       (trigger_declaration
         (trigger_keyword)
-        name: (identifier)
-        name: (identifier)
+        name: (member_trigger_name
+          object: (identifier)
+          member: (identifier))
         body: (code_block
           (begin_keyword)
           body: (statement_block
@@ -84,8 +86,9 @@ page 50200 "Provider Events"
           (end_keyword)))
       (trigger_declaration
         (trigger_keyword)
-        name: (identifier)
-        name: (identifier)
+        name: (member_trigger_name
+          object: (identifier)
+          member: (identifier))
         parameters: (parameter_list
           (parameter
             name: (identifier)
@@ -101,8 +104,9 @@ page 50200 "Provider Events"
           (end_keyword)))
       (trigger_declaration
         (trigger_keyword)
-        name: (identifier)
-        name: (identifier)
+        name: (member_trigger_name
+          object: (identifier)
+          member: (identifier))
         parameters: (parameter_list
           (parameter
             name: (identifier)
@@ -163,8 +167,9 @@ page 50300 "Mixed Triggers"
           (end_keyword)))
       (trigger_declaration
         (trigger_keyword)
-        name: (identifier)
-        name: (identifier)
+        name: (member_trigger_name
+          object: (identifier)
+          member: (identifier))
         parameters: (parameter_list
           (parameter
             name: (identifier)
