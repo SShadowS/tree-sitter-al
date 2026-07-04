@@ -1,0 +1,108 @@
+================================================================================
+`# region`/`# endregion` with a single horizontal space (already-accepted
+control — must keep working unchanged after tightening `\s*` to `[ \t]*`)
+================================================================================
+
+codeunit 50000 "Region Test"
+{
+    # region Foo
+    procedure Test()
+    begin
+    end;
+    # endregion Foo
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (preproc_region)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))
+    (preproc_endregion)))
+
+================================================================================
+AUDIT FIX — NEGATIVE: `#` then a bare LF then `region` on the next line must
+NOT be recognized as `#region`. `preproc_region`/`preproc_endregion` used
+`#\s*region`/`#\s*endregion` (regex `\s` matches `\n`/`\r`, same cross-line
+hazard class as the `#pragma` defect) — confirmed pre-fix this silently
+parsed as ONE `preproc_region` token spanning both lines, swallowing real
+source. Tightened to `[ \t]*` (horizontal-only) alongside the pragma fix. The
+CRLF variant (`#\r\nregion`) shares this exact proof and was verified
+empirically via a standalone (uncommitted) `tree-sitter parse` scratch
+fixture rather than here, for the same `.gitattributes` `eol=lf`
+normalization reason documented in pragma_whitespace_tolerance_test.txt
+================================================================================
+
+codeunit 50000 "Region Test"
+{
+    #
+region Foo
+    procedure Test()
+    begin
+    end;
+    #endregion
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (ERROR
+      (UNEXPECTED '\n')
+      (identifier)
+      (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))
+    (preproc_endregion)))
+
+================================================================================
+AUDIT FIX — NEGATIVE: `#` then a bare LF then `endregion` on the next line
+must NOT be recognized as `#endregion` (same class as the `#region` negative
+above)
+================================================================================
+
+codeunit 50000 "Region Test"
+{
+    #region Foo
+    procedure Test()
+    begin
+    end;
+    #
+endregion
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (preproc_region)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))
+    (ERROR
+      (UNEXPECTED '\n')
+      (identifier))))

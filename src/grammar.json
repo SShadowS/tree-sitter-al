@@ -4417,6 +4417,13 @@
         }
       ]
     },
+    "_tabledata_keyword": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "(?i)tabledata"
+      }
+    },
     "tabledata_permission": {
       "type": "SEQ",
       "members": [
@@ -4424,11 +4431,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "TOKEN",
-              "content": {
-                "type": "PATTERN",
-                "value": "(?i)tabledata"
-              }
+              "type": "SYMBOL",
+              "name": "_tabledata_keyword"
             },
             {
               "type": "SYMBOL",
@@ -5058,6 +5062,15 @@
           "content": {
             "type": "SYMBOL",
             "name": "keyword_as_identifier"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_tabledata_keyword"
           },
           "named": true,
           "value": "identifier"
@@ -15570,15 +15583,15 @@
     },
     "pragma": {
       "type": "PATTERN",
-      "value": "(?i)#pragma[^\\n\\r]*"
+      "value": "(?i)#[ \\t]*pragma[^\\n\\r]*"
     },
     "preproc_region": {
       "type": "PATTERN",
-      "value": "(?i)#\\s*region[^\\n\\r]*"
+      "value": "(?i)#[ \\t]*region[^\\n\\r]*"
     },
     "preproc_endregion": {
       "type": "PATTERN",
-      "value": "(?i)#\\s*endregion[^\\n\\r]*"
+      "value": "(?i)#[ \\t]*endregion[^\\n\\r]*"
     },
     "_statement": {
       "type": "PREC_RIGHT",

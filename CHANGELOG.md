@@ -5,6 +5,79 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
+## [3.1.0] — 2026-07-04
+
+Additive-only — no previously-valid parse tree changes shape (verified via
+`tools/tree-harness.sh` before/after on the CDO source corpus + zero
+divergence in the consuming engine's `cargo test --workspace` and the full
+CDO resolution harness; `tree-sitter test` 1463/1463, confirmed byte-stable
+across 5 repeated clean-cache runs — see the review note at the end of this
+entry).
+
+### Fixed
+
+- **`OptionMembers = TableData,...` first-position collision.** Bare, unquoted
+  `TableData` as the FIRST `OptionMembers` member case-insensitively collided
+  with the `tabledata` keyword that starts `tabledata_permission` — GLR chose
+  the keyword read, so the option list restarted from the second member and
+  the first was dropped as an ERROR (a real production hit: MS `System`'s
+  `Object.Table.al`, `NAVAppObjectPrerequisites.Table.al`,
+  `DatabaseLocks.Table.al` all define an `Option` field whose first member is
+  `TableData`). Fixed via a hidden `_tabledata_keyword` rule shared between
+  `tabledata_permission` (unchanged shape — the token was already anonymous)
+  and a new `alias($._tabledata_keyword, $.identifier)` arm in `option_member`
+  (mirrors the existing `table_keyword`-via-`keyword_as_identifier` route for
+  the same class of keyword-as-option-member). No new visible node kind; after
+  the spaced-if revert `node-types.json` is byte-identical to the previous
+  release (the `# pragma`/`# region` fixes are regex-value changes with no
+  node-types entry).
+- **`# pragma` (a space between `#` and `pragma`) not recognized at all.**
+  `pragma` was `#pragma[^\n\r]*` with zero whitespace tolerance (a real
+  production hit: Continia System Application's `Http.Codeunit.al`). Now
+  `#[ \t]*pragma[^\n\r]*` — HORIZONTAL whitespace only (never `\s*`, which
+  would let the extras token span a newline and silently swallow the next
+  line's real source — see the region audit below, which found exactly that
+  latent bug already present elsewhere in the grammar). Negative tests
+  confirm `#\npragma` still does not match.
+- **`preproc_region`/`preproc_endregion` cross-line hazard (audit).** Both used
+  `#\s*region[^\n\r]*` / `#\s*endregion[^\n\r]*` — the regex crate's `\s`
+  matches `\n`/`\r`, so `#` at the end of one line followed by `region`/
+  `endregion` on the NEXT line was silently accepted as a single directive
+  spanning both lines, swallowing whatever the `#` actually belonged to.
+  Confirmed pre-fix via a scratch fixture. Tightened to `[ \t]*`
+  (horizontal-only) alongside the pragma fix, closing the same bug class in
+  the one other place it existed. The already-accepted single-horizontal-space
+  form (`# region`, `# endregion`) is unaffected.
+
+### Not supported (reviewed and explicitly rejected)
+
+- **`# if` / `# elif`** (single horizontal space) — a preventive literal-variant
+  fix (mirroring the pre-existing `# else`/`# endif` variants) was drafted and
+  then DROPPED after empirical review found it introduced (a) genuine GLR
+  non-determinism: the pre-existing `preproc_split_if_then_begin_else_shared`
+  construct, fed a spaced `#if`-equivalent open, produced two mutually-
+  exclusive stable parses across process states for byte-identical input (a
+  small localized `ERROR` vs. a giant procedure-swallowing `ERROR`) — even
+  `tree-sitter test`'s own pass count flapped (1453 ↔ 1463) with zero source
+  change; and (b) a silent no-`ERROR` shape defect under `#if`-nesting: the
+  literal-variant token doesn't participate in the external scanner's depth
+  counter (the same trade-off `# else`/`# endif` already accept, which is
+  fine for THEM since they carry no nesting-sensitive payload), so a spaced
+  `# if` nested inside a real `#if` undercounted depth and the enclosing
+  `code_block` silently lost its `begin_keyword`/`end_keyword` naming. The
+  feature had zero corpus instances (purely preventive), so removing it costs
+  nothing real. **Current, intentional behavior:** a spaced `# if`/`# elif` is
+  NOT recognized as a preprocessor directive at all — the file `Recover`s
+  (parses with an honest `ERROR` node) rather than silently producing a wrong
+  or non-deterministic tree. The consuming engine's `ParseStatus::Recovered`
+  diagnostic is the designed detection path: if a real corpus instance ever
+  surfaces, it will be flagged for triage instead of passing silently. See
+  `test/corpus/preproc_if_elif_whitespace_not_recognized_test.txt` for the
+  documented-non-support fixtures (including the honest recovery shape). A
+  future fix, if warranted by a real corpus hit, belongs in the external
+  scanner (so it participates in the depth counter) — NOT another literal
+  variant.
+
 ## [3.0.1] — 2026-06-17
 
 ### Added

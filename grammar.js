@@ -921,9 +921,21 @@ module.exports = grammar({
       $.preproc_conditional_permissions,
     ),
 
+    // Hidden (underscore) rule, not a named node — a visible `tabledata_keyword`
+    // would change the tree shape of every valid `tabledata_permission` (the
+    // token is currently an anonymous inline literal with no node of its own).
+    // Referenced both here (unchanged shape) and via the `alias(..., $.identifier)`
+    // route in `option_member` below, so `OptionMembers = TableData,...` — where
+    // bare unquoted `TableData` case-insensitively collides with this exact
+    // keyword — can resolve as a plain identifier option member instead of
+    // erroring (previously: ERROR, first-position-only; see the
+    // `tabledata_permission`/`option_member` ambiguity this shares with
+    // `table_keyword`'s existing `keyword_as_identifier` precedent).
+    _tabledata_keyword: $ => kw('tabledata'),
+
     tabledata_permission: $ => seq(
       choice(
-        kw('tabledata'),
+        $._tabledata_keyword,
         $.table_keyword,
         $.codeunit_keyword,
         $.page_keyword,
@@ -1039,6 +1051,7 @@ module.exports = grammar({
       seq('-', $.integer),   // Negative integer option members (ValuesAllowed = -1)
       $.keyword_identifier,  // System, Action, etc.
       alias($.keyword_as_identifier, $.identifier),  // Type, Field, etc.
+      alias($._tabledata_keyword, $.identifier),  // TableData (first-position collision fix)
       $.local_keyword,       // 'Local' as option member
       $.internal_keyword,    // 'Internal' as option member
       $.protected_keyword,   // 'Protected' as option member
@@ -3170,12 +3183,18 @@ module.exports = grammar({
       $.preproc_endif,
     )),
 
-    // Pragma and region directives (extras — can appear anywhere)
-    pragma: $ => new RustRegex('(?i)#pragma[^\\n\\r]*'),
+    // Pragma and region directives (extras — can appear anywhere).
+    // Whitespace between `#` and the keyword is HORIZONTAL ONLY (`[ \t]*`),
+    // never `\s*` — the regex crate's `\s` matches `\n`/`\r` too, which would
+    // let the token span a newline and silently swallow real source on the
+    // NEXT line (confirmed pre-fix: `#\nregion Foo` parsed as a single
+    // `preproc_region` spanning both lines). `[^\n\r]*` already bounds the
+    // token to one line on the tail end; `[ \t]*` bounds it on the head end.
+    pragma: $ => new RustRegex('(?i)#[ \\t]*pragma[^\\n\\r]*'),
 
-    preproc_region: $ => new RustRegex('(?i)#\\s*region[^\\n\\r]*'),
+    preproc_region: $ => new RustRegex('(?i)#[ \\t]*region[^\\n\\r]*'),
 
-    preproc_endregion: $ => new RustRegex('(?i)#\\s*endregion[^\\n\\r]*'),
+    preproc_endregion: $ => new RustRegex('(?i)#[ \\t]*endregion[^\\n\\r]*'),
 
     // =====================================================================
     // Statements

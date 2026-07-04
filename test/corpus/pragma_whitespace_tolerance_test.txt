@@ -1,0 +1,99 @@
+================================================================================
+`# pragma` with a single horizontal space — the reported repro (Continia
+System Application's Http.Codeunit.al)
+================================================================================
+
+codeunit 50000 "Pragma Test"
+{
+    # pragma warning disable AL0123
+    procedure Test()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (pragma)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+`#pragma` no-space control (must keep working unchanged)
+================================================================================
+
+codeunit 50000 "Pragma Test"
+{
+    #pragma warning disable AL0123
+    procedure Test()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (pragma)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+NEGATIVE: `#` then a bare LF then `pragma` on the next line must NOT be
+recognized as a pragma directive — horizontal-only tolerance (`[ \t]*`), never
+`\s*` (which would swallow the newline and the next line's real content). The
+CRLF variant (`#\r\npragma`) shares this exact proof — `[ \t]*` excludes `\r`
+by construction the same way it excludes `\n` — and was verified empirically
+via a standalone (uncommitted) `tree-sitter parse` scratch fixture rather than
+here: this repo's `.gitattributes` forces `eol=lf` on every committed text
+file, so a `\r\n` byte sequence in a committed corpus fixture is silently
+normalized back to `\n` on checkout, making a committed "CRLF" test
+indistinguishable from this LF one — not honest coverage, hence not added.
+================================================================================
+
+codeunit 50000 "Pragma Test"
+{
+    #
+pragma warning disable AL0123
+    procedure Test()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (ERROR
+      (UNEXPECTED '\n')
+      (identifier)
+      (identifier)
+      (identifier)
+      (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

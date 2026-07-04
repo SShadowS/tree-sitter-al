@@ -1,0 +1,217 @@
+================================================================================
+TableData as first OptionMembers member (multi-member) — the reported repro
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; Type; Option)
+        {
+            OptionMembers = TableData,Table,Report;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier
+                      (table_keyword)))
+                  (option_member
+                    (keyword_identifier
+                      (report_keyword))))))))))))
+
+================================================================================
+TableData as the sole OptionMembers member
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; Type; Option)
+        {
+            OptionMembers = TableData;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+TableData in a non-first OptionMembers position (mid-list control — already
+worked pre-fix; regression guard that the fix does not disturb this path)
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; Type; Option)
+        {
+            OptionMembers = Foo,TableData,Bar;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (option_member_list
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier))
+                  (option_member
+                    (identifier)))))))))))
+
+================================================================================
+Valid tabledata_permission regression control (AccessByPermission) — the tree
+shape here must stay byte-identical to the pre-fix shape: no visible keyword
+node, `table_name`/`permission` fields only
+================================================================================
+
+page 123 "Test Page"
+{
+    actions
+    {
+        action(TestAction)
+        {
+            ApplicationArea = All;
+            AccessByPermission = tabledata Customer = R;
+            Caption = 'Test Action';
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (actions_section
+        (actions_keyword)
+        body: (action_body
+          (action_declaration
+            name: (identifier)
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (identifier))
+              (property
+                name: (property_name)
+                value: (tabledata_permission_list
+                  (tabledata_permission
+                    table_name: (identifier)
+                    permission: (permission_type))))
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))
+
+================================================================================
+Malformed permission-like fragment under OptionMembers — recovery must not
+silently parse the whole thing as a valid construct. The `TableData Customer =
+R` fragment IS shaped exactly like a valid tabledata_permission (parse
+structure, not property name, decides the value shape — matches the
+`AccessByPermission = tabledata Customer = R` case above regardless of
+property name), so it parses clean; the dangling `, Foo` after it does not fit
+any `tabledata_permission_list` continuation and must surface as an ERROR
+================================================================================
+
+table 50100 "Test Table"
+{
+    fields
+    {
+        field(1; Type; Option)
+        {
+            OptionMembers = TableData Customer = R, Foo;
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (option_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (tabledata_permission_list
+                  (tabledata_permission
+                    table_name: (identifier)
+                    permission: (permission_type)))
+                (ERROR
+                  (identifier))))))))))
