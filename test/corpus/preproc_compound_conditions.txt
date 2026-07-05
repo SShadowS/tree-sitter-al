@@ -66,6 +66,11 @@ codeunit 1 T
 
 ========================================================================
 Preprocessor with spaced endif
+(v3.2.0: PREPROC_CLOSE is now scanner-exclusive and consumes the space, so
+this produces a NAMED (preproc_close) child and correctly decrements the
+scanner's depth counter — pre-3.2.0 this matched via a grammar-literal
+fallback that bypassed the depth counter entirely, a latent bug this test
+used to unknowingly document; see preproc_if_elif_whitespace_tolerance_test.txt)
 ========================================================================
 codeunit 1 T
 {
@@ -92,4 +97,5 @@ codeunit 1 T
               name: (identifier)
               type: (type_specification
                 (basic_type)))))
-        (preproc_endif)))))
+        (preproc_endif
+          (preproc_close))))))

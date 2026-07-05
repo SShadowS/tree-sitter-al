@@ -13030,7 +13030,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "preproc_close",
@@ -13803,7 +13803,7 @@
     },
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "preproc_open",
@@ -24433,11 +24433,15 @@
     "fields": {}
   },
   {
+    "type": "# ELIF",
+    "named": false
+  },
+  {
     "type": "# ELSE",
     "named": false
   },
   {
-    "type": "# ENDIF",
+    "type": "# Elif",
     "named": false
   },
   {
@@ -24445,15 +24449,11 @@
     "named": false
   },
   {
-    "type": "# Endif",
+    "type": "# elif",
     "named": false
   },
   {
     "type": "# else",
-    "named": false
-  },
-  {
-    "type": "# endif",
     "named": false
   },
   {
@@ -24465,10 +24465,6 @@
     "named": false
   },
   {
-    "type": "#ENDIF",
-    "named": false
-  },
-  {
     "type": "#Elif",
     "named": false
   },
@@ -24477,31 +24473,11 @@
     "named": false
   },
   {
-    "type": "#Endif",
-    "named": false
-  },
-  {
-    "type": "#IF",
-    "named": false
-  },
-  {
-    "type": "#If",
-    "named": false
-  },
-  {
     "type": "#elif",
     "named": false
   },
   {
     "type": "#else",
-    "named": false
-  },
-  {
-    "type": "#endif",
-    "named": false
-  },
-  {
-    "type": "#if",
     "named": false
   },
   {

@@ -105,3 +105,121 @@ codeunit 50100 T
                 return_value: (boolean))
               (end_keyword)))
           (end_keyword))))))
+
+================================================================================
+GLR STABILITY REPRO (v3.2.0): the identical construct above, but the `#if`
+OPEN is spaced (`# if not CLEAN27APP`) — the exact reviewer repro that made
+the 3.1.0 literal-variant attempt produce two mutually-exclusive stable
+parses across process states for byte-identical input (see CHANGELOG.md
+3.1.0 and preproc_if_elif_whitespace_tolerance_test.txt). Scanner-exclusive
+ownership (no grammar-literal fallback competing with $.preproc_open) means
+there is only ONE route to the PREPROC_OPEN token, so there is nothing for
+GLR to fork on — this must parse identically in shape to the unspaced
+version above, stably, run after run (see the Task 4 report's stability
+protocol: ≥5 clean-cache reruns, md5-stable).
+================================================================================
+
+codeunit 50100 T
+{
+    procedure P(Text: Text)
+    var
+        R: Record Item;
+    begin
+        if R.Get() then;
+    # if not CLEAN27APP
+        if Page.RunModal(Page::"A", R) = Action::LookupOK then begin
+#else
+        if Page.RunModal(Page::"B", R) = Action::LookupOK then begin
+#endif
+            Text := 'x';
+            exit(true);
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (text_type))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (record_type
+                  reference: (identifier))))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list))
+              (then_keyword)
+              then_branch: (empty_statement))
+            (preproc_split_if_then_begin_else_shared
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (if_keyword)
+              condition: (comparison_expression
+                left: (call_expression
+                  function: (member_expression
+                    object: (keyword_identifier
+                      (page_keyword))
+                    member: (identifier))
+                  arguments: (argument_list
+                    (database_reference
+                      keyword: (object_type_keyword)
+                      table_name: (quoted_identifier))
+                    (identifier)))
+                operator: (comparison_operator)
+                right: (qualified_enum_value
+                  enum_type: (keyword_identifier)
+                  value: (identifier)))
+              (then_keyword)
+              (preproc_else)
+              (if_keyword)
+              condition: (comparison_expression
+                left: (call_expression
+                  function: (member_expression
+                    object: (keyword_identifier
+                      (page_keyword))
+                    member: (identifier))
+                  arguments: (argument_list
+                    (database_reference
+                      keyword: (object_type_keyword)
+                      table_name: (quoted_identifier))
+                    (identifier)))
+                operator: (comparison_operator)
+                right: (qualified_enum_value
+                  enum_type: (keyword_identifier)
+                  value: (identifier)))
+              (then_keyword)
+              (preproc_split_begin)
+              (preproc_endif
+                (preproc_close))
+              (assignment_statement
+                left: (identifier)
+                right: (string_literal))
+              (exit_statement
+                (exit_keyword)
+                return_value: (boolean))
+              (end_keyword)))
+          (end_keyword))))))

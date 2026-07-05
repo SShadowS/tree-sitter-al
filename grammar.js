@@ -2839,8 +2839,17 @@ module.exports = grammar({
       $.preproc_endif,
     ),
 
+    // Scanner-exclusive: $.preproc_open is the ONLY route to this token (no
+    // grammar-literal fallback). The external scanner now consumes '#',
+    // optional horizontal whitespace, and the case-insensitive keyword as ONE
+    // token (see scanner.c PREPROC_OPEN) — spaced (`# if`) and unspaced
+    // (`#if`) forms are both scanner-owned, so there is no overlapping
+    // scanner/literal lexer state for GLR to fork on (the reverted
+    // literal-variant attempt hit exactly that trap — see CHANGELOG.md 3.1.0
+    // "Not supported (reviewed and explicitly rejected)", now resolved in
+    // 3.2.0).
     preproc_if: $ => seq(
-      choice($.preproc_open, '#if', '#IF', '#If'),
+      $.preproc_open,
       field('condition', $._preproc_expression)
     ),
 
@@ -2879,14 +2888,30 @@ module.exports = grammar({
       $._preproc_expression
     ),
 
+    // Pure grammar literals — elif, like else, has NO external-scanner token
+    // and touches no scanner state (it doesn't change #if/#endif nesting
+    // depth, unlike preproc_open/preproc_close). Adding the spaced variants
+    // here is therefore a plain literal-vs-literal addition (no scanner
+    // involved at all), NOT a scanner/literal split — it mirrors the
+    // pre-existing, long-safe `preproc_else` spaced-variant pattern below,
+    // not the reverted preproc_if attempt (which added a literal alongside an
+    // ALREADY-scanner-owned token). See the Task 4 design note for the full
+    // "why elif differs from if/endif" reasoning.
     preproc_elif: $ => seq(
-      choice('#elif', '#ELIF', '#Elif'),
+      choice('#elif', '#ELIF', '#Elif', '# elif', '# ELIF', '# Elif'),
       field('condition', $._preproc_expression)
     ),
 
     preproc_else: $ => choice('#else', '#ELSE', '#Else', '# else', '# ELSE', '# Else'),
 
-    preproc_endif: $ => choice($.preproc_close, '#endif', '#ENDIF', '#Endif', '# endif', '# ENDIF', '# Endif'),
+    // Scanner-exclusive: $.preproc_close is the ONLY route to this token (no
+    // grammar-literal fallback, spaced or unspaced) — see preproc_if above
+    // for the rationale. This RETIRES the pre-3.2.0 '# endif' literal
+    // fallback, which matched a spaced close WITHOUT decrementing the
+    // scanner's depth counter (a latent depth-corruption bug); the scanner
+    // now owns spaced '# endif' too, so every close — spaced or not —
+    // decrements depth correctly.
+    preproc_endif: $ => $.preproc_close,
 
     // Preprocessor-split if statement: if header varies across #if/#else, body is shared
     // Pattern 1: #if COND / if (expr) then / #else / if (expr) then / #endif / body;

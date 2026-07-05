@@ -1,0 +1,417 @@
+================================================================================
+`# if` with a single horizontal space — now scanner-exclusive (v3.2.0). The
+external scanner's PREPROC_OPEN consumes '#', optional horizontal whitespace,
+then the case-insensitive 'if' keyword as ONE token (scanner.c), so this
+participates in the depth counter exactly like unspaced `#if`. No grammar
+literal fallback exists for this token (preproc_if: $ => seq($.preproc_open,
+...)) — see the design note in .superpowers/sdd/task-4-report.md for why a
+scanner/literal split (the reverted 3.1.0 attempt) is a categorical GLR trap
+and scanner-exclusive ownership is the only safe route.
+================================================================================
+
+codeunit 50000 "If Test"
+{
+    # if CLEAN24
+    procedure Test()
+    begin
+    end;
+    # endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+`# elif` with a single horizontal space, alongside no-space `#if`/`#endif`
+controls (which must keep working unchanged). preproc_elif has NO external-
+scanner token — unlike `#if`/`#endif` it touches no depth state, so the spaced
+variant is added as a plain grammar literal (mirroring the pre-existing,
+long-safe `preproc_else` spaced-literal pattern), not a scanner route. This is
+NOT a scanner/literal split: there is no scanner token for elif to fork
+against.
+================================================================================
+
+codeunit 50000 "If Test"
+{
+    #if CLEAN24
+    procedure Test()
+    begin
+    end;
+    # elif CLEAN23
+    procedure Test2()
+    begin
+    end;
+    #endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_elif
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+Fully spaced `# if` / `# elif` / `# else` / `# endif` together in one
+conditional (combined confidence — all four directive forms spaced at once)
+================================================================================
+
+codeunit 50000 "If Test"
+{
+    # if CLEAN24
+    procedure Test()
+    begin
+    end;
+    # elif CLEAN23
+    procedure Test2()
+    begin
+    end;
+    # else
+    procedure Test3()
+    begin
+    end;
+    # endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_elif
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_else)
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+Case-insensitivity survives the spaced route: `# IF` / `# ELIF` / `# ENDIF`
+================================================================================
+
+codeunit 50000 "If Test"
+{
+    # IF CLEAN24
+    procedure Test()
+    begin
+    end;
+    # ELIF CLEAN23
+    procedure Test2()
+    begin
+    end;
+    # ENDIF
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_elif
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+DEPTH-CORRECTNESS PROOF: a spaced `# if`/`# endif` nested INSIDE an unspaced
+`#if`/`#endif`. The scanner's depth counter must increment for the outer open,
+increment AGAIN for the inner spaced open, decrement for the inner spaced
+close, then decrement for the outer close — landing back at depth 0. Proven
+structurally: `Before`/`After` (outside any #if, depth 0) get NAMED
+begin_keyword/end_keyword; `Inner` (inside BOTH #if levels, depth 2) gets
+anonymous begin/end (scanner declines BEGIN_KEYWORD/END_KEYWORD at depth > 0,
+so code_block has no children at all for it) — if the inner spaced open/close
+failed to touch the depth counter (the exact bug class the reverted 3.1.0
+literal-variant attempt introduced), Inner's begin/end would be wrongly named,
+or After's would be wrongly anonymous (permanently off-by-one for the rest of
+the file)
+================================================================================
+
+codeunit 50000 "Nested If Test"
+{
+    procedure Before()
+    begin
+    end;
+
+    #if OUTER
+    # if INNER
+    procedure Inner()
+    begin
+    end;
+    # endif
+    #endif
+
+    procedure After()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword)))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (preproc_conditional
+          (preproc_if
+            (preproc_open)
+            condition: (identifier))
+          (procedure
+            (procedure_keyword)
+            name: (identifier)
+            body: (code_block))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+NEGATIVE: `# ifx` (a non-directive identifier that merely starts with "if")
+must NOT be recognized as `#if` — the scanner's whole-word boundary check
+(is_identifier_char after the keyword) rejects it exactly as it already
+rejects unspaced `#ifx`
+================================================================================
+
+codeunit 50000 "If Test"
+{
+    # ifx CLEAN24
+    procedure Test()
+    begin
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (ERROR
+      (UNEXPECTED 'i')
+      (identifier)
+      (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+REGRESSION CONTROL: unspaced `#if`/`#elif`/`#endif` must keep parsing
+byte-identically (the scanner-exclusive refactor removed preproc_if's and
+preproc_endif's grammar-literal choice arms — this proves the sole remaining
+route, $.preproc_open/$.preproc_close, still covers the unspaced form
+unchanged)
+================================================================================
+
+codeunit 50000 "If Test"
+{
+    #if CLEAN24
+    procedure Test()
+    begin
+    end;
+    #elif CLEAN23
+    procedure Test2()
+    begin
+    end;
+    #endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_elif
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_endif
+          (preproc_close))))))
+
+================================================================================
+NEGATIVE: `#` then a bare LF then `if` on the next line must NOT be recognized
+as `#if` — horizontal-only tolerance, never a cross-line match. The CRLF
+variant (`#\r\nif`) shares this exact proof and was verified empirically via a
+standalone (uncommitted) `tree-sitter parse` scratch fixture rather than here,
+for the same `.gitattributes` `eol=lf` normalization reason documented in
+pragma_whitespace_tolerance_test.txt — a committed CRLF fixture would silently
+become this LF one on checkout, which is not honest coverage
+================================================================================
+
+codeunit 50000 "If Test"
+{
+    #
+if CLEAN24
+    procedure Test()
+    begin
+    end;
+    #endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    (ERROR
+      (UNEXPECTED '\n')
+      (identifier))
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))
+    (ERROR
+      (UNEXPECTED 'i'))))
+
+================================================================================
+NEGATIVE: `#` then a bare LF then `elif` on the next line must NOT be
+recognized as `#elif` (same class as the `#if` negative above)
+================================================================================
+
+codeunit 50000 "If Test"
+{
+    #if CLEAN24
+    procedure Test()
+    begin
+    end;
+    #
+elif CLEAN23
+    procedure Test2()
+    begin
+    end;
+    #endif
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (ERROR
+          (UNEXPECTED '\n')
+          (identifier)
+          (identifier))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_endif
+          (preproc_close))))))

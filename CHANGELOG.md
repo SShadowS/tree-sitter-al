@@ -5,6 +5,94 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
+## [3.2.0] — 2026-07-05
+
+Additive-only — no previously-valid parse tree changes shape (verified via
+`tools/tree-harness.sh` before/after on the full BC.History corpus [16,898
+`.al` files], run TWICE from a clean `tree-sitter` build cache, manifest
+sha256 identical both times: byte-identical to the pre-change baseline;
+`parse-al-parallel.sh` re-confirms 16898/16898, 0 errors, 100% both runs;
+`tree-sitter test` 1469/1469, confirmed byte-stable across 5 repeated
+clean-cache runs).
+
+### Fixed
+
+- **`# if` / `# endif` (a single horizontal space between `#` and the
+  keyword) is now recognized** — closing the limitation 3.1.0 documented and
+  reviewed-and-rejected (see that entry's "Not supported" note below, now
+  resolved). The external scanner's `PREPROC_OPEN`/`PREPROC_CLOSE` consume
+  `#`, then optional horizontal whitespace (`' '`/`'\t'` only, via
+  `lexer->advance(lexer, false)` so it counts as part of the token — never
+  skipped as an extra, never a bare `isspace()`/`\s` test that could span a
+  newline), then the case-insensitive keyword, as ONE token — so a spaced
+  open/close increments/decrements the scanner's depth counter exactly like
+  the unspaced form. **Scanner-exclusive ownership**: the grammar's
+  `preproc_if`/`preproc_endif` rules now carry ONLY `$.preproc_open`/
+  `$.preproc_close` — every grammar-literal fallback (`'#if'`, `'#IF'`,
+  `'#If'`, `'#endif'`, `'#ENDIF'`, `'#Endif'`, `'# endif'`, `'# ENDIF'`,
+  `'# Endif'`) is REMOVED. This retires a latent bug the old `'# endif'`
+  literal fallback carried since its introduction (commit `500c1eb`): matching
+  a spaced close via the grammar literal bypassed the scanner entirely, so the
+  depth counter never decremented for it — a `# endif` anywhere in a real file
+  would have silently corrupted `begin`/`end` keyword naming for the rest of
+  the file. No corpus instance of this ever fired (BC.History has zero spaced
+  `#endif` occurrences), so nothing was silently wrong in production, but the
+  bug was real and is now closed at the root by making the scanner the sole,
+  depth-correct route.
+- **`# elif` (a single horizontal space)** is now recognized too — added as a
+  plain grammar-literal variant (`'# elif'`, `'# ELIF'`, `'# Elif'`), mirroring
+  the pre-existing, long-safe `preproc_else` spaced-literal pattern. `elif`
+  carries no external-scanner token and touches no depth state (unlike
+  `if`/`endif`), so this is a literal-vs-literal addition, not a
+  scanner/literal split — there is no scanner token for elif to fork against.
+
+### Why this is safe (the reverted 3.1.0 attempt was not)
+
+The 3.1.0 attempt added `# if`/`# elif` as NEW grammar-literal alternatives
+running ALONGSIDE the existing (already scanner-owned, for `if`) or
+literal-only (for `elif`) routes — a genuine scanner/literal split for `if`,
+which is a categorical GLR trap (two token-production routes for overlapping
+text let the parser's conflict resolution fork non-deterministically across
+process states). This time, `if`/`endif` are made **scanner-exclusive** (the
+literal alternatives are REMOVED, not added-to) — there is only ONE route to
+either token, spaced or not, so there is nothing for GLR to fork on. `elif`
+(and `else`) never had a scanner token to fork against in the first place, so
+adding their spaced literal is the same safe shape as the pre-existing,
+long-working `preproc_else` variants.
+
+Validation:
+- `tree-sitter test`: 1469/1469 (1459 pre-existing + 10 new/updated: 9 in
+  `test/corpus/preproc_if_elif_whitespace_tolerance_test.txt` [renamed from
+  `..._not_recognized_test.txt` — the honest-rejection fixtures flip to
+  positives, including the depth-correctness nesting proof, a
+  case-insensitivity check, an unspaced regression control, a `# ifx`
+  non-directive negative, and the cross-line negatives which STAY errors] + 1
+  new GLR-stability repro appended to
+  `preproc_split_if_then_begin_else_shared.txt` [the exact reviewer repro
+  construct from 3.1.0, now with a spaced open] + 1 pre-existing test in
+  `preproc_compound_conditions.txt` ("Preprocessor with spaced endif")
+  corrected from the old buggy depth-bypassing shape to the new depth-correct
+  one). Confirmed byte-stable across 5 repeated clean-cache
+  `tree-sitter test` runs (identical 1469/1469 every time) and 5 repeated
+  clean-cache parses of the GLR-stability repro and the nesting-depth-proof
+  repro (md5-identical tree output every time — the non-determinism class
+  from 3.1.0 does not reproduce).
+- `tools/tree-harness.sh`: BC.History (16,898 `.al` files) manifest sha256 is
+  IDENTICAL before/after this change
+  (`d96393c178907dcc405b0e5b410fe4d86b82a86122af726e585c094fda72d60b`),
+  confirmed on 2 separate clean-cache runs — proves zero shape change to any
+  previously-valid tree and zero spaced-directive corpus hits (expected: BC
+  source doesn't use this spacing style).
+- `parse-al-parallel.sh`: 16898/16898, 0 errors, 100.0% success, both before
+  and after (2 clean-cache runs post-change).
+- Serialization untouched: the scanner's `ScannerState` (a 1-byte `depth`
+  counter) and its `serialize`/`deserialize` lifecycle functions are
+  byte-for-byte unchanged — only the token-matching body of
+  `tree_sitter_al_external_scanner_scan` gained the whitespace-consuming loop.
+
+Version 3.1.0 -> 3.2.0 (additive-only, minor bump per the v2.5.2->v2.6.0 /
+v3.0.1->v3.1.0 precedent).
+
 ## [3.1.0] — 2026-07-04
 
 Additive-only — no previously-valid parse tree changes shape (verified via
@@ -77,6 +165,15 @@ entry).
   future fix, if warranted by a real corpus hit, belongs in the external
   scanner (so it participates in the depth counter) — NOT another literal
   variant.
+
+  **RESOLVED in 3.2.0** (2026-07-05): the external-scanner route this note
+  called for has landed — `PREPROC_OPEN`/`PREPROC_CLOSE` now consume optional
+  horizontal whitespace as part of the token, participating in the depth
+  counter exactly as this note anticipated. Scanner-exclusive ownership (the
+  grammar-literal fallback for `if`/`endif` is REMOVED, not extended)
+  eliminates the scanner/literal split that caused the GLR non-determinism
+  described above. See the [3.2.0] entry. The renamed fixture file is
+  `test/corpus/preproc_if_elif_whitespace_tolerance_test.txt`.
 
 ## [3.0.1] — 2026-06-17
 

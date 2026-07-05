@@ -159,22 +159,42 @@ bool tree_sitter_al_external_scanner_scan(
     skip_whitespace(lexer);
     if (lexer->lookahead == '#') {
       lexer->advance(lexer, false);
+      // Consume horizontal whitespace between '#' and the keyword as PART OF
+      // THE TOKEN (advance(lexer, false) — never advance(lexer, true), which
+      // would mark it as a skippable extra instead). Space/tab ONLY — never
+      // '\r'/'\n': a directive split across lines must NOT match (that stays
+      // an honest ERROR; see the cross-line negatives in
+      // preproc_if_elif_whitespace_tolerance_test.txt). This makes '#if' and
+      // '#endif' (spaced or not) scanner-exclusive: the only route either
+      // token can be produced is here, so there is no scanner/literal split
+      // for GLR to fork on (see grammar.js's preproc_if/preproc_endif, which
+      // now carry ONLY $.preproc_open/$.preproc_close — no literal fallback).
+      while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+        lexer->advance(lexer, false);
+      }
       if (valid_symbols[PREPROC_OPEN] && read_keyword_ci(lexer, "if")) {
         state->depth++;
         lexer->result_symbol = PREPROC_OPEN;
         return true;
       }
-      // Note: if "if" didn't match, we consumed '#' + partial chars.
-      // But read_keyword_ci only advances while chars match, so if it
-      // returned false on the first char, we only consumed '#'.
-      // For "#endif", after failing "#if" match (first char 'e' != 'i'),
-      // the lexer is at 'e'. We can still try "endif".
+      // Note: if "if" didn't match, we consumed '#' + optional whitespace +
+      // partial chars. read_keyword_ci only advances while chars match, so
+      // if it returned false on the first char, no further chars beyond the
+      // whitespace were consumed. For "#endif"/"# endif", after failing the
+      // "if" match (first char 'e' != 'i'), the lexer is right after the
+      // whitespace. We can still try "endif" from there.
       if (valid_symbols[PREPROC_CLOSE] && read_keyword_ci(lexer, "endif")) {
         if (state->depth > 0) state->depth--;
         lexer->result_symbol = PREPROC_CLOSE;
         return true;
       }
-      // '#' was consumed but neither matched — return false
+      // '#' (+ optional whitespace) was consumed but neither matched —
+      // return false. Per the external-scanner contract, ALL advances made
+      // during this (failed) scan are discarded by tree-sitter; the lexer
+      // resets to the original '#' position for the next lex attempt (e.g.
+      // the parser's generic error-recovery machinery). This is the existing
+      // invariant the pre-whitespace code already relied on (see the note
+      // above) — untouched by this change.
       return false;
     }
   }
