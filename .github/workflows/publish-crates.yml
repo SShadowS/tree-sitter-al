@@ -1,0 +1,32 @@
+name: Publish Rust Crate
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+    environment: crates
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Verify Cargo.toml matches package.json
+        run: |
+          pkg="$(node -p "require('./package.json').version")"
+          crate="$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)"
+          if [ "$pkg" != "$crate" ]; then
+            echo "::error::Cargo.toml version $crate does not match package.json version $pkg"
+            exit 1
+          fi
+          echo "Publishing crate version $crate"
+
+      - name: Publish to crates.io
+        run: cargo publish --locked
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
