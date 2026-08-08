@@ -63,5 +63,11 @@ jobs:
 
       # No NODE_AUTH_TOKEN: authentication is OIDC via the trusted publisher.
       # Provenance attestations are generated automatically in that mode.
+      # setup-node exports NODE_AUTH_TOKEN as the literal placeholder
+      # XXXXX-XXXXX-XXXXX-XXXXX, which npm sends as a real token and the
+      # registry rejects with a 404 before OIDC is ever attempted. Blank it
+      # so the .npmrc entry resolves empty and trusted publishing can engage.
       - name: Publish to npm
         run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ""
