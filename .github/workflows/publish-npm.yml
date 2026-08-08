@@ -49,6 +49,17 @@ jobs:
           npm install -g npm@latest
           npm --version
 
+      - name: Debug OIDC environment
+        run: |
+          echo "ACTIONS_ID_TOKEN_REQUEST_URL set: ${ACTIONS_ID_TOKEN_REQUEST_URL:+yes}${ACTIONS_ID_TOKEN_REQUEST_URL:-NO}"
+          echo "NODE_AUTH_TOKEN set: ${NODE_AUTH_TOKEN:+yes}${NODE_AUTH_TOKEN:-NO}"
+          echo "NPM_CONFIG_USERCONFIG: ${NPM_CONFIG_USERCONFIG:-unset}"
+          echo "registry: $(npm config get registry)"
+          if [ -n "${NPM_CONFIG_USERCONFIG:-}" ] && [ -f "$NPM_CONFIG_USERCONFIG" ]; then
+            echo "--- userconfig contents ---"
+            sed 's/=.*/=<redacted>/' "$NPM_CONFIG_USERCONFIG"
+          fi
+
       - name: Install dependencies
         run: npm ci
 
