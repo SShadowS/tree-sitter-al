@@ -68,6 +68,6 @@ jobs:
       # registry rejects with a 404 before OIDC is ever attempted. Blank it
       # so the .npmrc entry resolves empty and trusted publishing can engage.
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish --access public --loglevel silly
         env:
           NODE_AUTH_TOKEN: ""
