@@ -48,26 +48,23 @@ jobs:
           npm install -g npm@latest
           npm --version
 
-      - name: Debug OIDC environment
-        run: |
-          echo "ACTIONS_ID_TOKEN_REQUEST_URL set: ${ACTIONS_ID_TOKEN_REQUEST_URL:+yes}${ACTIONS_ID_TOKEN_REQUEST_URL:-NO}"
-          echo "NODE_AUTH_TOKEN set: ${NODE_AUTH_TOKEN:+yes}${NODE_AUTH_TOKEN:-NO}"
-          echo "NPM_CONFIG_USERCONFIG: ${NPM_CONFIG_USERCONFIG:-unset}"
-          if [ -n "${NPM_CONFIG_USERCONFIG:-}" ] && [ -f "$NPM_CONFIG_USERCONFIG" ]; then
-            echo "--- userconfig contents ---"
-            sed 's/\(_authToken=\).*/\1<redacted>/' "$NPM_CONFIG_USERCONFIG"
-          fi
-
       - name: Install dependencies
         run: npm ci
 
       # No NODE_AUTH_TOKEN: authentication is OIDC via the trusted publisher.
       # Provenance attestations are generated automatically in that mode.
-      # setup-node exports NODE_AUTH_TOKEN as the literal placeholder
-      # XXXXX-XXXXX-XXXXX-XXXXX, which npm sends as a real token and the
-      # registry rejects with a 404 before OIDC is ever attempted. Blank it
-      # so the .npmrc entry resolves empty and trusted publishing can engage.
+      # Authentication is OIDC via the trusted publisher configured on npmjs;
+      # provenance attestations are generated automatically in that mode.
+      #
+      # NODE_AUTH_TOKEN is blanked because setup-node's registry-url exports it
+      # as the literal placeholder XXXXX-XXXXX-XXXXX-XXXXX. OIDC overrides it on
+      # success, but if the exchange ever fails npm falls back to that bogus
+      # token and reports a misleading 404 instead of the real reason. Blanking
+      # it makes such a failure surface honestly.
+      #
+      # To debug a failed exchange, add --loglevel silly: the reason is logged
+      # as "npm verbose oidc Failed token exchange request with body message".
       - name: Publish to npm
-        run: npm publish --access public --loglevel silly
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ""
