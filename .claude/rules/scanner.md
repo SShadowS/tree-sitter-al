@@ -21,6 +21,12 @@ The scanner maintains a 1-byte `ScannerState` with a `depth` counter (uint8_t) t
 
 **Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → BEGIN_KEYWORD → END_KEYWORD → PREPROC_SPLIT_BEGIN → PREPROC_SPLIT_END → CONTINUE_AS_IDENTIFIER → PROPERTY_NAME
 
+## Transparent Directives
+
+`peek_keyword_ci_skip_extras` scans ahead for `#endif` (used by `PREPROC_SPLIT_BEGIN`) and must step over every directive that `grammar.js` declares as `extras` — they are transparent to the parse tree. `TRANSPARENT_DIRECTIVES` lists them: `pragma`, `region`, `endregion`, `define`, `undef`. **Keep it in sync with the `extras` array.**
+
+Consuming `#` is irreversible within one scan, and so is consuming the `end` prefix shared by `endif`/`endregion` — so the helper reads the directive word into a buffer ONCE and then classifies it. Never match candidate keywords in sequence here.
+
 ## PROPERTY_NAME Token
 
 This is the V2 grammar's key architectural innovation. When the parser state allows both properties and variables, the scanner checks what follows the identifier:

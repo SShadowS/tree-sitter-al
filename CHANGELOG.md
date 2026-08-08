@@ -5,6 +5,54 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
+## [Unreleased]
+
+Additive-only — no previously-valid parse tree changes shape (verified via
+`tools/tree-harness.sh`: all 15,358 BC.History `.al` files byte-identical to
+the pre-change baseline; `parse-al-parallel.sh` re-confirms 15358/15358, 0
+errors, 100%; `tree-sitter test` 1482/1482).
+
+### Added
+
+- **`#define` and `#undef` are now recognized**, as the new node types
+  `preproc_define` and `preproc_undef`. Both are single-line regex tokens in
+  `extras`, alongside `pragma`/`preproc_region`/`preproc_endregion`: they are
+  line-level, take a single symbol name, and never touch the external scanner's
+  `#if`/`#endif` depth counter. Case-insensitive, and tolerant of horizontal
+  whitespace between `#` and the keyword (`# define`), matching the other
+  directives.
+
+  Microsoft documents both directives, and Microsoft's own Highlight.js AL
+  grammar lists them, but BC.History contains zero occurrences — the base
+  application declares its symbols via `preprocessorSymbols` in `app.json`
+  rather than in source — so the gap went unnoticed and the fixtures in
+  `test/corpus/preproc_define_undef_test.txt` are synthetic.
+
+  The `extras` placement is deliberately more permissive than the compiler,
+  which accepts these directives ONLY before the first real token of a file
+  (`error AL0625`); comments, `#pragma`, `#region` and whole `#if`/`#endif`
+  blocks may still precede or wrap them. Per "parse structure, don't validate",
+  that positional rule belongs in a linter. `docs/preproc-define-undef.md`
+  records the full compiler-verified accept/reject matrix (alc 18.0.37).
+
+  `queries/highlights.scm` captures both as `@keyword.directive`. They are not
+  added to `queries/folds.scm` — single-line directives that open nothing.
+
+### Changed
+
+- **The external scanner's `#endif` lookahead now steps over every transparent
+  directive, not just `#pragma`.** `peek_keyword_ci_skip_pragma` is renamed
+  `peek_keyword_ci_skip_extras` and skips `#pragma`, `#region`, `#endregion`,
+  `#define` and `#undef` (`TRANSPARENT_DIRECTIVES`, kept in sync with the
+  `extras` array). It now reads the directive word after `#` once into a buffer
+  and classifies it, rather than trying candidate keywords in sequence —
+  consuming `#` is irreversible within one scan, and so is consuming the `end`
+  prefix shared by `endif` and `endregion`.
+
+  Beyond the new directives this fixes `#region`/`#endregion` between a split
+  `begin` and its `#endif`, which previously blocked `PREPROC_SPLIT_BEGIN`. No
+  BC.History file relied on the old behaviour (tree harness: byte-identical).
+
 ## [3.2.0] — 2026-07-05
 
 Additive-only — no previously-valid parse tree changes shape (verified via

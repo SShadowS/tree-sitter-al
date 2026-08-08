@@ -88,6 +88,8 @@ module.exports = grammar({
     $.pragma,
     $.preproc_region,
     $.preproc_endregion,
+    $.preproc_define,
+    $.preproc_undef,
     /\uFEFF/,  // BOM
   ],
 
@@ -3220,6 +3222,31 @@ module.exports = grammar({
     preproc_region: $ => new RustRegex('(?i)#[ \\t]*region[^\\n\\r]*'),
 
     preproc_endregion: $ => new RustRegex('(?i)#[ \\t]*endregion[^\\n\\r]*'),
+
+    // Symbol definition directives. Line-level like #pragma/#region: they take a
+    // single symbol name, never open or close a conditional, and so must NOT
+    // touch the scanner's #if/#endif depth counter.
+    //
+    // Positionally the AL compiler is far stricter than this rule — verified
+    // against alc 18.0.37 (full accept/reject matrix in
+    // docs/preproc-define-undef.md):
+    //   * accepted ONLY before the first real token of the file — comments,
+    //     #pragma, #region/#endregion and whole #if/#else/#endif blocks may
+    //     precede or wrap them, but a `namespace`, `using` or object
+    //     declaration ends the window (error AL0625, "Cannot define/undefine
+    //     preprocessor symbols after first token in file")
+    //   * the symbol must be a bare identifier — letters, digits, underscores
+    //     (error AL0107 on a missing or quoted name)
+    //   * only a trailing `//` comment may follow the symbol (error AL0631)
+    //   * `#` and the directive must share a line (error AL0621)
+    // Per "parse structure, don't validate", those are semantic checks for a
+    // linter, so these stay `extras` alongside the other line-level directives.
+    // That also buys reachability for free: file-leading position, inside a
+    // leading pragma-only #if block, and after leading comments/pragmas are all
+    // the same rule with no new parser states and no GLR conflicts.
+    preproc_define: $ => new RustRegex('(?i)#[ \\t]*define[^\\n\\r]*'),
+
+    preproc_undef: $ => new RustRegex('(?i)#[ \\t]*undef[^\\n\\r]*'),
 
     // =====================================================================
     // Statements

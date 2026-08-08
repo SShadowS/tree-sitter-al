@@ -1,0 +1,306 @@
+================================================================================
+#define at the top of a file, followed by an object declaration
+================================================================================
+#define DEBUG
+codeunit 50100 "Debug Helper"
+{
+    procedure Run()
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_define)
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+#define followed by #undef
+================================================================================
+#define DEBUG
+#undef DEBUG
+codeunit 50100 Probe { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_define)
+  (preproc_undef)
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+================================================================================
+Whitespace between # and the directive
+================================================================================
+# define DEBUG
+#	undef DEBUG
+codeunit 50100 Probe { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_define)
+  (preproc_undef)
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+================================================================================
+Upper and mixed case spellings
+================================================================================
+#DEFINE DEBUG
+#UNDEF DEBUG
+#Define TRACE
+#UnDef TRACE
+codeunit 50100 Probe { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_define)
+  (preproc_undef)
+  (preproc_define)
+  (preproc_undef)
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+================================================================================
+Defined symbol used in a later #if
+================================================================================
+#define DEBUG
+codeunit 50100 Probe
+{
+    procedure Run()
+    begin
+#if DEBUG
+        Message('on');
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_define)
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_conditional_statement
+              (preproc_if
+                (preproc_open)
+                condition: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal)))
+              (preproc_endif
+                (preproc_close))))
+          (end_keyword))))))
+
+================================================================================
+Trailing line comment after the symbol
+================================================================================
+#define DEBUG // enable
+#undef DEBUG // disable
+codeunit 50100 Probe { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_define)
+  (preproc_undef)
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+================================================================================
+#define inside a leading #if block, before the namespace
+================================================================================
+#if not CLEAN99
+#define DEBUG
+#endif
+namespace Probe.Test;
+codeunit 50100 Probe { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_pragma_only
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_not_expression
+        (identifier)))
+    (preproc_define)
+    (preproc_endif
+      (preproc_close)))
+  (namespace_declaration
+    (namespace_keyword)
+    name: (namespace_name
+      (identifier)
+      (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+================================================================================
+#define ahead of namespace and using declarations
+================================================================================
+#define DEBUG
+namespace Probe.Test;
+using System.Utilities;
+codeunit 50100 Probe { }
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_define)
+  (namespace_declaration
+    (namespace_keyword)
+    name: (namespace_name
+      (identifier)
+      (identifier)))
+  (using_statement
+    (using_keyword)
+    namespace: (namespace_name
+      (identifier)
+      (identifier)))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)))
+
+================================================================================
+Scanner lookahead: #define between a split begin and its #endif
+================================================================================
+codeunit 1 T
+{
+    procedure X() : Boolean
+    var
+        Ok: Boolean;
+    begin
+#if not CLEAN27
+        if not Ok then begin
+#define DEBUG
+#endif
+            exit(false);
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_if_begin_asymmetric
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (if_keyword)
+              condition: (unary_expression
+                operand: (identifier))
+              (then_keyword)
+              (preproc_split_begin)
+              (preproc_define)
+              (preproc_endif
+                (preproc_close))
+              (exit_statement
+                (exit_keyword)
+                return_value: (boolean))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Scanner lookahead: #region between a split begin and its #endif
+================================================================================
+codeunit 1 T
+{
+    procedure X() : Boolean
+    var
+        Ok: Boolean;
+    begin
+#if not CLEAN27
+        if not Ok then begin
+#region Inner
+#endif
+            exit(false);
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_if_begin_asymmetric
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (if_keyword)
+              condition: (unary_expression
+                operand: (identifier))
+              (then_keyword)
+              (preproc_split_begin)
+              (preproc_region)
+              (preproc_endif
+                (preproc_close))
+              (exit_statement
+                (exit_keyword)
+                return_value: (boolean))
+              (end_keyword)))
+          (end_keyword))))))

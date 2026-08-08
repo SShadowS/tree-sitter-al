@@ -85,44 +85,24 @@ static bool peek_keyword_ci(TSLexer *lexer, const char *keyword) {
   return true;
 }
 
-// Skip whitespace and any #pragma lines, then peek for a keyword.
-// #pragma lines are transparent extras — we must skip them when scanning ahead
-// for split-construct patterns (e.g., PREPROC_SPLIT_BEGIN checking for #endif).
-static bool peek_keyword_ci_skip_pragma(TSLexer *lexer, const char *keyword) {
+// Directives that grammar.js declares as `extras`. They are transparent to the
+// parse tree, so a lookahead scanning for a structural directive must step over
+// them rather than stop on them. Keep in sync with the `extras` array.
+static const char *const TRANSPARENT_DIRECTIVES[] = {
+  "pragma", "endregion", "region", "define", "undef", NULL,
+};
+
+// Skip whitespace and any transparent-directive lines, then peek for a keyword.
+//
+// Used when scanning ahead for split-construct patterns (e.g.
+// PREPROC_SPLIT_BEGIN checking for #endif). Consuming '#' is irreversible
+// within one scan, so the directive word after '#' is read ONCE into a buffer
+// and then classified — matching candidates one after another would burn the
+// shared prefix of e.g. "endif"/"endregion" on the first failed attempt.
+static bool peek_keyword_ci_skip_extras(TSLexer *lexer, const char *keyword) {
   while (true) {
     skip_whitespace(lexer);
-    // Check for '#pragma' line — skip entire line
-    if (lexer->lookahead == '#') {
-      lexer->advance(lexer, false);
-      // Check if 'pragma' follows
-      const char *pragma = "pragma";
-      bool is_pragma = true;
-      for (int i = 0; pragma[i] != '\0'; i++) {
-        if (towlower(lexer->lookahead) != pragma[i]) { is_pragma = false; break; }
-        lexer->advance(lexer, false);
-      }
-      if (is_pragma && (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
-                        lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
-                        lexer->lookahead == '\0')) {
-        // Skip rest of this #pragma line
-        while (lexer->lookahead != '\0' && lexer->lookahead != '\n') {
-          lexer->advance(lexer, false);
-        }
-        continue;  // loop back to skip more whitespace/#pragma lines
-      } else {
-        // '#' was followed by something other than 'pragma' — check for keyword
-        // We already consumed '#'; now match rest of keyword (which starts with '#')
-        // Since we consumed '#', match from position 1 of keyword
-        if (keyword[0] != '#') return false;
-        const char *rest = keyword + 1;
-        for (int i = 0; rest[i] != '\0'; i++) {
-          if (towlower(lexer->lookahead) != rest[i]) return false;
-          lexer->advance(lexer, false);
-        }
-        if (is_identifier_char(lexer->lookahead)) return false;
-        return true;
-      }
-    } else {
+    if (lexer->lookahead != '#') {
       // Not '#' — try to match keyword directly
       for (int i = 0; keyword[i] != '\0'; i++) {
         if (towlower(lexer->lookahead) != keyword[i]) return false;
@@ -130,6 +110,38 @@ static bool peek_keyword_ci_skip_pragma(TSLexer *lexer, const char *keyword) {
       }
       if (is_identifier_char(lexer->lookahead)) return false;
       return true;
+    }
+
+    lexer->advance(lexer, false);
+    // Horizontal whitespace only: '# pragma' is one directive, but '#' and a
+    // word on the NEXT line are not (matching the extras regexes' `[ \t]*`).
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+      lexer->advance(lexer, false);
+    }
+
+    // Read the directive word. Longest AL directive is "endregion" (9).
+    char word[16];
+    size_t len = 0;
+    while (is_identifier_char(lexer->lookahead)) {
+      if (len < sizeof(word) - 1) word[len] = (char)towlower(lexer->lookahead);
+      len++;
+      lexer->advance(lexer, false);
+    }
+    if (len >= sizeof(word)) return false;  // too long to be any directive
+    word[len] = '\0';
+
+    // The caller's keyword includes the '#' we just consumed.
+    if (keyword[0] == '#' && strcmp(word, keyword + 1) == 0) return true;
+
+    bool transparent = false;
+    for (int i = 0; TRANSPARENT_DIRECTIVES[i] != NULL; i++) {
+      if (strcmp(word, TRANSPARENT_DIRECTIVES[i]) == 0) { transparent = true; break; }
+    }
+    if (!transparent) return false;
+
+    // Skip the rest of this directive's line, then look again.
+    while (lexer->lookahead != '\0' && lexer->lookahead != '\n') {
+      lexer->advance(lexer, false);
     }
   }
 }
@@ -223,12 +235,13 @@ bool tree_sitter_al_external_scanner_scan(
   // including '#'). PREPROC_OPEN/CLOSE manually advance past '#' before calling
   // read_keyword_ci("if"/"endif"). These are DIFFERENT conventions — do not mix.
   //
-  // #pragma lines are transparent extras — we skip them when scanning ahead for #endif.
+  // #pragma/#region/#define and friends are transparent extras — we skip them
+  // when scanning ahead for #endif (see TRANSPARENT_DIRECTIVES).
   if (valid_symbols[PREPROC_SPLIT_BEGIN] && state->depth > 0) {
     skip_whitespace(lexer);
     if (read_keyword_ci(lexer, "begin")) {
       lexer->mark_end(lexer);  // token covers only 'begin'
-      if (peek_keyword_ci_skip_pragma(lexer, "#endif")) {
+      if (peek_keyword_ci_skip_extras(lexer, "#endif")) {
         lexer->result_symbol = PREPROC_SPLIT_BEGIN;
         return true;
       }

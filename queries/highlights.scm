@@ -21,6 +21,8 @@
   (pragma)
   (preproc_region)
   (preproc_endregion)
+  (preproc_define)
+  (preproc_undef)
 ] @keyword.directive
 
 ; =============================================================================

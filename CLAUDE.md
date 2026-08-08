@@ -131,6 +131,13 @@ Parse tree: `(attribute_item ...) (procedure ...)`  — separate nodes at the sa
 
 ## Preprocessor Handling
 
+**Line-level directives** are `extras` (reachable anywhere): `pragma`,
+`preproc_region`, `preproc_endregion`, `preproc_define`, `preproc_undef`. They
+never touch the scanner's `#if`/`#endif` depth counter. The AL compiler only
+accepts `#define`/`#undef` before the first real token of a file — that
+positional rule is a linter's job, not the parser's. See
+`docs/preproc-define-undef.md`.
+
 **Generic conditionals** (most cases):
 ```javascript
 preproc_conditional: $ => seq($.preproc_if, repeat($._any_content), ...)
@@ -208,11 +215,11 @@ python parse_bug_finder.py file.al debug.log
 
 | Metric | Value |
 |--------|-------|
-| parser.c size | 23.8 MB |
-| SYMBOL_COUNT | ~814 |
-| STATE_COUNT | ~12,616 |
-| grammar.js lines | ~3,933 |
-| Tests | 1,451 |
+| parser.c size | 24.8 MB |
+| SYMBOL_COUNT | ~862 |
+| STATE_COUNT | ~11,866 |
+| grammar.js lines | ~4,044 |
+| Tests | 1,482 |
 | Production success | 100% (0 errors) |
 | Named keywords | 82 |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
@@ -247,6 +254,7 @@ Exit `0` + `test.app` written = compiler accepts. Exit `1` with no `test.app` = 
 - `docs/v2-blog-post-notes.md` — V2 rewrite narrative and data
 - `docs/superpowers/specs/` — Design specs for major changes
 - `docs/database-reference-numeric-id-fix.md` — `Codeunit::N` / `Page::N` numeric ID support
+- `docs/preproc-define-undef.md` — `#define`/`#undef` support, compiler-verified accept/reject matrix
 
 ## Philosophy: No Known Limitations
 

@@ -15559,6 +15559,14 @@
       "type": "PATTERN",
       "value": "(?i)#[ \\t]*endregion[^\\n\\r]*"
     },
+    "preproc_define": {
+      "type": "PATTERN",
+      "value": "(?i)#[ \\t]*define[^\\n\\r]*"
+    },
+    "preproc_undef": {
+      "type": "PATTERN",
+      "value": "(?i)#[ \\t]*undef[^\\n\\r]*"
+    },
     "_statement": {
       "type": "PREC_RIGHT",
       "value": 0,
@@ -19605,6 +19613,14 @@
     {
       "type": "SYMBOL",
       "name": "preproc_endregion"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "preproc_define"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "preproc_undef"
     },
     {
       "type": "PATTERN",
