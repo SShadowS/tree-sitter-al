@@ -1,10 +1,8 @@
 ; AL Language (v2) - Tree-sitter Indentation Queries
 ; Compatible with Neovim (nvim-treesitter) and Helix editor
-
 ; =============================================================================
 ; Indent Begin - nodes that increase indentation
 ; =============================================================================
-
 ; Object declarations (all use { ... })
 [
   (table_declaration)
@@ -172,23 +170,25 @@
 
 ; Argument and parameter lists
 (argument_list) @indent.begin
+
 (parameter_list) @indent.begin
 
 ; =============================================================================
 ; Indent End - tokens that signal end of indentation
 ; =============================================================================
-
 "}" @indent.end
+
 ")" @indent.end
+
 "]" @indent.end
 
 ; Code block begin/end tokens (at depth 0 — named nodes)
-(code_block (end_keyword) @indent.end)
+(code_block
+  (end_keyword) @indent.end)
 
 ; =============================================================================
 ; Indent Branch - closing tokens that should dedent to match their opener
 ; =============================================================================
-
 [
   "}"
   ")"
