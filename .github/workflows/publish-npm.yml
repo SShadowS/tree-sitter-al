@@ -1,8 +1,13 @@
 name: Publish npm Package
 
+# Triggered directly on the tag rather than through a wrapper workflow.
+# npm validates trusted publishing against the CALLING workflow, so running
+# this from a reusable-workflow caller would not match the trusted publisher
+# registered for publish-npm.yml.
 on:
+  push:
+    tags: ["v*"]
   workflow_dispatch:
-  workflow_call:
 
 jobs:
   publish:
@@ -20,10 +25,29 @@ jobs:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
+      - name: Verify tag matches package.json
+        run: |
+          if [ "$GITHUB_REF_TYPE" != "tag" ]; then
+            echo "Manual dispatch from $GITHUB_REF_NAME; skipping tag check."
+            exit 0
+          fi
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$pkg" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $pkg"
+            exit 1
+          fi
+          echo "Publishing version $pkg"
+
+      # Trusted publishing needs npm >= 11.5.1; Node 22 ships npm 10.x, which
+      # silently falls back to token auth instead of using OIDC.
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@^11
+
       - name: Install dependencies
         run: npm ci
 
+      # No NODE_AUTH_TOKEN: authentication is OIDC via the trusted publisher.
+      # Provenance attestations are generated automatically in that mode.
       - name: Publish to npm
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public

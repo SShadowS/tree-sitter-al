@@ -1,7 +1,9 @@
 name: Publish Rust Crate
 
+# Triggered directly on the tag, matching the npm and PyPI workflows.
 on:
-  workflow_call:
+  push:
+    tags: ["v*"]
   workflow_dispatch:
 
 jobs:
@@ -16,12 +18,16 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
-      - name: Verify Cargo.toml matches package.json
+      - name: Verify versions agree
         run: |
           pkg="$(node -p "require('./package.json').version")"
           crate="$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)"
           if [ "$pkg" != "$crate" ]; then
             echo "::error::Cargo.toml version $crate does not match package.json version $pkg"
+            exit 1
+          fi
+          if [ "$GITHUB_REF_TYPE" = "tag" ] && [ "${GITHUB_REF_NAME#v}" != "$pkg" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $pkg"
             exit 1
           fi
           echo "Publishing crate version $crate"
