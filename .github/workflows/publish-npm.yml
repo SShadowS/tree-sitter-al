@@ -20,10 +20,13 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # No registry-url: it makes setup-node write an .npmrc containing
+      # _authToken=${NODE_AUTH_TOKEN} and export that variable as the literal
+      # placeholder XXXXX-XXXXX-XXXXX-XXXXX. npm then authenticates with that
+      # bogus token, gets a 404, and never falls back to OIDC.
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
-          registry-url: "https://registry.npmjs.org"
 
       - name: Verify tag matches package.json
         run: |
