@@ -5,7 +5,7 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
-## [Unreleased]
+## [3.3.0] — 2026-08-09
 
 Additive-only — no previously-valid parse tree changes shape (verified via
 `tools/tree-harness.sh`: all 15,358 BC.History `.al` files byte-identical to
