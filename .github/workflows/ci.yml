@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - grammar.js
+      - src/**
+      - test/**
+      - queries/**
+      - bindings/**
+      - binding.gyp
+      - .github/workflows/ci.yml
+  pull_request:
+    paths:
+      - grammar.js
+      - src/**
+      - test/**
+      - queries/**
+      - bindings/**
+      - binding.gyp
+      - .github/workflows/ci.yml
+
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test parser
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v2
+      - name: Run tests
+        uses: tree-sitter/parser-test-action@v3
+        with:
+          test-rust: ${{runner.os == 'Linux'}}
+
+  fuzz:
+    name: Fuzz scanner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Check for scanner changes
+        id: scanner-check
+        shell: sh
+        run: |-
+          {
+            test -f src/scanner.c && ! git diff --quiet HEAD^ -- "$_" &&
+            printf 'changed=true\n' || printf 'changed=false\n'
+          } >> "$GITHUB_OUTPUT"
+      - name: Run fuzzer
+        uses: tree-sitter/fuzz-action@v4
+        if: steps.scanner-check.outputs.changed == 'true'
+
+  query:
+    name: Validate queries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up repository
+        uses: actions/checkout@v6
+
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v2
+
+      - name: Build parser
+        run: tree-sitter build
+
+      - name: Set up ts_query_ls
+        run: curl -fL https://github.com/ribru17/ts_query_ls/releases/latest/download/ts_query_ls-x86_64-unknown-linux-gnu.tar.gz | tar -xz
+
+      - name: Check queries
+        run: ./ts_query_ls check -f queries/
