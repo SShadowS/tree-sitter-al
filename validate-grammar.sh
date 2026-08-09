@@ -310,6 +310,11 @@ else
 fi
 
 # Step 8: Grammar health check (regression detection)
+#
+# .grammar_baseline.json's known_unused/known_missing entries are mostly
+# regex-detector false positives, not real debt -- see its own "_note" field,
+# or the BASELINE_NOTE comment in tools/check_grammar_health.py, for the four
+# categories and why each was accepted into the baseline.
 print_header "Step 8: Grammar Health Check"
 if [ -f "tools/check_grammar_health.py" ]; then
     # `&& ... || ...` (not a bare assignment) because this step can now actually

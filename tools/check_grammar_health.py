@@ -28,6 +28,43 @@ from datetime import datetime
 # beside grammar.js before this script moved under tools/.
 BASELINE_FILE = Path(__file__).resolve().parent.parent / '.grammar_baseline.json'
 
+# _find_unused_rules()/_find_missing_definitions() below use a regex over `$.name`
+# and `name: $ =>` text, not a real JS parser, so they have known blind spots.
+# The baseline currently carries 27 entries that are each one of exactly four
+# false-positive shapes, not real debt — verified by reading every one against
+# grammar.js (2026-08-10 review, Task 20 fix round 1):
+#
+#   1. External scanner tokens (9) — declared in `externals: $ => [...]` and
+#      never given a `name: $ =>` rule body, e.g. `property_name`
+#      (the PROPERTY_NAME scanner token). Reported as "missing" because the
+#      only definition-shaped pattern the regex looks for doesn't apply to
+#      externals.
+#   2. Object/extension declarations built through a helper function (13) —
+#      e.g. `table_declaration: _object_with_id('table')`. The regex requires
+#      a literal `$ =>` right after the colon; a helper-function call doesn't
+#      match even though the rule is genuinely defined.
+#   3. Legitimate `alias()` targets (2) — `aggregate_function` (grammar.js
+#      `field('function', alias($.identifier, $.aggregate_function))`) and
+#      `object_type_keyword` (`alias(choice(...), $.object_type_keyword)`).
+#      Real nodes with no `name: $ =>` definition by design — `alias()` is how
+#      a rule gets renamed in the tree without one.
+#   4. `unused_rules` via computed member access (3) — `entitlement_keyword`,
+#      `profile_keyword`, `profileextension_keyword`, all referenced only as
+#      `$[keyword_name + '_keyword']` in a loop. The reference-finding regex
+#      only matches literal dot access (`$.name`), so a computed lookup is
+#      invisible to it even though the rule is used.
+#
+# If this count grows on a future --save-baseline, re-derive which category
+# each new entry falls into before accepting it — don't assume it's another
+# false positive. BASELINE_NOTE below is written into the JSON file itself so
+# this explanation survives every future regeneration, not just this comment.
+BASELINE_NOTE = (
+    "The known_unused/known_missing entries below are regex-detector false "
+    "positives, not confirmed dead code -- see the comment above BASELINE_NOTE "
+    "in tools/check_grammar_health.py for the four categories and how each was "
+    "verified. Re-verify before assuming a NEW entry is also a false positive."
+)
+
 class GrammarHealthChecker:
     def __init__(self):
         self.metrics = {}
@@ -203,6 +240,7 @@ class GrammarHealthChecker:
         """Save current metrics as baseline."""
         self.collect_metrics()
         baseline = {
+            '_note': BASELINE_NOTE,
             'created': datetime.now().isoformat(),
             'metrics': self.metrics,
             'known_unused': self.metrics.get('unused_rules', []),

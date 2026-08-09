@@ -531,10 +531,12 @@ public API — a change to node structure or field names is a **major** bump.
   substitution aborted the whole script on that line, before `HEALTH_EXIT_CODE`
   was even read — skipping the new error message and every step after it.
   Rewritten as `cmd && VAR=0 || VAR=$?` so the step's own handling actually
-  runs. (Steps 2, 4, 5, 5b and 6 capture their tool output the same fragile
-  way; none were touched here — out of scope for this task, flagged as a
-  follow-up.) Also fixed: `tools/find_unused_definitions.py` was missing its
-  trailing newline.
+  runs. (Steps 2, 4, 5, 5b and 5c capture their tool output the same fragile
+  way — a bare `VAR=$(cmd)` followed by a `$?` check; Step 6 looks similar but
+  does not read `$?` at all, so it is not in this class, though it has its own
+  problems, tracked separately. None of the five were touched here — out of
+  scope for this task, flagged as a follow-up.) Also fixed:
+  `tools/find_unused_definitions.py` was missing its trailing newline.
   Demonstrated three ways: `validate-grammar.sh` exits 1 with the
   missing-baseline message when `.grammar_baseline.json` is absent; exits 0
   with "No regressions from baseline" once the baseline exists; and a
