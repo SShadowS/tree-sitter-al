@@ -1,0 +1,60 @@
+#!/bin/bash
+#
+# FIXTURE, not a utility. A `tree-sitter` shim that injects an offsetting chunk
+# loss. Nothing in the build or the validation path calls it; it takes effect
+# only when a caller deliberately puts this directory earlier on PATH.
+#
+# What it injects: one chunk emits DELTA trees FEWER, another emits DELTA MORE
+# (duplicating its last). Every other chunk passes through byte-for-byte and the
+# real exit status is preserved, so the corpus total still reconciles and
+# nothing about the invocation looks wrong — a gate that checks only the global
+# tree count reports success over files it never opened.
+#
+# Usage and expected results: ../README.md
+#
+# Knobs, all optional:
+#   FIXTURE_LOSE_CHUNK   chunk that loses trees   (default chunk_0001)
+#   FIXTURE_GAIN_CHUNK   chunk that gains trees   (default chunk_0002)
+#   FIXTURE_DELTA        how many                 (default 3)
+#   PYTHON               interpreter for trim_trees.py
+
+set -uo pipefail
+
+SELF_DIR=$(cd "$(dirname "$0")" && pwd)
+LOSE="${FIXTURE_LOSE_CHUNK:-chunk_0001}"
+GAIN="${FIXTURE_GAIN_CHUNK:-chunk_0002}"
+DELTA="${FIXTURE_DELTA:-3}"
+
+# The real binary is the first `tree-sitter` on PATH that is not this shim.
+REAL=""
+IFS=':' read -ra _dirs <<< "$PATH"
+for _d in "${_dirs[@]}"; do
+    [ -n "$_d" ] || continue
+    [ "$(cd "$_d" 2>/dev/null && pwd)" = "$SELF_DIR" ] && continue
+    for _c in "$_d/tree-sitter" "$_d/tree-sitter.exe"; do
+        if [ -x "$_c" ] && [ ! -d "$_c" ]; then REAL="$_c"; break 2; fi
+    done
+done
+[ -n "$REAL" ] || { echo "fixture: no real tree-sitter found on PATH" >&2; exit 127; }
+
+if [ -z "${PYTHON:-}" ]; then
+    for _p in python3 python py; do
+        if command -v "$_p" >/dev/null 2>&1 \
+           && "$_p" -c 'import sys' >/dev/null 2>&1 </dev/null; then
+            PYTHON="$_p"; break
+        fi
+    done
+fi
+
+# Which chunk is this invocation for? Callers pass the chunk file to --paths;
+# anything else (a warm-up parse, a single file) runs untouched.
+chunk=""
+for a in "$@"; do
+    case "$a" in *chunk_[0-9][0-9][0-9][0-9]) chunk="$a" ;; esac
+done
+
+case "$chunk" in
+    *"$LOSE") "$REAL" "$@" | "$PYTHON" "$SELF_DIR/trim_trees.py" "-$DELTA" ;;
+    *"$GAIN") "$REAL" "$@" | "$PYTHON" "$SELF_DIR/trim_trees.py" "+$DELTA" ;;
+    *)        exec "$REAL" "$@" ;;
+esac

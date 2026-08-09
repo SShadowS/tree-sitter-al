@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# FIXTURE, not a utility. A `tree-sitter` shim that makes ONE chunk's invocation
+# fail outright, producing no trees — the wholesale chunk loss that a caller
+# using `tree-sitter parse ... || true` will swallow. Takes effect only when
+# this directory is deliberately placed earlier on PATH.
+#
+# Usage and expected results: ../README.md
+#
+# Knobs, all optional:
+#   FIXTURE_FAIL_CHUNK   chunk to kill   (default chunk_0001)
+
+set -uo pipefail
+
+SELF_DIR=$(cd "$(dirname "$0")" && pwd)
+FAIL="${FIXTURE_FAIL_CHUNK:-chunk_0001}"
+
+REAL=""
+IFS=':' read -ra _dirs <<< "$PATH"
+for _d in "${_dirs[@]}"; do
+    [ -n "$_d" ] || continue
+    [ "$(cd "$_d" 2>/dev/null && pwd)" = "$SELF_DIR" ] && continue
+    for _c in "$_d/tree-sitter" "$_d/tree-sitter.exe"; do
+        if [ -x "$_c" ] && [ ! -d "$_c" ]; then REAL="$_c"; break 2; fi
+    done
+done
+[ -n "$REAL" ] || { echo "fixture: no real tree-sitter found on PATH" >&2; exit 127; }
+
+for a in "$@"; do
+    case "$a" in
+        *"$FAIL")
+            echo "FIXTURE: simulated tree-sitter failure for $a" >&2
+            exit 1
+            ;;
+    esac
+done
+exec "$REAL" "$@"

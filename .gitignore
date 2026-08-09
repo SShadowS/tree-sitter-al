@@ -64,6 +64,10 @@ tools/keyword-sync/__pycache__/
 # wired into validate-grammar.sh (orphan, duplicate, health and field-shape
 # checks); if they are not tracked, a fresh clone silently skips those steps.
 !tools/*.py
+# Fault injectors for the validation gates (tools/gate-fixtures/README.md). A
+# fixture that is not tracked is a fixture that does not survive, and these are
+# the only proof the gates fail when they should.
+!tools/gate-fixtures/*/*.py
 # Written to the repo root by every text-format run of
 # tools/find_unused_definitions.py — a report, not a source artifact
 grammar_analysis.json
