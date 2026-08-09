@@ -17,19 +17,36 @@ BOM = "\uFEFF"
 
 
 def _is_ignorable(text: str) -> bool:
-    """Whitespace per the grammar's extras array: /\s/ and /\uFEFF/."""
+    """Whitespace per the grammar's extras array: /\\s/ and /\\uFEFF/."""
     return all(ch.isspace() or ch == BOM for ch in text)
 
 
-def _inside(ranges, start: int, end: int) -> bool:
-    """True if [start, end) overlaps any error range at all.
+def _split_by_errors(start: int, end: int, errors):
+    """Subtract every error range from [start, end); return the remainders in order.
 
-    Full containment is not enough: a gap chunk can straddle an error range's
-    boundary (real whitespace immediately followed by error-recovery bytes,
-    merged into one uncovered span by leaf traversal). Any overlap means the
-    chunk is entangled with error recovery and belongs to detector 2, not here.
+    A single gap chunk (the bytes between two adjacent leaves) can straddle an
+    error range's edge: when tree-sitter nests one ERROR inside another,
+    _tree.leaves() does not yield the outer, non-leaf ERROR at all -- only its
+    leaf descendant -- so the chunk from the last clean leaf can run straight
+    through a dropped token and into the error's own un-leafed lead-in.
+    Blanket overlap suppression would then discard the dropped token along
+    with the error text it happens to be glued to. Subtracting each error
+    range keeps whatever part of the chunk is genuinely outside error
+    recovery, which is where a real dropped-token finding lives.
     """
-    return any(lo < end and start < hi for lo, hi in ranges)
+    segments = [(start, end)]
+    for lo, hi in errors:
+        next_segments = []
+        for seg_start, seg_end in segments:
+            if hi <= seg_start or lo >= seg_end:
+                next_segments.append((seg_start, seg_end))
+                continue
+            if seg_start < lo:
+                next_segments.append((seg_start, lo))
+            if hi < seg_end:
+                next_segments.append((hi, seg_end))
+        segments = next_segments
+    return segments
 
 
 def detect(tree, source: bytes, path: str) -> list[Finding]:
@@ -51,10 +68,13 @@ def detect(tree, source: bytes, path: str) -> list[Finding]:
 
 
 def _emit(findings, source, path, start, end, node, errors) -> None:
+    for seg_start, seg_end in _split_by_errors(start, end, errors):
+        _emit_segment(findings, source, path, seg_start, seg_end, node)
+
+
+def _emit_segment(findings, source, path, start, end, node) -> None:
     raw = source[start:end].decode("utf-8", errors="replace")
     if _is_ignorable(raw):
-        return
-    if _inside(errors, start, end):
         return
 
     stripped = raw.strip()
@@ -82,4 +102,4 @@ def _emit(findings, source, path, start, end, node, errors) -> None:
 def _snippet(source: bytes, offset: int, radius: int = 60) -> str:
     lo = max(0, offset - radius)
     hi = min(len(source), offset + radius)
-    return source[lo:hi].decode("utf-8", errors="replace").replace("\n", "\n")
+    return source[lo:hi].decode("utf-8", errors="replace").replace("\n", "\\n")
