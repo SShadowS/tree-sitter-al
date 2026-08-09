@@ -49,6 +49,27 @@ function namespacedRefFielded($, name) {
   );
 }
 
+// A statement in body/branch position, with the field kept off the terminator.
+//
+// `_statement` is hidden and expands to `<statement> optional(';')`, so
+// `field(name, $._statement)` labels the ';' too: a consumer calling
+// children_by_field_name('body') on `while c do x := 1;` received
+// [assignment_statement, ';'] -- two nodes for one body, and `multiple: true`.
+// Fielding the inner statement and leaving the ';' outside the field keeps
+// every node and every range identical while the field holds exactly one node.
+//
+// `call_statement` is listed separately because it owns its ';' internally, so
+// fielding it whole is already correct.
+// The prec.right mirrors `_statement`'s own, which these sites used to inherit
+// by referencing it; without it the `optional(';')` decision loses the
+// associativity that disambiguates it from a preproc guard block's terminator.
+function fieldedStatement($, name) {
+  return prec.right(choice(
+    field(name, $.call_statement),
+    seq(field(name, $._statement_inner), optional(';')),
+  ));
+}
+
 // Object declaration helper — with object ID
 function _object_with_id(keyword_name) {
   return $ => seq(
@@ -202,7 +223,11 @@ module.exports = grammar({
     [$.preproc_conditional_case, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$.case_branch, $.preproc_split_case_branch, $.preproc_conditional_case_patterns],
     [$.case_branch, $.preproc_split_case_branch, $.preproc_conditional_case_patterns, $.preproc_split_case_extended],
-    [$._preproc_guard_block, $._statement],
+    // Was [$._preproc_guard_block, $._statement]; splitting the terminator out
+    // of `_statement` moved this reduction to `_statement_inner`, so the entry
+    // is retargeted rather than added to. Guard-block terminator vs statement
+    // terminator: `#if C  stmt; if X then  #endif  shared;`
+    [$._preproc_guard_block, $._statement_inner],
     [$.if_statement, $._if_statement_no_else],  // dangling-else in case branches
     // statement_block vs preproc_split_code_block_end after the statement run
     [$.statement_block],
@@ -3022,10 +3047,10 @@ module.exports = grammar({
       repeat(seq($.preproc_elif, $._preproc_if_header)),
       optional(seq($.preproc_else, $._preproc_if_header)),
       $.preproc_endif,
-      field('then_branch', $._then_branch),
+      $._then_branch,
       optional(seq(
         $.else_keyword,
-        field('else_branch', $._else_branch)
+        $._else_branch
       ))
     )),
 
@@ -3044,7 +3069,7 @@ module.exports = grammar({
       $.preproc_if,
       $._preproc_guard_block,
       $.preproc_endif,
-      field('then_branch', $._then_branch),
+      $._then_branch,
     )),
 
     // Guard block: one or more expression statements followed by an if-then header
@@ -3062,7 +3087,7 @@ module.exports = grammar({
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      field('then_branch', $._then_branch),
+      $._then_branch,
       $.else_keyword,
       choice(
         // Fragmented: else begin #endif stmts #if end; #endif
@@ -3074,21 +3099,18 @@ module.exports = grammar({
             $.if_keyword,
             field('condition', $._expression),
             $.then_keyword,
-            field('then_branch', $._then_branch),
+            $._then_branch,
             $.else_keyword,
           )),
           optional(seq($.preproc_else,
             $.if_keyword,
             field('condition', $._expression),
             $.then_keyword,
-            field('then_branch', $._then_branch),
+            $._then_branch,
             $.else_keyword,
           )),
           $.preproc_endif,
-          field('else_branch', choice(
-            $.code_block,
-            $._statement,
-          )),
+          $._else_branch_simple,
         ),
       ),
     )),
@@ -3361,8 +3383,13 @@ module.exports = grammar({
       // recovery debris / a value statement and is NOT a call. Higher precedence than
       // the `_expression_statement` branch so `Foo;` deterministically reduces here.
       $.call_statement,
-      seq(
-        choice(
+      seq($._statement_inner, optional(';'))
+    )),
+
+    // The statement itself, without the terminating ';'. Split out of
+    // `_statement` so that body/branch positions can field the statement
+    // WITHOUT the field spilling onto the ';' — see fieldedStatement().
+    _statement_inner: $ => choice(
           $.assignment_statement,
           $.asserterror_statement,
           $.if_statement,
@@ -3386,10 +3413,7 @@ module.exports = grammar({
           $.preproc_split_if_then_begin_else_shared,
           $.preproc_guarded_statement,
           $.preproc_split_call_statement,
-        ),
-        optional(';')
-      )
-    )),
+    ),
 
     // Parenless no-arg call statement (`Initialize;`). Requires the `;` terminator —
     // see the note in `_statement`. Only a bare identifier / quoted identifier is a
@@ -3427,10 +3451,10 @@ module.exports = grammar({
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      field('then_branch', $._then_branch),
+      $._then_branch,
       optional(seq(
         $.else_keyword,
-        field('else_branch', $._else_branch)
+        $._else_branch
       ))
     )),
 
@@ -3441,20 +3465,42 @@ module.exports = grammar({
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      field('then_branch', $._then_branch),
+      $._then_branch,
     )),
 
     // Shared then-branch body: a complete code_block or single statement
+    // Each of these carries its own field() internally rather than being
+    // fielded at the call site, so the ';' that `_statement` owns stays out of
+    // the field. See fieldedStatement().
     _then_branch: $ => choice(
-      $.code_block,
-      $._statement,
+      field('then_branch', $.code_block),
+      fieldedStatement($, 'then_branch'),
     ),
 
     // Shared else-branch body: code_block, nested if (else-if chain), or single statement
     _else_branch: $ => choice(
-      $.code_block,
-      prec(1, $.if_statement),
-      $._statement,
+      field('else_branch', $.code_block),
+      prec(1, field('else_branch', $.if_statement)),
+      fieldedStatement($, 'else_branch'),
+    ),
+
+    // else-branch without the else-if chain (preproc split if-else shared tail)
+    _else_branch_simple: $ => choice(
+      field('else_branch', $.code_block),
+      fieldedStatement($, 'else_branch'),
+    ),
+
+    // Loop / with body: a code_block or a single statement
+    _body_branch: $ => choice(
+      field('body', $.code_block),
+      fieldedStatement($, 'body'),
+    ),
+
+    // Case-branch body: also admits a dangling-else-free nested if
+    _case_body_branch: $ => choice(
+      field('body', $.code_block),
+      field('body', alias($._if_statement_no_else, $.if_statement)),
+      fieldedStatement($, 'body'),
     ),
 
     // --- Case ---
@@ -3488,11 +3534,7 @@ module.exports = grammar({
       seq(
         $._case_pattern,
         ':',
-        field('body', choice(
-          $.code_block,
-          alias($._if_statement_no_else, $.if_statement),
-          $._statement,
-        ))
+        $._case_body_branch
       ),
       // Preprocessor-split case branch: #if wraps extra patterns before the main pattern
       // #if COND  pattern1,  #endif  pattern2: body;
@@ -3515,11 +3557,7 @@ module.exports = grammar({
       // Pattern(s) after the preprocessor block, ending with ':'
       $._case_pattern,
       ':',
-      field('body', choice(
-        $.code_block,
-        alias($._if_statement_no_else, $.if_statement),
-        $._statement,
-      ))
+      $._case_body_branch
     )),
 
     // Extended case split: #if adds complete branches + provides header for next shared branch
@@ -3543,11 +3581,7 @@ module.exports = grammar({
       )),
       $.preproc_endif,
       // Shared body for the split branch
-      field('body', choice(
-        $.code_block,
-        alias($._if_statement_no_else, $.if_statement),
-        $._statement,
-      )),
+      $._case_body_branch,
     )),
 
     // Case pattern list: supports preprocessor conditionals interleaved with patterns.
@@ -3634,10 +3668,7 @@ module.exports = grammar({
       )),
       field('end', $._expression),
       $.do_keyword,
-      field('body', choice(
-        $._statement,
-        $.code_block,
-      ))
+      $._body_branch
     )),
 
     // --- Foreach ---
@@ -3648,10 +3679,7 @@ module.exports = grammar({
       $.in_keyword,
       field('iterable', $._expression),
       $.do_keyword,
-      field('body', choice(
-        $._statement,
-        $.code_block,
-      ))
+      $._body_branch
     )),
 
     // --- While ---
@@ -3660,10 +3688,7 @@ module.exports = grammar({
       $.while_keyword,
       field('condition', $._expression),
       $.do_keyword,
-      field('body', choice(
-        $._statement,
-        $.code_block,
-      ))
+      $._body_branch
     )),
 
     // --- Repeat/Until ---
@@ -3681,10 +3706,7 @@ module.exports = grammar({
       $.with_keyword,
       field('record', $._expression),
       $.do_keyword,
-      field('body', choice(
-        $._statement,
-        $.code_block,
-      ))
+      $._body_branch
     )),
 
     // --- Exit ---

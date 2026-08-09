@@ -147,57 +147,62 @@ FIELD_INVARIANTS = [
         "'*' wildcard IS the table name, like an operator field",
         types={'*', 'identifier', 'integer', 'quoted_identifier'}),
 
-    # ------------------------------------------------------------- DEFERRED
-    # The 14 rows below all carry a ';'. Root cause is single and shared:
-    # `_statement` (grammar.js) is `seq(choice(...23 statements...),
-    # optional(';'))` and is hidden, so ANY `field(X, $._statement)` spans the
-    # terminator. The ';' is NOT inside the statement node -- it is a loose
-    # sibling that inherits the field.
+    # -- Task 17: statement bodies and branches ------------------------------
+    # The 14 rows below all used to carry a ';'. Root cause was single and
+    # shared: `_statement` is `seq(choice(...23 statements...), optional(';'))`
+    # and is hidden, so ANY `field(X, $._statement)` spanned the terminator.
+    # The ';' was never inside the statement node -- it was a loose sibling
+    # that inherited the field.
     #
-    # This IS reachable at runtime, confirmed by TSTreeCursor walk: for
-    # `while i > 0 do i := 2;` a consumer calling
-    # children_by_field_name('body') receives [assignment_statement, ';'] --
-    # two nodes, multiple:true.
+    # Reachable at runtime, not merely declared: before the fix, a TSTreeCursor
+    # walk of `while i > 0 do i := 2;` showed children_by_field_name('body')
+    # returning [assignment_statement, ';'] -- two nodes, multiple:true. Note
+    # that `tree-sitter parse -c` CANNOT show this, because it does not print
+    # field names on anonymous nodes at all (see the note on the dotted
+    # references above); the cursor is the only instrument that settles it.
     #
-    # So this is NOT "deliberate design". It is the same defect class that was
-    # fixed for case_else_branch.body above, and these 14 currently contradict
-    # that invariant. Fixing means splitting `_statement` into an inner choice
-    # plus its terminator and rewriting all 14 field sites; parse trees would
-    # stay byte-identical (it only drops a field label from an already-present
-    # ';'), but it touches the single most heavily shared rule in the grammar
-    # and was judged too broad to fold into this audit.
+    # Fixed by splitting `_statement` into `_statement_inner` plus its
+    # terminator, and giving every body/branch position its own field via
+    # fieldedStatement(), so the ';' stays outside the field. All 14 are now
+    # `multiple: False` with a single named node, matching the
+    # `case_else_branch.body` invariant above (issue #19) -- previously one
+    # construct honoured that invariant and fourteen siblings contradicted it.
     #
-    # These rows pin the CURRENT (imprecise) shape so the state is recorded
-    # rather than rediscovered. When `_statement` is fixed, flip each
-    # `{';'}` to `set()` and the verdict to FIXED.
-    inv('case_branch', 'body', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('for_statement', 'body', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('foreach_statement', 'body', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('if_statement', 'then_branch', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('if_statement', 'else_branch', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('preproc_guarded_statement', 'then_branch', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('preproc_split_case_branch', 'body', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('preproc_split_case_extended', 'body', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('preproc_split_if_statement', 'then_branch', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('preproc_split_if_statement', 'else_branch', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('preproc_split_if_else_statement', 'then_branch', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('preproc_split_if_else_statement', 'else_branch', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('while_statement', 'body', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
-    inv('with_statement', 'body', True, {';'}, 'DEFERRED',
-        "';' from hidden _statement's terminator; see block comment"),
+    # No parse tree moved: this only drops a field label from a ';' that was
+    # already there. `multiple=False` is the load-bearing half of each row --
+    # it is what the textobject queries depend on.
+    inv('case_branch', 'body', False, set(), 'FIXED',
+        "single-node body; ';' no longer inherits the field"),
+    inv('for_statement', 'body', False, set(), 'FIXED',
+        "single-node body; ';' no longer inherits the field"),
+    inv('foreach_statement', 'body', False, set(), 'FIXED',
+        "single-node body; ';' no longer inherits the field"),
+    inv('if_statement', 'then_branch', False, set(), 'FIXED',
+        "single-node branch; ';' no longer inherits the field"),
+    inv('if_statement', 'else_branch', False, set(), 'FIXED',
+        "single-node branch; ';' no longer inherits the field"),
+    inv('preproc_guarded_statement', 'then_branch', False, set(), 'FIXED',
+        "single-node branch; ';' no longer inherits the field"),
+    inv('preproc_split_case_branch', 'body', False, set(), 'FIXED',
+        "single-node body; ';' no longer inherits the field"),
+    inv('preproc_split_case_extended', 'body', False, set(), 'FIXED',
+        "single-node body; ';' no longer inherits the field"),
+    inv('preproc_split_if_statement', 'then_branch', False, set(), 'FIXED',
+        "single-node branch; ';' no longer inherits the field"),
+    inv('preproc_split_if_statement', 'else_branch', False, set(), 'FIXED',
+        "single-node branch; ';' no longer inherits the field"),
+    # multiple=True here is correct and unrelated to the ';' defect: this rule
+    # has three separate then_branch positions (the base #if plus its #elif and
+    # #else header variants), so one node legitimately carries the field more
+    # than once. What matters is that the anonymous ';' is gone.
+    inv('preproc_split_if_else_statement', 'then_branch', True, set(), 'FIXED',
+        "';' no longer inherits the field (multiple: one per #if/#elif/#else header)"),
+    inv('preproc_split_if_else_statement', 'else_branch', False, set(), 'FIXED',
+        "single-node branch; ';' no longer inherits the field"),
+    inv('while_statement', 'body', False, set(), 'FIXED',
+        "single-node body; ';' no longer inherits the field"),
+    inv('with_statement', 'body', False, set(), 'FIXED',
+        "single-node body; ';' no longer inherits the field"),
 ]
 
 

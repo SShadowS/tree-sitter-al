@@ -9,6 +9,33 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **Every statement body and branch field now holds exactly one node instead of
+  the statement plus its `;`.** `_statement` is a hidden rule that expands to
+  `<statement> optional(';')`, so any `field(name, $._statement)` labelled the
+  terminator as well. For `while i > 0 do i := 2;` a consumer calling
+  `children_by_field_name('body')` received `[assignment_statement, ';']` — two
+  nodes for one body, with `multiple: true`. The `;` was never *inside* the
+  statement node; it was a loose sibling that inherited the field. All 14
+  affected fields are now `multiple: false` over a single named node:
+  `case_branch.body`, `for_statement.body`, `foreach_statement.body`,
+  `while_statement.body`, `with_statement.body`,
+  `if_statement.then_branch`, `if_statement.else_branch`,
+  `preproc_guarded_statement.then_branch`, `preproc_split_case_branch.body`,
+  `preproc_split_case_extended.body`,
+  `preproc_split_if_statement.{then,else}_branch` and
+  `preproc_split_if_else_statement.{then,else}_branch`.
+  (`preproc_split_if_else_statement.then_branch` stays `multiple: true` for an
+  unrelated and legitimate reason — that rule has one `then_branch` per
+  `#if`/`#elif`/`#else` header — but it too no longer carries a `;`.) This
+  makes the 14 consistent with `case_else_branch.body`, which was given the
+  single-node shape earlier in this release for the textobject queries
+  (issue #19); until now one construct honoured that invariant and fourteen
+  siblings contradicted it. Implemented by splitting `_statement` into
+  `_statement_inner` plus its terminator and fielding the inner statement at
+  each site. **No parse tree changes** — this only removes a field label from a
+  `;` that was already present, all 15,358 BC.History trees are byte-identical,
+  and highlight/tag/textobject capture counts are unchanged to the site.
+
 - **Seven fields that name a dotted reference no longer hand you the `.`
   separators.** `field('reference', $._namespaced_or_simple_ref)` wrapped the
   whole dotted name in a single `field()` call, so every separator inherited
