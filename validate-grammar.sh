@@ -91,7 +91,10 @@ TEST_FILE_COUNT=0
 # hit in any other corpus file still fails it.
 #
 # Keep this list in sync with pre-flight check #3 in .claude/commands/release.md,
-# which greps for the same thing before a release.
+# which greps for the same thing before a release. Both gates must exempt exactly
+# the same set: this one compares the file's basename for equality, and that one
+# anchors its grep to `(^|/)<name>.txt:` so it exempts the same basenames and
+# nothing else.
 DELIBERATE_ERROR_FIXTURES=(
     # A `TableData Customer = R` fragment misplaced under OptionMembers is shaped
     # exactly like a valid tabledata_permission. Asserts recovery surfaces the

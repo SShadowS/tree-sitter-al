@@ -14,8 +14,15 @@ Before starting, verify:
    ```bash
    grep -rn "(ERROR\b\|MISSING\b" test/corpus/ --include="*.txt" \
      | grep -v "ERROR(" \
-     | grep -vE "option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test"
+     | grep -vE "(^|/)(option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test)\.txt:"
    ```
+
+   The `(^|/)…\.txt:` anchoring is load-bearing. `grep -rn` emits
+   `path:lineno:content`, so an unanchored name matches anywhere in the line
+   — including the matched source text — and would silently exempt any future
+   fixture whose content happens to mention one of these names. Anchored, the
+   name must be the file's own basename, which is exactly the comparison
+   `validate-grammar.sh` makes.
 
    Those four files are deliberate negatives — their ERROR nodes *are* the
    assertion. They pin that a misplaced `TableData X = R` fragment under
@@ -26,8 +33,9 @@ Before starting, verify:
 
    Unscoped, this check had 8 hits across those 4 files and so had never passed
    at any release, v3.3.0 included. The same exemption list lives in
-   `validate-grammar.sh` Step 3 (`DELIBERATE_ERROR_FIXTURES`) — change both or
-   neither.
+   `validate-grammar.sh` Step 3 (`DELIBERATE_ERROR_FIXTURES`), which matches on
+   exact basename. **The two gates must exempt exactly the same set** — change
+   both or neither, and keep the matching anchored so they cannot drift.
 4. Working directory is clean (no uncommitted grammar/scanner changes)
 5. `src/parser.c` is current: run `tree-sitter generate` and confirm no diff. CI fails otherwise, because `parser-test-action` regenerates and runs `git diff --exit-code`.
 
