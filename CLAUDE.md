@@ -48,9 +48,9 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 ## Architecture
 
 **Core Files:**
-- `grammar.js` - Main grammar definition (~4,096 lines). Never edit `src/parser.c` (auto-generated)
+- `grammar.js` - Main grammar definition (~4,111 lines). Never edit `src/parser.c` (auto-generated)
 - `src/scanner.c` - External scanner for property disambiguation and preprocessor patterns
-- `test/corpus/` - Test suite with AL code and expected parse trees (1,507 tests)
+- `test/corpus/` - Test suite with AL code and expected parse trees (1,514 tests)
 - `queries/` - 6 query files (highlights, locals, tags, indents, folds, textobjects)
 
 **Key Design Principles (V2 architecture):**
@@ -58,7 +58,7 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 - **Scanner-based property disambiguation** — The `PROPERTY_NAME` scanner token distinguishes `identifier =` (property) from `identifier :` (variable) via 1-char lookahead
 - **Generic property rule** — ONE `property` rule handles all simple properties (vs V1's 291 individual rules)
 - **Generic preprocessor** — ONE `preproc_conditional` rule + ~12 dedicated split-construct rules (vs V1's 63)
-- **Named keyword nodes** — 84 keywords exposed as named nodes for query matching (82 grammar rules + the external `begin_keyword`/`end_keyword`)
+- **Named keyword nodes** — 83 keywords exposed as named nodes for query matching (81 grammar rules + the external `begin_keyword`/`end_keyword`), all with a uniform shape: one anonymous child typed as the canonical lowercase spelling
 - **Stateful scanner** — 1-byte depth counter tracks `#if`/`#endif` nesting; `begin`/`end` are named at every depth, and the depth counter decides only whether a `PREPROC_SPLIT_*` token gets first refusal
 
 **Scanner Tokens:**
@@ -100,12 +100,18 @@ property: $ => seq(
 
 ## Keyword Architecture
 
-84 keywords are named nodes for query matching — 82 grammar rules plus the two external tokens `begin_keyword`/`end_keyword`:
+83 keywords are named nodes for query matching — 81 grammar rules plus the two external tokens `begin_keyword`/`end_keyword`. **Every grammar keyword rule has the same shape: exactly one anonymous child, typed as the canonical lowercase spelling.**
 
 ```javascript
-table_keyword: $ => kw('table'),                  // childless leaf
-procedure_keyword: $ => kw('procedure'),          // childless leaf
-if_keyword: $ => prec(10, alias(kw('if'), 'if')), // keeps an anonymous "if" child
+table_keyword: $ => alias(kw('table'), 'table'),          // anonymous "table" child
+procedure_keyword: $ => alias(kw('procedure'), 'procedure'),
+if_keyword: $ => prec(10, alias(kw('if'), 'if')),         // anonymous "if" child
+```
+
+Compound (CamelCase) keywords use `kwCases()` instead of `kw()`, because their case-spelling whitelist is load-bearing — see "CamelCase keywords" below — but they produce the identical shape:
+
+```javascript
+enum_keyword: $ => prec(10, kwCases('enum', 'enum', 'ENUM', 'Enum', 'eNUM', 'eNum', 'ENum')),
 ```
 
 **begin/end are named via stateful scanner** — `begin_keyword` and `end_keyword` are emitted at **every** depth. `grammar.js` has no `kw('begin')`/`kw('end')` fallback: begin/end are scanner-exclusive, the same way `#if`/`#endif` became scanner-exclusive in 3.2.0, so there is no scanner/literal pair for GLR to fork on. Direct naming via grammar rules or `alias()` still breaks GLR backtracking — the stateful scanner is the correct approach.
@@ -114,26 +120,29 @@ The depth counter no longer decides whether the keyword is *named*; it decides o
 
 Until 4.0.0 the depth > 0 case handed off to an anonymous `kw('begin')`, which made a complete `begin … end` inside any `#if` block **vanish from the tree**: `kw()` builds a `token(PATTERN)`, and tree-sitter renders anonymous *pattern* tokens as hidden `aux_sym_*` symbols (`.visible = false`), unlike anonymous *string* tokens such as `";"`, which are visible. The keyword was lexed and then dropped, so the CST was not lossless over the source and both keywords were unhighlightable inside every `#if`.
 
-**Named keyword node structure — not uniform.** A named rule whose entire body is a single token collapses *into* that token, so the node's shape is decided by that token's visibility, which is the same `.visible` rule as above:
+**Named keyword node structure — uniform since 4.0.0.** A named rule whose entire body is a single token collapses *into* that token, so the node's shape is decided by that token's visibility, which is the same `.visible` rule as above. A bare `kw('word')` builds a `token(PATTERN)` and therefore yields a **childless leaf**; wrapping it in `alias(…, 'word')` makes the token a visible STRING and yields **one anonymous child**. Before 4.0.0 the grammar mixed both, so a consumer could not predict a keyword's shape.
 
-> **A keyword node has an anonymous child if and only if its body reduces to a string literal. A pattern (`kw()`) or an external token gives a childless leaf.**
+> **Every grammar keyword rule is now `alias(kw('word'), 'word')` (or `kwCases(...)` for compound keywords) and has exactly one anonymous child typed as the canonical lowercase spelling. The 2 external tokens cannot take a child and remain childless leaves.**
 
-| body | child | how to read the text |
+| body | child | count |
 |---|---|---|
-| bare `kw('word')` → `token(PATTERN)` | none — pattern tokens are hidden | node's own text |
-| `alias(kw('word'), 'word')` or explicit `choice('x','X',…)` → STRING | one anonymous child typed `"word"` | node's own text, or the child |
-| external scanner token | none | node's own text |
+| `alias(kw('word'), 'word')` → STRING | one anonymous child typed `"word"` | 68 |
+| `kwCases('word', …)` → STRING, each spelling aliased to `'word'` | one anonymous child typed `"word"` | 13 |
+| external scanner token (`begin_keyword`, `end_keyword`) | none — cannot take a child | 2 |
 
-Measured across the 84 named `*_keyword` node types: **51** childless leaves (bare `kw()`), **31** with an anonymous string child (**18** via `alias()`, **13** via explicit case `choice()`), **2** external (`begin_keyword`, `end_keyword`). The `alias()` group exists because a bare `kw()` would have deleted the anonymous child these keywords previously had — see the comment above `if_keyword` in `grammar.js`.
+The child's type is always the canonical lowercase spelling regardless of how the source spelled the keyword: `XmlPort` yields `(xmlport_keyword "xmlport")`, and the node's own text is still `XmlPort`.
 
-**`node-types.json` cannot tell you which shape you have.** It lists anonymous children only when they sit inside a field, and none of these do, so all 84 keyword nodes look childless there regardless of their real shape. **Read a keyword's text from the node itself, never by descending into a child** — that is correct for all three shapes and is the only approach that survives a rule changing groups.
+**`node-types.json` cannot confirm this for you.** It lists anonymous children only when they sit inside a field, and none of these do, so all 83 keyword nodes look childless there regardless of their real shape. **Read a keyword's text from the node itself, never by descending into a child** — that stays correct for the external tokens too, and it survives any future change to the anonymous layer.
 
-Do not "fix" the non-uniformity casually: it spans 84 rules and moves the anonymous layer of every consumer's trees.
+`_tabledata_keyword` is deliberately excluded: it is a *hidden* (`_`-prefixed) token helper, not a keyword node, and one of its two uses re-aliases it to `$.identifier`.
 
-**CamelCase keywords** use explicit case alternatives:
+**CamelCase keywords** use `kwCases()` — an explicit case-spelling whitelist, each spelling aliased to the canonical lowercase form:
 ```javascript
-controladdin_keyword: $ => prec(10, choice('controladdin', 'CONTROLADDIN', 'Controladdin', 'ControlAddIn')),
+controladdin_keyword: $ => prec(10, kwCases('controladdin',
+  'controladdin', 'CONTROLADDIN', 'Controladdin', 'ControlAddIn', 'ControlAddin', 'controlAddIn', 'controlAddin')),
 ```
+
+**The whitelist is load-bearing — never "simplify" these to `kw()`.** `kw()` compiles to a case-*insensitive* regex, which would claim every case permutation and steal spellings that AL code legitimately uses as identifiers. Real AL declares `eNuM: Decimal;` as a variable; `eNuM` is absent from `enum_keyword`'s whitelist precisely so it stays an `identifier`. Converting the 13 compound keywords to `kw()` fails `test/corpus/enum_as_identifier_test.txt`.
 
 ## Attribute Handling
 
@@ -233,13 +242,13 @@ python parse_bug_finder.py file.al debug.log
 
 | Metric | Value |
 |--------|-------|
-| parser.c size | 24.8 MB |
-| SYMBOL_COUNT | ~796 |
-| STATE_COUNT | ~12,293 |
-| grammar.js lines | ~4,096 |
-| Tests | 1,507 |
+| parser.c size | 26.0 MB |
+| SYMBOL_COUNT | ~846 |
+| STATE_COUNT | ~12,545 |
+| grammar.js lines | ~4,111 |
+| Tests | 1,514 |
 | Production success | 100% (0 errors) |
-| Named keywords | 84 (82 rules + 2 external) |
+| Named keywords | 83 (81 rules + 2 external), uniform shape |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
 
 ## Validating AL Syntax Questions

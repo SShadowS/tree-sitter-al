@@ -18,36 +18,39 @@ When adding new keywords that can also be identifiers, add them to this choice l
 
 ## Named Keywords
 
-84 keywords are named nodes for query matching — 82 grammar rules plus the external `begin_keyword`/`end_keyword`. Use `kw()` (regex) for simple keywords:
+83 keywords are named nodes for query matching — 81 grammar rules plus the external `begin_keyword`/`end_keyword`. Always wrap `kw()` in an `alias()` to the canonical lowercase spelling:
 
 ```javascript
-procedure_keyword: $ => kw('procedure'),
+procedure_keyword: $ => alias(kw('procedure'), 'procedure'),
 ```
 
-For CamelCase compound keywords, use explicit case variants:
+For CamelCase compound keywords, use `kwCases()` — the first argument is the canonical form, the rest are the accepted spellings:
 
 ```javascript
-controladdin_keyword: $ => prec(10, choice(
-  'controladdin', 'CONTROLADDIN', 'Controladdin', 'ControlAddIn'
-)),
+controladdin_keyword: $ => prec(10, kwCases('controladdin',
+  'controladdin', 'CONTROLADDIN', 'Controladdin', 'ControlAddIn',
+  'ControlAddin', 'controlAddIn', 'controlAddin')),
 ```
 
-### Node shape is not uniform
+**Never replace `kwCases()` with `kw()`.** The spelling whitelist is load-bearing: `kw()` is case-*insensitive* and would claim every permutation, stealing spellings AL code uses as identifiers (`eNuM: Decimal;` is a real variable declaration, and `eNuM` is deliberately absent from `enum_keyword`'s list). `test/corpus/enum_as_identifier_test.txt` catches this.
 
-A named rule whose whole body is a single token collapses *into* that token, so the token's visibility decides the node's shape:
+### Node shape is uniform (since 4.0.0)
 
-> **A keyword node has an anonymous child if and only if its body reduces to a string literal. A pattern (`kw()`) or an external token gives a childless leaf.**
+A named rule whose whole body is a single token collapses *into* that token, so the token's visibility decides the node's shape. A bare `kw('word')` is a `token(PATTERN)`, which tree-sitter hides, giving a childless leaf; `alias(…, 'word')` makes it a visible STRING. The grammar used to mix both, so a consumer could not predict a keyword's shape. It no longer does:
+
+> **Every grammar keyword rule has exactly one anonymous child, typed as the canonical lowercase spelling. The 2 external tokens cannot take a child and remain childless leaves.**
 
 | body | child | count |
 |---|---|---|
-| bare `kw('word')` → `token(PATTERN)`, hidden | none — childless leaf | 51 |
-| `alias(kw('word'), 'word')` → STRING | one anonymous `"word"` child | 18 |
-| explicit `choice('x','X',…)` → STRING | one anonymous `"word"` child | 13 |
-| external scanner token | none | 2 |
+| `alias(kw('word'), 'word')` → STRING | one anonymous `"word"` child | 68 |
+| `kwCases('word', …)` → STRING, every spelling aliased to `'word'` | one anonymous `"word"` child | 13 |
+| external scanner token | none — cannot take a child | 2 |
 
-The `alias()` group exists because a bare `kw()` would have deleted the anonymous child those keywords previously had.
+The child's type is the canonical lowercase spelling whatever the source used: `XmlPort` gives `(xmlport_keyword "xmlport")`, while the node's own text stays `XmlPort`.
 
-`node-types.json` **cannot** distinguish these: it lists anonymous children only when they sit inside a field, and none of these do, so all 84 look childless there. **Read a keyword's text from the node itself, never by descending into a child** — correct for all shapes, and it survives a rule moving between groups. Do not try to make the shapes uniform without a deliberate decision; it spans 84 rules and moves every consumer's anonymous layer.
+`node-types.json` **cannot** confirm this: it lists anonymous children only when they sit inside a field, and none of these do, so all 83 look childless there. **Read a keyword's text from the node itself, never by descending into a child** — that stays correct for the two external tokens as well, and it survives any future change to the anonymous layer.
+
+`_tabledata_keyword` is not in these counts: it is a *hidden* (`_`-prefixed) token helper rather than a keyword node, and `option_member` re-aliases it to `$.identifier`.
 
 ## begin/end Named via Stateful Scanner
 
@@ -57,4 +60,4 @@ The depth counter decides only whether `PREPROC_SPLIT_BEGIN`/`PREPROC_SPLIT_END`
 
 **Never reintroduce a `kw('begin')`/`kw('end')` fallback.** Until 4.0.0 the depth > 0 path handed off to one, and a complete `begin … end` inside any `#if` block then landed in no node at all: `kw()` builds a `token(PATTERN)`, and tree-sitter renders anonymous *pattern* tokens as hidden `aux_sym_*` symbols (`.visible = false`) — unlike anonymous *string* tokens such as `";"`, which are visible. The keyword was lexed and silently dropped.
 
-This `.visible` rule applies to every `kw()` in the grammar: an anonymous `kw('word')` never produces a node of its own. Wrapping it in a named rule makes the *named* node visible, but the token inside stays hidden — see the shape table above.
+This `.visible` rule applies to every bare `kw()` in the grammar: an anonymous `kw('word')` never produces a node of its own. Wrapping it in a named rule makes the *named* node visible, but the token inside stays hidden — which is exactly why every keyword rule now adds an `alias()` to make that token visible. See the shape table above.

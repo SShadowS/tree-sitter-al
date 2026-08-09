@@ -13,6 +13,20 @@ function kw(word, precedence = null) {
   return precedence !== null ? token(prec(precedence, regex)) : token(regex);
 }
 
+// Explicit case-spelling whitelist for compound (CamelCase) keywords.
+//
+// Unlike kw()'s case-insensitive regex, this matches ONLY the listed spellings,
+// so every other case permutation stays available as an identifier — AL code
+// really does use `eNuM` as a variable name, and `(?i)enum` would swallow it.
+// The whitelist is load-bearing; do not "simplify" these rules to kw().
+//
+// Each spelling is aliased to the canonical lowercase form so that the node
+// shape and the child's type match every other keyword rule, regardless of how
+// the source spelled it.
+function kwCases(canonical, ...spellings) {
+  return choice(...spellings.map(s => s === canonical ? s : alias(s, canonical)));
+}
+
 // Object declaration helper — with object ID
 function _object_with_id(keyword_name) {
   return $ => seq(
@@ -3947,81 +3961,81 @@ module.exports = grammar({
     continue_keyword: $ => prec(10, alias(kw('continue'), 'continue')),
     break_keyword: $ => prec(10, alias(kw('break'), 'break')),
     with_keyword: $ => prec(10, alias(kw('with'), 'with')),
-    asserterror_keyword: $ => kw('asserterror', 10),
+    asserterror_keyword: $ => alias(kw('asserterror', 10), 'asserterror'),
     in_keyword: $ => prec(10, alias(kw('in'), 'in')),
     to_keyword: $ => prec(10, alias(kw('to'), 'to')),
     downto_keyword: $ => prec(10, alias(kw('downto'), 'downto')),
 
     // --- Tier 2: Object types ---
 
-    table_keyword: $ => kw('table'),
-    tableextension_keyword: $ => prec(10, choice('tableextension', 'TABLEEXTENSION', 'Tableextension', 'TableExtension', 'tableExtension')),
-    page_keyword: $ => kw('page'),
-    pageextension_keyword: $ => prec(10, choice('pageextension', 'PAGEEXTENSION', 'Pageextension', 'PageExtension', 'pageExtension')),
-    codeunit_keyword: $ => prec(10, choice('codeunit', 'CODEUNIT', 'Codeunit', 'CodeUnit', 'COdeunit', 'codeUnit')),
-    report_keyword: $ => kw('report'),
-    reportextension_keyword: $ => prec(10, choice('reportextension', 'REPORTEXTENSION', 'Reportextension', 'ReportExtension', 'reportExtension')),
-    query_keyword: $ => kw('query'),
-    xmlport_keyword: $ => prec(10, choice('xmlport', 'XMLPORT', 'Xmlport', 'XMLport', 'XMLPort', 'XmlPort')),
-    enum_keyword: $ => prec(10, choice('enum', 'ENUM', 'Enum', 'eNUM', 'eNum', 'ENum')),
-    enumextension_keyword: $ => prec(10, choice('enumextension', 'ENUMEXTENSION', 'Enumextension', 'EnumExtension', 'enumExtension')),
-    interface_keyword: $ => kw('interface'),
-    controladdin_keyword: $ => prec(10, choice('controladdin', 'CONTROLADDIN', 'Controladdin', 'ControlAddIn', 'ControlAddin', 'controlAddIn', 'controlAddin')),
-    dotnet_keyword: $ => prec(10, choice('dotnet', 'DOTNET', 'Dotnet', 'DotNet', 'dotNet')),
-    profile_keyword: $ => kw('profile'),
-    profileextension_keyword: $ => prec(10, choice('profileextension', 'PROFILEEXTENSION', 'Profileextension', 'ProfileExtension', 'profileExtension')),
-    permissionset_keyword: $ => prec(10, choice('permissionset', 'PERMISSIONSET', 'Permissionset', 'PermissionSet', 'permissionSet')),
-    permissionsetextension_keyword: $ => prec(10, choice('permissionsetextension', 'PERMISSIONSETEXTENSION', 'Permissionsetextension', 'PermissionSetExtension', 'permissionSetExtension')),
-    entitlement_keyword: $ => kw('entitlement'),
-    pagecustomization_keyword: $ => prec(10, choice('pagecustomization', 'PAGECUSTOMIZATION', 'Pagecustomization', 'PageCustomization', 'pageCustomization')),
-    namespace_keyword: $ => kw('namespace'),
-    using_keyword: $ => kw('using'),
-    implements_keyword: $ => kw('implements'),
-    extends_keyword: $ => kw('extends'),
-    customizes_keyword: $ => kw('customizes'),
+    table_keyword: $ => alias(kw('table'), 'table'),
+    tableextension_keyword: $ => prec(10, kwCases('tableextension', 'tableextension', 'TABLEEXTENSION', 'Tableextension', 'TableExtension', 'tableExtension')),
+    page_keyword: $ => alias(kw('page'), 'page'),
+    pageextension_keyword: $ => prec(10, kwCases('pageextension', 'pageextension', 'PAGEEXTENSION', 'Pageextension', 'PageExtension', 'pageExtension')),
+    codeunit_keyword: $ => prec(10, kwCases('codeunit', 'codeunit', 'CODEUNIT', 'Codeunit', 'CodeUnit', 'COdeunit', 'codeUnit')),
+    report_keyword: $ => alias(kw('report'), 'report'),
+    reportextension_keyword: $ => prec(10, kwCases('reportextension', 'reportextension', 'REPORTEXTENSION', 'Reportextension', 'ReportExtension', 'reportExtension')),
+    query_keyword: $ => alias(kw('query'), 'query'),
+    xmlport_keyword: $ => prec(10, kwCases('xmlport', 'xmlport', 'XMLPORT', 'Xmlport', 'XMLport', 'XMLPort', 'XmlPort')),
+    enum_keyword: $ => prec(10, kwCases('enum', 'enum', 'ENUM', 'Enum', 'eNUM', 'eNum', 'ENum')),
+    enumextension_keyword: $ => prec(10, kwCases('enumextension', 'enumextension', 'ENUMEXTENSION', 'Enumextension', 'EnumExtension', 'enumExtension')),
+    interface_keyword: $ => alias(kw('interface'), 'interface'),
+    controladdin_keyword: $ => prec(10, kwCases('controladdin', 'controladdin', 'CONTROLADDIN', 'Controladdin', 'ControlAddIn', 'ControlAddin', 'controlAddIn', 'controlAddin')),
+    dotnet_keyword: $ => prec(10, kwCases('dotnet', 'dotnet', 'DOTNET', 'Dotnet', 'DotNet', 'dotNet')),
+    profile_keyword: $ => alias(kw('profile'), 'profile'),
+    profileextension_keyword: $ => prec(10, kwCases('profileextension', 'profileextension', 'PROFILEEXTENSION', 'Profileextension', 'ProfileExtension', 'profileExtension')),
+    permissionset_keyword: $ => prec(10, kwCases('permissionset', 'permissionset', 'PERMISSIONSET', 'Permissionset', 'PermissionSet', 'permissionSet')),
+    permissionsetextension_keyword: $ => prec(10, kwCases('permissionsetextension', 'permissionsetextension', 'PERMISSIONSETEXTENSION', 'Permissionsetextension', 'PermissionSetExtension', 'permissionSetExtension')),
+    entitlement_keyword: $ => alias(kw('entitlement'), 'entitlement'),
+    pagecustomization_keyword: $ => prec(10, kwCases('pagecustomization', 'pagecustomization', 'PAGECUSTOMIZATION', 'Pagecustomization', 'PageCustomization', 'pageCustomization')),
+    namespace_keyword: $ => alias(kw('namespace'), 'namespace'),
+    using_keyword: $ => alias(kw('using'), 'using'),
+    implements_keyword: $ => alias(kw('implements'), 'implements'),
+    extends_keyword: $ => alias(kw('extends'), 'extends'),
+    customizes_keyword: $ => alias(kw('customizes'), 'customizes'),
 
     // --- Tier 3: Declarations & modifiers ---
 
-    procedure_keyword: $ => kw('procedure'),
-    trigger_keyword: $ => kw('trigger'),
-    var_keyword: $ => kw('var'),
-    local_keyword: $ => kw('local'),
-    internal_keyword: $ => kw('internal'),
-    protected_keyword: $ => kw('protected'),
-    event_keyword: $ => kw('event'),
-    temporary_keyword: $ => kw('temporary'),
+    procedure_keyword: $ => alias(kw('procedure'), 'procedure'),
+    trigger_keyword: $ => alias(kw('trigger'), 'trigger'),
+    var_keyword: $ => alias(kw('var'), 'var'),
+    local_keyword: $ => alias(kw('local'), 'local'),
+    internal_keyword: $ => alias(kw('internal'), 'internal'),
+    protected_keyword: $ => alias(kw('protected'), 'protected'),
+    event_keyword: $ => alias(kw('event'), 'event'),
+    temporary_keyword: $ => alias(kw('temporary'), 'temporary'),
 
     // --- Tier 3: Sections ---
 
-    fields_keyword: $ => kw('fields'),
-    keys_keyword: $ => kw('keys'),
-    key_keyword: $ => kw('key'),
-    fieldgroups_keyword: $ => kw('fieldgroups'),
-    fieldgroup_keyword: $ => kw('fieldgroup'),
-    actions_keyword: $ => kw('actions'),
-    layout_keyword: $ => kw('layout'),
-    area_keyword: $ => kw('area'),
-    group_keyword: $ => kw('group'),
-    repeater_keyword: $ => kw('repeater'),
-    cuegroup_keyword: $ => kw('cuegroup'),
-    fixed_keyword: $ => kw('fixed'),
-    grid_keyword: $ => kw('grid'),
-    part_keyword: $ => kw('part'),
-    systempart_keyword: $ => kw('systempart'),
-    usercontrol_keyword: $ => kw('usercontrol'),
-    dataset_keyword: $ => kw('dataset'),
-    elements_keyword: $ => kw('elements'),
-    dataitem_keyword: $ => kw('dataitem'),
-    column_keyword: $ => kw('column'),
-    filter_keyword: $ => kw('filter'),
-    labels_keyword: $ => kw('labels'),
-    rendering_keyword: $ => kw('rendering'),
-    requestpage_keyword: $ => kw('requestpage'),
-    schema_keyword: $ => kw('schema'),
-    views_keyword: $ => kw('views'),
-    analysisviews_keyword: $ => kw('analysisviews'),
-    analysisview_keyword: $ => kw('analysisview'),
-    view_keyword: $ => kw('view'),
+    fields_keyword: $ => alias(kw('fields'), 'fields'),
+    keys_keyword: $ => alias(kw('keys'), 'keys'),
+    key_keyword: $ => alias(kw('key'), 'key'),
+    fieldgroups_keyword: $ => alias(kw('fieldgroups'), 'fieldgroups'),
+    fieldgroup_keyword: $ => alias(kw('fieldgroup'), 'fieldgroup'),
+    actions_keyword: $ => alias(kw('actions'), 'actions'),
+    layout_keyword: $ => alias(kw('layout'), 'layout'),
+    area_keyword: $ => alias(kw('area'), 'area'),
+    group_keyword: $ => alias(kw('group'), 'group'),
+    repeater_keyword: $ => alias(kw('repeater'), 'repeater'),
+    cuegroup_keyword: $ => alias(kw('cuegroup'), 'cuegroup'),
+    fixed_keyword: $ => alias(kw('fixed'), 'fixed'),
+    grid_keyword: $ => alias(kw('grid'), 'grid'),
+    part_keyword: $ => alias(kw('part'), 'part'),
+    systempart_keyword: $ => alias(kw('systempart'), 'systempart'),
+    usercontrol_keyword: $ => alias(kw('usercontrol'), 'usercontrol'),
+    dataset_keyword: $ => alias(kw('dataset'), 'dataset'),
+    elements_keyword: $ => alias(kw('elements'), 'elements'),
+    dataitem_keyword: $ => alias(kw('dataitem'), 'dataitem'),
+    column_keyword: $ => alias(kw('column'), 'column'),
+    filter_keyword: $ => alias(kw('filter'), 'filter'),
+    labels_keyword: $ => alias(kw('labels'), 'labels'),
+    rendering_keyword: $ => alias(kw('rendering'), 'rendering'),
+    requestpage_keyword: $ => alias(kw('requestpage'), 'requestpage'),
+    schema_keyword: $ => alias(kw('schema'), 'schema'),
+    views_keyword: $ => alias(kw('views'), 'views'),
+    analysisviews_keyword: $ => alias(kw('analysisviews'), 'analysisviews'),
+    analysisview_keyword: $ => alias(kw('analysisview'), 'analysisview'),
+    view_keyword: $ => alias(kw('view'), 'view'),
 
     // =====================================================================
     // Shared rules

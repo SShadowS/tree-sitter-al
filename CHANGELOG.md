@@ -9,6 +9,49 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **Every keyword node now has the same shape: exactly one anonymous child,
+  typed as the canonical lowercase spelling.**
+  **This changes the anonymous layer of essentially every tree.** A named rule
+  whose entire body is a single token collapses *into* that token, so the
+  token's visibility decided the node's shape: `kw()` builds a
+  `token(PATTERN)`, and tree-sitter renders anonymous *pattern* tokens as
+  hidden `aux_sym_*` symbols (`.visible = false`), unlike anonymous *string*
+  tokens such as `";"`, which are visible. The 84 keyword rules were split
+  across four forms — 51 bare `kw()` (childless leaves), 18 `alias(kw(w), w)`,
+  13 explicit case `choice()` (both with a visible anonymous child), and 2
+  external tokens (childless). A consumer could not predict which shape a
+  given keyword had, and `node-types.json` could not tell them: it lists
+  anonymous children only when they sit inside a field, and none of these do,
+  so all 84 looked childless there regardless of reality.
+  Every grammar keyword rule is now `alias(kw('word'), 'word')`, or
+  `kwCases('word', …)` for the 13 compound (CamelCase) keywords whose
+  case-spelling whitelist is load-bearing and must not become a
+  case-insensitive regex — `eNuM` is a legal AL variable name and is
+  deliberately absent from `enum_keyword`'s list. `kwCases()` aliases each
+  accepted spelling to the canonical lowercase form, so the child's type no
+  longer depends on how the source spelled the keyword: `XmlPort` now yields
+  `(xmlport_keyword "xmlport")` where it previously yielded
+  `(xmlport_keyword "XmlPort")`. The node's own text is unchanged, so reading
+  a keyword's text from the node itself — always the recommended approach —
+  is unaffected.
+  `node-types.json` **adds 50** anonymous types (`actions`, `analysisview`,
+  `analysisviews`, `area`, `asserterror`, `column`, `cuegroup`, `customizes`,
+  `dataitem`, `dataset`, `elements`, `entitlement`, `event`, `extends`,
+  `fieldgroup`, `fieldgroups`, `fields`, `filter`, `fixed`, `grid`, `group`,
+  `implements`, `interface`, `internal`, `key`, `keys`, `labels`, `layout`,
+  `local`, `namespace`, `page`, `part`, `procedure`, `profile`, `protected`,
+  `query`, `rendering`, `repeater`, `report`, `requestpage`, `schema`,
+  `systempart`, `table`, `temporary`, `trigger`, `usercontrol`, `using`,
+  `var`, `view`, `views`) and **removes 57** — every non-canonical case
+  spelling of the 13 compound keywords (`CODEUNIT`, `CodeUnit`, `Codeunit`,
+  `codeUnit`, `COdeunit`, `XMLPort`, `XmlPort`, `Enum`, `eNum`,
+  `PermissionSet`, `ControlAddIn`, and so on), which now all collapse to their
+  canonical lowercase type. **No named node type is added, removed, or
+  moved**, and all 15,358 BC.History parse trees remain byte-identical at the
+  named level. The 2 external tokens (`begin_keyword`, `end_keyword`) cannot
+  take a child and stay childless leaves. `_tabledata_keyword` is unchanged:
+  it is a hidden token helper, not a keyword node.
+
 - **`begin` and `end` inside a `#if` block are now `begin_keyword` /
   `end_keyword` nodes. Until now they were in no node at all.**
   **This changes the parse tree** for every `#if`-wrapped `begin … end` in the

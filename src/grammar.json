@@ -18272,15 +18272,20 @@
       }
     },
     "asserterror_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PREC",
-        "value": 10,
+        "type": "TOKEN",
         "content": {
-          "type": "PATTERN",
-          "value": "(?i)asserterror"
+          "type": "PREC",
+          "value": 10,
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)asserterror"
+          }
         }
-      }
+      },
+      "named": false,
+      "value": "asserterror"
     },
     "in_keyword": {
       "type": "PREC",
@@ -18331,11 +18336,16 @@
       }
     },
     "table_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)table"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)table"
+        }
+      },
+      "named": false,
+      "value": "table"
     },
     "tableextension_keyword": {
       "type": "PREC",
@@ -18348,30 +18358,55 @@
             "value": "tableextension"
           },
           {
-            "type": "STRING",
-            "value": "TABLEEXTENSION"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "TABLEEXTENSION"
+            },
+            "named": false,
+            "value": "tableextension"
           },
           {
-            "type": "STRING",
-            "value": "Tableextension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Tableextension"
+            },
+            "named": false,
+            "value": "tableextension"
           },
           {
-            "type": "STRING",
-            "value": "TableExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "TableExtension"
+            },
+            "named": false,
+            "value": "tableextension"
           },
           {
-            "type": "STRING",
-            "value": "tableExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "tableExtension"
+            },
+            "named": false,
+            "value": "tableextension"
           }
         ]
       }
     },
     "page_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)page"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)page"
+        }
+      },
+      "named": false,
+      "value": "page"
     },
     "pageextension_keyword": {
       "type": "PREC",
@@ -18384,20 +18419,40 @@
             "value": "pageextension"
           },
           {
-            "type": "STRING",
-            "value": "PAGEEXTENSION"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "PAGEEXTENSION"
+            },
+            "named": false,
+            "value": "pageextension"
           },
           {
-            "type": "STRING",
-            "value": "Pageextension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Pageextension"
+            },
+            "named": false,
+            "value": "pageextension"
           },
           {
-            "type": "STRING",
-            "value": "PageExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "PageExtension"
+            },
+            "named": false,
+            "value": "pageextension"
           },
           {
-            "type": "STRING",
-            "value": "pageExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "pageExtension"
+            },
+            "named": false,
+            "value": "pageextension"
           }
         ]
       }
@@ -18413,34 +18468,64 @@
             "value": "codeunit"
           },
           {
-            "type": "STRING",
-            "value": "CODEUNIT"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "CODEUNIT"
+            },
+            "named": false,
+            "value": "codeunit"
           },
           {
-            "type": "STRING",
-            "value": "Codeunit"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Codeunit"
+            },
+            "named": false,
+            "value": "codeunit"
           },
           {
-            "type": "STRING",
-            "value": "CodeUnit"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "CodeUnit"
+            },
+            "named": false,
+            "value": "codeunit"
           },
           {
-            "type": "STRING",
-            "value": "COdeunit"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "COdeunit"
+            },
+            "named": false,
+            "value": "codeunit"
           },
           {
-            "type": "STRING",
-            "value": "codeUnit"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "codeUnit"
+            },
+            "named": false,
+            "value": "codeunit"
           }
         ]
       }
     },
     "report_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)report"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)report"
+        }
+      },
+      "named": false,
+      "value": "report"
     },
     "reportextension_keyword": {
       "type": "PREC",
@@ -18453,30 +18538,55 @@
             "value": "reportextension"
           },
           {
-            "type": "STRING",
-            "value": "REPORTEXTENSION"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "REPORTEXTENSION"
+            },
+            "named": false,
+            "value": "reportextension"
           },
           {
-            "type": "STRING",
-            "value": "Reportextension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Reportextension"
+            },
+            "named": false,
+            "value": "reportextension"
           },
           {
-            "type": "STRING",
-            "value": "ReportExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "ReportExtension"
+            },
+            "named": false,
+            "value": "reportextension"
           },
           {
-            "type": "STRING",
-            "value": "reportExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "reportExtension"
+            },
+            "named": false,
+            "value": "reportextension"
           }
         ]
       }
     },
     "query_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)query"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)query"
+        }
+      },
+      "named": false,
+      "value": "query"
     },
     "xmlport_keyword": {
       "type": "PREC",
@@ -18489,24 +18599,49 @@
             "value": "xmlport"
           },
           {
-            "type": "STRING",
-            "value": "XMLPORT"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "XMLPORT"
+            },
+            "named": false,
+            "value": "xmlport"
           },
           {
-            "type": "STRING",
-            "value": "Xmlport"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Xmlport"
+            },
+            "named": false,
+            "value": "xmlport"
           },
           {
-            "type": "STRING",
-            "value": "XMLport"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "XMLport"
+            },
+            "named": false,
+            "value": "xmlport"
           },
           {
-            "type": "STRING",
-            "value": "XMLPort"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "XMLPort"
+            },
+            "named": false,
+            "value": "xmlport"
           },
           {
-            "type": "STRING",
-            "value": "XmlPort"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "XmlPort"
+            },
+            "named": false,
+            "value": "xmlport"
           }
         ]
       }
@@ -18522,24 +18657,49 @@
             "value": "enum"
           },
           {
-            "type": "STRING",
-            "value": "ENUM"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "ENUM"
+            },
+            "named": false,
+            "value": "enum"
           },
           {
-            "type": "STRING",
-            "value": "Enum"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Enum"
+            },
+            "named": false,
+            "value": "enum"
           },
           {
-            "type": "STRING",
-            "value": "eNUM"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "eNUM"
+            },
+            "named": false,
+            "value": "enum"
           },
           {
-            "type": "STRING",
-            "value": "eNum"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "eNum"
+            },
+            "named": false,
+            "value": "enum"
           },
           {
-            "type": "STRING",
-            "value": "ENum"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "ENum"
+            },
+            "named": false,
+            "value": "enum"
           }
         ]
       }
@@ -18555,30 +18715,55 @@
             "value": "enumextension"
           },
           {
-            "type": "STRING",
-            "value": "ENUMEXTENSION"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "ENUMEXTENSION"
+            },
+            "named": false,
+            "value": "enumextension"
           },
           {
-            "type": "STRING",
-            "value": "Enumextension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Enumextension"
+            },
+            "named": false,
+            "value": "enumextension"
           },
           {
-            "type": "STRING",
-            "value": "EnumExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "EnumExtension"
+            },
+            "named": false,
+            "value": "enumextension"
           },
           {
-            "type": "STRING",
-            "value": "enumExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "enumExtension"
+            },
+            "named": false,
+            "value": "enumextension"
           }
         ]
       }
     },
     "interface_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)interface"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)interface"
+        }
+      },
+      "named": false,
+      "value": "interface"
     },
     "controladdin_keyword": {
       "type": "PREC",
@@ -18591,28 +18776,58 @@
             "value": "controladdin"
           },
           {
-            "type": "STRING",
-            "value": "CONTROLADDIN"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "CONTROLADDIN"
+            },
+            "named": false,
+            "value": "controladdin"
           },
           {
-            "type": "STRING",
-            "value": "Controladdin"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Controladdin"
+            },
+            "named": false,
+            "value": "controladdin"
           },
           {
-            "type": "STRING",
-            "value": "ControlAddIn"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "ControlAddIn"
+            },
+            "named": false,
+            "value": "controladdin"
           },
           {
-            "type": "STRING",
-            "value": "ControlAddin"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "ControlAddin"
+            },
+            "named": false,
+            "value": "controladdin"
           },
           {
-            "type": "STRING",
-            "value": "controlAddIn"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "controlAddIn"
+            },
+            "named": false,
+            "value": "controladdin"
           },
           {
-            "type": "STRING",
-            "value": "controlAddin"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "controlAddin"
+            },
+            "named": false,
+            "value": "controladdin"
           }
         ]
       }
@@ -18628,30 +18843,55 @@
             "value": "dotnet"
           },
           {
-            "type": "STRING",
-            "value": "DOTNET"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "DOTNET"
+            },
+            "named": false,
+            "value": "dotnet"
           },
           {
-            "type": "STRING",
-            "value": "Dotnet"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Dotnet"
+            },
+            "named": false,
+            "value": "dotnet"
           },
           {
-            "type": "STRING",
-            "value": "DotNet"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "DotNet"
+            },
+            "named": false,
+            "value": "dotnet"
           },
           {
-            "type": "STRING",
-            "value": "dotNet"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "dotNet"
+            },
+            "named": false,
+            "value": "dotnet"
           }
         ]
       }
     },
     "profile_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)profile"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)profile"
+        }
+      },
+      "named": false,
+      "value": "profile"
     },
     "profileextension_keyword": {
       "type": "PREC",
@@ -18664,20 +18904,40 @@
             "value": "profileextension"
           },
           {
-            "type": "STRING",
-            "value": "PROFILEEXTENSION"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "PROFILEEXTENSION"
+            },
+            "named": false,
+            "value": "profileextension"
           },
           {
-            "type": "STRING",
-            "value": "Profileextension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Profileextension"
+            },
+            "named": false,
+            "value": "profileextension"
           },
           {
-            "type": "STRING",
-            "value": "ProfileExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "ProfileExtension"
+            },
+            "named": false,
+            "value": "profileextension"
           },
           {
-            "type": "STRING",
-            "value": "profileExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "profileExtension"
+            },
+            "named": false,
+            "value": "profileextension"
           }
         ]
       }
@@ -18693,20 +18953,40 @@
             "value": "permissionset"
           },
           {
-            "type": "STRING",
-            "value": "PERMISSIONSET"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "PERMISSIONSET"
+            },
+            "named": false,
+            "value": "permissionset"
           },
           {
-            "type": "STRING",
-            "value": "Permissionset"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Permissionset"
+            },
+            "named": false,
+            "value": "permissionset"
           },
           {
-            "type": "STRING",
-            "value": "PermissionSet"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "PermissionSet"
+            },
+            "named": false,
+            "value": "permissionset"
           },
           {
-            "type": "STRING",
-            "value": "permissionSet"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "permissionSet"
+            },
+            "named": false,
+            "value": "permissionset"
           }
         ]
       }
@@ -18722,30 +19002,55 @@
             "value": "permissionsetextension"
           },
           {
-            "type": "STRING",
-            "value": "PERMISSIONSETEXTENSION"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "PERMISSIONSETEXTENSION"
+            },
+            "named": false,
+            "value": "permissionsetextension"
           },
           {
-            "type": "STRING",
-            "value": "Permissionsetextension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Permissionsetextension"
+            },
+            "named": false,
+            "value": "permissionsetextension"
           },
           {
-            "type": "STRING",
-            "value": "PermissionSetExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "PermissionSetExtension"
+            },
+            "named": false,
+            "value": "permissionsetextension"
           },
           {
-            "type": "STRING",
-            "value": "permissionSetExtension"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "permissionSetExtension"
+            },
+            "named": false,
+            "value": "permissionsetextension"
           }
         ]
       }
     },
     "entitlement_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)entitlement"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)entitlement"
+        }
+      },
+      "named": false,
+      "value": "entitlement"
     },
     "pagecustomization_keyword": {
       "type": "PREC",
@@ -18758,317 +19063,547 @@
             "value": "pagecustomization"
           },
           {
-            "type": "STRING",
-            "value": "PAGECUSTOMIZATION"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "PAGECUSTOMIZATION"
+            },
+            "named": false,
+            "value": "pagecustomization"
           },
           {
-            "type": "STRING",
-            "value": "Pagecustomization"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "Pagecustomization"
+            },
+            "named": false,
+            "value": "pagecustomization"
           },
           {
-            "type": "STRING",
-            "value": "PageCustomization"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "PageCustomization"
+            },
+            "named": false,
+            "value": "pagecustomization"
           },
           {
-            "type": "STRING",
-            "value": "pageCustomization"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "pageCustomization"
+            },
+            "named": false,
+            "value": "pagecustomization"
           }
         ]
       }
     },
     "namespace_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)namespace"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)namespace"
+        }
+      },
+      "named": false,
+      "value": "namespace"
     },
     "using_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)using"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)using"
+        }
+      },
+      "named": false,
+      "value": "using"
     },
     "implements_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)implements"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)implements"
+        }
+      },
+      "named": false,
+      "value": "implements"
     },
     "extends_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)extends"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)extends"
+        }
+      },
+      "named": false,
+      "value": "extends"
     },
     "customizes_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)customizes"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)customizes"
+        }
+      },
+      "named": false,
+      "value": "customizes"
     },
     "procedure_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)procedure"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)procedure"
+        }
+      },
+      "named": false,
+      "value": "procedure"
     },
     "trigger_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)trigger"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)trigger"
+        }
+      },
+      "named": false,
+      "value": "trigger"
     },
     "var_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)var"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)var"
+        }
+      },
+      "named": false,
+      "value": "var"
     },
     "local_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)local"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)local"
+        }
+      },
+      "named": false,
+      "value": "local"
     },
     "internal_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)internal"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)internal"
+        }
+      },
+      "named": false,
+      "value": "internal"
     },
     "protected_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)protected"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)protected"
+        }
+      },
+      "named": false,
+      "value": "protected"
     },
     "event_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)event"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)event"
+        }
+      },
+      "named": false,
+      "value": "event"
     },
     "temporary_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)temporary"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)temporary"
+        }
+      },
+      "named": false,
+      "value": "temporary"
     },
     "fields_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)fields"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)fields"
+        }
+      },
+      "named": false,
+      "value": "fields"
     },
     "keys_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)keys"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)keys"
+        }
+      },
+      "named": false,
+      "value": "keys"
     },
     "key_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)key"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)key"
+        }
+      },
+      "named": false,
+      "value": "key"
     },
     "fieldgroups_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)fieldgroups"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)fieldgroups"
+        }
+      },
+      "named": false,
+      "value": "fieldgroups"
     },
     "fieldgroup_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)fieldgroup"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)fieldgroup"
+        }
+      },
+      "named": false,
+      "value": "fieldgroup"
     },
     "actions_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)actions"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)actions"
+        }
+      },
+      "named": false,
+      "value": "actions"
     },
     "layout_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)layout"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)layout"
+        }
+      },
+      "named": false,
+      "value": "layout"
     },
     "area_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)area"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)area"
+        }
+      },
+      "named": false,
+      "value": "area"
     },
     "group_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)group"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)group"
+        }
+      },
+      "named": false,
+      "value": "group"
     },
     "repeater_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)repeater"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)repeater"
+        }
+      },
+      "named": false,
+      "value": "repeater"
     },
     "cuegroup_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)cuegroup"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)cuegroup"
+        }
+      },
+      "named": false,
+      "value": "cuegroup"
     },
     "fixed_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)fixed"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)fixed"
+        }
+      },
+      "named": false,
+      "value": "fixed"
     },
     "grid_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)grid"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)grid"
+        }
+      },
+      "named": false,
+      "value": "grid"
     },
     "part_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)part"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)part"
+        }
+      },
+      "named": false,
+      "value": "part"
     },
     "systempart_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)systempart"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)systempart"
+        }
+      },
+      "named": false,
+      "value": "systempart"
     },
     "usercontrol_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)usercontrol"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)usercontrol"
+        }
+      },
+      "named": false,
+      "value": "usercontrol"
     },
     "dataset_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)dataset"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)dataset"
+        }
+      },
+      "named": false,
+      "value": "dataset"
     },
     "elements_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)elements"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)elements"
+        }
+      },
+      "named": false,
+      "value": "elements"
     },
     "dataitem_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)dataitem"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)dataitem"
+        }
+      },
+      "named": false,
+      "value": "dataitem"
     },
     "column_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)column"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)column"
+        }
+      },
+      "named": false,
+      "value": "column"
     },
     "filter_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)filter"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)filter"
+        }
+      },
+      "named": false,
+      "value": "filter"
     },
     "labels_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)labels"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)labels"
+        }
+      },
+      "named": false,
+      "value": "labels"
     },
     "rendering_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)rendering"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)rendering"
+        }
+      },
+      "named": false,
+      "value": "rendering"
     },
     "requestpage_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)requestpage"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)requestpage"
+        }
+      },
+      "named": false,
+      "value": "requestpage"
     },
     "schema_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)schema"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)schema"
+        }
+      },
+      "named": false,
+      "value": "schema"
     },
     "views_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)views"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)views"
+        }
+      },
+      "named": false,
+      "value": "views"
     },
     "analysisviews_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)analysisviews"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)analysisviews"
+        }
+      },
+      "named": false,
+      "value": "analysisviews"
     },
     "analysisview_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)analysisview"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)analysisview"
+        }
+      },
+      "named": false,
+      "value": "analysisview"
     },
     "view_keyword": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "PATTERN",
-        "value": "(?i)view"
-      }
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)view"
+        }
+      },
+      "named": false,
+      "value": "view"
     },
     "_identifier_or_quoted": {
       "type": "CHOICE",
