@@ -42,10 +42,26 @@
 // Example — the shape a seq-spanning field produces:
 //
 //   $ fieldwalk probe.al record_type reference
+//   parse: HAS_ERROR=no
 //   == record_type [60,90)
 //      FIELD reference -> identifier  text=`System`
 //      FIELD reference -> . (ANON)  text=`.`      <-- the defect
 //      FIELD reference -> identifier  text=`Reflection`
+//
+// READING THE OUTPUT — the two blank results mean different things:
+//
+//   "== <type> ..." with no FIELD rows under it
+//        The node exists and carries NO child with that field. This is a real
+//        answer: field present, no members (or the field name is misspelled).
+//   "0 nodes of type <type> found"
+//        The construct never reduced to that node type -- usually the probe
+//        does not exercise it, or it did not parse. This is NOT evidence about
+//        the field. Fix the probe and re-run.
+//
+// Always read the `parse: HAS_ERROR=` line first. A probe that fails to parse
+// silently produces no rows, and a blank result trusted at face value is
+// exactly the false negative that produced two wrong verdicts in this repo
+// before this tool existed. A miss is printed loudly for that reason.
 //
 // To compare against an older parser, extract it first
 // (`git show <rev>:src/parser.c > old/parser.c`, likewise scanner.c, and copy
@@ -62,8 +78,10 @@ static char *slurp(const char *path, size_t *len) {
   FILE *f = fopen(path, "rb");
   if (!f) { fprintf(stderr, "cannot open %s\n", path); exit(2); }
   fseek(f, 0, SEEK_END); long n = ftell(f); fseek(f, 0, SEEK_SET);
-  char *b = malloc(n + 1);
-  size_t got = fread(b, 1, n, f);
+  if (n < 0) { fprintf(stderr, "cannot size %s\n", path); exit(2); }
+  char *b = malloc((size_t)n + 1);
+  if (!b) { fprintf(stderr, "out of memory reading %s\n", path); exit(2); }
+  size_t got = fread(b, 1, (size_t)n, f);
   b[got] = 0; *len = got; fclose(f); return b;
 }
 
@@ -102,15 +120,22 @@ int main(int argc, char **argv) {
   TSTree *t = ts_parser_parse_string(p, NULL, src, (uint32_t)len);
   TSNode root = ts_tree_root_node(t);
 
+  // Report parse health unconditionally. A probe that failed to parse produces
+  // no rows in targeted mode, which is indistinguishable from "the field has no
+  // members" unless the failure is stated out loud.
+  int had_error = ts_node_has_error(root);
+  printf("parse: HAS_ERROR=%s\n", had_error ? "YES -- results below are unreliable" : "no");
+
   if (argc >= 4) {
     // Targeted mode: for every node of type argv[2], list the children that
     // carry field argv[3]. This is exactly children_by_field_name(argv[3]).
     const char *want_type = argv[2], *want_field = argv[3];
     TSTreeCursor c = ts_tree_cursor_new(root);
-    int done = 0;
+    int done = 0, matched = 0;
     while (!done) {
       TSNode n = ts_tree_cursor_current_node(&c);
       if (strcmp(ts_node_type(n), want_type) == 0) {
+        matched++;
         printf("== %s [%u,%u)\n", want_type,
                ts_node_start_byte(n), ts_node_end_byte(n));
         TSTreeCursor ic = ts_tree_cursor_new(n);
@@ -134,6 +159,15 @@ int main(int argc, char **argv) {
       }
     }
     ts_tree_cursor_delete(&c);
+    if (matched == 0) {
+      // Loud, and distinct from "found the node, it has no such field child" --
+      // conflating the two is how a blank result gets mistaken for evidence.
+      printf("0 nodes of type %s found -- this says NOTHING about field '%s'; "
+             "the probe does not exercise that construct%s\n",
+             want_type, want_field,
+             had_error ? " (and the file did not parse cleanly)" : "");
+      return 1;
+    }
   } else {
     TSTreeCursor c = ts_tree_cursor_new(root);
     walk(&c, 0);

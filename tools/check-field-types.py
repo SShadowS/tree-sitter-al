@@ -135,10 +135,36 @@ FIELD_INVARIANTS = [
     # unhandled-variant panic in the owned-IR consumer, and this fix adds none.
     # `types` is not pinned -- this is a 30-member choice of every legal
     # property value, and pinning it would fail on unrelated additions.
+    #
+    # multiple=True here is NOT a residual defect and is unrelated to the '-':
+    # `permissions_property` and `table_relation_property` are both aliased to
+    # `property`, and those rules field their value more than once, so the
+    # generator widens the declared arity for the merged node type. In practice
+    # the field is single-valued -- 0 of 42,811 `property` nodes across 1,500
+    # BC.History files return more than one `value` child.
     inv('property', 'value', True, set(), 'FIXED',
         "'-' of a negated CalcFormula inherited the value field"),
 
     # ----------------------------------------------------------- DELIBERATE
+    # The four `operator` fields are purely anonymous: the operator token IS
+    # the value, so there is no named node to hold and nothing to fix. They do
+    # not show up in the "mixes named and anonymous" audit query at all (it
+    # requires a named member too), which is exactly why they are pinned here
+    # -- an edit that gave `operator` a named member would otherwise pass the
+    # audit unnoticed. `multiple: False` says one operator per node.
+    inv('additive_expression', 'operator', False, {'+', '-'}, 'DELIBERATE',
+        'operator token IS the value; purely anonymous by design',
+        types={'+', '-'}),
+    inv('multiplicative_expression', 'operator', False, {'*', '/', 'div', 'mod'},
+        'DELIBERATE', 'operator token IS the value; purely anonymous by design',
+        types={'*', '/', 'div', 'mod'}),
+    inv('logical_expression', 'operator', False, {'and', 'or', 'xor'},
+        'DELIBERATE', 'operator token IS the value; purely anonymous by design',
+        types={'and', 'or', 'xor'}),
+    inv('unary_expression', 'operator', False, {'+', '-', 'not'},
+        'DELIBERATE', 'operator token IS the value; purely anonymous by design',
+        types={'+', '-', 'not'}),
+
     # `Permissions = tabledata * = RIMD` -- the wildcard IS the table name, so
     # an anonymous member in this field's type set is correct, exactly as for
     # the `operator` fields on the expression rules. The '.' that also used to

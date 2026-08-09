@@ -424,7 +424,7 @@ public API — a change to node structure or field names is a **major** bump.
   part of the tree. It matters because typed bindings (Rust, TypeScript) and other
   tooling generate their `sizes` accessor type from `node-types.json`, not
   from a live parse, and would have exposed a `sizes` accessor typed to
-  include a comma token that can never actually appear. Each size dimension
+  include a comma the fix removes. Each size dimension
   now carries its own `field('sizes', $.integer)`; the declared `sizes` type
   set is `['integer']` only, matching what the parser actually produces.
   Guarded by `tools/check-field-types.py`, run as part of

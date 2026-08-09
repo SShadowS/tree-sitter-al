@@ -224,6 +224,42 @@ else
     print_warning "Field-shape check script not found (tools/check-field-types.py)"
 fi
 
+# Step 5c: Compile-check tools/fieldwalk.c
+#
+# fieldwalk is the only instrument that can verify field membership at runtime
+# (it walks a TSTreeCursor; `tree-sitter parse -c` cannot show fields on
+# anonymous nodes). Nothing else builds it, so without this it could rot
+# unnoticed and take the evidence base for the field-shape rows with it.
+#
+# Skipped, not failed, when its prerequisites are absent: the vendored runtime
+# is fetched on demand by bindings/c/build.sh, and CI images may lack a C
+# compiler. Only a genuine compile failure fails validation.
+print_header "Step 5c: Compile-Checking tools/fieldwalk.c"
+FIELDWALK_TS_DIR=$(ls -d .cache/tree-sitter-*/lib 2>/dev/null | head -1)
+FIELDWALK_CC="${CC:-cc}"
+command -v "$FIELDWALK_CC" >/dev/null 2>&1 || FIELDWALK_CC=gcc
+
+if [ ! -f "tools/fieldwalk.c" ]; then
+    print_warning "fieldwalk not found (tools/fieldwalk.c)"
+elif ! command -v "$FIELDWALK_CC" >/dev/null 2>&1; then
+    print_warning "No C compiler found - skipping fieldwalk compile check"
+elif [ -z "$FIELDWALK_TS_DIR" ]; then
+    print_warning "No vendored tree-sitter runtime in .cache/ - skipping fieldwalk compile check (run bindings/c/build.sh once to fetch it)"
+else
+    FIELDWALK_BIN=$(mktemp -u)
+    FIELDWALK_OUTPUT=$("$FIELDWALK_CC" -O0 -o "$FIELDWALK_BIN" \
+        tools/fieldwalk.c src/parser.c src/scanner.c "$FIELDWALK_TS_DIR/src/lib.c" \
+        -I"$FIELDWALK_TS_DIR/include" -I"$FIELDWALK_TS_DIR/src" -Isrc 2>&1)
+    if [ $? -eq 0 ]; then
+        print_success "fieldwalk compiles against the current parser"
+        rm -f "$FIELDWALK_BIN" "$FIELDWALK_BIN.exe"
+    else
+        print_error "fieldwalk failed to compile:"
+        echo "$FIELDWALK_OUTPUT"
+        VALIDATION_FAILED=1
+    fi
+fi
+
 # Step 6: Run parsing test on AL files (optional, can be slow)
 print_header "Step 6: AL File Parsing Test (Optional)"
 if [ -f "parse-al-parallel.sh" ] && [ "$1" = "--full" ]; then
