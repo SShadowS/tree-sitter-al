@@ -9,7 +9,25 @@ All three registries authenticate with OIDC trusted publishing. There are no pub
 Before starting, verify:
 1. All tests pass: `tree-sitter test`
 2. Production validation: `./parse-al-parallel.sh ./BC.History/ .` (0 errors)
-3. No ERROR/MISSING nodes in any test: `grep -rn "(ERROR\b\|MISSING\b" test/corpus/ --include="*.txt" | grep -v "ERROR("`
+3. No **unexpected** ERROR/MISSING nodes in any test — this must print nothing:
+
+   ```bash
+   grep -rn "(ERROR\b\|MISSING\b" test/corpus/ --include="*.txt" \
+     | grep -v "ERROR(" \
+     | grep -vE "option_members_tabledata_keyword_test|pragma_whitespace_tolerance_test|preproc_if_elif_whitespace_tolerance_test|preproc_region_whitespace_audit_test"
+   ```
+
+   Those four files are deliberate negatives — their ERROR nodes *are* the
+   assertion. They pin that a misplaced `TableData X = R` fragment under
+   OptionMembers surfaces rather than being silently absorbed, that `#` +
+   newline + `pragma`/`if`/`elif`/`region` does not lex as a directive
+   (whitespace tolerance after `#` is horizontal-only), and that `# ifx` is not
+   `#if`. Any hit OUTSIDE those four is a real problem.
+
+   Unscoped, this check had 8 hits across those 4 files and so had never passed
+   at any release, v3.3.0 included. The same exemption list lives in
+   `validate-grammar.sh` Step 3 (`DELIBERATE_ERROR_FIXTURES`) — change both or
+   neither.
 4. Working directory is clean (no uncommitted grammar/scanner changes)
 5. `src/parser.c` is current: run `tree-sitter generate` and confirm no diff. CI fails otherwise, because `parser-test-action` regenerates and runs `git diff --exit-code`.
 
