@@ -2103,10 +2103,6 @@
         }
       ]
     },
-    "empty_statement": {
-      "type": "STRING",
-      "value": ";"
-    },
     "property": {
       "type": "SEQ",
       "members": [
@@ -15702,6 +15698,10 @@
       "type": "SYMBOL",
       "name": "_expression"
     },
+    "empty_statement": {
+      "type": "STRING",
+      "value": ";"
+    },
     "assignment_statement": {
       "type": "PREC_DYNAMIC",
       "value": 10,
@@ -19207,13 +19207,6 @@
       "content": {
         "type": "PATTERN",
         "value": "(?i)usercontrol"
-      }
-    },
-    "chartpart_keyword": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PATTERN",
-        "value": "(?i)chartpart"
       }
     },
     "dataset_keyword": {

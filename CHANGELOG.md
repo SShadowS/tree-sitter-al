@@ -128,6 +128,17 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Removed
 
+- **Dead code cleanup: no parse tree changes.** Dropped `chartpart_keyword`
+  (referenced nowhere but its own definition and absent from
+  `node-types.json`, so it could never appear in a tree), the `_named_section`
+  helper function (never called), and the first of two identical
+  `empty_statement` definitions (the second silently shadowed it, so the rule
+  itself was unaffected). Also corrected a misleading comment on
+  `variable_declaration`'s Label arm: it said the type "must be" `Label`, but
+  the rule accepts any `basic_type` — parse structure, don't validate; the
+  "must" is a linter's job. Confirmed via `tools/tree-harness.sh verify`: all
+  15,358 BC.History parse trees byte-identical before and after.
+
 ## [3.3.1] — 2026-08-09
 
 Six external-scanner defects, all pre-existing and all found by a review of

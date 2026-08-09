@@ -63,19 +63,6 @@ function _extension_without_id(keyword_name) {
   );
 }
 
-// Section template: keyword(name) { content* }
-function _named_section(keyword_rule, content_rule) {
-  return $ => seq(
-    keyword_rule,
-    '(',
-    field('name', $._identifier_or_quoted),
-    ')',
-    '{',
-    repeat(content_rule($)),
-    '}'
-  );
-}
-
 module.exports = grammar({
   name: "al",
 
@@ -485,8 +472,6 @@ module.exports = grammar({
       // Extension modifications (table/page extensions)
       $.modify_modification,
     ),
-
-    empty_statement: $ => ';',
 
     // =====================================================================
     // Properties
@@ -2752,7 +2737,10 @@ module.exports = grammar({
       prec(5, seq(
         field('name', $._identifier_or_quoted),
         ':',
-        field('type', $.basic_type),  // Must be Label type
+        // Conventionally a Label, but the rule accepts any basic_type — the
+        // "must" is a semantic rule for a linter, not something the grammar
+        // enforces (parse structure, don't validate).
+        field('type', $.basic_type),
         field('value', choice($.string_literal, $.verbatim_string)),
         optional(seq(
           ',',
@@ -3995,7 +3983,6 @@ module.exports = grammar({
     part_keyword: $ => kw('part'),
     systempart_keyword: $ => kw('systempart'),
     usercontrol_keyword: $ => kw('usercontrol'),
-    chartpart_keyword: $ => kw('chartpart'),
     dataset_keyword: $ => kw('dataset'),
     elements_keyword: $ => kw('elements'),
     dataitem_keyword: $ => kw('dataitem'),
