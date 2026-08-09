@@ -182,25 +182,30 @@ else
     print_warning "Orphan detection script not found (tools/find_unused_definitions.py)"
 fi
 
-# Step 5: Check for duplicate rules
-print_header "Step 5: Checking for Duplicate Rules"
+# Step 5: Check for duplicate rule keys in grammar.js's rules object
+#
+# grammar.js's `rules: { ... }` is one JavaScript object literal. A repeated
+# key is valid JS syntax -- the parser silently keeps the LAST value and
+# discards the rest -- so `tree-sitter generate`, ESLint, and a normal diff
+# review all pass it through unremarked. Task 10 found exactly this
+# (`empty_statement` defined twice, identically) by a human reading the file;
+# nothing else caught it. tools/analyze_duplicates.py distinguishes an
+# IDENTICAL duplicate (dead weight: both definitions agree, so the grammar
+# behaves as written, but it is a trap for whoever next edits only one copy)
+# from a DIFFERING one (a live bug: the earlier definition is silently
+# discarded and the grammar does not do what it says). Both fail this step --
+# see the script's module docstring for why "identical, so it's harmless"
+# still fails the build.
+print_header "Step 5: Checking for Duplicate Rule Keys"
 if [ -f "tools/analyze_duplicates.py" ]; then
     DUPLICATE_OUTPUT=$(python3 tools/analyze_duplicates.py 2>&1)
     DUPLICATE_EXIT_CODE=$?
-    
+
     if [ $DUPLICATE_EXIT_CODE -eq 0 ]; then
-        # Check if there are any duplicates in the output
-        if echo "$DUPLICATE_OUTPUT" | grep -q "Found [1-9][0-9]* duplicate"; then
-            DUPLICATE_COUNT=$(echo "$DUPLICATE_OUTPUT" | grep -oE 'Found [0-9]+ duplicate' | grep -oE '[0-9]+')
-            print_warning "Found $DUPLICATE_COUNT duplicate rule definitions"
-            echo "$DUPLICATE_OUTPUT" | grep -A20 "Duplicate rule:" | head -20
-            VALIDATION_FAILED=1
-        else
-            print_success "No duplicate rules found"
-        fi
+        print_success "$DUPLICATE_OUTPUT"
     else
-        print_error "Duplicate detection script failed"
-        echo "$DUPLICATE_OUTPUT" | head -10
+        print_error "Duplicate rule key(s) found in grammar.js:"
+        echo "$DUPLICATE_OUTPUT"
         VALIDATION_FAILED=1
     fi
 else

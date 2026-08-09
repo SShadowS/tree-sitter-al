@@ -1,274 +1,328 @@
 #!/usr/bin/env python3
 """
-Analyze property patterns to identify:
-1. True duplicates (identical logic, different names)
-2. Intentional variants (same base concept, different contexts)
-3. Consolidation opportunities
+analyze_duplicates.py - Detect duplicate top-level rule keys in grammar.js.
 
-Property variants are INTENTIONAL when they exist because:
-- Different contexts (entity vs option vs page vs view)
-- Different value types (ml vs non-ml)
-- Different object types (run_page vs sub_page)
+grammar.js's `rules: { ... }` is one big JavaScript object literal. If the
+same key is written twice, JavaScript silently keeps the LAST value and
+discards the first -- a repeated key in an object literal is valid syntax,
+so nothing about `tree-sitter generate`, ESLint, or a normal diff review
+flags it. Task 10 (see CHANGELOG.md, "Removed") found exactly this:
+`empty_statement` was defined twice, identically, in two different places in
+the file, and no tool caught it -- a human reading the file did.
 
-True duplicates should be consolidated if they:
-- Have identical implementation patterns
-- Serve the same semantic purpose
-- Could be replaced by a single parameterized rule
+This script parses `rules: { ... }` well enough to recover every top-level
+`key: value` entry (a small hand-rolled scanner, not a full JS parser -- see
+`_skip_noncode` for what it does and does not handle) and reports any key
+that appears more than once. Two different entries can matter in very
+different ways:
 
-Run from the repository root — grammar.js is read relative to the working
+  * IDENTICAL duplicate -- both definitions are byte-for-byte the same after
+    trimming surrounding whitespace. Harmless in the sense that the grammar
+    behaves as written (there is only one distinct definition to discard),
+    but it is dead weight: a copy-paste leftover, and a trap for the next
+    person who edits only one of the two copies.
+  * DIFFERING duplicate -- the definitions disagree. This is a live bug: the
+    earlier definition is silently discarded by JavaScript's last-write-wins
+    object literal semantics, so the grammar does not do what the *first*
+    definition says, and nothing before this script said so.
+
+Both kinds fail this check -- see validate-grammar.sh's Step 5 for why an
+"identical, so it's harmless" duplicate still fails the build: it is exactly
+the kind of thing that goes unnoticed and then bit-rots into a differing one
+the next time someone edits only one of the copies.
+
+Run from the repository root -- grammar.js is read relative to the working
 directory.
 
 Usage:
-    python tools/analyze_duplicates.py           # Show analysis
-    python tools/analyze_duplicates.py --strict  # Only show true duplicates
+    python tools/analyze_duplicates.py           # Human-readable report
+    python tools/analyze_duplicates.py --json     # Machine-readable report
+
+--strict is still accepted (a no-op) for compatibility with existing
+`.claude/commands/*.md` references -- there is no "loose" mode left to
+distinguish it from: this script only ever reports actual duplicate keys,
+never speculative consolidation candidates.
 """
 
+import argparse
+import json
 import re
 import sys
-import argparse
-from collections import defaultdict
+from collections import OrderedDict
 from pathlib import Path
 
-# Known intentional variant patterns - these are NOT duplicates
-INTENTIONAL_PATTERNS = {
-    # Context variants (same property, different scopes)
-    'context_variants': [
-        ('caption', ['caption', 'entity_caption', 'option_caption', 'view_caption', 'show_caption']),
-        ('caption_ml', ['caption_ml', 'entity_caption_ml', 'option_caption_ml']),
-        ('name', ['external_name', 'entity_name', 'entity_set_name']),
-        ('namespace', ['default_namespace', 'use_default_namespace']),
-        ('permissions', ['permissions', 'test_permissions']),
-        ('filters', ['filters', 'view_filters']),
-        ('link', ['run_page_link', 'sub_page_link', 'data_item_link']),
-        ('layout', ['cuegroup_layout', 'word_layout', 'excel_layout', 'rdlc_layout', 'pdf_layout']),
-    ],
+# Characters after which a '/' starts a regex literal rather than division.
+# grammar.js contains exactly two raw regex literals in the rules object
+# (`token(/\d+/)`, `token(/[\p{L}_][\p{L}\p{N}_]*/u)`); both are immediately
+# preceded by one of these. The set errs toward "regex is legal here" for any
+# JS operator/punctuator token, which is the standard lexer heuristic and safe
+# for a DSL file that contains no division.
+_REGEX_ALLOWED_AFTER = set('([{,:;=!&|?~^%<>+-*') | {None}
 
-    # ML (multi-language) variants
-    'ml_variants': [
-        ('ml', ['tool_tip_ml', 'instructional_text_ml', 'request_filter_heading_ml',
-                'additional_search_terms_ml', 'entity_set_caption_ml']),
-    ],
-
-    # Object-specific variants (same action, different targets)
-    'target_variants': [
-        ('run', ['run_page', 'run_object']),
-        ('source', ['source_table', 'source_table_view']),
-        ('access', ['access_by_permission']),
-    ],
-}
+_IDENT_RE = re.compile(r'[A-Za-z_$][A-Za-z0-9_$]*')
 
 
-def extract_property_rules(content):
-    """Extract all property rule definitions from grammar.js."""
-    properties = {}
-    lines = content.split('\n')
-    current_rule = None
-    current_body = []
-    brace_depth = 0
+def _skip_noncode(text, i, n, prev):
+    """If `text[i]` starts a `//` or `/* */` comment, a `'`/`"`/`` ` `` string,
+    or (when `prev` says a value is expected, not a division operator) a `/
+    .../` regex literal, return the index just past it and the new `prev`
+    token to report to the caller. Otherwise return None -- the caller should
+    treat `text[i]` as ordinary, structurally significant source.
 
-    for i, line in enumerate(lines, 1):
-        # Check for property rule definition
-        match = re.match(r'^\s*([a-zA-Z_]+_property):\s*\$\s*=>', line)
-        if match:
-            if current_rule:
-                properties[current_rule] = {
-                    'line': properties[current_rule]['line'],
-                    'body': '\n'.join(current_body)
-                }
-            current_rule = match.group(1)
-            current_body = [line]
-            properties[current_rule] = {'line': i, 'body': ''}
-            brace_depth = 0
+    This is deliberately not a full JS lexer: it exists only to keep brace/
+    paren/bracket depth-counting from being confused by a `{`, `(`, `[`, `:`,
+    or `,` that merely *appears* inside a comment, string, or regex literal
+    (e.g. the `[...]` character class in `/[\\p{L}_].../u`). Nothing here
+    needs to know what the skipped text *means* -- only where it ends.
+    """
+    c = text[i]
+
+    if c == '/' and i + 1 < n and text[i + 1] == '/':
+        j = text.find('\n', i)
+        return (n if j == -1 else j), prev
+
+    if c == '/' and i + 1 < n and text[i + 1] == '*':
+        j = text.find('*/', i + 2)
+        return (n if j == -1 else j + 2), prev
+
+    if c in ("'", '"', '`'):
+        quote = c
+        j = i + 1
+        while j < n:
+            if text[j] == '\\':
+                j += 2
+                continue
+            if text[j] == quote:
+                j += 1
+                break
+            j += 1
+        return j, quote
+
+    if c == '/' and prev in _REGEX_ALLOWED_AFTER:
+        j = i + 1
+        in_class = False
+        while j < n:
+            ch = text[j]
+            if ch == '\\':
+                j += 2
+                continue
+            if ch == '\n':
+                break  # malformed/unterminated -- bail, treat '/' as itself
+            if ch == '[':
+                in_class = True
+            elif ch == ']':
+                in_class = False
+            elif ch == '/' and not in_class:
+                j += 1
+                break
+            j += 1
+        while j < n and text[j].isalpha():
+            j += 1
+        return j, '/'
+
+    return None
+
+
+def _find_rules_object(text):
+    """Return (body_start, body_end) spanning the inside of `rules: { ... }`
+    (exclusive of the braces)."""
+    m = re.search(r'\brules\s*:\s*\{', text)
+    if not m:
+        raise ValueError("no 'rules: {' object found in grammar.js")
+
+    i = m.end()  # just past the opening '{'
+    depth = 1
+    n = len(text)
+    prev = '{'
+
+    while i < n and depth > 0:
+        skip = _skip_noncode(text, i, n, prev)
+        if skip is not None:
+            i, prev = skip
             continue
 
-        if current_rule:
-            current_body.append(line)
-            brace_depth += line.count('(') - line.count(')')
-            # End of rule when we return to depth 0 and see a comma or rule end
-            if brace_depth <= 0 and (line.strip().endswith(',') or
-                                      re.match(r'^\s*[a-zA-Z_]+:\s*\$\s*=>', line)):
-                properties[current_rule]['body'] = '\n'.join(current_body[:-1] if
-                    re.match(r'^\s*[a-zA-Z_]+:\s*\$\s*=>', line) else current_body)
-                current_rule = None
-                current_body = []
+        c = text[i]
+        if c in '([{':
+            depth += 1
+        elif c in ')]}':
+            depth -= 1
+            if depth == 0:
+                return m.end(), i
 
-    return properties
+        if not c.isspace():
+            prev = c
+        i += 1
 
-
-def normalize_property_body(body):
-    """Normalize property body for comparison."""
-    # Remove comments
-    body = re.sub(r'//.*$', '', body, flags=re.MULTILINE)
-    # Remove whitespace
-    body = re.sub(r'\s+', ' ', body)
-    # Remove property name from start
-    body = re.sub(r'^[a-zA-Z_]+_property:\s*\$\s*=>\s*', '', body)
-    # Normalize kw() calls by extracting just the keyword
-    body = re.sub(r"kw\(['\"](\w+)['\"](?:,\s*\d+)?\)", r'KW(\1)', body)
-    # Normalize kw_with_eq() calls
-    body = re.sub(r"kw_with_eq\(['\"](\w+)['\"](?:,\s*\d+)?\)", r'KWEQ(\1)', body)
-    return body.strip()
+    raise ValueError("unbalanced braces while scanning 'rules: { ... }'")
 
 
-def find_base_name(prop_name):
-    """Extract the base concept from a property name."""
-    # Remove _property suffix
-    base = prop_name.replace('_property', '')
+def extract_rule_entries(text):
+    """Return an ordered list of (key, value_text, line_number) for every
+    top-level `key: value,` entry directly inside grammar.js's `rules: {}`.
 
-    # Known prefixes to strip for grouping
-    prefixes = [
-        'page_about_', 'about_', 'entity_set_', 'entity_', 'option_',
-        'run_page_', 'sub_page_', 'data_item_', 'source_table_',
-        'view_', 'show_', 'use_', 'default_', 'external_',
-        'additional_search_terms_', 'request_filter_', 'instructional_text_',
-        'tool_tip_', 'excel_layout_', 'word_', 'rdlc_', 'pdf_',
-        'cuegroup_', 'analysis_mode_', 'maximum_', 'enable_',
+    A "top-level" entry is one whose `key:` appears at bracket depth 0
+    relative to the rules object body -- i.e. not nested inside another
+    rule's `seq(...)`/`choice(...)`/object argument. `value_text` is the
+    exact source between the colon and the entry's trailing top-level comma
+    (or the closing brace for the last entry), stripped of surrounding
+    whitespace; it is NOT semantically normalized, so this compares what the
+    file actually says, byte for byte.
+    """
+    body_start, body_end = _find_rules_object(text)
+    body = text[body_start:body_end]
+    line = text.count('\n', 0, body_start) + 1
+
+    entries = []
+    i = 0
+    n = len(body)
+    depth = 0
+    prev = None
+
+    current_key = None
+    current_line = None
+    value_start = None
+
+    def flush(end):
+        nonlocal current_key, current_line, value_start
+        if current_key is not None:
+            raw = body[value_start:end].rstrip()
+            if raw.endswith(','):
+                raw = raw[:-1]
+            entries.append((current_key, raw.strip(), current_line))
+        current_key = None
+        current_line = None
+        value_start = None
+
+    while i < n:
+        if body[i] == '\n':
+            line += 1
+            i += 1
+            continue
+
+        prev_i = i
+        skip = _skip_noncode(body, i, n, prev)
+        if skip is not None:
+            i, prev = skip
+            line += body.count('\n', prev_i, i)
+            continue
+
+        c = body[i]
+
+        if c in '([{':
+            depth += 1
+            prev = c
+            i += 1
+            continue
+        if c in ')]}':
+            depth -= 1
+            prev = c
+            i += 1
+            continue
+
+        if depth == 0 and (c.isalpha() or c in '_$'):
+            m = _IDENT_RE.match(body, i)
+            after = m.end()
+            k = after
+            while k < n and body[k] in ' \t':
+                k += 1
+            if k < n and body[k] == ':' and (k + 1 >= n or body[k + 1] != ':'):
+                flush(i)
+                current_key = m.group(0)
+                current_line = line
+                value_start = k + 1
+                i = k + 1
+                prev = ':'
+                continue
+            prev = body[after - 1]
+            i = after
+            continue
+
+        if not c.isspace():
+            prev = c
+        i += 1
+
+    flush(n)
+    return entries
+
+
+def find_duplicates(entries):
+    """Group entries by key; return an OrderedDict of key -> list of
+    (value_text, line) for every key that appears more than once, in file
+    order of first appearance."""
+    by_key = OrderedDict()
+    for key, value, line in entries:
+        by_key.setdefault(key, []).append((value, line))
+    return OrderedDict((k, v) for k, v in by_key.items() if len(v) > 1)
+
+
+def classify(occurrences):
+    """'identical' if every occurrence's value text matches byte for byte,
+    else 'differing'."""
+    values = {v for v, _ in occurrences}
+    return 'identical' if len(values) == 1 else 'differing'
+
+
+def analyze(text):
+    entries = extract_rule_entries(text)
+    duplicates = find_duplicates(entries)
+
+    results = [
+        {
+            'key': key,
+            'verdict': classify(occurrences),
+            'lines': [line for _, line in occurrences],
+        }
+        for key, occurrences in duplicates.items()
     ]
 
-    for prefix in sorted(prefixes, key=len, reverse=True):
-        if base.startswith(prefix):
-            base = base[len(prefix):]
-            break
-
-    return base
-
-
-def is_intentional_variant(prop_name, group):
-    """Check if a property is part of a known intentional variant pattern."""
-    for category, patterns in INTENTIONAL_PATTERNS.items():
-        for base, variants in patterns:
-            if any(v in prop_name for v in variants):
-                # Check if other group members are also in this variant family
-                variant_count = sum(1 for p in group if any(v in p for v in variants))
-                if variant_count > 1:
-                    return True, category, base
-    return False, None, None
-
-
-def analyze_duplicates(content, strict=False):
-    """Analyze grammar for true duplicates vs intentional variants."""
-    properties = extract_property_rules(content)
-
-    # Group by normalized body (true duplicates have same implementation)
-    by_body = defaultdict(list)
-    for name, info in properties.items():
-        normalized = normalize_property_body(info['body'])
-        by_body[normalized].append((name, info['line']))
-
-    # Group by base name (potential variants)
-    by_base = defaultdict(list)
-    for name in properties:
-        base = find_base_name(name)
-        by_base[base].append(name)
-
-    results = {
-        'true_duplicates': [],
-        'intentional_variants': [],
-        'consolidation_candidates': [],
-        'summary': {}
+    return {
+        'total_rules': len(entries),
+        'distinct_rules': len(set(k for k, _, _ in entries)),
+        'duplicates': results,
     }
 
-    # Find true duplicates (same implementation)
-    for body, props in by_body.items():
-        if len(props) > 1:
-            names = [p[0] for p in props]
-            is_variant, category, _ = is_intentional_variant(names[0], names)
-            if not is_variant:
-                results['true_duplicates'].append({
-                    'properties': props,
-                    'normalized_body': body[:100] + '...' if len(body) > 100 else body
-                })
 
-    # Find intentional variants (same base, different contexts)
-    for base, names in by_base.items():
-        if len(names) > 1:
-            is_variant, category, pattern_base = is_intentional_variant(names[0], names)
-            if is_variant:
-                results['intentional_variants'].append({
-                    'base': base,
-                    'category': category,
-                    'properties': names
-                })
-            elif not strict:
-                # Check if these could potentially be consolidated
-                bodies = [normalize_property_body(properties[n]['body']) for n in names]
-                unique_bodies = len(set(bodies))
-                if unique_bodies == 1:
-                    results['consolidation_candidates'].append({
-                        'base': base,
-                        'properties': names,
-                        'reason': 'Identical implementations'
-                    })
-                elif unique_bodies < len(names):
-                    results['consolidation_candidates'].append({
-                        'base': base,
-                        'properties': names,
-                        'reason': f'{unique_bodies} unique implementations for {len(names)} properties'
-                    })
+def print_report(results):
+    dups = results['duplicates']
+    total = results['total_rules']
 
-    results['summary'] = {
-        'total_properties': len(properties),
-        'true_duplicates': len(results['true_duplicates']),
-        'intentional_variants': len(results['intentional_variants']),
-        'consolidation_candidates': len(results['consolidation_candidates'])
-    }
+    if not dups:
+        print(f"PASSED: {total} rule key(s) checked in grammar.js, no duplicates found")
+        return
 
-    return results
+    identical = [d for d in dups if d['verdict'] == 'identical']
+    differing = [d for d in dups if d['verdict'] == 'differing']
 
+    print(f"FAILED: {len(dups)} duplicate rule key(s) found in grammar.js "
+          f"({len(differing)} differing, {len(identical)} identical) out of {total} rule entries")
 
-def print_report(results, strict=False):
-    """Print analysis report."""
-    print("=" * 70)
-    print("PROPERTY DUPLICATE ANALYSIS")
-    print("=" * 70)
-    print()
-
-    summary = results['summary']
-    print("SUMMARY:")
-    print(f"  Total properties analyzed: {summary['total_properties']}")
-    print(f"  True duplicates found:     {summary['true_duplicates']}")
-    print(f"  Intentional variants:      {summary['intentional_variants']}")
-    print(f"  Consolidation candidates:  {summary['consolidation_candidates']}")
-    print()
-
-    if results['true_duplicates']:
-        print("TRUE DUPLICATES (same implementation, different names):")
-        print("-" * 50)
-        for dup in results['true_duplicates']:
-            print(f"\n  Identical implementation found in:")
-            for name, line in dup['properties']:
-                print(f"    - {name} (line {line})")
+    if differing:
         print()
+        print("  DIFFERING -- live bug. JavaScript's last-write-wins object literal")
+        print("  semantics silently discard every definition but the last; the grammar")
+        print("  does not do what the earlier definition(s) say:")
+        for d in differing:
+            lines = ', '.join(f"line {n}" for n in d['lines'])
+            print(f"    - '{d['key']}' defined {len(d['lines'])} times ({lines}) "
+                  f"-- bodies differ, only the last is in effect")
 
-    if not strict and results['consolidation_candidates']:
-        print("CONSOLIDATION CANDIDATES (may benefit from refactoring):")
-        print("-" * 50)
-        for cand in results['consolidation_candidates']:
-            print(f"\n  Base: {cand['base']}")
-            print(f"  Reason: {cand['reason']}")
-            for prop in cand['properties']:
-                print(f"    - {prop}")
+    if identical:
         print()
-
-    if results['intentional_variants'] and not strict:
-        print("INTENTIONAL VARIANTS (different contexts, expected):")
-        print("-" * 50)
-        for var in results['intentional_variants'][:5]:  # Show first 5
-            print(f"\n  {var['base']} ({var['category']}): {len(var['properties'])} variants")
-        if len(results['intentional_variants']) > 5:
-            print(f"\n  ... and {len(results['intentional_variants']) - 5} more variant groups")
-        print()
-
-    if not results['true_duplicates'] and not results['consolidation_candidates']:
-        print("No actionable duplicates found.")
-        print()
+        print("  IDENTICAL -- dead weight, not (yet) a behavioral bug. Byte-for-byte")
+        print("  the same definition twice; safe to delete every copy but the last,")
+        print("  and worth doing before someone edits only one of them:")
+        for d in identical:
+            lines = ', '.join(f"line {n}" for n in d['lines'])
+            print(f"    - '{d['key']}' defined {len(d['lines'])} times ({lines}) "
+                  f"-- byte-identical")
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Analyze property duplicates')
-    parser.add_argument('--strict', action='store_true',
-                       help='Only show true duplicates, ignore potential consolidations')
+    parser = argparse.ArgumentParser(
+        description='Detect duplicate top-level rule keys in grammar.js')
     parser.add_argument('--json', action='store_true', help='Output as JSON')
+    parser.add_argument('--strict', action='store_true',
+                         help=argparse.SUPPRESS)  # accepted no-op, see module docstring
     args = parser.parse_args()
 
     grammar_path = Path('grammar.js')
@@ -276,16 +330,15 @@ def main():
         print("Error: grammar.js not found", file=sys.stderr)
         return 1
 
-    content = grammar_path.read_text(encoding='utf-8')
-    results = analyze_duplicates(content, strict=args.strict)
+    text = grammar_path.read_text(encoding='utf-8')
+    results = analyze(text)
 
     if args.json:
-        import json
         print(json.dumps(results, indent=2))
     else:
-        print_report(results, strict=args.strict)
+        print_report(results)
 
-    return 0
+    return 1 if results['duplicates'] else 0
 
 
 if __name__ == '__main__':

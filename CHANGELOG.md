@@ -450,6 +450,33 @@ public API — a change to node structure or field names is a **major** bump.
   the declared `value` type set no longer includes `.`. Guarded by a new row
   in `tools/check-field-types.py`.
 
+- **`validate-grammar.sh`'s Step 5 duplicate check now examines the whole
+  grammar instead of almost nothing.** `tools/analyze_duplicates.py` only
+  ever inspected rules matching `*_property` — 2 of them in the V2 grammar,
+  where V1 had 291 — so the step always printed "no duplicates found" having
+  checked 2 of grammar.js's 442 rule definitions. It could not have caught
+  the very bug it exists to catch: `grammar.js`'s `rules: { ... }` is one
+  JavaScript object literal, and a repeated key is valid syntax that
+  JavaScript resolves by silently keeping the *last* value and discarding the
+  rest. Task 10 (see "Removed" below) found exactly this — `empty_statement`
+  defined twice, identically, in two different places in the file — by a
+  human reading the file, because nothing else did. Repurposed the script to
+  parse `rules: { ... }` well enough to recover every top-level `key: value`
+  entry (a small hand-rolled scanner: comment/string/regex-aware
+  bracket-depth counting, not a full JS parser) and report any key that
+  appears more than once, distinguishing two cases that matter differently:
+  an IDENTICAL duplicate (both definitions agree byte-for-byte — harmless in
+  that the grammar behaves as written, but dead weight and a trap for whoever
+  next edits only one copy) from a DIFFERING one (a live bug — the earlier
+  definition is silently discarded, so the grammar does not do what it says).
+  Both fail the check: an "identical, so it's harmless" duplicate is exactly
+  the kind of thing that goes unnoticed and later bit-rots into a differing
+  one. Verified by temporarily reintroducing both cases (an identical and a
+  differing duplicate of the `integer` rule, plus a mid-file duplicate of the
+  `identifier` rule to exercise the raw regex-literal handling) and
+  confirming each is reported and fails the script, then reverting — no
+  grammar change, `git status --short src/` stayed empty throughout.
+
 ### Removed
 
 - **Dead code cleanup: no parse tree changes.** Dropped `chartpart_keyword`
