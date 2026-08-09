@@ -300,17 +300,32 @@ public API — a change to node structure or field names is a **major** bump.
   - The rule is now branch-symmetric. Every `#if`/`#elif`/`#else` branch is an
     alternative completion of the same block, so each independently contributes
     either a bare `end;` or the longer `end … else begin … end;` tail, via a new
-    hidden `_preproc_end_branch`. That incidentally fixed two shapes `#else`
-    never handled either — a bare `end;` in the *final* branch
-    (`#if … end; #else end; #endif`) and a tail in the *first*
-    (`#if … end else begin … end; #else end; #endif`) — both of which degraded
-    exactly like the `#elif` case before this change.
+    hidden `_preproc_end_branch`. That symmetry also repaired two `#else` shapes
+    — see the next entry.
   - Factoring the branch into one shared hidden rule made the parser **smaller**:
     `STATE_COUNT` 12709 → 12604 (-105), `parser.c` 27,593,402 → 27,490,081 bytes
     (-101 KB). No `conflicts` entry was needed. `node-types.json` changed by
     exactly one line — `preproc_elif` added to `preproc_split_code_block_end`'s
     children — with the anonymous layer untouched, and all 15,358 BC.History
     parse trees stayed byte-identical.
+
+- **Two `#else` split-code-block shapes were also degrading, and are fixed by the
+  same change.** These are on the path everyone believed was fully repaired in
+  3.3.1 — that release fixed one `#else` shape, and these two were never covered.
+  Both produced a wrong tree with a `MISSING end_keyword`, identical to the
+  `#elif` case above:
+  - **A bare `end;` in the *final* branch** — `#if COND / end; / #else / end; / #endif`.
+  - **The tail in the *first* branch** — `#if COND / end else begin … end; / #else / end; / #endif`.
+
+  Only one arrangement previously parsed: the bare `end;` first and the
+  `end … else begin … end;` tail last. That asymmetry was the defect — nothing
+  in AL requires the branches to be ordered that way, since each is an
+  alternative completion of the same block. Making
+  `preproc_split_code_block_end` branch-symmetric fixed `#elif` and both of
+  these together. Found by measuring the `#else` analogue of every `#elif`
+  variant before designing the fix, rather than assuming the `#else` path was
+  sound. All four `#elif` shapes and both `#else` shapes are pinned in
+  `test/corpus/preproc_split_code_block_end_elif_test.txt`.
 
 - **`tools/tree-harness.sh` is 2-7x faster and can no longer report a clean run
   it did not earn.** Measured on BC.History (15,358 files, `NUM_THREADS=16`):
