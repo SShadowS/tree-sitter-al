@@ -783,12 +783,21 @@ below its accepted count passed silently. Exit 2 (corpus broken) and 3
 
 **Files:**
 - Create: `tools/query_coverage/detectors/__init__.py`
+- Create: `tools/query_coverage/detectors/_tree.py`
 - Create: `tools/query_coverage/detectors/gaps.py`
+- Create: `tools/query_coverage/tests/test_tree.py`
 - Create: `tools/query_coverage/tests/test_gaps.py`
 
 **Interfaces:**
 - Consumes: `model.Finding`, `model.normalize_text`, the `al_parser` fixture.
-- Produces: `gaps.detect(tree, source: bytes, path: str) -> list[Finding]`
+- Produces:
+  - `_tree.walk(node) -> Iterator[Node]` — every node, self first
+  - `_tree.leaves(node) -> Iterator[Node]` — childless nodes in byte order, walking ALL children (anonymous string tokens such as `';'` are visible leaves and count as coverage)
+  - `_tree.enclosing_named(node, skip_error: bool = False) -> str` — nearest named ancestor type, self included; `skip_error=True` skips `ERROR` nodes
+  - `_tree.error_ranges(node) -> list[tuple[int, int]]` — byte ranges of ERROR subtrees, not descended into
+  - `gaps.detect(tree, source: bytes, path: str) -> list[Finding]`
+
+**Shared traversal lives in `_tree.py`, not copied per detector.** Six detectors need the same walk and the same enclosing-node lookup. Two hand-copied versions of `enclosing_named` with different skip rules would drift apart silently, and that is precisely the class of quiet wrongness this harness exists to catch. Detectors stay pure functions and independently reviewable; only the traversal primitive is shared.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -808,7 +817,7 @@ def test_assignment_operator_is_a_gap(al_parser):
 
     findings = gaps.detect(al_parser.parse(source), source, "t.al")
 
-    assert texts(findings) == [":=", "+="] or texts(findings) == ["+=", ":="]
+    assert texts(findings) == ["+=", ":="]  # texts() sorts
 
 
 def test_tabledata_keyword_is_a_gap(al_parser):
@@ -868,14 +877,123 @@ def test_semicolon_counts_as_coverage(al_parser):
         assert finding.detail["gap_text"] != ";"
 ```
 
+Create `tools/query_coverage/tests/test_tree.py`:
+
+```python
+from tools.query_coverage.detectors import _tree
+
+
+def test_leaves_are_in_byte_order(al_parser):
+    source = b"codeunit 1 T { var i: Integer; }"
+
+    offsets = [leaf.start_byte for leaf in _tree.leaves(al_parser.parse(source).root_node)]
+
+    assert offsets == sorted(offsets)
+
+
+def test_leaves_include_anonymous_string_tokens(al_parser):
+    source = b"codeunit 1 T { var i: Integer; }"
+
+    texts = [leaf.text.decode() for leaf in _tree.leaves(al_parser.parse(source).root_node)]
+
+    assert ";" in texts
+
+
+def test_walk_yields_self_first(al_parser):
+    root = al_parser.parse(b"codeunit 1 T { }").root_node
+
+    assert next(iter(_tree.walk(root))) is root
+
+
+def test_enclosing_named_returns_self_when_named(al_parser):
+    root = al_parser.parse(b"codeunit 1 T { }").root_node
+
+    assert _tree.enclosing_named(root) == "source_file"
+
+
+def test_error_ranges_covers_the_error_and_does_not_descend(al_parser):
+    source = b"codeunit 1 T { @@@ }"
+    tree = al_parser.parse(source)
+    assert tree.root_node.has_error
+
+    ranges = _tree.error_ranges(tree.root_node)
+
+    assert ranges
+    assert all(lo < hi for lo, hi in ranges)
+
+
+def test_error_ranges_is_empty_on_a_clean_tree(al_parser):
+    assert _tree.error_ranges(al_parser.parse(b"codeunit 1 T { }").root_node) == []
+```
+
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `python -m pytest tools/query_coverage/tests/test_gaps.py -q`
+Run: `python -m pytest tools/query_coverage/tests/test_tree.py tools/query_coverage/tests/test_gaps.py -q`
 Expected: FAIL with `ModuleNotFoundError: No module named 'tools.query_coverage.detectors'`
 
 - [ ] **Step 3: Write minimal implementation**
 
 Create `tools/query_coverage/detectors/__init__.py` (empty for now; the registry lands in Task 14).
+
+Create `tools/query_coverage/detectors/_tree.py`:
+
+```python
+"""Tree traversal shared by every detector.
+
+One implementation, because two hand-copied versions of enclosing_named with
+different skip rules drift apart silently — the exact class of quiet wrongness
+this harness exists to catch.
+"""
+
+from __future__ import annotations
+
+from typing import Iterator
+
+
+def walk(node) -> Iterator:
+    """Every node in the subtree, self first."""
+    yield node
+    for child in node.children:
+        yield from walk(child)
+
+
+def leaves(node) -> Iterator:
+    """Childless nodes in byte order.
+
+    Walks ALL children, not named_children: anonymous string tokens such as
+    ';' are visible leaves and legitimately provide byte coverage.
+    """
+    if node.child_count == 0:
+        yield node
+        return
+    for child in node.children:
+        yield from leaves(child)
+
+
+def enclosing_named(node, skip_error: bool = False) -> str:
+    """Nearest named ancestor's type, self included. Falls back to source_file."""
+    current = node
+    while current is not None:
+        if current.is_named and not (skip_error and current.type == "ERROR"):
+            return current.type
+        current = current.parent
+    return "source_file"
+
+
+def error_ranges(node) -> list[tuple[int, int]]:
+    """Byte ranges of ERROR subtrees. Does not descend into an ERROR."""
+    found: list[tuple[int, int]] = []
+    _collect_errors(node, found)
+    return found
+
+
+def _collect_errors(node, out: list[tuple[int, int]]) -> None:
+    if node.type == "ERROR" or node.is_error:
+        out.append((node.start_byte, node.end_byte))
+        return
+    for child in node.children:
+        _collect_errors(child, out)
+```
 
 Create `tools/query_coverage/detectors/gaps.py`:
 
@@ -892,6 +1010,7 @@ so no tree hash can change when a hidden token disappears.
 from __future__ import annotations
 
 from ..model import Finding, normalize_text
+from . import _tree
 
 DETECTOR = "gaps"
 BOM = "\uFEFF"
@@ -902,45 +1021,18 @@ def _is_ignorable(text: str) -> bool:
     return all(ch.isspace() or ch == BOM for ch in text)
 
 
-def _leaves(node):
-    if node.child_count == 0:
-        yield node
-        return
-    for child in node.children:  # all children, not named_children
-        yield from _leaves(child)
-
-
-def _error_ranges(node, out):
-    if node.type == "ERROR" or node.is_error:
-        out.append((node.start_byte, node.end_byte))
-        return
-    for child in node.children:
-        _error_ranges(child, out)
-    return out
-
-
 def _inside(ranges, start: int, end: int) -> bool:
     return any(lo <= start and end <= hi for lo, hi in ranges)
 
 
-def _enclosing_named(node) -> str:
-    current = node
-    while current is not None:
-        if current.is_named:
-            return current.type
-        current = current.parent
-    return "source_file"
-
-
 def detect(tree, source: bytes, path: str) -> list[Finding]:
-    errors: list[tuple[int, int]] = []
-    _error_ranges(tree.root_node, errors)
+    errors = _tree.error_ranges(tree.root_node)
 
     findings: list[Finding] = []
     cursor = 0
     root = tree.root_node
 
-    for leaf in _leaves(root):
+    for leaf in _tree.leaves(root):
         if leaf.start_byte > cursor:
             _emit(findings, source, path, cursor, leaf.start_byte, leaf, errors)
         cursor = max(cursor, leaf.end_byte)
@@ -962,7 +1054,7 @@ def _emit(findings, source, path, start, end, node, errors) -> None:
     offset = start + raw.index(stripped[0]) if stripped else start
     line = source[:offset].count(b"\n") + 1
     column = offset - (source.rfind(b"\n", 0, offset) + 1) + 1
-    enclosing = _enclosing_named(node)
+    enclosing = _tree.enclosing_named(node)
 
     findings.append(
         Finding(
@@ -986,7 +1078,7 @@ def _snippet(source: bytes, offset: int, radius: int = 60) -> str:
     return source[lo:hi].decode("utf-8", errors="replace").replace("\n", "\\n")
 ```
 
-Note on the enclosing node: `_leaves` yields leaves whose `.parent` chain is intact, so `_enclosing_named(leaf)` gives the node the *following* leaf sits in. That is the stable choice — a dropped token's own node does not exist, so its neighbour's is the best available anchor. Do not try to reconstruct a node for the gap itself.
+Note on the enclosing node: `_tree.leaves` yields leaves whose `.parent` chain is intact, so `_tree.enclosing_named(leaf)` gives the node the *following* leaf sits in. That is the stable choice — a dropped token's own node does not exist, so its neighbour's is the best available anchor. Do not try to reconstruct a node for the gap itself.
 
 - [ ] **Step 4: Run test to verify it passes**
 
@@ -1086,29 +1178,15 @@ the gap clusters.
 from __future__ import annotations
 
 from ..model import Finding
+from . import _tree
 
 DETECTOR = "errors"
-
-
-def _walk(node):
-    yield node
-    for child in node.children:
-        yield from _walk(child)
-
-
-def _enclosing_named(node) -> str:
-    current = node.parent
-    while current is not None:
-        if current.is_named and current.type != "ERROR":
-            return current.type
-        current = current.parent
-    return "source_file"
 
 
 def detect(tree, source: bytes, path: str) -> list[Finding]:
     findings: list[Finding] = []
 
-    for node in _walk(tree.root_node):
+    for node in _tree.walk(tree.root_node):
         if node.is_missing:
             symbol, category = "MISSING", "missing-node"
         elif node.type == "ERROR" or node.is_error:
@@ -1116,7 +1194,7 @@ def detect(tree, source: bytes, path: str) -> list[Finding]:
         else:
             continue
 
-        enclosing = _enclosing_named(node)
+        enclosing = _tree.enclosing_named(node, skip_error=True)
         line = source[: node.start_byte].count(b"\n") + 1
         column = node.start_byte - (source.rfind(b"\n", 0, node.start_byte) + 1) + 1
 
@@ -1293,6 +1371,7 @@ from __future__ import annotations
 from typing import Any, Iterator
 
 from ..model import Finding
+from . import _tree
 
 DETECTOR = "fields"
 
@@ -1436,16 +1515,39 @@ This closes the static audit's blind spot: a field whose content is a `choice()`
 Append to `tools/query_coverage/tests/test_fields.py`:
 
 ```python
-def test_dynamic_flags_required_field_returning_none(al_parser, node_types):
-    """A field listed required in node-types.json must be present on every instance."""
+def test_dynamic_flags_a_synthetic_required_field(al_parser):
+    """Drive the detector with a node type we KNOW cannot satisfy the requirement.
+
+    Asserting over the real node-types.json would pass vacuously on a healthy
+    tree. Injecting an impossible requirement proves the detector fires.
+    """
+    impossible = [
+        {
+            "type": "assignment_statement",
+            "named": True,
+            "fields": {"operator": {"multiple": False, "required": True, "types": []}},
+        }
+    ]
     source = b"codeunit 1 T { procedure P() begin i := 1; end; }"
 
-    findings = fields.detect_dynamic(al_parser.parse(source), source, "t.al", node_types)
+    findings = fields.detect_dynamic(al_parser.parse(source), source, "t.al", impossible)
 
-    assert isinstance(findings, list)
-    for finding in findings:
-        assert finding.category == "required-field-missing"
-        assert len(finding.fingerprint) == 2
+    assert len(findings) == 1
+    assert findings[0].category == "required-field-missing"
+    assert findings[0].fingerprint == ("assignment_statement", "operator")
+
+
+def test_dynamic_is_silent_when_the_required_field_is_present(al_parser):
+    satisfied = [
+        {
+            "type": "assignment_statement",
+            "named": True,
+            "fields": {"left": {"multiple": False, "required": True, "types": []}},
+        }
+    ]
+    source = b"codeunit 1 T { procedure P() begin i := 1; end; }"
+
+    assert fields.detect_dynamic(al_parser.parse(source), source, "t.al", satisfied) == []
 
 
 def test_dynamic_is_quiet_on_a_clean_tree(al_parser, node_types):
@@ -1477,12 +1579,6 @@ def _required_fields(node_types: list[dict]) -> dict[str, list[str]]:
     return required
 
 
-def _walk(node):
-    yield node
-    for child in node.children:
-        yield from _walk(child)
-
-
 def detect_dynamic(tree, source: bytes, path: str, node_types: list[dict]) -> list[Finding]:
     """Catch fields that node-types.json promises but a given instance lacks.
 
@@ -1493,7 +1589,7 @@ def detect_dynamic(tree, source: bytes, path: str, node_types: list[dict]) -> li
     required = _required_fields(node_types)
     findings: list[Finding] = []
 
-    for node in _walk(tree.root_node):
+    for node in _tree.walk(tree.root_node):
         if node.has_error:
             continue
         for field_name in required.get(node.type, ()):
@@ -1575,14 +1671,60 @@ def test_whitelisted_contextual_keywords_are_not_flagged(al_parser):
 
 
 def test_hard_reserved_word_as_identifier_is_flagged(al_parser):
-    source = b"codeunit 1 T { procedure P() begin end(); end; }"
-    tree = al_parser.parse(source)
+    """Bug 2's signature: 'end' reparsed into an identifier position.
 
-    findings = reserved.detect(tree, source, "t.al")
+    Find a source shape that actually produces an `identifier` node whose text
+    is a hard-reserved word. If none of the candidates below does, the parser
+    never mislabels these today — say so explicitly rather than looping over an
+    empty list, and record which candidates were tried.
+    """
+    candidates = [
+        b"codeunit 1 T { procedure P() begin end(); end; }",
+        b"codeunit 1 T { procedure P() begin exit := 1; end; }",
+        b"codeunit 1 T { procedure P() begin then(); end; }",
+    ]
 
-    if findings:
-        assert findings[0].detail["keyword"] == "end"
-        assert findings[0].category == "reserved-as-identifier"
+    hits = []
+    for source in candidates:
+        hits.extend(reserved.detect(al_parser.parse(source), source, "t.al"))
+
+    if not hits:
+        import pytest
+
+        pytest.skip(
+            "no candidate produces a reserved word in identifier position on this "
+            "grammar; detector 4 is exercised by test_detect_on_synthetic_tree below"
+        )
+
+    assert hits[0].category == "reserved-as-identifier"
+    assert hits[0].detail["keyword"] in reserved.HARD_RESERVED
+
+
+def test_detect_fires_on_a_word_the_grammar_does_parse_as_an_identifier(
+    al_parser, monkeypatch
+):
+    """Exercise the mechanism unconditionally.
+
+    Whether today's grammar ever mislabels a hard-reserved word is a property of
+    the grammar. Whether the detector FIRES when it happens is a property of this
+    code, and must be tested without depending on the former.
+    """
+    monkeypatch.setattr(reserved, "HARD_RESERVED", frozenset({"myvar"}))
+    source = b"codeunit 1 T { procedure P() var myvar: Integer; begin myvar := 1; end; }"
+
+    findings = reserved.detect(al_parser.parse(source), source, "t.al")
+
+    assert findings
+    assert all(f.detail["keyword"] == "myvar" for f in findings)
+    assert all(f.category == "reserved-as-identifier" for f in findings)
+
+
+def test_whitelist_suppresses_a_word_even_when_hard_reserved(al_parser, monkeypatch):
+    monkeypatch.setattr(reserved, "HARD_RESERVED", frozenset({"myvar"}))
+    monkeypatch.setattr(reserved, "CONTEXTUAL_WHITELIST", frozenset({"myvar"}))
+    source = b"codeunit 1 T { procedure P() var myvar: Integer; begin myvar := 1; end; }"
+
+    assert reserved.detect(al_parser.parse(source), source, "t.al") == []
 
 
 def test_member_access_position_is_excluded(al_parser):
@@ -1649,6 +1791,7 @@ baseline, so this is tuning rather than a blocker.
 from __future__ import annotations
 
 from ..model import Finding
+from . import _tree
 
 DETECTOR = "reserved"
 
@@ -1685,12 +1828,6 @@ CONTEXTUAL_WHITELIST = frozenset(
 )
 
 
-def _walk(node):
-    yield node
-    for child in node.children:
-        yield from _walk(child)
-
-
 def _is_member_access(node) -> bool:
     """x.End — the member name is not a free identifier."""
     parent = node.parent
@@ -1703,7 +1840,7 @@ def _is_member_access(node) -> bool:
 def detect(tree, source: bytes, path: str) -> list[Finding]:
     findings: list[Finding] = []
 
-    for node in _walk(tree.root_node):
+    for node in _tree.walk(tree.root_node):
         if node.type != "identifier":
             continue
 
@@ -2043,11 +2180,20 @@ def test_mismatch_is_reported_with_both_counts(al_parser):
     assert nodes == 0
 
 
-def test_fingerprint_is_anchor_and_path(al_parser):
-    fake_source = b"codeunit 1 T { }"
+def test_fingerprint_is_anchor_and_path(al_parser, monkeypatch):
+    """Force a mismatch so the assertion cannot pass vacuously."""
+    impossible = anchors.Anchor(
+        name="procedure", pattern=r"procedure", node_types=("nonexistent_node",)
+    )
+    monkeypatch.setattr(anchors, "ANCHORS", (impossible,))
+    source = b"codeunit 1 T { procedure A() begin end; }"
 
-    for finding in anchor_counts.detect(al_parser.parse(fake_source), fake_source, "t.al"):
-        assert finding.fingerprint == (finding.detail["anchor"], "t.al")
+    findings = anchor_counts.detect(al_parser.parse(source), source, "t.al")
+
+    assert len(findings) == 1
+    assert findings[0].fingerprint == ("procedure", "t.al")
+    assert findings[0].detail["lexical"] == 1
+    assert findings[0].detail["nodes"] == 0
 
 
 def test_every_anchor_names_at_least_one_node_type():
@@ -2138,6 +2284,7 @@ import re
 from .. import anchors as anchor_table
 from .. import lexer
 from ..model import Finding
+from . import _tree
 
 DETECTOR = "anchors"
 
@@ -2148,15 +2295,9 @@ def count_lexical(source: str, anchor: anchor_table.Anchor) -> int:
     return sum(1 for m in pattern.finditer(source) if lexer.is_code(spans, m.start()))
 
 
-def _walk(node):
-    yield node
-    for child in node.children:
-        yield from _walk(child)
-
-
 def count_nodes(tree, anchor: anchor_table.Anchor) -> int:
     wanted = set(anchor.node_types)
-    return sum(1 for node in _walk(tree.root_node) if node.type in wanted)
+    return sum(1 for node in _tree.walk(tree.root_node) if node.type in wanted)
 
 
 def detect(tree, source: bytes, path: str) -> list[Finding]:
@@ -2353,6 +2494,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from ..model import Finding, normalize_text
+from . import _tree
 
 DETECTOR = "shipped_queries"
 
@@ -2440,12 +2582,6 @@ def detect_dead(usages: list[PatternUsage]) -> list[Finding]:
     return findings
 
 
-def _walk(node):
-    yield node
-    for child in node.children:
-        yield from _walk(child)
-
-
 def detect_keyword_coverage(
     language, highlights_path: Path, node_types: list[dict], tree, source: bytes, path: str
 ) -> list[Finding]:
@@ -2463,7 +2599,7 @@ def detect_keyword_coverage(
     findings: list[Finding] = []
     seen: set[str] = set()
 
-    for node in _walk(tree.root_node):
+    for node in _tree.walk(tree.root_node):
         is_keyword = node.is_named and node.type.endswith("_keyword")
         is_operator = not node.is_named and node.type in set(operator_tokens(node_types))
         if not (is_keyword or is_operator):
@@ -2809,7 +2945,7 @@ drifted corpus aborts rather than silently changing the comparison.
 - Produces:
   - `inventory.extract(language, tree, source: bytes) -> dict` — the semantic dump
   - `inventory.property_value_types(node_types: list[dict]) -> list[str]`
-  - `inventory.meta_check(language, node_types: list[dict]) -> list[Finding]`
+  - `inventory.meta_check(language, node_types: list[dict], generic_covers_all: bool | None = None) -> list[Finding]` — `None` derives coverage from the .scm; `False` forces per-value-type checking so the check can be tested non-vacuously
 
 The meta-check is what stops `inventory.scm` going stale. Complex properties follow no naming convention — only two rules match `*_property`, the rest are value-shape rules such as `ml_value_list` and `table_relation_value` — so a new one would otherwise slip in unnoticed.
 
@@ -2872,12 +3008,35 @@ def test_property_value_types_are_enumerable(node_types):
     assert "string_literal" in types
 
 
-def test_meta_check_reports_value_types_with_no_inventory_pattern(al_language, node_types):
-    findings = inventory.meta_check(al_language, node_types)
+def test_meta_check_reports_a_value_type_with_no_inventory_pattern(al_language):
+    """Inject a value type the .scm provably does not mention.
 
-    for finding in findings:
-        assert finding.category == "inventory-stale"
-        assert "value_type" in finding.detail
+    Running against the real node-types.json passes vacuously while the generic
+    (property ...) pattern covers everything, so it proves nothing.
+    """
+    synthetic = [
+        {
+            "type": "property",
+            "named": True,
+            "fields": {
+                "value": {
+                    "multiple": False,
+                    "required": True,
+                    "types": [{"type": "zzz_nonexistent_value_type", "named": True}],
+                }
+            },
+        }
+    ]
+
+    findings = inventory.meta_check(al_language, synthetic, generic_covers_all=False)
+
+    assert len(findings) == 1
+    assert findings[0].category == "inventory-stale"
+    assert findings[0].detail["value_type"] == "zzz_nonexistent_value_type"
+
+
+def test_meta_check_is_silent_when_the_generic_pattern_covers_everything(al_language, node_types):
+    assert inventory.meta_check(al_language, node_types) == []
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -3037,17 +3196,26 @@ def property_value_types(node_types: list[dict]) -> list[str]:
     return []
 
 
-def meta_check(language, node_types: list[dict]) -> list[Finding]:
+def meta_check(
+    language, node_types: list[dict], generic_covers_all: bool | None = None
+) -> list[Finding]:
     """Fail when a property value type has no inventory pattern.
 
     Complex properties follow no naming convention — only two rules match
     *_property, the rest are value-shape rules like ml_value_list and
     table_relation_value — so a new one slips in silently without this.
+
+    generic_covers_all=None derives coverage from the .scm. Pass False to force
+    per-value-type checking; without that the check cannot be tested
+    non-vacuously while the generic (property ...) pattern matches everything.
     """
     scm = SCM_PATH.read_text(encoding="utf-8")
     findings: list[Finding] = []
 
-    covered_generically = "(property name: (property_name)" in scm
+    if generic_covers_all is None:
+        covered_generically = "(property name: (property_name)" in scm
+    else:
+        covered_generically = generic_covers_all
 
     for value_type in property_value_types(node_types):
         if covered_generically or f"({value_type}" in scm:
@@ -3533,23 +3701,91 @@ exits 0. Baseline is bound to the manifest hash it was accepted under.
 
 **Files:**
 - Create: `tools/query_coverage/README.md`
+- Create: `tools/query_coverage/tests/test_integration.py`
 - Modify: `validate-grammar.sh`
 - Modify: `CLAUDE.md` (Quick Reference section)
 
 **Interfaces:**
-- Consumes: the `qc` CLI.
+- Consumes: the `qc` CLI, `baseline.Baseline`, `baseline.save`.
 - Produces: no new code interfaces.
+
+**Before editing `validate-grammar.sh`, re-read it.** Another session is committing to this branch and added a `Step 5c: Compile-Checking tools/fieldwalk.c` block. Confirm the current step numbering and the `print_header` / `print_success` / `print_error` / `VALIDATION_FAILED` helpers still exist, and place the new block accordingly rather than assuming the line numbers below.
 
 - [ ] **Step 1: Write the failing test**
 
-This task has no unit test; its verification is that the documented commands run. Write the check first as a shell assertion you will run in Step 4:
+Create `tools/query_coverage/tests/test_integration.py`:
 
-```bash
-# Every command in the README must run and exit as documented.
-grep -oP '(?<=^\$ ).*' tools/query_coverage/README.md
+```python
+"""The integration itself must be verifiable, not asserted in prose."""
+
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+from tools.query_coverage import baseline, loader
+
+
+def test_validate_grammar_invokes_the_harness():
+    script = (loader.REPO_ROOT / "validate-grammar.sh").read_text(encoding="utf-8")
+
+    assert "tools.query_coverage.qc run" in script
+    assert "tools/query_coverage/baseline.json" in script
+
+
+def test_readme_documents_every_subcommand():
+    readme = (loader.REPO_ROOT / "tools" / "query_coverage" / "README.md").read_text(
+        encoding="utf-8"
+    )
+
+    for command in ("qc select", "qc run", "qc accept", "--full-query-scan"):
+        assert command in readme
+
+
+def test_run_all_exits_zero_and_writes_both_reports():
+    result = subprocess.run(
+        [sys.executable, "-m", "tools.query_coverage.qc", "run", "--all"],
+        cwd=loader.REPO_ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == baseline.EXIT_OK, result.stderr
+    reports = loader.REPO_ROOT / "tools" / "query_coverage" / "reports"
+    assert (reports / "findings.jsonl").is_file()
+    assert (reports / "summary.md").is_file()
+
+
+def test_a_seeded_regression_makes_run_exit_one(tmp_path: Path):
+    """Prove the gate is non-vacuous: remove a cluster from the baseline and
+    the observed count becomes a NEW cluster, which must fail."""
+    real = baseline.load(loader.REPO_ROOT / "tools" / "query_coverage" / "baseline.json")
+    assert real is not None and real.counts, "run `qc accept` before this test"
+
+    dropped = dict(real.counts)
+    victim = sorted(dropped)[0]
+    del dropped[victim]
+
+    seeded = tmp_path / "seeded-baseline.json"
+    baseline.save(seeded, baseline.Baseline(manifest_hash=real.manifest_hash, counts=dropped))
+
+    result = subprocess.run(
+        [sys.executable, "-m", "tools.query_coverage.qc", "--baseline", str(seeded), "run"],
+        cwd=loader.REPO_ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == baseline.EXIT_REGRESSION
+    assert victim in result.stdout
 ```
 
-- [ ] **Step 2: Confirm the current state**
+- [ ] **Step 2: Run test to verify it fails**
+
+Run: `python -m pytest tools/query_coverage/tests/test_integration.py -q`
+Expected: FAIL — `test_validate_grammar_invokes_the_harness` and `test_readme_documents_every_subcommand` fail because neither file mentions the harness yet.
+
+Then confirm the current state of validation:
 
 Run: `bash validate-grammar.sh 2>&1 | tail -5`
 Expected: passes as it does today, with no query-coverage step.
@@ -3664,18 +3900,21 @@ python -m tools.query_coverage.qc run --all    # full picture
 python -m tools.query_coverage.qc accept       # freeze the current state as the baseline
 ```
 
-- [ ] **Step 4: Verify**
+- [ ] **Step 4: Run the tests to verify they pass**
+
+Run: `python -m pytest tools/query_coverage/tests/test_integration.py -q`
+Expected: PASS, 4 tests. `test_a_seeded_regression_makes_run_exit_one` is the one that matters — it proves the gate is non-vacuous by removing a cluster from a copy of the baseline and confirming `run` exits 1 and names it.
 
 Run: `bash validate-grammar.sh 2>&1 | tail -10`
 Expected: the query-coverage step runs and reports no regressions (the baseline was accepted in Task 14).
 
-Run: `python -m tools.query_coverage.qc run --all >/dev/null && head -1 tools/query_coverage/reports/findings.jsonl`
-Expected: a provenance JSON object with `build_stamp`, `manifest_hash`, and `tree_sitter_version`.
+Run: `python -m pytest tools/query_coverage/tests -q`
+Expected: PASS, the whole suite.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add tools/query_coverage/README.md validate-grammar.sh CLAUDE.md
+git add tools/query_coverage/README.md tools/query_coverage/tests/test_integration.py validate-grammar.sh CLAUDE.md
 git commit -m "docs(qc): harness README and validate-grammar.sh integration
 
 validate-grammar.sh now runs the query-coverage gate when a baseline exists,
