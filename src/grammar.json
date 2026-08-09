@@ -14223,33 +14223,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "#elif"
-            },
-            {
-              "type": "STRING",
-              "value": "#ELIF"
-            },
-            {
-              "type": "STRING",
-              "value": "#Elif"
-            },
-            {
-              "type": "STRING",
-              "value": "# elif"
-            },
-            {
-              "type": "STRING",
-              "value": "# ELIF"
-            },
-            {
-              "type": "STRING",
-              "value": "# Elif"
-            }
-          ]
+          "type": "PATTERN",
+          "value": "(?i)#[ \\t]*elif"
         },
         {
           "type": "FIELD",
@@ -14262,33 +14237,8 @@
       ]
     },
     "preproc_else": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "#else"
-        },
-        {
-          "type": "STRING",
-          "value": "#ELSE"
-        },
-        {
-          "type": "STRING",
-          "value": "#Else"
-        },
-        {
-          "type": "STRING",
-          "value": "# else"
-        },
-        {
-          "type": "STRING",
-          "value": "# ELSE"
-        },
-        {
-          "type": "STRING",
-          "value": "# Else"
-        }
-      ]
+      "type": "PATTERN",
+      "value": "(?i)#[ \\t]*else"
     },
     "preproc_endif": {
       "type": "SYMBOL",

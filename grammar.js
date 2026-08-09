@@ -2900,19 +2900,20 @@ module.exports = grammar({
 
     // Pure grammar literals — elif, like else, has NO external-scanner token
     // and touches no scanner state (it doesn't change #if/#endif nesting
-    // depth, unlike preproc_open/preproc_close). Adding the spaced variants
-    // here is therefore a plain literal-vs-literal addition (no scanner
-    // involved at all), NOT a scanner/literal split — it mirrors the
-    // pre-existing, long-safe `preproc_else` spaced-variant pattern below,
-    // not the reverted preproc_if attempt (which added a literal alongside an
-    // ALREADY-scanner-owned token). See the Task 4 design note for the full
-    // "why elif differs from if/endif" reasoning.
+    // depth, unlike preproc_open/preproc_close). Horizontal whitespace after
+    // the '#' is tolerated the same way the scanner tolerates it for
+    // #if/#endif. `[ \t]*` NEVER `\s*` — the regex crate's `\s` matches '\n',
+    // which would let the token span a newline and swallow the next line's
+    // source. `elif` and `else` carry no external token and touch no depth
+    // state, so a regex here is a plain literal-vs-regex swap with no
+    // scanner interaction. See the Task 4 design note for the full "why
+    // elif differs from if/endif" reasoning.
     preproc_elif: $ => seq(
-      choice('#elif', '#ELIF', '#Elif', '# elif', '# ELIF', '# Elif'),
+      new RustRegex('(?i)#[ \\t]*elif'),
       field('condition', $._preproc_expression)
     ),
 
-    preproc_else: $ => choice('#else', '#ELSE', '#Else', '# else', '# ELSE', '# Else'),
+    preproc_else: $ => new RustRegex('(?i)#[ \\t]*else'),
 
     // Scanner-exclusive: $.preproc_close is the ONLY route to this token (no
     // grammar-literal fallback, spaced or unspaced) — see preproc_if above

@@ -49,6 +49,16 @@ public API — a change to node structure or field names is a **major** bump.
   `_preproc_expression`, alongside `identifier`, `preproc_not_expression`,
   `preproc_or_expression`, and `preproc_and_expression`.
 
+- **`#elif`/`#else` now tolerate any amount of horizontal whitespace after the
+  `#`, not just zero or one space.** `preproc_elif`/`preproc_else` spelled out
+  literal zero-space and one-space alternatives, while scanner-owned
+  `#if`/`#endif` already accept `[ \t]*`. `#  elif BAR` (two spaces) and
+  `#\telse` (a tab) are legal AL — alc accepts both — but were an ERROR.
+  Replaced the literal-choice lists with `(?i)#[ \t]*elif` /
+  `(?i)#[ \t]*else` regexes; `elif`/`else` carry no external-scanner token and
+  touch no `#if`/`#endif` depth state, so this is a plain literal-vs-regex
+  swap with no scanner interaction.
+
 ### Removed
 
 ## [3.3.1] — 2026-08-09
