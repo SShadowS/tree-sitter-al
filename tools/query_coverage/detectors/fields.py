@@ -217,3 +217,64 @@ def detect_static(grammar: dict, node_types: list[dict]) -> list[Finding]:
         )
 
     return findings
+
+
+def _required_fields(node_types: list[dict]) -> dict[str, list[str]]:
+    required: dict[str, list[str]] = {}
+    for entry in node_types:
+        names = [
+            name
+            for name, spec in entry.get("fields", {}).items()
+            if spec.get("required")
+        ]
+        if names:
+            required[entry["type"]] = names
+    return required
+
+
+def detect_dynamic(tree, source: bytes, path: str, node_types: list[dict]) -> list[Finding]:
+    """Catch fields that node-types.json promises but a given instance lacks.
+
+    Static analysis cannot see this: a field over a choice() mixing visible and
+    hidden alternatives stays in node-types.json yet is absent on the instances
+    that took the hidden alternative.
+    """
+    required = _required_fields(node_types)
+    findings: list[Finding] = []
+
+    for node in _tree.walk(tree.root_node):
+        if node.has_error:
+            continue
+        if not node.is_named:
+            # node-types.json can list an anonymous entry sharing a "type"
+            # string with a named rule (e.g. the "procedure" declaration vs.
+            # the anonymous "procedure" keyword-alias leaf inside
+            # procedure_keyword — see the same collision guarded against in
+            # detect_static). Fields only ever attach to named nodes; without
+            # this guard the anonymous leaf is checked against the named
+            # entry's requirements and — having no children at all — always
+            # "fails" them, flooding every real file with false positives.
+            continue
+        for field_name in required.get(node.type, ()):
+            if node.child_by_field_name(field_name) is not None:
+                continue
+
+            line = source[: node.start_byte].count(b"\n") + 1
+            findings.append(
+                Finding(
+                    detector=DETECTOR,
+                    category="required-field-missing",
+                    fingerprint=(node.type, field_name),
+                    path=path,
+                    byte_offset=node.start_byte,
+                    line=line,
+                    column=node.start_point[1] + 1,
+                    enclosing=node.type,
+                    snippet=source[node.start_byte : node.end_byte][:120].decode(
+                        "utf-8", errors="replace"
+                    ),
+                    detail={"rule": node.type, "field": field_name},
+                )
+            )
+
+    return findings

@@ -163,3 +163,44 @@ def test_skipped_scope_count_moves_with_population():
         if c.key == model.fingerprint_key(fields.DETECTOR, ("skipped", fields.REASON_HIDDEN_RULE))
     )
     assert hidden_three.count == 3
+
+
+def test_dynamic_flags_a_synthetic_required_field(al_parser):
+    """Drive the detector with a node type we KNOW cannot satisfy the requirement.
+
+    Asserting over the real node-types.json would pass vacuously on a healthy
+    tree. Injecting an impossible requirement proves the detector fires.
+    """
+    impossible = [
+        {
+            "type": "assignment_statement",
+            "named": True,
+            "fields": {"operator": {"multiple": False, "required": True, "types": []}},
+        }
+    ]
+    source = b"codeunit 1 T { procedure P() begin i := 1; end; }"
+
+    findings = fields.detect_dynamic(al_parser.parse(source), source, "t.al", impossible)
+
+    assert len(findings) == 1
+    assert findings[0].category == "required-field-missing"
+    assert findings[0].fingerprint == ("assignment_statement", "operator")
+
+
+def test_dynamic_is_silent_when_the_required_field_is_present(al_parser):
+    satisfied = [
+        {
+            "type": "assignment_statement",
+            "named": True,
+            "fields": {"left": {"multiple": False, "required": True, "types": []}},
+        }
+    ]
+    source = b"codeunit 1 T { procedure P() begin i := 1; end; }"
+
+    assert fields.detect_dynamic(al_parser.parse(source), source, "t.al", satisfied) == []
+
+
+def test_dynamic_is_quiet_on_a_clean_tree(al_parser, node_types):
+    source = b"codeunit 1 T { }"
+
+    assert fields.detect_dynamic(al_parser.parse(source), source, "t.al", node_types) == []
