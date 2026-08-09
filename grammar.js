@@ -2891,7 +2891,7 @@ module.exports = grammar({
     )),
 
     preproc_not_expression: $ => seq(
-      choice('not', 'NOT', 'Not'),
+      alias(kw('not'), 'not'),
       $._preproc_expression
     ),
 
@@ -3714,7 +3714,10 @@ module.exports = grammar({
 
     multiplicative_expression: $ => prec.left(7, seq(
       field('left', $._expression),
-      field('operator', choice('*', '/', choice('div', 'DIV', 'Div'), choice('mod', 'MOD', 'Mod'))),
+      // alias() pins the anonymous node name so queries keep matching "div"
+      // and "mod" whatever the source casing. Without it a bare kw() token is
+      // auto-named multiplicative_expression_token1.
+      field('operator', choice('*', '/', alias(kw('div'), 'div'), alias(kw('mod'), 'mod'))),
       field('right', $._expression)
     )),
 
@@ -3743,19 +3746,19 @@ module.exports = grammar({
       // AND (prec 3)
       prec.left(3, seq(
         field('left', $._expression),
-        field('operator', choice('and', 'AND', 'And')),
+        field('operator', alias(kw('and'), 'and')),
         field('right', $._expression)
       )),
       // OR (prec 2)
       prec.left(2, seq(
         field('left', $._expression),
-        field('operator', choice('or', 'OR', 'Or')),
+        field('operator', alias(kw('or'), 'or')),
         field('right', $._expression)
       )),
       // XOR (prec 2)
       prec.left(2, seq(
         field('left', $._expression),
-        field('operator', choice('xor', 'XOR', 'Xor')),
+        field('operator', alias(kw('xor'), 'xor')),
         field('right', $._expression)
       )),
     ),
@@ -3773,7 +3776,7 @@ module.exports = grammar({
     // --- Unary expression ---
 
     unary_expression: $ => prec.right(7, seq(
-      field('operator', choice('+', '-', choice('not', 'NOT', 'Not'))),
+      field('operator', choice('+', '-', alias(kw('not'), 'not'))),
       field('operand', $._expression)
     )),
 
@@ -3906,25 +3909,43 @@ module.exports = grammar({
 
     // --- Tier 1: Control flow ---
 
-    if_keyword: $ => prec(10, choice('if', 'IF', 'If')),
-    then_keyword: $ => prec(10, choice('then', 'THEN', 'Then')),
-    else_keyword: $ => prec(10, choice('else', 'ELSE', 'Else')),
-    case_keyword: $ => prec(10, choice('case', 'CASE', 'Case')),
-    of_keyword: $ => prec(10, choice('of', 'OF', 'Of')),
-    for_keyword: $ => prec(10, choice('for', 'FOR', 'For')),
-    foreach_keyword: $ => prec(10, choice('foreach', 'FOREACH', 'Foreach')),
-    while_keyword: $ => prec(10, choice('while', 'WHILE', 'While')),
-    do_keyword: $ => prec(10, choice('do', 'DO', 'Do')),
-    repeat_keyword: $ => prec(10, choice('repeat', 'REPEAT', 'Repeat')),
-    until_keyword: $ => prec(10, choice('until', 'UNTIL', 'Until')),
-    exit_keyword: $ => prec(10, choice('exit', 'EXIT', 'Exit')),
-    continue_keyword: $ => prec(10, choice('continue', 'CONTINUE', 'Continue')),
-    break_keyword: $ => prec(10, choice('break', 'BREAK', 'Break')),
-    with_keyword: $ => prec(10, choice('with', 'WITH', 'With')),
+    // AL is fully case-insensitive. Spelling out three casings meant `iF`,
+    // `tHEN`, `eLSe` — all legal AL, all accepted by alc — failed, and because
+    // _statement carries optional(';') the failure was SILENT: the if-structure
+    // collapsed into a flat statement run with no ERROR node. kw() is a
+    // case-insensitive regex; asserterror_keyword already used this form.
+    //
+    // The 10 stays OUTSIDE kw() so it remains *parse* precedence, exactly as
+    // the old prec(10, choice('if','IF','If')) had it. kw('in', 10) would put
+    // it inside token(), making it *lexical*, where it outranks the prec-0
+    // `integer` token in the keyword lexer and stops `Integer` from ever
+    // matching past `In` — silently demoting basic_type to identifier.
+    //
+    // alias() keeps the anonymous lowercase child. A named rule whose whole
+    // body is a single token collapses INTO that token, so a bare kw() would
+    // turn if_keyword into a childless leaf and delete the anonymous "if" node
+    // type that queries and tree-walkers rely on (see CLAUDE.md § Keyword
+    // Architecture, which uses exit_keyword as its worked example). One alias
+    // per keyword now covers every source casing.
+    if_keyword: $ => prec(10, alias(kw('if'), 'if')),
+    then_keyword: $ => prec(10, alias(kw('then'), 'then')),
+    else_keyword: $ => prec(10, alias(kw('else'), 'else')),
+    case_keyword: $ => prec(10, alias(kw('case'), 'case')),
+    of_keyword: $ => prec(10, alias(kw('of'), 'of')),
+    for_keyword: $ => prec(10, alias(kw('for'), 'for')),
+    foreach_keyword: $ => prec(10, alias(kw('foreach'), 'foreach')),
+    while_keyword: $ => prec(10, alias(kw('while'), 'while')),
+    do_keyword: $ => prec(10, alias(kw('do'), 'do')),
+    repeat_keyword: $ => prec(10, alias(kw('repeat'), 'repeat')),
+    until_keyword: $ => prec(10, alias(kw('until'), 'until')),
+    exit_keyword: $ => prec(10, alias(kw('exit'), 'exit')),
+    continue_keyword: $ => prec(10, alias(kw('continue'), 'continue')),
+    break_keyword: $ => prec(10, alias(kw('break'), 'break')),
+    with_keyword: $ => prec(10, alias(kw('with'), 'with')),
     asserterror_keyword: $ => kw('asserterror', 10),
-    in_keyword: $ => prec(10, choice('in', 'IN', 'In')),
-    to_keyword: $ => prec(10, choice('to', 'TO', 'To')),
-    downto_keyword: $ => prec(10, choice('downto', 'DOWNTO', 'Downto')),
+    in_keyword: $ => prec(10, alias(kw('in'), 'in')),
+    to_keyword: $ => prec(10, alias(kw('to'), 'to')),
+    downto_keyword: $ => prec(10, alias(kw('downto'), 'downto')),
 
     // --- Tier 2: Object types ---
 

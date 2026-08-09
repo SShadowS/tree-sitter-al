@@ -177,29 +177,16 @@
 ; Ternary conditional
 "?" @operator
 
-; Keyword operators (string literal alternatives, matchable)
+; Keyword operators. These are case-insensitive tokens aliased to a single
+; lowercase node name, so one entry matches every source casing. `in` is
+; covered by (in_keyword) in the keyword block above.
 [
   "and"
-  "AND"
-  "And"
   "or"
-  "OR"
-  "Or"
   "xor"
-  "XOR"
-  "Xor"
   "not"
-  "NOT"
-  "Not"
   "div"
-  "DIV"
-  "Div"
   "mod"
-  "MOD"
-  "Mod"
-  "in"
-  "IN"
-  "In"
 ] @keyword.operator
 
 ; =============================================================================

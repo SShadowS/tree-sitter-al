@@ -1,0 +1,238 @@
+================================================================================
+Mixed-case control-flow keywords
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        iF x = 0 tHEN x := 1 eLSe x := 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (assignment_statement
+                left: (identifier)
+                right: (integer))
+              (else_keyword)
+              else_branch: (assignment_statement
+                left: (identifier)
+                right: (integer))))
+          (end_keyword))))))
+
+================================================================================
+Mixed-case operators
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        a: Boolean;
+        b: Boolean;
+        n: Integer;
+    begin
+        a := a aNd b;
+        a := a oR b;
+        a := nOt a;
+        n := n dIv 2;
+        n := n mOd 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (logical_expression
+                left: (identifier)
+                right: (identifier)))
+            (assignment_statement
+              left: (identifier)
+              right: (logical_expression
+                left: (identifier)
+                right: (identifier)))
+            (assignment_statement
+              left: (identifier)
+              right: (unary_expression
+                operand: (identifier)))
+            (assignment_statement
+              left: (identifier)
+              right: (multiplicative_expression
+                left: (identifier)
+                right: (integer)))
+            (assignment_statement
+              left: (identifier)
+              right: (multiplicative_expression
+                left: (identifier)
+                right: (integer))))
+          (end_keyword))))))
+
+================================================================================
+Mixed-case preprocessor not
+================================================================================
+codeunit 1 T
+{
+#if nOT BAR
+    procedure A() begin end;
+#endif
+    procedure C() begin end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block))
+        (preproc_endif
+          (preproc_close)))
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Identifiers that merely start with a keyword stay identifiers
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        ifCondition: Boolean;
+        Then: Integer;
+        NotFlag: Boolean;
+        Divisor: Integer;
+        Order: Integer;
+        Modify: Integer;
+        Document: Text;
+        IsHandled: Boolean;
+    begin
+        ifCondition := NotFlag;
+        Then := Divisor;
+        Order := Modify;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (text_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              right: (identifier))
+            (assignment_statement
+              left: (identifier)
+              right: (identifier))
+            (assignment_statement
+              left: (identifier)
+              right: (identifier)))
+          (end_keyword))))))

@@ -37,6 +37,58 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **Control-flow keywords and word operators are now genuinely
+  case-insensitive.** AL is a fully case-insensitive language, but the Tier-1
+  keyword rules and the word-operator rules spelled out exactly three casings
+  (`'if'`, `'IF'`, `'If'`). Every other casing failed, and because `_statement`
+  carries `optional(';')` the failure was **silent**:
+  `iF x = 0 tHEN x := 1 eLSe x := 2;` compiles under alc, but parsed into a
+  flat run of `(identifier)` and `(assignment_statement)` nodes with the entire
+  if-structure gone and **zero ERROR or MISSING nodes** — a consumer had no way
+  to detect that it had been handed the wrong tree. The 19 Tier-1 keywords
+  (`if`, `then`, `else`, `case`, `of`, `for`, `foreach`, `while`, `do`,
+  `repeat`, `until`, `exit`, `continue`, `break`, `with`, `asserterror`, `in`,
+  `to`, `downto`), the word operators (`and`, `or`, `xor`, `not`, `div`, `mod`)
+  and the preprocessor `not` now use the case-insensitive `kw()` regex form
+  that most of the grammar already used.
+  The **named** parse tree is unchanged: all 15,358 BC.History trees are
+  byte-identical to the pre-change snapshot. The parser also got *smaller*
+  (`STATE_COUNT` 11,879 → 11,796, `parser.c` 23.5 → 22.2 MB), since one regex
+  token replaces three string literals per keyword.
+
+  **Anonymous node types removed — action required for some queries.** Each
+  keyword and word operator previously contributed one anonymous node type per
+  spelled-out casing; it now contributes exactly one, lowercase, whatever the
+  source casing. **48 anonymous node types are removed and none are added:**
+  the 36 upper- and title-case Tier-1 keyword forms (`"IF"`, `"If"`, `"THEN"`,
+  `"Then"`, … for all 18 of `if`, `then`, `else`, `case`, `of`, `for`,
+  `foreach`, `while`, `do`, `repeat`, `until`, `exit`, `continue`, `break`,
+  `with`, `in`, `to`, `downto`) and the 12 upper- and title-case operator forms
+  (`"AND"`, `"And"`, `"OR"`, `"Or"`, `"XOR"`, `"Xor"`, `"NOT"`, `"Not"`,
+  `"DIV"`, `"Div"`, `"MOD"`, `"Mod"`). **Every lowercase name is retained** —
+  `"if"`, `"then"`, `"exit"`, `"and"`, `"div"` and the rest all still exist and
+  now match every casing. A query referencing a lowercase name keeps working
+  unchanged and gains coverage; a query referencing an uppercase or title-case
+  name **fails to compile** with `Invalid node type` and must drop it.
+  `queries/highlights.scm` is updated accordingly. `in` is additionally
+  matchable via the named `(in_keyword)` node.
+
+  For a consumer reading the full CST, the anonymous child under a keyword node
+  is now normalised to lowercase: source `IF` yields `(if_keyword "if")` where
+  it previously yielded `(if_keyword "IF")`. The node text is untouched — only
+  the type name normalises — and the named tree is unaffected, which is why the
+  harness reports no change. As an upper bound, 3,072 of 15,358 BC.History
+  files (20%) contain a non-lowercase spelling of one of these words somewhere
+  in the file; the true figure is lower, since that count also matches comments,
+  string literals and identifiers such as `IfBlank`.
+  - The `10` precedence on the Tier-1 keywords stays *outside* `kw()`, so it
+    remains parse precedence. Moving it inside `token()` would make it
+    lexical, where it outranks the prec-0 `integer` token in the keyword lexer
+    and stops `Integer` from ever matching past `In` — silently demoting
+    `basic_type` to `identifier`. Identifiers that merely begin with a keyword
+    (`ifCondition`, `Then`, `NotFlag`, `Divisor`, `Order`, `Modify`) are
+    unaffected and covered by a regression test.
+
 - **`exit` followed by whitespace before its `(...)` no longer silently drops
   the return value.** `exit_statement` used `token.immediate('(')`, so any
   whitespace — a space, or the parenthesis on the next source line — split the
