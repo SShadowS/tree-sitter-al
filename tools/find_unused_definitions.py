@@ -12,6 +12,13 @@ Combines functionality of find_orphans.py and find_unused_simple.py with improve
 Run from the repository root — grammar.js and test/corpus/ are read relative to
 the working directory.
 
+KNOWN LIMITATION: the scan is only partly comment-aware. A trailing `// …`
+comment is stripped from a rule's own definition line, but nowhere else: a
+`$.rule` mentioned inside a `/* … */` block comment, or in a trailing `//`
+comment on a continuation line, still counts as a reference and can therefore
+hide a genuine orphan. Both holes pre-date the definition-line scan and neither
+is currently triggered by grammar.js.
+
 Usage:
     python tools/find_unused_definitions.py [--json] [--verbose] [--threshold N]
 """
@@ -22,6 +29,22 @@ import json
 import argparse
 from collections import defaultdict
 from pathlib import Path
+
+
+# A quoted string, or a `//` that is therefore outside one. Alternating them in a
+# single pattern means a `//` inside a literal is consumed as part of the string
+# and can never be mistaken for a comment — grammar.js really does contain
+# `comment: $ => token(seq('//', /[^\n]*/))`, which a naive `//.*$` strip would
+# truncate.
+_LINE_COMMENT_SCAN = re.compile(r"""('(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*")|//""")
+
+
+def _strip_line_comment(line):
+    """Return `line` with any trailing `//` comment removed."""
+    for match in _LINE_COMMENT_SCAN.finditer(line):
+        if match.group(1) is None:      # matched `//`, not a quoted string
+            return line[:match.start()]
+    return line
 
 
 class GrammarAnalyzer:
@@ -100,7 +123,13 @@ class GrammarAnalyzer:
             # is the real case — was reported as an orphan.
             definition_match = re.match(r'^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:\s*\$\s*=>', line)
             if definition_match:
-                rhs = line[definition_match.end():]
+                # A trailing `// …` comment is not code. Without this, a rule
+                # mentioned only in a note such as
+                #     stub: $ => 'a',  // TODO: wire up like $.ghost
+                # counts as a reference and a real orphan stays hidden — the
+                # false-negative direction, which is worse than the false
+                # positive this pattern was added to fix.
+                rhs = _strip_line_comment(line)[definition_match.end():]
                 is_alias = re.match(r'^\s*\$\.([a-zA-Z_][a-zA-Z0-9_]*)\s*,?\s*$', rhs) is not None
                 for match in re.finditer(r'\$\.([a-zA-Z_][a-zA-Z0-9_]*)', rhs):
                     rule_name = match.group(1)
