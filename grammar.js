@@ -3769,6 +3769,8 @@ module.exports = grammar({
     call_expression: $ => prec(12, seq(
       field('function', choice(
         $.identifier,
+        $.quoted_identifier,      // "My Proc"(42) — alc accepts; call_statement
+                                  // already allowed this, call_expression did not
         $.member_expression,
         $.qualified_enum_value,
         $.keyword_identifier,     // System(), Dialog(), etc.

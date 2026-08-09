@@ -1,0 +1,46 @@
+================================================================================
+Call to a quoted-identifier procedure with an argument
+================================================================================
+codeunit 1 T { procedure X() begin "My Proc"(42); end; }
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (quoted_identifier)
+              arguments: (argument_list
+                (integer))))
+          (end_keyword))))))
+
+================================================================================
+Call to a quoted-identifier procedure with no arguments
+================================================================================
+codeunit 1 T { procedure X() begin "My Proc"(); end; }
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (quoted_identifier)
+              arguments: (argument_list)))
+          (end_keyword))))))

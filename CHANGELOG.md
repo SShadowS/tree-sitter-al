@@ -27,6 +27,18 @@ public API — a change to node structure or field names is a **major** bump.
   continue the exit vs. reduce and start a new parenthesized-expression
   statement — that a `prec` nested inside `optional()` does not resolve.
 
+- **A call to a quoted-identifier procedure, e.g. `"My Proc"(42);`, no longer
+  splits silently.** `call_expression`'s `function` field choice omitted
+  `quoted_identifier`, even though the parenless `call_statement` already
+  accepted it. With an argument, the call split into a bare
+  `(quoted_identifier)` sibling followed by a detached
+  `(parenthesized_expression (integer))` — **no ERROR node**. With no
+  arguments, `"My Proc"();` produced a `(MISSING identifier)` inside the
+  parenthesized expression. alc accepts both forms; `quoted_identifier` is
+  now a valid `call_expression` function alongside `identifier`,
+  `member_expression`, `qualified_enum_value`, `keyword_identifier`, and
+  `subscript_expression`.
+
 ### Removed
 
 ## [3.3.1] — 2026-08-09
