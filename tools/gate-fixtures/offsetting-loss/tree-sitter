@@ -1,16 +1,42 @@
 #!/bin/bash
 #
-# FIXTURE, not a utility. A `tree-sitter` shim that injects an offsetting chunk
-# loss. Nothing in the build or the validation path calls it; it takes effect
-# only when a caller deliberately puts this directory earlier on PATH.
+# FIXTURE, not a utility. Do not run this against a real snapshot expecting
+# anything useful — its entire purpose is to corrupt a run so a gate can be
+# tested. Nothing in the build or the validation path calls it; it takes effect
+# only when a caller deliberately puts this directory earlier on PATH. (The file
+# is named `tree-sitter` because PATH shadowing is the injection mechanism; the
+# directory name is what identifies the fault.)
 #
-# What it injects: one chunk emits DELTA trees FEWER, another emits DELTA MORE
-# (duplicating its last). Every other chunk passes through byte-for-byte and the
-# real exit status is preserved, so the corpus total still reconciles and
-# nothing about the invocation looks wrong — a gate that checks only the global
-# tree count reports success over files it never opened.
+# WHAT IT INJECTS: one chunk emits DELTA trees FEWER, another emits DELTA MORE
+# (duplicating its last), so the GLOBAL tree total still reconciles. Every other
+# chunk passes through byte-for-byte and the real exit status is preserved.
 #
-# Usage and expected results: ../README.md
+# WHY IT EXISTS: a gate that checks only the global total cannot see this. Only
+# a per-chunk assertion can. `tree-sitter` exits 0 throughout, so no amount of
+# checking return values catches it either — the count of work done is the only
+# signal that moves.
+#
+# WHAT IT PRODUCED against tools/tree-harness.sh before 055eb41, on
+# ./BC.History/PowerBIReports (280 files, CHUNK_SIZE=100 -> 100/100/80, faulted
+# to 100/97/83):
+#
+#     tree-harness: VERIFIED — all 280 parse trees byte-identical to snapshot
+#     exit 0
+#
+# while, measured against a clean run of the same corpus:
+#     * 82 of 280 manifest rows carried another file's hash
+#     * distinct tree hashes fell 279 -> 276
+#     * 3 trees present in a clean run were absent entirely — three files were
+#       never opened, in either the snapshot or the verify run
+#
+# At and after 055eb41 the same fault is refused:
+#     tree-harness: chunk chunk_0001 produced 97 trees for 100 files
+#     tree-harness:   tree-sitter status: 0
+#     tree-harness: chunk chunk_0001 desynced — refusing to report on an
+#                   incomplete tree set                              exit 1
+#
+# Usage, the other fixture, and what parse-al-parallel.sh does with this
+# (nothing — it reports 100.0%): ../README.md
 #
 # Knobs, all optional:
 #   FIXTURE_LOSE_CHUNK   chunk that loses trees   (default chunk_0001)

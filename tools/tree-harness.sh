@@ -131,9 +131,23 @@ build_trees() {
     find "$WORK/chunks" -name 'chunk_*' -type f -print0 \
         | xargs -0 -P "$NUM_THREADS" -I {} bash -c 'process_chunk "$@"' _ {}
 
-    # Every chunk must yield exactly one tree per file it listed. A global total
-    # is not enough: two chunks losing and gaining the same number of trees would
-    # cancel out and silently mis-pair every path after the gap with the wrong hash.
+    # Every chunk must yield exactly one tree per file it listed.
+    #
+    # THIS COUNT IS LOAD-BEARING, NOT A CHEAP SANITY LINE. It is the only thing
+    # standing between an offsetting chunk loss and a green VERIFIED. A global
+    # total is not enough: two chunks losing and gaining the same number cancel
+    # out, and every path after the gap is then silently paired with another
+    # file's hash. Measured on a 280-file corpus, the version of this script
+    # before 055eb41 — which checked only the global total — printed
+    # "VERIFIED — all 280 parse trees byte-identical to snapshot" and exited 0
+    # over a run in which 3 files were never opened and 82 of 280 rows carried
+    # the wrong file's hash. `tree-sitter` exits 0 throughout, so checking its
+    # return value would not have caught it either.
+    #
+    # Before touching this loop for speed, run the fixture that produces exactly
+    # that fault and confirm it still fails:
+    #   PATH="$PWD/tools/gate-fixtures/offsetting-loss:$PATH" CHUNK_SIZE=100 \
+    #     ./tools/tree-harness.sh snapshot ./BC.History/PowerBIReports /tmp/snap
     # `split -l` fixes the expected size of every chunk but the last, so the
     # counts come from ONE `wc` over the index files rather than a per-chunk
     # command: on Windows a process spawn costs ~33ms and `mapfile` on a 500-line
