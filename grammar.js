@@ -27,6 +27,28 @@ function kwCases(canonical, ...spellings) {
   return choice(...spellings.map(s => s === canonical ? s : alias(s, canonical)));
 }
 
+// Dotted-name helper for fields over a namespaced reference.
+//
+// `field('x', $._namespaced_or_simple_ref)` puts the WHOLE dotted seq in one
+// field, so the separating '.' inherits the field too and a consumer calling
+// children_by_field_name('x') on `Record System.Reflection.Field` gets back
+// [System, '.', Reflection, '.', Field]. Fielding each name part individually
+// keeps the separators out of the field — the same fix applied to
+// array_type.sizes and link_value.value.
+//
+// The field name differs per call site (reference / table / table_name), so
+// this cannot live inside the shared `_namespaced_or_simple_ref` rule; each
+// distinct field name gets its own hidden variant built from this helper.
+function namespacedRefFielded($, name) {
+  return choice(
+    field(name, $.integer),
+    prec.right(seq(
+      field(name, $._identifier_or_quoted),
+      repeat(seq('.', field(name, $._identifier_or_quoted)))
+    )),
+  );
+}
+
 // Object declaration helper — with object ID
 function _object_with_id(keyword_name) {
   return $ => seq(
@@ -141,7 +163,13 @@ module.exports = grammar({
     [$._body_element, $._action_element, $._procedure_header],
     [$.page_field, $._field_header],
     [$.field_declaration, $._table_field_header],
-    [$._property_value, $.option_member, $._namespaced_or_simple_ref],
+    // Fielded variant inherits the property-value ambiguity that the unfielded
+    // `_namespaced_or_simple_ref` used to carry here.
+    [$._property_value, $.option_member, $._namespaced_ref_table],
+    // `Prop = table Foo.Bar` is object_reference_value (unfielded ref) until
+    // the '=' that would make it a tabledata_permission (fielded ref) appears,
+    // so both dotted-name forms stay live across the dots.
+    [$._namespaced_or_simple_ref, $._namespaced_ref_table_name],
     [$.addafter_modification, $.addafter_views_modification],
     [$.addbefore_modification, $.addbefore_views_modification],
     [$._report_body_element, $.preproc_conditional],
@@ -162,7 +190,7 @@ module.exports = grammar({
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values, $.preproc_conditional_table_relation],
     [$.preproc_conditional_permissions, $.preproc_conditional_table_relation],
     [$.tabledata_permission_list],
-    [$._namespaced_or_simple_ref, $._literal_value],
+    [$._namespaced_ref_table, $._literal_value],
     [$.preproc_conditional_link_values, $.preproc_conditional_permissions, $.preproc_conditional_impl_values],
     [$.preproc_conditional_link_values, $.preproc_conditional_impl_values],
     [$.preproc_conditional_controladdin, $.preproc_conditional],
@@ -651,7 +679,6 @@ module.exports = grammar({
     _calc_formula_expression: $ => choice(
       $.lookup_formula,
       $.aggregate_formula,
-      seq('-', $.aggregate_formula),  // Negated formulas
     ),
 
     lookup_formula: $ => seq(
@@ -663,6 +690,12 @@ module.exports = grammar({
     ),
 
     aggregate_formula: $ => prec(15, seq(
+      // Negated formulas (CalcFormula = -Sum(...)). The sign belongs to the
+      // formula: as a sibling branch `seq('-', $.aggregate_formula)` under the
+      // hidden `_calc_formula_expression`, the '-' landed as a direct child of
+      // `property` and inherited the `value` field, so
+      // children_by_field_name('value') returned ['-', aggregate_formula].
+      optional('-'),
       field('function', alias($.identifier, $.aggregate_function)),
       '(',
       field('target', $.calc_field_reference),
@@ -910,7 +943,7 @@ module.exports = grammar({
     )),
 
     simple_table_relation: $ => prec.right(20, seq(
-      field('table', choice($._namespaced_or_simple_ref, $.member_expression)),
+      choice($._namespaced_ref_table, field('table', $.member_expression)),
       optional(prec(25, $.where_clause))
     )),
 
@@ -980,7 +1013,9 @@ module.exports = grammar({
         $.xmlport_keyword,
         kw('system'),
       ),
-      field('table_name', choice($._namespaced_or_simple_ref, '*')),
+      // '*' keeps the field: the wildcard IS the table name, so an anonymous
+      // node in this field's type set is correct here (cf. operator fields).
+      choice($._namespaced_ref_table_name, field('table_name', '*')),
       '=',
       field('permission', $.permission_type)
     ),
@@ -1285,17 +1320,17 @@ module.exports = grammar({
     // Also: Record System.Reflection.Field temporary
     record_type: $ => prec.right(seq(
       prec(1, kw('record')),
-      field('reference', $._namespaced_or_simple_ref),
+      $._namespaced_ref_reference,
       optional($.temporary_keyword)
     )),
 
     // DotNet "System.Text.StringBuilder" or DotNet System.DateTime type reference
     dotnet_type: $ => prec.right(seq(
       $.dotnet_keyword,
-      field('reference', choice(
-        $.string_literal,
-        $._namespaced_or_simple_ref,
-      ))
+      choice(
+        field('reference', $.string_literal),
+        $._namespaced_ref_reference,
+      )
     )),
 
     // Object reference types: Codeunit "Sales-Post", Page "Customer Card", etc.
@@ -1313,10 +1348,11 @@ module.exports = grammar({
         kw('testrequestpage'),
         $.controladdin_keyword,
       )),
-      field('reference', $._namespaced_or_simple_ref)
+      $._namespaced_ref_reference
     )),
 
     // Handles: "Name", Name, Namespace.Name, Namespace."Name", etc.
+    // Unfielded form — used where the reference carries no field of its own.
     _namespaced_or_simple_ref: $ => choice(
       $.integer,
       prec.right(seq(
@@ -1324,6 +1360,12 @@ module.exports = grammar({
         repeat(seq('.', $._identifier_or_quoted))
       )),
     ),
+
+    // Fielded forms of the above — one per distinct field name. Each name part
+    // carries the field individually so the separating '.' does not.
+    _namespaced_ref_reference: $ => namespacedRefFielded($, 'reference'),
+    _namespaced_ref_table: $ => namespacedRefFielded($, 'table'),
+    _namespaced_ref_table_name: $ => namespacedRefFielded($, 'table_name'),
 
     // array[10] of Integer, array[10,20] of Text[100]
     //
@@ -2176,7 +2218,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ';',
-      field('table_name', $._namespaced_or_simple_ref),
+      $._namespaced_ref_table_name,
       ')',
       '{',
       optional(field('body', $.report_body)),
@@ -2291,7 +2333,7 @@ module.exports = grammar({
       '(',
       field('name', $._identifier_or_quoted),
       ';',
-      field('table_name', $._namespaced_or_simple_ref),
+      $._namespaced_ref_table_name,
       ')',
       '{',
       optional(field('body', $.query_body)),

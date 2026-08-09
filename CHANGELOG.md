@@ -9,6 +9,60 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **Seven fields that name a dotted reference no longer hand you the `.`
+  separators.** `field('reference', $._namespaced_or_simple_ref)` wrapped the
+  whole dotted name in a single `field()` call, so every separator inherited
+  the field. On `Record System.Reflection.Field`, a consumer calling
+  `children_by_field_name('reference')` received five nodes —
+  `[System, '.', Reflection, '.', Field]` — and had to filter punctuation back
+  out. It now receives the three name parts only. Affected:
+  `record_type.reference`, `dotnet_type.reference`,
+  `object_reference_type.reference`, `simple_table_relation.table`,
+  `report_dataitem.table_name`, `query_dataitem.table_name` and
+  `tabledata_permission.table_name`. `tabledata_permission.table_name`
+  deliberately still admits the anonymous `*` — in `Permissions = tabledata *
+  = RIMD` the wildcard *is* the table name, the same way an `operator` field's
+  token is its value. **No parse tree changes**: this only removes a field
+  label from punctuation that was already there, and all 15,358 BC.History
+  trees stay byte-identical. Highlighting improves as a side effect: queries
+  matching `reference:`/`table_name:` previously captured only the *first*
+  segment of a namespaced name, so `Microsoft.Foundation.UOM."Unit of Measure
+  Management"` had one `@type` site and now has four (0 capture sites lost,
+  +82 gained across a 1,500-file sample). Implemented with a new
+  `namespacedRefFielded()` helper in `grammar.js` plus one hidden variant per
+  distinct field name; costs +1.4% parser states.
+
+- **A negated `CalcFormula` is now one `aggregate_formula` node that includes
+  its sign, instead of a loose `-` beside the formula.** `CalcFormula = -
+  sum(...)` was built as `seq('-', $.aggregate_formula)` inside the *hidden*
+  `_calc_formula_expression`, so the `-` landed as a direct child of
+  `property` and inherited the `value` field:
+  `children_by_field_name('value')` returned `['-', aggregate_formula]`, two
+  nodes for one value. The optional sign now lives inside `aggregate_formula`
+  itself, so the field holds exactly one node. **This moves trees** — the only
+  tree movement in this change — extending the `aggregate_formula` node left
+  to cover its sign: 103 node instances across 34 of 15,358 BC.History files.
+  No node type is added, removed, or re-parented; a
+  `negated_aggregate_formula` wrapper was deliberately *not* introduced,
+  because a new node type risks an unhandled-variant failure in downstream
+  consumers that switch exhaustively on node type.
+
+- **Correction to two earlier entries in this release.** The `array_type.sizes`
+  and `link_value.value` entries under *Fixed* below described those defects as
+  affecting only the declared `node-types.json` surface and stated that the
+  runtime field assignment "never produces that". **That is wrong, and the
+  fixes were more valuable than recorded: both were reachable at runtime.**
+  The claim was verified with `tree-sitter parse -c`, which cannot show field
+  names on *anonymous* nodes at all — `additive_expression.operator` is a
+  declared field over an anonymous `'+'`, and `-c` prints that `"+"` with no
+  field either. Re-checked against the pre-fix parsers with a `TSTreeCursor`
+  walk (the mechanism `children_by_field_name` actually uses),
+  `array[10,20] of Integer` returned `sizes` = `[10, ',', 20]` and a dotted
+  `DataItemLink` returned `value` = `[Parent, '.', "No."]`. The corrected
+  shapes those entries describe, and the parse-tree evidence that no tree
+  moved, are both unaffected. The sentences making the runtime claim have been
+  amended in place.
+
 - **Every keyword node now has the same shape: exactly one anonymous child,
   typed as the canonical lowercase spelling.**
   **This changes the anonymous layer of essentially every tree.** A named rule
@@ -332,13 +386,15 @@ public API — a change to node structure or field names is a **major** bump.
   seq($.integer, repeat(seq(',', $.integer))))`. That single `field()` call
   made the generated `node-types.json` record `sizes` as `multiple: true` with
   type set `[',', 'integer']` — declaring the anonymous `,` as a possible
-  member of the field, even though the compiled parser's actual field
-  assignment never produces that: at runtime each integer already carried its
-  own `sizes` label and the comma carried none, in both the old and new
-  grammar (confirmed with `tree-sitter parse -c`, and the parse-tree harness
-  shows 0 of 15,358 BC.History production trees changed). The bug was a lie
-  about the tree in the grammar's own declared API surface, not a corrupted
-  parse — but it matters because typed bindings (Rust, TypeScript) and other
+  member of the field. The compiled parser produced that too: at runtime
+  `children_by_field_name('sizes')` on `array[10,20] of Integer` returned
+  `[10, ',', 20]`, the comma included. (An earlier revision of this entry
+  claimed the runtime was unaffected, on the strength of `tree-sitter parse
+  -c`; that tool cannot display field names on anonymous nodes, so it could
+  not have shown the comma either way. Corrected after re-checking the pre-fix
+  parser with a `TSTreeCursor` walk.) The parse-tree harness still shows 0 of
+  15,358 BC.History production trees changed, because a field label is not
+  part of the tree. It matters because typed bindings (Rust, TypeScript) and other
   tooling generate their `sizes` accessor type from `node-types.json`, not
   from a live parse, and would have exposed a `sizes` accessor typed to
   include a comma token that can never actually appear. Each size dimension
@@ -352,14 +408,16 @@ public API — a change to node structure or field names is a **major** bump.
   (used by `DataItemLink`, `SubPageLink`, etc.) wrapped both identifiers and
   the `.` between them in one `field('value', seq(id, '.', id))`. That single
   `field()` call made the generated `node-types.json` record `value` with
-  type set including `.`, even though the compiled parser's actual field
-  assignment never produces that: at runtime each identifier already carried
-  its own `value` label and the `.` carried none, in both the old and new
-  grammar (confirmed with `tree-sitter parse -c`, and the parse-tree harness
-  shows 0 of 15,358 BC.History production trees changed). Same class of bug
-  as the `array_type.sizes` fix above — a lie about the tree in the
-  grammar's declared API surface, not a corrupted parse — and it matters for
-  the same reason: typed bindings and tooling generate their `value`
+  type set including `.`. The compiled parser produced that too: at runtime
+  `children_by_field_name('value')` on a dotted `DataItemLink` returned
+  `[Parent, '.', "No."]`, the dot included. (As with `array_type.sizes` above,
+  an earlier revision of this entry claimed the runtime was unaffected on the
+  strength of `tree-sitter parse -c`, which cannot display field names on
+  anonymous nodes; corrected after re-checking the pre-fix parser with a
+  `TSTreeCursor` walk.) The parse-tree harness still shows 0 of 15,358
+  BC.History production trees changed, because a field label is not part of
+  the tree. Same class of bug as the `array_type.sizes` fix above, and it
+  matters for the same reason: typed bindings and tooling generate their `value`
   accessor type from `node-types.json`, not from a live parse. Each
   identifier now carries its own `field('value', $._identifier_or_quoted)`;
   the declared `value` type set no longer includes `.`. Guarded by a new row
