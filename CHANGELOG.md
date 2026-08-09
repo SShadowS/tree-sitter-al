@@ -59,16 +59,26 @@ public API — a change to node structure or field names is a **major** bump.
   touch no `#if`/`#endif` depth state, so this is a plain literal-vs-regex
   swap with no scanner interaction.
 
-- **`array_type.sizes` no longer distributes over the commas.** A
-  multi-dimensional declaration like `array[10,20] of Integer` wrapped its
-  whole comma-separated size list in one `field('sizes', seq($.integer,
-  repeat(seq(',', $.integer))))`, so the anonymous `,` sat inside the field
-  alongside the integers — `node-types.json` recorded `sizes` as `multiple:
-  true` with type set `[',', 'integer']`, and `children_by_field_name('sizes')`
-  on a two-dimensional array returned `10`, `,`, `20`. Same defect class
-  already fixed for `case` patterns (see the owned-IR lowerer comment near
-  `preproc_conditional_case_patterns`). Each size dimension now carries its
-  own `field('sizes', $.integer)`; the `sizes` type set is `['integer']` only.
+- **`node-types.json` no longer declares that `array_type.sizes` can contain a
+  comma.** A multi-dimensional declaration like `array[10,20] of Integer`
+  wrapped its whole comma-separated size list in one `field('sizes',
+  seq($.integer, repeat(seq(',', $.integer))))`. That single `field()` call
+  made the generated `node-types.json` record `sizes` as `multiple: true` with
+  type set `[',', 'integer']` — declaring the anonymous `,` as a possible
+  member of the field, even though the compiled parser's actual field
+  assignment never produces that: at runtime each integer already carried its
+  own `sizes` label and the comma carried none, in both the old and new
+  grammar (confirmed with `tree-sitter parse -c`, and the parse-tree harness
+  shows 0 of 15,358 BC.History production trees changed). The bug was a lie
+  about the tree in the grammar's own declared API surface, not a corrupted
+  parse — but it matters because typed bindings (Rust, TypeScript) and other
+  tooling generate their `sizes` accessor type from `node-types.json`, not
+  from a live parse, and would have exposed a `sizes` accessor typed to
+  include a comma token that can never actually appear. Each size dimension
+  now carries its own `field('sizes', $.integer)`; the declared `sizes` type
+  set is `['integer']` only, matching what the parser actually produces.
+  Guarded by `tools/check-field-types.py`, run as part of
+  `./validate-grammar.sh`.
 
 ### Removed
 

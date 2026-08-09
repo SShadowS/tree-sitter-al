@@ -60,6 +60,8 @@ DC/*
 !tools/keyword-sync/*.py
 !tools/keyword-sync/output/
 tools/keyword-sync/__pycache__/
+# Field-shape invariant gate, wired into validate-grammar.sh — must ship with the repo
+!tools/check-field-types.py
 current_orphans.txt
 orphan_report.txt
 run_query*.sh

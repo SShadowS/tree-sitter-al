@@ -167,6 +167,23 @@ else
     print_warning "Duplicate detection script not found (analyze_duplicates.py)"
 fi
 
+# Step 5b: Check field-shape invariants in node-types.json
+print_header "Step 5b: Checking Field-Shape Invariants"
+if [ -f "tools/check-field-types.py" ]; then
+    FIELD_TYPES_OUTPUT=$(python3 tools/check-field-types.py 2>&1)
+    FIELD_TYPES_EXIT_CODE=$?
+
+    if [ $FIELD_TYPES_EXIT_CODE -eq 0 ]; then
+        print_success "$FIELD_TYPES_OUTPUT"
+    else
+        print_error "Field-shape invariant violations found:"
+        echo "$FIELD_TYPES_OUTPUT"
+        VALIDATION_FAILED=1
+    fi
+else
+    print_warning "Field-shape check script not found (tools/check-field-types.py)"
+fi
+
 # Step 6: Run parsing test on AL files (optional, can be slow)
 print_header "Step 6: AL File Parsing Test (Optional)"
 if [ -f "parse-al-parallel.sh" ] && [ "$1" = "--full" ]; then
