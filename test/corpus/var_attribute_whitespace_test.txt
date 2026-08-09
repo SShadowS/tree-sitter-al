@@ -1,0 +1,279 @@
+================================================================================
+Comment after the closing bracket of a var attribute
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        [InDataSet] // trailing
+        Alpha: Boolean;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (comment)
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Comment inside the name list of an attributed var declaration
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        [InDataSet]
+        Alpha, /* note */ Beta: Boolean;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (variable_declaration
+              name: (identifier)
+              (multiline_comment)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Comment before the ':' of an attributed var declaration
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        [InDataSet]
+        Alpha /* note */: Boolean;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (variable_declaration
+              name: (identifier)
+              (multiline_comment)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Newline after the ',' of an attributed multi-name var declaration
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        [InDataSet]
+        Alpha,
+        Beta: Boolean;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (variable_declaration
+              name: (identifier)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Newline before the ':' of an attributed var declaration
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        [InDataSet]
+        Alpha
+        : Boolean;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Quoted name leading a multi-name list with a newline after its ','
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        [InDataSet]
+        "My Var",
+        Other: Boolean;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (variable_declaration
+              name: (quoted_identifier)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Comment between two chained var attributes
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        [InDataSet] /* note */ [NonDebuggable]
+        Alpha: Boolean;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (multiline_comment)
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

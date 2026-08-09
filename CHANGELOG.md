@@ -67,6 +67,32 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **`VAR_ATTRIBUTE_OPEN`'s remaining skips are no longer comment- and
+  newline-blind — this completes the work 3.3.1 started.** 3.3.1 fixed the
+  bracket-scan's comment-blindness and the name-list's quoted-name/`,`
+  structure, but left four other hand-rolled whitespace loops in the same
+  block untouched: the skip after the closing `]`, the inter-attribute skip
+  in the chained-attribute loop, and the two name-list skips (before `:` and
+  after `,`) — all comment-blind, and the two name-list skips newline-blind
+  too since they only listed `' '`/`'\t'`. Six shapes each gave 3 ERROR nodes,
+  identical before and after 3.3.1: a comment after the `]`, a comment inside
+  the name list, a comment before the `:`, a newline after the `,`, a newline
+  before the `:`, and `[InDataSet]` then `"My Var",` newline `Other:
+  Boolean;` — the last of which means 3.3.1's quoted-name fix was **partial**:
+  it made `"My Var", Other: Boolean;` work on one line but not across a
+  newline, while the grammar itself already parses `Alpha,` newline `Beta:
+  Boolean;` cleanly with no attribute present, so the scanner was internally
+  inconsistent with its own grammar. All four skips now route through the
+  `skip_whitespace_and_comments` helper 3.3.1 introduced, in both the main
+  bracket-scan loop and the chained-attribute loop (`[A][B] Name: Type` with
+  a comment between the two attributes is covered by a dedicated test).
+  Every one of these skips runs after `mark_end` has pinned the token to the
+  `[`, so all route through the non-marking form; none regress to
+  `skip_whitespace`'s marking `advance(lexer, true)`, which would collapse
+  the token to zero width. All six shapes produced ERROR nodes before this
+  fix, so no currently-clean BC.History tree can depend on them — the harness
+  reports 0 changed files.
+
 - **Control-flow keywords and word operators are now genuinely
   case-insensitive.** AL is a fully case-insensitive language, but the Tier-1
   keyword rules and the word-operator rules spelled out exactly three casings

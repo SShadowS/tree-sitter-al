@@ -399,12 +399,8 @@ bool tree_sitter_al_external_scanner_scan(
 
       if (bracket_depth != 0) return false;  // unterminated attribute
 
-      // Now skip whitespace after ']' and check what follows
-      while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
-             lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
-             lexer->lookahead == '\f') {
-        lexer->advance(lexer, false);
-      }
+      // Now skip whitespace and comments after ']' and check what follows
+      if (!skip_whitespace_and_comments(lexer)) return false;
 
       // Check what follows:
       // - '[' → another attribute (chain) → this is a var attribute
@@ -451,12 +447,8 @@ bool tree_sitter_al_external_scanner_scan(
             lexer->advance(lexer, false);
           }
           if (inner_bracket_depth != 0) return false;
-          // Skip whitespace between chained attributes
-          while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
-                 lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
-                 lexer->lookahead == '\f') {
-            lexer->advance(lexer, false);
-          }
+          // Skip whitespace and comments between chained attributes
+          if (!skip_whitespace_and_comments(lexer)) return false;
         }
         // After all chained attributes, check for variable declaration pattern
         // (fall through to the identifier/quoted-identifier checks below)
@@ -484,10 +476,8 @@ bool tree_sitter_al_external_scanner_scan(
             return false;
           }
 
-          // Skip whitespace
-          while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
-            lexer->advance(lexer, false);
-          }
+          // Skip whitespace and comments
+          if (!skip_whitespace_and_comments(lexer)) return false;
           if (lexer->lookahead == ':') {
             lexer->result_symbol = VAR_ATTRIBUTE_OPEN;
             return true;
@@ -495,9 +485,7 @@ bool tree_sitter_al_external_scanner_scan(
           if (lexer->lookahead != ',') return false;
 
           lexer->advance(lexer, false);  // past the ','
-          while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
-            lexer->advance(lexer, false);
-          }
+          if (!skip_whitespace_and_comments(lexer)) return false;
         }
       }
 
