@@ -37,12 +37,17 @@ skipping is possible (that skipping needs to know it is inside the object it
 is still looking for), so a doc comment mentioning `rules: { ... }` ahead of
 the real object could in principle make it anchor on the wrong place. Rather
 than trying to make that anchor fully JS-aware -- a rabbit hole with no fixed
-point -- `main()` treats **zero extracted rule entries as a hard failure**,
-not a pass: a grammar with no rules is not a valid state, so 0 can only mean
-the scanner mis-anchored. That single guard is what actually matters here --
+point -- `analyze()` itself treats **zero extracted rule entries as a hard
+failure**, raising `RulesExtractionError` rather than returning a result a
+caller could mistake for "no duplicates found": a grammar with no rules is
+not a valid state, so 0 can only mean the scanner mis-anchored. The guard
+lives in `analyze()`, not just in `main()`'s CLI error handling, so it
+applies equally to any other code in this repository that imports and calls
+`analyze()` directly. That single guard is what actually matters here --
 this check exists because a previous version of this exact file reported
 success having examined almost nothing, and a mis-anchor that silently
-produces `[]` would be that same failure mode again.
+produces `[]` would be that same failure mode again, for a library caller
+as much as for the CLI.
 
 Run from the repository root -- grammar.js is read relative to the working
 directory.
@@ -276,8 +281,30 @@ def classify(occurrences):
     return 'identical' if len(values) == 1 else 'differing'
 
 
+class RulesExtractionError(ValueError):
+    """Raised by analyze() when grammar.js's rules object could not be
+    trusted -- either extract_rule_entries()/_find_rules_object() couldn't
+    locate or balance `rules: { ... }` at all (they raise ValueError
+    directly, so this subclass lets a caller catch both with one except), or
+    it extracted zero rule entries. A grammar with no rules is not a valid
+    state, so an empty result can only mean the scanner's `rules: {` anchor
+    landed somewhere that merely mentions the object -- e.g. inside a
+    comment or string -- rather than the real one (see the module
+    docstring). analyze() never returns a zero-entries result silently:
+    that would be this file's original defect (a check reporting success
+    having examined nothing) recurring one level up, for the first caller
+    that imports analyze() directly instead of going through main().
+    """
+
+
 def analyze(text):
     entries = extract_rule_entries(text)
+    if not entries:
+        raise RulesExtractionError(
+            "grammar.js's rules object was located but 0 rule entries were "
+            "extracted -- this can only mean the scanner mis-anchored, never "
+            "that the grammar is empty"
+        )
     duplicates = find_duplicates(entries)
 
     results = [
@@ -346,35 +373,24 @@ def main():
 
     text = grammar_path.read_text(encoding='utf-8')
 
-    # _find_rules_object anchors on the first *textual* match of `rules: {`,
-    # which is comment/string-unaware by construction (it has to run before
-    # any comment/string skipping can happen -- that skipping only exists
-    # once we're inside the object we're still looking for). A stray mention
-    # of "rules: {" in a doc comment ahead of the real object, or an
-    # unbalanced brace anywhere in the file, can make this raise -- and any
-    # other malformed input this scanner does not anticipate should fail the
-    # same way, not print a raw Python traceback that reads as "the tool is
-    # broken" instead of "look at this".
+    # analyze() raises (never returns a zero-entries result silently -- see
+    # RulesExtractionError) whenever grammar.js's rules object could not be
+    # located, balanced, or fully extracted. `_find_rules_object` anchors on
+    # the first *textual* match of `rules: {`, which is comment/string-
+    # unaware by construction (that skipping only exists once the scanner is
+    # inside the object it's still looking for), so a stray mention of
+    # "rules: {" in a doc comment ahead of the real object is one way this
+    # can happen; an unbalanced brace anywhere in the file is another. Either
+    # way this is a tooling failure, not a raw Python traceback that reads as
+    # "the tool is broken" instead of "look at this".
     try:
         results = analyze(text)
     except Exception as e:
-        print(f"FAILED: could not parse grammar.js's rules object -- {e}", file=sys.stderr)
+        print(f"FAILED: {e}", file=sys.stderr)
         print("This is a tooling failure, not a reported grammar defect: the scanner", file=sys.stderr)
-        print("could not locate or balance 'rules: { ... }'. Investigate the scanner", file=sys.stderr)
-        print("(tools/analyze_duplicates.py) before trusting this check again.", file=sys.stderr)
-        return 1
-
-    # A grammar with zero rules is not a valid state, so 0 extracted entries
-    # can only mean the scanner mis-anchored -- e.g. the textual `rules: {`
-    # search above matched inside a comment or string that merely mentions
-    # it, ahead of the real object, and the brace-balancer then closed on
-    # that fragment instead. Silently reporting "no duplicates" in that case
-    # would be this exact check's own failure mode arriving through a
-    # different door, so treat it as a failure rather than a pass.
-    if results['total_rules'] == 0:
-        print("FAILED: grammar.js's rules object was located but 0 rule entries were", file=sys.stderr)
-        print("extracted. Not a clean pass -- see the module docstring for why zero", file=sys.stderr)
-        print("can only mean the scanner mis-anchored, never that the grammar is empty.", file=sys.stderr)
+        print("could not locate, balance, or fully extract grammar.js's 'rules: { ... }'.", file=sys.stderr)
+        print("Investigate the scanner (tools/analyze_duplicates.py) before trusting this", file=sys.stderr)
+        print("check again.", file=sys.stderr)
         return 1
 
     if args.json:
