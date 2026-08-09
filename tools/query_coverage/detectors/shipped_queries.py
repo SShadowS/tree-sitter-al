@@ -54,25 +54,33 @@ def operator_tokens(node_types: list[dict]) -> list[str]:
     return sorted(tokens)
 
 
-def pattern_texts(query, source: str) -> list[str]:
+def pattern_texts(query, source: bytes) -> list[str]:
     """Per-pattern source text, comments and blank lines stripped.
 
     end_byte_for_pattern runs to the start of the next pattern, so the raw slice
     carries trailing comments. Strip them or the fingerprint churns whenever a
     comment nearby is edited.
+
+    start_byte_for_pattern/end_byte_for_pattern return BYTE offsets, not
+    character offsets. `source` must be bytes and stay bytes through the
+    slice — slicing a decoded str with a byte offset desyncs after the first
+    multi-byte UTF-8 character anywhere earlier in the file (a non-ASCII
+    comment, an arrow, a curly quote), corrupting every pattern that follows
+    it. Decode only the per-pattern slice, after slicing.
     """
     texts = []
     for index in range(query.pattern_count):
         raw = source[query.start_byte_for_pattern(index) : query.end_byte_for_pattern(index)]
-        texts.append(normalize_text(_COMMENT_LINE.sub("", raw)))
+        text = raw.decode("utf-8")
+        texts.append(normalize_text(_COMMENT_LINE.sub("", text)))
     return texts
 
 
 def tally(language, query_path: Path, trees_and_sources) -> list[PatternUsage]:
     import tree_sitter
 
-    source = query_path.read_text(encoding="utf-8")
-    query = tree_sitter.Query(language, source)
+    source = query_path.read_bytes()
+    query = tree_sitter.Query(language, source.decode("utf-8"))
     texts = pattern_texts(query, source)
     counts = [0] * query.pattern_count
 
