@@ -3713,6 +3713,7 @@ def main(argv: list[str] | None = None) -> int:
     run = sub.add_parser("run")
     run.add_argument("--all", action="store_true")
     run.add_argument("--full-query-scan", action="store_true", dest="full_query_scan")
+    run.add_argument("--full-corpus", action="store_true", dest="full_corpus")
     run.set_defaults(func=cmd_run)
 
     accept = sub.add_parser("accept")
