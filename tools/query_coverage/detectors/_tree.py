@@ -30,6 +30,36 @@ def leaves(node) -> Iterator:
         yield from leaves(child)
 
 
+# grammar.js:128-138's `extras` array, named entries only — `/\s/` and the
+# BOM pattern are anonymous tokens and never appear as sibling nodes at all.
+EXTRA_NODE_TYPES = frozenset(
+    {
+        "comment",
+        "multiline_comment",
+        "pragma",
+        "preproc_region",
+        "preproc_endregion",
+        "preproc_define",
+        "preproc_undef",
+    }
+)
+
+
+def previous_meaningful_sibling(node):
+    """Nearest previous sibling that is not a grammar extra, or None.
+
+    A raw `node.prev_sibling` lookup is fooled by a comment or line-level
+    preprocessor directive sitting between two real tokens — extras can
+    appear anywhere, not just between statements (`x./*c*/End()` is legal
+    AL). This is the tree-level counterpart of the scanner's own rule that
+    every lookahead must step over extras (see .claude/rules/scanner.md).
+    """
+    current = node.prev_sibling
+    while current is not None and current.type in EXTRA_NODE_TYPES:
+        current = current.prev_sibling
+    return current
+
+
 def enclosing_named(node, skip_error: bool = False) -> str:
     """Nearest named ancestor's type, self included. Falls back to source_file."""
     current = node

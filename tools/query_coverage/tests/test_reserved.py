@@ -76,6 +76,43 @@ def test_member_access_position_is_excluded(al_parser):
     assert [f.detail["keyword"] for f in findings] == []
 
 
+def test_member_access_position_is_excluded_across_a_block_comment(al_parser):
+    """x./*c*/End() — a raw prev_sibling lookup is fooled by the comment
+    sitting between '.' and the member name. Same failure class as the
+    scanner bug (PREPROC_SPLIT_END) this whole detector exists to catch.
+    """
+    source = b"codeunit 1 T { procedure P() var x: DotNet Foo; begin x./*c*/End(); end; }"
+
+    findings = reserved.detect(al_parser.parse(source), source, "t.al")
+
+    assert [f.detail["keyword"] for f in findings] == []
+
+
+def test_member_access_position_is_excluded_across_a_line_comment(al_parser):
+    """x. // comment\\n End() — a line comment is a different node type
+    (comment vs. multiline_comment) and must be skipped too."""
+    source = (
+        b"codeunit 1 T { procedure P() var x: DotNet Foo; begin "
+        b"x. // line comment\n End(); end; }"
+    )
+
+    findings = reserved.detect(al_parser.parse(source), source, "t.al")
+
+    assert [f.detail["keyword"] for f in findings] == []
+
+
+def test_reserved_word_after_a_comment_still_fires_when_not_member_access(al_parser):
+    """A comment sitting before a reserved word must not blanket-suppress it
+    — the exclusion is specific to member-access position, not "near a
+    comment" in general.
+    """
+    source = b"codeunit 1 T { procedure P() begin /* c */ then(); end; }"
+
+    findings = reserved.detect(al_parser.parse(source), source, "t.al")
+
+    assert [f.detail["keyword"] for f in findings] == ["then"]
+
+
 def test_fingerprint_pairs_keyword_with_enclosing_type(al_parser):
     source = b"codeunit 1 T { procedure P() begin end(); end; }"
 

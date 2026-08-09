@@ -42,3 +42,43 @@ def test_error_ranges_covers_the_error_and_does_not_descend(al_parser):
 
 def test_error_ranges_is_empty_on_a_clean_tree(al_parser):
     assert _tree.error_ranges(al_parser.parse(b"codeunit 1 T { }").root_node) == []
+
+
+def test_previous_meaningful_sibling_skips_a_comment(al_parser):
+    source = b"codeunit 1 T { procedure P() var x: DotNet Foo; begin x./*c*/End(); end; }"
+    tree = al_parser.parse(source)
+
+    member = next(
+        node
+        for node in _tree.walk(tree.root_node)
+        if node.type == "member_expression"
+    )
+    end_identifier = member.child_by_field_name("member")
+
+    previous = _tree.previous_meaningful_sibling(end_identifier)
+
+    assert previous is not None
+    assert previous.type == "."
+
+
+def test_previous_meaningful_sibling_returns_the_immediate_sibling_when_no_extra(al_parser):
+    source = b"codeunit 1 T { procedure P() var x: DotNet Foo; begin x.End(); end; }"
+    tree = al_parser.parse(source)
+
+    member = next(
+        node
+        for node in _tree.walk(tree.root_node)
+        if node.type == "member_expression"
+    )
+    end_identifier = member.child_by_field_name("member")
+
+    # tree-sitter's Python bindings mint a fresh wrapper Node per access, so
+    # compare by position rather than `is`.
+    expected = end_identifier.prev_sibling
+    actual = _tree.previous_meaningful_sibling(end_identifier)
+    assert actual is not None
+    assert (actual.type, actual.start_byte, actual.end_byte) == (
+        expected.type,
+        expected.start_byte,
+        expected.end_byte,
+    )

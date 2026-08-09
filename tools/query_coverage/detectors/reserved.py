@@ -51,11 +51,17 @@ CONTEXTUAL_WHITELIST = frozenset(
 
 
 def _is_member_access(node) -> bool:
-    """x.End — the member name is not a free identifier."""
+    """x.End — the member name is not a free identifier.
+
+    Skips extras (comments, line-level preprocessor directives) between the
+    '.' and the member name via _tree.previous_meaningful_sibling — a raw
+    prev_sibling lookup is fooled by `x./*c*/End()`, the same class of bug
+    this whole detector exists to catch (see .claude/rules/scanner.md).
+    """
     parent = node.parent
     if parent is None or parent.type != "member_expression":
         return False
-    previous = node.prev_sibling
+    previous = _tree.previous_meaningful_sibling(node)
     return previous is not None and previous.type == "."
 
 
