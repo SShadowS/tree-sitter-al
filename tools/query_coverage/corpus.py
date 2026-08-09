@@ -1,0 +1,127 @@
+"""Corpus selection by greedy set-cover, and the committed manifest.
+
+Not biggest-file-per-type: the biggest Query file (13.6 KB) produces zero
+findings, and the biggest Table burns 580 KB repeating `record` and `:=`.
+Big means repetitive, not diverse.
+
+Object type comes from the tree root, never the filename. BC.History suffixes
+are inconsistent — 527 *.PermissionSet.al, 276 *.permissionset.al,
+15 *.Permissionset.al, plus 30 files with no suffix at all.
+"""
+
+from __future__ import annotations
+
+import hashlib
+from dataclasses import dataclass
+from pathlib import Path
+
+MANIFEST_HEADER = "# object_types\tpath\tsha256\tbytes\treason"
+
+
+@dataclass(frozen=True)
+class ManifestEntry:
+    object_types: tuple[str, ...]
+    path: str
+    sha256: str
+    bytes: int
+    reason: str
+
+
+def select(vocabularies: dict[str, set[str]]) -> list[str]:
+    """Greedy set-cover. Ties break on path ascending so `select` is reproducible.
+
+    Non-deterministic tie-breaking churns the manifest, which invalidates every
+    baseline count.
+    """
+    remaining = {path: set(vocab) for path, vocab in vocabularies.items()}
+    covered: set[str] = set()
+    picked: list[str] = []
+
+    while True:
+        best_path = None
+        best_gain = 0
+        for path in sorted(remaining):
+            gain = len(remaining[path] - covered)
+            if gain > best_gain:
+                best_path, best_gain = path, gain
+
+        if best_path is None:
+            return picked
+
+        picked.append(best_path)
+        covered |= remaining.pop(best_path)
+
+
+def object_types(tree) -> tuple[str, ...]:
+    return tuple(child.type for child in tree.root_node.named_children if child.type.endswith("_declaration"))
+
+
+def write_manifest(path: Path, entries: list[ManifestEntry]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(MANIFEST_HEADER + "\n")
+        for entry in sorted(entries, key=lambda e: e.path):
+            handle.write(
+                "\t".join(
+                    (
+                        ",".join(entry.object_types),
+                        entry.path,
+                        entry.sha256,
+                        str(entry.bytes),
+                        entry.reason,
+                    )
+                )
+                + "\n"
+            )
+
+
+def read_manifest(path: Path) -> list[ManifestEntry]:
+    entries: list[ManifestEntry] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#"):
+            continue
+        types, file_path, digest, size, reason = line.split("\t")
+        entries.append(
+            ManifestEntry(
+                object_types=tuple(t for t in types.split(",") if t),
+                path=file_path,
+                sha256=digest,
+                bytes=int(size),
+                reason=reason,
+            )
+        )
+    return entries
+
+
+def manifest_hash(entries: list[ManifestEntry]) -> str:
+    digest = hashlib.sha256()
+    for entry in sorted(entries, key=lambda e: e.path):
+        digest.update(f"{entry.path}:{entry.sha256}\n".encode("utf-8"))
+    return digest.hexdigest()
+
+
+def file_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def verify(repo_root: Path, entries: list[ManifestEntry]) -> list[str]:
+    """Empty list means the corpus on disk matches the manifest."""
+    problems: list[str] = []
+    for entry in entries:
+        target = repo_root / entry.path
+        if not target.is_file():
+            problems.append(f"missing: {entry.path}")
+            continue
+        actual = file_sha256(target)
+        if actual != entry.sha256:
+            problems.append(f"sha256 drift: {entry.path} (manifest {entry.sha256[:12]}, disk {actual[:12]})")
+    return problems
+
+
+def never_observed(node_types: list[dict], seen: set[str]) -> list[str]:
+    """Named types the corpus never produced: dead grammar or uncovered constructs."""
+    return sorted(
+        entry["type"]
+        for entry in node_types
+        if entry.get("named") and entry["type"] not in seen
+    )
