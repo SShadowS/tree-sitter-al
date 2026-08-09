@@ -38,7 +38,14 @@ assignment_statement: $ => prec.dynamic(10, seq(   // 3434
 _assignment_operator: $ => token(choice(':=', '+=', '-=', '*=', '/=')),   // 3446
 ```
 
-`assignment_expression` (`grammar.js:3440-3444`) has the identical defect.
+Three more rules carry the identical defect, all verified against `src/node-types.json`, which gives every one of them only `left` and `right`:
+
+| Rule | Line | Hidden token wrapped by `field('operator', ...)` |
+|---|---|---|
+| `assignment_statement` | `grammar.js:3436` | `$._assignment_operator` |
+| `assignment_expression` | `grammar.js:3442` | `$._assignment_operator` |
+| `is_expression` | `grammar.js:3764` | `kw('is', 5)` |
+| `as_expression` | `grammar.js:3769` | `kw('as', 5)` |
 
 `_assignment_operator` is a `token(choice(...))` — a hidden token. The field wrapping it is therefore dropped. Parsing `i := 1; i += 2;` gives:
 
@@ -51,12 +58,19 @@ child_by_field_name('operator') -> None
 `src/node-types.json` lists only `left` and `right` for `assignment_statement`. Consequences:
 
 - `:=` versus `+=` is unrecoverable from the tree. A consumer cannot distinguish assignment from compound assignment.
-- `queries/highlights.scm:155` (`":=" @operator`) can never match an assignment. It matches only the plain-string `':='` inside `for_statement` (`grammar.js:3663`).
+- `queries/highlights.scm:155` (`":=" @operator`) can never match an assignment. It matches only the plain-string `':='` inside `for_statement` (`grammar.js:3663`). Verified: running that pattern over `for i := 1 to 5 do x := i;` returns exactly **one** capture, `parent = for_statement`. The assignment's `:=` is uncapturable.
 - The bytes appear in no node at all: gap-scanning the sample yields `GAP 52 56 b' := '` and `GAP 60 64 b' += '`.
 
-Measured frequency in one production file: 2,692 occurrences. Zero errors, stable tree, dead query.
+Measured frequency: 2,692 `:=` gaps across the six-file sample. Zero errors, stable tree, near-dead query.
 
-This example is also the harness's built-in self-test. A first run that does *not* report the `:=`, `record`, `field`, and `tabledata` clusters means a detector is broken.
+**Note what this example is not.** The `:=` pattern is *mostly* dead, not *fully* dead — any for-loop keeps it matching. A "pattern matched zero times corpus-wide" check therefore sails right past it. This case is caught by detector 1 (byte gap) and detector 3 (dropped field), not by detector 6. Detector 6 finds only fully-dead patterns, which is a different and also worthwhile invariant.
+
+### Self-tests
+
+Two detectors have a known-answer check on their first run. If either comes back clean, that detector is broken rather than the grammar being healthy.
+
+- **Detector 1** must report the `:=`, `record`, `field`, and `tabledata` gap clusters.
+- **Detector 3** must report exactly the four rules in the table above. A set-level implementation returns zero here — see the warning in its section.
 
 ## Decisions
 
@@ -66,6 +80,7 @@ This example is also the harness's built-in self-test. A first run that does *no
 | Query layer measured | Harness-owned `inventory.scm` **and** the shipped queries, reported separately | The shipped queries were written for editors, not exhaustive extraction; mixing them produces false holes |
 | Corpus pinning | Committed manifest; corpus stays external and gitignored | Keeps Microsoft base-app source out of the repo |
 | Output | Clustered JSONL + committed baseline + markdown summary | `run` prints only NEW/FIXED clusters, so the backlog does not drown the signal |
+| Baseline counts | Ratchet downward automatically on every run | Without it, a cluster fixed to 0 and later regressed to any value below its accepted count passes silently |
 | Runtime | Python, loading the local `al.dll` via ctypes | Verified working, ABI 15; direct byte access; matches existing `parse_bug_finder.py` tooling |
 
 ### The tautology caveat
@@ -109,7 +124,15 @@ Pin the `py-tree-sitter` version in the harness's requirements. `Language(int)` 
 
 ## Corpus selection
 
-**Greedy set-cover over per-file node-type vocabulary.** Parse the whole corpus once (this already takes about 37 seconds via the existing tree-harness path), record the set of node types each file produces, then greedily pick files that add the most previously-unseen types until no file adds anything new. Expect 100–300 files covering every node type the grammar can emit. Use parent→child type pairs rather than bare types if the flat version saturates too early.
+**Greedy set-cover over per-file node-type vocabulary.** Parse the whole corpus once (this already takes about 37 seconds via the existing tree-harness path), record the set of node types each file produces, then greedily pick files that add the most previously-unseen types until no file adds anything new. Expect 100–300 files. Use parent→child type pairs rather than bare types if the flat version saturates too early.
+
+Three things `select` must pin down, or it is not reproducible:
+
+- **Deterministic tie-breaking.** Ties broken by dict iteration order make `select` non-reproducible, which churns the manifest, which invalidates every baseline count. Order candidates by (gain descending, path ascending) and take the first.
+- **Vocabulary means *named* node types.** The tree-harness path yields CLI s-expressions, which contain named nodes only. Set-cover over observed output covers the named types the corpus exercises — not "every node type the grammar can emit". The shortfall is measured by the never-observed report below rather than assumed away.
+- **Multi-object files.** A `source_file` can hold more than one object declaration, and 30 files carry no type suffix at all. `manifest.tsv`'s `object_type` column holds a comma-separated list of every object type in the file, not a single value.
+
+**Never-observed node types report.** A free by-product of the same parse: every type in `src/node-types.json` appearing in zero of the 15,358 files. That set is either dead grammar or a construct with no production coverage. Both are worth knowing, and it quantifies how far the corpus falls short of the grammar.
 
 **Not biggest-file-per-type.** Measured: the biggest Query file (13.6 KB) produces zero findings, and the biggest Table spends 580 KB repeating `record` and `:=` thousands of times. Big means repetitive, not diverse. Roughly 20 files cannot exercise the ~36 complex property rules, the ~12 split-construct rules, or the long tail of 391 named node types. Keep biggest-per-type as a supplementary stress row, not as the coverage strategy.
 
@@ -125,12 +148,12 @@ Walk every leaf node (`child_count == 0`) in byte order. For each adjacent pair,
 
 Implementation constraints, each of which was hit during design verification:
 
-- **Whitespace means `isspace()` or `U+FEFF`.** `grammar.js:127-137` declares both `/\s/` and `/\uFEFF/` as extras. Python's `str.isspace()` returns False for the BOM, so a naive check flags offset 0 of every BOM'd file. Decode as UTF-8 and test `ch.isspace() or ch == '\uFEFF'` (written with the escape, never as a literal BOM in source). Keep this definition slaved to the `extras` array.
+- **Whitespace means `isspace()` or `U+FEFF`.** The `extras` array (`grammar.js:128-138`) declares both `/\s/` (line 129) and `/\uFEFF/` (line 137). Python's `str.isspace()` returns False for the BOM, so a naive check flags offset 0 of every BOM'd file. Decode as UTF-8 and test `ch.isspace() or ch == '\uFEFF'` (written with the escape, never as a literal BOM in source). Keep this definition slaved to the `extras` array.
 - **Walk all children, not named children.** Anonymous string tokens such as `';'` are visible leaves and legitimately provide coverage.
 - **Exclude ERROR node ranges.** Error recovery both emits ERROR leaves covering garbage and drops adjacent tokens unpredictably. Gaps inside ERROR ranges belong to detector 2; mixing them makes detector 1's clusters unstable.
 - **Fingerprint carries no byte offsets.** Key on (lowercased gap text with internal whitespace collapsed, enclosing named node type). Raw text leaks indentation into the key — `'else\r\n            if'` was observed as a distinct cluster. Offsets belong in the examples, not the key, or every corpus refresh churns the whole baseline.
 
-**Expected day-one volume: large.** Measured 7,478 gaps across the 6 biggest clean files, forming roughly 30 clusters. The grammar has 260 `kw(` call sites; every one used inline without an `alias()` wrapper drops its bytes on every clean parse. Top clusters in that sample: `record` (2,959), `:=` (2,692), `fieldelement` (668), `field` (281), `else … if` (40). Corpus-wide, expect 50–150 clusters.
+**Expected day-one volume: large.** Measured 7,478 gaps across the 6 biggest clean files, forming roughly 30 clusters. `grammar.js` contains 267 `kw(` occurrences on 260 lines, of which roughly 76 sit inside an `alias(kw(...))` keyword rule and drop nothing; the remainder are inline uses, and every inline use drops its bytes on every clean parse. Top clusters in that sample: `record` (2,959), `:=` (2,692), `fieldelement` (668), `field` (281), `else … if` (40). Corpus-wide, expect 50–150 clusters.
 
 This is why the baseline freeze is mandatory rather than merely convenient. It is also not all noise — the `:=` cluster is the worked example above, and `_tabledata_keyword` (`grammar.js:1028`, used un-aliased at `grammar.js:1032`) produces `NON-WS GAP 36-47: b' tabledata '` on `Permissions = tabledata Foo = rimd;` with `has_error: False`.
 
@@ -140,9 +163,22 @@ Per object: every ERROR and MISSING node, its enclosing named construct, and thr
 
 ### 3. Dropped-field audit (static)
 
-For every `field('name', ...)` call site in `grammar.js`, check that the field name appears on the owning node type in `src/node-types.json`. A field wrapping a hidden token silently disappears; this is the general form of the `operator` bug.
+For every `field('name', ...)` declaration, check that the field name appears on **that rule's own node type** in `src/node-types.json`. A field wrapping a hidden token silently disappears; this is the general form of the `operator` bug.
 
-Runs without parsing anything and costs a single pass over two files. Highest value per line of code in the whole harness.
+**The check is per-owning-type, never set-level.** The field name `operator` exists in `node-types.json` on six other types — `additive_expression`, `comparison_expression`, `in_expression`, `logical_expression`, `multiplicative_expression`, `unary_expression`. An implementation that asks "does this field name appear anywhere in node-types.json" reports zero findings for `operator` and the detector is dead on arrival. This is what the detector-3 self-test guards.
+
+**Read `src/grammar.json`, not `grammar.js`.** The compiled grammar is machine-readable JSON with `FIELD` and `ALIAS` nodes explicit, so the audit needs no JavaScript parsing and gets the rule→field ownership directly.
+
+**Scope v1 to visible, un-aliased rules; report the rest as skipped.** Resolving the owning type is not always trivial:
+
+- Fields declared inside *hidden* rules (`_procedure_header`) surface in `node-types.json` under whatever visible rules reference them. Matching against a type literally named `_procedure_header` is a false positive for every such field.
+- Fields inside rules *aliased at their use sites* (`alias($.permissions_property, $.property)`, `grammar.js:500`) surface under the alias target.
+
+Emit a `skipped: hidden or aliased rule` list rather than guessing. All four known instances are visible un-aliased rules, so the cheap scope catches everything currently known while staying honest about its blind spot.
+
+**Known blind spot, with a cheap dynamic complement.** A field whose content is a `choice()` mixing visible and hidden alternatives stays in `node-types.json`, yet is silently absent on the instances that took the hidden alternative. Static analysis cannot see this. During the corpus walk, flag any node where a field marked `required: true` in `node-types.json` returns `None` — that catches it at almost no cost.
+
+The static half runs without parsing anything and costs a single pass over two files.
 
 ### 4. Reserved-keyword-as-identifier audit
 
@@ -152,11 +188,26 @@ Exclude the deliberate `keyword_as_identifier` whitelist (`grammar.js:4148-4159`
 
 `end` appearing as a call-statement identifier is bug 2's exact signature. Without this detector the harness would miss one of its own two motivating examples: that misparse leaves no byte gap (every byte is covered by an `identifier` leaf and punctuation) and produces no ERROR.
 
+Two tuning points. Carry the enclosing node type in the fingerprint and exclude member-access position, or `x.End` — a DotNet or interface member legitimately named `End` — fires on every use. And validate the hard-reserved list with `al compile` probes before trusting it, `exit` and `var` especially: AL is lenient about contextual keywords, and per this project's own doctrine the compiler is the only ground truth. Day-one false positives land in the baseline either way, so this is tuning, not a blocker.
+
 ### 5. Independent lexer and anchor counting
 
 **A mini-lexer for strings, comments, and directives only.** AL's rules here are small and unambiguous: `'...'` with `''` escaping, `//` to end of line, `/* */`, and `#`-prefixed directive lines. This is the one component that can catch parser *tokenization* errors, because it derives token boundaries without consulting the grammar. Write it from the AL language rules, not by transliterating `grammar.js` — a transliteration shares the bug and detects nothing.
 
-**Anchor counting, not construct extraction.** Per file, count occurrences of `procedure`, `trigger On`, `field(`, `key(`, `value(`, `action(` that fall outside comments and strings, and compare against the corresponding node counts from the tree. On mismatch, localize by nearest-offset diff.
+**Anchor counting, not construct extraction.** Per file, count anchor occurrences falling outside comments and strings, and compare against node counts from the tree. On mismatch, localize by nearest-offset diff.
+
+**The anchor table is part of the spec, not an implementation detail.** "Compare against the corresponding node counts" diverges the moment anyone writes it: `field(` in AL source is not only `field_declaration` — it is also the field reference inside link properties (`SubPageLink = X = field(Y)`), inside `CalcFormula`/`TableRelation` (`where(X = field(Y))`), and potentially a `.Field(` method call. A naive `field(` versus `field_declaration` comparison mismatches on every page carrying a link property. That is permanent noise, and the likely "fix" is an implementer subtracting fudge factors until it balances.
+
+Commit an explicit table: anchor → lexical rule → the exact set of node types whose counts sum to the expectation. Prefer 1:1 mappings against visible keyword nodes wherever one exists, because those are exact and self-explaining:
+
+| Anchor | Lexical rule | Expected node count |
+|---|---|---|
+| `procedure` | word boundary, not preceded by `.` | `procedure_keyword` |
+| `trigger` | word boundary, not preceded by `.` | `trigger_keyword` |
+| `field(` | word boundary, not preceded by `.` | sum over `field_declaration` + link/filter field-reference types |
+| `key(`, `value(`, `action(` | word boundary, not preceded by `.` | multi-type sums, enumerated in the table |
+
+The hidden-keyword anchors are precisely the ones needing a multi-type sum. Validate each sum once at `accept` time, then treat drift as a finding.
 
 Counting carries no nesting state, so it cannot desync. This matters: a full brace/`begin`-`end`-tracking shadow extractor loses sync precisely on `preproc_split_*` files, where `begin`, `end`, and the terminating `;` are deliberately split across `#if` branches. Its worst noise would land exactly where this project's bugs live. The construct-extraction half of the original design is therefore cut.
 
@@ -164,8 +215,12 @@ Counting carries no nesting state, so it cannot desync. This matters: a full bra
 
 Two crisp invariants, replacing the noisy "node types no shipped query captures" list. Structural nodes are legitimately uncaptured by highlighting, so that list is mostly false positives.
 
-- **Keyword and operator coverage.** Every `*_keyword` node and every visible operator token must receive a capture from `queries/highlights.scm`. Directly checkable against the documented 83-keyword architecture.
-- **Dead patterns.** Any shipped-query pattern that matches zero times across the entire corpus is reported. This finds `queries/highlights.scm:155` mechanically, and finds the next one like it without anyone noticing by hand.
+- **Keyword and operator coverage.** Every `*_keyword` node and every visible operator token must receive a capture from `queries/highlights.scm`. Directly checkable against the documented 83-keyword architecture. "Operator token" needs an explicit definition rather than intuition — take it as the anonymous entries in `node-types.json` whose text is entirely punctuation, minus the structural delimiters `;` `,` `(` `)` `{` `}` `[` `]` `.` `:`. Write the resulting list into the harness so it is reviewable.
+- **Dead patterns.** Any shipped-query pattern matching zero times is reported. Run this over **all 15,358 files**, not the manifest subset — a manifest-only run false-flags patterns for rare constructs that set-cover happened to satisfy from a single file. A query pass over the full corpus is affordable.
+
+Fingerprint dead patterns on a hash of the pattern's **source text**, never its index. Indices shift on every `.scm` edit and would churn the baseline wholesale.
+
+This detector finds only *fully* dead patterns. `queries/highlights.scm:155` is not one of them — see the note in the worked example.
 
 This detector is informational and never fails the run.
 
@@ -181,11 +236,42 @@ It serves two purposes: it feeds detector 5's node counts, and it is the artifac
 
 **`reports/findings.jsonl`** — one finding per line, stable sort order. Each record carries the cluster fingerprint, category, object type, file path, byte offset, line/column, enclosing node type, and a source snippet.
 
+The first line is a **provenance header**: build stamp hash, manifest hash, `py-tree-sitter` version, harness version. Three lines of code, and it is what makes any two reports comparable — which is the entire point of a run-it-over-and-over harness.
+
 **`reports/summary.md`** — clusters with counts and up to three examples each, grouped by detector, most frequent first.
 
-**`baseline.json`** — accepted cluster fingerprints with their counts at acceptance time.
+**`baseline.json`** — accepted cluster fingerprints with their counts, plus the manifest hash they were accepted under. `run` refuses to diff a baseline accepted under a different manifest, which closes the count-churn interaction between `select` and the exit rule.
 
-`run` exits 0 unless a cluster is new relative to the baseline, or an existing cluster's count grew. It always reports FIXED clusters, so progress is visible. `--all` ignores the baseline entirely.
+### Fingerprints
+
+Every detector needs one, or its findings cannot be clustered or baselined. Detector 1's is specified in its own section; the rest:
+
+| Detector | Fingerprint key |
+|---|---|
+| 2 — ERROR/MISSING | (enclosing construct type, ERROR or MISSING symbol) |
+| 3 — dropped field | (rule name, field name) |
+| 4 — reserved keyword | (keyword, enclosing node type) |
+| 5 — anchor count | (anchor, file path) |
+| 6 — dead pattern | (query file, sha256 of the pattern's source text) |
+
+No fingerprint contains a byte offset or a pattern index.
+
+### Exit codes and the ratchet
+
+| Code | Meaning |
+|---|---|
+| 0 | No new cluster, no cluster above its ratcheted count |
+| 1 | A regression: new cluster, or count above the ratchet |
+| 2 | Corpus broken: a manifest file is missing or its sha256 drifted |
+| 3 | Stale parser: build stamp does not match `grammar.js` + `src/scanner.c` |
+
+CI must be able to distinguish "corpus broken" from "regression found", hence the separate codes. `run --all` reports everything and exits 0 regardless of findings; it is a reporting mode, not a gate.
+
+**The baseline ratchets downward automatically.** Whenever a run observes a *lower* count for an existing cluster, it rewrites that count in `baseline.json` immediately and prints the ratchet it applied.
+
+This is deliberate, and it is the one place `run` mutates a committed file as a side effect. Without it there is a hole: a cluster at 100 gets fixed to 0 and is reported FIXED with exit 0; it later regresses to 80; the baseline still reads 100, so 80 < 100 and the run passes. The regression stays invisible until somebody remembers to re-`accept`. Ratcheting means the bar only ever moves down, so that regression fails the very next run. The cost is a modified `baseline.json` in `git status` after a run that improved something — expected, and the printed ratchet lines say exactly why.
+
+`accept` remains the only way to raise a count or admit a new cluster.
 
 ## Failure model
 
