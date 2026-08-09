@@ -21,15 +21,43 @@
 # Notes:
 #   * Run `tree-sitter generate` yourself before invoking — the harness parses
 #     with whatever parser is currently built.
-#   * Chunked parsing (one tree-sitter process per CHUNK_SIZE files) plus batched
-#     hashing keeps both snapshot and verify to a handful of seconds for ~15k files.
 #   * The file set must be stable between snapshot and verify (same ROOT). The
 #     harness asserts this and aborts if the master file list drifted.
+#
+# A CLEAN RESULT MUST MEAN SOMETHING. This harness is the only thing standing
+# between a silent parse-tree change and a release, so every path that could
+# report "0 files changed" without having compared 15k real trees is asserted
+# shut: each chunk must yield exactly as many trees as it had files, the
+# manifest must have exactly one row per file, and a manifest difference that
+# resolves to zero changed paths is treated as corruption, not as success.
+#
+# Performance, BC.History (15,358 files) at NUM_THREADS=16, measured:
+#
+#                          before    after
+#   snapshot                44.1s    16.1s
+#   verify, no change       24.6s    11.2s
+#   verify, 20 changed      30.9s    15.3s
+#   verify, 757 changed   2m56.1s    22.3s
+#
+#   * The trees are never exploded into one file each. `tree-sitter parse`
+#     already concatenates a chunk's trees, so that blob is kept as-is and
+#     tools/tree_blob.py splits/hashes it in-process — no 15k file creations,
+#     no second hashing pass, no 15k-member tar. Parsing itself is ~8s of the
+#     total and is the floor.
+#   * The mismatch report runs ONE `diff -r` over the changed trees rather than
+#     one `diff` per changed file. Process creation on Windows costs ~33ms, and
+#     the old per-file loop spent ~230ms on each changed file, which is where a
+#     757-file delta lost 2.5 of its 3 minutes.
 
 set -euo pipefail
 
 CHUNK_SIZE="${CHUNK_SIZE:-500}"
 NUM_THREADS="${NUM_THREADS:-$(nproc)}"
+GZIP_LEVEL="${GZIP_LEVEL:-1}"   # -1 costs ~40% archive size and saves ~17s per snapshot
+
+# Stamped into SNAPDIR/FORMAT. `verify` reads the archive layout from what is
+# actually on disk, so snapshots taken before this existed still work.
+SNAP_FORMAT=2
 
 die() { echo "tree-harness: $*" >&2; exit 1; }
 
@@ -42,14 +70,29 @@ usage() {
 CMD="$1"; ROOT="$2"; SNAPDIR="$3"
 [ -d "$ROOT" ] || die "ROOT '$ROOT' is not a directory"
 
+TOOLDIR=$(cd "$(dirname "$0")" && pwd)
+TREE_BLOB="$TOOLDIR/tree_blob.py"
+[ -f "$TREE_BLOB" ] || die "missing helper '$TREE_BLOB'"
+
+if [ -z "${PYTHON:-}" ]; then
+    for cand in python3 python py; do
+        if command -v "$cand" >/dev/null 2>&1 \
+           && "$cand" -c 'import sys' >/dev/null 2>&1 </dev/null; then
+            PYTHON="$cand"; break
+        fi
+    done
+fi
+[ -n "${PYTHON:-}" ] || die "no working python interpreter found (set PYTHON=...)"
+
 # --- shared: build the per-file tree set + manifest into $WORK -----------------
 # Produces:
 #   $WORK/master.txt      sorted list of *.al paths (relative to repo cwd)
-#   $WORK/trees/NNNNNN     plain s-expression tree, indexed by line in master.txt
-#   $WORK/manifest.tsv     "<path>\t<sha256-of-tree>" sorted by path
+#   $WORK/raw/chunk_NNNN  concatenated trees for that chunk, exactly as parsed
+#   $WORK/idx/chunk_NNNN  "<sha256>\t<offset>\t<length>" per tree in that blob
+#   $WORK/manifest.tsv    "<path>\t<sha256-of-tree>" sorted by path
 build_trees() {
     local WORK="$1"
-    mkdir -p "$WORK/trees" "$WORK/chunks"
+    mkdir -p "$WORK/chunks" "$WORK/raw" "$WORK/idx" "$WORK/rc"
 
     find "$ROOT" -name '*.al' -type f | LC_ALL=C sort > "$WORK/master.txt"
     local count
@@ -57,41 +100,85 @@ build_trees() {
     [ "$count" -gt 0 ] || die "no *.al files under '$ROOT'"
     echo "tree-harness: $count files, $NUM_THREADS threads, chunk $CHUNK_SIZE" >&2
 
+    # Build the parser once, serially, before fanning out. tree-sitter locks its
+    # build directory so a cold cache is not known to corrupt a parallel run, but
+    # a single warm parse removes the window entirely and costs nothing when the
+    # shared library is already current.
+    head -n 1 "$WORK/master.txt" > "$WORK/warmup.txt"
+    tree-sitter parse -q --paths "$WORK/warmup.txt" >/dev/null 2>&1 || true
+
     # Stable, zero-padded chunk names so the global file index is reconstructible.
     split -l "$CHUNK_SIZE" -d -a 4 "$WORK/master.txt" "$WORK/chunks/chunk_"
 
-    export WORK CHUNK_SIZE
-    # Parse one chunk, split the concatenated output on the '(source_file' root
-    # (only ever at column 0), and write each tree to its global index.
+    export WORK PYTHON TREE_BLOB
+    # Parse one chunk and index the resulting blob in place. A non-zero exit from
+    # tree-sitter is NORMAL here (it reports failure when any file has an ERROR
+    # node), so the status is recorded for diagnostics rather than acted on; the
+    # per-chunk tree count below is what actually decides whether a chunk is good.
     process_chunk() {
         local chunk="$1"
-        local base idx_base
-        base=$(basename "$chunk")
-        idx_base=$(( 10#${base#chunk_} * CHUNK_SIZE ))   # 0-based offset into master.txt
-        local out="$WORK/raw_$base"
-        tree-sitter parse --paths "$chunk" > "$out" 2>&1 || true
-        awk -v outdir="$WORK/trees" -v base="$idx_base" '
-            /^\(source_file/ { n++; close(cur); cur = sprintf("%s/%06d", outdir, base + n) }
-            { if (n > 0) print > cur }
-        ' "$out"
-        rm -f "$out"
+        local base rc=0
+        base=${chunk##*/}
+        tree-sitter parse --paths "$chunk" > "$WORK/raw/$base" 2>&1 || rc=$?
+        if ! "$PYTHON" "$TREE_BLOB" index "$WORK/raw/$base" > "$WORK/idx/$base"; then
+            echo "index-failed(parse rc=$rc)" > "$WORK/rc/$base"
+        else
+            echo "$rc" > "$WORK/rc/$base"
+        fi
     }
     export -f process_chunk
 
     find "$WORK/chunks" -name 'chunk_*' -type f -print0 \
         | xargs -0 -P "$NUM_THREADS" -I {} bash -c 'process_chunk "$@"' _ {}
 
-    # Verify every file produced exactly one tree (guards against read-error desync).
-    local produced
-    produced=$(find "$WORK/trees" -type f | wc -l)
-    [ "$produced" -eq "$count" ] \
-        || die "tree count mismatch: $produced trees for $count files (read error or split desync)"
+    # Every chunk must yield exactly one tree per file it listed. A global total
+    # is not enough: two chunks losing and gaining the same number of trees would
+    # cancel out and silently mis-pair every path after the gap with the wrong hash.
+    # `split -l` fixes the expected size of every chunk but the last, so the
+    # counts come from ONE `wc` over the index files rather than a per-chunk
+    # command: on Windows a process spawn costs ~33ms and `mapfile` on a 500-line
+    # file costs ~38ms, so a 31-chunk loop either way threw away several seconds.
+    local nchunks last_expected base expected got idx seen=0
+    nchunks=$(( (count + CHUNK_SIZE - 1) / CHUNK_SIZE ))
+    last_expected=$(( count - (nchunks - 1) * CHUNK_SIZE ))
+    while read -r got base; do
+        [ "$base" = "total" ] && continue
+        base=${base##*/}
+        idx=$(( 10#${base#chunk_} ))
+        expected=$CHUNK_SIZE
+        [ "$idx" -eq $(( nchunks - 1 )) ] && expected=$last_expected
+        seen=$(( seen + 1 ))
+        if [ "$got" -ne "$expected" ]; then
+            local keep
+            keep=$(mktemp -d "${TMPDIR:-/tmp}/tree-harness-fail-XXXXXX")
+            cp "$WORK/chunks/$base" "$keep/" || true
+            cp "$WORK/raw/$base" "$keep/" || true
+            {
+                echo "tree-harness: chunk $base produced $got trees for $expected files"
+                echo "tree-harness:   tree-sitter status: $(cat "$WORK/rc/$base" || echo '<none recorded>')"
+                echo "tree-harness:   file list and raw output preserved in $keep"
+                echo "tree-harness:   first lines of raw output:"
+                head -n 5 "$WORK/raw/$base" 2>&1 | sed 's/^/tree-harness:     /' || true
+            } >&2
+            die "chunk $base desynced — refusing to report on an incomplete tree set"
+        fi
+    done < <(wc -l "$WORK"/idx/chunk_*)
+    [ "$seen" -eq "$nchunks" ] \
+        || die "only $seen of $nchunks chunks were indexed — a parse worker never ran"
 
-    # Build the manifest with a single batched sha256sum over all trees, then
-    # join hashes (ordered by index) against the master path list.
-    ( cd "$WORK/trees" && LC_ALL=C ls | LC_ALL=C sort | xargs sha256sum ) > "$WORK/hashes.txt"
-    paste -d'\t' "$WORK/master.txt" <(cut -d' ' -f1 "$WORK/hashes.txt") \
+    # Concatenate the per-chunk indexes in chunk order, which is master.txt order
+    # (the zero-padded names sort identically in every locale).
+    cat "$WORK"/idx/chunk_* > "$WORK/index.tsv"
+    local produced
+    produced=$(wc -l < "$WORK/index.tsv")
+    [ "$produced" -eq "$count" ] \
+        || die "tree count mismatch: $produced trees for $count files"
+
+    paste -d'\t' "$WORK/master.txt" <(cut -f1 "$WORK/index.tsv") \
         | LC_ALL=C sort > "$WORK/manifest.tsv"
+    local rows
+    rows=$(wc -l < "$WORK/manifest.tsv")
+    [ "$rows" -eq "$count" ] || die "manifest has $rows rows for $count files"
 }
 
 case "$CMD" in
@@ -104,61 +191,125 @@ snapshot)
     mkdir -p "$SNAPDIR"
     cp "$WORK/master.txt"   "$SNAPDIR/master.txt"
     cp "$WORK/manifest.tsv" "$SNAPDIR/manifest.tsv"
-    # All trees in one compressed archive (members are the 000001.. index files).
-    tar -czf "$SNAPDIR/trees.tar.gz" -C "$WORK" trees
+    # One compressed blob holding every tree back to back, in master.txt order.
+    cat "$WORK"/raw/chunk_* | gzip "-$GZIP_LEVEL" -c > "$SNAPDIR/trees.gz"
     n=$(wc -l < "$SNAPDIR/master.txt")
+    printf 'format=%s\ntrees=%s\n' "$SNAP_FORMAT" "$n" > "$SNAPDIR/FORMAT"
     echo "tree-harness: snapshot of $n trees written to $SNAPDIR"
     echo "tree-harness: manifest sha256 = $(sha256sum "$SNAPDIR/manifest.tsv" | cut -d' ' -f1)"
     ;;
 
 verify)
     [ -f "$SNAPDIR/manifest.tsv" ] || die "no snapshot at '$SNAPDIR' (run 'snapshot' first)"
+    # manifest.tsv has never changed shape, so a pre-format-2 snapshot still
+    # verifies; only the archive layout differs, and the mismatch report reads
+    # the old one through a legacy path rather than stranding stored baselines.
+    if [ -f "$SNAPDIR/trees.gz" ]; then
+        SNAP_ARCHIVE="$SNAPDIR/trees.gz"; SNAP_READER=extract
+    elif [ -f "$SNAPDIR/trees.tar.gz" ]; then
+        SNAP_ARCHIVE="$SNAPDIR/trees.tar.gz"; SNAP_READER=extract-tar
+    else
+        die "snapshot '$SNAPDIR' has no tree archive — re-run 'snapshot'"
+    fi
     WORK=$(mktemp -d)
     trap 'rm -rf "$WORK"' EXIT
     build_trees "$WORK"
 
     # The file set must not have drifted.
-    if ! diff -q "$SNAPDIR/master.txt" "$WORK/master.txt" > /dev/null; then
+    if ! cmp -s "$SNAPDIR/master.txt" "$WORK/master.txt"; then
         die "file set changed since snapshot — re-run 'snapshot'"
     fi
 
-    if diff -q "$SNAPDIR/manifest.tsv" "$WORK/manifest.tsv" > /dev/null; then
-        n=$(wc -l < "$WORK/manifest.tsv")
+    # The snapshot itself must describe every file, or a comparison against it
+    # proves nothing.
+    n=$(wc -l < "$WORK/master.txt")
+    snap_rows=$(wc -l < "$SNAPDIR/manifest.tsv")
+    [ "$n" -gt 0 ] || die "empty file list — nothing was compared"
+    [ "$snap_rows" -eq "$n" ] \
+        || die "snapshot manifest has $snap_rows rows for $n files — snapshot is damaged"
+
+    if cmp -s "$SNAPDIR/manifest.tsv" "$WORK/manifest.tsv"; then
         echo "tree-harness: VERIFIED — all $n parse trees byte-identical to snapshot"
         exit 0
     fi
 
-    # Report every changed file with a tree diff (old tree extracted from archive).
-    #
-    # Both the archive extraction and the path->index lookup happen ONCE, before
-    # the loop. Doing either per changed file made reporting O(n^2): each
-    # iteration re-inflated the whole trees.tar.gz to fetch a single member and
-    # re-scanned all of master.txt, which put a ~2s floor under every changed
-    # file on a 15k-file snapshot and made large deltas unusable.
     echo "tree-harness: MISMATCH — parse trees changed:" >&2
-    changed=0
 
     # join old+new manifests on path; emit path when hashes differ
     LC_ALL=C join -t$'\t' "$SNAPDIR/manifest.tsv" "$WORK/manifest.tsv" \
         | awk -F'\t' '$2 != $3 { print $1 }' > "$WORK/changed.txt"
+    [ -s "$WORK/changed.txt" ] \
+        || die "manifests differ but no path disagrees on its hash — snapshot manifest is malformed"
 
     # Resolve every changed path to its 1-based line number in master.txt in a
     # single pass, emitting "<path>\t<zero-padded index>".
-    awk 'NR==FNR { idx[$0] = FNR; next } { printf "%s\t%06d\n", $0, idx[$0] }' \
-        "$SNAPDIR/master.txt" "$WORK/changed.txt" > "$WORK/changed_idx.tsv"
+    awk '
+        NR==FNR { idx[$0] = FNR; next }
+        { if (!($0 in idx)) { print "tree-harness: changed path absent from master.txt: " $0 > "/dev/stderr"; exit 3 }
+          printf "%s\t%06d\n", $0, idx[$0] }
+    ' "$SNAPDIR/master.txt" "$WORK/changed.txt" > "$WORK/changed_idx.tsv" \
+        || die "a changed path is not in the snapshot's master list — snapshot is inconsistent"
+    changed=$(wc -l < "$WORK/changed_idx.tsv")
+    [ "$changed" -gt 0 ] || die "changed-file index came out empty — refusing to report a clean run"
 
-    # One pass over the archive pulls out exactly the members we need; snapshot
-    # trees land in $WORK/old/trees/NNNNNN, mirroring $WORK/trees/NNNNNN.
-    cut -f2 "$WORK/changed_idx.tsv" | sed 's|^|trees/|' > "$WORK/old_members.txt"
-    mkdir -p "$WORK/old"
-    tar -xzf "$SNAPDIR/trees.tar.gz" -C "$WORK/old" -T "$WORK/old_members.txt"
+    # Pull only the changed trees out of both sides. Each side is one streaming
+    # pass over blobs the helper opens itself (piping 1.3 GB into native Python
+    # from MSYS costs 20-35s; letting it read the files costs ~1s). A member
+    # missing from the archive degrades to a note for that one file instead of
+    # aborting the whole report, and an empty request extracts nothing at all
+    # (the `tar -T` trap this replaced extracted everything).
+    cut -f2 "$WORK/changed_idx.tsv" > "$WORK/wanted.txt"
+    mkdir -p "$WORK/cmp/old" "$WORK/cmp/new"
+    old_stats=$("$PYTHON" "$TREE_BLOB" "$SNAP_READER" "$WORK/wanted.txt" "$WORK/cmp/old" \
+        "$SNAP_ARCHIVE") \
+        || die "could not read snapshot archive '$SNAP_ARCHIVE'"
+    new_stats=$("$PYTHON" "$TREE_BLOB" extract "$WORK/wanted.txt" "$WORK/cmp/new" \
+        "$WORK"/raw/chunk_*) \
+        || die "could not re-read the freshly parsed trees"
+    [ -n "$old_stats" ] && [ -n "$new_stats" ] \
+        || die "tree extraction reported nothing — refusing to report on an unread archive"
+    read -r old_seen old_written old_missing <<< "$old_stats"
+    read -r new_seen new_written new_missing <<< "$new_stats"
 
-    while IFS=$'\t' read -r path idxp; do
-        changed=$((changed + 1))
-        echo "" >&2
-        echo "=== CHANGED: $path" >&2
-        diff "$WORK/old/trees/$idxp" "$WORK/trees/$idxp" >&2 || true
-    done < "$WORK/changed_idx.tsv"
+    [ "$new_missing" -eq 0 ] && [ "$new_seen" -eq "$n" ] \
+        || die "freshly parsed tree set is incomplete ($new_seen trees, $new_missing unresolved)"
+    if [ "$old_seen" -ne "$n" ]; then
+        echo "tree-harness: WARNING — archive holds $old_seen trees, expected $n" >&2
+    fi
+    [ "$old_written" -gt 0 ] \
+        || die "no snapshot tree could be read for any of the $changed changed files"
+
+    # ONE diff process for the whole delta — the old per-file loop spent ~230ms
+    # on every changed file, which is where a 757-file delta lost 2.5 of its 3
+    # minutes. Run from $WORK/cmp so the headers `diff -r` emits are the
+    # fixed strings rewritten below, and pass -s so a pair that turns out
+    # identical still gets a `=== CHANGED:` header instead of vanishing from the
+    # report. Both directories are name-sorted and names are the zero-padded
+    # master.txt line numbers, so the report order matches changed_idx.tsv.
+    ( cd "$WORK/cmp" && diff -r -s old new || true ) \
+        | awk -F'\t' '
+            FNR==NR { path[$2] = $1; next }
+            /^diff -r -s old\/[0-9][0-9][0-9][0-9][0-9][0-9] new\/[0-9][0-9][0-9][0-9][0-9][0-9]$/ {
+                split($0, a, " "); idx = substr(a[4], 5)
+                printf "\n=== CHANGED: %s\n", path[idx]; next
+            }
+            /^Files old\/[0-9][0-9][0-9][0-9][0-9][0-9] and new\/[0-9][0-9][0-9][0-9][0-9][0-9] are identical$/ {
+                split($0, a, " "); idx = substr(a[2], 5)
+                printf "\n=== CHANGED: %s\n", path[idx]; identical++; next
+            }
+            /^Only in new: [0-9][0-9][0-9][0-9][0-9][0-9]$/ {
+                idx = substr($0, 14)
+                printf "\n=== CHANGED: %s\n", path[idx]
+                print "tree-harness: snapshot tree for this file is missing from the archive — cannot diff"
+                next
+            }
+            { print }
+            END {
+                if (identical > 0)
+                    printf "\ntree-harness: %d changed file(s) parsed to a tree identical to the snapshot — the snapshot manifest disagrees with the snapshot archive\n", identical
+            }
+        ' "$WORK/changed_idx.tsv" - >&2
+
     echo "" >&2
     echo "tree-harness: $changed file(s) changed" >&2
     exit 1

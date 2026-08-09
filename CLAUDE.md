@@ -26,8 +26,8 @@ Run full parse before committing: `./parse-al-parallel.sh ./BC.History/ .`
 ./validate-grammar.sh --full # Full: includes production AL file parsing
 
 # Zero-behavior-change gate for grammar refactors (byte-identical parse trees)
-./tools/tree-harness.sh snapshot ./BC.History .snapshots/bc   # baseline (~37s)
-./tools/tree-harness.sh verify   ./BC.History .snapshots/bc   # verify (~18s)
+./tools/tree-harness.sh snapshot ./BC.History .snapshots/bc   # baseline (~20s)
+./tools/tree-harness.sh verify   ./BC.History .snapshots/bc   # verify (~11s, ~25s with a large delta)
 
 # Standard development cycle
 tree-sitter generate         # Generate parser from grammar.js

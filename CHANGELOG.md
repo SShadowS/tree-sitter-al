@@ -279,6 +279,34 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **`tools/tree-harness.sh` is 2-7x faster and can no longer report a clean run
+  it did not earn.** Measured on BC.History (15,358 files, `NUM_THREADS=16`):
+  `snapshot` 44.1s → 16.1s, a clean `verify` 24.6s → 11.2s, a 20-file delta
+  30.9s → 15.3s, and a 757-file delta **2m56s → 22.3s**. The mismatch report was
+  spending ~230ms per changed file on process creation — one `diff` spawn each —
+  so it now runs a single `diff -r` over the changed trees; report output is
+  byte-identical (`cmp -s` against the previous implementation at both delta
+  sizes: 10,041 bytes / 20 headers and 422,909 bytes / 757 headers). `build_trees`
+  no longer materialises 15,358 individual tree files, hashes them in a second
+  pass and tars them in a third: `tree-sitter parse` already concatenates each
+  chunk's trees, so that blob is kept as-is and the new `tools/tree_blob.py`
+  splits and hashes it in-process. Tree boundaries and hashes are unchanged — a
+  snapshot taken by either implementation has the same `manifest sha256`.
+  Snapshots taken before this change still verify; their archive is read through
+  a legacy path rather than being stranded.
+  Every route to a false clean is now asserted shut, each demonstrated by
+  deliberately provoking it: a chunk that returns no trees names the chunk,
+  its `tree-sitter` exit status and the first lines of its output, and preserves
+  them on disk (the old code's `|| true` plus `rm -f` destroyed the evidence, and
+  its global count could be fooled by two chunks losing and gaining the same
+  number); manifests that differ while no path disagrees on its hash now abort
+  instead of printing "0 file(s) changed"; an extraction that yields nothing
+  aborts; and an empty file list aborts. Two latent traps in the extraction are
+  gone with the `tar` it replaced: an empty member list extracted the **entire**
+  archive (confirmed: 280 of 280 members) and now extracts nothing, and a member
+  missing from the archive aborted the whole extraction and now degrades to a
+  note against that one file. Tooling only — no grammar, parser or query change.
+
 - **`VAR_ATTRIBUTE_OPEN`'s remaining skips are no longer comment- and
   newline-blind — this completes the work 3.3.1 started.** 3.3.1 fixed the
   bracket-scan's comment-blindness and the name-list's quoted-name/`,`
