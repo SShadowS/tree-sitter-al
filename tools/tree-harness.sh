@@ -129,19 +129,36 @@ verify)
     fi
 
     # Report every changed file with a tree diff (old tree extracted from archive).
+    #
+    # Both the archive extraction and the path->index lookup happen ONCE, before
+    # the loop. Doing either per changed file made reporting O(n^2): each
+    # iteration re-inflated the whole trees.tar.gz to fetch a single member and
+    # re-scanned all of master.txt, which put a ~2s floor under every changed
+    # file on a 15k-file snapshot and made large deltas unusable.
     echo "tree-harness: MISMATCH — parse trees changed:" >&2
     changed=0
+
     # join old+new manifests on path; emit path when hashes differ
-    while IFS=$'\t' read -r path; do
+    LC_ALL=C join -t$'\t' "$SNAPDIR/manifest.tsv" "$WORK/manifest.tsv" \
+        | awk -F'\t' '$2 != $3 { print $1 }' > "$WORK/changed.txt"
+
+    # Resolve every changed path to its 1-based line number in master.txt in a
+    # single pass, emitting "<path>\t<zero-padded index>".
+    awk 'NR==FNR { idx[$0] = FNR; next } { printf "%s\t%06d\n", $0, idx[$0] }' \
+        "$SNAPDIR/master.txt" "$WORK/changed.txt" > "$WORK/changed_idx.tsv"
+
+    # One pass over the archive pulls out exactly the members we need; snapshot
+    # trees land in $WORK/old/trees/NNNNNN, mirroring $WORK/trees/NNNNNN.
+    cut -f2 "$WORK/changed_idx.tsv" | sed 's|^|trees/|' > "$WORK/old_members.txt"
+    mkdir -p "$WORK/old"
+    tar -xzf "$SNAPDIR/trees.tar.gz" -C "$WORK/old" -T "$WORK/old_members.txt"
+
+    while IFS=$'\t' read -r path idxp; do
         changed=$((changed + 1))
-        idx=$(grep -nxF "$path" "$SNAPDIR/master.txt" | cut -d: -f1)
-        idxp=$(printf '%06d' "$idx")
         echo "" >&2
         echo "=== CHANGED: $path" >&2
-        diff <(tar -xzO -f "$SNAPDIR/trees.tar.gz" "trees/$idxp") \
-             "$WORK/trees/$idxp" >&2 || true
-    done < <(LC_ALL=C join -t$'\t' "$SNAPDIR/manifest.tsv" "$WORK/manifest.tsv" \
-                | awk -F'\t' '$2 != $3 { print $1 }')
+        diff "$WORK/old/trees/$idxp" "$WORK/trees/$idxp" >&2 || true
+    done < "$WORK/changed_idx.tsv"
     echo "" >&2
     echo "tree-harness: $changed file(s) changed" >&2
     exit 1
