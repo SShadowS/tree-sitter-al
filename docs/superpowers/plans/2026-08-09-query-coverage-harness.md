@@ -317,12 +317,12 @@ checkouts.
 - Consumes: nothing.
 - Produces:
   - `model.Finding` — frozen dataclass with fields `detector: str`, `category: str`, `fingerprint: tuple[str, ...]`, `path: str`, `byte_offset: int`, `line: int`, `column: int`, `enclosing: str`, `snippet: str`, `detail: dict`
-  - `model.Cluster` — frozen dataclass with `detector: str`, `key: str`, `count: int`, `examples: list[Finding]`
+  - `model.Cluster` — frozen dataclass with `detector: str`, `key: str`, `count: int`, `examples: tuple[Finding, ...]` (immutable, matching the implementation — not a list)
   - `model.fingerprint_key(detector: str, parts: tuple[str, ...]) -> str` — stable `detector + "|" + "|".join(parts)`
   - `model.cluster(findings: Iterable[Finding], max_examples: int = 3) -> list[Cluster]` — sorted by count descending then key ascending
   - `model.normalize_text(text: str) -> str` — lowercase, collapse internal whitespace runs to one space, strip
   - `model.Provenance` — dataclass with `build_stamp`, `manifest_hash`, `tree_sitter_version`, `harness_version`
-  - `model.write_jsonl(path: Path, provenance: Provenance, findings: list[Finding]) -> None`
+  - `model.write_jsonl(path: Path, provenance: Provenance, findings: list[Finding]) -> None` — output must be byte-identical for the same findings in any input order, so the sort key must be TOTAL (ties broken down to `detail`, serialized stably)
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1251,6 +1251,17 @@ git commit -m "feat(qc): detector 2, ERROR/MISSING census with context
   - `fields.collect_declared_fields(grammar: dict) -> list[tuple[str, str]]` — `(rule_name, field_name)` for every FIELD in a visible, un-aliased rule
   - `fields.alias_targets(grammar: dict) -> set[str]` — rule names that appear as the content of an ALIAS anywhere
   - `fields.detect_static(grammar: dict, node_types: list[dict]) -> list[Finding]`
+
+**The four known instances are not equally severe, and the finding must say so.** Verified by parsing both forms:
+
+| Rule | Operators sharing the node | Recoverable from the tree? |
+|---|---|---|
+| `assignment_statement` | `:=` `+=` `-=` `*=` `/=` | **No.** `i := 1` and `i += 2` produce byte-identical trees, and the operator bytes are in no node, so there is no text fallback. `i += 2` means `i := i + 2`, so a dataflow consumer is silently wrong. |
+| `assignment_expression` | same five | **No.** Same collision. |
+| `is_expression` | `is` only | Yes — `is_expression` and `as_expression` are distinct node types, so the type already encodes the operator. |
+| `as_expression` | `as` only | Yes — same reason. |
+
+Put this in the finding's `detail` as `"operator_collision": true/false` (JSON-native, per the `detail` contract), so a report reader can tell information loss from redundancy without re-deriving it. The fingerprint stays `(rule, field)` — do not put severity in the key.
 
 **Related existing tool — complementary, do not duplicate or replace it.** `tools/check-field-types.py` holds ~29 hand-pinned invariants asserting the exact declared shape (`multiple`, `anon`, `types`) of specific fields, catching a separator or terminator that leaked into a field's type set. It pins the four `operator` fields that *do* survive: `additive_expression`, `multiplicative_expression`, `logical_expression`, `unary_expression`. This detector is the other half — exhaustive and automatic, finding fields that vanished entirely, which is exactly what a hand-curated allowlist cannot enumerate in advance. The failure modes do not overlap: "field carries junk" versus "field does not exist". Leave `check-field-types.py` alone; both run.
 

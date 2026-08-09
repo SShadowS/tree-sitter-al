@@ -57,7 +57,7 @@ child_by_field_name('operator') -> None
 
 `src/node-types.json` lists only `left` and `right` for `assignment_statement`. Consequences:
 
-- `:=` versus `+=` is unrecoverable from the tree. A consumer cannot distinguish assignment from compound assignment.
+- `:=` versus `+=` is unrecoverable from the tree. Verified: `i := 1` and `i += 2` both parse to `(assignment_statement left: (identifier) right: (integer))`. All five of `:=` `+=` `-=` `*=` `/=` collapse into one indistinguishable node, and since the bytes belong to no node there is no text fallback either. `i += 2` means `i := i + 2`, so a dataflow consumer is silently wrong. The `is_expression`/`as_expression` instances below are milder: their node types differ, so the type already encodes the operator.
 - `queries/highlights.scm:155` (`":=" @operator`) can never match an assignment. It matches only the plain-string `':='` inside `for_statement` (`grammar.js:3663`). Verified: running that pattern over `for i := 1 to 5 do x := i;` returns exactly **one** capture, `parent = for_statement`. The assignment's `:=` is uncapturable.
 - The bytes appear in no node at all: gap-scanning the sample yields `GAP 52 56 b' := '` and `GAP 60 64 b' += '`.
 
