@@ -1174,6 +1174,8 @@ git commit -m "feat(qc): detector 2, ERROR/MISSING census with context
   - `fields.alias_targets(grammar: dict) -> set[str]` — rule names that appear as the content of an ALIAS anywhere
   - `fields.detect_static(grammar: dict, node_types: list[dict]) -> list[Finding]`
 
+**Related existing tool — complementary, do not duplicate or replace it.** `tools/check-field-types.py` holds ~29 hand-pinned invariants asserting the exact declared shape (`multiple`, `anon`, `types`) of specific fields, catching a separator or terminator that leaked into a field's type set. It pins the four `operator` fields that *do* survive: `additive_expression`, `multiplicative_expression`, `logical_expression`, `unary_expression`. This detector is the other half — exhaustive and automatic, finding fields that vanished entirely, which is exactly what a hand-curated allowlist cannot enumerate in advance. The failure modes do not overlap: "field carries junk" versus "field does not exist". Leave `check-field-types.py` alone; both run.
+
 - [ ] **Step 1: Write the failing test**
 
 Create `tools/query_coverage/tests/test_fields.py`:
@@ -3634,21 +3636,22 @@ needs structural assertions against expected trees, which is what
 `test/corpus/` provides.
 ```
 
-Append to `validate-grammar.sh`, immediately before its final success message (find the last `echo` reporting overall success and insert above it):
+Append to `validate-grammar.sh` as **Step 5d**, after the existing `Step 5c: Compile-Checking tools/fieldwalk.c` block (around line 237) and before the timing/summary block at the end. Follow the surrounding style — that file uses `print_header` / `print_success` / `print_error` helpers and a `VALIDATION_FAILED` accumulator rather than bare `echo` and early `exit`:
 
 ```bash
-# --- query-coverage regression gate -----------------------------------------
+# Step 5d: Query-coverage regression gate
+print_header "Step 5d: Query-Coverage Harness"
+
 if [ -f tools/query_coverage/baseline.json ]; then
-    echo "Running query-coverage harness..."
     if python -m tools.query_coverage.qc run; then
-        echo "  query-coverage: no regressions"
+        print_success "query-coverage: no regressions"
     else
         qc_status=$?
-        echo "  query-coverage FAILED (exit $qc_status) — see tools/query_coverage/reports/summary.md" >&2
-        exit $qc_status
+        print_error "query-coverage failed (exit $qc_status) — see tools/query_coverage/reports/summary.md"
+        VALIDATION_FAILED=1
     fi
 else
-    echo "Skipping query-coverage (no baseline yet; run 'qc accept' to create one)"
+    echo "Skipping: no baseline yet (run 'python -m tools.query_coverage.qc accept' to create one)"
 fi
 ```
 
