@@ -3293,6 +3293,17 @@ extract-then-compare-to-itself, which can never fail.
 - Modify: `tools/query_coverage/detectors/__init__.py`
 - Create: `tools/query_coverage/tests/test_cli.py`
 
+**Scope — the manifest is a regression gate, not a discovery sweep.**
+
+Set-cover selects **59 files** covering 357 of the 391 named node types; the other 34 appear nowhere in the corpus, so that is all the coverage available, in 0.38% of the files. Excellent for node-type diversity — and the wrong instrument for sparse defects. Measured: detector 4's 16 findings live in **11 specific files out of 15,358**. A 59-file manifest reliably catches the dense clusters (`record`, `:=`, and the dropped-field audit, which is static anyway) and will almost certainly miss the dangling-else misparse, the most valuable defect this harness has found.
+
+So `run` has two scopes:
+
+- **`run`** (default) — detectors over the manifest's files. Fast, deterministic, baseline-comparable. This is what `validate-grammar.sh` invokes.
+- **`run --full-corpus`** — every detector over every `.al` file under the corpus root. Slow, and how new defects are actually found. Findings still cluster and write to `findings.jsonl`, but **must not be diffed against a manifest baseline** — the counts are not comparable. Refuse that combination outright, or require `--all` alongside it.
+
+**Print which scope ran, every time.** A report that does not say whether it saw 59 files or 15,358 cannot be interpreted.
+
 **Prerequisite — make `_tree` traversal iterative, before anything else in this task.**
 
 `detectors/_tree.py`'s `walk()` and `leaves()` are plain-recursive. A deeply nested AL file raises `RecursionError` at Python's default limit, and this is the first task to run detectors across whole corpora rather than small fixtures — Task 7's reviewer hit exactly this partway through a 15,358-file run.
