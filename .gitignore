@@ -64,6 +64,9 @@ tools/keyword-sync/__pycache__/
 # wired into validate-grammar.sh (orphan, duplicate, health and field-shape
 # checks); if they are not tracked, a fresh clone silently skips those steps.
 !tools/*.py
+# Written to the repo root by every text-format run of
+# tools/find_unused_definitions.py — a report, not a source artifact
+grammar_analysis.json
 current_orphans.txt
 orphan_report.txt
 run_query*.sh
