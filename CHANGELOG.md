@@ -402,6 +402,12 @@ public API — a change to node structure or field names is a **major** bump.
   group, because `exit` followed by `(` is a genuine shift/reduce ambiguity —
   continue the exit vs. reduce and start a new parenthesized-expression
   statement — that a `prec` nested inside `optional()` does not resolve.
+  - **Behaviour change worth calling out:** `exit (x + y) * 2;` now produces an
+    ERROR node where it previously produced a *silent* wrong tree. This is the
+    correct outcome, not a regression — alc rejects that form (`'end' expected`),
+    and the unspaced `exit(x + y) * 2;` has always errored. The spaced and
+    unspaced forms now agree with each other and with the compiler. Code that
+    means to return the product must parenthesise it: `exit((x + y) * 2);`.
 
 - **A call to a quoted-identifier procedure, e.g. `"My Proc"(42);`, no longer
   splits silently.** `call_expression`'s `function` field choice omitted

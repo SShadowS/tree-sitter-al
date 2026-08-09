@@ -22,3 +22,29 @@ codeunit 1 T { procedure X() : Integer begin exit (42); end; }
               (exit_keyword)
               return_value: (integer)))
           (end_keyword))))))
+
+================================================================================
+bare exit does not swallow a following parenthesized-expression statement
+================================================================================
+codeunit 1 T { procedure X() begin exit; (a + b); end; }
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword))
+            (parenthesized_expression
+              (additive_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))

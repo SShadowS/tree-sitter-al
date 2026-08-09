@@ -3719,9 +3719,15 @@ module.exports = grammar({
     // The two forms are separate choice alternatives with DIFFERENT precedences
     // rather than one seq with an optional group. `exit` followed by `(` is
     // genuinely ambiguous (continue the exit vs. reduce and start a
-    // parenthesized-expression statement); the parenthesised alternative must
-    // win. prec() nested inside optional() does not reach the conflicting item
-    // and leaves the conflict unresolved — attach it at the alternative.
+    // parenthesized-expression statement) and the parenthesised alternative
+    // must win. The precedence has to sit ON the alternative: prec() nested
+    // inside optional() does not reach the conflicting item, so the single-seq
+    // shape leaves the conflict unresolved. Other resolutions (e.g. a declared
+    // `conflicts` entry) may also work — this is the one that does, not the
+    // only one that could. Both alternatives are pinned by
+    // test/corpus/exit_statement_spacing_test.txt; the prec(14) arm is the one
+    // that can silently start swallowing a following parenthesized-expression
+    // statement, so keep that fixture green.
     exit_statement: $ => choice(
       prec(14, seq(
         $.exit_keyword,
