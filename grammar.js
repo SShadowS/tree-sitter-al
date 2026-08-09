@@ -935,6 +935,17 @@ module.exports = grammar({
     // erroring (previously: ERROR, first-position-only; see the
     // `tabledata_permission`/`option_member` ambiguity this shares with
     // `table_keyword`'s existing `keyword_as_identifier` precedent).
+    //
+    // KNOWN GAP (tracked, not fixed): because this stays a bare `kw()`, it is the
+    // one keyword token left outside the uniform `alias(kw(w), w)` shape, and its
+    // text lands in no node at all. In
+    //   Permissions = tabledata Customer = R, table Customer = X;
+    // the bytes spelling `tabledata` are covered by no node, while the sibling
+    // `table` does get `table_keyword -> "table"`. That is the same losslessness
+    // defect class as the `#if` begin/end bug fixed in 4.0.0. Closing it means
+    // deciding what `tabledata_permission` should look like and untangling the
+    // nested alias under `option_member`, which is a shape change in its own
+    // right — deliberately out of scope here rather than silently fine.
     _tabledata_keyword: $ => kw('tabledata'),
 
     tabledata_permission: $ => seq(

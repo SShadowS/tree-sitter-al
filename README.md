@@ -13,11 +13,11 @@ Validated against **15,358 production AL files** from the Business Central codeb
 | Metric | Value |
 |--------|-------|
 | **Success rate** | **100%** (15,358 / 15,358 files) |
-| Tests | 1,451 |
-| parser.c size | ~28 MB |
-| grammar.js | ~3,930 lines |
-| Named keywords | 82 (queryable via highlights/tags) |
-| Scanner tokens | 8 (stateful, depth-tracking) |
+| Tests | 1,514 |
+| parser.c size | ~26 MB |
+| grammar.js | ~4,121 lines |
+| Named keywords | 83 (81 grammar rules + 2 external; queryable via highlights/tags) |
+| Scanner tokens | 9 (stateful, depth-tracking) |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
 
 ## What's new in 3.0.0
@@ -98,22 +98,22 @@ The grammar was rewritten from scratch in March 2026, achieving a **major reduct
 
 | Metric | V1 | V2 (current) |
 |--------|-----|-----|
-| parser.c | 106 MB (can't push to GitHub) | **~25 MB** |
+| parser.c | 106 MB (can't push to GitHub) | **~26 MB** |
 | Errors | 14 | **0** |
 | Success rate | 99.91% | **100%** |
-| Symbols | 2,249 | **~814** |
-| States | 29,126 | **~12,600** |
-| grammar.js | 8,500 lines | **~3,930 lines** |
-| Tests | 1,225 | **1,451** |
-| Keywords | invisible in queries | **82 named nodes** |
+| Symbols | 2,249 | **~846** |
+| States | 29,126 | **~12,545** |
+| grammar.js | 8,500 lines | **~4,121 lines** |
+| Tests | 1,225 | **1,514** |
+| Keywords | invisible in queries | **83 named nodes** |
 | Query files | 3 (partial) | **6 (comprehensive)** |
 
 ### Key design decisions
 
-- **Stateful external scanner** — 8 scanner tokens handle property disambiguation, depth tracking (`#if`/`#endif` nesting), named `begin`/`end` keywords at depth 0, and split-construct detection via lookahead.
+- **Stateful external scanner** — 9 scanner tokens handle property disambiguation, depth tracking (`#if`/`#endif` nesting), named `begin`/`end` keywords at every depth, and split-construct detection via lookahead.
 - **Parse structure, don't validate** — Accept any `Name = Value ;` as a property. Semantic validation belongs in linters/LSP servers, not the parser.
-- **Generic preprocessor** — One `preproc_conditional` rule + ~15 dedicated rules for genuinely complex split constructs (begin/end, var/begin, brace-close across `#if`/`#else` branches).
-- **82 named keyword nodes** — All keywords including `begin`/`end` are named nodes, enabling proper syntax highlighting and code navigation queries.
+- **Generic preprocessor** — One `preproc_conditional` rule + 20 dedicated rules for genuinely complex split constructs (begin/end, var/begin, brace-close across `#if`/`#else` branches).
+- **83 named keyword nodes** — All keywords including `begin`/`end` are named nodes, enabling proper syntax highlighting and code navigation queries. Every grammar keyword rule has a uniform shape: one anonymous child typed as the canonical lowercase spelling, whatever the source casing.
 
 See [docs/v2-blog-post-notes.md](docs/v2-blog-post-notes.md) for the full rewrite narrative.
 
@@ -158,8 +158,8 @@ tree-sitter parse path/to/file.al -q    # Quiet (errors only)
 | File | Purpose |
 |------|---------|
 | `grammar.js` | Main grammar definition |
-| `src/scanner.c` | External scanner (8 tokens: property, depth tracking, named begin/end, split detection) |
-| `test/corpus/` | Test suite (1,451 tests) |
+| `src/scanner.c` | External scanner (9 tokens: property, depth tracking, named begin/end, split detection) |
+| `test/corpus/` | Test suite (1,514 tests) |
 | `queries/` | Syntax highlighting, code navigation, folding, indentation, textobjects |
 
 ## Contributing

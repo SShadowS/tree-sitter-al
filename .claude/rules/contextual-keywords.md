@@ -6,15 +6,24 @@ In V2, most property/variable disambiguation is handled by the `PROPERTY_NAME` s
 
 ## Keyword-as-Identifier
 
-Some AL keywords are used as identifiers in certain contexts (e.g., `field`, `key`, `value`, `filter`, `action`, `type`, `version`). These are handled by the `keyword_as_identifier` rule:
+Some AL keywords are used as identifiers in certain contexts. These are handled by the `keyword_as_identifier` rule, which mixes bare `kw()` tokens with references to existing keyword rules:
 
 ```javascript
-keyword_as_identifier: $ => choice(
-  'field', 'key', 'value', 'separator', 'dataset', 'type', 'version', 'action'
-),
+keyword_as_identifier: $ => prec(-10, choice(
+  kw('field'),
+  $.key_keyword,
+  kw('value'),
+  kw('separator'),
+  $.dataset_keyword,
+  kw('type'),
+  kw('version'),
+  kw('action'),
+  $.table_keyword,
+  kw('assembly'),
+)),
 ```
 
-When adding new keywords that can also be identifiers, add them to this choice list.
+The `prec(-10)` makes this the last resort, so a real keyword use always wins. When adding new keywords that can also be identifiers, add them to this choice list — use `$.x_keyword` if a named rule already exists, otherwise `kw('x')`.
 
 ## Named Keywords
 

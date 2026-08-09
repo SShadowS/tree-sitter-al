@@ -48,7 +48,7 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 ## Architecture
 
 **Core Files:**
-- `grammar.js` - Main grammar definition (~4,111 lines). Never edit `src/parser.c` (auto-generated)
+- `grammar.js` - Main grammar definition (~4,121 lines). Never edit `src/parser.c` (auto-generated)
 - `src/scanner.c` - External scanner for property disambiguation and preprocessor patterns
 - `test/corpus/` - Test suite with AL code and expected parse trees (1,514 tests)
 - `queries/` - 6 query files (highlights, locals, tags, indents, folds, textobjects)
@@ -245,7 +245,7 @@ python parse_bug_finder.py file.al debug.log
 | parser.c size | 26.0 MB |
 | SYMBOL_COUNT | ~846 |
 | STATE_COUNT | ~12,545 |
-| grammar.js lines | ~4,111 |
+| grammar.js lines | ~4,121 |
 | Tests | 1,514 |
 | Production success | 100% (0 errors) |
 | Named keywords | 83 (81 rules + 2 external), uniform shape |

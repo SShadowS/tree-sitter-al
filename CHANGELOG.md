@@ -48,7 +48,11 @@ public API — a change to node structure or field names is a **major** bump.
   `PermissionSet`, `ControlAddIn`, and so on), which now all collapse to their
   canonical lowercase type. **No named node type is added, removed, or
   moved**, and all 15,358 BC.History parse trees remain byte-identical at the
-  named level. The 2 external tokens (`begin_keyword`, `end_keyword`) cannot
+  named level. 50 named entries do change in place, all of them keyword rules:
+  `{"type":"x_keyword","named":true}` becomes
+  `{"type":"x_keyword","named":true,"fields":{}}`. If you detect a leaf node by
+  the *absence* of a `fields` key rather than by child count, those 50 now read
+  as non-leaf. The 2 external tokens (`begin_keyword`, `end_keyword`) cannot
   take a child and stay childless leaves. `_tabledata_keyword` is unchanged:
   it is a hidden token helper, not a keyword node.
 
