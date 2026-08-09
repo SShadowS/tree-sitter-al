@@ -84,25 +84,35 @@ class GrammarAnalyzer:
             # Skip comments
             if line.strip().startswith('//'):
                 continue
-            
-            # Pattern 3: Check for alias patterns FIRST (before skipping definition lines)
-            # This ensures we catch references in alias definitions like: rule: $ => $._other_rule
-            alias_match = re.match(r'^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:\s*\$\s*=>\s*\$\.([a-zA-Z_][a-zA-Z0-9_]*)\s*,?\s*$', line.strip())
-            if alias_match and alias_match.group(2) in self.defined_rules:
-                aliased_rule = alias_match.group(2)
-                self.referenced_rules[aliased_rule].append({
-                    'line': line_num,
-                    'context': line.strip(),
-                    'type': 'alias_reference'
-                })
-                if aliased_rule in self.defined_rules:
-                    self.defined_rules[aliased_rule]['usage_count'] += 1
-            
-            # Skip the definition line itself (but AFTER checking for aliases)
+
+            # Pattern 3: a rule definition line carries references on its own
+            # right-hand side whenever the whole body fits on one line:
+            #     alias_rule:      $ => $._other_rule,
+            #     break_statement: $ => prec(13, $.break_keyword),
+            # Scanning starts just past the `$ =>` so the rule's own name on the
+            # left is never counted as a reference to itself. Only the explicit
+            # `$.name` form is collected here; the bare-identifier sweep
+            # (Pattern 2 below) is meaningful only inside argument lists.
+            #
+            # Previously only the bare `$ => $.other` shape was recognised and
+            # every other definition line was skipped wholesale, so any rule
+            # whose sole use was inside a wrapper such as prec() — break_keyword
+            # is the real case — was reported as an orphan.
             definition_match = re.match(r'^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:\s*\$\s*=>', line)
             if definition_match:
+                rhs = line[definition_match.end():]
+                is_alias = re.match(r'^\s*\$\.([a-zA-Z_][a-zA-Z0-9_]*)\s*,?\s*$', rhs) is not None
+                for match in re.finditer(r'\$\.([a-zA-Z_][a-zA-Z0-9_]*)', rhs):
+                    rule_name = match.group(1)
+                    self.referenced_rules[rule_name].append({
+                        'line': line_num,
+                        'context': line.strip(),
+                        'type': 'alias_reference' if is_alias else 'direct_reference'
+                    })
+                    if rule_name in self.defined_rules:
+                        self.defined_rules[rule_name]['usage_count'] += 1
                 continue
-                
+
             # Pattern 1: $.rule_name
             for match in re.finditer(r'\$\.([a-zA-Z_][a-zA-Z0-9_]*)', line):
                 rule_name = match.group(1)
