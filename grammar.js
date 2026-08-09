@@ -2868,9 +2868,17 @@ module.exports = grammar({
 
     _preproc_expression: $ => choice(
       $.identifier,
+      $.preproc_parenthesized_expression,
       $.preproc_not_expression,
       $.preproc_or_expression,
       $.preproc_and_expression,
+    ),
+
+    // `#if (FOO)` and `#if not (FOO and BAR)` — alc accepts both. Without this
+    // the condition was a MISSING identifier and the `(…)` leaked into the
+    // branch body as an expression statement.
+    preproc_parenthesized_expression: $ => seq(
+      '(', $._preproc_expression, ')'
     ),
 
     preproc_or_expression: $ => prec.left(1, seq(

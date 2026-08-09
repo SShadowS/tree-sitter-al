@@ -14094,6 +14094,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "preproc_parenthesized_expression"
+        },
+        {
+          "type": "SYMBOL",
           "name": "preproc_not_expression"
         },
         {
@@ -14103,6 +14107,23 @@
         {
           "type": "SYMBOL",
           "name": "preproc_and_expression"
+        }
+      ]
+    },
+    "preproc_parenthesized_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_preproc_expression"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
         }
       ]
     },

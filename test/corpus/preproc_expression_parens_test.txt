@@ -1,0 +1,44 @@
+================================================================================
+Parenthesized preprocessor condition
+================================================================================
+#if (FOO)
+codeunit 1 T { }
+#endif
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_parenthesized_expression
+        (identifier)))
+    (codeunit_declaration
+      (codeunit_keyword)
+      object_id: (integer)
+      object_name: (identifier))
+    (preproc_endif
+      (preproc_close))))
+
+================================================================================
+Parenthesized preprocessor condition under not
+================================================================================
+#if not (FOO and BAR)
+codeunit 1 T { }
+#endif
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_conditional_object
+    (preproc_if
+      (preproc_open)
+      condition: (preproc_not_expression
+        (preproc_parenthesized_expression
+          (preproc_and_expression
+            (identifier)
+            (identifier)))))
+    (codeunit_declaration
+      (codeunit_keyword)
+      object_id: (integer)
+      object_name: (identifier))
+    (preproc_endif
+      (preproc_close))))

@@ -10762,6 +10762,10 @@
         {
           "type": "preproc_or_expression",
           "named": true
+        },
+        {
+          "type": "preproc_parenthesized_expression",
+          "named": true
         }
       ]
     }
@@ -13018,6 +13022,10 @@
           {
             "type": "preproc_or_expression",
             "named": true
+          },
+          {
+            "type": "preproc_parenthesized_expression",
+            "named": true
           }
         ]
       }
@@ -13801,6 +13809,10 @@
           {
             "type": "preproc_or_expression",
             "named": true
+          },
+          {
+            "type": "preproc_parenthesized_expression",
+            "named": true
           }
         ]
       }
@@ -13839,6 +13851,10 @@
         {
           "type": "preproc_or_expression",
           "named": true
+        },
+        {
+          "type": "preproc_parenthesized_expression",
+          "named": true
         }
       ]
     }
@@ -13865,6 +13881,41 @@
         },
         {
           "type": "preproc_or_expression",
+          "named": true
+        },
+        {
+          "type": "preproc_parenthesized_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_parenthesized_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "preproc_and_expression",
+          "named": true
+        },
+        {
+          "type": "preproc_not_expression",
+          "named": true
+        },
+        {
+          "type": "preproc_or_expression",
+          "named": true
+        },
+        {
+          "type": "preproc_parenthesized_expression",
           "named": true
         }
       ]

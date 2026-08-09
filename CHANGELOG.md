@@ -39,6 +39,16 @@ public API — a change to node structure or field names is a **major** bump.
   `member_expression`, `qualified_enum_value`, `keyword_identifier`, and
   `subscript_expression`.
 
+- **Parenthesized preprocessor conditions no longer produce an ERROR node.**
+  `#if (FOO)` and `#if not (FOO and BAR)` both compile under alc, but
+  `_preproc_expression` only accepted a bare `identifier` as an atom — the
+  `(` became an `ERROR` node, the condition fell back to reading whatever
+  identifier followed, and the trailing `)` leaked into the branch body as a
+  detached expression statement. Added `preproc_parenthesized_expression`
+  (`'(' _preproc_expression ')'`) as a new alternative in
+  `_preproc_expression`, alongside `identifier`, `preproc_not_expression`,
+  `preproc_or_expression`, and `preproc_and_expression`.
+
 ### Removed
 
 ## [3.3.1] — 2026-08-09
