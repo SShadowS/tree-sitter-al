@@ -1,5 +1,5 @@
 ================================================================================
-Complex ColumnFilter expressions in query columns (known limitation)
+ColumnFilter with a const value in a query column
 ================================================================================
 
 query 76 "Posted Docs With No Inc Doc"
@@ -10,7 +10,7 @@ query 76 "Posted Docs With No Inc Doc"
         {
             column(NoOfIncomingDocuments)
             {
-                // This pattern is not currently supported
+                // Single entry: reaches link_value like a comma-separated one
                 ColumnFilter = NoOfIncomingDocuments = const(0);
                 Method = Count;
             }

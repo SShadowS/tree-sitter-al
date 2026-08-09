@@ -112,6 +112,90 @@ public API — a change to node structure or field names is a **major** bump.
   the `case_branch` count is identical (22,047 before and after). Guarded by
   a new row in `tools/check-field-types.py`.
 
+- **A single-entry `DataItemLink` / `RunPageLink` / `SubPageLink` /
+  `ColumnFilter` now parses as `link_value_list` → `link_value`, the same as a
+  comma-separated one. Until now it did not reach `link_value` at all.** One
+  entry is still a complete `A = B` expression, so
+  `property_expression` → `comparison_expression` parsed it too; the tie
+  survived to a GLR ambiguity, where static precedence does not apply, and the
+  arbitrary tiebreak handed every single-entry site to `property_expression`.
+  Two-or-more entries were never ambiguous — the comma rules
+  `property_expression` out — so `link_value` only ever modelled the
+  multi-entry case. A query written against `link_value` to find link
+  relationships therefore missed the single-entry form, which is the majority
+  shape for `DataItemLink` (342 of 603 sites in BC.History) and 100% of
+  `ColumnFilter`.
+
+  Before, for `DataItemLink = "Customer No." = Cust."No.";`:
+  ```
+  value: (property_expression
+    (comparison_expression
+      left: (quoted_identifier)          ; "Customer No."
+      operator: (comparison_operator)    ; =
+      right: (member_expression
+        object: (identifier)             ; Cust
+        member: (quoted_identifier))))   ; "No."
+  ```
+  After — identical to what two entries have always produced:
+  ```
+  value: (link_value_list
+    (link_value
+      field: (quoted_identifier)         ; "Customer No."
+      value: (identifier)                ; Cust
+      value: (quoted_identifier)))       ; "No."
+  ```
+  The `field(…)` / `const(…)` / `filter(…)` / `upperlimit(…)` forms move the
+  same way: the `call_expression` + `argument_list` wrapper collapses into
+  `link_value`'s own `value` field (and `filter_keyword` / `filter_value` for
+  the filter form), matching the multi-entry shape exactly.
+
+  **Scope.** Only the structured right-hand sides — `field()`, `const()`,
+  `filter()`, `upperlimit()` and the dotted `DataItem.Field` reference — are
+  routed this way. The *bare* form (`Prop = A = B` with a plain identifier or
+  quoted identifier on the right) is deliberately left as it was: in
+  production that shape is never a link, it is `Implementation` /
+  `DefaultImplementation` / `UnknownValueImplementation` syntax or an ordinary
+  boolean property expression such as `Visible = HideActions = false`, and
+  routing it through `link_value` would have mislabelled 425 such sites.
+  Note that this carve-out is an **empirical** guarantee over BC.History, not a
+  structural one: nothing in the grammar prevents a hand-written
+  `Enabled = X = field(Y)` from being labelled `link_value`. No such
+  construct is semantically legal AL, and none occurs in the 15,358-file
+  corpus, but the grammar does not enforce it.
+
+  Across all 15,358 BC.History files this moves 880 files and exactly 1,677
+  property sites — 873 `RunPageLink`, 384 `SubPageLink`, 342 `DataItemLink`,
+  47 `DataItemTableFilter`, 16 `LinkFields`, 15 `ColumnFilter`, which is
+  every remaining single-entry site of those properties. A node-instance
+  set-difference (identity = node type + exact byte range) over all 15,358
+  trees shows the delta is closed: `+1,677 link_value_list`,
+  `+1,677 link_value`, `+20 filter_keyword`, `+16 filter_value` against
+  `-1,677 property_expression`, `-1,677 comparison_expression`,
+  `-1,677 comparison_operator`, `-1,529 call_expression`/`argument_list`/
+  `identifier`, `-152 member_expression`, `-2 range_expression`. No node of
+  any other type is added or removed. The `-1,529` is `1,525 + 4`: 1,525
+  non-dotted structured sites each shed one `call_expression` wrapper, and 4
+  nested `field(filter(…))` sites shed a second — the same 4 that make
+  `+20 filter_keyword` exceed `+16 filter_value`. `node-types.json` is
+  unchanged — the declared shapes already covered both readings; only which
+  input reaches `link_value` changed.
+
+  **Highlighting.** Because the `field`/`const`/`upperlimit` keyword inside
+  `link_value` is a hidden token rather than a named `identifier` inside a
+  `call_expression`, moved sites would otherwise have lost their
+  `@function.call`, `@operator` and `@variable` captures. `queries/highlights.scm`
+  gains four `link_value` rules covering all **6,983** link sites in the corpus
+  — the 1,677 that moved and the 5,306 comma-separated ones, which never had
+  these captures either: `@property` on the target field, `@operator` on the
+  inner `=`, `@variable` on the dotted form's dataitem name, and `@property` on
+  the source field. Literal arguments such as `const(0)` keep their own literal
+  highlighting. The one capture that cannot be restored is `@function.call` on
+  the `field`/`const`/`upperlimit` token itself: it is a hidden token and no
+  query can match it. `queries/tags.scm` and `queries/locals.scm` are
+  *improved* by the same mechanism — they no longer emit a spurious
+  `reference.call` tag and `local.reference` named `field` for `field(Code)`,
+  which were never real call sites.
+
 ### Fixed
 
 - **`VAR_ATTRIBUTE_OPEN`'s remaining skips are no longer comment- and
@@ -280,66 +364,6 @@ public API — a change to node structure or field names is a **major** bump.
   identifier now carries its own `field('value', $._identifier_or_quoted)`;
   the declared `value` type set no longer includes `.`. Guarded by a new row
   in `tools/check-field-types.py`.
-
-- **A single-entry `DataItemLink` / `RunPageLink` / `SubPageLink` /
-  `ColumnFilter` now parses as `link_value_list` → `link_value`, the same as a
-  comma-separated one. Until now it did not reach `link_value` at all.** One
-  entry is still a complete `A = B` expression, so
-  `property_expression` → `comparison_expression` parsed it too; the tie
-  survived to a GLR ambiguity, where static precedence does not apply, and the
-  arbitrary tiebreak handed every single-entry site to `property_expression`.
-  Two-or-more entries were never ambiguous — the comma rules
-  `property_expression` out — so `link_value` only ever modelled the
-  multi-entry case. A query written against `link_value` to find link
-  relationships therefore missed the single-entry form, which is the majority
-  shape for `DataItemLink` (342 of 603 sites in BC.History) and 100% of
-  `ColumnFilter`.
-
-  Before, for `DataItemLink = "Customer No." = Cust."No.";`:
-  ```
-  value: (property_expression
-    (comparison_expression
-      left: (quoted_identifier)          ; "Customer No."
-      operator: (comparison_operator)    ; =
-      right: (member_expression
-        object: (identifier)             ; Cust
-        member: (quoted_identifier))))   ; "No."
-  ```
-  After — identical to what two entries have always produced:
-  ```
-  value: (link_value_list
-    (link_value
-      field: (quoted_identifier)         ; "Customer No."
-      value: (identifier)                ; Cust
-      value: (quoted_identifier)))       ; "No."
-  ```
-  The `field(…)` / `const(…)` / `filter(…)` / `upperlimit(…)` forms move the
-  same way: the `call_expression` + `argument_list` wrapper collapses into
-  `link_value`'s own `value` field (and `filter_keyword` / `filter_value` for
-  the filter form), matching the multi-entry shape exactly.
-
-  **Scope.** Only the structured right-hand sides — `field()`, `const()`,
-  `filter()`, `upperlimit()` and the dotted `DataItem.Field` reference — are
-  routed this way. The *bare* form (`Prop = A = B` with a plain identifier or
-  quoted identifier on the right) is deliberately left as it was: in
-  production that shape is never a link, it is `Implementation` /
-  `DefaultImplementation` / `UnknownValueImplementation` syntax or an ordinary
-  boolean property expression such as `Visible = HideActions = false`, and
-  routing it through `link_value` would have mislabelled 421 such sites.
-
-  Across all 15,358 BC.History files this moves 880 files and exactly 1,677
-  property sites — 873 `RunPageLink`, 384 `SubPageLink`, 342 `DataItemLink`,
-  47 `DataItemTableFilter`, 16 `LinkFields`, 15 `ColumnFilter`, which is
-  every remaining single-entry site of those properties. A node-instance
-  set-difference (identity = node type + exact byte range) over all 15,358
-  trees shows the delta is closed: `+1,677 link_value_list`,
-  `+1,677 link_value`, `+20 filter_keyword`, `+16 filter_value` against
-  `-1,677 property_expression`, `-1,677 comparison_expression`,
-  `-1,677 comparison_operator`, `-1,529 call_expression`/`argument_list`/
-  `identifier`, `-152 member_expression`, `-2 range_expression`. No node of
-  any other type is added or removed. `node-types.json` is unchanged — the
-  declared shapes already covered both readings; only which input reaches
-  `link_value` changed.
 
 ### Removed
 

@@ -703,6 +703,45 @@
 ; Keyword identifiers (contextual keywords used as values)
 (keyword_identifier) @keyword
 
+; Link values — DataItemLink, RunPageLink, SubPageLink, ColumnFilter,
+; DataItemTableFilter, LinkFields. Single-entry and comma-separated links both
+; parse to link_value, so these rules cover every link site.
+;
+; The enclosing field()/const()/upperlimit() keyword is a hidden token inside
+; link_value and cannot be captured by any query, so it carries no highlight.
+; (filter() is the named filter_keyword and is highlighted with the other
+; structure keywords above.)
+
+; Target field, left of the '='
+(link_value
+  field: [
+    (identifier)
+    (quoted_identifier)
+  ] @property)
+
+; The '=' joining target and source
+(link_value
+  "=" @operator)
+
+; Dotted source `DataItem."Field"` — the dataitem name. The field itself is
+; covered by the source-field rule below, which anchors to the last child.
+(link_value
+  value: (identifier) @variable
+  "."
+  value: (_))
+
+; Source field: the bare form, the dotted form's field, and the argument of
+; field()/const()/filter()/upperlimit(). Anchored to the last named child so it
+; never re-captures the dataitem name above. Literal arguments such as
+; `const(0)` or `const('x')` are deliberately excluded and keep their own
+; literal highlighting.
+(link_value
+  value: [
+    (identifier)
+    (quoted_identifier)
+  ] @property
+  .)
+
 ; =============================================================================
 ; Query and Report Elements
 ; =============================================================================
