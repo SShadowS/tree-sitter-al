@@ -48,9 +48,9 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 ## Architecture
 
 **Core Files:**
-- `grammar.js` - Main grammar definition (~3,400 lines). Never edit `src/parser.c` (auto-generated)
+- `grammar.js` - Main grammar definition (~4,096 lines). Never edit `src/parser.c` (auto-generated)
 - `src/scanner.c` - External scanner for property disambiguation and preprocessor patterns
-- `test/corpus/` - Test suite with AL code and expected parse trees (1,404 tests)
+- `test/corpus/` - Test suite with AL code and expected parse trees (1,507 tests)
 - `queries/` - 6 query files (highlights, locals, tags, indents, folds, textobjects)
 
 **Key Design Principles (V2 architecture):**
@@ -112,7 +112,7 @@ if_keyword: $ => prec(10, alias(kw('if'), 'if')), // keeps an anonymous "if" chi
 
 The depth counter no longer decides whether the keyword is *named*; it decides only whether a `PREPROC_SPLIT_*` token gets first refusal. Both decisions happen in **one** scan: the scanner reads the keyword, calls `mark_end`, runs the split lookahead, and picks the symbol from the result. They cannot be two sequential blocks — a scan that returns false discards every advance and is not re-entered at the same position.
 
-Until 3.4.0 the depth > 0 case handed off to an anonymous `kw('begin')`, which made a complete `begin … end` inside any `#if` block **vanish from the tree**: `kw()` builds a `token(PATTERN)`, and tree-sitter renders anonymous *pattern* tokens as hidden `aux_sym_*` symbols (`.visible = false`), unlike anonymous *string* tokens such as `";"`, which are visible. The keyword was lexed and then dropped, so the CST was not lossless over the source and both keywords were unhighlightable inside every `#if`.
+Until 4.0.0 the depth > 0 case handed off to an anonymous `kw('begin')`, which made a complete `begin … end` inside any `#if` block **vanish from the tree**: `kw()` builds a `token(PATTERN)`, and tree-sitter renders anonymous *pattern* tokens as hidden `aux_sym_*` symbols (`.visible = false`), unlike anonymous *string* tokens such as `";"`, which are visible. The keyword was lexed and then dropped, so the CST was not lossless over the source and both keywords were unhighlightable inside every `#if`.
 
 **Named keyword node structure — not uniform.** A named rule whose entire body is a single token collapses *into* that token, so the node's shape is decided by that token's visibility, which is the same `.visible` rule as above:
 

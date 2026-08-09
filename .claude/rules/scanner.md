@@ -43,7 +43,7 @@ The split token gets first refusal at depth > 0; the named keyword is the fallba
 
 The `end` dispatch is the same shape with `DIRECTIVE_ELSE_ENDIF` and the `;` check.
 
-Before 3.4.0 these were separate blocks and `BEGIN_KEYWORD`/`END_KEYWORD` were guarded by `state->depth == 0`, so a complete `begin … end` inside any `#if` block fell through to an anonymous `kw('begin')` — a `token(PATTERN)`, which tree-sitter renders as a hidden `aux_sym_*` symbol. The keyword was lexed and then dropped from the tree entirely.
+Before 4.0.0 these were separate blocks and `BEGIN_KEYWORD`/`END_KEYWORD` were guarded by `state->depth == 0`, so a complete `begin … end` inside any `#if` block fell through to an anonymous `kw('begin')` — a `token(PATTERN)`, which tree-sitter renders as a hidden `aux_sym_*` symbol. The keyword was lexed and then dropped from the tree entirely.
 
 ## Transparent Extras
 

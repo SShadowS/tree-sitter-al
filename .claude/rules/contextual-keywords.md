@@ -55,6 +55,6 @@ The `alias()` group exists because a bare `kw()` would have deleted the anonymou
 
 The depth counter decides only whether `PREPROC_SPLIT_BEGIN`/`PREPROC_SPLIT_END` get first refusal at depth > 0; both that and the named-keyword fallback are resolved inside a single scan.
 
-**Never reintroduce a `kw('begin')`/`kw('end')` fallback.** Until 3.4.0 the depth > 0 path handed off to one, and a complete `begin … end` inside any `#if` block then landed in no node at all: `kw()` builds a `token(PATTERN)`, and tree-sitter renders anonymous *pattern* tokens as hidden `aux_sym_*` symbols (`.visible = false`) — unlike anonymous *string* tokens such as `";"`, which are visible. The keyword was lexed and silently dropped.
+**Never reintroduce a `kw('begin')`/`kw('end')` fallback.** Until 4.0.0 the depth > 0 path handed off to one, and a complete `begin … end` inside any `#if` block then landed in no node at all: `kw()` builds a `token(PATTERN)`, and tree-sitter renders anonymous *pattern* tokens as hidden `aux_sym_*` symbols (`.visible = false`) — unlike anonymous *string* tokens such as `";"`, which are visible. The keyword was lexed and silently dropped.
 
-This `.visible` rule applies to every `kw()` in the grammar: an anonymous `kw('word')` never produces a node of its own. Wrapping it in a named rule makes the *named* node visible, but the token inside stays hidden — see the shape table below.
+This `.visible` rule applies to every `kw()` in the grammar: an anonymous `kw('word')` never produces a node of its own. Wrapping it in a named rule makes the *named* node visible, but the token inside stays hidden — see the shape table above.

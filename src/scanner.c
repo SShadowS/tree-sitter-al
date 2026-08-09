@@ -300,6 +300,16 @@ bool tree_sitter_al_external_scanner_scan(
     // Not 'begin'. When the split token is live this scan is committed to the
     // begin decision and declines outright (pre-existing behaviour); otherwise
     // fall through so the 'end' dispatch and the identifier tokens still run.
+    //
+    // CONSTRAINT this early return depends on: no parse state may offer
+    // PREPROC_SPLIT_BEGIN and END_KEYWORD at the same position. If one did,
+    // this line would swallow a legitimate 'end'. It holds today because all
+    // three $.preproc_split_begin sites in grammar.js are immediately followed
+    // by $.preproc_endif, so #endif is the only continuation the parser will
+    // accept there. Before 4.0.0 the constraint was free — END_KEYWORD was
+    // dead at depth > 0, so this guard could not shadow it. It is no longer
+    // free. Re-check it if you add a fourth $.preproc_split_begin site, and
+    // narrow the guard to the 'begin'-only case if the new site admits 'end'.
     if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_BEGIN]) return false;
   }
 
