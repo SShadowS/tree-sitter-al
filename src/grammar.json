@@ -16892,57 +16892,54 @@
       }
     },
     "exit_statement": {
-      "type": "PREC",
-      "value": 13,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "exit_keyword"
-          },
-          {
-            "type": "CHOICE",
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PREC",
+          "value": 14,
+          "content": {
+            "type": "SEQ",
             "members": [
               {
-                "type": "SEQ",
+                "type": "SYMBOL",
+                "name": "exit_keyword"
+              },
+              {
+                "type": "STRING",
+                "value": "("
+              },
+              {
+                "type": "CHOICE",
                 "members": [
                   {
-                    "type": "IMMEDIATE_TOKEN",
+                    "type": "FIELD",
+                    "name": "return_value",
                     "content": {
-                      "type": "STRING",
-                      "value": "("
+                      "type": "SYMBOL",
+                      "name": "_expression"
                     }
                   },
                   {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "FIELD",
-                        "name": "return_value",
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "_expression"
-                        }
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "STRING",
-                    "value": ")"
+                    "type": "BLANK"
                   }
                 ]
               },
               {
-                "type": "BLANK"
+                "type": "STRING",
+                "value": ")"
               }
             ]
           }
-        ]
-      }
+        },
+        {
+          "type": "PREC",
+          "value": 13,
+          "content": {
+            "type": "SYMBOL",
+            "name": "exit_keyword"
+          }
+        }
+      ]
     },
     "continue_statement": {
       "type": "PREC",

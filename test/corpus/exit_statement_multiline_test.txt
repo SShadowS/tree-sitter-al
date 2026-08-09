@@ -1,0 +1,47 @@
+================================================================================
+exit with the return value's parenthesis on the next source line
+================================================================================
+codeunit 1 T
+{
+    procedure X(): Boolean
+    var
+        A: Boolean;
+        B: Boolean;
+    begin
+        exit
+            (A and B);
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (logical_expression
+                left: (identifier)
+                right: (identifier))))
+          (end_keyword))))))

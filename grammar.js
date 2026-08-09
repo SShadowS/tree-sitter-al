@@ -3583,14 +3583,26 @@ module.exports = grammar({
 
     // --- Exit ---
 
-    exit_statement: $ => prec(13, seq(
-      $.exit_keyword,
-      optional(seq(
-        token.immediate('('),
+    // The '(' is a PLAIN literal, never token.immediate — alc accepts
+    // `exit (42);` and with token.immediate the spaced form parsed SILENTLY as
+    // a bare exit_statement plus a detached sibling parenthesized_expression,
+    // dropping the return value with no ERROR node.
+    //
+    // The two forms are separate choice alternatives with DIFFERENT precedences
+    // rather than one seq with an optional group. `exit` followed by `(` is
+    // genuinely ambiguous (continue the exit vs. reduce and start a
+    // parenthesized-expression statement); the parenthesised alternative must
+    // win. prec() nested inside optional() does not reach the conflicting item
+    // and leaves the conflict unresolved — attach it at the alternative.
+    exit_statement: $ => choice(
+      prec(14, seq(
+        $.exit_keyword,
+        '(',
         optional(field('return_value', $._expression)),
         ')'
-      ))
-    )),
+      )),
+      prec(13, $.exit_keyword)
+    ),
 
     // --- Continue / Break ---
 

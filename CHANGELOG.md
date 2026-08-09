@@ -9,6 +9,24 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **`exit` followed by whitespace before its `(...)` no longer silently drops
+  the return value.** `exit_statement` used `token.immediate('(')`, so any
+  whitespace — a space, or the parenthesis on the next source line — split the
+  statement into a bare `(exit_statement (exit_keyword))` plus a detached
+  sibling `(parenthesized_expression ...)`. **No ERROR node.** alc accepts the
+  whitespace freely; AL tokenization is whitespace-insensitive between tokens.
+  Confirmed against real shipped Microsoft code, not just a synthetic case:
+  `BaseApp/Source/Base Application/Sales/Document/SalesLineReserve.Codeunit.al`,
+  `VerifyPickedQtyReservToInventory`, has `exit` with its parenthesised
+  three-line boolean condition starting on the *next* source line — every
+  release through v3.3.1 silently dropped that entire return condition from
+  the parse tree with zero ERROR nodes. `'('` is now a plain literal, and
+  `exit_statement` is a `choice` of two `prec`-differentiated alternatives
+  (parenthesised form higher) rather than one `seq` with an optional trailing
+  group, because `exit` followed by `(` is a genuine shift/reduce ambiguity —
+  continue the exit vs. reduce and start a new parenthesized-expression
+  statement — that a `prec` nested inside `optional()` does not resolve.
+
 ### Removed
 
 ## [3.3.1] — 2026-08-09

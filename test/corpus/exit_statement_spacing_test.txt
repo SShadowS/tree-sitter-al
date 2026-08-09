@@ -1,0 +1,24 @@
+================================================================================
+exit with a space before the parenthesis keeps its return value
+================================================================================
+codeunit 1 T { procedure X() : Integer begin exit (42); end; }
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (exit_statement
+              (exit_keyword)
+              return_value: (integer)))
+          (end_keyword))))))
