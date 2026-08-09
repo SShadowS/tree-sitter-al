@@ -5,7 +5,7 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
-## [Unreleased]
+## [3.3.1] — 2026-08-09
 
 Six external-scanner defects, all pre-existing and all found by a review of
 `src/scanner.c` rather than by the corpus — BC.History and DO.Support-Agents
@@ -33,15 +33,20 @@ flagged them.
   `/* */`, and both split lookaheads now route through
   `peek_directive_ci_skip_extras`.
 
-- **`PREPROC_SPLIT_END`'s `#endif` arm was unreachable.**
-  `read_keyword_ci(lexer, "else") || read_keyword_ci(lexer, "endif")` consumes
-  the shared `e` on the failed `else` attempt, so the `endif` attempt started at
-  `n` and could never match — `end; #endif` could not produce the token, despite
-  `scanner.c`, `grammar.js` and the docs all describing that form as supported.
-  This is exactly the shared-prefix hazard documented for the `#endif`/
-  `#endregion` pair in 3.3.0, sitting live twenty lines away. The rewritten
-  helper takes a target *set* and tests all of them against one buffered read of
-  the directive word.
+- **`PREPROC_SPLIT_END`'s `#endif` arm was unreachable** (no observable change
+  today — see below). `read_keyword_ci(lexer, "else") || read_keyword_ci(lexer,
+  "endif")` consumes the shared `e` on the failed `else` attempt, so the `endif`
+  attempt started at `n` and could never match. `scanner.c`, `grammar.js` and
+  the docs all describe `end; #endif` as producing the token; it could not.
+  Nothing depends on that today — the only consumer,
+  `preproc_split_code_block_end`, requires a `#else` after the token, and
+  `end; #endif` is served by `_preproc_end_guard` — so parse trees are identical
+  before and after. The value is that the branch is no longer silently dead: the
+  rewritten helper takes a target *set* and tests all of them against one
+  buffered read of the directive word, so a future rule relying on the
+  `end; #endif` form will actually work. This is the same shared-prefix hazard
+  documented for the `#endif`/`#endregion` pair in 3.3.0, which was sitting live
+  twenty lines away.
 
 - **`VAR_ATTRIBUTE_OPEN` declined a quoted name leading a multi-name
   declaration.** `[InDataSet]` followed by `"My Var", Other: Boolean;` gave 4
