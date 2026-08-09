@@ -204,10 +204,19 @@ Commit an explicit table: anchor → lexical rule → the exact set of node type
 |---|---|---|
 | `procedure` | word boundary, not preceded by `.` | `procedure_keyword` |
 | `trigger` | word boundary, not preceded by `.` | `trigger_keyword` |
-| `field(` | word boundary, not preceded by `.` | sum over `field_declaration` + link/filter field-reference types |
-| `key(`, `value(`, `action(` | word boundary, not preceded by `.` | multi-type sums, enumerated in the table |
+| `key(` | word boundary, not preceded by `.` | `key_declaration` |
+| `value(` | word boundary, not preceded by `.` | `enum_value_declaration` |
+| `action(` | word boundary, not preceded by `.` | `action_declaration` |
 
-The hidden-keyword anchors are precisely the ones needing a multi-type sum. Validate each sum once at `accept` time, then treat drift as a finding.
+Every shipped anchor turned out to be 1:1 against a node type verified to exist. The anticipated multi-type sums were not needed — but the table stays committed and reviewable, because the reason they were anticipated is real.
+
+**`field(` is excluded in v1**, and this is the case that justified writing the table down. A field reference inside a `where()` clause produces no node at all: parsing `TableRelation = Other.Code where(X = field(N))` bottoms out at `where_condition`, whose children are `identifier X`, `=`, `(`, `identifier N`, `)`. The `field` keyword is a bare `kw()` and is dropped entirely — detector 1 reports it as a byte gap, alongside `where`. So one `field_declaration` plus one where-clause reference counts 2 lexically and 1 structurally, and no node-type sum reconciles that, because the second occurrence has nothing to count.
+
+Adding `where_condition` to the sum would be the tempting fix and is wrong: `where(X = 5)` is a `where_condition` containing no field reference, so it trades a known gap for a wrong number. The anchor is excluded and the exclusion is logged, per the no-silent-caps rule.
+
+An earlier draft of this table named `field_reference` and `enum_value`. Neither exists in `src/node-types.json` — which is why the verification step below is part of the task rather than an afterthought.
+
+Validate each mapping once at `accept` time, then treat drift as a finding.
 
 Counting carries no nesting state, so it cannot desync. This matters: a full brace/`begin`-`end`-tracking shadow extractor loses sync precisely on `preproc_split_*` files, where `begin`, `end`, and the terminating `;` are deliberately split across `#if` branches. Its worst noise would land exactly where this project's bugs live. The construct-extraction half of the original design is therefore cut.
 

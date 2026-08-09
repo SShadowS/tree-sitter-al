@@ -2257,12 +2257,26 @@ class Anchor:
 ANCHORS: tuple[Anchor, ...] = (
     Anchor("procedure", _NO_DOT + r"procedure\b", ("procedure_keyword",)),
     Anchor("trigger", _NO_DOT + r"trigger\b", ("trigger_keyword",)),
-    Anchor("field(", _NO_DOT + r"field\s*\(", ("field_declaration", "field_reference")),
     Anchor("key(", _NO_DOT + r"key\s*\(", ("key_declaration",)),
-    Anchor("value(", _NO_DOT + r"value\s*\(", ("enum_value",)),
+    Anchor("value(", _NO_DOT + r"value\s*\(", ("enum_value_declaration",)),
     Anchor("action(", _NO_DOT + r"action\s*\(", ("action_declaration",)),
 )
+
+# `field(` is deliberately absent — see the note below. Report it, never
+# silently drop it: the no-silent-caps rule applies.
+EXCLUDED_ANCHORS: dict[str, str] = {
+    "field(": (
+        "a field reference inside a where() clause produces no node, so the "
+        "lexical and structural counts cannot be reconciled by any node-type sum"
+    ),
+}
 ```
+
+**These node type names are verified against this grammar. Do not substitute guesses.** An earlier draft of this plan named `field_reference` and `enum_value`; neither exists in `src/node-types.json`. Verified present: `procedure_keyword`, `trigger_keyword`, `key_declaration`, `enum_value_declaration`, `action_declaration`, `field_declaration`.
+
+**Why `field(` is excluded rather than approximated.** A `field(...)` reference inside a `where()` clause produces no node of its own. Parsing `TableRelation = Other.Code where(X = field(N))` bottoms out at `where_condition`, whose children are `identifier X`, `=`, `(`, `identifier N`, `)` — the `field` keyword is a bare `kw()` and is dropped entirely (detector 1 reports it as a byte gap, alongside `where`). So a file with one `field_declaration` plus one where-clause reference counts 2 lexically and 1 structurally, and no sum over node types reconciles that, because the second occurrence has no node to count.
+
+Do not paper over this by adding `where_condition` to the sum. A `where_condition` is not a field reference — `where(X = 5)` contains none — so that trades a known gap for a wrong number. Ship v1 without the anchor and log the exclusion.
 
 **Before implementing the detector, verify each `node_types` entry actually exists.** Run:
 
