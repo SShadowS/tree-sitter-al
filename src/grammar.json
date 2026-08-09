@@ -3685,53 +3685,251 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "TOKEN",
-                      "content": {
-                        "type": "PATTERN",
-                        "value": "(?i)field"
+              "type": "PREC_DYNAMIC",
+              "value": 1,
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "TOKEN",
+                            "content": {
+                              "type": "PATTERN",
+                              "value": "(?i)field"
+                            }
+                          },
+                          {
+                            "type": "TOKEN",
+                            "content": {
+                              "type": "PATTERN",
+                              "value": "(?i)upperlimit"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "("
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "FIELD",
+                            "name": "value",
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "_identifier_or_quoted"
+                            }
+                          },
+                          {
+                            "type": "SEQ",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "filter_keyword"
+                              },
+                              {
+                                "type": "STRING",
+                                "value": "("
+                              },
+                              {
+                                "type": "FIELD",
+                                "name": "value",
+                                "content": {
+                                  "type": "SYMBOL",
+                                  "name": "_identifier_or_quoted"
+                                }
+                              },
+                              {
+                                "type": "STRING",
+                                "value": ")"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "SEQ",
+                            "members": [
+                              {
+                                "type": "TOKEN",
+                                "content": {
+                                  "type": "PATTERN",
+                                  "value": "(?i)upperlimit"
+                                }
+                              },
+                              {
+                                "type": "STRING",
+                                "value": "("
+                              },
+                              {
+                                "type": "CHOICE",
+                                "members": [
+                                  {
+                                    "type": "FIELD",
+                                    "name": "value",
+                                    "content": {
+                                      "type": "SYMBOL",
+                                      "name": "_identifier_or_quoted"
+                                    }
+                                  },
+                                  {
+                                    "type": "SEQ",
+                                    "members": [
+                                      {
+                                        "type": "SYMBOL",
+                                        "name": "filter_keyword"
+                                      },
+                                      {
+                                        "type": "STRING",
+                                        "value": "("
+                                      },
+                                      {
+                                        "type": "FIELD",
+                                        "name": "value",
+                                        "content": {
+                                          "type": "SYMBOL",
+                                          "name": "_identifier_or_quoted"
+                                        }
+                                      },
+                                      {
+                                        "type": "STRING",
+                                        "value": ")"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "STRING",
+                                "value": ")"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "STRING",
+                        "value": ")"
                       }
-                    },
-                    {
-                      "type": "TOKEN",
-                      "content": {
-                        "type": "PATTERN",
-                        "value": "(?i)upperlimit"
+                    ]
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "TOKEN",
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "(?i)const"
+                        }
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "("
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "FIELD",
+                            "name": "value",
+                            "content": {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "string_literal"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "identifier"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "quoted_identifier"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "integer"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "boolean"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "database_reference"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "qualified_enum_value"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "keyword_identifier"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "datetime_literal"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "date_literal"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "time_literal"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "BLANK"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "STRING",
+                        "value": ")"
                       }
-                    }
-                  ]
-                },
-                {
-                  "type": "STRING",
-                  "value": "("
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "FIELD",
-                      "name": "value",
-                      "content": {
+                    ]
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
                         "type": "SYMBOL",
-                        "name": "_identifier_or_quoted"
+                        "name": "filter_keyword"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "("
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "value",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "filter_value"
+                        }
+                      },
+                      {
+                        "type": "STRING",
+                        "value": ")"
                       }
-                    },
-                    {
+                    ]
+                  },
+                  {
+                    "type": "PREC",
+                    "value": 3,
+                    "content": {
                       "type": "SEQ",
                       "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "filter_keyword"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "("
-                        },
                         {
                           "type": "FIELD",
                           "name": "value",
@@ -3742,206 +3940,17 @@
                         },
                         {
                           "type": "STRING",
-                          "value": ")"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "SEQ",
-                      "members": [
+                          "value": "."
+                        },
                         {
-                          "type": "TOKEN",
+                          "type": "FIELD",
+                          "name": "value",
                           "content": {
-                            "type": "PATTERN",
-                            "value": "(?i)upperlimit"
+                            "type": "SYMBOL",
+                            "name": "_identifier_or_quoted"
                           }
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "("
-                        },
-                        {
-                          "type": "CHOICE",
-                          "members": [
-                            {
-                              "type": "FIELD",
-                              "name": "value",
-                              "content": {
-                                "type": "SYMBOL",
-                                "name": "_identifier_or_quoted"
-                              }
-                            },
-                            {
-                              "type": "SEQ",
-                              "members": [
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "filter_keyword"
-                                },
-                                {
-                                  "type": "STRING",
-                                  "value": "("
-                                },
-                                {
-                                  "type": "FIELD",
-                                  "name": "value",
-                                  "content": {
-                                    "type": "SYMBOL",
-                                    "name": "_identifier_or_quoted"
-                                  }
-                                },
-                                {
-                                  "type": "STRING",
-                                  "value": ")"
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          "type": "STRING",
-                          "value": ")"
                         }
                       ]
-                    }
-                  ]
-                },
-                {
-                  "type": "STRING",
-                  "value": ")"
-                }
-              ]
-            },
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "TOKEN",
-                  "content": {
-                    "type": "PATTERN",
-                    "value": "(?i)const"
-                  }
-                },
-                {
-                  "type": "STRING",
-                  "value": "("
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "FIELD",
-                      "name": "value",
-                      "content": {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "string_literal"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "identifier"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "quoted_identifier"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "integer"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "boolean"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "database_reference"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "qualified_enum_value"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "keyword_identifier"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "datetime_literal"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "date_literal"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "time_literal"
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                },
-                {
-                  "type": "STRING",
-                  "value": ")"
-                }
-              ]
-            },
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "filter_keyword"
-                },
-                {
-                  "type": "STRING",
-                  "value": "("
-                },
-                {
-                  "type": "FIELD",
-                  "name": "value",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "filter_value"
-                  }
-                },
-                {
-                  "type": "STRING",
-                  "value": ")"
-                }
-              ]
-            },
-            {
-              "type": "PREC",
-              "value": 3,
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "FIELD",
-                    "name": "value",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_identifier_or_quoted"
-                    }
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "."
-                  },
-                  {
-                    "type": "FIELD",
-                    "name": "value",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_identifier_or_quoted"
                     }
                   }
                 ]

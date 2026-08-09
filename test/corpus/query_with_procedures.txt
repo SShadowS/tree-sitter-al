@@ -260,14 +260,10 @@ query 7308 CalcOutstandQtyOnWhseActLine
                         value: (quoted_identifier))))
                   (property
                     name: (property_name)
-                    value: (property_expression
-                      (comparison_expression
-                        left: (quoted_identifier)
-                        operator: (comparison_operator)
-                        right: (call_expression
-                          function: (identifier)
-                          arguments: (argument_list
-                            (integer))))))
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (integer))))
                   (property
                     name: (property_name)
                     value: (identifier))

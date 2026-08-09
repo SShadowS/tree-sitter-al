@@ -190,14 +190,10 @@ xmlport 50102 "Complex Export"
                     body: (xmlport_body
                       (property
                         name: (property_name)
-                        value: (property_expression
-                          (comparison_expression
-                            left: (quoted_identifier)
-                            operator: (comparison_operator)
-                            right: (call_expression
-                              function: (identifier)
-                              arguments: (argument_list
-                                (quoted_identifier))))))
+                        value: (link_value_list
+                          (link_value
+                            field: (quoted_identifier)
+                            value: (quoted_identifier))))
                       (xmlport_attribute
                         name: (identifier)
                         source: (member_expression

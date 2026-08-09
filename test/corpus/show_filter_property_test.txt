@@ -50,14 +50,10 @@ page 123 "Test Page"
                     value: (boolean))
                   (property
                     name: (property_name)
-                    value: (property_expression
-                      (comparison_expression
-                        left: (quoted_identifier)
-                        operator: (comparison_operator)
-                        right: (call_expression
-                          function: (identifier)
-                          arguments: (argument_list
-                            (quoted_identifier))))))))
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (quoted_identifier))))))
               (part_section
                 (part_keyword)
                 name: (quoted_identifier)

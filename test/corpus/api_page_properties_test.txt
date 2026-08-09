@@ -144,14 +144,10 @@ page 50001 "Test Page"
                     value: (identifier))
                   (property
                     name: (property_name)
-                    value: (property_expression
-                      (comparison_expression
-                        left: (identifier)
-                        operator: (comparison_operator)
-                        right: (call_expression
-                          function: (identifier)
-                          arguments: (argument_list
-                            (quoted_identifier)))))))))))))))
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        value: (quoted_identifier)))))))))))))
 
 ================================================================================
 Multiplicity property case variations

@@ -1,0 +1,174 @@
+================================================================================
+Single-entry SubPageLink reaches link_value (not property_expression)
+================================================================================
+
+page 50100 "Single Entry Link"
+{
+    layout
+    {
+        area(content)
+        {
+            part(P1; "Some Part")
+            {
+                SubPageLink = "Business Unit Filter" = field(Code);
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (part_section
+                (part_keyword)
+                name: (identifier)
+                source: (quoted_identifier)
+                body: (declaration_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)))))))))))))
+
+================================================================================
+Single-entry DataItemLink dot form and ColumnFilter const form reach link_value
+================================================================================
+
+query 50100 "Single Entry Dotted"
+{
+    elements
+    {
+        dataitem(Cust; Customer)
+        {
+            dataitem(Entry; "Cust. Ledger Entry")
+            {
+                DataItemLink = "Customer No." = Cust."No.";
+                column(Amt; Amount)
+                {
+                    ColumnFilter = Amount = const(0);
+                }
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))))
+                  (query_column
+                    (column_keyword)
+                    name: (identifier)
+                    field_name: (identifier)
+                    body: (declaration_body
+                      (property
+                        name: (property_name)
+                        value: (link_value_list
+                          (link_value
+                            field: (identifier)
+                            value: (integer)))))))))))))))
+
+================================================================================
+Bare right-hand side stays an expression: Implementation is not a link
+================================================================================
+
+codeunit 50100 "Bare Form Not A Link"
+{
+    Implementation = "Feature Data Update" = "Feature - Price Calculation";
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (property
+        name: (property_name)
+        value: (property_expression
+          (comparison_expression
+            left: (quoted_identifier)
+            operator: (comparison_operator)
+            right: (quoted_identifier)))))))
+
+================================================================================
+Bare right-hand side stays an expression: boolean property is not a link
+================================================================================
+
+page 50101 "Bare Boolean Not A Link"
+{
+    layout
+    {
+        area(content)
+        {
+            group(G1)
+            {
+                Visible = HideActions = false;
+            }
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (quoted_identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            body: (layout_body
+              (group_section
+                (group_keyword)
+                name: (identifier)
+                body: (layout_container_body
+                  (property
+                    name: (property_name)
+                    value: (property_expression
+                      (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (boolean)))))))))))))

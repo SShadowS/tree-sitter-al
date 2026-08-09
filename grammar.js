@@ -799,34 +799,55 @@ module.exports = grammar({
       field('field', $._identifier_or_quoted),
       '=',
       choice(
-        seq(
-          choice(kw('field'), kw('upperlimit')),
-          '(',
-          choice(
-            field('value', $._identifier_or_quoted),
-            seq($.filter_keyword, '(', field('value', $._identifier_or_quoted), ')'),
-            seq(kw('upperlimit'), '(', choice(
+        // --- Structured link forms -------------------------------------------
+        // field()/const()/filter()/upperlimit() and the dotted DataItem.Field
+        // reference are unambiguously link syntax. A one-entry list is still a
+        // complete `A = B` expression though, so property_expression ->
+        // comparison_expression parses it too; the tie survives to a GLR
+        // ambiguity, where static prec does not apply and the arbitrary
+        // symbol-id tiebreak used to hand every single-entry DataItemLink /
+        // RunPageLink / SubPageLink / ColumnFilter to property_expression.
+        // prec.dynamic settles it in favour of the link reading so one query
+        // on link_value finds every link site, not just the comma-separated
+        // ones. Two-or-more entries were never ambiguous — the comma already
+        // rules property_expression out — so this only moves the single-entry
+        // trees.
+        prec.dynamic(1, choice(
+          seq(
+            choice(kw('field'), kw('upperlimit')),
+            '(',
+            choice(
               field('value', $._identifier_or_quoted),
               seq($.filter_keyword, '(', field('value', $._identifier_or_quoted), ')'),
-            ), ')'),
+              seq(kw('upperlimit'), '(', choice(
+                field('value', $._identifier_or_quoted),
+                seq($.filter_keyword, '(', field('value', $._identifier_or_quoted), ')'),
+              ), ')'),
+            ),
+            ')'
           ),
-          ')'
-        ),
-        seq(kw('const'), '(', optional(field('value', choice(
-          $.string_literal, $.identifier, $.quoted_identifier, $.integer, $.boolean,
-          $.database_reference, $.qualified_enum_value, $.keyword_identifier,
-          $.datetime_literal, $.date_literal, $.time_literal,
-        ))), ')'),
-        seq($.filter_keyword, '(', field('value', $.filter_value), ')'),
-        // Direct reference: DataItem.FieldName (used in query DataItemLink).
-        // Each identifier carries its own field; wrapping the seq put the
-        // anonymous '.' inside the value field's declared type set.
-        prec(3, seq(
-          field('value', $._identifier_or_quoted),
-          '.',
-          field('value', $._identifier_or_quoted)
+          seq(kw('const'), '(', optional(field('value', choice(
+            $.string_literal, $.identifier, $.quoted_identifier, $.integer, $.boolean,
+            $.database_reference, $.qualified_enum_value, $.keyword_identifier,
+            $.datetime_literal, $.date_literal, $.time_literal,
+          ))), ')'),
+          seq($.filter_keyword, '(', field('value', $.filter_value), ')'),
+          // Direct reference: DataItem.FieldName (used in query DataItemLink).
+          // Each identifier carries its own field; wrapping the seq put the
+          // anonymous '.' inside the value field's declared type set.
+          prec(3, seq(
+            field('value', $._identifier_or_quoted),
+            '.',
+            field('value', $._identifier_or_quoted)
+          )),
         )),
-        // Bare value: Field = "Value" or Field = Value
+        // --- Bare value: Field = "Value" or Field = Value ---------------------
+        // Deliberately NOT dynamic-boosted. A single `Prop = A = B` with a bare
+        // right-hand side is never a link in practice — it is Implementation /
+        // DefaultImplementation / UnknownValueImplementation syntax (which wants
+        // implementation_value_list) or an ordinary boolean property expression
+        // such as `Visible = HideActions = false`. Leaving this branch at
+        // dynamic 0 keeps all of those trees exactly as they are.
         field('value', prec(-1, $._identifier_or_quoted)),
       )
     ),

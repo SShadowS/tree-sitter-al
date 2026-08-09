@@ -73,16 +73,13 @@ page 60200 "Unified Range Page"
                 body: (declaration_body
                   (property
                     name: (property_name)
-                    value: (property_expression
-                      (comparison_expression
-                        left: (quoted_identifier)
-                        operator: (comparison_operator)
-                        right: (call_expression
-                          function: (identifier)
-                          arguments: (argument_list
-                            (range_expression
-                              left: (integer)
-                              right: (integer))))))))))))))))
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (integer)
+                          (integer))))))))))))))
 
 ================================================================================
 PROOF: Unified filter pattern - OR expressions work everywhere
@@ -322,11 +319,9 @@ page 60800 "Unified Identifier Page"
                 body: (declaration_body
                   (property
                     name: (property_name)
-                    value: (property_expression
-                      (comparison_expression
-                        left: (quoted_identifier)
-                        operator: (comparison_operator)
-                        right: (call_expression
-                          function: (identifier)
-                          arguments: (argument_list
-                            (identifier)))))))))))))))
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (filter_keyword)
+                        value: (filter_value
+                          (identifier))))))))))))))

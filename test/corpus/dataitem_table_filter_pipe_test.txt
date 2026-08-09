@@ -61,13 +61,11 @@ query 50100 "Production Orders"
                 body: (query_body
                   (property
                     name: (property_name)
-                    value: (property_expression
-                      (comparison_expression
-                        left: (quoted_identifier)
-                        operator: (comparison_operator)
-                        right: (member_expression
-                          object: (identifier)
-                          member: (quoted_identifier)))))
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))))
                   (property
                     name: (property_name)
                     value: (link_value_list

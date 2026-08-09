@@ -153,13 +153,11 @@ query 50102 "Top Customer Overview"
                 body: (query_body
                   (property
                     name: (property_name)
-                    value: (property_expression
-                      (comparison_expression
-                        left: (identifier)
-                        operator: (comparison_operator)
-                        right: (member_expression
-                          object: (identifier)
-                          member: (quoted_identifier)))))
+                    value: (link_value_list
+                      (link_value
+                        field: (identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))))
                   (query_column
                     (column_keyword)
                     name: (identifier)
@@ -171,13 +169,11 @@ query 50102 "Top Customer Overview"
                     body: (query_body
                       (property
                         name: (property_name)
-                        value: (property_expression
-                          (comparison_expression
-                            left: (identifier)
-                            operator: (comparison_operator)
-                            right: (member_expression
-                              object: (identifier)
-                              member: (quoted_identifier)))))
+                        value: (link_value_list
+                          (link_value
+                            field: (identifier)
+                            value: (identifier)
+                            value: (quoted_identifier))))
                       (query_column
                         (column_keyword)
                         name: (identifier)

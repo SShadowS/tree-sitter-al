@@ -41,14 +41,10 @@ query 76 "Posted Docs With No Inc Doc"
                 (declaration_body
                   (property
                     (property_name)
-                    (property_expression
-                      (comparison_expression
+                    (link_value_list
+                      (link_value
                         (identifier)
-                        (comparison_operator)
-                        (call_expression
-                          (identifier)
-                          (argument_list
-                            (integer))))))
+                        (integer))))
                   (property
                     (property_name)
                     (identifier)))))))))))
