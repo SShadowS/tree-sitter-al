@@ -146,7 +146,9 @@ codeunit 1 T
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_endif
           (preproc_close)))
       (procedure

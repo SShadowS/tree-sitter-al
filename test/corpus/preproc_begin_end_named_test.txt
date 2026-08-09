@@ -1,0 +1,189 @@
+========================================================================
+Complete begin/end inside #if is named, same as at depth 0
+========================================================================
+codeunit 50100 T
+{
+    procedure A()
+    begin
+        Message('a');
+    end;
+#if not CLEAN22
+    procedure B()
+    begin
+        Message('b');
+    end;
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal))))
+          (end_keyword)))
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            body: (statement_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+========================================================================
+Complete begin/end at #if nesting depth 2
+========================================================================
+codeunit 50100 T
+{
+#if not CLEAN22
+#if not CLEAN23
+    procedure C()
+    begin
+        Message('c');
+    end;
+#endif
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (preproc_conditional
+          (preproc_if
+            (preproc_open)
+            condition: (preproc_not_expression
+              (identifier)))
+          (procedure
+            (procedure_keyword)
+            name: (identifier)
+            body: (code_block
+              (begin_keyword)
+              body: (statement_block
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (string_literal))))
+              (end_keyword)))
+          (preproc_endif
+            (preproc_close)))
+        (preproc_endif
+          (preproc_close))))))
+
+========================================================================
+Mixed-case BEGIN/End inside #if are still named
+========================================================================
+codeunit 50100 T
+{
+#if not CLEAN22
+    procedure D()
+    BEGIN
+        Message('d');
+    End;
+#endif
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (preproc_conditional
+        (preproc_if
+          (preproc_open)
+          condition: (preproc_not_expression
+            (identifier)))
+        (procedure
+          (procedure_keyword)
+          name: (identifier)
+          body: (code_block
+            (begin_keyword)
+            body: (statement_block
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (string_literal))))
+            (end_keyword)))
+        (preproc_endif
+          (preproc_close))))))
+
+========================================================================
+PRIORITY GUARD: begin immediately before #endif stays preproc_split_begin
+========================================================================
+codeunit 50100 T
+{
+    procedure E()
+    begin
+#if not CLEAN22
+        if X.FindSet() then begin
+#endif
+            DoSomething();
+        end;
+    end;
+}
+------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_if_begin_asymmetric
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (if_keyword)
+              condition: (call_expression
+                function: (member_expression
+                  object: (identifier)
+                  member: (identifier))
+                arguments: (argument_list))
+              (then_keyword)
+              (preproc_split_begin)
+              (preproc_endif
+                (preproc_close))
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list))
+              (end_keyword)))
+          (end_keyword))))))

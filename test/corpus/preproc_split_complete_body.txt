@@ -55,6 +55,7 @@ page 50000 MyPage {
                         type: (type_specification
                           (record_type
                             reference: (quoted_identifier))))))
+                  (begin_keyword)
                   body: (statement_block
                     (call_expression
                       function: (identifier)
@@ -64,6 +65,7 @@ page 50000 MyPage {
                             object: (identifier)
                             member: (identifier))
                           value: (identifier)))))
+                  (end_keyword)
                   (preproc_else)
                   (var_section
                     (var_keyword)
@@ -73,6 +75,7 @@ page 50000 MyPage {
                         type: (type_specification
                           (record_type
                             reference: (quoted_identifier))))))
+                  (begin_keyword)
                   body: (statement_block
                     (call_expression
                       function: (identifier)
@@ -82,6 +85,7 @@ page 50000 MyPage {
                             object: (identifier)
                             member: (identifier))
                           value: (identifier)))))
+                  (end_keyword)
                   (preproc_endif
                     (preproc_close)))))))))))
 
@@ -137,6 +141,7 @@ codeunit 50000 MyCodeunit {
                   (object_reference_type
                     object_type: (codeunit_keyword)
                     reference: (quoted_identifier))))))
+          (begin_keyword)
           body: (statement_block
             (call_expression
               function: (member_expression
@@ -145,6 +150,9 @@ codeunit 50000 MyCodeunit {
               arguments: (argument_list
                 (identifier)
                 (identifier))))
+          (end_keyword)
           (preproc_else)
+          (begin_keyword)
+          (end_keyword)
           (preproc_endif
             (preproc_close)))))))

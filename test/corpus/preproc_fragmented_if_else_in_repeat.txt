@@ -74,6 +74,7 @@ codeunit 50000 "Test"
                   arguments: (argument_list)))
               (then_keyword)
               then_branch: (code_block
+                (begin_keyword)
                 body: (statement_block
                   (call_expression
                     function: (member_expression
@@ -116,7 +117,8 @@ codeunit 50000 "Test"
                             member: (identifier))
                           arguments: (argument_list))
                         operator: (comparison_operator)
-                        right: (integer))))))
+                        right: (integer)))))
+                (end_keyword))
               (else_keyword)
               (preproc_fragmented_else_tail
                 (preproc_split_begin)
@@ -168,6 +170,7 @@ codeunit 50000 "Test"
                   (preproc_open)
                   condition: (preproc_not_expression
                     (identifier)))
+                (end_keyword)
                 (preproc_endif
                   (preproc_close)))))
           (end_keyword))))))

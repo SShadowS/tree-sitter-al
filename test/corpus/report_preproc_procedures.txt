@@ -56,11 +56,13 @@ report 1111 TestReport
           (procedure_keyword)
           name: (identifier)
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))
+                  (string_literal))))
+            (end_keyword)))
         (preproc_endif
           (preproc_close)))
       (procedure
@@ -120,21 +122,25 @@ report 50000 "Complex Report"
           (procedure_keyword)
           name: (identifier)
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))
+                  (string_literal))))
+            (end_keyword)))
         (preproc_else)
         (procedure
           (procedure_keyword)
           name: (identifier)
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))
+                  (string_literal))))
+            (end_keyword)))
         (preproc_endif
           (preproc_close)))
       (preproc_conditional
@@ -160,9 +166,11 @@ report 50000 "Complex Report"
                 type: (type_specification
                   (basic_type)))))
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (assignment_statement
                 left: (identifier)
-                right: (integer)))))
+                right: (integer)))
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))

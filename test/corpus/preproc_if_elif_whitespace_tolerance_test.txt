@@ -33,7 +33,9 @@ codeunit 50000 "If Test"
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))
 
@@ -75,13 +77,17 @@ codeunit 50000 "If Test"
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_elif
           condition: (identifier))
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))
 
@@ -122,18 +128,24 @@ codeunit 50000 "If Test"
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_elif
           condition: (identifier))
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_else)
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))
 
@@ -169,13 +181,17 @@ codeunit 50000 "If Test"
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_elif
           condition: (identifier))
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))
 
@@ -238,7 +254,9 @@ codeunit 50000 "Nested If Test"
           (procedure
             (procedure_keyword)
             name: (identifier)
-            body: (code_block))
+            body: (code_block
+              (begin_keyword)
+              (end_keyword)))
           (preproc_endif
             (preproc_close)))
         (preproc_endif
@@ -320,13 +338,17 @@ codeunit 50000 "If Test"
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_elif
           condition: (identifier))
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))
 
@@ -404,7 +426,9 @@ elif CLEAN23
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (ERROR
           (UNEXPECTED '\n')
           (identifier)
@@ -412,6 +436,8 @@ elif CLEAN23
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))

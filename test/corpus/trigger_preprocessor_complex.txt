@@ -77,6 +77,7 @@ table 5880 "Test Table"
                   arguments: (argument_list)))
               (then_keyword)
               then_branch: (code_block
+                (begin_keyword)
                 body: (statement_block
                   (call_expression
                     function: (member_expression
@@ -87,7 +88,8 @@ table 5880 "Test Table"
                     function: (member_expression
                       object: (identifier)
                       member: (identifier))
-                    arguments: (argument_list))))
+                    arguments: (argument_list)))
+                (end_keyword))
               (else_keyword)
               (preproc_fragmented_else_tail
                 (preproc_split_begin)
@@ -107,6 +109,7 @@ table 5880 "Test Table"
                   (preproc_open)
                   condition: (preproc_not_expression
                     (identifier)))
+                (end_keyword)
                 (preproc_endif
                   (preproc_close)))))
           (end_keyword)))

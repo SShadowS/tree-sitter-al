@@ -34,4 +34,10 @@ controladdin_keyword: $ => prec(10, choice(
 
 ## begin/end Named via Stateful Scanner
 
-`begin_keyword` and `end_keyword` are external scanner tokens emitted at depth 0 (outside `#if` blocks). At depth > 0, the scanner declines and anonymous `kw('begin')`/`kw('end')` tokens handle preprocessor-split contexts. Direct naming via grammar rules or `alias()` still breaks GLR backtracking — the stateful scanner is the correct approach. See `docs/superpowers/specs/2026-03-24-stateful-scanner-begin-end-design.md` for details.
+`begin_keyword` and `end_keyword` are external scanner tokens emitted at **every** `#if` depth. `grammar.js` carries no `kw('begin')`/`kw('end')` fallback — begin/end are scanner-exclusive, so there is no scanner/literal pair for GLR to fork on. Direct naming via grammar rules or `alias()` still breaks GLR backtracking — the stateful scanner is the correct approach. See `docs/superpowers/specs/2026-03-24-stateful-scanner-begin-end-design.md` for details.
+
+The depth counter decides only whether `PREPROC_SPLIT_BEGIN`/`PREPROC_SPLIT_END` get first refusal at depth > 0; both that and the named-keyword fallback are resolved inside a single scan.
+
+**Never reintroduce a `kw('begin')`/`kw('end')` fallback.** Until 3.4.0 the depth > 0 path handed off to one, and a complete `begin … end` inside any `#if` block then landed in no node at all: `kw()` builds a `token(PATTERN)`, and tree-sitter renders anonymous *pattern* tokens as hidden `aux_sym_*` symbols (`.visible = false`) — unlike anonymous *string* tokens such as `";"`, which are visible. The keyword was lexed and silently dropped.
+
+This `.visible` rule applies to every `kw()` in the grammar: an anonymous `kw('word')` never produces a node. Only a `kw()` wrapped in a named rule (`if_keyword: $ => kw('if')`) is visible, and then the named node is a childless leaf.

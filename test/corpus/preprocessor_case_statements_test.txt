@@ -75,7 +75,9 @@ codeunit 50100 TestUnit
                       enum_type: (identifier)
                       value: (identifier))
                     body: (code_block
-                      (comment)))
+                      (begin_keyword)
+                      (comment)
+                      (end_keyword)))
                   (preproc_endif
                     (preproc_close))))
               (case_else_branch

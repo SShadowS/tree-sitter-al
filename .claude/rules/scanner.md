@@ -14,12 +14,36 @@ The scanner maintains a 1-byte `ScannerState` with a `depth` counter (uint8_t) t
 | `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` — used as variable name | none |
 | `PREPROC_OPEN` | `#if` — with string literal fallback in grammar | depth++ |
 | `PREPROC_CLOSE` | `#endif` — with string literal fallback in grammar | depth-- |
-| `BEGIN_KEYWORD` | `begin` at depth 0 — named node for queries | none |
-| `END_KEYWORD` | `end` at depth 0 — named node for queries | none |
+| `BEGIN_KEYWORD` | `begin` at any depth — named node for queries | none |
+| `END_KEYWORD` | `end` at any depth — named node for queries | none |
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection | none |
 | `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#else`/`#endif` — split detection | none |
 
-**Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → BEGIN_KEYWORD → END_KEYWORD → PREPROC_SPLIT_BEGIN → PREPROC_SPLIT_END → VAR_ATTRIBUTE_OPEN → CONTINUE_AS_IDENTIFIER → PROPERTY_NAME
+**Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → 'begin' dispatch (PREPROC_SPLIT_BEGIN | BEGIN_KEYWORD) → 'end' dispatch (PREPROC_SPLIT_END | END_KEYWORD) → VAR_ATTRIBUTE_OPEN → CONTINUE_AS_IDENTIFIER → PROPERTY_NAME
+
+## Single-Scan Dispatch (begin/end)
+
+`BEGIN_KEYWORD` and `PREPROC_SPLIT_BEGIN` compete for the same text, so they **must** be decided inside one scan. A scan that returns false discards every advance it made and the scanner is not re-entered at the same position — so a split block that reads `begin`, fails its lookahead and declines destroys `BEGIN_KEYWORD`'s only chance to fire.
+
+```c
+if (valid_symbols[BEGIN_KEYWORD] || valid_symbols[PREPROC_SPLIT_BEGIN]) {
+  skip_whitespace(lexer);
+  if (read_keyword_ci(lexer, "begin")) {
+    lexer->mark_end(lexer);              // pin the token to 'begin'
+    if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_BEGIN] &&
+        peek_directive_ci_skip_extras(lexer, DIRECTIVE_ENDIF)) { ... SPLIT ... }
+    if (valid_symbols[BEGIN_KEYWORD]) { ... BEGIN_KEYWORD ... }
+    return false;
+  }
+  if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_BEGIN]) return false;
+}
+```
+
+The split token gets first refusal at depth > 0; the named keyword is the fallback at every depth. A failed lookahead is not a failed scan — `begin` is still a `begin`. `mark_end` before the lookahead is what makes the fallback safe, since the lookahead advances well past the keyword.
+
+The `end` dispatch is the same shape with `DIRECTIVE_ELSE_ENDIF` and the `;` check.
+
+Before 3.4.0 these were separate blocks and `BEGIN_KEYWORD`/`END_KEYWORD` were guarded by `state->depth == 0`, so a complete `begin … end` inside any `#if` block fell through to an anonymous `kw('begin')` — a `token(PATTERN)`, which tree-sitter renders as a hidden `aux_sym_*` symbol. The keyword was lexed and then dropped from the tree entirely.
 
 ## Transparent Extras
 

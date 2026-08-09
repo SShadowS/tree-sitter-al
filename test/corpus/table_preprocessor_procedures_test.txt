@@ -63,11 +63,13 @@ table 50100 "Test Table"
           (procedure_keyword)
           name: (identifier)
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))
+                  (string_literal))))
+            (end_keyword)))
         (preproc_endif
           (preproc_close)))
       (procedure
@@ -149,6 +151,7 @@ table 50101 "VAT Amount Line"
               type: (type_specification
                 (basic_type))))
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (call_expression
                 function: (member_expression
@@ -169,7 +172,8 @@ table 50101 "VAT Amount Line"
                 function: (member_expression
                   object: (identifier)
                   member: (identifier))
-                arguments: (argument_list)))))
+                arguments: (argument_list)))
+            (end_keyword)))
         (preproc_endif
           (preproc_close)))
       (preproc_conditional
@@ -197,6 +201,7 @@ table 50101 "VAT Amount Line"
               type: (type_specification
                 (basic_type))))
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (assignment_statement
                 left: (quoted_identifier)
@@ -206,7 +211,8 @@ table 50101 "VAT Amount Line"
                 right: (identifier))
               (call_expression
                 function: (identifier)
-                arguments: (argument_list)))))
+                arguments: (argument_list)))
+            (end_keyword)))
         (preproc_endif
           (preproc_close)))
       (procedure
@@ -257,11 +263,13 @@ table 50102 "Test Table"
           (procedure_keyword)
           name: (identifier)
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))
+                  (string_literal))))
+            (end_keyword)))
         (preproc_else)
         (attribute_item
           attribute: (attribute_content
@@ -274,11 +282,13 @@ table 50102 "Test Table"
           (procedure_keyword)
           name: (identifier)
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))
+                  (string_literal))))
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))
 
@@ -345,10 +355,12 @@ table 50103 "Test Table"
           (trigger_keyword)
           name: (identifier)
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (call_expression
                 function: (identifier)
-                arguments: (argument_list)))))
+                arguments: (argument_list)))
+            (end_keyword)))
         (attribute_item
           attribute: (attribute_content
             name: (identifier)
@@ -360,7 +372,9 @@ table 50103 "Test Table"
           (procedure_keyword)
           name: (identifier)
           body: (code_block
-            (comment)))
+            (begin_keyword)
+            (comment)
+            (end_keyword)))
         (preproc_endif
           (preproc_close)))
       (trigger_declaration
@@ -405,10 +419,12 @@ table 50104 "Test Table"
           (procedure_keyword)
           name: (identifier)
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))
+                  (string_literal))))
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))

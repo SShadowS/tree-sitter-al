@@ -59,7 +59,7 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 - **Generic property rule** — ONE `property` rule handles all simple properties (vs V1's 291 individual rules)
 - **Generic preprocessor** — ONE `preproc_conditional` rule + ~12 dedicated split-construct rules (vs V1's 63)
 - **Named keyword nodes** — 82 keywords exposed as named nodes for query matching (including `begin_keyword`, `end_keyword`)
-- **Stateful scanner** — 1-byte depth counter tracks `#if`/`#endif` nesting; `begin`/`end` named at depth 0, anonymous at depth > 0
+- **Stateful scanner** — 1-byte depth counter tracks `#if`/`#endif` nesting; `begin`/`end` are named at every depth, and the depth counter decides only whether a `PREPROC_SPLIT_*` token gets first refusal
 
 **Scanner Tokens:**
 
@@ -69,8 +69,8 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 | `CONTINUE_AS_IDENTIFIER` | `continue` followed by `:=` — used as variable name |
 | `PREPROC_OPEN` | `#if` — increments depth counter |
 | `PREPROC_CLOSE` | `#endif` — decrements depth counter |
-| `BEGIN_KEYWORD` | `begin` at depth 0 — named node for queries |
-| `END_KEYWORD` | `end` at depth 0 — named node for queries |
+| `BEGIN_KEYWORD` | `begin` at any depth — named node for queries |
+| `END_KEYWORD` | `end` at any depth — named node for queries |
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection |
 | `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#else`/`#endif` — split detection |
 
@@ -108,9 +108,16 @@ table_keyword: $ => kw('table'),
 procedure_keyword: $ => kw('procedure'),
 ```
 
-**begin/end are named via stateful scanner** — `begin_keyword` and `end_keyword` are emitted at depth 0 (outside `#if` blocks). At depth > 0, the scanner declines and anonymous `kw('begin')`/`kw('end')` tokens handle preprocessor-split contexts. Direct naming via grammar rules or `alias()` still breaks GLR backtracking — the stateful scanner is the correct approach.
+**begin/end are named via stateful scanner** — `begin_keyword` and `end_keyword` are emitted at **every** depth. `grammar.js` has no `kw('begin')`/`kw('end')` fallback: begin/end are scanner-exclusive, the same way `#if`/`#endif` became scanner-exclusive in 3.2.0, so there is no scanner/literal pair for GLR to fork on. Direct naming via grammar rules or `alias()` still breaks GLR backtracking — the stateful scanner is the correct approach.
 
-**Named keyword node structure** — Named keyword rules (e.g., `exit_keyword`) wrap anonymous string children (`"exit"`). When tree-walking into children, you hit the anonymous string — this is expected tree-sitter behavior, not a grammar bug. The named node is the parent; the literal text is an anonymous child.
+The depth counter no longer decides whether the keyword is *named*; it decides only whether a `PREPROC_SPLIT_*` token gets first refusal. Both decisions happen in **one** scan: the scanner reads the keyword, calls `mark_end`, runs the split lookahead, and picks the symbol from the result. They cannot be two sequential blocks — a scan that returns false discards every advance and is not re-entered at the same position.
+
+Until 3.4.0 the depth > 0 case handed off to an anonymous `kw('begin')`, which made a complete `begin … end` inside any `#if` block **vanish from the tree**: `kw()` builds a `token(PATTERN)`, and tree-sitter renders anonymous *pattern* tokens as hidden `aux_sym_*` symbols (`.visible = false`), unlike anonymous *string* tokens such as `";"`, which are visible. The keyword was lexed and then dropped, so the CST was not lossless over the source and both keywords were unhighlightable inside every `#if`.
+
+**Named keyword node structure** — this differs by how the keyword rule is built, and the difference is the same `.visible` rule as above:
+- `kw()`-based rules (e.g. `procedure_keyword`, `if_keyword`) wrap a **hidden** pattern token. The named node prints as a childless leaf; there is no anonymous child to walk into.
+- Explicit case-`choice()` rules (e.g. `controladdin_keyword`, `codeunit_keyword`) wrap a visible anonymous **string** child (`"codeunit"`). Tree-walking into children hits that string — expected tree-sitter behavior, not a grammar bug.
+- `begin_keyword`/`end_keyword` are external scanner tokens and have no children at all.
 
 **CamelCase keywords** use explicit case alternatives:
 ```javascript
@@ -216,10 +223,10 @@ python parse_bug_finder.py file.al debug.log
 | Metric | Value |
 |--------|-------|
 | parser.c size | 24.8 MB |
-| SYMBOL_COUNT | ~862 |
-| STATE_COUNT | ~11,866 |
-| grammar.js lines | ~4,044 |
-| Tests | 1,482 |
+| SYMBOL_COUNT | ~796 |
+| STATE_COUNT | ~12,293 |
+| grammar.js lines | ~4,096 |
+| Tests | 1,507 |
 | Production success | 100% (0 errors) |
 | Named keywords | 82 |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |

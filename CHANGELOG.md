@@ -9,6 +9,36 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Changed
 
+- **`begin` and `end` inside a `#if` block are now `begin_keyword` /
+  `end_keyword` nodes. Until now they were in no node at all.**
+  **This changes the parse tree** for every `#if`-wrapped `begin … end` in the
+  corpus. The scanner declined `BEGIN_KEYWORD`/`END_KEYWORD` whenever the
+  `#if` depth counter was above zero and handed the text to an anonymous
+  `kw('begin')`/`kw('end')` — but `kw()` builds a `token(PATTERN)`, and
+  tree-sitter renders anonymous *pattern* tokens as hidden `aux_sym_*` symbols
+  (`.visible = false`), unlike anonymous *string* tokens such as `";"`, which
+  are visible. So the keyword was lexed and then dropped: `code_block` spanned
+  the text while neither a named nor an anonymous child covered `begin` or
+  `end`. The CST was not lossless over the source, and both keywords were
+  unhighlightable inside every `#if` block — `queries/highlights.scm` matched
+  nothing there. Present since before 3.3.0.
+  The depth > 0 path now reads the keyword once, calls `mark_end`, then lets
+  the split lookahead choose between `PREPROC_SPLIT_BEGIN` and `BEGIN_KEYWORD`
+  within a single scan (a scan that returns false discards its advances and is
+  not re-entered at the same position, so the two cannot be separate blocks).
+  `PREPROC_SPLIT_BEGIN`/`PREPROC_SPLIT_END` keep first refusal at depth > 0,
+  so no existing split construct changes shape.
+  All 17 `kw('begin')`/`kw('end')` sites in `grammar.js` are gone: begin/end
+  are now scanner-exclusive at every depth, the same way `#if`/`#endif` became
+  scanner-exclusive in 3.2.0, leaving no scanner/literal pair for GLR to fork
+  on. Measured against the 15,358-file BC.History corpus: 742 files change
+  shape, adding 6,239 `begin_keyword` and 6,476 `end_keyword` nodes; **no node
+  of any type is removed or moved anywhere in the corpus**. `node-types.json`
+  gains `begin_keyword`/`end_keyword` as possible children of seven
+  `preproc_split_*` rules and loses nothing — the removed `kw()` tokens were
+  hidden, so they were never in the anonymous layer to begin with. Cost:
+  `STATE_COUNT` 11,796 → 12,293, `parser.c` 23.3 → 24.8 MB.
+
 - **`case … else` bodies now parse into a single `statement_block` node
   instead of a flat, individually-fielded run of statements.**
   **This changes the parse tree** for every `case … else` branch whose body

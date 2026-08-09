@@ -258,26 +258,22 @@ bool tree_sitter_al_external_scanner_scan(
     }
   }
 
-  // BEGIN_KEYWORD: 'begin' at depth 0 only — decline at depth > 0
-  if (valid_symbols[BEGIN_KEYWORD] && state->depth == 0) {
-    skip_whitespace(lexer);
-    if (read_keyword_ci(lexer, "begin")) {
-      lexer->result_symbol = BEGIN_KEYWORD;
-      return true;
-    }
-  }
-
-  // END_KEYWORD: 'end' at depth 0 only — decline at depth > 0
-  if (valid_symbols[END_KEYWORD] && state->depth == 0) {
-    skip_whitespace(lexer);
-    if (read_keyword_ci(lexer, "end")) {
-      lexer->result_symbol = END_KEYWORD;
-      return true;
-    }
-  }
-
-  // PREPROC_SPLIT_BEGIN: 'begin' at depth > 0, before #endif (possibly with
-  // comments or transparent directive lines between)
+  // 'begin' dispatch — BEGIN_KEYWORD and PREPROC_SPLIT_BEGIN in ONE scan.
+  //
+  // These cannot be two sequential blocks. A scan that returns false discards
+  // every advance it made and the scanner is NOT re-entered at the same
+  // position, so a PREPROC_SPLIT_BEGIN block that reads 'begin', fails its
+  // lookahead and declines destroys BEGIN_KEYWORD's only chance to fire. Read
+  // the keyword once, fix the token end with mark_end, then let the lookahead
+  // choose the symbol.
+  //
+  // The split token gets first refusal at depth > 0; BEGIN_KEYWORD is the
+  // fallback at EVERY depth. It used to be guarded by `state->depth == 0`,
+  // which left a complete begin…end inside #if claimed by no visible node at
+  // all: the grammar's anonymous kw('begin') is token(PATTERN), and tree-sitter
+  // renders anonymous PATTERN tokens as hidden auxiliary symbols (unlike
+  // anonymous STRING tokens such as ";", which are visible). The keyword was
+  // lexed and then vanished from the tree.
   //
   // '#' handling: peek_directive_ci_skip_extras takes BARE directive words and
   // consumes the '#' itself. PREPROC_OPEN/CLOSE manually advance past '#'
@@ -286,45 +282,58 @@ bool tree_sitter_al_external_scanner_scan(
   //
   // Comments, #pragma, #region, #define and friends are all extras, hence all
   // transparent here (see skip_whitespace_and_comments/TRANSPARENT_DIRECTIVES).
-  if (valid_symbols[PREPROC_SPLIT_BEGIN] && state->depth > 0) {
+  if (valid_symbols[BEGIN_KEYWORD] || valid_symbols[PREPROC_SPLIT_BEGIN]) {
     skip_whitespace(lexer);
     if (read_keyword_ci(lexer, "begin")) {
       lexer->mark_end(lexer);  // token covers only 'begin'
-      if (peek_directive_ci_skip_extras(lexer, DIRECTIVE_ENDIF)) {
+      if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_BEGIN] &&
+          peek_directive_ci_skip_extras(lexer, DIRECTIVE_ENDIF)) {
         lexer->result_symbol = PREPROC_SPLIT_BEGIN;
         return true;
       }
-      // 'begin' found but #endif not next — return false.
-      // tree-sitter resets lexer to pre-scan position; anonymous kw('begin') fires.
+      if (valid_symbols[BEGIN_KEYWORD]) {
+        lexer->result_symbol = BEGIN_KEYWORD;
+        return true;
+      }
       return false;
     }
-    return false;
+    // Not 'begin'. When the split token is live this scan is committed to the
+    // begin decision and declines outright (pre-existing behaviour); otherwise
+    // fall through so the 'end' dispatch and the identifier tokens still run.
+    if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_BEGIN]) return false;
   }
 
-  // PREPROC_SPLIT_END: 'end' at depth > 0, followed by ';' then #else or #endif
-  // Analogous to PREPROC_SPLIT_BEGIN but for 'end' tokens.
-  // Fires when code_block's 'end' is inside a #if block.
-  if (valid_symbols[PREPROC_SPLIT_END] && state->depth > 0) {
+  // 'end' dispatch — END_KEYWORD and PREPROC_SPLIT_END in ONE scan, for the
+  // same reason as 'begin' above. PREPROC_SPLIT_END wants 'end' followed by
+  // ';' then #else or #endif.
+  if (valid_symbols[END_KEYWORD] || valid_symbols[PREPROC_SPLIT_END]) {
     skip_whitespace(lexer);
     if (read_keyword_ci(lexer, "end")) {
       lexer->mark_end(lexer);  // token covers only 'end'
-      // Check for ';' then #else or #endif. Comments and transparent directive
-      // lines may sit at either gap and must not stop the lookahead — before
-      // this skipped nothing, a single trailing `// note` after the `end;`
-      // silently dropped the token and the run reparsed as a call_statement
-      // with NO error nodes.
-      if (!skip_whitespace_and_comments(lexer)) return false;
-      if (lexer->lookahead == ';') {
-        lexer->advance(lexer, false);
-        if (peek_directive_ci_skip_extras(lexer, DIRECTIVE_ELSE_ENDIF)) {
-          lexer->result_symbol = PREPROC_SPLIT_END;
-          return true;
+      if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_END]) {
+        // Comments and transparent directive lines may sit at either gap and
+        // must not stop the lookahead — before this skipped nothing, a single
+        // trailing `// note` after the `end;` silently dropped the token and
+        // the run reparsed as a call_statement with NO error nodes.
+        //
+        // A failed lookahead (including the bare-'/' decline) is not a failed
+        // scan: 'end' is still an 'end', so fall through to END_KEYWORD rather
+        // than returning false. mark_end already pinned the token to 'end'.
+        if (skip_whitespace_and_comments(lexer) && lexer->lookahead == ';') {
+          lexer->advance(lexer, false);
+          if (peek_directive_ci_skip_extras(lexer, DIRECTIVE_ELSE_ENDIF)) {
+            lexer->result_symbol = PREPROC_SPLIT_END;
+            return true;
+          }
         }
       }
-      // 'end' found but not followed by ; then #else/#endif — return false.
+      if (valid_symbols[END_KEYWORD]) {
+        lexer->result_symbol = END_KEYWORD;
+        return true;
+      }
       return false;
     }
-    return false;
+    if (state->depth > 0 && valid_symbols[PREPROC_SPLIT_END]) return false;
   }
 
   // VAR_ATTRIBUTE_OPEN: match '[' when the attribute is followed by a variable

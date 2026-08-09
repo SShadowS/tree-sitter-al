@@ -195,11 +195,13 @@ xmlport 50101 "Import Data"
                           (trigger_keyword)
                           name: (identifier)
                           body: (code_block
+                            (begin_keyword)
                             body: (statement_block
                               (call_expression
                                 function: (identifier)
                                 arguments: (argument_list
-                                  (string_literal))))))))
+                                  (string_literal))))
+                            (end_keyword)))))
                     (preproc_endif
                       (preproc_close)))
                   (xmlport_element
@@ -276,7 +278,9 @@ xmlport 50102 "Complex Export"
                             (trigger_keyword)
                             name: (identifier)
                             body: (code_block
-                              (comment)))
+                              (begin_keyword)
+                              (comment)
+                              (end_keyword)))
                           (preproc_endif
                             (preproc_close)))))
                     (preproc_endif

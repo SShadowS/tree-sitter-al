@@ -90,12 +90,16 @@ codeunit 50100 MyCodeunit
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_else)
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))
 
@@ -128,7 +132,9 @@ codeunit 50100 MyCodeunit
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))
 
@@ -168,18 +174,24 @@ codeunit 50100 MyCodeunit
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_elif
           condition: (identifier))
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_else)
         (procedure
           (procedure_keyword)
           name: (identifier)
-          body: (code_block))
+          body: (code_block
+            (begin_keyword)
+            (end_keyword)))
         (preproc_endif
           (preproc_close))))))
 
@@ -226,10 +238,12 @@ codeunit 50100 Test
               condition: (boolean)
               (then_keyword)
               then_branch: (code_block
+                (begin_keyword)
                 body: (statement_block
                   (call_expression
                     function: (identifier)
-                    arguments: (argument_list))))
+                    arguments: (argument_list)))
+                (end_keyword))
               (else_keyword)
               (preproc_fragmented_else_tail
                 (preproc_split_begin)
@@ -242,6 +256,7 @@ codeunit 50100 Test
                   (preproc_open)
                   condition: (preproc_not_expression
                     (identifier)))
+                (end_keyword)
                 (preproc_endif
                   (preproc_close)))))
           (end_keyword))))))
@@ -298,6 +313,7 @@ codeunit 50100 Test
                 (preproc_open)
                 condition: (preproc_not_expression
                   (identifier)))
+              (end_keyword)
               (preproc_endif
                 (preproc_close))))
           (end_keyword))))))

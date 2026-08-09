@@ -37,11 +37,13 @@ page 50000 "Test Page"
           (trigger_keyword)
           name: (identifier)
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (call_expression
                 function: (identifier)
                 arguments: (argument_list
-                  (string_literal))))))
+                  (string_literal))))
+            (end_keyword)))
         (var_section
           (var_keyword)
           body: (var_body
@@ -180,6 +182,7 @@ page 30114 "Shpfy Order Attributes"
                   (record_type
                     reference: (quoted_identifier))))))
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (if_statement
                 (if_keyword)
@@ -207,7 +210,8 @@ page 30114 "Shpfy Order Attributes"
                     left: (identifier)
                     right: (member_expression
                       object: (identifier)
-                      member: (quoted_identifier))))))))
+                      member: (quoted_identifier))))))
+            (end_keyword)))
         (var_section
           (var_keyword)
           body: (var_body
@@ -321,6 +325,7 @@ page 50001 "Complex Page"
                 type: (type_specification
                   (basic_type)))))
           body: (code_block
+            (begin_keyword)
             body: (statement_block
               (assignment_statement
                 left: (identifier)
@@ -329,12 +334,15 @@ page 50001 "Complex Page"
                 function: (identifier)
                 arguments: (argument_list
                   (string_literal)
-                  (identifier))))))
+                  (identifier))))
+            (end_keyword)))
         (trigger_declaration
           (trigger_keyword)
           name: (identifier)
           body: (code_block
-            (comment)))
+            (begin_keyword)
+            (comment)
+            (end_keyword)))
         (var_section
           (var_keyword)
           body: (var_body

@@ -45,6 +45,7 @@ codeunit 50100 Test
                   member: (identifier))
                 arguments: (argument_list))
               (then_keyword)
+              (begin_keyword)
               (call_expression
                 function: (identifier)
                 arguments: (argument_list))
@@ -77,6 +78,7 @@ codeunit 50100 Test
                 (preproc_open)
                 condition: (preproc_not_expression
                   (identifier)))
+              (end_keyword)
               (preproc_endif
                 (preproc_close))))
           (end_keyword))))))

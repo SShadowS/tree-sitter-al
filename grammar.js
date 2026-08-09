@@ -85,8 +85,8 @@ module.exports = grammar({
     $.continue_as_identifier,   // [1] 'continue' followed by ':=' (used as variable)
     $.preproc_open,             // [2] #if — depth++
     $.preproc_close,            // [3] #endif — depth--
-    $.begin_keyword,            // [4] 'begin' at depth 0
-    $.end_keyword,              // [5] 'end' at depth 0
+    $.begin_keyword,            // [4] 'begin' — any depth, unless split claims it
+    $.end_keyword,              // [5] 'end' — any depth, unless split claims it
     $.preproc_split_begin,      // [6] 'begin' at depth > 0, immediately before #endif
     $.preproc_split_end,        // [7] 'end' at depth > 0, followed by ; then #else/#endif
     $.var_attribute_open,       // [8] '[' when attribute is followed by variable declaration
@@ -2484,7 +2484,7 @@ module.exports = grammar({
       $._pspb_if_branch,
       $._pspb_else_branch,
       optional(field('body', $.statement_block)),
-      choice($.end_keyword, kw('end')),
+      $.end_keyword,
       optional(';'),
     )),
 
@@ -2492,7 +2492,7 @@ module.exports = grammar({
     _pspb_if_branch: $ => seq(
       $.preproc_if,
       optional($.var_section),
-      kw('begin'),
+      $.begin_keyword,
       optional(field('body', $.statement_block)),
       optional($._preproc_if_header),  // trailing if-then guard (body is shared code)
       $.preproc_else,
@@ -2501,7 +2501,7 @@ module.exports = grammar({
     // #else branch opener of a split procedure body — complete unit ending at #endif
     _pspb_else_branch: $ => seq(
       optional($.var_section),
-      kw('begin'),
+      $.begin_keyword,
       $.preproc_endif,
     ),
 
@@ -2519,9 +2519,9 @@ module.exports = grammar({
     // Shared body block for a single preprocessor branch: [var] begin stmts end [;]
     _preproc_branch_body: $ => seq(
       optional($.var_section),
-      kw('begin'),
+      $.begin_keyword,
       optional(field('body', $.statement_block)),
-      kw('end'),
+      $.end_keyword,
       optional(';'),
     ),
 
@@ -2622,13 +2622,17 @@ module.exports = grammar({
     ),
 
     // code_block: begin ... end;
-    // At depth 0: scanner emits begin_keyword/end_keyword (named tokens)
-    // At depth > 0: scanner declines, kw() anonymous regex handles it
+    // begin/end are scanner-exclusive at EVERY depth: the scanner emits
+    // begin_keyword/end_keyword unless a PREPROC_SPLIT_* lookahead claims the
+    // keyword first. There is deliberately no kw('begin')/kw('end') fallback —
+    // a scanner/literal split for the same text is what GLR forks on, and the
+    // anonymous kw() form is a token(PATTERN), which tree-sitter renders as a
+    // HIDDEN auxiliary symbol, so the keyword would vanish from the tree.
     code_block: $ => prec.right(seq(
-      choice($.begin_keyword, kw('begin')),
+      $.begin_keyword,
       optional(field('body', $.statement_block)),
       choice(
-        seq(choice($.end_keyword, kw('end')), optional(';')),
+        seq($.end_keyword, optional(';')),
         // Split ending: 'end' is inside #if, with different structure in #else
         // Scanner's PREPROC_SPLIT_END only fires when end;#else or end;#endif
         $.preproc_split_code_block_end,
@@ -3008,7 +3012,7 @@ module.exports = grammar({
       repeat($._statement),
       $.preproc_if,
       repeat($._statement),           // allow preamble before end
-      kw('end'),
+      $.end_keyword,
       choice(
         optional(';'),                // Pattern A: just end;
         $._else_begin_block,          // Pattern B: end else begin ... end;
@@ -3031,7 +3035,7 @@ module.exports = grammar({
     // Complete preprocessor-guarded end: #if end [;] #endif
     _preproc_end_guard: $ => seq(
       $.preproc_if,
-      kw('end'),
+      $.end_keyword,
       optional(';'),
       $.preproc_endif,
     ),
@@ -3039,9 +3043,9 @@ module.exports = grammar({
     // Complete else-branch begin block: else begin stmts end [;] — a complete unit
     _else_begin_block: $ => seq(
       $.else_keyword,
-      kw('begin'),
+      $.begin_keyword,
       repeat($._statement),
-      kw('end'),
+      $.end_keyword,
       optional(';'),
     ),
 
@@ -3050,14 +3054,15 @@ module.exports = grammar({
     preproc_split_if_begin_asymmetric: $ => prec.right(26, seq(
       $._preproc_split_then_begin_open,
       repeat($._statement),
-      choice($.end_keyword, kw('end')),
+      $.end_keyword,
       optional(';'),
     )),
 
     // Split if-then-begin where BOTH branches end with `then begin` and a single
     // shared `end;` follows after #endif (BC gates the differing if-header behind
-    // `#if not CLEANxx`/`#else`). The #if-branch begin precedes #else (anonymous);
-    // the #else-branch begin precedes #endif (PREPROC_SPLIT_BEGIN).
+    // `#if not CLEANxx`/`#else`). The #if-branch begin precedes #else, so the
+    // split lookahead misses and the scanner emits begin_keyword; the
+    // #else-branch begin precedes #endif, so it is PREPROC_SPLIT_BEGIN.
     // Pattern: #if [pre] if A then begin [stmts] #else [pre] if B then begin #endif shared end;
     preproc_split_if_then_begin_else_shared: $ => prec.right(26, seq(
       $.preproc_if,
@@ -3065,7 +3070,7 @@ module.exports = grammar({
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      kw('begin'),
+      $.begin_keyword,
       repeat($._statement),
       $.preproc_else,
       repeat($._statement),
@@ -3075,7 +3080,7 @@ module.exports = grammar({
       $.preproc_split_begin,
       $.preproc_endif,
       repeat($._statement),
-      choice($.end_keyword, kw('end')),
+      $.end_keyword,
       optional(';'),
     )),
 
@@ -3088,7 +3093,7 @@ module.exports = grammar({
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      kw('begin'),
+      $.begin_keyword,
       repeat($._statement),              // extra stmts in #if branch after begin
       $.preproc_else,
       repeat($._statement),              // optional preamble in #else branch
@@ -3140,7 +3145,7 @@ module.exports = grammar({
       optional(';'),
       $.preproc_else,
       repeat($._statement),
-      kw('end'),
+      $.end_keyword,
       $._else_begin_block,
       $.preproc_endif,
     )),
@@ -3372,7 +3377,7 @@ module.exports = grammar({
       $.of_keyword,
       optional(field('body', $.case_body)),
       optional($.case_else_branch),
-      choice($.end_keyword, kw('end'))
+      $.end_keyword
     )),
 
     case_body: $ => repeat1(choice(
