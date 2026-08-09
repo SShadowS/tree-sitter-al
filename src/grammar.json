@@ -6336,26 +6336,25 @@
           "type": "FIELD",
           "name": "sizes",
           "content": {
+            "type": "SYMBOL",
+            "name": "integer"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
             "type": "SEQ",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "integer"
+                "type": "STRING",
+                "value": ","
               },
               {
-                "type": "REPEAT",
+                "type": "FIELD",
+                "name": "sizes",
                 "content": {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": ","
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "integer"
-                    }
-                  ]
+                  "type": "SYMBOL",
+                  "name": "integer"
                 }
               }
             ]

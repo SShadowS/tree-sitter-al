@@ -1,0 +1,36 @@
+================================================================================
+Multi-dimensional array sizes are individually fielded
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        A: array[10,20] of Integer;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (array_type
+                  sizes: (integer)
+                  sizes: (integer)
+                  element_type: (type_specification
+                    (basic_type)))))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))

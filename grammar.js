@@ -1292,10 +1292,16 @@ module.exports = grammar({
     ),
 
     // array[10] of Integer, array[10,20] of Text[100]
+    //
+    // Each size carries its OWN field('sizes', …). Wrapping the whole
+    // comma-separated seq in one field puts the anonymous ',' inside the field,
+    // so children_by_field_name('sizes') yields 10, ',', 20 — the same shape
+    // that made the owned-IR lowerer panic on case patterns.
     array_type: $ => seq(
       prec(1, kw('array')),
       '[',
-      field('sizes', seq($.integer, repeat(seq(',', $.integer)))),
+      field('sizes', $.integer),
+      repeat(seq(',', field('sizes', $.integer))),
       ']',
       kw('of'),
       field('element_type', $.type_specification)

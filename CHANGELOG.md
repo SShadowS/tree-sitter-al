@@ -59,6 +59,17 @@ public API — a change to node structure or field names is a **major** bump.
   touch no `#if`/`#endif` depth state, so this is a plain literal-vs-regex
   swap with no scanner interaction.
 
+- **`array_type.sizes` no longer distributes over the commas.** A
+  multi-dimensional declaration like `array[10,20] of Integer` wrapped its
+  whole comma-separated size list in one `field('sizes', seq($.integer,
+  repeat(seq(',', $.integer))))`, so the anonymous `,` sat inside the field
+  alongside the integers — `node-types.json` recorded `sizes` as `multiple:
+  true` with type set `[',', 'integer']`, and `children_by_field_name('sizes')`
+  on a two-dimensional array returned `10`, `,`, `20`. Same defect class
+  already fixed for `case` patterns (see the owned-IR lowerer comment near
+  `preproc_conditional_case_patterns`). Each size dimension now carries its
+  own `field('sizes', $.integer)`; the `sizes` type set is `['integer']` only.
+
 ### Removed
 
 ## [3.3.1] — 2026-08-09
