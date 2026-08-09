@@ -152,7 +152,7 @@ build_trees() {
     # counts come from ONE `wc` over the index files rather than a per-chunk
     # command: on Windows a process spawn costs ~33ms and `mapfile` on a 500-line
     # file costs ~38ms, so a 31-chunk loop either way threw away several seconds.
-    local nchunks last_expected base expected got idx seen=0
+    local nchunks last_expected base expected got idx seen=0 bad=0 keep
     nchunks=$(( (count + CHUNK_SIZE - 1) / CHUNK_SIZE ))
     last_expected=$(( count - (nchunks - 1) * CHUNK_SIZE ))
     while read -r got base; do
@@ -162,21 +162,34 @@ build_trees() {
         expected=$CHUNK_SIZE
         [ "$idx" -eq $(( nchunks - 1 )) ] && expected=$last_expected
         seen=$(( seen + 1 ))
-        if [ "$got" -ne "$expected" ]; then
-            local keep
-            keep=$(mktemp -d "${TMPDIR:-/tmp}/tree-harness-fail-XXXXXX")
-            cp "$WORK/chunks/$base" "$keep/" || true
-            cp "$WORK/raw/$base" "$keep/" || true
-            {
-                echo "tree-harness: chunk $base produced $got trees for $expected files"
-                echo "tree-harness:   tree-sitter status: $(cat "$WORK/rc/$base" || echo '<none recorded>')"
-                echo "tree-harness:   file list and raw output preserved in $keep"
-                echo "tree-harness:   first lines of raw output:"
-                head -n 5 "$WORK/raw/$base" 2>&1 | sed 's/^/tree-harness:     /' || true
-            } >&2
-            die "chunk $base desynced — refusing to report on an incomplete tree set"
-        fi
+        [ "$got" -eq "$expected" ] && continue
+
+        # Report EVERY short chunk before dying, not just the first: the symptom
+        # that started this was six chunks failing at once, and whether the
+        # failures cluster is the first thing you want to know.
+        bad=$(( bad + 1 ))
+        keep=$(mktemp -d "${TMPDIR:-/tmp}/tree-harness-fail-XXXXXX")
+        # Distinct destination names. These three share the basename $base at
+        # source, so copying them into $keep/ unqualified silently overwrote the
+        # file list with the raw output — leaving the half you cannot diagnose
+        # from. A copy that fails says so; it must not fail quietly.
+        preserve() {
+            cp "$1" "$2" \
+                || echo "tree-harness:   COULD NOT PRESERVE $1 — evidence incomplete" >&2
+        }
+        preserve "$WORK/chunks/$base" "$keep/filelist.txt"
+        preserve "$WORK/raw/$base"    "$keep/raw-output.txt"
+        preserve "$WORK/rc/$base"     "$keep/tree-sitter-status.txt"
+        {
+            echo "tree-harness: chunk $base produced $got trees for $expected files"
+            echo "tree-harness:   tree-sitter status: $(cat "$WORK/rc/$base" || echo '<none recorded>')"
+            echo "tree-harness:   file list, raw output and status preserved in $keep"
+            echo "tree-harness:   first lines of raw output:"
+            head -n 5 "$WORK/raw/$base" 2>&1 | sed 's/^/tree-harness:     /' || true
+        } >&2
     done < <(wc -l "$WORK"/idx/chunk_*)
+    [ "$bad" -eq 0 ] \
+        || die "$bad of $seen chunks desynced — refusing to report on an incomplete tree set"
     [ "$seen" -eq "$nchunks" ] \
         || die "only $seen of $nchunks chunks were indexed — a parse worker never ran"
 
@@ -219,11 +232,17 @@ verify)
     # verifies; only the archive layout differs, and the mismatch report reads
     # the old one through a legacy path rather than stranding stored baselines.
     if [ -f "$SNAPDIR/trees.gz" ]; then
-        SNAP_ARCHIVE="$SNAPDIR/trees.gz"; SNAP_READER=extract
+        SNAP_ARCHIVE="$SNAPDIR/trees.gz"; SNAP_READER=extract; SNAP_KIND=2
     elif [ -f "$SNAPDIR/trees.tar.gz" ]; then
-        SNAP_ARCHIVE="$SNAPDIR/trees.tar.gz"; SNAP_READER=extract-tar
+        SNAP_ARCHIVE="$SNAPDIR/trees.tar.gz"; SNAP_READER=extract-tar; SNAP_KIND=1
     else
         die "snapshot '$SNAPDIR' has no tree archive — re-run 'snapshot'"
+    fi
+    # FORMAT is metadata only if nobody checks it. Where it exists it must agree
+    # with the archive actually on disk, so a half-rewritten snapshot directory
+    # cannot be read with the wrong reader.
+    if [ -f "$SNAPDIR/FORMAT" ] && ! grep -qx "format=$SNAP_KIND" "$SNAPDIR/FORMAT"; then
+        die "snapshot '$SNAPDIR' declares $(grep -m1 '^format=' "$SNAPDIR/FORMAT" || echo 'no format') but holds a format-$SNAP_KIND archive — snapshot is inconsistent"
     fi
     WORK=$(mktemp -d)
     trap 'rm -rf "$WORK"' EXIT
@@ -241,7 +260,15 @@ verify)
     [ "$n" -gt 0 ] || die "empty file list — nothing was compared"
     [ "$snap_rows" -eq "$n" ] \
         || die "snapshot manifest has $snap_rows rows for $n files — snapshot is damaged"
+    if [ -f "$SNAPDIR/FORMAT" ] && grep -q '^trees=' "$SNAPDIR/FORMAT" \
+       && ! grep -qx "trees=$n" "$SNAPDIR/FORMAT"; then
+        die "snapshot '$SNAPDIR' declares $(grep -m1 '^trees=' "$SNAPDIR/FORMAT") but its manifest covers $n files"
+    fi
 
+    # The manifest is the gate; the archive is only read to show you a diff. A
+    # clean verify therefore never opens the archive, which means archive
+    # corruption surfaces at the moment you first need it — deliberate, but
+    # worth knowing before you rely on an old snapshot for a report.
     if cmp -s "$SNAPDIR/manifest.tsv" "$WORK/manifest.tsv"; then
         echo "tree-harness: VERIFIED — all $n parse trees byte-identical to snapshot"
         exit 0
@@ -295,34 +322,94 @@ verify)
 
     # ONE diff process for the whole delta — the old per-file loop spent ~230ms
     # on every changed file, which is where a 757-file delta lost 2.5 of its 3
-    # minutes. Run from $WORK/cmp so the headers `diff -r` emits are the
-    # fixed strings rewritten below, and pass -s so a pair that turns out
+    # minutes. Run from $WORK/cmp so the paths `diff` prints are the short fixed
+    # strings the rewriter below matches, and pass -s so a pair that turns out
     # identical still gets a `=== CHANGED:` header instead of vanishing from the
     # report. Both directories are name-sorted and names are the zero-padded
     # master.txt line numbers, so the report order matches changed_idx.tsv.
-    ( cd "$WORK/cmp" && diff -r -s old new || true ) \
-        | awk -F'\t' '
+    #
+    # The flags are set ONCE and handed to both `diff` and the rewriter. `diff`
+    # echoes its options back in every header, so a flag changed in one place
+    # and not the other used to make every `=== CHANGED:` header stop matching
+    # at once — a report that says "757 files changed" and lists none.
+    diff_flags="-r -s"
+
+    # The rewriter ASSERTS the shape it requires and aborts on anything else. It
+    # must never fall through to `{ print }` for a line it does not understand:
+    # that is how a `Binary files … differ`, or the next diff release's new
+    # message, turns into a counted-but-unlisted file. Two independent guards —
+    # unknown line aborts, and the emitted header count must equal $changed.
+    if ! ( cd "$WORK/cmp" && diff $diff_flags old new || true ) \
+        | awk -F'\t' -v hdr="diff $diff_flags old/" -v expected="$changed" '
+            function bail(line, why) {
+                printf "tree-harness: report rewriter does not recognise this %s line from diff:\n", why > "/dev/stderr"
+                printf "tree-harness:   %s\n", line > "/dev/stderr"
+                failed = 1
+                exit 2
+            }
+            # The diff body vocabulary of normal format, and nothing else:
+            # hunk ranges, the two content prefixes, the separator, and the
+            # no-trailing-newline marker. An empty changed line arrives as
+            # "< " / "> " with the trailing space, so the 2-char test covers it.
+            function is_body(s) {
+                if (s ~ /^[0-9]+(,[0-9]+)?[acd][0-9]+(,[0-9]+)?$/) return 1
+                if (substr(s, 1, 2) == "< ") return 1
+                if (substr(s, 1, 2) == "> ") return 1
+                if (s == "---") return 1
+                if (substr(s, 1, 2) == "\\ ") return 1
+                return 0
+            }
+            function head(idx,   p) {
+                if (!(idx in path)) bail($0, "unindexed")
+                p = path[idx]
+                printf "\n=== CHANGED: %s\n", p
+                emitted++
+            }
             FNR==NR { path[$2] = $1; next }
-            /^diff -r -s old\/[0-9][0-9][0-9][0-9][0-9][0-9] new\/[0-9][0-9][0-9][0-9][0-9][0-9]$/ {
-                split($0, a, " "); idx = substr(a[4], 5)
-                printf "\n=== CHANGED: %s\n", path[idx]; next
+
+            # --- file-level shapes, each matched exactly, never by prefix alone
+            index($0, hdr) == 1 {
+                rest = substr($0, length(hdr) + 1); idx = substr(rest, 1, 6)
+                if (idx ~ /^[0-9][0-9][0-9][0-9][0-9][0-9]$/ && rest == idx " new/" idx) {
+                    head(idx); next
+                }
+                bail($0, "diff-header")
             }
-            /^Files old\/[0-9][0-9][0-9][0-9][0-9][0-9] and new\/[0-9][0-9][0-9][0-9][0-9][0-9] are identical$/ {
-                split($0, a, " "); idx = substr(a[2], 5)
-                printf "\n=== CHANGED: %s\n", path[idx]; identical++; next
+            index($0, "Files old/") == 1 {
+                idx = substr($0, 11, 6)
+                if (idx ~ /^[0-9][0-9][0-9][0-9][0-9][0-9]$/ \
+                    && $0 == "Files old/" idx " and new/" idx " are identical") {
+                    head(idx); identical++; next
+                }
+                bail($0, "identical-pair")
             }
-            /^Only in new: [0-9][0-9][0-9][0-9][0-9][0-9]$/ {
-                idx = substr($0, 14)
-                printf "\n=== CHANGED: %s\n", path[idx]
-                print "tree-harness: snapshot tree for this file is missing from the archive — cannot diff"
-                next
+            index($0, "Only in ") == 1 {
+                idx = substr($0, 14, 6)
+                if (idx ~ /^[0-9][0-9][0-9][0-9][0-9][0-9]$/ && $0 == "Only in new: " idx) {
+                    head(idx)
+                    print "tree-harness: snapshot tree for this file is missing from the archive — cannot diff"
+                    next
+                }
+                bail($0, "only-in")
             }
-            { print }
+
+            # --- diff body, legal only once a file header has been emitted
+            emitted > 0 && is_body($0) { print; next }
+
+            { bail($0, "unexpected") }
+
             END {
+                if (failed) exit 2
+                if (emitted != expected) {
+                    printf "tree-harness: report listed %d file(s) but %d changed — headers were lost\n", emitted, expected > "/dev/stderr"
+                    exit 2
+                }
                 if (identical > 0)
                     printf "\ntree-harness: %d changed file(s) parsed to a tree identical to the snapshot — the snapshot manifest disagrees with the snapshot archive\n", identical
             }
-        ' "$WORK/changed_idx.tsv" - >&2
+        ' "$WORK/changed_idx.tsv" - >&2; then
+        die "the tree report is incomplete — see the rewriter message above; do not treat this run as a listing of what changed"
+    fi
 
     echo "" >&2
     echo "tree-harness: $changed file(s) changed" >&2

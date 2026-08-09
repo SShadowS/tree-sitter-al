@@ -71,6 +71,11 @@ if [ -z "${PYTHON:-}" ]; then
         fi
     done
 fi
+# Without this the targeted chunk would die on an unbound variable and emit
+# nothing, silently degrading this fixture into ../chunk-parse-failure — the
+# gate would still refuse, but for the wrong reason and with the wrong message.
+[ -n "${PYTHON:-}" ] \
+    || { echo "fixture: no working python interpreter found (set PYTHON=...)" >&2; exit 127; }
 
 # Which chunk is this invocation for? Callers pass the chunk file to --paths;
 # anything else (a warm-up parse, a single file) runs untouched.

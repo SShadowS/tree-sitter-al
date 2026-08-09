@@ -30,6 +30,7 @@ import gzip
 import hashlib
 import os
 import sys
+import zlib
 
 MARKER = b"\n(source_file"
 HEAD = b"(source_file"
@@ -204,13 +205,18 @@ def cmd_extract(argv):
 
     seen = written = 0
     # The whole blob is always consumed: `seen` is the caller's proof that the
-    # archive holds the number of trees it claims to.
-    for n, _off, _length, _sha, payload in iter_trees(ChainedBlobs(inputs), wanted=wanted):
-        seen = n
-        if payload is not None:
-            with open(os.path.join(outdir, "%06d" % n), "wb") as fh:
-                fh.write(payload)
-            written += 1
+    # archive holds the number of trees it claims to. A truncated or corrupt
+    # archive is reported as one line, not a traceback — this output is read in
+    # a terminal and pasted into reports.
+    try:
+        for n, _off, _length, _sha, payload in iter_trees(ChainedBlobs(inputs), wanted=wanted):
+            seen = n
+            if payload is not None:
+                with open(os.path.join(outdir, "%06d" % n), "wb") as fh:
+                    fh.write(payload)
+                written += 1
+    except (OSError, EOFError, zlib.error) as exc:
+        _die("archive is unreadable after %d trees: %s" % (seen, exc))
     print("%d %d %d" % (seen, written, len(wanted) - written))
     return 0
 
@@ -234,23 +240,26 @@ def cmd_extract_tar(argv):
         return 0
 
     seen = written = 0
-    with tarfile.open(archive, "r|gz") as tf:
-        for member in tf:
-            name = member.name
-            if not name.startswith("trees/"):
-                continue
-            tail = name[len("trees/"):]
-            if not tail.isdigit():
-                continue
-            seen += 1
-            n = int(tail, 10)
-            if n in wanted:
-                src = tf.extractfile(member)
-                if src is None:
+    try:
+        with tarfile.open(archive, "r|gz") as tf:
+            for member in tf:
+                name = member.name
+                if not name.startswith("trees/"):
                     continue
-                with open(os.path.join(outdir, "%06d" % n), "wb") as fh:
-                    fh.write(src.read())
-                written += 1
+                tail = name[len("trees/"):]
+                if not tail.isdigit():
+                    continue
+                seen += 1
+                n = int(tail, 10)
+                if n in wanted:
+                    src = tf.extractfile(member)
+                    if src is None:
+                        continue
+                    with open(os.path.join(outdir, "%06d" % n), "wb") as fh:
+                        fh.write(src.read())
+                    written += 1
+    except (OSError, EOFError, zlib.error, tarfile.TarError) as exc:
+        _die("archive is unreadable after %d members: %s" % (seen, exc))
     print("%d %d %d" % (seen, written, len(wanted) - written))
     return 0
 
