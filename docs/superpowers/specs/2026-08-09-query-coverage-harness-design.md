@@ -1,0 +1,202 @@
+# Query-Coverage Harness — Design
+
+**Date:** 2026-08-09
+**Status:** Approved, not yet implemented
+**Scope:** Build the harness. No grammar or query corrections in this work.
+
+## Problem
+
+The project has three quality gates, and a whole class of defect walks past all of them.
+
+| Gate | What it proves |
+|---|---|
+| `parse-al-parallel.sh` | No ERROR nodes across 15,358 production files |
+| `tools/tree-harness.sh verify` | Every file's s-expression tree is byte-identical to a saved baseline |
+| `tree-sitter test` | 1,451 hand-written corpus trees still match |
+
+None of them proves the tree actually *represents* the source, or that a consumer can *reach* a value through a query. Two real bugs demonstrate the gap:
+
+1. **`begin`/`end` dropped inside `#if`.** Until 4.0.0 the depth > 0 path fell through to an anonymous `kw('begin')`. `kw()` builds a `token(PATTERN)`, and tree-sitter renders anonymous pattern tokens as hidden `aux_sym_*` symbols with `.visible = false`. The keyword was lexed and then dropped from the tree. Zero errors, tree "stable", CST not lossless over the source, keyword unhighlightable inside every `#if`.
+
+2. **`PREPROC_SPLIT_END` stopping on a trailing comment.** The run silently reparsed as a `call_statement`. Clean error count, wrong tree, invisible to every gate.
+
+`tree-harness.sh` is structurally blind to the first case: it hashes the output of `tree-sitter parse`, which contains named nodes only (`tools/tree-harness.sh:72-76`). No hash can change when a hidden token is dropped.
+
+A third instance was found while designing this harness, and is documented below as the worked example.
+
+## Worked example: the dropped `operator` field
+
+`grammar.js:3434-3438` and `grammar.js:3446` declare:
+
+```javascript
+assignment_statement: $ => prec.dynamic(10, seq(   // 3434
+  field('left', $._expression),
+  field('operator', $._assignment_operator),
+  field('right', $._expression)
+)),
+
+_assignment_operator: $ => token(choice(':=', '+=', '-=', '*=', '/=')),   // 3446
+```
+
+`assignment_expression` (`grammar.js:3440-3444`) has the identical defect.
+
+`_assignment_operator` is a `token(choice(...))` — a hidden token. The field wrapping it is therefore dropped. Parsing `i := 1; i += 2;` gives:
+
+```
+sexp:     (assignment_statement left: (identifier) right: (integer))
+children: [('identifier', 'i'), ('integer', '1')]
+child_by_field_name('operator') -> None
+```
+
+`src/node-types.json` lists only `left` and `right` for `assignment_statement`. Consequences:
+
+- `:=` versus `+=` is unrecoverable from the tree. A consumer cannot distinguish assignment from compound assignment.
+- `queries/highlights.scm:155` (`":=" @operator`) can never match an assignment. It matches only the plain-string `':='` inside `for_statement` (`grammar.js:3663`).
+- The bytes appear in no node at all: gap-scanning the sample yields `GAP 52 56 b' := '` and `GAP 60 64 b' += '`.
+
+Measured frequency in one production file: 2,692 occurrences. Zero errors, stable tree, dead query.
+
+This example is also the harness's built-in self-test. A first run that does *not* report the `:=`, `record`, `field`, and `tabledata` clusters means a detector is broken.
+
+## Decisions
+
+| Decision | Choice | Rationale |
+|---|---|---|
+| Ground truth | The source bytes themselves | No goldens to maintain; a dropped token becomes a byte gap automatically |
+| Query layer measured | Harness-owned `inventory.scm` **and** the shipped queries, reported separately | The shipped queries were written for editors, not exhaustive extraction; mixing them produces false holes |
+| Corpus pinning | Committed manifest; corpus stays external and gitignored | Keeps Microsoft base-app source out of the repo |
+| Output | Clustered JSONL + committed baseline + markdown summary | `run` prints only NEW/FIXED clusters, so the backlog does not drown the signal |
+| Runtime | Python, loading the local `al.dll` via ctypes | Verified working, ABI 15; direct byte access; matches existing `parse_bug_finder.py` tooling |
+
+### The tautology caveat
+
+With ground truth set to the source bytes, comparing a query capture's text to the file bytes at that capture's own byte range **always passes**. It is not an assertion. Only two kinds of check are non-vacuous here:
+
+- **Existence and coverage** — every lexical occurrence of a construct has a covering node or capture.
+- **Cross-derivation agreement** — two independent derivations of the same fact disagree.
+
+`inventory.scm` must not be implemented as extract-then-compare-to-itself. Its job is to produce the artifact and to feed detector 5.
+
+## Layout
+
+```
+tools/query-coverage/
+  qc.py                    # single entry point
+  manifest.tsv             # committed: object_type \t path \t sha256 \t bytes \t reason
+  inventory.scm            # harness-owned extraction queries
+  baseline.json            # committed: accepted current state, cluster fingerprints
+  reports/                 # gitignored run output (findings.jsonl, summary.md, inventory/*.json)
+```
+
+## Commands
+
+```bash
+python tools/query-coverage/qc.py select     # rebuild manifest by set-cover over node-type vocabulary
+python tools/query-coverage/qc.py run        # parse + all detectors, diff vs baseline
+python tools/query-coverage/qc.py run --all  # ignore baseline, emit the full picture
+python tools/query-coverage/qc.py accept     # promote the current report to baseline
+```
+
+### Build freshness
+
+`run` verifies the loaded parser matches the current sources before doing anything else.
+
+Record a sha256 stamp over `grammar.js` + `src/scanner.c` at build time and compare on each run. **Do not use mtime.** Git rewrites mtimes in arbitrary order during checkouts and branch switches on Windows, so an mtime comparison produces both false alarms and false all-clears.
+
+The same stamp lets `run` skip the rebuild when nothing changed. `src/parser.c` is 26 MB; an unconditional rebuild puts a full compile inside every fix-iterate cycle for no reason.
+
+Pin the `py-tree-sitter` version in the harness's requirements. `Language(int)` already emits a `DeprecationWarning` on the installed version; the verified loading recipe has a shelf life.
+
+## Corpus selection
+
+**Greedy set-cover over per-file node-type vocabulary.** Parse the whole corpus once (this already takes about 37 seconds via the existing tree-harness path), record the set of node types each file produces, then greedily pick files that add the most previously-unseen types until no file adds anything new. Expect 100–300 files covering every node type the grammar can emit. Use parent→child type pairs rather than bare types if the flat version saturates too early.
+
+**Not biggest-file-per-type.** Measured: the biggest Query file (13.6 KB) produces zero findings, and the biggest Table spends 580 KB repeating `record` and `:=` thousands of times. Big means repetitive, not diverse. Roughly 20 files cannot exercise the ~36 complex property rules, the ~12 split-construct rules, or the long tail of 391 named node types. Keep biggest-per-type as a supplementary stress row, not as the coverage strategy.
+
+**Derive object type from the tree root, not the filename.** BC.History suffixes are inconsistent: 527 `*.PermissionSet.al`, 276 `*.permissionset.al`, 15 `*.Permissionset.al`, 25 `*.PermissionsetExt.al`, 2 `*.permissionSetExt.al`, plus 30 files with no type suffix. The file is being parsed anyway; the root child's node type is authoritative and free.
+
+`manifest.tsv` records the sha256 of each selected file. `run` aborts loudly if a file is missing or its hash drifted, rather than silently reporting against a different corpus.
+
+## Detectors
+
+### 1. Lossless coverage
+
+Walk every leaf node (`child_count == 0`) in byte order. For each adjacent pair, assert the interstitial bytes contain nothing but whitespace. Non-whitespace bytes belonging to no leaf mean a token was lexed and dropped.
+
+Implementation constraints, each of which was hit during design verification:
+
+- **Whitespace means `isspace()` or `U+FEFF`.** `grammar.js:127-137` declares both `/\s/` and `/\uFEFF/` as extras. Python's `str.isspace()` returns False for the BOM, so a naive check flags offset 0 of every BOM'd file. Decode as UTF-8 and test `ch.isspace() or ch == '\uFEFF'` (written with the escape, never as a literal BOM in source). Keep this definition slaved to the `extras` array.
+- **Walk all children, not named children.** Anonymous string tokens such as `';'` are visible leaves and legitimately provide coverage.
+- **Exclude ERROR node ranges.** Error recovery both emits ERROR leaves covering garbage and drops adjacent tokens unpredictably. Gaps inside ERROR ranges belong to detector 2; mixing them makes detector 1's clusters unstable.
+- **Fingerprint carries no byte offsets.** Key on (lowercased gap text with internal whitespace collapsed, enclosing named node type). Raw text leaks indentation into the key — `'else\r\n            if'` was observed as a distinct cluster. Offsets belong in the examples, not the key, or every corpus refresh churns the whole baseline.
+
+**Expected day-one volume: large.** Measured 7,478 gaps across the 6 biggest clean files, forming roughly 30 clusters. The grammar has 260 `kw(` call sites; every one used inline without an `alias()` wrapper drops its bytes on every clean parse. Top clusters in that sample: `record` (2,959), `:=` (2,692), `fieldelement` (668), `field` (281), `else … if` (40). Corpus-wide, expect 50–150 clusters.
+
+This is why the baseline freeze is mandatory rather than merely convenient. It is also not all noise — the `:=` cluster is the worked example above, and `_tabledata_keyword` (`grammar.js:1028`, used un-aliased at `grammar.js:1032`) produces `NON-WS GAP 36-47: b' tabledata '` on `Permissions = tabledata Foo = rimd;` with `has_error: False`.
+
+### 2. ERROR / MISSING census
+
+Per object: every ERROR and MISSING node, its enclosing named construct, and three lines of source context. Straightforward, and it keeps error-recovery artifacts out of detector 1.
+
+### 3. Dropped-field audit (static)
+
+For every `field('name', ...)` call site in `grammar.js`, check that the field name appears on the owning node type in `src/node-types.json`. A field wrapping a hidden token silently disappears; this is the general form of the `operator` bug.
+
+Runs without parsing anything and costs a single pass over two files. Highest value per line of code in the whole harness.
+
+### 4. Reserved-keyword-as-identifier audit
+
+Flag any leaf of type `identifier` whose text case-insensitively equals a hard-reserved word: `begin`, `end`, `then`, `else`, `until`, `repeat`, `case`, `exit`, `var`, `procedure`, `trigger`.
+
+Exclude the deliberate `keyword_as_identifier` whitelist (`grammar.js:4148-4159`): `field`, `key`, `value`, `separator`, `dataset`, `type`, `version`, `action`, `table`, `assembly`. Those are legitimate identifiers in AL and are whitelisted on purpose — see `.claude/rules/contextual-keywords.md`.
+
+`end` appearing as a call-statement identifier is bug 2's exact signature. Without this detector the harness would miss one of its own two motivating examples: that misparse leaves no byte gap (every byte is covered by an `identifier` leaf and punctuation) and produces no ERROR.
+
+### 5. Independent lexer and anchor counting
+
+**A mini-lexer for strings, comments, and directives only.** AL's rules here are small and unambiguous: `'...'` with `''` escaping, `//` to end of line, `/* */`, and `#`-prefixed directive lines. This is the one component that can catch parser *tokenization* errors, because it derives token boundaries without consulting the grammar. Write it from the AL language rules, not by transliterating `grammar.js` — a transliteration shares the bug and detects nothing.
+
+**Anchor counting, not construct extraction.** Per file, count occurrences of `procedure`, `trigger On`, `field(`, `key(`, `value(`, `action(` that fall outside comments and strings, and compare against the corresponding node counts from the tree. On mismatch, localize by nearest-offset diff.
+
+Counting carries no nesting state, so it cannot desync. This matters: a full brace/`begin`-`end`-tracking shadow extractor loses sync precisely on `preproc_split_*` files, where `begin`, `end`, and the terminating `;` are deliberately split across `#if` branches. Its worst noise would land exactly where this project's bugs live. The construct-extraction half of the original design is therefore cut.
+
+### 6. Shipped-query audit
+
+Two crisp invariants, replacing the noisy "node types no shipped query captures" list. Structural nodes are legitimately uncaptured by highlighting, so that list is mostly false positives.
+
+- **Keyword and operator coverage.** Every `*_keyword` node and every visible operator token must receive a capture from `queries/highlights.scm`. Directly checkable against the documented 83-keyword architecture.
+- **Dead patterns.** Any shipped-query pattern that matches zero times across the entire corpus is reported. This finds `queries/highlights.scm:155` mechanically, and finds the next one like it without anyone noticing by hand.
+
+This detector is informational and never fails the run.
+
+## inventory.scm
+
+A harness-owned extraction query file producing a semantic dump per object: object id/name/type, every property name + value + byte range, fields with id/name/type/properties, keys, triggers, procedures with parameters and return type, variable declarations, enum values, and the page layout/actions tree.
+
+It serves two purposes: it feeds detector 5's node counts, and it is the artifact a human or an LLM reads when writing corrections.
+
+**Meta-check against `node-types.json`.** Enumerate the child types of `property`'s `value` field and the element types of each section body, and fail the meta-check if any lacks an inventory pattern. Complex properties follow no naming convention — only two rules match `*_property`, while the rest are value-shape rules such as `ml_value_list` and `table_relation_value` — so a new complex property would otherwise slip into the grammar and leave `inventory.scm` silently stale. That is the same staleness failure this harness exists to eliminate.
+
+## Output
+
+**`reports/findings.jsonl`** — one finding per line, stable sort order. Each record carries the cluster fingerprint, category, object type, file path, byte offset, line/column, enclosing node type, and a source snippet.
+
+**`reports/summary.md`** — clusters with counts and up to three examples each, grouped by detector, most frequent first.
+
+**`baseline.json`** — accepted cluster fingerprints with their counts at acceptance time.
+
+`run` exits 0 unless a cluster is new relative to the baseline, or an existing cluster's count grew. It always reports FIXED clusters, so progress is visible. `--all` ignores the baseline entirely.
+
+## Failure model
+
+Report-only initially. The first `accept` freezes today's holes into `baseline.json`, which makes the harness a regression net immediately while the backlog is worked down separately. Correcting the findings is explicitly out of scope for this work.
+
+## Known limitations
+
+Stated plainly rather than discovered later. None of the six detectors catches:
+
+- **Wrong-parent attachment with correct spans.** A property landing under the wrong field when preprocessor branches interleave produces no gap, no error, and correct byte coverage.
+- **Precedence and associativity misparses inside expressions.** `a + b * c` grouped wrongly covers every byte correctly.
+- **Scanner over-consumption**, where a string or comment token swallows adjacent code — unless detector 5's lexer is genuinely independent, which is why that constraint is called out above.
+
+Closing these needs structural assertions against expected trees, which is what `test/corpus/` already provides. The harness complements those tests; it does not replace them.
