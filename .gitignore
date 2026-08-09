@@ -121,3 +121,10 @@ BC.History/
 
 # tree-harness parse-tree snapshots (regenerated locally; large)
 .snapshots/
+
+# tools/query_coverage/ is a checked-in package (query-coverage test harness),
+# not scratch — unignore its .py files despite the blanket *.py rule above,
+# and its reports/ output dir and __pycache__ dirs stay ignored.
+!tools/query_coverage/**/*.py
+tools/query_coverage/**/__pycache__/
+tools/query_coverage/reports/
