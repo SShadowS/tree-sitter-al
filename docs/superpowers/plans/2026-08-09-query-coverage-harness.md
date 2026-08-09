@@ -3308,7 +3308,7 @@ Convert both to explicit-stack iteration. `leaves()` must keep yielding in byte 
   - `qc.cmd_select(args) -> int`
   - `qc.cmd_run(args) -> int`
   - `qc.cmd_accept(args) -> int`
-  - `qc.write_summary(path: Path, clusters, diff, never_seen: list[str]) -> None`
+  - `qc.write_summary(path: Path, clusters, diff, never_seen: list[str]) -> None` — must also emit a "Coverage deliberately not checked" section from `anchors.EXCLUDED_ANCHORS`, so the `field(` exclusion is visible to anyone running the tool rather than only to someone reading the source
   - `qc.main(argv: list[str] | None = None) -> int`
 
 - [ ] **Step 1: Write the failing test**
@@ -3414,6 +3414,7 @@ import json
 import sys
 from pathlib import Path
 
+from . import anchors as anchor_table
 from . import baseline, corpus, inventory, loader, model
 from .detectors import PER_FILE, fields, shipped_queries
 
@@ -3653,6 +3654,18 @@ def write_summary(path: Path, clusters, diff, never_seen: list[str]) -> None:
     if never_seen:
         lines += ["## Never-observed named node types", ""]
         lines += [f"- `{name}`" for name in never_seen] + [""]
+
+    # No silent caps: anything the harness deliberately does not check must say
+    # so in its own output. anchors.py defines EXCLUDED_ANCHORS with the comment
+    # "Report it, never silently drop it" — this is the consumer that keeps that
+    # promise. Without it the dict is source-level documentation only, invisible
+    # to anyone actually running the tool.
+    if anchor_table.EXCLUDED_ANCHORS:
+        lines += ["## Coverage deliberately not checked", ""]
+        lines += [
+            f"- `{name}` — {reason}"
+            for name, reason in sorted(anchor_table.EXCLUDED_ANCHORS.items())
+        ] + [""]
 
     with open(path, "w", encoding="utf-8", newline="\n") as handle:
         handle.write("\n".join(lines))
