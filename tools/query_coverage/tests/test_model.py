@@ -91,3 +91,92 @@ def test_write_jsonl_is_stably_sorted(tmp_path: Path):
         for line in out.read_text(encoding="utf-8").splitlines()[1:]
     ]
     assert offsets == [10, 50]
+
+
+def test_write_jsonl_is_order_independent_when_findings_differ_only_in_non_key_fields(tmp_path: Path):
+    """Two findings with identical (detector, path, byte_offset, fingerprint)
+    but different snippet/detail must produce byte-identical output regardless of input order."""
+    prov = model.Provenance("s", "m", "0.25.2", "1")
+
+    # Two findings identical on the key fields but different in snippet/detail
+    a = model.Finding(
+        detector="gaps",
+        category="byte-gap",
+        fingerprint=("record", "variable_declaration"),
+        path="a/b.al",
+        byte_offset=0,
+        line=1,
+        column=1,
+        enclosing="variable_declaration",
+        snippet="snippet_AAA",
+        detail={"x": "aaa"},
+    )
+    b = model.Finding(
+        detector="gaps",
+        category="byte-gap",
+        fingerprint=("record", "variable_declaration"),
+        path="a/b.al",
+        byte_offset=0,
+        line=1,
+        column=1,
+        enclosing="variable_declaration",
+        snippet="snippet_BBB",
+        detail={"x": "bbb"},
+    )
+
+    # Write in order [a, b]
+    out1 = tmp_path / "findings1.jsonl"
+    model.write_jsonl(out1, prov, [a, b])
+    bytes1 = out1.read_bytes()
+
+    # Write in order [b, a]
+    out2 = tmp_path / "findings2.jsonl"
+    model.write_jsonl(out2, prov, [b, a])
+    bytes2 = out2.read_bytes()
+
+    # Output must be identical
+    assert bytes1 == bytes2, "write_jsonl output differs based on input order"
+
+
+def test_cluster_examples_are_order_independent_when_findings_differ_only_in_non_key_fields(tmp_path: Path):
+    """Cluster examples must be deterministic regardless of input order."""
+    # Two findings identical on (detector, path, byte_offset, fingerprint) but different in snippet/detail
+    a = model.Finding(
+        detector="gaps",
+        category="byte-gap",
+        fingerprint=("record", "variable_declaration"),
+        path="a/b.al",
+        byte_offset=0,
+        line=1,
+        column=1,
+        enclosing="variable_declaration",
+        snippet="snippet_AAA",
+        detail={"x": "aaa"},
+    )
+    b = model.Finding(
+        detector="gaps",
+        category="byte-gap",
+        fingerprint=("record", "variable_declaration"),
+        path="a/b.al",
+        byte_offset=0,
+        line=1,
+        column=1,
+        enclosing="variable_declaration",
+        snippet="snippet_BBB",
+        detail={"x": "bbb"},
+    )
+
+    # Cluster in order [a, b]
+    clusters1 = model.cluster([a, b])
+    examples1_json = json.dumps(
+        [f.to_dict() for f in clusters1[0].examples], sort_keys=True
+    )
+
+    # Cluster in order [b, a]
+    clusters2 = model.cluster([b, a])
+    examples2_json = json.dumps(
+        [f.to_dict() for f in clusters2[0].examples], sort_keys=True
+    )
+
+    # Examples must be identical
+    assert examples1_json == examples2_json, "cluster examples differ based on input order"

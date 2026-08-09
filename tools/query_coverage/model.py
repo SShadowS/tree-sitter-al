@@ -98,7 +98,21 @@ def cluster(findings: Iterable[Finding], max_examples: int = 3) -> list[Cluster]
 
 
 def _sorted(findings: Iterable[Finding]) -> list[Finding]:
-    return sorted(findings, key=lambda f: (f.detector, f.path, f.byte_offset, f.key()))
+    return sorted(
+        findings,
+        key=lambda f: (
+            f.detector,
+            f.path,
+            f.byte_offset,
+            f.key(),
+            f.category,
+            f.line,
+            f.column,
+            f.enclosing,
+            f.snippet,
+            json.dumps(f.detail, sort_keys=True),
+        ),
+    )
 
 
 def write_jsonl(path: Path, provenance: Provenance, findings: list[Finding]) -> None:
