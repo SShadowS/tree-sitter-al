@@ -5,6 +5,12 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
+## [Unreleased]
+
+### Fixed
+
+### Removed
+
 ## [3.3.1] — 2026-08-09
 
 Six external-scanner defects, all pre-existing and all found by a review of
