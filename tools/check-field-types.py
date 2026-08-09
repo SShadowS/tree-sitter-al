@@ -45,6 +45,12 @@ FIELD_INVARIANTS = [
         'qualified_enum_value', 'quoted_identifier', 'string_literal',
         'time_literal',
     }),
+    # case ... else body: field('body', repeat($._statement)) fielded EACH
+    # statement in the repeat individually, so 'body' was multiple:true and
+    # broke the single-node body invariant the textobject queries rely on
+    # (issue #19). Fixed in grammar.js's case_else_branch rule by wrapping
+    # the repeat in $.statement_block, matching repeat_statement's shape.
+    ('case_else_branch', 'body', False, {'code_block', 'statement_block'}),
 ]
 
 

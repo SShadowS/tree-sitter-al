@@ -242,9 +242,10 @@ table 50004 "Test Table"
                     right: (integer))))
               (case_else_branch
                 (else_keyword)
-                body: (assignment_statement
-                  left: (identifier)
-                  right: (integer)))
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))))
               (end_keyword)))
           (end_keyword))))))
 

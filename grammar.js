@@ -3523,10 +3523,17 @@ module.exports = grammar({
 
     case_else_branch: $ => prec.left(seq(
       $.else_keyword,
-      field('body', choice(
+      // body is ONE node, never a raw repeat — a fielded repeat($._statement)
+      // makes body multiple:true and drags the anonymous ';' into the field,
+      // breaking the single-node body invariant the textobject queries rely on
+      // (issue #19). repeat_statement already uses statement_block this way.
+      // optional() preserves `else` with zero statements before `end` (see
+      // "Empty case else branch" in test/corpus/case_statement.txt) — neither
+      // code_block nor statement_block (repeat1) can match an empty body.
+      optional(field('body', choice(
         $.code_block,
-        repeat($._statement),
-      ))
+        $.statement_block,
+      )))
     )),
 
     // --- For loop ---

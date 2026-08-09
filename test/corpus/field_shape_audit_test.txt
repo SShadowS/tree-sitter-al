@@ -83,3 +83,64 @@ query 50100 Q
                         field: (quoted_identifier)
                         value: (identifier)
                         value: (quoted_identifier)))))))))))))
+
+================================================================================
+case else branch body is a single statement_block, not a raw statement repeat
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        case x of
+            1:
+                x := 1;
+            else
+                x := 2;
+                x := 3;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (assignment_statement
+                    left: (identifier)
+                    right: (integer))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))))
+              (end_keyword)))
+          (end_keyword))))))

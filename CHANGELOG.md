@@ -7,6 +7,34 @@ public API — a change to node structure or field names is a **major** bump.
 
 ## [Unreleased]
 
+### Changed
+
+- **`case … else` bodies now parse into a single `statement_block` node
+  instead of a flat, individually-fielded run of statements.**
+  **This changes the parse tree** for every `case … else` branch whose body
+  is a bare statement list (one or more statements not already wrapped in
+  `begin/end`) — it is the only change in this release that moves parse trees
+  *at scale*, and consumers that walk `case_else_branch.body` must update.
+  For the release as a whole: this change moves 757 of the 15,358 BC.History
+  files, the `exit` fix below moves exactly one
+  (`Sales/Document/SalesLineReserve.Codeunit.al`, the file that bullet cites),
+  and the two declared-type corrections (`array_type.sizes`,
+  `link_value.value`) move none.
+  `case_else_branch` used `field('body', repeat($._statement))`, which fields
+  *each* statement in the repeat individually, so `body` was `multiple: true`
+  — the one scoped construct not honouring the single-node `body` invariant
+  every other construct (and the textobject queries, issue #19) rely on.
+  `repeat_statement` already wraps its repeat in `$.statement_block`;
+  `case_else_branch` now does the same, matching `if_statement.then_branch`
+  and friends: `body: (statement_block ...)` instead of one or more
+  `body: (...)` siblings. An `else` immediately followed by `end` with no
+  statements at all is unaffected — `body` is simply absent, exactly as
+  before. Measured against the 15,358-file BC.History corpus: 757 files
+  change shape, adding 1,316 `statement_block` nodes; no node type other
+  than `statement_block` is added or removed anywhere in the corpus, and
+  the `case_branch` count is identical (22,047 before and after). Guarded by
+  a new row in `tools/check-field-types.py`.
+
 ### Fixed
 
 - **`exit` followed by whitespace before its `(...)` no longer silently drops
