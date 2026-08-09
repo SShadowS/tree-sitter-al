@@ -312,8 +312,11 @@ fi
 # Step 8: Grammar health check (regression detection)
 print_header "Step 8: Grammar Health Check"
 if [ -f "tools/check_grammar_health.py" ]; then
-    HEALTH_OUTPUT=$(python3 tools/check_grammar_health.py --ci 2>&1)
-    HEALTH_EXIT_CODE=$?
+    # `&& ... || ...` (not a bare assignment) because this step can now actually
+    # fail: under `set -e`, `HEALTH_OUTPUT=$(cmd)` alone would abort the whole
+    # script right here on a non-zero exit, before HEALTH_EXIT_CODE is even read
+    # -- skipping the error message below and every step after it.
+    HEALTH_OUTPUT=$(python3 tools/check_grammar_health.py --ci 2>&1) && HEALTH_EXIT_CODE=0 || HEALTH_EXIT_CODE=$?
 
     if [ $HEALTH_EXIT_CODE -eq 0 ]; then
         # Extract key metrics from output
@@ -324,6 +327,15 @@ if [ -f "tools/check_grammar_health.py" ]; then
         else
             print_success "Health check passed"
         fi
+    elif echo "$HEALTH_OUTPUT" | grep -q "NO BASELINE FOUND"; then
+        # .grammar_baseline.json is tracked in git (see .gitignore), so it should
+        # exist in any real checkout. Its absence means a broken checkout or a
+        # deliberate reset, not a routine first run -- never silently re-seed it,
+        # that would bless whatever state happens to be on disk as "good".
+        print_error "Grammar health baseline missing (.grammar_baseline.json not found)"
+        echo "Restore it from git, or if this is a deliberate reset, review the current"
+        echo "state and run: python3 tools/check_grammar_health.py --save-baseline"
+        VALIDATION_FAILED=1
     else
         print_error "Grammar health check detected regressions"
         echo "$HEALTH_OUTPUT" | grep -A5 "REGRESSIONS:" | head -10

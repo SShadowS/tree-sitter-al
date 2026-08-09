@@ -505,6 +505,45 @@ public API — a change to node structure or field names is a **major** bump.
   confirming each is reported and fails the script, then reverting — no
   grammar change, `git status --short src/` stayed empty throughout.
 
+- **`validate-grammar.sh`'s Step 8 grammar health check now fails when it has
+  nothing to compare against, instead of reporting a pass.** `check_grammar_health.py
+  --ci` exited 0 whenever `.grammar_baseline.json` was absent — the state of
+  the repo before this fix — because `compare_to_baseline(None)` returns an
+  empty `regressions` list, and an empty list read as "no regressions" instead
+  of "nothing was checked." Step 8 then printed `✓ Health check passed`, so
+  one of the script's eight steps was green because it had run zero
+  comparisons. The health checker now treats a missing baseline as
+  `STATUS: FAILED` and returns exit 1 under `--ci`; Step 8 reports a specific,
+  actionable error ("Grammar health baseline missing... run --save-baseline")
+  instead of the generic "regressions detected" message. `.grammar_baseline.json`
+  is now tracked in git — it was previously neither tracked nor ignored, the
+  same class of defect as `grammar_analysis.json` before it was gitignored
+  above. A baseline that lives only on one machine cannot detect drift across
+  commits, which is the entire point of the check; tracking it means a fresh
+  clone always has one, so a missing baseline signals a broken checkout, not a
+  routine first run, and failing loudly on it is safe rather than a nuisance.
+  Self-seeding on first run was considered and rejected: it would silently
+  bless whatever state happens to be on disk — possibly already regressed — as
+  the new "good" baseline, with nobody the wiser.
+  Making the exit code real also exposed that Step 8's own output capture was
+  dead code: `HEALTH_OUTPUT=$(python3 tools/check_grammar_health.py --ci 2>&1)`
+  is a bare assignment, and under `set -e` a non-zero exit from that command
+  substitution aborted the whole script on that line, before `HEALTH_EXIT_CODE`
+  was even read — skipping the new error message and every step after it.
+  Rewritten as `cmd && VAR=0 || VAR=$?` so the step's own handling actually
+  runs. (Steps 2, 4, 5, 5b and 6 capture their tool output the same fragile
+  way; none were touched here — out of scope for this task, flagged as a
+  follow-up.) Also fixed: `tools/find_unused_definitions.py` was missing its
+  trailing newline.
+  Demonstrated three ways: `validate-grammar.sh` exits 1 with the
+  missing-baseline message when `.grammar_baseline.json` is absent; exits 0
+  with "No regressions from baseline" once the baseline exists; and a
+  temporary, non-committed edit to a copy of the baseline (dropping one
+  already-known missing definition) reproduces a genuine
+  `[ERROR] New missing definitions` regression and exit 1 — proving the
+  comparison logic itself works, not just the present/absent gate. No grammar
+  change — `git status --short src/` stayed empty throughout.
+
 ### Removed
 
 - **Dead code cleanup: no parse tree changes.** Dropped `chartpart_keyword`

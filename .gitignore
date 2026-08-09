@@ -74,6 +74,12 @@ grammar_analysis.json
 current_orphans.txt
 orphan_report.txt
 run_query*.sh
+# .grammar_baseline.json is deliberately NOT listed here. Unlike the report
+# above, it is a golden snapshot Step 8 of validate-grammar.sh (tools/check_grammar_health.py)
+# diffs future runs against, so it is tracked in git on purpose: a baseline
+# that only exists on one machine can't detect drift across commits, and a
+# fresh clone needs it present or that step fails loudly by design (see
+# CHANGELOG "Fixed" entry for validate-grammar.sh Step 8).
 # Ignore queries/ except standard tree-sitter query files
 queries/*
 !queries/tags.scm

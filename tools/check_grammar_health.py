@@ -350,7 +350,12 @@ class GrammarHealthChecker:
         has_critical = any(r['severity'] == 'critical' for r in comparison.get('regressions', []))
         has_error = any(r['severity'] == 'error' for r in comparison.get('regressions', []))
 
-        if has_critical or has_error:
+        if not comparison['has_baseline']:
+            # No baseline means nothing was actually compared -- this must never
+            # read as a pass. .grammar_baseline.json is tracked in git, so its
+            # absence in a real checkout means a broken checkout, not a first run.
+            lines.append("STATUS: FAILED - No baseline found; run --save-baseline and commit .grammar_baseline.json")
+        elif has_critical or has_error:
             lines.append("STATUS: FAILED - Critical or error regressions detected")
         elif comparison.get('regressions'):
             lines.append("STATUS: WARNING - Non-critical regressions detected")
@@ -395,7 +400,10 @@ def main():
     if args.ci:
         has_critical = any(r['severity'] == 'critical' for r in comparison.get('regressions', []))
         has_error = any(r['severity'] == 'error' for r in comparison.get('regressions', []))
-        if has_critical or has_error:
+        # A missing baseline means the comparison never ran -- it is not a pass.
+        # See STATUS logic in generate_report() for the same reasoning.
+        no_baseline = not comparison.get('has_baseline', False)
+        if has_critical or has_error or no_baseline:
             return 1
 
     return 0
