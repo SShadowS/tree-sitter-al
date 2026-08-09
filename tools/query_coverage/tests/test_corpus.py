@@ -40,6 +40,40 @@ def test_object_types_come_from_the_tree_not_the_filename(al_parser):
     assert types == ("codeunit_declaration", "table_declaration")
 
 
+def test_object_types_excludes_namespace_declaration(al_parser):
+    """A leading `namespace X;` is a directive, not an object -- it must not leak in."""
+    source = b'namespace Foo.Bar; codeunit 1 A { }'
+
+    types = corpus.object_types(al_parser.parse(source))
+
+    assert types == ("codeunit_declaration",)
+
+
+def test_object_types_descends_into_preproc_conditional_object(al_parser):
+    """An object wrapped in a top-level #if/#endif must report its real type, not ()."""
+    source = b'#if CLEAN24\ncodeunit 1 A { }\n#endif'
+
+    types = corpus.object_types(al_parser.parse(source))
+
+    assert types == ("codeunit_declaration",)
+
+
+def test_object_types_reports_both_branches_when_types_differ(al_parser):
+    """#if/#else with a different object type per branch: report both, in source order.
+
+    There is no "active" branch without evaluating preprocessor symbols, which this
+    tool never does -- it tracks grammar/query coverage over the source text, not
+    compiled semantics. Reporting only one branch would silently hide whichever
+    declaration shape wasn't picked; reporting both is the honest inventory of what
+    the file's source actually contains.
+    """
+    source = b'#if A\ncodeunit 1 X { }\n#else\ntable 1 Y { }\n#endif'
+
+    types = corpus.object_types(al_parser.parse(source))
+
+    assert types == ("codeunit_declaration", "table_declaration")
+
+
 def test_manifest_roundtrip(tmp_path: Path):
     path = tmp_path / "manifest.tsv"
     entries = [

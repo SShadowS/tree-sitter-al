@@ -53,7 +53,39 @@ def select(vocabularies: dict[str, set[str]]) -> list[str]:
 
 
 def object_types(tree) -> tuple[str, ...]:
-    return tuple(child.type for child in tree.root_node.named_children if child.type.endswith("_declaration"))
+    """Object types declared in this file, from the tree root.
+
+    `namespace_declaration` is excluded explicitly: a namespace directive is
+    not an object, even though its name also ends in `_declaration`.
+
+    Objects wrapped in a top-level `#if`/`#endif` are still found. Per
+    node-types.json, only `source_file` and `preproc_conditional_object`
+    itself can directly hold an object declaration, and
+    `preproc_conditional_object` nests arbitrarily deep for nested `#if`
+    blocks, so the walk recurses into it. Recursion (not an explicit stack)
+    is fine here: depth is bounded by `#if` nesting, which the scanner caps
+    at 255 and which in practice runs a handful of levels deep at most --
+    nothing like the AST-depth hazard in detectors/_tree.py's walk().
+
+    Branches of an `#if`/`#else` are not deduplicated or resolved to "the
+    active one" -- every declaration shape found in the source is reported,
+    in source order, because this tool tracks grammar/query coverage, not
+    compiled semantics. Two branches with the same object type report that
+    type twice; branches with different object types report both.
+    """
+    types: list[str] = []
+
+    def visit(node) -> None:
+        for child in node.named_children:
+            if child.type == "namespace_declaration":
+                continue
+            if child.type == "preproc_conditional_object":
+                visit(child)
+            elif child.type.endswith("_declaration"):
+                types.append(child.type)
+
+    visit(tree.root_node)
+    return tuple(types)
 
 
 def write_manifest(path: Path, entries: list[ManifestEntry]) -> None:
