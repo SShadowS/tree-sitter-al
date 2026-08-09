@@ -71,46 +71,92 @@ static bool read_keyword_ci(TSLexer *lexer, const char *keyword) {
   return true;
 }
 
-// Peek (without advancing) whether the keyword follows at current position.
-// Skips whitespace first. Returns true if the keyword is found as a whole word.
-static bool peek_keyword_ci(TSLexer *lexer, const char *keyword) {
-  // We can't actually peek without advancing in the tree-sitter API.
-  // This function advances freely — on false returns tree-sitter resets the lexer.
-  skip_whitespace(lexer);
-  for (int i = 0; keyword[i] != '\0'; i++) {
-    if (towlower(lexer->lookahead) != keyword[i]) return false;
-    lexer->advance(lexer, false);
+// Consume a comment beginning at the current '/'. The '/' is consumed either
+// way; the return value says whether it actually opened a comment, so a caller
+// that cannot tolerate a bare '/' can decline. AL block comments do not nest
+// (grammar.js's multiline_comment is the classic non-nesting C form).
+static bool skip_comment(TSLexer *lexer) {
+  lexer->advance(lexer, false);  // past the leading '/'
+  if (lexer->lookahead == '/') {
+    while (lexer->lookahead != 0 && lexer->lookahead != '\n') {
+      lexer->advance(lexer, false);
+    }
+    return true;
   }
-  if (is_identifier_char(lexer->lookahead)) return false;
-  return true;
+  if (lexer->lookahead == '*') {
+    lexer->advance(lexer, false);
+    while (lexer->lookahead != 0) {
+      if (lexer->lookahead == '*') {
+        lexer->advance(lexer, false);
+        if (lexer->lookahead == '/') {
+          lexer->advance(lexer, false);
+          return true;
+        }
+        continue;
+      }
+      lexer->advance(lexer, false);
+    }
+    return true;  // unterminated block comment runs to EOF
+  }
+  return false;  // a lone '/' — not a comment
 }
 
-// Directives that grammar.js declares as `extras`. They are transparent to the
-// parse tree, so a lookahead scanning for a structural directive must step over
-// them rather than stop on them. Keep in sync with the `extras` array.
+// Skip whitespace WITHOUT marking it skippable.
+//
+// advance(lexer, true) unconditionally resets the token's START position to the
+// current offset. That is right for LEADING whitespace, and catastrophic
+// afterwards: once the token text has been consumed (or mark_end called), a
+// marking skip drags the start past the end and the node collapses to zero
+// width at the later position. Every skip that runs after the token text must
+// use this, never skip_whitespace.
+static void skip_whitespace_nomark(TSLexer *lexer) {
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
+         lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
+         lexer->lookahead == '\f') {
+    lexer->advance(lexer, false);
+  }
+}
+
+// Skip whitespace and comments, without marking. Returns false if a bare '/'
+// was hit (already consumed), which no lookahead in this scanner can make
+// sense of.
+static bool skip_whitespace_and_comments(TSLexer *lexer) {
+  while (true) {
+    skip_whitespace_nomark(lexer);
+    if (lexer->lookahead != '/') return true;
+    if (!skip_comment(lexer)) return false;
+  }
+}
+
+// Directives that grammar.js declares as `extras`. Comments are extras too, but
+// they are handled by skip_whitespace_and_comments rather than listed here.
+// Everything transparent to the parse tree must be stepped over by a lookahead
+// scanning for a structural directive. Keep in sync with the `extras` array.
 static const char *const TRANSPARENT_DIRECTIVES[] = {
   "pragma", "endregion", "region", "define", "undef", NULL,
 };
 
-// Skip whitespace and any transparent-directive lines, then peek for a keyword.
+// Target sets for peek_directive_ci_skip_extras. Bare words, no '#'.
+static const char *const DIRECTIVE_ENDIF[] = { "endif", NULL };
+static const char *const DIRECTIVE_ELSE_ENDIF[] = { "else", "endif", NULL };
+
+// Skip whitespace, comments and transparent-directive lines, then test whether
+// what follows is a '#' directive named by one of `targets`.
 //
-// Used when scanning ahead for split-construct patterns (e.g.
-// PREPROC_SPLIT_BEGIN checking for #endif). Consuming '#' is irreversible
-// within one scan, so the directive word after '#' is read ONCE into a buffer
-// and then classified — matching candidates one after another would burn the
-// shared prefix of e.g. "endif"/"endregion" on the first failed attempt.
-static bool peek_keyword_ci_skip_extras(TSLexer *lexer, const char *keyword) {
+// Used when scanning ahead for split-construct patterns (PREPROC_SPLIT_BEGIN
+// looking for #endif, PREPROC_SPLIT_END looking for #else/#endif).
+//
+// EVERY target is tested against a SINGLE buffered read of the directive word.
+// Never match candidates one after another here: consuming '#' is irreversible
+// within one scan, and so is consuming the 'end' prefix shared by "endif" and
+// "endregion", so a failed first attempt silently destroys the later ones. An
+// earlier `read_keyword_ci(lexer, "else") || read_keyword_ci(lexer, "endif")`
+// in PREPROC_SPLIT_END made the "endif" arm permanently unreachable exactly
+// this way.
+static bool peek_directive_ci_skip_extras(TSLexer *lexer, const char *const *targets) {
   while (true) {
-    skip_whitespace(lexer);
-    if (lexer->lookahead != '#') {
-      // Not '#' — try to match keyword directly
-      for (int i = 0; keyword[i] != '\0'; i++) {
-        if (towlower(lexer->lookahead) != keyword[i]) return false;
-        lexer->advance(lexer, false);
-      }
-      if (is_identifier_char(lexer->lookahead)) return false;
-      return true;
-    }
+    if (!skip_whitespace_and_comments(lexer)) return false;
+    if (lexer->lookahead != '#') return false;
 
     lexer->advance(lexer, false);
     // Horizontal whitespace only: '# pragma' is one directive, but '#' and a
@@ -130,8 +176,9 @@ static bool peek_keyword_ci_skip_extras(TSLexer *lexer, const char *keyword) {
     if (len >= sizeof(word)) return false;  // too long to be any directive
     word[len] = '\0';
 
-    // The caller's keyword includes the '#' we just consumed.
-    if (keyword[0] == '#' && strcmp(word, keyword + 1) == 0) return true;
+    for (int i = 0; targets[i] != NULL; i++) {
+      if (strcmp(word, targets[i]) == 0) return true;
+    }
 
     bool transparent = false;
     for (int i = 0; TRANSPARENT_DIRECTIVES[i] != NULL; i++) {
@@ -229,19 +276,21 @@ bool tree_sitter_al_external_scanner_scan(
     }
   }
 
-  // PREPROC_SPLIT_BEGIN: 'begin' at depth > 0, before #endif (possibly with #pragma lines between)
+  // PREPROC_SPLIT_BEGIN: 'begin' at depth > 0, before #endif (possibly with
+  // comments or transparent directive lines between)
   //
-  // '#' handling: peek_keyword_ci is called with "#endif" (the full string
-  // including '#'). PREPROC_OPEN/CLOSE manually advance past '#' before calling
-  // read_keyword_ci("if"/"endif"). These are DIFFERENT conventions — do not mix.
+  // '#' handling: peek_directive_ci_skip_extras takes BARE directive words and
+  // consumes the '#' itself. PREPROC_OPEN/CLOSE manually advance past '#'
+  // before calling read_keyword_ci("if"/"endif"). These are DIFFERENT
+  // conventions — do not mix.
   //
-  // #pragma/#region/#define and friends are transparent extras — we skip them
-  // when scanning ahead for #endif (see TRANSPARENT_DIRECTIVES).
+  // Comments, #pragma, #region, #define and friends are all extras, hence all
+  // transparent here (see skip_whitespace_and_comments/TRANSPARENT_DIRECTIVES).
   if (valid_symbols[PREPROC_SPLIT_BEGIN] && state->depth > 0) {
     skip_whitespace(lexer);
     if (read_keyword_ci(lexer, "begin")) {
       lexer->mark_end(lexer);  // token covers only 'begin'
-      if (peek_keyword_ci_skip_extras(lexer, "#endif")) {
+      if (peek_directive_ci_skip_extras(lexer, DIRECTIVE_ENDIF)) {
         lexer->result_symbol = PREPROC_SPLIT_BEGIN;
         return true;
       }
@@ -259,26 +308,17 @@ bool tree_sitter_al_external_scanner_scan(
     skip_whitespace(lexer);
     if (read_keyword_ci(lexer, "end")) {
       lexer->mark_end(lexer);  // token covers only 'end'
-      // Check for ';' then whitespace then '#else' or '#endif'
-      while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
-             lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
-             lexer->lookahead == '\f') {
-        lexer->advance(lexer, false);
-      }
+      // Check for ';' then #else or #endif. Comments and transparent directive
+      // lines may sit at either gap and must not stop the lookahead — before
+      // this skipped nothing, a single trailing `// note` after the `end;`
+      // silently dropped the token and the run reparsed as a call_statement
+      // with NO error nodes.
+      if (!skip_whitespace_and_comments(lexer)) return false;
       if (lexer->lookahead == ';') {
         lexer->advance(lexer, false);
-        // Now check for #else or #endif after whitespace
-        while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
-               lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
-               lexer->lookahead == '\f') {
-          lexer->advance(lexer, false);
-        }
-        if (lexer->lookahead == '#') {
-          lexer->advance(lexer, false);
-          if (read_keyword_ci(lexer, "else") || read_keyword_ci(lexer, "endif")) {
-            lexer->result_symbol = PREPROC_SPLIT_END;
-            return true;
-          }
+        if (peek_directive_ci_skip_extras(lexer, DIRECTIVE_ELSE_ENDIF)) {
+          lexer->result_symbol = PREPROC_SPLIT_END;
+          return true;
         }
       }
       // 'end' found but not followed by ; then #else/#endif — return false.
@@ -299,9 +339,9 @@ bool tree_sitter_al_external_scanner_scan(
       lexer->mark_end(lexer);
 
       // Scan past the attribute content to find the closing ']'.
-      // Track bracket and paren depth for nested constructs like [Obsolete('msg', '24.0')]
+      // Bracket depth handles nesting; strings and comments are skipped whole so
+      // a ']' inside either cannot close the scan early.
       int bracket_depth = 1;
-      int paren_depth = 0;
       bool in_string = false;
 
       while (bracket_depth > 0 && lexer->lookahead != 0) {
@@ -317,12 +357,14 @@ bool tree_sitter_al_external_scanner_scan(
             continue;
           }
         } else {
+          if (lexer->lookahead == '/') {
+            // Consumes the '/' whether or not a comment opened, so the loop
+            // always makes progress.
+            skip_comment(lexer);
+            continue;
+          }
           if (lexer->lookahead == '\'') {
             in_string = true;
-          } else if (lexer->lookahead == '(') {
-            paren_depth++;
-          } else if (lexer->lookahead == ')') {
-            if (paren_depth > 0) paren_depth--;
           } else if (lexer->lookahead == '[') {
             bracket_depth++;
           } else if (lexer->lookahead == ']') {
@@ -371,6 +413,10 @@ bool tree_sitter_al_external_scanner_scan(
                 continue;
               }
             } else {
+              if (lexer->lookahead == '/') {
+                skip_comment(lexer);
+                continue;
+              }
               if (lexer->lookahead == '\'') {
                 inner_in_string = true;
               } else if (lexer->lookahead == '[') {
@@ -397,33 +443,28 @@ bool tree_sitter_al_external_scanner_scan(
         // (fall through to the identifier/quoted-identifier checks below)
       }
 
-      if (lexer->lookahead == '"') {
-        // Quoted identifier — scan to closing '"', check for ':'
-        lexer->advance(lexer, false);
-        while (lexer->lookahead != 0 && lexer->lookahead != '"') {
-          lexer->advance(lexer, false);
-        }
-        if (lexer->lookahead == '"') {
-          lexer->advance(lexer, false);
-          // Skip whitespace
-          while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
-            lexer->advance(lexer, false);
-          }
-          if (lexer->lookahead == ':') {
-            lexer->result_symbol = VAR_ATTRIBUTE_OPEN;
-            return true;
-          }
-        }
-        return false;
-      }
-
-      if (is_identifier_start(lexer->lookahead)) {
-        // Identifier — scan it, then check for ':' (or ',' for multi-variable decls)
-        // Pattern: identifier (',' identifier)* ':'
+      // Variable declaration pattern: name (',' name)* ':'  — where each name
+      // is a bare identifier or a quoted identifier, in ANY position. Handling
+      // quoted and bare names in one loop is what lets a quoted name lead a
+      // multi-name declaration; the previous split branches accepted a quoted
+      // name only when it was solo or in a later position.
+      if (lexer->lookahead == '"' || is_identifier_start(lexer->lookahead)) {
         while (true) {
-          while (is_identifier_char(lexer->lookahead)) {
+          if (lexer->lookahead == '"') {
             lexer->advance(lexer, false);
+            while (lexer->lookahead != 0 && lexer->lookahead != '"') {
+              lexer->advance(lexer, false);
+            }
+            if (lexer->lookahead != '"') return false;  // unterminated
+            lexer->advance(lexer, false);
+          } else if (is_identifier_start(lexer->lookahead)) {
+            while (is_identifier_char(lexer->lookahead)) {
+              lexer->advance(lexer, false);
+            }
+          } else {
+            return false;
           }
+
           // Skip whitespace
           while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
             lexer->advance(lexer, false);
@@ -432,29 +473,12 @@ bool tree_sitter_al_external_scanner_scan(
             lexer->result_symbol = VAR_ATTRIBUTE_OPEN;
             return true;
           }
-          if (lexer->lookahead == ',') {
-            // Multi-variable: identifier, identifier, ... : Type
+          if (lexer->lookahead != ',') return false;
+
+          lexer->advance(lexer, false);  // past the ','
+          while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
             lexer->advance(lexer, false);
-            while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
-              lexer->advance(lexer, false);
-            }
-            if (lexer->lookahead == '"') {
-              // Quoted identifier in multi-var list
-              lexer->advance(lexer, false);
-              while (lexer->lookahead != 0 && lexer->lookahead != '"') {
-                lexer->advance(lexer, false);
-              }
-              if (lexer->lookahead == '"') lexer->advance(lexer, false);
-              while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
-                lexer->advance(lexer, false);
-              }
-              // Loop back to check for ':', ',' etc.
-              continue;
-            }
-            if (!is_identifier_start(lexer->lookahead)) return false;
-            continue;
           }
-          return false;
         }
       }
 
@@ -517,10 +541,13 @@ bool tree_sitter_al_external_scanner_scan(
       }
     }
 
-    // Did not match continue_as_identifier
-    // Note: we can't fall through to PROPERTY_NAME here because we've
-    // already consumed characters. The scanner will be called again
-    // for the same position if we return false.
+    // Did not match continue_as_identifier. We can't fall through to
+    // PROPERTY_NAME because characters are already consumed and the external
+    // scanner is NOT re-entered for the same position after a false return —
+    // tree-sitter discards the advances and runs the internal lexer instead.
+    // This is only safe because the grammar never makes CONTINUE_AS_IDENTIFIER
+    // and PROPERTY_NAME valid in the same state (properties live in object and
+    // section bodies, `continue :=` in statement bodies).
     return false;
   }
 
@@ -547,11 +574,13 @@ bool tree_sitter_al_external_scanner_scan(
     // Mark end of identifier (before whitespace/equals)
     lexer->mark_end(lexer);
 
-    // Skip whitespace
-    while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
-           lexer->lookahead == '\r' || lexer->lookahead == '\f') {
-      lexer->advance(lexer, false);
-    }
+    // Skip whitespace and comments. '\n' belongs here just as much as '\r' —
+    // the leading skip above already accepts it, and alc accepts a property
+    // whose '=' sits on the next line (verified). Omitting it made
+    // `Caption\n    = 'Test';` an ERROR that the compiler compiles fine.
+    // A bare '/' is not a comment and is not '=', so declining on it loses
+    // nothing.
+    if (!skip_whitespace_and_comments(lexer)) return false;
 
     // Check for = but not :=
     if (lexer->lookahead == '=') {

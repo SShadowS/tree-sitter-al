@@ -19,13 +19,19 @@ The scanner maintains a 1-byte `ScannerState` with a `depth` counter (uint8_t) t
 | `PREPROC_SPLIT_BEGIN` | `begin` at depth > 0, immediately before `#endif` — split detection | none |
 | `PREPROC_SPLIT_END` | `end` at depth > 0, followed by `;` then `#else`/`#endif` — split detection | none |
 
-**Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → BEGIN_KEYWORD → END_KEYWORD → PREPROC_SPLIT_BEGIN → PREPROC_SPLIT_END → CONTINUE_AS_IDENTIFIER → PROPERTY_NAME
+**Scan function order:** error recovery guard → PREPROC_OPEN/CLOSE → BEGIN_KEYWORD → END_KEYWORD → PREPROC_SPLIT_BEGIN → PREPROC_SPLIT_END → VAR_ATTRIBUTE_OPEN → CONTINUE_AS_IDENTIFIER → PROPERTY_NAME
 
-## Transparent Directives
+## Transparent Extras
 
-`peek_keyword_ci_skip_extras` scans ahead for `#endif` (used by `PREPROC_SPLIT_BEGIN`) and must step over every directive that `grammar.js` declares as `extras` — they are transparent to the parse tree. `TRANSPARENT_DIRECTIVES` lists them: `pragma`, `region`, `endregion`, `define`, `undef`. **Keep it in sync with the `extras` array.**
+Every lookahead must step over everything `grammar.js` declares as `extras` — comments included, not just directives. Three helpers own this:
 
-Consuming `#` is irreversible within one scan, and so is consuming the `end` prefix shared by `endif`/`endregion` — so the helper reads the directive word into a buffer ONCE and then classifies it. Never match candidate keywords in sequence here.
+- `skip_comment` — consumes a `//` or `/* */` comment. Consumes the leading `/` either way; returns false for a bare `/` so callers that can't tolerate one decline.
+- `skip_whitespace_and_comments` — whitespace plus comments.
+- `peek_directive_ci_skip_extras(lexer, targets)` — skips whitespace, comments and transparent directive lines, then tests whether the next `#` directive is one of `targets` (bare words, no `#`). `TRANSPARENT_DIRECTIVES` = `pragma`, `region`, `endregion`, `define`, `undef`. **Keep it in sync with the `extras` array.**
+
+**Never match candidate keywords in sequence in a lookahead.** Consuming `#` is irreversible within one scan, and so is consuming a shared prefix. `read_keyword_ci(lexer,"else") || read_keyword_ci(lexer,"endif")` burns the `e` on the failed `else` attempt and makes the `endif` arm permanently unreachable — that bug was live in `PREPROC_SPLIT_END`. Read the directive word into a buffer ONCE, then compare against every target.
+
+A lookahead that stops on an extra does not always produce an ERROR node. `PREPROC_SPLIT_END` failing on a trailing comment let the run reparse as a `call_statement` with a clean error count, invisible to `parse-al-parallel.sh` and `validate-grammar.sh`. Add a corpus fixture pinning the node, not just the error count.
 
 ## PROPERTY_NAME Token
 

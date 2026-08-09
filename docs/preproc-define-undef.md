@@ -83,20 +83,21 @@ line-level and open nothing.
 
 ## Scanner lookahead
 
-`src/scanner.c` scans ahead past `#`-led lines in one place:
-`peek_keyword_ci_skip_extras` (formerly `peek_keyword_ci_skip_pragma`), used by
-`PREPROC_SPLIT_BEGIN` to check whether `begin` is immediately followed by
-`#endif`. Extras are transparent to the parse tree, so that lookahead has to
-step over all of them, not just `#pragma`.
+`src/scanner.c` scans ahead past `#`-led lines in `peek_directive_ci_skip_extras`
+(formerly `peek_keyword_ci_skip_pragma`), used by `PREPROC_SPLIT_BEGIN` to check
+whether `begin` is immediately followed by `#endif`, and by `PREPROC_SPLIT_END`
+for `#else`/`#endif`. Extras are transparent to the parse tree, so that lookahead
+has to step over all of them, not just `#pragma`.
 
-The helper now reads the directive word after `#` once into a buffer and then
+The helper reads the directive word after `#` once into a buffer and then
 classifies it, instead of trying candidate keywords one after another.
 Consuming `#` is irreversible within a single scan, and so is consuming the
 shared `end` prefix of `endif` and `endregion` — a sequential match on
 `endregion` would have destroyed the ability to then match `endif`. The
 transparent set is `pragma`, `region`, `endregion`, `define`, `undef`
 (`TRANSPARENT_DIRECTIVES`), and must be kept in sync with the `extras` array in
-`grammar.js`.
+`grammar.js`. Comments are extras too and are handled by
+`skip_whitespace_and_comments` rather than by that list.
 
 Adding `region`/`endregion` to that set is a behaviour change beyond
 `#define`/`#undef`: previously a `#region` line between a split `begin` and its

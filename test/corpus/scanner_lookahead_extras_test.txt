@@ -1,0 +1,380 @@
+================================================================================
+Line comment between a split begin and its #endif
+================================================================================
+codeunit 1 T
+{
+    procedure X() : Boolean
+    var
+        Ok: Boolean;
+    begin
+#if not CLEAN27
+        if not Ok then begin // note
+#endif
+            exit(false);
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_if_begin_asymmetric
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (if_keyword)
+              condition: (unary_expression
+                operand: (identifier))
+              (then_keyword)
+              (preproc_split_begin)
+              (comment)
+              (preproc_endif
+                (preproc_close))
+              (exit_statement
+                (exit_keyword)
+                return_value: (boolean))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Block comment between a split begin and its #endif
+================================================================================
+codeunit 1 T
+{
+    procedure X() : Boolean
+    var
+        Ok: Boolean;
+    begin
+#if not CLEAN27
+        if not Ok then begin /* note */
+#endif
+            exit(false);
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        return_type: (type_specification
+          (basic_type))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (preproc_split_if_begin_asymmetric
+              (preproc_if
+                (preproc_open)
+                condition: (preproc_not_expression
+                  (identifier)))
+              (if_keyword)
+              condition: (unary_expression
+                operand: (identifier))
+              (then_keyword)
+              (preproc_split_begin)
+              (multiline_comment)
+              (preproc_endif
+                (preproc_close))
+              (exit_statement
+                (exit_keyword)
+                return_value: (boolean))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Comment between a split end and its #else — must not silently degrade to a
+call_statement (this shape produced NO error nodes when the lookahead stopped
+on the comment, so error-count validation could not see it)
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end; // note
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (preproc_split_end)
+                  (comment)
+                  (preproc_else)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (else_keyword)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+#pragma between a split end and its #else
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#pragma warning disable AL0432
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (preproc_split_end)
+                  (pragma)
+                  (preproc_else)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (else_keyword)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+Attributed var declaration led by a quoted identifier in a multi-name list
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        [InDataSet]
+        "My Var", Other: Boolean;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)))
+            (variable_declaration
+              name: (quoted_identifier)
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+A ']' inside a comment must not close the var-attribute bracket scan early
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        [Obsolete('x') // legacy ]
+        ]
+        Alpha: Boolean;
+    begin
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (var_attribute_item
+              (var_attribute_open)
+              attribute: (attribute_content
+                name: (identifier)
+                arguments: (attribute_arguments
+                  (attribute_argument_list
+                    (string_literal))))
+              (comment))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          (end_keyword))))))
+
+================================================================================
+Property whose '=' sits on the next line (alc accepts this)
+================================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; F; Code[10])
+        {
+            Caption
+                = 'Test';
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (string_literal)))))))))

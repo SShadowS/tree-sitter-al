@@ -5,6 +5,69 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/); the proj
 uses [Semantic Versioning](https://semver.org/) where the parse-tree shape is the
 public API — a change to node structure or field names is a **major** bump.
 
+## [Unreleased]
+
+Six external-scanner defects, all pre-existing and all found by a review of
+`src/scanner.c` rather than by the corpus — BC.History and DO.Support-Agents
+contain no instance of any of them, which is why 100% parse success never
+flagged them.
+
+### Fixed
+
+- **Lookaheads now step over comments, not just directives.** Comments are
+  `extras` exactly like `#pragma`/`#region`, but every hand-rolled lookahead in
+  the scanner treated only directives as transparent. Two concrete failures:
+
+  - `PREPROC_SPLIT_BEGIN` declined on a trailing comment, so
+    `if not Ok then begin // note` before `#endif` produced 4 ERROR nodes where
+    the identical file without the comment parsed as
+    `preproc_split_if_begin_asymmetric`.
+  - `PREPROC_SPLIT_END` skipped nothing at all — neither comments nor
+    `#pragma`. **This one failed silently**: `end; // note` before `#else`
+    dropped the token and reparsed the run as `(call_statement (identifier))`
+    with **zero** ERROR nodes, so neither `parse-al-parallel.sh` nor
+    `validate-grammar.sh` could see it. Both gates are error-count based and
+    structurally cannot catch this class.
+
+  New `skip_comment` and `skip_whitespace_and_comments` helpers handle `//` and
+  `/* */`, and both split lookaheads now route through
+  `peek_directive_ci_skip_extras`.
+
+- **`PREPROC_SPLIT_END`'s `#endif` arm was unreachable.**
+  `read_keyword_ci(lexer, "else") || read_keyword_ci(lexer, "endif")` consumes
+  the shared `e` on the failed `else` attempt, so the `endif` attempt started at
+  `n` and could never match — `end; #endif` could not produce the token, despite
+  `scanner.c`, `grammar.js` and the docs all describing that form as supported.
+  This is exactly the shared-prefix hazard documented for the `#endif`/
+  `#endregion` pair in 3.3.0, sitting live twenty lines away. The rewritten
+  helper takes a target *set* and tests all of them against one buffered read of
+  the directive word.
+
+- **`VAR_ATTRIBUTE_OPEN` declined a quoted name leading a multi-name
+  declaration.** `[InDataSet]` followed by `"My Var", Other: Boolean;` gave 4
+  ERROR/MISSING nodes; `Other, "My Var": Boolean;` was fine. The quoted branch
+  checked only for `:` and had no `,` continuation. Quoted and bare names are
+  now handled by one loop, so either may appear in any position.
+
+- **`VAR_ATTRIBUTE_OPEN`'s bracket scan was comment-blind.** A `]` inside a
+  comment within an attribute closed the scan early and declined the token.
+
+- **`PROPERTY_NAME` rejected a newline before `=`.** The identifier-to-`=`
+  whitespace skip listed `' '`, `'\t'`, `'\r'` and `'\f'` but not `'\n'`, while
+  the leading skip did include it. `Caption` with `= 'Test';` on the next line
+  produced 2 ERROR nodes; **alc accepts it** (verified). Comments between the
+  name and the `=` are skipped too.
+
+### Removed
+
+- `peek_keyword_ci` — defined, never called.
+- `paren_depth` in `VAR_ATTRIBUTE_OPEN` — incremented and decremented, never
+  read, with a comment claiming it mattered.
+- A comment in `CONTINUE_AS_IDENTIFIER` claiming "the scanner will be called
+  again for the same position if we return false". It is not: tree-sitter
+  discards the advances and runs the internal lexer. Replaced with the actual
+  invariant that makes the early return safe.
+
 ## [3.3.0] — 2026-08-09
 
 Additive-only — no previously-valid parse tree changes shape (verified via
