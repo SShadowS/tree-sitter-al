@@ -80,6 +80,24 @@ public API — a change to node structure or field names is a **major** bump.
   Guarded by `tools/check-field-types.py`, run as part of
   `./validate-grammar.sh`.
 
+- **`node-types.json` no longer declares that `link_value.value` can contain a
+  `.`.** The `DataItem.FieldName` dotted reference form of `link_value`
+  (used by `DataItemLink`, `SubPageLink`, etc.) wrapped both identifiers and
+  the `.` between them in one `field('value', seq(id, '.', id))`. That single
+  `field()` call made the generated `node-types.json` record `value` with
+  type set including `.`, even though the compiled parser's actual field
+  assignment never produces that: at runtime each identifier already carried
+  its own `value` label and the `.` carried none, in both the old and new
+  grammar (confirmed with `tree-sitter parse -c`, and the parse-tree harness
+  shows 0 of 15,358 BC.History production trees changed). Same class of bug
+  as the `array_type.sizes` fix above — a lie about the tree in the
+  grammar's declared API surface, not a corrupted parse — and it matters for
+  the same reason: typed bindings and tooling generate their `value`
+  accessor type from `node-types.json`, not from a live parse. Each
+  identifier now carries its own `field('value', $._identifier_or_quoted)`;
+  the declared `value` type set no longer includes `.`. Guarded by a new row
+  in `tools/check-field-types.py`.
+
 ### Removed
 
 ## [3.3.1] — 2026-08-09

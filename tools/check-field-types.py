@@ -35,6 +35,16 @@ FIELD_INVARIANTS = [
     # leaked into the declared type set. Fixed in grammar.js's array_type
     # rule by fielding each $.integer on its own.
     ('array_type', 'sizes', True, {'integer'}),
+    # DataItemLink dotted form: DataItem.FieldName. field('value', seq(id,
+    # '.', id)) wraps the WHOLE dotted seq in one field, so the anonymous
+    # '.' leaked into the declared type set. Fixed in grammar.js's
+    # link_value rule by fielding each identifier on its own.
+    ('link_value', 'value', True, {
+        'boolean', 'database_reference', 'date_literal', 'datetime_literal',
+        'filter_value', 'identifier', 'integer', 'keyword_identifier',
+        'qualified_enum_value', 'quoted_identifier', 'string_literal',
+        'time_literal',
+    }),
 ]
 
 

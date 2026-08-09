@@ -34,3 +34,52 @@ codeunit 1 T
         body: (code_block
           (begin_keyword)
           (end_keyword))))))
+
+================================================================================
+DataItemLink dotted reference does not put the dot inside the value field
+================================================================================
+query 50100 Q
+{
+    elements
+    {
+        dataitem(Cust; Customer)
+        {
+            dataitem(Entry; "Cust. Ledger Entry")
+            {
+                DataItemLink = "Customer No." = Cust."No.", "Posting Date" = Cust."Posting Date";
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (query_declaration
+    (query_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (elements_section
+        (elements_keyword)
+        body: (elements_body
+          (query_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (query_body
+              (query_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                body: (query_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (quoted_identifier)
+                        value: (identifier)
+                        value: (quoted_identifier)))))))))))))

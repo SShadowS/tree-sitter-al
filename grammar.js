@@ -819,11 +819,14 @@ module.exports = grammar({
           $.datetime_literal, $.date_literal, $.time_literal,
         ))), ')'),
         seq($.filter_keyword, '(', field('value', $.filter_value), ')'),
-        // Direct reference: DataItem.FieldName (used in query DataItemLink)
-        field('value', prec(3, seq(
-          $._identifier_or_quoted,
-          '.', $._identifier_or_quoted
-        ))),
+        // Direct reference: DataItem.FieldName (used in query DataItemLink).
+        // Each identifier carries its own field; wrapping the seq put the
+        // anonymous '.' inside the value field's declared type set.
+        prec(3, seq(
+          field('value', $._identifier_or_quoted),
+          '.',
+          field('value', $._identifier_or_quoted)
+        )),
         // Bare value: Field = "Value" or Field = Value
         field('value', prec(-1, $._identifier_or_quoted)),
       )
