@@ -31,6 +31,19 @@ Both kinds fail this check -- see validate-grammar.sh's Step 5 for why an
 the kind of thing that goes unnoticed and then bit-rots into a differing one
 the next time someone edits only one of the copies.
 
+Known limitation, deliberately not chased further: `_find_rules_object`
+anchors on the first *textual* match of `rules: {` before any comment/string
+skipping is possible (that skipping needs to know it is inside the object it
+is still looking for), so a doc comment mentioning `rules: { ... }` ahead of
+the real object could in principle make it anchor on the wrong place. Rather
+than trying to make that anchor fully JS-aware -- a rabbit hole with no fixed
+point -- `main()` treats **zero extracted rule entries as a hard failure**,
+not a pass: a grammar with no rules is not a valid state, so 0 can only mean
+the scanner mis-anchored. That single guard is what actually matters here --
+this check exists because a previous version of this exact file reported
+success having examined almost nothing, and a mis-anchor that silently
+produces `[]` would be that same failure mode again.
+
 Run from the repository root -- grammar.js is read relative to the working
 directory.
 
@@ -219,23 +232,24 @@ def extract_rule_entries(text):
             i += 1
             continue
 
-        if depth == 0 and (c.isalpha() or c in '_$'):
+        if depth == 0:
             m = _IDENT_RE.match(body, i)
-            after = m.end()
-            k = after
-            while k < n and body[k] in ' \t':
-                k += 1
-            if k < n and body[k] == ':' and (k + 1 >= n or body[k + 1] != ':'):
-                flush(i)
-                current_key = m.group(0)
-                current_line = line
-                value_start = k + 1
-                i = k + 1
-                prev = ':'
+            if m is not None:
+                after = m.end()
+                k = after
+                while k < n and body[k] in ' \t':
+                    k += 1
+                if k < n and body[k] == ':' and (k + 1 >= n or body[k + 1] != ':'):
+                    flush(i)
+                    current_key = m.group(0)
+                    current_line = line
+                    value_start = k + 1
+                    i = k + 1
+                    prev = ':'
+                    continue
+                prev = body[after - 1]
+                i = after
                 continue
-            prev = body[after - 1]
-            i = after
-            continue
 
         if not c.isspace():
             prev = c
@@ -331,7 +345,37 @@ def main():
         return 1
 
     text = grammar_path.read_text(encoding='utf-8')
-    results = analyze(text)
+
+    # _find_rules_object anchors on the first *textual* match of `rules: {`,
+    # which is comment/string-unaware by construction (it has to run before
+    # any comment/string skipping can happen -- that skipping only exists
+    # once we're inside the object we're still looking for). A stray mention
+    # of "rules: {" in a doc comment ahead of the real object, or an
+    # unbalanced brace anywhere in the file, can make this raise -- and any
+    # other malformed input this scanner does not anticipate should fail the
+    # same way, not print a raw Python traceback that reads as "the tool is
+    # broken" instead of "look at this".
+    try:
+        results = analyze(text)
+    except Exception as e:
+        print(f"FAILED: could not parse grammar.js's rules object -- {e}", file=sys.stderr)
+        print("This is a tooling failure, not a reported grammar defect: the scanner", file=sys.stderr)
+        print("could not locate or balance 'rules: { ... }'. Investigate the scanner", file=sys.stderr)
+        print("(tools/analyze_duplicates.py) before trusting this check again.", file=sys.stderr)
+        return 1
+
+    # A grammar with zero rules is not a valid state, so 0 extracted entries
+    # can only mean the scanner mis-anchored -- e.g. the textual `rules: {`
+    # search above matched inside a comment or string that merely mentions
+    # it, ahead of the real object, and the brace-balancer then closed on
+    # that fragment instead. Silently reporting "no duplicates" in that case
+    # would be this exact check's own failure mode arriving through a
+    # different door, so treat it as a failure rather than a pass.
+    if results['total_rules'] == 0:
+        print("FAILED: grammar.js's rules object was located but 0 rule entries were", file=sys.stderr)
+        print("extracted. Not a clean pass -- see the module docstring for why zero", file=sys.stderr)
+        print("can only mean the scanner mis-anchored, never that the grammar is empty.", file=sys.stderr)
+        return 1
 
     if args.json:
         print(json.dumps(results, indent=2))
