@@ -152,8 +152,8 @@ fi
 
 # Step 4: Check for orphaned rules
 print_header "Step 4: Checking for Orphaned Rules"
-if [ -f "find_unused_definitions.py" ]; then
-    ORPHAN_OUTPUT=$(python3 find_unused_definitions.py 2>&1)
+if [ -f "tools/find_unused_definitions.py" ]; then
+    ORPHAN_OUTPUT=$(python3 tools/find_unused_definitions.py 2>&1)
     ORPHAN_EXIT_CODE=$?
     
     if [ $ORPHAN_EXIT_CODE -eq 0 ]; then
@@ -176,13 +176,13 @@ if [ -f "find_unused_definitions.py" ]; then
         VALIDATION_FAILED=1
     fi
 else
-    print_warning "Orphan detection script not found (find_unused_definitions.py)"
+    print_warning "Orphan detection script not found (tools/find_unused_definitions.py)"
 fi
 
 # Step 5: Check for duplicate rules
 print_header "Step 5: Checking for Duplicate Rules"
-if [ -f "analyze_duplicates.py" ]; then
-    DUPLICATE_OUTPUT=$(python3 analyze_duplicates.py 2>&1)
+if [ -f "tools/analyze_duplicates.py" ]; then
+    DUPLICATE_OUTPUT=$(python3 tools/analyze_duplicates.py 2>&1)
     DUPLICATE_EXIT_CODE=$?
     
     if [ $DUPLICATE_EXIT_CODE -eq 0 ]; then
@@ -201,7 +201,7 @@ if [ -f "analyze_duplicates.py" ]; then
         VALIDATION_FAILED=1
     fi
 else
-    print_warning "Duplicate detection script not found (analyze_duplicates.py)"
+    print_warning "Duplicate detection script not found (tools/analyze_duplicates.py)"
 fi
 
 # Step 5b: Check field-shape invariants in node-types.json
@@ -267,8 +267,8 @@ fi
 
 # Step 8: Grammar health check (regression detection)
 print_header "Step 8: Grammar Health Check"
-if [ -f "check_grammar_health.py" ]; then
-    HEALTH_OUTPUT=$(python3 check_grammar_health.py --ci 2>&1)
+if [ -f "tools/check_grammar_health.py" ]; then
+    HEALTH_OUTPUT=$(python3 tools/check_grammar_health.py --ci 2>&1)
     HEALTH_EXIT_CODE=$?
 
     if [ $HEALTH_EXIT_CODE -eq 0 ]; then
@@ -286,7 +286,7 @@ if [ -f "check_grammar_health.py" ]; then
         VALIDATION_FAILED=1
     fi
 else
-    print_warning "Health check script not found (check_grammar_health.py)"
+    print_warning "Health check script not found (tools/check_grammar_health.py)"
 fi
 
 # Final summary
