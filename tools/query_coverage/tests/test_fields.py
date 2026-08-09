@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from tools.query_coverage import loader
+from tools.query_coverage import loader, model
 from tools.query_coverage.detectors import fields
 
 
@@ -47,9 +47,16 @@ def test_set_level_check_would_miss_operator(node_types):
 
 
 def test_hidden_rules_are_skipped_not_flagged(grammar, node_types):
+    """"Skipped, not flagged": a hidden rule's field may still surface as a
+    skipped-scope Finding (one per declaration, bucketed by reason — see
+    test_skipped_scope_count_moves_with_population), but it must never be
+    reported as a dropped-field finding, which is what would make v1 scope
+    look like a real defect.
+    """
     findings = fields.detect_static(grammar, node_types)
 
-    for finding in findings:
+    dropped = [f for f in findings if f.category == "dropped-field"]
+    for finding in dropped:
         assert not finding.detail["rule"].startswith("_")
 
 
@@ -58,7 +65,8 @@ def test_aliased_rules_are_skipped(grammar, node_types):
     findings = fields.detect_static(grammar, node_types)
 
     assert "permissions_property" in aliased
-    for finding in findings:
+    dropped = [f for f in findings if f.category == "dropped-field"]
+    for finding in dropped:
         assert finding.detail["rule"] not in aliased
 
 
@@ -111,3 +119,47 @@ def test_named_and_anonymous_entries_of_the_same_type_do_not_shadow():
 
     dropped = {(f.detail["rule"], f.detail["field"]) for f in findings if f.category == "dropped-field"}
     assert ("widget", "gadget") not in dropped
+
+
+def _grammar_with_hidden_fields(count: int) -> dict:
+    return {
+        "rules": {
+            "_hidden_rule": {
+                "type": "SEQ",
+                "members": [
+                    {
+                        "type": "FIELD",
+                        "name": f"f{i}",
+                        "content": {"type": "SYMBOL", "name": "x"},
+                    }
+                    for i in range(count)
+                ],
+            }
+        }
+    }
+
+
+def test_skipped_scope_count_moves_with_population():
+    """baseline.diff() acts on Cluster.count. A single summary Finding pins
+    count at 1 no matter how many declarations it represents, so growth or
+    shrinkage of the skipped population is invisible to the gate. One
+    Finding per skipped declaration, bucketed by reason, makes the count
+    track the real population: 2 hidden-rule fields -> count 2, adding a
+    third -> count 3. Asserting "some skipped findings exist" would not
+    prove this; only watching the count move across a population change does.
+    """
+    findings_two = fields.detect_static(_grammar_with_hidden_fields(2), [])
+    cluster_two = model.cluster(findings_two)
+    hidden_two = next(
+        c for c in cluster_two if c.key == model.fingerprint_key(fields.DETECTOR, ("skipped", fields.REASON_HIDDEN_RULE))
+    )
+    assert hidden_two.count == 2
+
+    findings_three = fields.detect_static(_grammar_with_hidden_fields(3), [])
+    cluster_three = model.cluster(findings_three)
+    hidden_three = next(
+        c
+        for c in cluster_three
+        if c.key == model.fingerprint_key(fields.DETECTOR, ("skipped", fields.REASON_HIDDEN_RULE))
+    )
+    assert hidden_three.count == 3

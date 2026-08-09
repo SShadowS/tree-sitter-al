@@ -31,6 +31,18 @@ _UNWRAP_TYPES = {
     "ALIAS",
 }
 
+# Stable reason slugs for skipped-scope findings. Each is a distinct
+# fingerprint bucket ("skipped", <reason>), so baseline.diff() sees the real
+# per-bucket population count instead of one Finding pinned at count=1
+# regardless of how many declarations it summarizes. This matters beyond
+# visibility: if a future change to the hidden/aliased scope logic
+# accidentally widens and a real dropped-field finding migrates into a skip
+# bucket, that bucket's count has to move for the ratchet to catch the
+# migration as a regression rather than recording it as improvement.
+REASON_HIDDEN_RULE = "hidden-rule"
+REASON_ALIASED_AT_USE_SITE = "aliased-at-use-site"
+REASON_RULE_ABSENT_FROM_NODE_TYPES = "rule-absent-from-node-types"
+
 
 def _walk_field_decls(node: Any) -> Iterator[str]:
     if isinstance(node, dict):
@@ -127,8 +139,31 @@ def collect_declared_fields(grammar: dict) -> list[tuple[str, str]]:
     return sorted(set(pairs))
 
 
+def _skip_finding(rule: str, field_name: str, reason: str) -> Finding:
+    """One Finding per skipped declaration, fingerprinted by reason bucket
+    (not by rule/field — that would make every skip its own singleton
+    cluster and defeat the point of bucketing). `detail` still carries the
+    real rule/field so a report reader can see exactly what was skipped.
+    """
+    return Finding(
+        detector=DETECTOR,
+        category="skipped-scope",
+        fingerprint=("skipped", reason),
+        path="grammar.js",
+        byte_offset=0,
+        line=0,
+        column=0,
+        enclosing=rule,
+        snippet=f"field('{field_name}', ...) in {rule} — skipped ({reason})",
+        detail={"rule": rule, "field": field_name, "reason": reason},
+    )
+
+
 def detect_static(grammar: dict, node_types: list[dict]) -> list[Finding]:
-    """v1 scope: visible, un-aliased rules only. Everything else is reported skipped."""
+    """v1 scope: visible, un-aliased rules only. Everything else is reported
+    skipped, one Finding per declaration, bucketed by reason so the count
+    moves with the population (see REASON_* for why that matters).
+    """
     aliased = alias_targets(grammar)
     # named-only: node-types.json can list two entries sharing a "type" when a
     # rule name coincides with an anonymous keyword token spelled the same way
@@ -141,19 +176,18 @@ def detect_static(grammar: dict, node_types: list[dict]) -> list[Finding]:
     rules = grammar["rules"]
 
     findings: list[Finding] = []
-    skipped: list[str] = []
 
     for rule, field_name in collect_declared_fields(grammar):
         if rule.startswith("_"):
-            skipped.append(f"{rule}.{field_name} (hidden rule)")
+            findings.append(_skip_finding(rule, field_name, REASON_HIDDEN_RULE))
             continue
         if rule in aliased:
-            skipped.append(f"{rule}.{field_name} (aliased at use site)")
+            findings.append(_skip_finding(rule, field_name, REASON_ALIASED_AT_USE_SITE))
             continue
 
         entry = by_type.get(rule)
         if entry is None:
-            skipped.append(f"{rule}.{field_name} (rule absent from node-types.json)")
+            findings.append(_skip_finding(rule, field_name, REASON_RULE_ABSENT_FROM_NODE_TYPES))
             continue
 
         if field_name in entry.get("fields", {}):
@@ -178,34 +212,6 @@ def detect_static(grammar: dict, node_types: list[dict]) -> list[Finding]:
                     "field": field_name,
                     "reason": "absent from node-types.json",
                     "operator_collision": operator_collision,
-                },
-            )
-        )
-
-    if skipped:
-        findings.append(
-            Finding(
-                detector=DETECTOR,
-                category="skipped-scope",
-                fingerprint=("skipped", "hidden-or-aliased"),
-                path="grammar.js",
-                byte_offset=0,
-                line=0,
-                column=0,
-                enclosing="grammar",
-                snippet=f"{len(skipped)} field declarations outside v1 scope",
-                # "rule"/"field" are dummy placeholders, not a real dropped field:
-                # every test in test_fields.py reads finding.detail["rule"] on
-                # every returned Finding unconditionally (see
-                # test_hidden_rules_are_skipped_not_flagged and
-                # test_aliased_rules_are_skipped), so this entry must carry the
-                # same keys as a dropped-field finding or it KeyErrors there.
-                # category="skipped-scope" is how a consumer tells it apart
-                # from a real dropped-field finding.
-                detail={
-                    "rule": "<skipped>",
-                    "field": "<summary>",
-                    "skipped": sorted(skipped),
                 },
             )
         )
