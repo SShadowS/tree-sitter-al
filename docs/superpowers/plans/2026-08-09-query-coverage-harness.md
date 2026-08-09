@@ -3307,6 +3307,7 @@ Convert both to explicit-stack iteration. `leaves()` must keep yielding in byte 
   - `detectors.PER_FILE` — tuple of `(name, callable(tree, source, path) -> list[Finding])`
   - `qc.cmd_select(args) -> int`
   - `qc.cmd_run(args) -> int`
+  - `qc.INFORMATIONAL_DETECTORS: frozenset[str]` — detectors whose clusters are written to the report but excluded from the baseline diff and the exit code
   - `qc.cmd_accept(args) -> int`
   - `qc.write_summary(path: Path, clusters, diff, never_seen: list[str]) -> None` — must also emit a "Coverage deliberately not checked" section from `anchors.EXCLUDED_ANCHORS`, so the `field(` exclusion is visible to anyone running the tool rather than only to someone reading the source
   - `qc.main(argv: list[str] | None = None) -> int`
@@ -3417,6 +3418,12 @@ from pathlib import Path
 from . import anchors as anchor_table
 from . import baseline, corpus, inventory, loader, model
 from .detectors import PER_FILE, fields, shipped_queries
+
+# Detector 6 audits the SHIPPED editor queries. They were written for
+# highlighting, not exhaustive extraction, so a gap in them is a note, not a
+# regression. Nothing in the Finding/Cluster model distinguishes advisory from
+# gating findings, so the distinction lives here and is applied before diff().
+INFORMATIONAL_DETECTORS = frozenset({"shipped_queries"})
 
 DEFAULT_MANIFEST = Path("tools/query_coverage/manifest.tsv")
 DEFAULT_BASELINE = Path("tools/query_coverage/baseline.json")
@@ -3557,15 +3564,27 @@ def cmd_run(args) -> int:
                 shipped_queries.tally(language, query_file, scan_targets)
             )
         )
-    if parsed:
-        tree, source = parsed[0]
+    # Keyword coverage runs over EVERY manifest file, not just the first. A
+    # keyword absent from one file says nothing; the invariant is "no *_keyword
+    # node type anywhere in the corpus goes uncaptured". detect_keyword_coverage
+    # already dedupes by node type internally, so the union stays small.
+    for (tree, source), entry in zip(parsed, entries):
         findings.extend(
             shipped_queries.detect_keyword_coverage(
-                language, highlights, node_types, tree, source, entries[0].path
+                language, highlights, node_types, tree, source, entry.path
             )
         )
 
     clusters = model.cluster(findings)
+
+    # Detector 6 is informational and must never change the exit code. That is
+    # not enforced by anything in the data model — its findings cluster and
+    # baseline exactly like everyone else's — so it must be enforced HERE, by
+    # partitioning before the diff. Everything still reaches findings.jsonl and
+    # summary.md; only the gate ignores it.
+    gating_clusters = [
+        c for c in clusters if c.detector not in INFORMATIONAL_DETECTORS
+    ]
 
     baseline_path = repo_root / args.baseline
     manifest_digest = corpus.manifest_hash(entries)
@@ -3578,7 +3597,7 @@ def cmd_run(args) -> int:
         )
         return baseline.EXIT_CORPUS_BROKEN
 
-    diff = baseline.diff(base, clusters)
+    diff = baseline.diff(base, gating_clusters)
 
     provenance = model.Provenance(
         build_stamp=loader.compute_stamp(repo_root),
