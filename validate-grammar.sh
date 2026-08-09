@@ -86,12 +86,49 @@ echo "Scanning test files for ERROR or MISSING nodes..."
 ERROR_MISSING_FILES=()
 TEST_FILE_COUNT=0
 
+# Deliberate-negative fixtures: their expected trees contain ERROR nodes ON
+# PURPOSE — the ERROR *is* the assertion, so they are exempt from this step. A
+# hit in any other corpus file still fails it.
+#
+# Keep this list in sync with pre-flight check #3 in .claude/commands/release.md,
+# which greps for the same thing before a release.
+DELIBERATE_ERROR_FIXTURES=(
+    # A `TableData Customer = R` fragment misplaced under OptionMembers is shaped
+    # exactly like a valid tabledata_permission. Asserts recovery surfaces the
+    # dangling remainder as an ERROR instead of silently accepting the whole
+    # thing as a well-formed construct.
+    "option_members_tabledata_keyword_test.txt"
+    # Asserts `#` + newline + `pragma` stays an ERROR: whitespace tolerance after
+    # `#` is horizontal-only (`[ \t]*`), so a directive may not straddle a line
+    # break and swallow the following source.
+    "pragma_whitespace_tolerance_test.txt"
+    # Same horizontal-only rule for `#if`/`#elif`, plus `# ifx` — an identifier
+    # that merely starts with "if" — must not lex as `#if`.
+    "preproc_if_elif_whitespace_tolerance_test.txt"
+    # Same horizontal-only rule for `#region`/`#endregion`.
+    "preproc_region_whitespace_audit_test.txt"
+)
+
+is_deliberate_error_fixture() {
+    local name allowed
+    name=$(basename "$1")
+    for allowed in "${DELIBERATE_ERROR_FIXTURES[@]}"; do
+        if [ "$name" = "$allowed" ]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 # Search for ERROR or MISSING in test corpus files
 # Look for ERROR or MISSING as parse tree nodes (not as AL code)
 # Pattern: (ERROR at start of line or after spaces, but not ERROR( which is AL function call
 for test_file in test/corpus/*.txt; do
     if [ -f "$test_file" ]; then
         TEST_FILE_COUNT=$((TEST_FILE_COUNT + 1))
+        if is_deliberate_error_fixture "$test_file"; then
+            continue
+        fi
         # Check for (ERROR or (MISSING but not ERROR( which is AL function call
         if grep -qE '^\s*\((ERROR|MISSING)|^\s*(ERROR|MISSING)[^(]' "$test_file"; then
             ERROR_MISSING_FILES+=("$test_file")
@@ -100,9 +137,9 @@ for test_file in test/corpus/*.txt; do
 done
 
 if [ ${#ERROR_MISSING_FILES[@]} -eq 0 ]; then
-    print_success "No ERROR or MISSING nodes found in $TEST_FILE_COUNT test files"
+    print_success "No unexpected ERROR or MISSING nodes in $TEST_FILE_COUNT test files (${#DELIBERATE_ERROR_FIXTURES[@]} deliberate-negative fixtures exempt)"
 else
-    print_error "Found ERROR/MISSING nodes in ${#ERROR_MISSING_FILES[@]} test files:"
+    print_error "Found unexpected ERROR/MISSING nodes in ${#ERROR_MISSING_FILES[@]} test files:"
     for file in "${ERROR_MISSING_FILES[@]}"; do
         echo "  - $(basename "$file")"
         # Show the first occurrence of ERROR or MISSING in each file
