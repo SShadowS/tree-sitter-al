@@ -3274,9 +3274,18 @@ extract-then-compare-to-itself, which can never fail.
 ### Task 14: CLI wiring — select, run, accept
 
 **Files:**
+- Modify: `tools/query_coverage/detectors/_tree.py` (prerequisite below)
 - Create: `tools/query_coverage/qc.py`
 - Modify: `tools/query_coverage/detectors/__init__.py`
 - Create: `tools/query_coverage/tests/test_cli.py`
+
+**Prerequisite — make `_tree` traversal iterative, before anything else in this task.**
+
+`detectors/_tree.py`'s `walk()` and `leaves()` are plain-recursive. A deeply nested AL file raises `RecursionError` at Python's default limit, and this is the first task to run detectors across whole corpora rather than small fixtures — Task 7's reviewer hit exactly this partway through a 15,358-file run.
+
+Convert both to explicit-stack iteration. `leaves()` must keep yielding in byte order, so an explicit stack has to push children in reverse to pop them left-to-right; `walk()` yields self before children. Add a test that builds a deeply nested source (a few thousand levels) and asserts both complete without `RecursionError` at the default limit.
+
+**Do not raise `sys.setrecursionlimit`.** That trades a clean, catchable exception for a hard interpreter crash, and the limit that matters is the C stack, not the Python counter.
 
 **Interfaces:**
 - Consumes: everything above.
