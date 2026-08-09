@@ -81,3 +81,33 @@ def test_collect_declared_fields_finds_nested_fields():
     }
 
     assert sorted(fields.collect_declared_fields(grammar)) == [("r", "a"), ("r", "b")]
+
+
+def test_named_and_anonymous_entries_of_the_same_type_do_not_shadow():
+    """Regression: node-types.json can list two entries sharing a "type" when
+    a rule name coincides with an anonymous keyword token of the same
+    spelling (real instance: the "procedure" rule vs. the anonymous
+    "procedure" keyword token). A naive {entry["type"]: entry} dict
+    comprehension is last-wins; with the anonymous (fieldless) entry last,
+    it shadows the real named entry and every field the rule declares is
+    reported dropped. Only named entries may own fields.
+    """
+    grammar = {
+        "rules": {
+            "widget": {
+                "type": "SEQ",
+                "members": [
+                    {"type": "FIELD", "name": "gadget", "content": {"type": "SYMBOL", "name": "x"}},
+                ],
+            }
+        }
+    }
+    node_types = [
+        {"type": "widget", "named": True, "fields": {"gadget": {}}},
+        {"type": "widget", "named": False},
+    ]
+
+    findings = fields.detect_static(grammar, node_types)
+
+    dropped = {(f.detail["rule"], f.detail["field"]) for f in findings if f.category == "dropped-field"}
+    assert ("widget", "gadget") not in dropped

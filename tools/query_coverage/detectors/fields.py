@@ -130,7 +130,14 @@ def collect_declared_fields(grammar: dict) -> list[tuple[str, str]]:
 def detect_static(grammar: dict, node_types: list[dict]) -> list[Finding]:
     """v1 scope: visible, un-aliased rules only. Everything else is reported skipped."""
     aliased = alias_targets(grammar)
-    by_type = {entry["type"]: entry for entry in node_types}
+    # named-only: node-types.json can list two entries sharing a "type" when a
+    # rule name coincides with an anonymous keyword token spelled the same way
+    # (e.g. the "procedure" rule vs. the anonymous "procedure" keyword token).
+    # A grammar rule always produces a *named* node; the anonymous entry is
+    # never the field owner. Keying on every entry is last-wins and lets the
+    # fieldless anonymous entry shadow the real one, producing a false
+    # positive for every field the rule declares.
+    by_type = {entry["type"]: entry for entry in node_types if entry.get("named")}
     rules = grammar["rules"]
 
     findings: list[Finding] = []
