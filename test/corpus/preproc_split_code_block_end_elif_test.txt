@@ -1,0 +1,508 @@
+================================================================================
+split code block end: #elif branch, both branches bare end;
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if A
+        end;
+#elif B
+        end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_split_end)
+                  (preproc_elif
+                    condition: (identifier))
+                  (preproc_split_end)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+split code block end: #elif branch carries the end/else-begin tail
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if A
+        end;
+#elif B
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_split_end)
+                  (preproc_elif
+                    condition: (identifier))
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+split code block end: #if branch carries the tail, #elif is a bare end;
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if A
+        end else begin x := 3; end;
+#elif B
+        end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (end_keyword)
+                  (preproc_elif
+                    condition: (identifier))
+                  (preproc_split_end)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+split code block end: #if and #elif bare, #else carries the tail
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if A
+        end;
+#elif B
+        end;
+#else
+        x := 2;
+        end else begin x := 3; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_split_end)
+                  (preproc_elif
+                    condition: (identifier))
+                  (preproc_split_end)
+                  (preproc_else)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+split code block end: #if bare, #elif and #else both carry tails
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if not CLEAN22
+        end;
+#elif not CLEAN23
+        x := 2;
+        end else begin x := 3; end;
+#else
+        x := 4;
+        end else begin x := 5; end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (preproc_split_end)
+                  (preproc_elif
+                    condition: (preproc_not_expression
+                      (identifier)))
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (end_keyword)
+                  (preproc_else)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (end_keyword)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+split code block end: #else peer of a bare end; (no #elif)
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if A
+        end;
+#else
+        end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (preproc_split_end)
+                  (preproc_else)
+                  (preproc_split_end)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+
+================================================================================
+split code block end: #if tail then a bare #else end;
+================================================================================
+codeunit 1 T
+{
+    procedure X()
+    var
+        x: Integer;
+    begin
+        if x = 1 then begin
+            x := 9;
+#if A
+        end else begin x := 3; end;
+#else
+        end;
+#endif
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (comparison_expression
+                left: (identifier)
+                operator: (comparison_operator)
+                right: (integer))
+              (then_keyword)
+              then_branch: (code_block
+                (begin_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer)))
+                (preproc_split_code_block_end
+                  (preproc_if
+                    (preproc_open)
+                    condition: (identifier))
+                  (end_keyword)
+                  (else_keyword)
+                  (begin_keyword)
+                  (assignment_statement
+                    left: (identifier)
+                    right: (integer))
+                  (end_keyword)
+                  (preproc_else)
+                  (preproc_split_end)
+                  (preproc_endif
+                    (preproc_close))))))
+          (end_keyword))))))
+

@@ -138,7 +138,14 @@ static const char *const TRANSPARENT_DIRECTIVES[] = {
 
 // Target sets for peek_directive_ci_skip_extras. Bare words, no '#'.
 static const char *const DIRECTIVE_ENDIF[] = { "endif", NULL };
-static const char *const DIRECTIVE_ELSE_ENDIF[] = { "else", "endif", NULL };
+// PREPROC_SPLIT_END's continuation set. "elif" belongs here for the same reason
+// "else" does: `#if … end; #elif …` is a branch alternative, and alc accepts it
+// (verified — both the #elif and #else forms compile). Omitting it made the
+// token decline and the run reparse as a call_statement plus loose identifiers.
+// Adding a target here is free: every target is tested against ONE buffered
+// read of the directive word (see peek_directive_ci_skip_extras), so a third
+// entry cannot resurrect the consume-the-prefix trap described there.
+static const char *const DIRECTIVE_BRANCH_OR_ENDIF[] = { "elif", "else", "endif", NULL };
 
 // Skip whitespace, comments and transparent-directive lines, then test whether
 // what follows is a '#' directive named by one of `targets`.
@@ -315,7 +322,7 @@ bool tree_sitter_al_external_scanner_scan(
 
   // 'end' dispatch — END_KEYWORD and PREPROC_SPLIT_END in ONE scan, for the
   // same reason as 'begin' above. PREPROC_SPLIT_END wants 'end' followed by
-  // ';' then #else or #endif.
+  // ';' then a branch continuation — #elif, #else or #endif.
   if (valid_symbols[END_KEYWORD] || valid_symbols[PREPROC_SPLIT_END]) {
     skip_whitespace(lexer);
     if (read_keyword_ci(lexer, "end")) {
@@ -331,7 +338,7 @@ bool tree_sitter_al_external_scanner_scan(
         // than returning false. mark_end already pinned the token to 'end'.
         if (skip_whitespace_and_comments(lexer) && lexer->lookahead == ';') {
           lexer->advance(lexer, false);
-          if (peek_directive_ci_skip_extras(lexer, DIRECTIVE_ELSE_ENDIF)) {
+          if (peek_directive_ci_skip_extras(lexer, DIRECTIVE_BRANCH_OR_ENDIF)) {
             lexer->result_symbol = PREPROC_SPLIT_END;
             return true;
           }

@@ -145,7 +145,7 @@ module.exports = grammar({
     $.begin_keyword,            // [4] 'begin' — any depth, unless split claims it
     $.end_keyword,              // [5] 'end' — any depth, unless split claims it
     $.preproc_split_begin,      // [6] 'begin' at depth > 0, immediately before #endif
-    $.preproc_split_end,        // [7] 'end' at depth > 0, followed by ; then #else/#endif
+    $.preproc_split_end,        // [7] 'end' at depth > 0, followed by ; then #elif/#else/#endif
     $.var_attribute_open,       // [8] '[' when attribute is followed by variable declaration
   ],
 
@@ -3248,17 +3248,31 @@ module.exports = grammar({
 
     // Used in code_block when the closing end (and optional else branch)
     // differs across preprocessor branches. Scanner's PREPROC_SPLIT_END ensures
-    // this only matches when 'end' at depth>0 is followed by ';' then #else/#endif.
+    // this only matches when 'end' at depth>0 is followed by ';' then a branch
+    // continuation (#elif/#else/#endif).
+    //
+    // #elif is a full peer of #else here. Every branch is an alternative
+    // completion of the same code_block, so each one independently contributes
+    // either a bare `end;` or the longer `end … else begin … end;` tail — hence
+    // _preproc_end_branch rather than a fixed first-is-bare/last-is-tail shape.
+    // Before this, #elif was absent from both the scanner's target set and this
+    // rule, so `#if … end; #elif …` degraded into a call_statement plus loose
+    // identifiers (a wrong tree, though the MISSING end_keyword it left behind
+    // did keep the error gate honest). alc accepts the #elif form.
     preproc_split_code_block_end: $ => prec(25, seq(
       $.preproc_if,
-      $.preproc_split_end,
-      optional(';'),
-      $.preproc_else,
-      repeat($._statement),
-      $.end_keyword,
-      $._else_begin_block,
+      $._preproc_end_branch,
+      repeat(seq($.preproc_elif, $._preproc_end_branch)),
+      optional(seq($.preproc_else, $._preproc_end_branch)),
       $.preproc_endif,
     )),
+
+    // One branch of preproc_split_code_block_end: either the split `end;` on its
+    // own, or statements followed by the full end/else-begin tail.
+    _preproc_end_branch: $ => choice(
+      seq($.preproc_split_end, optional(';')),
+      seq(repeat($._statement), $.end_keyword, $._else_begin_block),
+    ),
 
     // Fragmented else tail: begin #endif stmts #if end; #endif
     // Used after else_keyword when the else branch's begin/end is split across preprocessor blocks

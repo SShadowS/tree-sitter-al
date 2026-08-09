@@ -279,6 +279,39 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **`#elif` after a preprocessor-split `end;` no longer degrades the block.**
+  `#if COND / end; / #elif COND / … / #endif` produced a wrong tree: the `end;`
+  became `(call_statement (identifier))` and the following branch shredded into
+  loose `(identifier)` nodes, all flattened into `preproc_conditional_statement`
+  instead of forming one `preproc_split_code_block_end`. The identical source
+  with `#else` had parsed correctly since 3.3.1. alc accepts the `#elif` form,
+  so this was a wrong tree for valid AL.
+  - **Unlike the other misparses in this release, this one was not silent.** It
+    left a `MISSING end_keyword`, `tree-sitter parse` exited non-zero, and
+    `parse-al-parallel.sh` did count it — that script greps every `\tParse:`
+    line, which quiet mode emits for MISSING as well as ERROR. The error gate
+    caught it, which is why no such file was ever able to reach BC.History's
+    100% clean run. An earlier note recorded it as producing "zero ERROR nodes",
+    which is true but incomplete: it checked ERROR without checking MISSING.
+  - Two layers had to change. The scanner's `PREPROC_SPLIT_END` lookahead target
+    set gained `"elif"` alongside `"else"`/`"endif"`, so the token is emitted at
+    all; and `preproc_split_code_block_end` gained `#elif` branches, without
+    which the emitted token had no rule to land in.
+  - The rule is now branch-symmetric. Every `#if`/`#elif`/`#else` branch is an
+    alternative completion of the same block, so each independently contributes
+    either a bare `end;` or the longer `end … else begin … end;` tail, via a new
+    hidden `_preproc_end_branch`. That incidentally fixed two shapes `#else`
+    never handled either — a bare `end;` in the *final* branch
+    (`#if … end; #else end; #endif`) and a tail in the *first*
+    (`#if … end else begin … end; #else end; #endif`) — both of which degraded
+    exactly like the `#elif` case before this change.
+  - Factoring the branch into one shared hidden rule made the parser **smaller**:
+    `STATE_COUNT` 12709 → 12604 (-105), `parser.c` 27,593,402 → 27,490,081 bytes
+    (-101 KB). No `conflicts` entry was needed. `node-types.json` changed by
+    exactly one line — `preproc_elif` added to `preproc_split_code_block_end`'s
+    children — with the anonymous layer untouched, and all 15,358 BC.History
+    parse trees stayed byte-identical.
+
 - **`tools/tree-harness.sh` is 2-7x faster and can no longer report a clean run
   it did not earn.** Measured on BC.History (15,358 files, `NUM_THREADS=16`):
   `snapshot` 44.1s → 16.1s, a clean `verify` 24.6s → 11.2s, a 20-file delta

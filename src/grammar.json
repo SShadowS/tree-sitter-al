@@ -15169,14 +15169,39 @@
           },
           {
             "type": "SYMBOL",
-            "name": "preproc_split_end"
+            "name": "_preproc_end_branch"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "preproc_elif"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_preproc_end_branch"
+                }
+              ]
+            }
           },
           {
             "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": ";"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "preproc_else"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_preproc_end_branch"
+                  }
+                ]
               },
               {
                 "type": "BLANK"
@@ -15185,29 +15210,56 @@
           },
           {
             "type": "SYMBOL",
-            "name": "preproc_else"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_statement"
-            }
-          },
-          {
-            "type": "SYMBOL",
-            "name": "end_keyword"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_else_begin_block"
-          },
-          {
-            "type": "SYMBOL",
             "name": "preproc_endif"
           }
         ]
       }
+    },
+    "_preproc_end_branch": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "preproc_split_end"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ";"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_statement"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "end_keyword"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_else_begin_block"
+            }
+          ]
+        }
+      ]
     },
     "preproc_fragmented_else_tail": {
       "type": "PREC",
