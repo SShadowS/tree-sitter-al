@@ -69,7 +69,7 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 - **Generic preprocessor** — ONE `preproc_conditional` rule + ~12 dedicated split-construct rules (vs V1's 63)
 - **Named keyword nodes** — 83 keywords exposed as named nodes for query matching (81 grammar rules + the external `begin_keyword`/`end_keyword`), all with a uniform shape: one anonymous child typed as the canonical lowercase spelling
 - **Stateful scanner** — a `uint32_t` depth counter tracks `#if`/`#endif` nesting (it was a `uint8_t` until 4.0.0 and wrapped at 256); `begin`/`end` are named at every depth, and the depth counter decides only whether a `PREPROC_SPLIT_*` token gets first refusal
-- **Single-read identifier dispatch** — all six identifier-initial scanner tokens are decided in one scan over one read of the word. `read_keyword_ci` leaves a matched prefix consumed on failure, so sequential per-token reads start mid-identifier
+- **Single-read identifier dispatch** — all six identifier-initial scanner tokens are decided in one scan over one read of the word. Nothing matches a keyword against the live lexer: a walking matcher leaves its matched prefix consumed on failure, so sequential per-token reads start mid-identifier. That shape caused three separate defects and was deleted in 4.0.0
 
 **Scanner Tokens:**
 
