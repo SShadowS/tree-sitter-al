@@ -41,11 +41,19 @@ Each of these has a full entry below with its mechanism and its measurement.
 
 ### What this release did not fix
 
-**The CST is still not lossless over the source.** The harness reports **3,895 byte-gap
-findings in 112 clusters** — source bytes that are consumed by the lexer and land in no
-node at all, so they cannot be read from the tree or matched by any query. The largest
-are `record` (2,220), `field` (473) and `code` (372), with roughly thirty other keywords
-behind them.
+**The CST is still not lossless over the source.** Over the full 15,358-file corpus the
+harness reports **574,694 byte-gap findings in 164 clusters** — source bytes that are
+consumed by the lexer and land in no node at all, so they cannot be read from the tree or
+matched by any query. The largest are `record` (305,922), `field` (83,885) and `code`
+(78,575), with roughly thirty other keywords behind them.
+
+*A note on which number you will see.* `tools/query_coverage/baseline.json` records
+**3,895 findings in 112 clusters**, and that is not a different measurement of the same
+thing — it is the **59-file manifest** scope that the regression gate runs against, not
+the corpus. The manifest is chosen by set-cover to hit every node type at least once, so
+it is far denser in constructs per file than real code and its absolute counts do not
+scale. Quote the corpus figure when describing the parser and the manifest figure when
+describing the gate; the two differ by roughly 147x and neither is wrong.
 
 This release fixed one half of that population: every keyword sitting inside a
 `field()`, where the dropped token also took a declared field down with it. The other

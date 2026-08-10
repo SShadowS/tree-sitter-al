@@ -159,7 +159,7 @@ For grammar refactors, the parse-tree diff harness proves a change is zero-behav
 ./tools/tree-harness.sh verify   ./BC.History .snapshots/baseline-<change>   # ~11s
 ```
 
-The query-coverage harness measures whether the tree is lossless over the source and whether values stay reachable through queries — the class of defect an error count cannot see, because a token that is lexed and then dropped changes no tree hash. It currently reports 3,895 byte gaps in 112 clusters, dominated by bare inline keywords (`record`, `field`, `code`); 4.0.0 fixed the ones that also took a declared field down with them, not the rest:
+The query-coverage harness measures whether the tree is lossless over the source and whether values stay reachable through queries — the class of defect an error count cannot see, because a token that is lexed and then dropped changes no tree hash. It currently reports 574,694 byte gaps in 164 clusters over the full 15,358-file corpus, dominated by bare inline keywords (`record`, `field`, `code`) — the 3,895 in `baseline.json` is the 59-file manifest scope the gate runs against, not the corpus; 4.0.0 fixed the ones that also took a declared field down with them, not the rest:
 
 ```bash
 python -m tools.query_coverage.qc run     # regression gate, exits 1 on a new cluster
