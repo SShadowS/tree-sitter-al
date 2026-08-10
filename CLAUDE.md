@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+GOAL: A parser which parses AL code CORRECT, not just without errors. That is the first and foremost goal. 
+
 This file provides guidance to Claude Code (claude.ai/code) when working with this tree-sitter parser for the AL (Application Language) programming language used in Microsoft Dynamics 365 Business Central.
 
 **Current Status**: 100% production file success rate (15,358/15,358 files), 1451 tests passing, 0 errors
@@ -42,10 +44,25 @@ python -m tools.query_coverage.qc accept       # freeze the current state as the
 tree-sitter generate         # Generate parser from grammar.js
 tree-sitter generate --report-states-for-rule -  # Rank rules by parser-state cost
 tree-sitter test            # Run test suite
-tree-sitter test -u         # Update test expectations (only if no ERRORs)
+tree-sitter test -u         # Update test expectations — see the two traps below
 tree-sitter parse file.al -d > debug.log 2>&1  # Debug specific files
 python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 ```
+
+**Two traps in `tree-sitter test -u`. Both produce a test that passes whether the grammar is right or wrong.**
+
+1. **"Only if no ERRORs" is not a sufficient check.** A tree can be completely wrong without
+   containing a single ERROR node — that is what every defect found in 4.0.0 looked like.
+   Five shipped fixtures were found asserting a defect as correct behaviour, and each had a
+   clean error count. Before accepting a `-u` rewrite, read the whole diff of every file it
+   touched and trace each hunk to your change. A hunk you cannot explain is drift being
+   blessed.
+2. **`-u` writes NO field labels if the expectation it replaces had none**, and an
+   unlabelled expected tree asserts *nothing* about fields. Field comparison is
+   all-or-nothing per file, so adding one label to an otherwise-unlabelled tree fails —
+   which is why the weak form degrades silently instead of erroring. If the fields are the
+   point of your test, generate the expectation from `tree-sitter parse` output instead, and
+   prove the fixture can fail by renaming a field to `bogus:`.
 
 **Common Test Options:**
 - `-i "pattern"` - Include tests matching pattern

@@ -35,6 +35,17 @@ Its counts are not comparable to the manifest baseline (59 files vs.
 refuses a `--full-corpus` report outright — a full sweep can only inform,
 never contaminate the baseline.
 
+## Not concurrency-safe
+
+**Never run two `qc` invocations at once, and never run one alongside
+`./validate-grammar.sh`** — its Step 5d runs a manifest-scope `qc`. Every invocation shares
+one `reports/` directory and one `baseline.json`, and nothing detects the collision or warns
+you. Both runs complete and both print plausible results; neither is trustworthy.
+
+This has already happened once: a full-corpus run was backgrounded and `validate-grammar.sh`
+started while it was in flight. Both outputs were discarded and the gates re-run serially.
+If you are unsure whether a result was taken cleanly, it was not — re-run it.
+
 ## Exit codes
 
 | Code | Meaning |
