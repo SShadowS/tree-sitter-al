@@ -239,6 +239,11 @@ module.exports = grammar({
     // terminator: `#if C  stmt; if X then  #endif  shared;`
     [$._preproc_guard_block, $._statement_inner],
     [$.if_statement, $._if_statement_no_else],  // dangling-else in case branches
+    // if_statement takes _then_branch_no_semi while the preproc_split_if_* rules
+    // still take _then_branch, and the two are indistinguishable until the token
+    // after the then-branch. LR cannot see that far, so GLR explores both and the
+    // lookahead settles it. Required: generation fails without it.
+    [$._then_branch, $._then_branch_no_semi],
     // statement_block vs preproc_split_code_block_end after the statement run
     [$.statement_block],
     // var_body run terminates at the following begin (no closing delimiter)
@@ -3558,20 +3563,76 @@ module.exports = grammar({
 
     // --- If/Then/Else ---
 
-    if_statement: $ => prec.right(seq(
+    // The two arms differ ONLY in whether the then-branch may carry a trailing
+    // ';', and that is the whole dangling-else fix. alc is unambiguous here
+    // (verified against 18.0.37.11445):
+    //
+    //   if C then A else B;      accepted -- else binds to the nearest if
+    //   if C then A; else B;     REJECTED, AL0110 "Orphaned ELSE statement"
+    //
+    // So a ';' TERMINATES the if: an else after one cannot belong to it. Making
+    // that structural is what lets the two case-branch shapes coexist without a
+    // precedence guess. `case 1: if C then A; else B; end;` has only the
+    // no-else reading (the ';' bars the else arm), so the else is the case's;
+    // `case 1: if C then A else B; else C; end;` has no ';', so the else arm is
+    // available and the dynamic precedence below picks it.
+    // Dangling else. The ONE-seq shape with optional(else) plus prec.right is
+    // load-bearing and must not be split into two alternatives: that is what
+    // makes the else shift into the INNERMOST unmatched if. Splitting it into
+    // `choice(with-else, without-else)` turns the decision into a choice between
+    // two productions, which associativity does not govern, and
+    // `if A then if B then if C then begin … end else X;` then binds the else to
+    // an OUTER if — verified against a real BC file
+    // (Assembly/Document/AssemblyAvailabilityMgt.Codeunit.al:144-149).
+    //
+    // What changed in 4.0.0 is only the then-branch: it no longer swallows a
+    // trailing ';'. alc settles the rule (verified, 18.0.37.11445):
+    //
+    //   if C then A else B;    accepted
+    //   if C then A; else B;   REJECTED, AL0110 "Orphaned ELSE statement"
+    //
+    // So a ';' TERMINATES the if. Leaving it to the enclosing statement wrapper
+    // makes that structural: `case 1: if C then A; else B; end;` can only read
+    // the else as the CASE's, while `case 1: if C then A else B; else C; end;`
+    // has no ';' and the else binds to the if. Before this the then-branch ate
+    // the ';', both readings completed, and prec.dynamic picked the wrong one —
+    // the if lost its else, case_else_branch swallowed B, and the real case-else
+    // became a bare identifier, with zero ERROR nodes.
+    //
+    // prec.dynamic(20) breaks the remaining tie against case_else_branch, which
+    // is a genuine GLR ambiguity (both parses complete) and therefore not
+    // resolvable by static precedence — prec.right(30) on the else arm had no
+    // effect at all.
+    if_statement: $ => prec.right(prec.dynamic(20, seq(
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      $._then_branch,
-      optional(seq(
-        $.else_keyword,
-        $._else_branch
-      ))
-    )),
+      $._then_branch_no_semi,
+      // Either an else, or the terminating ';' — never both. This is the whole
+      // fix, and keeping the ';' HERE rather than letting the enclosing wrapper
+      // take it is deliberate: moving it out re-spans every if_statement in the
+      // corpus (74,268 of them), which is a contract change far beyond a
+      // dangling-else fix.
+      choice(
+        seq($.else_keyword, $._else_branch),
+        optional(';'),
+      )
+    ))),
 
-    // If statement without else clause — used as case branch body
-    // to prevent the dangling-else problem where 'else' would be
-    // consumed by the if instead of the enclosing case statement.
+    // If statement without else clause — used as case branch body so that
+    // `case 1: if C then A; else B; end;` can give the else to the CASE.
+    // From 0f1871e (March); prec.dynamic(10) is that commit's value and is
+    // deliberately unchanged — verified that all six dangling-else shapes still
+    // resolve correctly with it, so there was no reason to touch it.
+    //
+    // It was NOT the cause of the dangling-else defect, though the obvious
+    // reading says it was. Deleting this rule entirely leaves
+    // `case 1: if C then A else B; else C; end;` misparsing exactly as before:
+    // both readings are complete parses and GLR was picking between them on
+    // DYNAMIC precedence, which this rule does not participate in — the losing
+    // reading uses plain `if_statement` without its else arm, not this variant.
+    // The fix is in if_statement: the ';' now decides structurally, and the
+    // else arm carries prec.dynamic(20) to win the tie that remains.
     _if_statement_no_else: $ => prec.dynamic(10, seq(
       $.if_keyword,
       field('condition', $._expression),
@@ -3586,6 +3647,17 @@ module.exports = grammar({
     _then_branch: $ => choice(
       field('then_branch', $.code_block),
       fieldedStatement($, 'then_branch'),
+    ),
+
+    // _then_branch minus the trailing ';'. The ';' now belongs to the enclosing
+    // statement wrapper, which is what terminates the whole if_statement — see
+    // the note on if_statement. call_statement stays because it OWNS its ';'
+    // (`if C then Foo;`) and dropping it here would turn that node into a bare
+    // identifier.
+    _then_branch_no_semi: $ => choice(
+      field('then_branch', $.code_block),
+      field('then_branch', $.call_statement),
+      field('then_branch', $._statement_inner),
     ),
 
     // Shared else-branch body: code_block, nested if (else-if chain), or single statement

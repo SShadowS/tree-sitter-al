@@ -1,0 +1,421 @@
+================================================================================
+A dangling else in a case branch binds to the inner if, not the case
+--
+THE defect. `if C then A else B;` inside a case branch: the if lost its else
+entirely, `case_else_branch` swallowed B, and the real case-else was demoted to
+a bare `identifier`. Zero ERROR nodes, so no gate saw it -- the program simply
+meant something else. Confirmed against alc 18.0.37.11445: this exact source
+compiles, which it could not if the inner else belonged to the case, because
+the outer else would then be a second case-else.
+--
+The assertion is the `else_branch:` field ON the if_statement, and a
+`case_else_branch` that contains only `Y := 3`.
+================================================================================
+codeunit 50100 P
+{
+    procedure P()
+    var
+        X: Integer;
+        Y: Integer;
+    begin
+        case X of
+            1:
+                if X = 0 then
+                    Y := 1
+                else
+                    Y := 2;
+            else
+                Y := 3;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (comparison_expression
+                      left: (identifier)
+                      operator: (comparison_operator)
+                      right: (integer))
+                    (then_keyword)
+                    then_branch: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer))
+                    (else_keyword)
+                    else_branch: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+A ';' before the else gives it to the CASE -- must not regress
+--
+The counter-shape, and the reason the fix is not simply "prefer the if". alc
+rejects `if C then A; else B;` in a plain statement context with AL0110
+"Orphaned ELSE statement", so a ';' TERMINATES the if. Here that makes the else
+unambiguously the case's. This parsed correctly before the fix and still does;
+the ';' is now what makes it structural rather than a precedence guess.
+================================================================================
+codeunit 50100 P
+{
+    procedure P()
+    var
+        X: Integer;
+        Y: Integer;
+    begin
+        case X of
+            1:
+                if X = 0 then
+                    Y := 1;
+            else
+                Y := 3;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (comparison_expression
+                      left: (identifier)
+                      operator: (comparison_operator)
+                      right: (integer))
+                    (then_keyword)
+                    then_branch: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+An else-if chain inside a case branch, with a real case-else after it
+================================================================================
+codeunit 50100 P
+{
+    procedure P()
+    var
+        X: Integer;
+        Y: Integer;
+    begin
+        case X of
+            1:
+                if X = 0 then
+                    Y := 1
+                else if X = 1 then
+                    Y := 2
+                else
+                    Y := 3;
+            else
+                Y := 4;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (comparison_expression
+                      left: (identifier)
+                      operator: (comparison_operator)
+                      right: (integer))
+                    (then_keyword)
+                    then_branch: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer))
+                    (else_keyword)
+                    else_branch: (if_statement
+                      (if_keyword)
+                      condition: (comparison_expression
+                        left: (identifier)
+                        operator: (comparison_operator)
+                        right: (integer))
+                      (then_keyword)
+                      then_branch: (assignment_statement
+                        left: (identifier)
+                        operator: (assignment_operator)
+                        right: (integer))
+                      (else_keyword)
+                      else_branch: (assignment_statement
+                        left: (identifier)
+                        operator: (assignment_operator)
+                        right: (integer))))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+An if-else in a case branch with no case-else competing
+--
+This shape always worked, and it is what proves the with-else reading was
+available all along: the defect was GLR choosing between two complete parses,
+not a missing rule.
+================================================================================
+codeunit 50100 P
+{
+    procedure P()
+    var
+        X: Integer;
+        Y: Integer;
+    begin
+        case X of
+            1:
+                if X = 0 then
+                    Y := 1
+                else
+                    Y := 2;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (comparison_expression
+                      left: (identifier)
+                      operator: (comparison_operator)
+                      right: (integer))
+                    (then_keyword)
+                    then_branch: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer))
+                    (else_keyword)
+                    else_branch: (assignment_statement
+                      left: (identifier)
+                      operator: (assignment_operator)
+                      right: (integer)))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+Nested ifs: the else binds to the NEAREST unmatched if
+--
+Regression guard for the fix itself. An earlier attempt split if_statement into
+two alternatives (with-else / without-else), which reads naturally but destroys
+the shift/reduce associativity that binds a dangling else innermost -- this
+shape then attached the else to an OUTER if. Caught on a real BC file,
+Assembly/Document/AssemblyAvailabilityMgt.Codeunit.al:144-149. The one-seq
+`optional(else)` plus prec.right shape is load-bearing; do not split it.
+================================================================================
+codeunit 50100 P
+{
+    procedure P()
+    var
+        A: Boolean;
+        B: Boolean;
+        C: Boolean;
+        Found: Boolean;
+    begin
+        if A then
+            if B then
+                if C then begin
+                    Found := false;
+                end else
+                    Found := true;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (if_statement
+              (if_keyword)
+              condition: (identifier)
+              (then_keyword)
+              then_branch: (if_statement
+                (if_keyword)
+                condition: (identifier)
+                (then_keyword)
+                then_branch: (if_statement
+                  (if_keyword)
+                  condition: (identifier)
+                  (then_keyword)
+                  then_branch: (code_block
+                    (begin_keyword)
+                    body: (statement_block
+                      (assignment_statement
+                        left: (identifier)
+                        operator: (assignment_operator)
+                        right: (boolean)))
+                    (end_keyword))
+                  (else_keyword)
+                  else_branch: (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (boolean))))))
+          (end_keyword))))))
+

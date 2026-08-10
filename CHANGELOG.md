@@ -279,6 +279,42 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **A dangling `else` in a case branch bound to the `case`, not to the inner
+  `if`.** The only defect in this release that changes what the program *means*.
+  For `case X of 1: if C then A else B; else C; end;` the `if` lost its `else`
+  entirely, `case_else_branch` swallowed `B`, and the real case-`else` was
+  demoted to a bare `identifier`. `B` should run when `C` is false; in that tree
+  it ran as the case's else-branch. Zero ERROR nodes throughout, so no gate saw
+  it.
+  - **Confirmed against alc 18.0.37.11445 rather than by appeal to Pascal.** The
+    discriminator: if the inner `else` bound to the case, the outer `else` would
+    be a second case-else and the file would not compile. It compiles, so the
+    `else` binds to the nearest unmatched `if`. Separately, `if C then A; else B;`
+    with **no** enclosing case is rejected — `AL0110, Orphaned ELSE statement` —
+    so a `;` *terminates* the `if`, while the same `;` inside a case branch is
+    legal and hands the `else` to the case.
+  - That makes the `;` the disambiguator, and it is now **structural**: the
+    then-branch and the `else` are mutually exclusive alternatives after the
+    then-branch, so `if C then A; else B;` can only read the `else` as the
+    case's. Previously the then-branch swallowed the `;`, both readings were
+    complete parses, and a `prec.dynamic` picked the wrong one.
+  - **"9 sites" was the size of the detectable residue, not of the defect.**
+    133 files changed: 179 wrongly-formed `case_else_branch` removed, 183
+    `else_branch:` gained, and exactly 9 `identifier` removed. The harness's
+    `reserved|else|statement_block` detector finds this defect only where the
+    case *also* had an `else` of its own, leaving a stray keyword-as-identifier
+    behind; in the other ~170 the case had no else, nothing was left over, and
+    the detector was blind to it. A stray-`else` census over all 15,358 files
+    now returns **0**.
+  - `_if_statement_no_else` and its `prec.dynamic(10)` from `0f1871e` are
+    **unchanged**. It reads like the cause and is not: deleting it entirely
+    leaves the misparse identical, because the losing reading uses plain
+    `if_statement` without its else arm. The contest is a GLR ambiguity between
+    two complete parses, so it is settled by *dynamic* precedence — static
+    `prec.right(30)` on the else arm had no effect at all.
+  - One new conflict (`_then_branch` / `_then_branch_no_semi`), verified
+    required; `STATE_COUNT` 14,063 → 14,088 (+25).
+
 - **`where(X = field(N))`, `where(X = const(N))` and `where(X = upperlimit(N))`
   produced byte-identical trees.** Not a cosmetic omission — a semantic misread.
   `const(N)` means "X equals the literal N", `field(N)` means "X equals the value
