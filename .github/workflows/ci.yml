@@ -10,6 +10,7 @@ on:
       - test/**
       - queries/**
       - bindings/**
+      - tools/**
       - binding.gyp
       - .github/workflows/ci.yml
   pull_request:
@@ -19,6 +20,7 @@ on:
       - test/**
       - queries/**
       - bindings/**
+      - tools/**
       - binding.gyp
       - .github/workflows/ci.yml
 
@@ -61,6 +63,32 @@ jobs:
       - name: Run fuzzer
         uses: tree-sitter/fuzz-action@v4
         if: steps.scanner-check.outputs.changed == 'true'
+
+  query-coverage-selftest:
+    # NOTE: this runs the harness's OWN unit tests, NOT the corpus gate.
+    # `qc run` needs BC.History, which is gitignored and absent on runners, so the
+    # gate that finds grammar defects still only runs locally via validate-grammar.sh
+    # Step 5d. Do not read a green check here as "the CST was verified lossless" --
+    # it means the harness itself is not broken. See tools/query_coverage/README.md.
+    name: Query-coverage harness self-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v2
+
+      - name: Install harness dependencies
+        run: pip install -r tools/query_coverage/requirements.txt
+
+      - name: Run harness unit tests
+        run: python -m pytest tools/query_coverage/tests -q
 
   query:
     name: Validate queries
