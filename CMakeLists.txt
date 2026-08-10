@@ -24,10 +24,21 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/src/parser.c"
                    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
                    COMMENT "Generating parser.c")
 
-add_library(tree-sitter-al src/parser.c)
-if(EXISTS src/scanner.c)
-  target_sources(tree-sitter-al PRIVATE src/scanner.c)
-endif()
+# scanner.c is UNCONDITIONAL, and the guard it replaces was two hazards.
+#
+# It was `if(EXISTS src/scanner.c)`. CMake documents if(EXISTS) as well-defined
+# only for FULL paths -- a relative one is undefined behaviour. It happens to
+# evaluate TRUE on CMake 3.29.2 (measured), so the build works today, but the
+# whole construct is wrong in a more basic way: this grammar has had an external
+# scanner for its entire life, so a missing scanner.c is not a configuration to
+# degrade gracefully into. It is a broken checkout.
+#
+# Degrading silently is the worse failure: parser.c references five
+# tree_sitter_al_external_scanner_* symbols, so skipping scanner.c does not
+# produce a scanner-less parser, it produces a library that cannot link -- and
+# the diagnostic then points at undefined symbols rather than at the missing
+# file. Listing it unconditionally makes CMake say which file is absent.
+add_library(tree-sitter-al src/parser.c src/scanner.c)
 target_include_directories(tree-sitter-al PRIVATE src)
 
 target_compile_definitions(tree-sitter-al PRIVATE

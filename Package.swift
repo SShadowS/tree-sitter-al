@@ -16,7 +16,17 @@ let package = Package(
             path: ".",
             sources: [
                 "src/parser.c",
-                // NOTE: if your language has an external scanner, add it here.
+                // REQUIRED. This grammar has had an external scanner for its
+                // entire life and eight tokens depend on it: PROPERTY_NAME,
+                // CONTINUE_AS_IDENTIFIER, PREPROC_OPEN/CLOSE,
+                // BEGIN_KEYWORD/END_KEYWORD and both PREPROC_SPLIT_*. Without
+                // it the package does not link -- parser.c references five
+                // tree_sitter_al_external_scanner_* symbols that live only
+                // here. Verified by linking parser.c alone: all five come back
+                // undefined. This line was the tree-sitter template's
+                // "add it here" placeholder, left unedited, so the published
+                // Swift package could never have worked.
+                "src/scanner.c",
             ],
             resources: [
                 .copy("queries")
