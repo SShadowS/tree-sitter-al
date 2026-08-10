@@ -4165,7 +4165,37 @@ module.exports = grammar({
       field('right', $._expression)
     )),
 
-    comparison_expression: $ => prec.left(4, seq(
+    // 2, BELOW `and` (4) and `or`/`xor` (3). AL is Pascal-derived and the
+    // logical operators bind TIGHTER than the comparisons — the exact inverse
+    // of what this rule declared until now, and the reason every BC codebase
+    // writes `if (a = b) and (c = d) then` with parentheses that look
+    // redundant and are not.
+    //
+    // Compiler-measured with alc 18.0.37.11445. Accept/reject cannot
+    // discriminate `and`/`or`/`xor` grouping — every operand must be Boolean
+    // under either reading — so this uses the operand-type message, which
+    // names the operator AND the order of the types:
+    //
+    //   b := 1 = 1 and 2 = 2;   AL0175 Operator 'and' … 'Integer' and 'Integer'
+    //   b := 1 < 2 and 3 < 4;   AL0175 Operator 'and' … 'Integer' and 'Integer'
+    //   b := 1 < 2 or 3 < 4;    AL0175 Operator 'or'  … 'Integer' and 'Integer'
+    //   b := 1 <> 2 xor 3 <> 4; AL0175 Operator 'xor' … 'Integer' and 'Integer'
+    //   b := (1 = 1) and (2 = 2);  ACCEPT                              (control)
+    //
+    // `'Integer' and 'Integer'` is producible only by `1 and 2`, i.e. alc read
+    // `1 = (1 and 2) = 2`, and the parenthesised control compiles — so the
+    // instrument discriminates. Both directions were probed:
+    //
+    //   b := 1 = 1 and true;    'and' 'Integer' and 'Boolean' => 1 = (1 and true)
+    //   b := true and 1 = 1;    'and' 'Boolean' and 'Integer' => (true and 1) = 1
+    //
+    // The two groupings are NOT equivalent. With A, B, C all Boolean and all
+    // false, `A = B and C` is TRUE under the compiler and was FALSE here.
+    //
+    // Only 3 BC.History sites write an unparenthesised comparison as an operand
+    // of a logical operator, and all three are the `… and X = true` idiom where
+    // the two readings happen to agree. That is luck, not safety.
+    comparison_expression: $ => prec.left(2, seq(
       field('left', $._expression),
       field('operator', $.comparison_operator),
       field('right', $._expression)
@@ -4180,21 +4210,26 @@ module.exports = grammar({
       '='
     ),
 
+    // Measured ladder: `and` binds tighter than `or`/`xor`, which are one level
+    // and left-associative, and all three bind tighter than the comparisons.
+    // Only the last part changed here — the relative order of the three was
+    // already right, confirmed by six alc probes (`true or 1 and true` reports
+    // 'and', `true or 1 xor true` reports 'or', and so on).
     logical_expression: $ => choice(
-      // AND (prec 3)
-      prec.left(3, seq(
+      // AND (prec 4) — above OR/XOR, below `in`/`is`/`as` (5)
+      prec.left(4, seq(
         field('left', $._expression),
         field('operator', alias(kw('and'), 'and')),
         field('right', $._expression)
       )),
-      // OR (prec 2)
-      prec.left(2, seq(
+      // OR (prec 3)
+      prec.left(3, seq(
         field('left', $._expression),
         field('operator', alias(kw('or'), 'or')),
         field('right', $._expression)
       )),
-      // XOR (prec 2)
-      prec.left(2, seq(
+      // XOR (prec 3) — same level as OR, so `a or b xor c` is `(a or b) xor c`
+      prec.left(3, seq(
         field('left', $._expression),
         field('operator', alias(kw('xor'), 'xor')),
         field('right', $._expression)
