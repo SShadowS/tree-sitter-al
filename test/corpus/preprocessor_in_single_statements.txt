@@ -51,10 +51,12 @@ codeunit 50200 TestWhileSingle
                   condition: (identifier))
                 (assignment_statement
                   left: (identifier)
+                  operator: (assignment_operator)
                   right: (integer))
                 (preproc_else)
                 (assignment_statement
                   left: (identifier)
+                  operator: (assignment_operator)
                   right: (additive_expression
                     left: (identifier)
                     right: (integer)))

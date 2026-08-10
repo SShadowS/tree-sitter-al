@@ -1,0 +1,128 @@
+================================================================================
+All five assignment operators are distinguishable
+--
+`_assignment_operator` was a hidden rule over a single token, so
+field('operator', ...) on assignment_statement had nothing visible to attach to
+and was dropped from node-types.json entirely. The bytes belonged to no node,
+so there was no text fallback either: these five statements produced
+BYTE-IDENTICAL trees, and a consumer doing dataflow read every one of them as a
+plain assignment. 22,964 `:=` per 500 files.
+--
+The field labels below are the assertion. An unlabelled expected tree would
+pass on the broken grammar, because the node shape was never the problem.
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+    var
+        i: Integer;
+    begin
+        i := 1;
+        i += 2;
+        i -= 3;
+        i *= 4;
+        i /= 5;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)))
+          (end_keyword))))))
+
+================================================================================
+assignment_expression carries the operator too, and for_statement's ':=' is a
+different token
+--
+for_statement uses a literal ':=', which is NOT an assignment_operator. That
+distinction is why queries/highlights.scm's `":=" @operator` matched only the
+for-statement site and never an assignment; the query now captures both.
+The token() wrapper on assignment_operator is what keeps the two apart, and
+removing it makes the grammar fail to generate.
+================================================================================
+codeunit 50100 C
+{
+    procedure P()
+    var
+        i: Integer;
+        j: Integer;
+    begin
+        for i := 1 to 10 do
+            j += i;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (for_statement
+              (for_keyword)
+              variable: (identifier)
+              start: (integer)
+              direction: (to_keyword)
+              end: (integer)
+              (do_keyword)
+              body: (assignment_statement
+                left: (identifier)
+                operator: (assignment_operator)
+                right: (identifier))))
+          (end_keyword))))))
+

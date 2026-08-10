@@ -49,6 +49,7 @@ codeunit 1 T
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (preproc_split_code_block_end
                   (preproc_if
@@ -114,6 +115,7 @@ codeunit 1 T
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (preproc_split_code_block_end
                   (preproc_if
@@ -124,12 +126,14 @@ codeunit 1 T
                     condition: (identifier))
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (end_keyword)
                   (else_keyword)
                   (begin_keyword)
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (end_keyword)
                   (preproc_endif
@@ -187,6 +191,7 @@ codeunit 1 T
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (preproc_split_code_block_end
                   (preproc_if
@@ -197,6 +202,7 @@ codeunit 1 T
                   (begin_keyword)
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (end_keyword)
                   (preproc_elif
@@ -260,6 +266,7 @@ codeunit 1 T
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (preproc_split_code_block_end
                   (preproc_if
@@ -272,12 +279,14 @@ codeunit 1 T
                   (preproc_else)
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (end_keyword)
                   (else_keyword)
                   (begin_keyword)
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (end_keyword)
                   (preproc_endif
@@ -339,6 +348,7 @@ codeunit 1 T
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (preproc_split_code_block_end
                   (preproc_if
@@ -351,23 +361,27 @@ codeunit 1 T
                       (identifier)))
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (end_keyword)
                   (else_keyword)
                   (begin_keyword)
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (end_keyword)
                   (preproc_else)
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (end_keyword)
                   (else_keyword)
                   (begin_keyword)
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (end_keyword)
                   (preproc_endif
@@ -425,6 +439,7 @@ codeunit 1 T
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (preproc_split_code_block_end
                   (preproc_if
@@ -488,6 +503,7 @@ codeunit 1 T
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (preproc_split_code_block_end
                   (preproc_if
@@ -498,6 +514,7 @@ codeunit 1 T
                   (begin_keyword)
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (end_keyword)
                   (preproc_else)
@@ -505,4 +522,3 @@ codeunit 1 T
                   (preproc_endif
                     (preproc_close))))))
           (end_keyword))))))
-

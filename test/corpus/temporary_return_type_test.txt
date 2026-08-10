@@ -87,11 +87,13 @@ codeunit 50200 "Temporary Record Handler"
               left: (member_expression
                 object: (identifier)
                 member: (quoted_identifier))
+              operator: (assignment_operator)
               right: (string_literal))
             (assignment_statement
               left: (member_expression
                 object: (identifier)
                 member: (identifier))
+              operator: (assignment_operator)
               right: (string_literal)))
           (end_keyword))))))
 
@@ -155,6 +157,7 @@ codeunit 50300 "Temp Record Processor"
               left: (member_expression
                 object: (identifier)
                 member: (quoted_identifier))
+              operator: (assignment_operator)
               right: (member_expression
                 object: (identifier)
                 member: (quoted_identifier)))

@@ -49,9 +49,11 @@ table 50001 "Test Table"
                     body: (statement_block
                       (assignment_statement
                         left: (identifier)
+                        operator: (assignment_operator)
                         right: (integer))
                       (assignment_statement
                         left: (identifier)
+                        operator: (assignment_operator)
                         right: (integer)))
                     (end_keyword)))
                 (case_branch
@@ -63,9 +65,11 @@ table 50001 "Test Table"
                     body: (statement_block
                       (assignment_statement
                         left: (identifier)
+                        operator: (assignment_operator)
                         right: (integer))
                       (assignment_statement
                         left: (identifier)
+                        operator: (assignment_operator)
                         right: (integer)))
                     (end_keyword))))
               (end_keyword)))
@@ -111,11 +115,13 @@ table 50002 "Test Table"
                   pattern: (string_literal)
                   body: (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (case_branch
                   pattern: (string_literal)
                   body: (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))))
               (end_keyword)))
           (end_keyword))))))
@@ -168,6 +174,7 @@ table 50003 "Test Table"
                     value: (identifier))
                   body: (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (case_branch
                   pattern: (qualified_enum_value
@@ -184,9 +191,11 @@ table 50003 "Test Table"
                     body: (statement_block
                       (assignment_statement
                         left: (identifier)
+                        operator: (assignment_operator)
                         right: (integer))
                       (assignment_statement
                         left: (identifier)
+                        operator: (assignment_operator)
                         right: (string_literal)))
                     (end_keyword))))
               (end_keyword)))
@@ -234,17 +243,20 @@ table 50004 "Test Table"
                   pattern: (string_literal)
                   body: (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (case_branch
                   pattern: (string_literal)
                   body: (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))))
               (case_else_branch
                 (else_keyword)
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))))
               (end_keyword)))
           (end_keyword))))))
@@ -293,6 +305,7 @@ table 50005 "Test Table"
                     value: (identifier))
                   body: (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))))
               (case_else_branch
                 (else_keyword)
@@ -301,9 +314,11 @@ table 50005 "Test Table"
                   body: (statement_block
                     (assignment_statement
                       left: (identifier)
+                      operator: (assignment_operator)
                       right: (integer))
                     (assignment_statement
                       left: (identifier)
+                      operator: (assignment_operator)
                       right: (string_literal)))
                   (end_keyword)))
               (end_keyword)))

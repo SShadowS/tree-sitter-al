@@ -35,6 +35,7 @@ codeunit 50100 TestDiv
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (integer)
                 right: (integer))))
@@ -77,6 +78,7 @@ codeunit 50100 TestMod
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (integer)
                 right: (integer))))
@@ -123,16 +125,19 @@ codeunit 50100 TestDivCases
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (integer)
                 right: (integer)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (integer)
                 right: (integer)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (integer)
                 right: (integer))))
@@ -179,16 +184,19 @@ codeunit 50100 TestModCases
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (integer)
                 right: (integer)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (integer)
                 right: (integer)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (integer)
                 right: (integer))))
@@ -241,6 +249,7 @@ codeunit 50100 TestDivInCase
                   pattern: (boolean)
                   body: (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (multiplicative_expression
                       left: (integer)
                       right: (integer)))))
@@ -286,6 +295,7 @@ codeunit 50100 TestComplexDivMod
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (additive_expression
                 left: (multiplicative_expression
                   left: (parenthesized_expression
@@ -299,6 +309,7 @@ codeunit 50100 TestComplexDivMod
                     right: (integer)))))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (multiplicative_expression
                   left: (integer)
@@ -306,6 +317,7 @@ codeunit 50100 TestComplexDivMod
                 right: (integer)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (multiplicative_expression
                   left: (integer)
@@ -395,6 +407,7 @@ table 50100 TestTable
                     left: (member_expression
                       object: (identifier)
                       member: (quoted_identifier))
+                    operator: (assignment_operator)
                     right: (multiplicative_expression
                       left: (member_expression
                         object: (identifier)
@@ -416,6 +429,7 @@ table 50100 TestTable
                     left: (member_expression
                       object: (identifier)
                       member: (quoted_identifier))
+                    operator: (assignment_operator)
                     right: (multiplicative_expression
                       left: (parenthesized_expression
                         (additive_expression

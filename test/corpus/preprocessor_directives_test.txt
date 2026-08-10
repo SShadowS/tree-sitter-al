@@ -98,10 +98,12 @@ codeunit 123 "Test Codeunit"
                 condition: (identifier))
               (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (boolean))
               (preproc_else)
               (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (boolean))
               (preproc_endif
                 (preproc_close))))
@@ -152,10 +154,12 @@ codeunit 124 "Test Codeunit Mixed"
                 condition: (identifier))
               (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (integer))
               (preproc_else)
               (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (integer))
               (preproc_endif
                 (preproc_close))))
@@ -213,16 +217,20 @@ codeunit 125 "Test Complex Preprocessor"
                 condition: (identifier))
               (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (boolean))
               (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (integer))
               (preproc_else)
               (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (boolean))
               (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (integer))
               (preproc_endif
                 (preproc_close))))

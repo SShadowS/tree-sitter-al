@@ -239,6 +239,7 @@ codeunit 50103 "Complex Region"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (string_literal)))
           (end_keyword)))
       (preproc_endregion)
@@ -253,6 +254,7 @@ codeunit 50103 "Complex Region"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer)))
           (end_keyword))))
     (preproc_endregion)))

@@ -66,6 +66,7 @@ codeunit 50101 Test2
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (as_expression
                 left: (identifier)
                 right: (type_specification
@@ -115,6 +116,7 @@ codeunit 50102 Test3
               (then_keyword)
               then_branch: (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (as_expression
                   left: (identifier)
                   right: (type_specification

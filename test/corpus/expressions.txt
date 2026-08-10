@@ -26,6 +26,7 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (additive_expression
                 (integer)
                 (multiplicative_expression
@@ -62,11 +63,13 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (multiplicative_expression
                 (identifier)
                 (integer)))
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (multiplicative_expression
                 (identifier)
                 (integer))))
@@ -214,6 +217,7 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (additive_expression
                 (additive_expression
                   (string_literal)
@@ -250,11 +254,13 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (member_expression
                 (identifier)
                 (identifier)))
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (member_expression
                 (identifier)
                 (quoted_identifier))))
@@ -323,11 +329,13 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (subscript_expression
                 (identifier)
                 (integer)))
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (subscript_expression
                 (identifier)
                 (additive_expression
@@ -363,6 +371,7 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (multiplicative_expression
                 (parenthesized_expression
                   (additive_expression
@@ -399,6 +408,7 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (qualified_enum_value
                 (identifier)
                 (identifier))))
@@ -432,6 +442,7 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (qualified_enum_value
                 (quoted_identifier)
                 (identifier))))
@@ -507,10 +518,12 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (unary_expression
                 (identifier)))
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (unary_expression
                 (identifier))))
           (end_keyword))))))
@@ -584,6 +597,7 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (database_reference
                 (object_type_keyword)
                 (quoted_identifier))))
@@ -658,6 +672,7 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (call_expression
                 (identifier)
                 (argument_list
@@ -732,6 +747,7 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (additive_expression
                 (additive_expression
                   (identifier)
@@ -803,9 +819,11 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (boolean))
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (boolean)))
           (end_keyword))))))
 

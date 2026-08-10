@@ -26,6 +26,7 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (integer)))
           (end_keyword))))))
 
@@ -60,15 +61,19 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (integer))
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (integer))
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (integer))
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (integer)))
           (end_keyword))))))
 
@@ -102,6 +107,7 @@ codeunit 50100 Test
               (member_expression
                 (identifier)
                 (identifier))
+              (assignment_operator)
               (string_literal)))
           (end_keyword))))))
 
@@ -141,6 +147,7 @@ codeunit 50100 Test
               (then_keyword)
               (assignment_statement
                 (identifier)
+                (assignment_operator)
                 (integer))))
           (end_keyword))))))
 
@@ -182,10 +189,12 @@ codeunit 50100 Test
               (then_keyword)
               (assignment_statement
                 (identifier)
+                (assignment_operator)
                 (integer))
               (else_keyword)
               (assignment_statement
                 (identifier)
+                (assignment_operator)
                 (integer))))
           (end_keyword))))))
 
@@ -232,9 +241,11 @@ codeunit 50100 Test
                 (statement_block
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (integer))
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (integer)))
                 (end_keyword))
               (else_keyword)
@@ -243,6 +254,7 @@ codeunit 50100 Test
                 (statement_block
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (integer)))
                 (end_keyword))))
           (end_keyword))))))
@@ -287,6 +299,7 @@ codeunit 50100 Test
               (then_keyword)
               (assignment_statement
                 (identifier)
+                (assignment_operator)
                 (string_literal))
               (else_keyword)
               (if_statement
@@ -298,10 +311,12 @@ codeunit 50100 Test
                 (then_keyword)
                 (assignment_statement
                   (identifier)
+                  (assignment_operator)
                   (string_literal))
                 (else_keyword)
                 (assignment_statement
                   (identifier)
+                  (assignment_operator)
                   (string_literal)))))
           (end_keyword))))))
 
@@ -347,18 +362,21 @@ codeunit 50100 Test
                   (integer)
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (string_literal)))
                 (case_branch
                   (integer)
                   (integer)
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (string_literal))))
               (case_else_branch
                 (else_keyword)
                 (statement_block
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (string_literal))))
               (end_keyword)))
           (end_keyword))))))
@@ -403,6 +421,7 @@ codeunit 50100 Test
                     (integer))
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (string_literal))))
               (end_keyword)))
           (end_keyword))))))
@@ -443,6 +462,7 @@ codeunit 50100 Test
               (do_keyword)
               (assignment_statement
                 (identifier)
+                (assignment_operator)
                 (identifier))))
           (end_keyword))))))
 
@@ -482,6 +502,7 @@ codeunit 50100 Test
               (do_keyword)
               (assignment_statement
                 (identifier)
+                (assignment_operator)
                 (identifier))))
           (end_keyword))))))
 
@@ -560,6 +581,7 @@ codeunit 50100 Test
               (do_keyword)
               (assignment_statement
                 (identifier)
+                (assignment_operator)
                 (integer))))
           (end_keyword))))))
 
@@ -596,6 +618,7 @@ codeunit 50100 Test
               (statement_block
                 (assignment_statement
                   (identifier)
+                  (assignment_operator)
                   (integer)))
               (until_keyword)
               (comparison_expression
@@ -641,6 +664,7 @@ codeunit 50100 Test
                 (statement_block
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (string_literal)))
                 (end_keyword))))
           (end_keyword))))))
@@ -866,12 +890,15 @@ codeunit 50100 Test
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (integer))
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (integer))
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (additive_expression
                 (identifier)
                 (identifier))))
@@ -918,9 +945,11 @@ codeunit 50100 Test
                 (statement_block
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (identifier))
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (integer)))
                 (end_keyword))))
           (end_keyword))))))
@@ -969,6 +998,7 @@ codeunit 50100 Test
                     (continue_keyword)))
                 (assignment_statement
                   (identifier)
+                  (assignment_operator)
                   (integer)))
               (until_keyword)
               (comparison_expression
@@ -1020,9 +1050,11 @@ codeunit 50100 Test
                     (statement_block
                       (assignment_statement
                         (identifier)
+                        (assignment_operator)
                         (string_literal))
                       (assignment_statement
                         (identifier)
+                        (assignment_operator)
                         (integer)))
                     (end_keyword))))
               (end_keyword)))

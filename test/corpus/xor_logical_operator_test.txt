@@ -64,16 +64,19 @@ codeunit 123 "Test XOR Operator"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (logical_expression
                 left: (identifier)
                 right: (identifier)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (logical_expression
                 left: (boolean)
                 right: (boolean)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (logical_expression
                 left: (parenthesized_expression
                   (comparison_expression
@@ -88,11 +91,13 @@ codeunit 123 "Test XOR Operator"
             (comment)
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (logical_expression
                 left: (identifier)
                 right: (identifier)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (logical_expression
                 left: (identifier)
                 right: (identifier)))
@@ -105,6 +110,7 @@ codeunit 123 "Test XOR Operator"
               (then_keyword)
               then_branch: (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (boolean)))
             (if_statement
               (if_keyword)
@@ -120,6 +126,7 @@ codeunit 123 "Test XOR Operator"
             (comment)
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (logical_expression
                 left: (logical_expression
                   left: (identifier)
@@ -127,6 +134,7 @@ codeunit 123 "Test XOR Operator"
                 right: (boolean)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (logical_expression
                 left: (parenthesized_expression
                   (logical_expression

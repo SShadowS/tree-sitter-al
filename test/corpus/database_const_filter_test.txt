@@ -156,6 +156,7 @@ codeunit 50200 "Database References"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (database_reference
                 keyword: (object_type_keyword)
                 table_name: (quoted_identifier)))

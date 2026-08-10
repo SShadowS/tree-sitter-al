@@ -49,6 +49,7 @@ codeunit 50000 "WITH Test"
                     function: (identifier))
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (string_literal))
                   (call_statement
                     function: (identifier)))
@@ -168,6 +169,7 @@ codeunit 50002 "Nested WITH Test"
                           function: (identifier))
                         (assignment_statement
                           left: (quoted_identifier)
+                          operator: (assignment_operator)
                           right: (member_expression
                             object: (identifier)
                             member: (quoted_identifier))))

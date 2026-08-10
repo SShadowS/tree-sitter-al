@@ -98,6 +98,7 @@ tableextension 50000 "Customer Extension" extends Customer
                   (then_keyword)
                   then_branch: (assignment_statement
                     left: (quoted_identifier)
+                    operator: (assignment_operator)
                     right: (member_expression
                       object: (member_expression
                         object: (identifier)
@@ -118,6 +119,7 @@ tableextension 50000 "Customer Extension" extends Customer
               body: (statement_block
                 (assignment_statement
                   left: (quoted_identifier)
+                  operator: (assignment_operator)
                   right: (identifier)))
               (end_keyword))))))))
 
@@ -177,6 +179,7 @@ tableextension 50001 "Item Extension" extends Item
                   (then_keyword)
                   then_branch: (assignment_statement
                     left: (quoted_identifier)
+                    operator: (assignment_operator)
                     right: (member_expression
                       object: (identifier)
                       member: (identifier)))))

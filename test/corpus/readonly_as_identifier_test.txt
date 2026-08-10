@@ -148,15 +148,19 @@ codeunit 50101 "ReadOnly Test"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (boolean))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (string_literal))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (decimal))
             (if_statement
               (if_keyword)
@@ -289,6 +293,7 @@ page 50102 "Advanced Viewer"
                       body: (statement_block
                         (assignment_statement
                           left: (identifier)
+                          operator: (assignment_operator)
                           right: (unary_expression
                             operand: (call_expression
                               function: (identifier)
@@ -418,11 +423,13 @@ table 50103 "Permission Settings"
           body: (statement_block
             (assignment_statement
               left: (quoted_identifier)
+              operator: (assignment_operator)
               right: (qualified_enum_value
                 enum_type: (quoted_identifier)
                 value: (identifier)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (comparison_expression
                 left: (quoted_identifier)
                 operator: (comparison_operator)

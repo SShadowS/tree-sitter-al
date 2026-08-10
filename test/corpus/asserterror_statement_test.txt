@@ -242,6 +242,7 @@ codeunit 50104 "Test Asserterror Block"
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (call_expression
                     function: (identifier)

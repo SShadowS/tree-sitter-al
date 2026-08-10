@@ -124,6 +124,7 @@ table 50100 "Sales Forecast"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (additive_expression
                 left: (identifier)
                 right: (integer))))
@@ -136,6 +137,7 @@ table 50100 "Sales Forecast"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer)))
           (end_keyword))))))
 

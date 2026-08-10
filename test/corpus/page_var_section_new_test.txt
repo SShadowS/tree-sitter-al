@@ -108,6 +108,7 @@ page 703 "Merge Duplicate Subform"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (comparison_expression
                 left: (member_expression
                   object: (identifier)
@@ -178,9 +179,11 @@ page 703 "Merge Duplicate Subform"
               (then_keyword)
               then_branch: (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (string_literal))
               (else_keyword)
               else_branch: (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (string_literal))))
           (end_keyword))))))

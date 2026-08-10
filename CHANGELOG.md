@@ -279,6 +279,38 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **`i := 1` and `i += 2` produced byte-identical trees; the assignment operator
+  is now a node.** `_assignment_operator` was a *hidden* rule over a single
+  token, so `field('operator', …)` on `assignment_statement` and
+  `assignment_expression` had nothing visible to attach to and the field was
+  dropped from `node-types.json` altogether — both types declared only `left`
+  and `right`. Unlike a mislabelled field this had no text fallback either: the
+  operator bytes belonged to **no node at all**, so a consumer could not recover
+  the operator by reading source ranges. Any dataflow analysis read every
+  compound assignment as a plain one. Renaming the rule to `assignment_operator`
+  makes it visible; `operator` now appears on both types and carries the
+  operator text.
+  - **`queries/highlights.scm` could never highlight an assignment.** Its
+    `":=" @operator` pattern matches the anonymous literal `':='`, which only
+    `for_statement` uses — the assignment operator is a *different*, atomic
+    token. Measured on a file with three assignments and one `for`: the shipped
+    pattern captured **1** site, the for-statement one. It now also captures
+    `(assignment_operator)`, taking that file from 1 to 4, and covers `+=`,
+    `-=`, `*=` and `/=`, which no pattern matched before.
+  - The `token()` wrapper is load-bearing and stays: it is what keeps this token
+    distinct from `for_statement`'s literal `':='`. Dropping it to mirror
+    `comparison_operator`'s shape makes the two collide and the grammar no
+    longer generates.
+  - **243,044 `assignment_operator` nodes gained across 8,559 of 15,358 files,
+    nothing else changed** — no other node type, and no node instance removed.
+    Corroborated against the raw text: 241,368 literal `:=` in 8,563 files, the
+    surplus being the compound operators and the shortfall the `for` statements.
+  - `STATE_COUNT` unchanged at 14,059 — this renames a rule rather than adding
+    one.
+  - `is_expression.operator` and `as_expression.operator` declare the same field
+    over hidden tokens and are deliberately untouched: their node *types* already
+    encode the operator, so nothing is recoverable that is not already there.
+
 - **Six fields that wrapped a bare `kw()` were silently empty; they now carry a
   named keyword node.** `field('x', kw('word'))` declares a field over an
   anonymous *pattern* token, and tree-sitter renders those as hidden `aux_sym_*`

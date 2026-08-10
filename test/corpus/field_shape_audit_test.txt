@@ -132,15 +132,18 @@ codeunit 1 T
                   pattern: (integer)
                   body: (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))))
               (case_else_branch
                 (else_keyword)
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer))))
               (end_keyword)))
           (end_keyword))))))

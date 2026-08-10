@@ -68,9 +68,11 @@ codeunit 50100 "Enum Variable Test"
             (assignment_statement
               left: (keyword_identifier
                 (enum_keyword))
+              operator: (assignment_operator)
               right: (string_literal))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (keyword_identifier
@@ -162,6 +164,7 @@ codeunit 50101 "X509 Certificate Handler"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (keyword_identifier
@@ -178,6 +181,7 @@ codeunit 50101 "X509 Certificate Handler"
                       (identifier))))))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (identifier)
@@ -263,16 +267,20 @@ codeunit 50102 "Case Test"
             (assignment_statement
               left: (keyword_identifier
                 (enum_keyword))
+              operator: (assignment_operator)
               right: (integer))
             (assignment_statement
               left: (keyword_identifier
                 (enum_keyword))
+              operator: (assignment_operator)
               right: (string_literal))
             (assignment_statement
               left: (keyword_identifier
                 (enum_keyword))
+              operator: (assignment_operator)
               right: (boolean))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (decimal)))
           (end_keyword))))))

@@ -130,6 +130,7 @@ page 50000 "Test Page Triggers"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (boolean)))
           (end_keyword)))
       (trigger_declaration
@@ -174,6 +175,7 @@ page 50000 "Test Page Triggers"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (member_expression
                 object: (identifier)
                 member: (identifier))))
@@ -188,6 +190,7 @@ page 50000 "Test Page Triggers"
               left: (member_expression
                 object: (identifier)
                 member: (identifier))
+              operator: (assignment_operator)
               right: (qualified_enum_value
                 enum_type: (member_expression
                   object: (identifier)
@@ -202,6 +205,7 @@ page 50000 "Test Page Triggers"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer))
             (exit_statement
               (exit_keyword)
@@ -215,6 +219,7 @@ page 50000 "Test Page Triggers"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer))
             (exit_statement
               (exit_keyword)

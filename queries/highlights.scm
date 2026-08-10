@@ -151,7 +151,14 @@
 ; =============================================================================
 ; Operators
 ; =============================================================================
-; Assignment operator
+; Assignment operator.
+; Both patterns are needed and they match disjoint sites. `:=` in an assignment
+; is an `assignment_operator` node — a distinct token from the literal ':=' in
+; for_statement — so the bare string below only ever matched the for-statement
+; one, and no assignment was highlighted at all until assignment_operator was
+; named in 4.0.0. The named pattern also covers `+=`, `-=`, `*=` and `/=`, which
+; no pattern here matched before.
+(assignment_operator) @operator
 ":=" @operator
 
 ; Arithmetic operators

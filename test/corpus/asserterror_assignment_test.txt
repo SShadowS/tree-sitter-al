@@ -61,15 +61,18 @@ codeunit 50100 "Test Asserterror Assignment"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (string_literal))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (string_literal))
             (comment)
             (asserterror_statement
               (asserterror_keyword)
               body: (assignment_expression
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (call_expression
                   function: (identifier)
                   arguments: (argument_list
@@ -188,6 +191,7 @@ codeunit 50200 "Complex Asserterror Tests"
               (asserterror_keyword)
               body: (assignment_expression
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (multiplicative_expression
                   left: (integer)
                   right: (integer))))
@@ -196,6 +200,7 @@ codeunit 50200 "Complex Asserterror Tests"
               (asserterror_keyword)
               body: (assignment_expression
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (call_expression
                   function: (member_expression
                     object: (identifier)
@@ -206,6 +211,7 @@ codeunit 50200 "Complex Asserterror Tests"
               (asserterror_keyword)
               body: (assignment_expression
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (multiplicative_expression
                   left: (call_expression
                     function: (identifier)

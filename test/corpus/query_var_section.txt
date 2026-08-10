@@ -63,6 +63,7 @@ query 50100 "Test Query Var"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer)))
           (end_keyword))))))
 
@@ -341,9 +342,11 @@ query 50102 "Mixed Var Query"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (identifier)))
           (end_keyword)))
       (trigger_declaration
@@ -354,5 +357,6 @@ query 50102 "Mixed Var Query"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer)))
           (end_keyword))))))

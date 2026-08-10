@@ -45,9 +45,11 @@ page 50100 "Item Turnover Lines"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (identifier))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (identifier)
@@ -63,6 +65,7 @@ page 50100 "Item Turnover Lines"
                     arguments: (argument_list)))))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (identifier)))
           (end_keyword))))))
 
@@ -113,9 +116,11 @@ page 50101 "Test Page"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (identifier))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (identifier)
@@ -131,6 +136,7 @@ page 50101 "Test Page"
                     arguments: (argument_list)))))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (identifier)))
           (end_keyword))))))
 
@@ -188,6 +194,7 @@ table 50100 "Test Table"
                   body: (statement_block
                     (assignment_statement
                       left: (identifier)
+                      operator: (assignment_operator)
                       right: (call_expression
                         function: (identifier)
                         arguments: (argument_list
@@ -228,6 +235,7 @@ page 50102 "Test Page"
           body: (statement_block
             (assignment_statement
               left: (quoted_identifier)
+              operator: (assignment_operator)
               right: (unary_expression
                 operand: (call_expression
                   function: (identifier)
@@ -280,6 +288,7 @@ page 50103 "Test Page"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (identifier)

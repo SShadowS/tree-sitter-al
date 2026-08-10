@@ -72,9 +72,11 @@ codeunit 50100 "Test Codeunit"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (identifier))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (parenthesized_expression
                 (comparison_expression
                   left: (identifier)
@@ -118,8 +120,10 @@ codeunit 50100 "Test Codeunit"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (identifier))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (boolean)))
           (end_keyword))))))

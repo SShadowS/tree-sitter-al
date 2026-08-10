@@ -92,6 +92,7 @@ table 50000 "Test Table"
               body: (statement_block
                 (assignment_statement
                   left: (identifier)
+                  operator: (assignment_operator)
                   right: (identifier)))
               (end_keyword))))))))
 
@@ -176,6 +177,7 @@ table 50001 "Complex Test"
               body: (statement_block
                 (assignment_statement
                   left: (identifier)
+                  operator: (assignment_operator)
                   right: (boolean))
                 (exit_statement
                   (exit_keyword)

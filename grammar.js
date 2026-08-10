@@ -3531,17 +3531,30 @@ module.exports = grammar({
 
     assignment_statement: $ => prec.dynamic(10, seq(
       field('left', $._expression),
-      field('operator', $._assignment_operator),
+      field('operator', $.assignment_operator),
       field('right', $._expression)
     )),
 
     assignment_expression: $ => prec.dynamic(1, prec.right(seq(
       field('left', $._expression),
-      field('operator', $._assignment_operator),
+      field('operator', $.assignment_operator),
       field('right', $._expression)
     ))),
 
-    _assignment_operator: $ => token(choice(':=', '+=', '-=', '*=', '/=')),
+    // Named, not hidden. As `_assignment_operator` this was a hidden rule over a
+    // single token, so `field('operator', …)` on assignment_statement and
+    // assignment_expression had nothing visible to attach to and the field was
+    // dropped from node-types.json entirely. The bytes belonged to no node, so
+    // there was no text fallback either: `i := 1` and `i += 2` produced
+    // byte-identical trees, and any consumer doing dataflow read a plain
+    // assignment where the source compounds. 22,964 `:=` per 500 files.
+    //
+    // The token() wrapper is load-bearing and must stay. It keeps this a single
+    // atomic token distinct from the literal ':=' in for_statement; dropping it
+    // makes the two collide and the grammar no longer generates. It is also why
+    // queries/highlights.scm's `":=" @operator` never matched an assignment —
+    // that pattern only ever saw for_statement's literal.
+    assignment_operator: $ => token(choice(':=', '+=', '-=', '*=', '/=')),
 
     // --- If/Then/Else ---
 

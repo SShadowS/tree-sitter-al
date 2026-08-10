@@ -209,6 +209,7 @@ page 30114 "Shpfy Order Attributes"
                   (then_keyword)
                   then_branch: (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (member_expression
                       object: (identifier)
                       member: (quoted_identifier))))))
@@ -331,6 +332,7 @@ page 50001 "Complex Page"
             body: (statement_block
               (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (integer))
               (call_expression
                 function: (identifier)

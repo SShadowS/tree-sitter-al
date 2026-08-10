@@ -40,6 +40,7 @@ codeunit 50000 "Range Test"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (in_expression
                 left: (identifier)
                 operator: (in_keyword)
@@ -91,6 +92,7 @@ codeunit 50001 "Multiple Range Test"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (in_expression
                 left: (identifier)
                 operator: (in_keyword)
@@ -148,6 +150,7 @@ codeunit 50002 "Value List Test"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (in_expression
                 left: (identifier)
                 operator: (in_keyword)
@@ -210,6 +213,7 @@ codeunit 50003 "Range Context Test"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer))
             (for_statement
               (for_keyword)
@@ -220,6 +224,7 @@ codeunit 50003 "Range Context Test"
               (do_keyword)
               body: (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (additive_expression
                   left: (identifier)
                   right: (identifier)))))
@@ -239,6 +244,7 @@ codeunit 50003 "Range Context Test"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (string_literal)))
           (end_keyword))))))
 
@@ -285,6 +291,7 @@ codeunit 50004 "Field Access Test"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (in_expression
                 left: (member_expression
                   object: (identifier)

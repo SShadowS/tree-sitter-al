@@ -55,6 +55,7 @@ codeunit 50100 "End Edge Cases"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (string_literal))
             (comment)
             (call_expression
@@ -66,6 +67,7 @@ codeunit 50100 "End Edge Cases"
               left: (subscript_expression
                 object: (identifier)
                 index: (integer))
+              operator: (assignment_operator)
               right: (integer))
             (comment)
             (if_statement

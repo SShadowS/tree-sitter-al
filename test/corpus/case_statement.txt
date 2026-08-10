@@ -48,6 +48,7 @@ codeunit 50100 Test
                     (statement_block
                       (assignment_statement
                         (identifier)
+                        (assignment_operator)
                         (integer)))
                     (end_keyword)))
                 (case_branch
@@ -59,6 +60,7 @@ codeunit 50100 Test
                     (statement_block
                       (assignment_statement
                         (identifier)
+                        (assignment_operator)
                         (integer)))
                     (end_keyword))))
               (case_else_branch
@@ -121,6 +123,7 @@ codeunit 50100 Test
                     (integer))
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (integer)))
                 (case_branch
                   (subscript_expression
@@ -128,6 +131,7 @@ codeunit 50100 Test
                     (integer))
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (integer))))
               (end_keyword)))
           (end_keyword))))))
@@ -189,6 +193,7 @@ codeunit 50100 Test
                     (quoted_identifier))
                   (assignment_statement
                     (identifier)
+                    (assignment_operator)
                     (integer))))
               (end_keyword)))
           (end_keyword))))))

@@ -40,6 +40,7 @@ table 50006 "Test Table"
                     value: (identifier))
                   body: (assignment_statement
                     left: (quoted_identifier)
+                    operator: (assignment_operator)
                     right: (string_literal)))
                 (case_branch
                   pattern: (qualified_enum_value

@@ -40,10 +40,12 @@ codeunit 1 T
               (then_keyword)
               then_branch: (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (integer))
               (else_keyword)
               else_branch: (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (integer))))
           (end_keyword))))))
 
@@ -96,25 +98,30 @@ codeunit 1 T
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (logical_expression
                 left: (identifier)
                 right: (identifier)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (logical_expression
                 left: (identifier)
                 right: (identifier)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (unary_expression
                 operand: (identifier)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (identifier)
                 right: (integer)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (multiplicative_expression
                 left: (identifier)
                 right: (integer))))
@@ -230,11 +237,14 @@ codeunit 1 T
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (identifier))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (identifier))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (identifier)))
           (end_keyword))))))

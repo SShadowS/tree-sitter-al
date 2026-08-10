@@ -175,6 +175,7 @@ codeunit 789 TestComplexStrings
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (identifier)
                 arguments: (argument_list
@@ -183,6 +184,7 @@ codeunit 789 TestComplexStrings
                   (string_literal))))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (identifier)
                 arguments: (argument_list

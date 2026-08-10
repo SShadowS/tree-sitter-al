@@ -2185,6 +2185,16 @@
           }
         ]
       },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assignment_operator",
+            "named": true
+          }
+        ]
+      },
       "right": {
         "multiple": false,
         "required": true,
@@ -2439,6 +2449,16 @@
           },
           {
             "type": "verbatim_string",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assignment_operator",
             "named": true
           }
         ]
@@ -25360,6 +25380,10 @@
   {
     "type": "asserterror",
     "named": false
+  },
+  {
+    "type": "assignment_operator",
+    "named": true
   },
   {
     "type": "begin_keyword",

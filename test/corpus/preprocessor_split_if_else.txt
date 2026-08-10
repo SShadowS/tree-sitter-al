@@ -48,12 +48,14 @@ codeunit 50000 "Test Split If-Else"
               (then_keyword)
               then_branch: (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (string_literal))
               (else_keyword)
               (preproc_endif
                 (preproc_close))
               else_branch: (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (string_literal))))
           (end_keyword))))))
 
@@ -126,6 +128,7 @@ codeunit 50001 "Multiple Split If-Else"
                 left: (member_expression
                   object: (identifier)
                   member: (identifier))
+                operator: (assignment_operator)
                 right: (call_expression
                   function: (identifier)
                   arguments: (argument_list
@@ -144,6 +147,7 @@ codeunit 50001 "Multiple Split If-Else"
                 left: (member_expression
                   object: (identifier)
                   member: (quoted_identifier))
+                operator: (assignment_operator)
                 right: (call_expression
                   function: (identifier)
                   arguments: (argument_list

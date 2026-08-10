@@ -60,6 +60,7 @@ table 1234 "Test Table"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (keyword_identifier
                 (enum_keyword)))
             (call_expression
@@ -83,6 +84,7 @@ table 1234 "Test Table"
             (comment)
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (keyword_identifier
@@ -98,6 +100,7 @@ table 1234 "Test Table"
             (comment)
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (additive_expression
                 left: (integer)
                 right: (multiplicative_expression
@@ -164,6 +167,7 @@ codeunit 50100 "Test Enum Types"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (qualified_enum_value
@@ -176,6 +180,7 @@ codeunit 50100 "Test Enum Types"
                 arguments: (argument_list)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (qualified_enum_value
                 enum_type: (qualified_enum_value
                   enum_type: (keyword_identifier

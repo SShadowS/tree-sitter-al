@@ -112,6 +112,7 @@ codeunit 50001 Test
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (member_expression
@@ -133,6 +134,7 @@ codeunit 50001 Test
               (then_keyword)
               then_branch: (assignment_statement
                 left: (identifier)
+                operator: (assignment_operator)
                 right: (call_expression
                   function: (member_expression
                     object: (identifier)

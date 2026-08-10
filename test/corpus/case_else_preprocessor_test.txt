@@ -84,6 +84,7 @@ codeunit 50000 "Test Case Else"
                     left: (member_expression
                       object: (identifier)
                       member: (quoted_identifier))
+                    operator: (assignment_operator)
                     right: (identifier)))
                 (case_branch
                   pattern: (integer)
@@ -91,6 +92,7 @@ codeunit 50000 "Test Case Else"
                     left: (member_expression
                       object: (identifier)
                       member: (quoted_identifier))
+                    operator: (assignment_operator)
                     right: (identifier))))
               (case_else_branch
                 (else_keyword)

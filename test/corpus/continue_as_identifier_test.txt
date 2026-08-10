@@ -66,6 +66,7 @@ codeunit 50000 "Continue Test"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (boolean)))
           (end_keyword))))))
 
@@ -158,6 +159,7 @@ codeunit 50000 "Test"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (boolean))
             (for_statement
               (for_keyword)
@@ -171,6 +173,7 @@ codeunit 50000 "Test"
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (boolean))
                   (continue_statement
                     (continue_keyword)))

@@ -40,6 +40,7 @@ codeunit 50100 TestTernary
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (ternary_expression
                 (identifier)
                 (integer)
@@ -90,6 +91,7 @@ codeunit 50100 NestedTernary
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (ternary_expression
                 (identifier)
                 (parenthesized_expression
@@ -162,6 +164,7 @@ codeunit 50100 ComplexTernary
           (statement_block
             (assignment_statement
               (identifier)
+              (assignment_operator)
               (ternary_expression
                 (comparison_expression
                   (identifier)
@@ -176,6 +179,7 @@ codeunit 50100 ComplexTernary
               (subscript_expression
                 (identifier)
                 (identifier))
+              (assignment_operator)
               (ternary_expression
                 (member_expression
                   (identifier)

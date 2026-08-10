@@ -162,11 +162,13 @@ table 50101 "VAT Amount Line"
                 left: (member_expression
                   object: (identifier)
                   member: (quoted_identifier))
+                operator: (assignment_operator)
                 right: (identifier))
               (assignment_statement
                 left: (member_expression
                   object: (identifier)
                   member: (quoted_identifier))
+                operator: (assignment_operator)
                 right: (identifier))
               (call_expression
                 function: (member_expression
@@ -205,9 +207,11 @@ table 50101 "VAT Amount Line"
             body: (statement_block
               (assignment_statement
                 left: (quoted_identifier)
+                operator: (assignment_operator)
                 right: (identifier))
               (assignment_statement
                 left: (quoted_identifier)
+                operator: (assignment_operator)
                 right: (identifier))
               (call_expression
                 function: (identifier)
@@ -385,6 +389,7 @@ table 50103 "Test Table"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (boolean)))
           (end_keyword))))))
 

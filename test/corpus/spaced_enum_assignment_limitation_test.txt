@@ -45,6 +45,7 @@ codeunit 50100 "Test"
               (subscript_expression
                 (identifier)
                 (integer))
+              (assignment_operator)
               (qualified_enum_value
                 (subscript_expression
                   (identifier)
@@ -54,6 +55,7 @@ codeunit 50100 "Test"
               (subscript_expression
                 (identifier)
                 (integer))
+              (assignment_operator)
               (qualified_enum_value
                 (subscript_expression
                   (identifier)
@@ -108,6 +110,7 @@ codeunit 50101 "Test"
               left: (subscript_expression
                 object: (identifier)
                 index: (integer))
+              operator: (assignment_operator)
               right: (qualified_enum_value
                 enum_type: (subscript_expression
                   object: (identifier)
@@ -117,6 +120,7 @@ codeunit 50101 "Test"
               left: (subscript_expression
                 object: (identifier)
                 index: (integer))
+              operator: (assignment_operator)
               right: (qualified_enum_value
                 enum_type: (subscript_expression
                   object: (identifier)

@@ -54,33 +54,41 @@ codeunit 123 "Test Compound Assignment"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (decimal))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (string_literal))
             (comment)
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (parenthesized_expression
                 (additive_expression
                   left: (integer)
                   right: (integer))))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (identifier)
                 arguments: (argument_list)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (identifier)
                 arguments: (argument_list

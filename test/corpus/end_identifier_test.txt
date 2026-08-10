@@ -41,8 +41,10 @@ codeunit 50100 "End Test"
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (integer))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (time_literal)))
           (end_keyword))))))

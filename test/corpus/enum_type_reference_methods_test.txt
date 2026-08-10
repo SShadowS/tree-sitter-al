@@ -35,6 +35,7 @@ codeunit 12345 TestCodeunit
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (member_expression
                 object: (call_expression
                   function: (member_expression
@@ -86,6 +87,7 @@ codeunit 23456 NamesTestCodeunit
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (qualified_enum_value
@@ -147,6 +149,7 @@ codeunit 34567 MultiEnumCodeunit
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (member_expression
                 object: (call_expression
                   function: (member_expression
@@ -159,6 +162,7 @@ codeunit 34567 MultiEnumCodeunit
                 member: (identifier)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (qualified_enum_value
@@ -169,6 +173,7 @@ codeunit 34567 MultiEnumCodeunit
                 arguments: (argument_list)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (call_expression
                 function: (member_expression
                   object: (qualified_enum_value
@@ -218,6 +223,7 @@ codeunit 45678 CaseVariationCodeunit
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (member_expression
                 object: (call_expression
                   function: (member_expression
@@ -230,6 +236,7 @@ codeunit 45678 CaseVariationCodeunit
                 member: (identifier)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (member_expression
                 object: (call_expression
                   function: (member_expression
@@ -242,6 +249,7 @@ codeunit 45678 CaseVariationCodeunit
                 member: (identifier)))
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (member_expression
                 object: (call_expression
                   function: (member_expression
@@ -291,6 +299,7 @@ codeunit 56789 UnquotedEnumCodeunit
           body: (statement_block
             (assignment_statement
               left: (identifier)
+              operator: (assignment_operator)
               right: (member_expression
                 object: (call_expression
                   function: (member_expression

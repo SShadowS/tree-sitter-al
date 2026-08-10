@@ -49,6 +49,7 @@ codeunit 50000 "Test"
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (end_keyword))
               (else_keyword)
@@ -57,6 +58,7 @@ codeunit 50000 "Test"
                 body: (statement_block
                   (assignment_statement
                     left: (identifier)
+                    operator: (assignment_operator)
                     right: (integer)))
                 (end_keyword))))
           (end_keyword))))))
