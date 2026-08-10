@@ -244,6 +244,14 @@ module.exports = grammar({
     // terminator: `#if C  stmt; if X then  #endif  shared;`
     [$._preproc_guard_block, $._statement_inner],
     [$.if_statement, $._if_statement_no_else],  // dangling-else in case branches
+    // if_statement hangs its `else` off `_then_branch_open` directly, while
+    // `_if_statement_no_else` and the preproc_split_if_* rules take the whole
+    // `_then_branch`. After a then-branch that could be either, only the NEXT
+    // token says which — LR cannot see that far, so GLR explores both and the
+    // lookahead settles it. Required: generation fails without it. (This
+    // replaces the old [$._then_branch, $._then_branch_no_semi] entry, which
+    // was the same ambiguity between the pre-restructure then-branch variants.)
+    [$.if_statement, $._then_branch],
     // statement_block vs preproc_split_code_block_end after the statement run
     [$.statement_block],
     // var_body run terminates at the following begin (no closing delimiter)
@@ -3652,12 +3660,50 @@ module.exports = grammar({
     // Pinned by "A ';' before the else gives it to the CASE" in
     // test/corpus/dangling_else_case_branch_test.txt, which passes with the
     // dynamic precedences removed entirely.
+    // Two then-branch forms are still SELF-TERMINATING after the restructure,
+    // and they get the same treatment the others got by having their terminator
+    // moved out: an `else` may not follow them.
+    //
+    //   * `call_statement` owns its ';' internally (`if C then Foo; else …`).
+    //     Dropping it from the then-branch entirely is not an option — the node
+    //     would degrade to a bare `identifier`, which the engine reads as
+    //     recovery debris rather than a call.
+    //   * `empty_statement` IS a ';' (`if C then ; else …`). Real site, and the
+    //     last of the 25 census hits: Manufacturing/Document/
+    //     CopyProductionOrderDocument.Report.al:79, where four `StatusType::`
+    //     case branches each end `then ;` and the `else` is plainly the case's.
+    //
+    // So they are separate arms here with no `else` after them, and the else
+    // hangs off the two forms that cannot hold a ';'. That exclusion holds only
+    // because `_statement_inner` no longer contains `empty_statement` — it is
+    // otherwise trivially routed around.
+    //
+    // The open pair is written out here rather than factored into a hidden
+    // rule: a hidden rule carrying `field('then_branch', …)` cannot surface in
+    // node-types.json, and the query-coverage harness counts each one
+    // (`fields|skipped|hidden-rule`). Inlining keeps the fields attributable to
+    // if_statement and the harness green.
+    //
+    // Splitting on the then-branch does NOT disturb the dangling-else
+    // associativity the comment above warns about: the shift/reduce on `else`
+    // is still one seq with `optional(else)` under prec.right, which is what
+    // binds the else to the INNERMOST unmatched if. Pinned by "Nested ifs: the
+    // else binds to the NEAREST unmatched if".
     if_statement: $ => prec.right(prec.dynamic(20, seq(
       $.if_keyword,
       field('condition', $._expression),
       $.then_keyword,
-      $._then_branch,
-      optional(prec.dynamic(30, seq($.else_keyword, $._else_branch))),
+      choice(
+        seq(
+          choice(
+            field('then_branch', $.code_block),
+            field('then_branch', $._statement_inner),
+          ),
+          optional(prec.dynamic(30, seq($.else_keyword, $._else_branch))),
+        ),
+        field('then_branch', $.call_statement),
+        field('then_branch', $.empty_statement),
+      ),
     ))),
 
     // If statement without else clause — used as case branch body so that

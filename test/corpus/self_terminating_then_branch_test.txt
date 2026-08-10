@@ -1,0 +1,159 @@
+================================================================================
+`if C then ;` terminates the if -- the else is the CASE's
+--
+The last of the 25 dangling-else census sites, and the one the terminator
+restructure could not reach on its own. `empty_statement` IS a ';', so a
+then-branch that resolves to one still swallowed the terminator after every
+other rule had stopped doing so, leaving the if's else arm available. Real site:
+Manufacturing/Document/CopyProductionOrderDocument.Report.al:79, where four
+`StatusType::` case branches each end `then ;` and the `else` is plainly the
+case's -- and it was being handed to the last if.
+--
+The assertion is `then_branch: (empty_statement)` with NO `else_branch:` on the
+if, plus a real `case_else_branch`. The empty_statement must survive as a node:
+excluding it from the then-branch outright makes the ';' unparseable there.
+================================================================================
+codeunit 50100 P
+{
+    procedure P()
+    var
+        X: Integer;
+        Y: Integer;
+    begin
+        case X of
+            1:
+                if Foo() then
+                    ;
+            else
+                Y := 1;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))
+                    (then_keyword)
+                    then_branch: (empty_statement))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (end_keyword)))
+          (end_keyword))))))
+
+================================================================================
+`if C then Foo;` terminates the if -- the else is the CASE's
+--
+The other self-terminating then-branch form. `call_statement` owns its ';'
+internally (that is what makes a real parenless call distinguishable from
+recovery debris, which has no terminator), so like `empty_statement` it
+swallowed the ';' and left the else arm live. BC.History has zero parenless
+call statements, so no census site covers this -- it is the same defect with no
+corpus witness, which is exactly why it needs a fixture.
+--
+The assertion is `then_branch: (call_statement ...)` with no `else_branch:`, and
+a real `case_else_branch`. `call_statement` must NOT degrade to a bare
+`identifier` here.
+================================================================================
+codeunit 50100 P
+{
+    procedure P()
+    var
+        X: Integer;
+        Y: Integer;
+    begin
+        case X of
+            1:
+                if Foo() then
+                    Bar;
+            else
+                Y := 1;
+        end;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (case_statement
+              (case_keyword)
+              expression: (identifier)
+              (of_keyword)
+              body: (case_body
+                (case_branch
+                  pattern: (integer)
+                  body: (if_statement
+                    (if_keyword)
+                    condition: (call_expression
+                      function: (identifier)
+                      arguments: (argument_list))
+                    (then_keyword)
+                    then_branch: (call_statement
+                      function: (identifier)))))
+              (case_else_branch
+                (else_keyword)
+                body: (statement_block
+                  (assignment_statement
+                    left: (identifier)
+                    operator: (assignment_operator)
+                    right: (integer))))
+              (end_keyword)))
+          (end_keyword))))))

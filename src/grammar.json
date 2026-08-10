@@ -15919,31 +15919,74 @@
               "name": "then_keyword"
             },
             {
-              "type": "SYMBOL",
-              "name": "_then_branch"
-            },
-            {
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "PREC_DYNAMIC",
-                  "value": 30,
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "FIELD",
+                          "name": "then_branch",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "code_block"
+                          }
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "then_branch",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_statement_inner"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "PREC_DYNAMIC",
+                          "value": 30,
+                          "content": {
+                            "type": "SEQ",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "else_keyword"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "_else_branch"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "type": "BLANK"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "FIELD",
+                  "name": "then_branch",
                   "content": {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "else_keyword"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "_else_branch"
-                      }
-                    ]
+                    "type": "SYMBOL",
+                    "name": "call_statement"
                   }
                 },
                 {
-                  "type": "BLANK"
+                  "type": "FIELD",
+                  "name": "then_branch",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "empty_statement"
+                  }
                 }
               ]
             }
@@ -20815,6 +20858,10 @@
     [
       "if_statement",
       "_if_statement_no_else"
+    ],
+    [
+      "if_statement",
+      "_then_branch"
     ],
     [
       "statement_block"
