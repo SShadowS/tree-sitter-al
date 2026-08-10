@@ -66,3 +66,44 @@ table 50100 T
       (integer))
     body: (declaration_body
       (empty_statement))))
+
+================================================================================
+DELIBERATE NEGATIVE. A BOM glued to the END of a keyword destroys the keyword,
+and that is CORRECT -- alc does the same. U+FEFF is \p{Cf}, so it continues an
+identifier, which means `begin<U+FEFF>` lexes as an identifier and not as
+begin_keyword. alc rejects this file too (AL0104 at 18.0.37.11445; the sibling
+`codeunit<U+FEFF> 50100` is AL0198), because alc's lexer makes the same call.
+.
+This BEHAVIOUR CHANGED and moved toward alc. Before \p{Cf} entered the continue
+class this file parsed with ZERO errors and a live begin_keyword -- we accepted
+a file the compiler rejects. Three shapes moved that way: a BOM after `codeunit`,
+a BOM glued to the following token, and this one. A BOM at file start and a BOM
+BETWEEN statements still parse cleanly, and alc accepts both of those, so the
+`extras` entry and is_extra_space()'s U+FEFF are still load-bearing.
+.
+What is pinned is the shape: `begin<U+FEFF>` must appear as an identifier inside
+the ERROR, NOT as a begin_keyword. An error-count assertion alone would not
+distinguish this from any other way of failing.
+================================================================================
+
+codeunit 50100 C
+{
+    procedure P()
+    begin﻿
+        Foo();
+    end;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    (ERROR
+      (procedure_keyword)
+      name: (identifier)
+      (identifier)
+      (identifier)
+      (identifier))))

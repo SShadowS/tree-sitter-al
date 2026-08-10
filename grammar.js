@@ -2525,6 +2525,20 @@ module.exports = grammar({
       $.empty_statement,
     )),
 
+    // THE THIRD COPY of an identifier-ish character class, and it deliberately
+    // does NOT track `identifier`. This names a .NET assembly / namespace, not
+    // an AL identifier, so it keeps the narrower `[\p{L}_][\p{L}\p{N}_]*` that
+    // `identifier` carried before Nl/Mn/Mc/Pc/Cf were added to match alc's AL
+    // rule. Widening it would be claiming something about .NET naming that has
+    // not been measured.
+    //
+    // It is called out because it is a silent-drift hazard by construction:
+    // `identifier` and src/scanner.c's tables are generated from one source and
+    // cannot diverge, but this literal is hand-written and shares neither. It is
+    // safe today only because nothing in src/scanner.c consults it -- the
+    // scanner mediates PROPERTY_NAME and VAR_ATTRIBUTE_OPEN, which are about
+    // `identifier`. If a scanner token ever needs this class, generate it too
+    // rather than copying the regex a fourth time.
     dotnet_assembly_name: $ => token(seq(
       /[\p{L}_][\p{L}\p{N}_]*/u,
       repeat(seq('.', /[\p{L}_][\p{L}\p{N}_]*/u))
@@ -4503,6 +4517,24 @@ module.exports = grammar({
     // and nothing here is capped to the BMP (alc rejects astral codepoints,
     // AL0183). Both are the parser accepting more than the compiler, which is
     // the safe direction and is recorded rather than closed.
+    //
+    // U+FEFF IS IN \p{Cf} AND IN `extras` AND IN the scanner's whitespace set,
+    // all three deliberately, and it is NOT excluded here. Do not "simplify"
+    // that by dropping U+FEFF from the class or from `extras`: each is
+    // load-bearing in a different position, and both are pinned by fixtures.
+    //   * alc ACCEPTS U+FEFF mid-identifier -- `O<U+FEFF>k: Integer;` compiles,
+    //     as do U+200B, U+200C, U+200D, U+00AD, U+2060, U+061C. So excluding it
+    //     would put us back to rejecting valid AL.
+    //   * The two components do NOT split it. tree-sitter's longest match makes
+    //     the identifier win, and src/scanner.c's read_word_ci consumes U+FEFF
+    //     through this same generated table, so PROPERTY_NAME spans exactly the
+    //     bytes the grammar's lexer would. Verified in six positions.
+    //   * Consequence, and it is CORRECT: `begin<U+FEFF>` is an identifier, not
+    //     a begin_keyword, so a BOM glued to a keyword breaks it. alc breaks the
+    //     same way (AL0104; `codeunit<U+FEFF>` is AL0198). Before this widening
+    //     we accepted those files with zero errors -- accepting what the
+    //     compiler rejects. A BOM at file start and a BOM BETWEEN statements
+    //     still parse cleanly, and alc accepts both.
     //
     // src/unicode_id.h MUST be regenerated whenever this line changes -- the
     // scanner reads those tables to decide where PROPERTY_NAME and
