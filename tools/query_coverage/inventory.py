@@ -46,13 +46,47 @@ def extract(language, tree, source: bytes) -> dict:
         "actions": [],
     }
 
+    # Keyed by the enclosing node's byte range. Needed because this
+    # tree-sitter binding's QueryCursor.matches() does not aggregate a
+    # quantified field capture (`field: (_)+ @x`) into one list per match —
+    # `field: (_) @x` against a `multiple: true` field instead yields one
+    # match PER occurrence, all sharing the same enclosing node (see the
+    # task-13 fix report). object_name on preproc_split_declaration and name
+    # on variable_declaration are both `multiple: true`, so both need
+    # consolidation rather than a plain append per match.
+    seen_object_ranges: set[tuple[int, int]] = set()
+    variables_by_range: dict[tuple[int, int], dict] = {}
+
     for _index, captures in cursor.matches(tree.root_node):
         if "object" in captures:
             node = captures["object"][0]
+            key = (node.start_byte, node.end_byte)
+            if key in seen_object_ranges:
+                # preproc_split_declaration only: one match per #if/#elif/#else
+                # branch's object_name. Keep the first branch as the primary
+                # reading (object_id below does the same via
+                # child_by_field_name) and drop the rest rather than
+                # duplicating the object entry once per branch.
+                continue
+            seen_object_ranges.add(key)
+
+            if "object.id" in captures:
+                object_id = _text(captures["object.id"][0], source)
+            else:
+                # Either one of the 6 id-less object kinds (interfaces,
+                # control add-ins, entitlements, page customizations,
+                # profiles, profile extensions — node-types.json has no
+                # object_id field at all), or preproc_split_declaration,
+                # where object_id is `multiple: true, required: false` and
+                # not captured by the .scm for the reason above.
+                # child_by_field_name naturally returns None for both cases.
+                id_node = node.child_by_field_name("object_id")
+                object_id = _text(id_node, source) if id_node else None
+
             result["objects"].append(
                 {
                     "type": node.type,
-                    "id": _text(captures["object.id"][0], source),
+                    "id": object_id,
                     "name": _text(captures["object.name"][0], source),
                 }
             )
@@ -113,14 +147,25 @@ def extract(language, tree, source: bytes) -> dict:
                 }
             )
         elif "variable" in captures:
+            # variable_declaration's name field is `multiple: true`
+            # (`A, B, C: Integer;`) — one match per name, all sharing this
+            # node's byte range. Consolidate into a single entry with every
+            # name, rather than one fragmented entry per name (see the
+            # task-13 fix report; a prior version of this branch assumed
+            # captures["variable.name"] already held every name per match,
+            # which does not hold for this binding).
             node = captures["variable"][0]
-            result["variables"].append(
-                {
-                    "name": [_text(n, source) for n in captures["variable.name"]],
+            key = (node.start_byte, node.end_byte)
+            entry = variables_by_range.get(key)
+            if entry is None:
+                entry = {
+                    "name": [],
                     "type": _text(captures["variable.type"][0], source),
                     "byte_range": [node.start_byte, node.end_byte],
                 }
-            )
+                variables_by_range[key] = entry
+                result["variables"].append(entry)
+            entry["name"].append(_text(captures["variable.name"][0], source))
         elif "control" in captures:
             node = captures["control"][0]
             result["controls"].append(
@@ -174,6 +219,23 @@ def _parameters_within(node, source: bytes) -> list[dict]:
             out.append({"name": _text(name, source) if name else ""})
         stack.extend(current.children)
     return out
+
+
+def object_declaration_types(node_types: list[dict]) -> list[str]:
+    """Every named node type that carries object identity (has `object_name`).
+
+    This is how inventory.scm's object-identity section was enumerated —
+    run this over src/node-types.json and diff the result against the .scm's
+    `(TYPE ... object_name: ...)` patterns to catch a newly introduced
+    object-bearing declaration type (a new extension kind, say) before it
+    silently drops out of `objects`. See test_inventory_scm_covers_every_
+    object_bearing_declaration_type, which runs exactly that diff.
+    """
+    return sorted(
+        entry["type"]
+        for entry in node_types
+        if entry.get("named") and "object_name" in entry.get("fields", {})
+    )
 
 
 def property_value_types(node_types: list[dict]) -> list[str]:
