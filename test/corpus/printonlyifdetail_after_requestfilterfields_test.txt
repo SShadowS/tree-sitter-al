@@ -103,9 +103,11 @@ report 50001 "Complex Report"
                 value: (sorting_value
                   (quoted_identifier)
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (identifier)
+                        (const_keyword)
                         value: (identifier))))))
               (property
                 name: (property_name)
@@ -140,6 +142,7 @@ report 50001 "Complex Report"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))))
                   (property
                     name: (property_name)

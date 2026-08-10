@@ -131,6 +131,7 @@ table 50002 "Mixed Date Time Filters"
                   target: (calc_field_reference
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
@@ -187,6 +188,7 @@ table 50003 "Date Pipe Filters"
                   target: (calc_field_reference
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)

@@ -65,9 +65,11 @@ page 50002 "Test Page 3"
           (quoted_identifier)
           (quoted_identifier)
           (where_clause
+            (where_keyword)
             (where_conditions
               (where_condition
                 field: (quoted_identifier)
+                (const_keyword)
                 value: (quoted_identifier))))))
       (layout_section
         (layout_keyword)
@@ -114,9 +116,11 @@ page 50002 "Test Page 3"
       (property
         name: (property_name)
         value: (where_clause
+          (where_keyword)
           (where_conditions
             (where_condition
               field: (quoted_identifier)
+              (const_keyword)
               value: (identifier)))))
       (layout_section
         (layout_keyword)

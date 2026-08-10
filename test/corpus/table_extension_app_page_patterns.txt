@@ -101,9 +101,11 @@ table 6175314 "CDO Extension App Page"
                       table: (identifier)
                       table: (quoted_identifier)
                       (where_clause
+                        (where_keyword)
                         (where_conditions
                           (where_condition
                             field: (quoted_identifier)
+                            (const_keyword)
                             value: (keyword_identifier
                               (page_keyword)))))))))
               (trigger_declaration
@@ -195,13 +197,16 @@ table 6175314 "CDO Extension App Page"
                     (identifier)
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (keyword_identifier
                           (page_keyword)))
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))))))))))
       (keys_section
         (keys_keyword)

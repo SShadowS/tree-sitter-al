@@ -54,9 +54,11 @@ page 9800 "Users List"
               (property
                 name: (property_name)
                 value: (where_clause
+                  (where_keyword)
                   (where_conditions
                     (where_condition
                       field: (identifier)
+                      (const_keyword)
                       value: (identifier)))))))))
       (layout_section
         (layout_keyword)
@@ -136,9 +138,11 @@ page 123 "Test List"
               (property
                 name: (property_name)
                 value: (where_clause
+                  (where_keyword)
                   (where_conditions
                     (where_condition
                       field: (identifier)
+                      (const_keyword)
                       value: (quoted_identifier)))))
               (property
                 name: (property_name)
@@ -155,6 +159,7 @@ page 123 "Test List"
               (property
                 name: (property_name)
                 value: (where_clause
+                  (where_keyword)
                   (where_conditions
                     (where_condition
                       field: (identifier)
@@ -220,6 +225,7 @@ pageextension 50001 "Customer List Ext" extends "Customer List"
               (property
                 name: (property_name)
                 value: (where_clause
+                  (where_keyword)
                   (where_conditions
                     (where_condition
                       field: (quoted_identifier)
@@ -294,6 +300,7 @@ page 456 "Multilingual List"
               (property
                 name: (property_name)
                 value: (where_clause
+                  (where_keyword)
                   (where_conditions
                     (where_condition
                       field: (identifier)

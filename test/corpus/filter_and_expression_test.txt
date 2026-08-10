@@ -39,6 +39,7 @@ table 50100 "Test Filter And"
                       table: (identifier)
                       table: (quoted_identifier)
                       (where_clause
+                        (where_keyword)
                         (where_conditions
                           (where_condition
                             field: (quoted_identifier)
@@ -88,6 +89,7 @@ table 50101 "Test Multiple And"
                       table: (identifier)
                       table: (quoted_identifier)
                       (where_clause
+                        (where_keyword)
                         (where_conditions
                           (where_condition
                             field: (quoted_identifier)
@@ -137,6 +139,7 @@ table 50102 "Test Mixed And"
                       table: (identifier)
                       table: (quoted_identifier)
                       (where_clause
+                        (where_keyword)
                         (where_conditions
                           (where_condition
                             field: (identifier)
@@ -186,6 +189,7 @@ table 50103 "Test And Identifiers"
                       table: (identifier)
                       table: (identifier)
                       (where_clause
+                        (where_keyword)
                         (where_conditions
                           (where_condition
                             field: (identifier)
@@ -234,6 +238,7 @@ table 50104 "Test Complex And"
                       table: (identifier)
                       table: (identifier)
                       (where_clause
+                        (where_keyword)
                         (where_conditions
                           (where_condition
                             field: (identifier)

@@ -3807,6 +3807,11 @@
     "fields": {}
   },
   {
+    "type": "const_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "content_keyword",
     "named": true,
     "fields": {}
@@ -5144,6 +5149,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "field_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "field_list",
@@ -8569,11 +8579,23 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
+          "type": "const_keyword",
+          "named": true
+        },
+        {
+          "type": "field_keyword",
+          "named": true
+        },
+        {
           "type": "filter_keyword",
+          "named": true
+        },
+        {
+          "type": "upperlimit_keyword",
           "named": true
         }
       ]
@@ -23478,6 +23500,11 @@
     "fields": {}
   },
   {
+    "type": "upperlimit_keyword",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "usercontrol_keyword",
     "named": true,
     "fields": {}
@@ -23868,11 +23895,15 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "where_conditions",
+          "named": true
+        },
+        {
+          "type": "where_keyword",
           "named": true
         }
       ]
@@ -23952,11 +23983,23 @@
       }
     },
     "children": {
-      "multiple": false,
-      "required": false,
+      "multiple": true,
+      "required": true,
       "types": [
         {
+          "type": "const_keyword",
+          "named": true
+        },
+        {
+          "type": "field_keyword",
+          "named": true
+        },
+        {
           "type": "filter_keyword",
+          "named": true
+        },
+        {
+          "type": "upperlimit_keyword",
           "named": true
         }
       ]
@@ -23980,6 +24023,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "where_keyword",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "while_keyword",
@@ -25415,6 +25463,10 @@
     "extra": true
   },
   {
+    "type": "const",
+    "named": false
+  },
+  {
     "type": "content",
     "named": false
   },
@@ -25520,6 +25572,10 @@
   },
   {
     "type": "factboxes",
+    "named": false
+  },
+  {
+    "type": "field",
     "named": false
   },
   {
@@ -25873,6 +25929,10 @@
     "named": false
   },
   {
+    "type": "upperlimit",
+    "named": false
+  },
+  {
     "type": "usercontrol",
     "named": false
   },
@@ -25898,6 +25958,10 @@
   },
   {
     "type": "views",
+    "named": false
+  },
+  {
+    "type": "where",
     "named": false
   },
   {

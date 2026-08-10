@@ -55,6 +55,7 @@ report 50700 "DataItemTableView Test"
                 value: (sorting_value
                   (quoted_identifier)
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
@@ -84,9 +85,11 @@ page 50800 "SourceTableView Test"
         value: (sorting_value
           (quoted_identifier)
           (where_clause
+            (where_keyword)
             (where_conditions
               (where_condition
                 field: (quoted_identifier)
+                (const_keyword)
                 value: (boolean)))))))))
 
 ================================================================================
@@ -160,6 +163,7 @@ report 50600 "FilterRange Test"
                 value: (sorting_value
                   (identifier)
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (identifier)
@@ -204,6 +208,7 @@ report 50650 "FilterIdentifier Test"
                 value: (sorting_value
                   (quoted_identifier)
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)

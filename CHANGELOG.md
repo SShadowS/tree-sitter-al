@@ -279,6 +279,40 @@ public API — a change to node structure or field names is a **major** bump.
 
 ### Fixed
 
+- **`where(X = field(N))`, `where(X = const(N))` and `where(X = upperlimit(N))`
+  produced byte-identical trees.** Not a cosmetic omission — a semantic misread.
+  `const(N)` means "X equals the literal N", `field(N)` means "X equals the value
+  of field N in the current record", and `upperlimit(N)` is a range bound: three
+  different queries against the database, and nothing in the tree recorded which
+  one was written. `where_condition` showed only `field:` and `value:`. All the
+  markers were bare `kw()`, i.e. hidden pattern tokens.
+  - `filter(…)`, in the *same* `choice()`, was already correct as the named
+    `filter_keyword` — which is how the inconsistency stayed invisible: one of
+    the four siblings produced a node and three produced nothing. The fix copies
+    that precedent exactly: `where_keyword`, `field_keyword`, `const_keyword`,
+    `upperlimit_keyword`.
+  - **The construct is duplicated**, in `where_condition` and again in
+    `link_value`, so `DataItemLink`, `RunPageLink`, `SubPageLink` and
+    `ColumnFilter` had the same defect. Both sites fixed; a census confirmed
+    there is no third.
+  - `where_keyword` keeps `kw()`'s second argument (`kw('where', 15)`), which
+    promotes parse precedence into *lexical* precedence — dropping it can make
+    other rules unreachable.
+  - **The field *declaration* keyword is deliberately untouched.** `field` is
+    also `field(1; A; Code[10])` and `field(Name; Source)`, and appears in
+    `keyword_as_identifier`. `field_keyword` is used only by the where/link
+    markers; the four declaration sites and the identifier use keep their bare
+    `kw('field')`, and a fixture pins that `procedure P(field: Integer)` and a
+    variable named `const` still parse.
+  - **`queries/highlights.scm` carried a comment stating these keywords "cannot
+    be captured by any query, so it carries no highlight".** That was true and is
+    now false; the comment is corrected and the three markers join
+    `filter_keyword` in the structure-keyword list. Measured on a four-marker
+    file: 1 captured marker before, 8 after.
+  - 29,017 node instances gained across 2,651 of 15,358 files, none lost:
+    12,844 `field_keyword`, 8,925 `const_keyword`, 7,208 `where_keyword`,
+    40 `upperlimit_keyword`. `STATE_COUNT` 14,059 → 14,063 (+4).
+
 - **`i := 1` and `i += 2` produced byte-identical trees; the assignment operator
   is now a node.** `_assignment_operator` was a *hidden* rule over a single
   token, so `field('operator', …)` on `assignment_statement` and

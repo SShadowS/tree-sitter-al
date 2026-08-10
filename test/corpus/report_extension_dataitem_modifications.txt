@@ -43,9 +43,11 @@ reportextension 123 "My Report Extension" extends "Standard Sales Quote"
                     value: (sorting_value
                       (identifier)
                       (where_clause
+                        (where_keyword)
                         (where_conditions
                           (where_condition
                             field: (identifier)
+                            (const_keyword)
                             value: (integer))))))
                   (report_column
                     (column_keyword)
@@ -213,9 +215,11 @@ reportextension 126 "Complex Extension" extends "Sales Report"
                   (property
                     name: (property_name)
                     value: (where_clause
+                      (where_keyword)
                       (where_conditions
                         (where_condition
                           field: (identifier)
+                          (const_keyword)
                           value: (integer)))))
                   (report_column
                     (column_keyword)
@@ -232,9 +236,11 @@ reportextension 126 "Complex Extension" extends "Sales Report"
                   (property
                     name: (property_name)
                     value: (where_clause
+                      (where_keyword)
                       (where_conditions
                         (where_condition
                           field: (identifier)
+                          (const_keyword)
                           value: (integer)))))
                   (report_column
                     (column_keyword)

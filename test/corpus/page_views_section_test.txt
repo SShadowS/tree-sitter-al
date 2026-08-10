@@ -50,9 +50,11 @@ pageextension 50000 "Test Views" extends "User List"
                   (property
                     name: (property_name)
                     value: (where_clause
+                      (where_keyword)
                       (where_conditions
                         (where_condition
                           field: (quoted_identifier)
+                          (const_keyword)
                           value: (boolean)))))
                   (property
                     name: (property_name)
@@ -67,9 +69,11 @@ pageextension 50000 "Test Views" extends "User List"
                   (property
                     name: (property_name)
                     value: (where_clause
+                      (where_keyword)
                       (where_conditions
                         (where_condition
                           field: (quoted_identifier)
+                          (const_keyword)
                           value: (boolean)))))
                   (property
                     name: (property_name)

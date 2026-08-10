@@ -213,9 +213,11 @@ table 50100 MyTable
             (quoted_identifier)
             (identifier))
           (where_clause
+            (where_keyword)
             (where_conditions
               (where_condition
                 (quoted_identifier)
+                (field_keyword)
                 (quoted_identifier)))))))))
 
 ========================================================================
@@ -240,9 +242,11 @@ table 50100 MyTable
             (quoted_identifier)
             (quoted_identifier))
           (where_clause
+            (where_keyword)
             (where_conditions
               (where_condition
                 (quoted_identifier)
+                (field_keyword)
                 (quoted_identifier)))))))))
 
 ========================================================================
@@ -267,9 +271,11 @@ table 50100 MyTable
           (calc_field_reference
             (quoted_identifier))
           (where_clause
+            (where_keyword)
             (where_conditions
               (where_condition
                 (quoted_identifier)
+                (field_keyword)
                 (quoted_identifier)))))))))
 
 ========================================================================
@@ -313,9 +319,11 @@ table 50100 MyTable
             (simple_table_relation
               (identifier)
               (where_clause
+                (where_keyword)
                 (where_conditions
                   (where_condition
                     (quoted_identifier)
+                    (field_keyword)
                     (quoted_identifier)))))))))))
 
 ========================================================================
@@ -341,6 +349,7 @@ table 50100 MyTable
               (where_conditions
                 (where_condition
                   (quoted_identifier)
+                  (const_keyword)
                   (identifier)))
               (simple_table_relation
                 (identifier))
@@ -474,9 +483,11 @@ table 50100 MyTable
             (quoted_identifier)
             (identifier))
           (where_clause
+            (where_keyword)
             (where_conditions
               (where_condition
                 (identifier)
+                (const_keyword)
                 (identifier)))))))))
 
 ========================================================================

@@ -59,9 +59,11 @@ xmlport 9611 "Code Coverage Detailed"
                   (property
                     name: (property_name)
                     value: (where_clause
+                      (where_keyword)
                       (where_conditions
                         (where_condition
                           field: (quoted_identifier)
+                          (const_keyword)
                           value: (identifier))
                         (where_condition
                           field: (quoted_identifier)
@@ -121,6 +123,7 @@ xmlport 50000 "Test Complex View"
                 value: (sorting_value
                   (quoted_identifier)
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
@@ -129,6 +132,7 @@ xmlport 50000 "Test Complex View"
                           (integer)))
                       (where_condition
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (string_literal))))))
               (xmlport_element
                 element_type: (fieldelement_keyword)

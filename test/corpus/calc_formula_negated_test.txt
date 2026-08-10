@@ -59,9 +59,11 @@ table 123 "Test Table"
                     (quoted_identifier)
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))))))
               (property
                 name: (property_name)
@@ -80,9 +82,11 @@ table 123 "Test Table"
                     (quoted_identifier)
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))))))
               (property
                 name: (property_name)
@@ -100,30 +104,11 @@ table 123 "Test Table"
                   target: (calc_field_reference
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
-                        value: (quoted_identifier))))))
-              (property
-                name: (property_name)
-                value: (identifier))))
-          (field_declaration
-            id: (integer)
-            name: (quoted_identifier)
-            type: (type_specification
-              (basic_type))
-            body: (declaration_body
-              (property
-                name: (property_name)
-                value: (aggregate_formula
-                  function: (aggregate_function)
-                  target: (calc_field_reference
-                    (quoted_identifier)
-                    (quoted_identifier))
-                  (where_clause
-                    (where_conditions
-                      (where_condition
-                        field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))))))
               (property
                 name: (property_name)
@@ -142,9 +127,34 @@ table 123 "Test Table"
                     (quoted_identifier)
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))))))
+              (property
+                name: (property_name)
+                value: (identifier))))
+          (field_declaration
+            id: (integer)
+            name: (quoted_identifier)
+            type: (type_specification
+              (basic_type))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (aggregate_formula
+                  function: (aggregate_function)
+                  target: (calc_field_reference
+                    (quoted_identifier)
+                    (quoted_identifier))
+                  (where_clause
+                    (where_keyword)
+                    (where_conditions
+                      (where_condition
+                        field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))))))
               (property
                 name: (property_name)

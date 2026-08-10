@@ -746,7 +746,7 @@ module.exports = grammar({
 
     // WHERE(conditions) clause — shared by CalcFormula, TableRelation, etc.
     where_clause: $ => seq(
-      kw('where', 15),
+      $.where_keyword,
       '(',
       $.where_conditions,
       ')'
@@ -777,14 +777,14 @@ module.exports = grammar({
       choice(
         // field("No.") or field(upperlimit("Date Filter")) or field(filter(Totaling))
         seq(
-          choice(kw('field'), kw('upperlimit')),
+          choice($.field_keyword, $.upperlimit_keyword),
           '(',
           choice(
             field('value', $._identifier_or_quoted),
             // field(filter(...)) — field with filter applied
             seq($.filter_keyword, '(', field('value', $._identifier_or_quoted), ')'),
             // field(upperlimit(...)) — field with upperlimit
-            seq(kw('upperlimit'), '(', choice(
+            seq($.upperlimit_keyword, '(', choice(
               field('value', $._identifier_or_quoted),
               // upperlimit(filter(...)) — upperlimit with filter
               seq($.filter_keyword, '(', field('value', $._identifier_or_quoted), ')'),
@@ -793,7 +793,7 @@ module.exports = grammar({
           ')'
         ),
         // const(value) — also accepts keyword identifiers like Report, Page, Codeunit, Action
-        seq(kw('const'), '(', optional(field('value', choice(
+        seq($.const_keyword, '(', optional(field('value', choice(
           $.string_literal, $.identifier, $.quoted_identifier, $.integer, $.boolean,
           $.database_reference, $.qualified_enum_value, $.keyword_identifier,
           $.datetime_literal, $.date_literal, $.time_literal,
@@ -882,19 +882,19 @@ module.exports = grammar({
         // trees.
         prec.dynamic(1, choice(
           seq(
-            choice(kw('field'), kw('upperlimit')),
+            choice($.field_keyword, $.upperlimit_keyword),
             '(',
             choice(
               field('value', $._identifier_or_quoted),
               seq($.filter_keyword, '(', field('value', $._identifier_or_quoted), ')'),
-              seq(kw('upperlimit'), '(', choice(
+              seq($.upperlimit_keyword, '(', choice(
                 field('value', $._identifier_or_quoted),
                 seq($.filter_keyword, '(', field('value', $._identifier_or_quoted), ')'),
               ), ')'),
             ),
             ')'
           ),
-          seq(kw('const'), '(', optional(field('value', choice(
+          seq($.const_keyword, '(', optional(field('value', choice(
             $.string_literal, $.identifier, $.quoted_identifier, $.integer, $.boolean,
             $.database_reference, $.qualified_enum_value, $.keyword_identifier,
             $.datetime_literal, $.date_literal, $.time_literal,
@@ -4240,6 +4240,27 @@ module.exports = grammar({
     elements_keyword: $ => alias(kw('elements'), 'elements'),
     dataitem_keyword: $ => alias(kw('dataitem'), 'dataitem'),
     column_keyword: $ => alias(kw('column'), 'column'),
+    // where()/field()/const()/upperlimit() markers, named in 4.0.0. filter_keyword
+    // below was already correct and sat in the SAME choice() as these three, which
+    // is how the inconsistency stayed invisible: `filter(...)` produced a node and
+    // its siblings produced nothing. All four were bare kw(), i.e. token(PATTERN),
+    // which tree-sitter hides — so `where(X = field(N))`, `where(X = const(N))` and
+    // `where(X = upperlimit(N))` produced BYTE-IDENTICAL subtrees. That is a
+    // semantic misread, not a cosmetic one: const(N) is the literal N, field(N) is
+    // the value of field N in the current record, and upperlimit(N) is a range
+    // bound. Three different database queries, one tree.
+    //
+    // field_keyword is used ONLY by the where/link markers. The field DECLARATION
+    // keyword (field_declaration, page_field, _field_header, _table_field_header)
+    // and keyword_as_identifier keep their bare kw('field') — a different
+    // construct that must not move.
+    //
+    // where_keyword keeps kw()'s second argument: it promotes parse precedence to
+    // LEXICAL precedence, and dropping it can make other rules unreachable.
+    where_keyword: $ => alias(kw('where', 15), 'where'),
+    field_keyword: $ => alias(kw('field'), 'field'),
+    const_keyword: $ => alias(kw('const'), 'const'),
+    upperlimit_keyword: $ => alias(kw('upperlimit'), 'upperlimit'),
     filter_keyword: $ => alias(kw('filter'), 'filter'),
     labels_keyword: $ => alias(kw('labels'), 'labels'),
     rendering_keyword: $ => alias(kw('rendering'), 'rendering'),

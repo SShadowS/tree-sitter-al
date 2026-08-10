@@ -66,9 +66,11 @@ report 30 "Check Value Posting"
                 value: (sorting_value
                   (identifier)
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (identifier)
+                        (const_keyword)
                         value: (integer))))))
               (property
                 name: (property_name)
@@ -100,9 +102,11 @@ report 30 "Check Value Posting"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))))
                   (property
                     name: (property_name)
@@ -114,6 +118,7 @@ report 30 "Check Value Posting"
                       (quoted_identifier)
                       (quoted_identifier)
                       (where_clause
+                        (where_keyword)
                         (where_conditions
                           (where_condition
                             field: (quoted_identifier)

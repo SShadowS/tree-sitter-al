@@ -50,9 +50,11 @@ page 50000 "Test Page"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (preproc_conditional_link_values
                         (preproc_if
@@ -61,11 +63,13 @@ page 50000 "Test Page"
                             (identifier)))
                         (link_value
                           field: (quoted_identifier)
+                          (field_keyword)
                           value: (quoted_identifier))
                         (preproc_endif
                           (preproc_close)))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier)))))))))))))
 
 ================================================================================
@@ -117,6 +121,7 @@ page 50001 "Test Page"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (preproc_conditional_link_values
                         (preproc_if
@@ -124,15 +129,18 @@ page 50001 "Test Page"
                           condition: (identifier))
                         (link_value
                           field: (quoted_identifier)
+                          (field_keyword)
                           value: (quoted_identifier))
                         (preproc_else)
                         (link_value
                           field: (quoted_identifier)
+                          (field_keyword)
                           value: (quoted_identifier))
                         (preproc_endif
                           (preproc_close)))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier)))))))))))))
 
 ================================================================================
@@ -182,6 +190,7 @@ page 50002 "Test Page"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (database_reference
                           keyword: (object_type_keyword)
                           table_name: (identifier)))
@@ -192,11 +201,13 @@ page 50002 "Test Page"
                             (identifier)))
                         (link_value
                           field: (quoted_identifier)
+                          (const_keyword)
                           value: (integer))
                         (preproc_endif
                           (preproc_close)))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier)))))))))))))
 
 ================================================================================
@@ -244,9 +255,11 @@ page 50003 "Test Page"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (link_value
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (integer))
                       (link_value
                         field: (quoted_identifier)

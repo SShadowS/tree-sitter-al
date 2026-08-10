@@ -42,9 +42,11 @@ page 50100 "Job WIP Cockpit"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (link_value
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (boolean)))))))))))))
 
 ================================================================================
@@ -95,9 +97,11 @@ page 50101 "Job WIP G/L Entries"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (link_value
                         field: (identifier)
+                        (const_keyword)
                         value: (boolean)))))))))))))
 
 ================================================================================
@@ -144,10 +148,13 @@ page 50102 "Mixed Links"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (link_value
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (identifier))
                       (link_value
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (boolean)))))))))))))

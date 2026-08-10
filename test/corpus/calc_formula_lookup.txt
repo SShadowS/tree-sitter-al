@@ -48,9 +48,11 @@ table 50100 "CalcFormula Test"
                     (identifier)
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         (quoted_identifier)
+                        (field_keyword)
                         (quoted_identifier))))))))
           (field_declaration
             (integer)
@@ -69,10 +71,13 @@ table 50100 "CalcFormula Test"
                     (identifier)
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         (quoted_identifier)
+                        (field_keyword)
                         (quoted_identifier))
                       (where_condition
                         (quoted_identifier)
+                        (const_keyword)
                         (string_literal)))))))))))))

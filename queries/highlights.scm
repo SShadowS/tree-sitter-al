@@ -124,6 +124,12 @@
   (dataitem_keyword)
   (column_keyword)
   (filter_keyword)
+  ; The where()/field()/const()/upperlimit() markers, named in 4.0.0. Before
+  ; that, filter() was the only one of the four that could be captured at all.
+  (where_keyword)
+  (field_keyword)
+  (const_keyword)
+  (upperlimit_keyword)
   (labels_keyword)
   (rendering_keyword)
   (requestpage_keyword)
@@ -714,10 +720,11 @@
 ; DataItemTableFilter, LinkFields. Single-entry and comma-separated links both
 ; parse to link_value, so these rules cover every link site.
 ;
-; The enclosing field()/const()/upperlimit() keyword is a hidden token inside
-; link_value and cannot be captured by any query, so it carries no highlight.
-; (filter() is the named filter_keyword and is highlighted with the other
-; structure keywords above.)
+; The enclosing field()/const()/upperlimit()/filter() keyword is a named node
+; and is highlighted with the other structure keywords above. Until 4.0.0 only
+; filter() was: the other three were bare kw(), i.e. hidden pattern tokens that
+; no query could reach, which is also why `where(X = field(N))` and
+; `where(X = const(N))` produced identical trees.
 
 ; Target field, left of the '='
 (link_value

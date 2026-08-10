@@ -218,9 +218,11 @@ table 50102 "Mixed CalcFormula"
                     (quoted_identifier)
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (identifier))))))))
           (field_declaration
             id: (integer)
@@ -272,7 +274,9 @@ table 50102 "Mixed CalcFormula"
                   target: (calc_field_reference
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (identifier)
+                        (const_keyword)
                         value: (boolean)))))))))))))

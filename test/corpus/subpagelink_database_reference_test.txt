@@ -54,11 +54,13 @@ page 50000 TestPage
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (database_reference
                           keyword: (object_type_keyword)
                           table_name: (identifier)))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier)))))))))))))
 
 ================================================================================
@@ -158,14 +160,17 @@ page 50002 TestPage
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (database_reference
                           keyword: (object_type_keyword)
                           table_name: (quoted_identifier)))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (link_value
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (database_reference
                           keyword: (object_type_keyword)
                           table_name: (identifier))))))))))))))

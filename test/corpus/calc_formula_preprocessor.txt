@@ -43,6 +43,7 @@ table 50000 "Test Table"
                   target: (calc_field_reference
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
@@ -68,6 +69,7 @@ table 50000 "Test Table"
                           (preproc_close)))
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))))))
               (property
                 name: (property_name)

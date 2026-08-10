@@ -52,12 +52,16 @@ table 2632 "Test Table"
                     (quoted_identifier)
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
+                        (upperlimit_keyword)
                         (filter_keyword)
                         value: (quoted_identifier))))))
               (property
@@ -77,12 +81,16 @@ table 2632 "Test Table"
                     (quoted_identifier)
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
+                        (upperlimit_keyword)
                         (filter_keyword)
                         value: (quoted_identifier))))))
               (property
@@ -102,12 +110,16 @@ table 2632 "Test Table"
                     (quoted_identifier)
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
+                        (upperlimit_keyword)
                         (filter_keyword)
                         value: (quoted_identifier))))))
               (property

@@ -88,9 +88,11 @@ page 50100 "Test Page"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         (filter_keyword)
                         value: (quoted_identifier)))))))))))))
 
@@ -144,9 +146,11 @@ page 50101 "Complex RunPageLink"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (integer))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (link_value
                         field: (quoted_identifier)
@@ -155,6 +159,7 @@ page 50101 "Complex RunPageLink"
                           (string_literal)))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         (filter_keyword)
                         value: (quoted_identifier)))))))))))))
 
@@ -200,9 +205,11 @@ page 50102 "Quoted Filter Test"
                     value: (link_value_list
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         (filter_keyword)
                         value: (quoted_identifier))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         (filter_keyword)
                         value: (quoted_identifier)))))))))))))

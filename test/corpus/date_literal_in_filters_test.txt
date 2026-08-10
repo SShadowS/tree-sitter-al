@@ -37,6 +37,7 @@ table 50100 "Test Table"
                   target: (calc_field_reference
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
@@ -83,6 +84,7 @@ table 50101 "Date Filter Test"
                   target: (calc_field_reference
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
@@ -132,6 +134,7 @@ table 50102 "Complex Date Filters"
                   target: (calc_field_reference
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
@@ -193,6 +196,7 @@ table 50103 "Mixed Date Time Filters"
                   target: (calc_field_reference
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)

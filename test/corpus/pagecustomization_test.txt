@@ -41,9 +41,11 @@ pagecustomization "Test Page Customization" customizes "Target Page"
                   (property
                     name: (property_name)
                     value: (where_clause
+                      (where_keyword)
                       (where_conditions
                         (where_condition
                           field: (identifier)
+                          (const_keyword)
                           value: (identifier))))))))))))))
 
 ================================================================================
@@ -89,9 +91,11 @@ pagecustomization "Test Customization" customizes "Base Page"
                   (property
                     name: (property_name)
                     value: (where_clause
+                      (where_keyword)
                       (where_conditions
                         (where_condition
                           field: (identifier)
+                          (const_keyword)
                           value: (identifier))))))))))))))
 
 ================================================================================
@@ -138,9 +142,11 @@ pagecustomization "Enhanced Page" customizes "Original Page"
                   (property
                     name: (property_name)
                     value: (where_clause
+                      (where_keyword)
                       (where_conditions
                         (where_condition
                           field: (identifier)
+                          (const_keyword)
                           value: (identifier))))))))))))))
 
 ================================================================================
@@ -191,9 +197,11 @@ pagecustomization "Multi View Page" customizes "Base Page"
                   (property
                     name: (property_name)
                     value: (where_clause
+                      (where_keyword)
                       (where_conditions
                         (where_condition
                           field: (identifier)
+                          (const_keyword)
                           value: (identifier)))))))
               (view_definition
                 (view_keyword)
@@ -205,7 +213,9 @@ pagecustomization "Multi View Page" customizes "Base Page"
                   (property
                     name: (property_name)
                     value: (where_clause
+                      (where_keyword)
                       (where_conditions
                         (where_condition
                           field: (identifier)
+                          (const_keyword)
                           value: (identifier))))))))))))))

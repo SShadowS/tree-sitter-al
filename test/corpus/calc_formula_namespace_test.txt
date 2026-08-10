@@ -48,12 +48,15 @@ table 39 "Purchase Line"
                     (identifier)
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (identifier))
                       (where_condition
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (database_reference
                           keyword: (object_type_keyword)
                           table_name: (quoted_identifier))))))))))))))
@@ -113,9 +116,11 @@ table 50000 TestTable
                     (identifier)
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (identifier))))))))
           (field_declaration
             id: (integer)
@@ -135,9 +140,11 @@ table 50000 TestTable
                     (identifier)
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (identifier))))))))
           (field_declaration
             id: (integer)
@@ -159,9 +166,11 @@ table 50000 TestTable
                     (identifier)
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (identifier)
+                        (field_keyword)
                         value: (identifier)))))))))))))
 
 ================================================================================
@@ -210,7 +219,9 @@ table 50001 TestTable2
                     (identifier)
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (identifier)))))))))))))

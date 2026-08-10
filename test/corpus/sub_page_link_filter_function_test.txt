@@ -73,6 +73,7 @@ page 12345 "Test Page"
                           (integer)))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))))))
               (part_section
                 (part_keyword)
@@ -108,9 +109,11 @@ page 12345 "Test Page"
                           (integer)))
                       (link_value
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (link_value
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (string_literal))))))
               (part_section
                 (part_keyword)

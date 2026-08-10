@@ -100,9 +100,11 @@ table 50200 "Statistics"
                   target: (calc_field_reference
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (identifier)
+                        (const_keyword)
                         value: (identifier))))))
               (property
                 name: (property_name)
@@ -180,6 +182,7 @@ table 50300 "Count Test"
                   target: (calc_field_reference
                     (identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)

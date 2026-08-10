@@ -1,0 +1,267 @@
+================================================================================
+where() markers are distinguishable: field(N), const(N), upperlimit(N), filter(N)
+--
+All four produced BYTE-IDENTICAL subtrees before 4.0.0 except filter(), which
+was already a named filter_keyword sitting in the same choice() as the other
+three. `where_condition` showed only `field: identifier` and `value: identifier`
+with nothing recording which marker was written.
+--
+This is a semantic misread, not a cosmetic one. const(N) is the literal N;
+field(N) is the value of field N in the current record; upperlimit(N) is a range
+bound. Three different queries against the database, one tree. The assertion
+here is that the four subtrees now DIFFER.
+================================================================================
+table 50100 T
+{
+    fields
+    {
+        field(1; A; Code[10])
+        {
+            TableRelation = Other.Code where(X = field(N));
+        }
+        field(2; B; Code[10])
+        {
+            TableRelation = Other.Code where(X = const(N));
+        }
+        field(3; C; Code[10])
+        {
+            TableRelation = Other.Code where(X = upperlimit(N));
+        }
+        field(4; D; Code[10])
+        {
+            TableRelation = Other.Code where(X = filter(N));
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (table_declaration
+    (table_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (fields_section
+        (fields_keyword)
+        body: (fields_body
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      table: (identifier)
+                      table: (identifier)
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (field_keyword)
+                            value: (identifier))))))))))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      table: (identifier)
+                      table: (identifier)
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (const_keyword)
+                            value: (identifier))))))))))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      table: (identifier)
+                      table: (identifier)
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (upperlimit_keyword)
+                            value: (identifier))))))))))
+          (field_declaration
+            id: (integer)
+            name: (identifier)
+            type: (type_specification
+              (code_type
+                length: (integer)))
+            body: (declaration_body
+              (property
+                name: (property_name)
+                value: (table_relation_value
+                  (table_relation_expression
+                    (simple_table_relation
+                      table: (identifier)
+                      table: (identifier)
+                      (where_clause
+                        (where_keyword)
+                        (where_conditions
+                          (where_condition
+                            field: (identifier)
+                            (filter_keyword)
+                            value: (filter_value
+                              (identifier))))))))))))))))
+
+================================================================================
+The same markers in link_value, the second and near-duplicate site
+--
+where_condition and link_value carry independent copies of the marker choice().
+Fixing only one would leave DataItemLink / RunPageLink / SubPageLink /
+ColumnFilter unreadable.
+================================================================================
+report 50100 R
+{
+    dataset
+    {
+        dataitem(Parent; Customer)
+        {
+            dataitem(Child; "Sales Line")
+            {
+                DataItemLink = "Document No." = field("No."), Amount = const(100);
+            }
+        }
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (report_declaration
+    (report_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (dataset_section
+        (dataset_keyword)
+        body: (dataset_body
+          (report_dataitem
+            (dataitem_keyword)
+            name: (identifier)
+            table_name: (identifier)
+            body: (report_body
+              (report_dataitem
+                (dataitem_keyword)
+                name: (identifier)
+                table_name: (quoted_identifier)
+                body: (report_body
+                  (property
+                    name: (property_name)
+                    value: (link_value_list
+                      (link_value
+                        field: (quoted_identifier)
+                        (field_keyword)
+                        value: (quoted_identifier))
+                      (link_value
+                        field: (identifier)
+                        (const_keyword)
+                        value: (integer)))))))))))))
+
+================================================================================
+NOT disturbed: field() the declaration keyword, and field/const as identifiers
+--
+`field` is the field DECLARATION keyword (field(1; A; Code[10]) and the page
+form field(Name; Source)) and also appears in keyword_as_identifier. Only the
+where/link markers were rerouted through field_keyword; the four declaration
+sites and the identifier use keep their bare kw('field'). This case is the
+proof, and it is why field_keyword was not simply substituted everywhere.
+================================================================================
+page 50100 P
+{
+    layout
+    {
+        area(content)
+        {
+            field(Name; Rec.Name) { }
+        }
+    }
+}
+codeunit 50101 K
+{
+    procedure P(field: Integer)
+    var
+        const: Integer;
+    begin
+        field := 1;
+        const := 2;
+    end;
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (page_declaration
+    (page_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (layout_section
+        (layout_keyword)
+        body: (layout_body
+          (area_section
+            (area_keyword)
+            type: (content_keyword)
+            body: (layout_body
+              (page_field
+                name: (identifier)
+                source: (member_expression
+                  object: (identifier)
+                  member: (identifier)))))))))
+  (codeunit_declaration
+    (codeunit_keyword)
+    object_id: (integer)
+    object_name: (identifier)
+    body: (declaration_body
+      (procedure
+        (procedure_keyword)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (type_specification
+              (basic_type))))
+        (var_section
+          (var_keyword)
+          body: (var_body
+            (variable_declaration
+              name: (identifier)
+              type: (type_specification
+                (basic_type)))))
+        body: (code_block
+          (begin_keyword)
+          body: (statement_block
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer))
+            (assignment_statement
+              left: (identifier)
+              operator: (assignment_operator)
+              right: (integer)))
+          (end_keyword))))))
+

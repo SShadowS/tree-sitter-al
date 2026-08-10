@@ -2889,15 +2889,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "PREC",
-            "value": 15,
-            "content": {
-              "type": "PATTERN",
-              "value": "(?i)where"
-            }
-          }
+          "type": "SYMBOL",
+          "name": "where_keyword"
         },
         {
           "type": "STRING",
@@ -3085,18 +3078,12 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "TOKEN",
-                      "content": {
-                        "type": "PATTERN",
-                        "value": "(?i)field"
-                      }
+                      "type": "SYMBOL",
+                      "name": "field_keyword"
                     },
                     {
-                      "type": "TOKEN",
-                      "content": {
-                        "type": "PATTERN",
-                        "value": "(?i)upperlimit"
-                      }
+                      "type": "SYMBOL",
+                      "name": "upperlimit_keyword"
                     }
                   ]
                 },
@@ -3144,11 +3131,8 @@
                       "type": "SEQ",
                       "members": [
                         {
-                          "type": "TOKEN",
-                          "content": {
-                            "type": "PATTERN",
-                            "value": "(?i)upperlimit"
-                          }
+                          "type": "SYMBOL",
+                          "name": "upperlimit_keyword"
                         },
                         {
                           "type": "STRING",
@@ -3210,11 +3194,8 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "TOKEN",
-                  "content": {
-                    "type": "PATTERN",
-                    "value": "(?i)const"
-                  }
+                  "type": "SYMBOL",
+                  "name": "const_keyword"
                 },
                 {
                   "type": "STRING",
@@ -3693,18 +3674,12 @@
                         "type": "CHOICE",
                         "members": [
                           {
-                            "type": "TOKEN",
-                            "content": {
-                              "type": "PATTERN",
-                              "value": "(?i)field"
-                            }
+                            "type": "SYMBOL",
+                            "name": "field_keyword"
                           },
                           {
-                            "type": "TOKEN",
-                            "content": {
-                              "type": "PATTERN",
-                              "value": "(?i)upperlimit"
-                            }
+                            "type": "SYMBOL",
+                            "name": "upperlimit_keyword"
                           }
                         ]
                       },
@@ -3752,11 +3727,8 @@
                             "type": "SEQ",
                             "members": [
                               {
-                                "type": "TOKEN",
-                                "content": {
-                                  "type": "PATTERN",
-                                  "value": "(?i)upperlimit"
-                                }
+                                "type": "SYMBOL",
+                                "name": "upperlimit_keyword"
                               },
                               {
                                 "type": "STRING",
@@ -3818,11 +3790,8 @@
                     "type": "SEQ",
                     "members": [
                       {
-                        "type": "TOKEN",
-                        "content": {
-                          "type": "PATTERN",
-                          "value": "(?i)const"
-                        }
+                        "type": "SYMBOL",
+                        "name": "const_keyword"
                       },
                       {
                         "type": "STRING",
@@ -19834,6 +19803,58 @@
       },
       "named": false,
       "value": "column"
+    },
+    "where_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PREC",
+          "value": 15,
+          "content": {
+            "type": "PATTERN",
+            "value": "(?i)where"
+          }
+        }
+      },
+      "named": false,
+      "value": "where"
+    },
+    "field_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)field"
+        }
+      },
+      "named": false,
+      "value": "field"
+    },
+    "const_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)const"
+        }
+      },
+      "named": false,
+      "value": "const"
+    },
+    "upperlimit_keyword": {
+      "type": "ALIAS",
+      "content": {
+        "type": "TOKEN",
+        "content": {
+          "type": "PATTERN",
+          "value": "(?i)upperlimit"
+        }
+      },
+      "named": false,
+      "value": "upperlimit"
     },
     "filter_keyword": {
       "type": "ALIAS",

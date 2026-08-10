@@ -44,6 +44,7 @@ table 1 T
                     (where_conditions
                       (where_condition
                         field: (identifier)
+                        (const_keyword)
                         value: (identifier)))
                     then_relation: (simple_table_relation
                       table: (identifier))
@@ -52,6 +53,7 @@ table 1 T
                         (where_conditions
                           (where_condition
                             field: (identifier)
+                            (const_keyword)
                             value: (identifier)))
                         then_relation: (simple_table_relation
                           table: (identifier))))))
@@ -65,13 +67,16 @@ table 1 T
                         (where_conditions
                           (where_condition
                             field: (identifier)
+                            (const_keyword)
                             value: (quoted_identifier)))
                         then_relation: (simple_table_relation
                           table: (quoted_identifier)
                           (where_clause
+                            (where_keyword)
                             (where_conditions
                               (where_condition
                                 field: (quoted_identifier)
+                                (const_keyword)
                                 value: (identifier))))))))
                   (preproc_else)
                   (else_table_relation_fragment
@@ -80,6 +85,7 @@ table 1 T
                         (where_conditions
                           (where_condition
                             field: (identifier)
+                            (const_keyword)
                             value: (quoted_identifier)))
                         then_relation: (simple_table_relation
                           table: (quoted_identifier)))))
@@ -131,6 +137,7 @@ table 1 T
                   (where_conditions
                     (where_condition
                       field: (identifier)
+                      (const_keyword)
                       value: (identifier)))
                   then_relation: (simple_table_relation
                     table: (identifier))
@@ -144,13 +151,16 @@ table 1 T
                           (where_conditions
                             (where_condition
                               field: (identifier)
+                              (const_keyword)
                               value: (quoted_identifier)))
                           then_relation: (simple_table_relation
                             table: (quoted_identifier)
                             (where_clause
+                              (where_keyword)
                               (where_conditions
                                 (where_condition
                                   field: (quoted_identifier)
+                                  (const_keyword)
                                   value: (identifier)))))))
                       (preproc_else)
                       (table_relation_expression
@@ -158,6 +168,7 @@ table 1 T
                           (where_conditions
                             (where_condition
                               field: (identifier)
+                              (const_keyword)
                               value: (quoted_identifier)))
                           then_relation: (simple_table_relation
                             table: (quoted_identifier))))

@@ -35,9 +35,11 @@ table 1 T
                   target: (calc_field_reference
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (const_keyword)
                         value: (datetime_literal)))))))))))))
 
 ========================================================================

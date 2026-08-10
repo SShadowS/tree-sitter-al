@@ -47,9 +47,11 @@ table 50100 "Test Table"
                   target: (calc_field_reference
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier))
                       (where_condition
                         field: (identifier)
@@ -99,7 +101,9 @@ table 50101 "Simple Test"
                   target: (calc_field_reference
                     (quoted_identifier))
                   (where_clause
+                    (where_keyword)
                     (where_conditions
                       (where_condition
                         field: (quoted_identifier)
+                        (field_keyword)
                         value: (quoted_identifier)))))))))))))
