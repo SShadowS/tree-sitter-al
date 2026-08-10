@@ -34,11 +34,20 @@ constructs no BC.History file writes — `testpage_keyword`, `public_keyword`,
 
 `run --full-corpus` (combined with `--all`) sweeps every file under
 `BC.History` through every detector, not just the dead-pattern tally. It cost
-30m52s until `81ab477`; it was measured at **407 s** after that commit, and the
-most recent one reported 233 clusters over all 15,358 files. Its counts are not
-comparable to the manifest baseline (59 files vs. 15,358), so `run` refuses
-`--full-corpus` without `--all`, and `accept` refuses a `--full-corpus` report
-outright — a full sweep can only inform, never contaminate the baseline.
+30m52s until `81ab477` and was measured at **407 s** after it. A run on this
+branch reported 233 clusters across all detectors over all 15,358 files
+(`terminator-report.md`); a later census of detector 1 alone put its own share
+at 574,694 findings in 164 clusters (`a316d8e`).
+
+Its counts are not comparable to the manifest baseline (59 files vs. 15,358),
+so `run` refuses `--full-corpus` without `--all`, and `accept` refuses a
+`--full-corpus` report outright — a full sweep can only inform, never
+contaminate the baseline. **Always state which scope a figure came from.** The
+manifest is chosen by set-cover to hit every node type at least once, so it is
+far denser in constructs per file than real code and its absolute counts do not
+scale: `baseline.json`'s 3,895 byte-gap findings are 574,694 at corpus scope,
+~147x, and `a316d8e` exists because that manifest number was published as the
+parser's.
 
 It is also a **reporting** pass, not a gate: `cmd_run` sets an empty `Diff()`
 on that branch, so exit 0 from `--full-corpus` means "it ran", not "no
