@@ -4213,7 +4213,35 @@ module.exports = grammar({
 
     // --- Unary expression ---
 
-    unary_expression: $ => prec.right(7, seq(
+    // 8, not 7. It was 7 — the SAME level as `multiplicative_expression` — and
+    // because this rule is prec.RIGHT while that one is prec.LEFT, the unary won
+    // every tie: `-2 * 3` parsed as `-(2 * 3)`, and `-Amount * "Bal. VAT %"` as
+    // `-(Amount * "Bal. VAT %")`. 629 sites in 193 BC.History files.
+    //
+    // Compiler-measured with alc: the operand-type message names which operator
+    // received the mismatched pair, which pins the grouping exactly.
+    //
+    //   i := -b * 2;      AL0173  Operator '-' cannot be applied to an operand
+    //                             of type 'Boolean'      => (-b) * 2
+    //   i := -b div 2;    AL0173  same                   => (-b) div 2
+    //   i := -b mod 2;    AL0173  same                   => (-b) mod 2
+    //   i := -(b * 2);    AL0175  Operator '*' ... 'Boolean' and 'Integer'   (control)
+    //   i := (-b) * 2;    AL0173  Operator '-' ... 'Boolean'                 (control)
+    //
+    // The two controls flip, so the instrument discriminates.
+    //
+    // 8 puts it strictly between `multiplicative_expression` (7) and
+    // `subscript_expression` (9), which is the measured AL ladder: postfix
+    // (`.` 11, `[]` 9, `()` 12) binds tighter than unary, unary tighter than
+    // `* / div mod`. `-x.y`, `-a[1]` and `-f(1)` therefore keep grouping the
+    // postfix first, as they already did.
+    //
+    // No AL value changes: over truncating integer division and decimal
+    // arithmetic `-(a op b) == (-a) op b` for `*`, `/`, `div` and `mod` alike.
+    // The TREE was wrong, not the arithmetic — which is precisely why nothing
+    // caught it. `not X * Y` is never valid AL under either grouping, so only
+    // the arithmetic unaries reach real code.
+    unary_expression: $ => prec.right(8, seq(
       field('operator', choice('+', '-', alias(kw('not'), 'not'))),
       field('operand', $._expression)
     )),
