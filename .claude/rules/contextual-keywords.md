@@ -27,7 +27,7 @@ The `prec(-10)` makes this the last resort, so a real keyword use always wins. W
 
 ## Named Keywords
 
-83 keywords are named nodes for query matching — 81 grammar rules plus the external `begin_keyword`/`end_keyword`. Always wrap `kw()` in an `alias()` to the canonical lowercase spelling:
+110 keywords are named nodes for query matching — 108 grammar rules plus the external `begin_keyword`/`end_keyword`. Always wrap `kw()` in an `alias()` to the canonical lowercase spelling:
 
 ```javascript
 procedure_keyword: $ => alias(kw('procedure'), 'procedure'),
@@ -51,8 +51,8 @@ A named rule whose whole body is a single token collapses *into* that token, so 
 
 | body | child | count |
 |---|---|---|
-| `alias(kw('word'), 'word')` → STRING | one anonymous `"word"` child | 68 |
-| `kwCases('word', …)` → STRING, every spelling aliased to `'word'` | one anonymous `"word"` child | 13 |
+| `alias(kw('word'), 'word')` → STRING | one anonymous `"word"` child | 94 |
+| `kwCases('word', …)` → STRING, every spelling aliased to `'word'` | one anonymous `"word"` child | 14 |
 | external scanner token | none — cannot take a child | 2 |
 
 The child's type is the canonical lowercase spelling whatever the source used: `XmlPort` gives `(xmlport_keyword "xmlport")`, while the node's own text stays `XmlPort`.

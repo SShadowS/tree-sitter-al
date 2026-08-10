@@ -84,7 +84,7 @@ python parse_bug_finder.py file.al debug.log   # Analyze parsing bugs
 - **Scanner-based property disambiguation** — The `PROPERTY_NAME` scanner token distinguishes `identifier =` (property) from `identifier :` (variable) via 1-char lookahead
 - **Generic property rule** — ONE `property` rule handles all simple properties (vs V1's 291 individual rules)
 - **Generic preprocessor** — ONE `preproc_conditional` rule + ~12 dedicated split-construct rules (vs V1's 63)
-- **Named keyword nodes** — 83 keywords exposed as named nodes for query matching (81 grammar rules + the external `begin_keyword`/`end_keyword`), all with a uniform shape: one anonymous child typed as the canonical lowercase spelling
+- **Named keyword nodes** — 110 keywords exposed as named nodes for query matching (108 grammar rules + the external `begin_keyword`/`end_keyword`), all with a uniform shape: one anonymous child typed as the canonical lowercase spelling
 - **Stateful scanner** — a `uint32_t` depth counter tracks `#if`/`#endif` nesting (it was a `uint8_t` until 4.0.0 and wrapped at 256); `begin`/`end` are named at every depth, and the depth counter decides only whether a `PREPROC_SPLIT_*` token gets first refusal
 - **Single-read identifier dispatch** — all six identifier-initial scanner tokens are decided in one scan over one read of the word. Nothing matches a keyword against the live lexer: a walking matcher leaves its matched prefix consumed on failure, so sequential per-token reads start mid-identifier. That shape caused three separate defects and was deleted in 4.0.0
 
@@ -127,7 +127,7 @@ property: $ => seq(
 
 ## Keyword Architecture
 
-83 keywords are named nodes for query matching — 81 grammar rules plus the two external tokens `begin_keyword`/`end_keyword`. **Every grammar keyword rule has the same shape: exactly one anonymous child, typed as the canonical lowercase spelling.**
+110 keywords are named nodes for query matching — 108 grammar rules plus the two external tokens `begin_keyword`/`end_keyword`. **Every grammar keyword rule has the same shape: exactly one anonymous child, typed as the canonical lowercase spelling.**
 
 ```javascript
 table_keyword: $ => alias(kw('table'), 'table'),          // anonymous "table" child
@@ -153,8 +153,8 @@ Until 4.0.0 the depth > 0 case handed off to an anonymous `kw('begin')`, which m
 
 | body | child | count |
 |---|---|---|
-| `alias(kw('word'), 'word')` → STRING | one anonymous child typed `"word"` | 68 |
-| `kwCases('word', …)` → STRING, each spelling aliased to `'word'` | one anonymous child typed `"word"` | 13 |
+| `alias(kw('word'), 'word')` → STRING | one anonymous child typed `"word"` | 94 |
+| `kwCases('word', …)` → STRING, each spelling aliased to `'word'` | one anonymous child typed `"word"` | 14 |
 | external scanner token (`begin_keyword`, `end_keyword`) | none — cannot take a child | 2 |
 
 The child's type is always the canonical lowercase spelling regardless of how the source spelled the keyword: `XmlPort` yields `(xmlport_keyword "xmlport")`, and the node's own text is still `XmlPort`.
@@ -275,7 +275,7 @@ python parse_bug_finder.py file.al debug.log
 | grammar.js lines | ~4,121 |
 | Tests | 1,514 |
 | Production success | 100% (0 errors) |
-| Named keywords | 83 (81 rules + 2 external), uniform shape |
+| Named keywords | 110 (108 rules + 2 external), uniform shape |
 | Query files | 6 (highlights, locals, tags, indents, folds, textobjects) |
 
 ## Validating AL Syntax Questions
