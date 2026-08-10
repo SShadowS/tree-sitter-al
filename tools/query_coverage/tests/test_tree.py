@@ -1,4 +1,43 @@
+import sys
+
 from tools.query_coverage.detectors import _tree
+
+
+def test_walk_and_leaves_survive_deep_nesting_without_recursionerror(al_parser):
+    """A deeply nested source must not blow Python's default recursion limit.
+
+    Task 7's reviewer hit RecursionError partway through a 15,358-file
+    BC.History run because walk()/leaves() were plain-recursive. Thousands of
+    nested parenthesized expressions build a parse tree deeper than
+    sys.getrecursionlimit() (1000 by default), so this reproduces the failure
+    mode without needing the real corpus.
+
+    error_ranges() is exercised here too: a real --full-corpus run (Task 14)
+    hit RecursionError inside it on a deeply nested BC.History file even
+    after walk()/leaves() were converted, because it was a separate
+    plain-recursive traversal (_collect_errors) over the same kind of tree.
+    """
+    depth = 4000
+    source = (
+        b"codeunit 1 T { procedure P() var x: Integer; begin x := "
+        + b"(" * depth
+        + b"1"
+        + b")" * depth
+        + b"; end; }"
+    )
+    assert depth > sys.getrecursionlimit()
+
+    tree = al_parser.parse(source)
+    assert not tree.root_node.has_error
+
+    nodes = list(_tree.walk(tree.root_node))
+    assert len(nodes) > depth
+
+    leaves = list(_tree.leaves(tree.root_node))
+    offsets = [leaf.start_byte for leaf in leaves]
+    assert offsets == sorted(offsets)
+
+    assert _tree.error_ranges(tree.root_node) == []
 
 
 def test_leaves_are_in_byte_order(al_parser):

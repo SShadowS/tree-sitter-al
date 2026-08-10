@@ -11,10 +11,19 @@ from typing import Iterator
 
 
 def walk(node) -> Iterator:
-    """Every node in the subtree, self first."""
-    yield node
-    for child in node.children:
-        yield from walk(child)
+    """Every node in the subtree, self first.
+
+    Explicit-stack, not recursive: a deeply nested AL file (long chains of
+    binary expressions, deeply nested #if blocks) can exceed Python's default
+    recursion limit long before it exceeds the C stack. Children are pushed in
+    reverse so the stack still pops them left-to-right, preserving the
+    self-then-children, left-to-right order the recursive version produced.
+    """
+    stack = [node]
+    while stack:
+        current = stack.pop()
+        yield current
+        stack.extend(reversed(current.children))
 
 
 def leaves(node) -> Iterator:
@@ -22,12 +31,17 @@ def leaves(node) -> Iterator:
 
     Walks ALL children, not named_children: anonymous string tokens such as
     ';' are visible leaves and legitimately provide byte coverage.
+
+    Explicit-stack for the same reason as walk(): reversed() on push is what
+    keeps pop() order left-to-right, i.e. byte order.
     """
-    if node.child_count == 0:
-        yield node
-        return
-    for child in node.children:
-        yield from leaves(child)
+    stack = [node]
+    while stack:
+        current = stack.pop()
+        if current.child_count == 0:
+            yield current
+            continue
+        stack.extend(reversed(current.children))
 
 
 # grammar.js:128-138's `extras` array, named entries only — `/\s/` and the
@@ -71,15 +85,19 @@ def enclosing_named(node, skip_error: bool = False) -> str:
 
 
 def error_ranges(node) -> list[tuple[int, int]]:
-    """Byte ranges of ERROR subtrees. Does not descend into an ERROR."""
+    """Byte ranges of ERROR subtrees. Does not descend into an ERROR.
+
+    Explicit-stack, same hazard as walk()/leaves(): a real full-corpus run
+    (detector 1 calls this) hit RecursionError here on a deeply nested file
+    even after walk()/leaves() were converted, because this was a separate
+    plain-recursive traversal over the same kind of tree.
+    """
     found: list[tuple[int, int]] = []
-    _collect_errors(node, found)
+    stack = [node]
+    while stack:
+        current = stack.pop()
+        if current.type == "ERROR" or current.is_error:
+            found.append((current.start_byte, current.end_byte))
+            continue
+        stack.extend(reversed(current.children))
     return found
-
-
-def _collect_errors(node, out: list[tuple[int, int]]) -> None:
-    if node.type == "ERROR" or node.is_error:
-        out.append((node.start_byte, node.end_byte))
-        return
-    for child in node.children:
-        _collect_errors(child, out)
