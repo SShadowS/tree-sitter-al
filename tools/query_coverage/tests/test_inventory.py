@@ -154,3 +154,31 @@ def test_single_name_variable_declaration_still_yields_one_entry(al_language, al
     assert len(result["variables"]) == 2
     assert result["variables"][0]["name"] == ["A"]
     assert result["variables"][1]["name"] == ["B"]
+
+
+def test_preproc_split_declaration_is_a_single_object_entry(al_language, al_parser):
+    """Same bug class as the multi-name variable case, found while fixing it:
+    preproc_split_declaration's object_name field is also `multiple: true`
+    (one occurrence per #if/#elif/#else branch — grammar.js:323-353), so it
+    hit the identical one-match-per-occurrence behavior. Unlike variables,
+    an object's name is a scalar in this schema, so the fix here dedupes to
+    the first branch rather than merging into a list.
+    """
+    source = b"""
+#if CONDITION
+codeunit 50100 "Test Impl" implements Interface1, Interface2
+#else
+codeunit 50100 "Test Impl" implements Interface2
+#endif
+{
+    procedure TestMethod()
+    begin
+    end;
+}
+"""
+
+    result = inventory.extract(al_language, al_parser.parse(source), source)
+
+    assert result["objects"] == [
+        {"type": "preproc_split_declaration", "id": "50100", "name": '"Test Impl"'}
+    ]
