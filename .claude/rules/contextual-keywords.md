@@ -57,7 +57,16 @@ A named rule whose whole body is a single token collapses *into* that token, so 
 
 The child's type is the canonical lowercase spelling whatever the source used: `XmlPort` gives `(xmlport_keyword "xmlport")`, while the node's own text stays `XmlPort`.
 
-`node-types.json` **cannot** confirm this: it lists anonymous children only when they sit inside a field, and none of these do, so all 83 look childless there. **Read a keyword's text from the node itself, never by descending into a child** — that stays correct for the two external tokens as well, and it survives any future change to the anonymous layer.
+`node-types.json` **cannot** confirm this: it lists anonymous children only when they sit inside a field, and none of these do, so all 110 look childless there. **Read a keyword's text from the node itself, never by descending into a child** — that stays correct for the two external tokens as well, and it survives any future change to the anonymous layer.
+
+**`object_type_keyword` is the concrete reason that advice is not merely defensive.** `node-types.json` contains **111** named `*_keyword` types, not 110 — the extra one has no rule of its own. `database_reference` (`grammar.js:4163-4173`) does `field('keyword', alias(choice(kw('database'), $.page_keyword, $.report_keyword, $.codeunit_keyword, $.xmlport_keyword, $.query_keyword), $.object_type_keyword))`. The five named alternatives carry visible aliased STRING tokens; the bare `kw('database')` is a hidden pattern token. So the SAME node type has two shapes:
+
+```
+(object_type_keyword text='Page')      children=[("page", anonymous)]
+(object_type_keyword text='DATABASE')  children=[]                     <- childless
+```
+
+The uniform-shape contract above is about keyword **rules** and still holds exactly. But a consumer enumerating `node-types.json` sees 111 types and would reasonably apply the contract to all of them. Reading the node's own text is correct for every one; descending into a child is not.
 
 `_tabledata_keyword` is not in these counts: it is a *hidden* (`_`-prefixed) token helper rather than a keyword node, and `option_member` re-aliases it to `$.identifier`.
 

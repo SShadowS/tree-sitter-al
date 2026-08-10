@@ -159,7 +159,16 @@ Until 4.0.0 the depth > 0 case handed off to an anonymous `kw('begin')`, which m
 
 The child's type is always the canonical lowercase spelling regardless of how the source spelled the keyword: `XmlPort` yields `(xmlport_keyword "xmlport")`, and the node's own text is still `XmlPort`.
 
-**`node-types.json` cannot confirm this for you.** It lists anonymous children only when they sit inside a field, and none of these do, so all 83 keyword nodes look childless there regardless of their real shape. **Read a keyword's text from the node itself, never by descending into a child** — that stays correct for the external tokens too, and it survives any future change to the anonymous layer.
+**`node-types.json` cannot confirm this for you.** It lists anonymous children only when they sit inside a field, and none of these do, so all 110 keyword nodes look childless there regardless of their real shape. **Read a keyword's text from the node itself, never by descending into a child** — that stays correct for the external tokens too, and it survives any future change to the anonymous layer.
+
+**`object_type_keyword` is the concrete reason that advice is not merely defensive.** `node-types.json` contains **111** named `*_keyword` types, not 110 — the extra one has no rule of its own. `database_reference` (`grammar.js:4163-4173`) does `field('keyword', alias(choice(kw('database'), $.page_keyword, $.report_keyword, $.codeunit_keyword, $.xmlport_keyword, $.query_keyword), $.object_type_keyword))`. The five named alternatives carry visible aliased STRING tokens; the bare `kw('database')` is a hidden pattern token. So the SAME node type has two shapes:
+
+```
+(object_type_keyword text='Page')      children=[("page", anonymous)]
+(object_type_keyword text='DATABASE')  children=[]                     <- childless
+```
+
+The uniform-shape contract above is about keyword **rules** and still holds exactly. But a consumer enumerating `node-types.json` sees 111 types and would reasonably apply the contract to all of them. Reading the node's own text is correct for every one; descending into a child is not.
 
 `_tabledata_keyword` is deliberately excluded: it is a *hidden* (`_`-prefixed) token helper, not a keyword node, and one of its two uses re-aliases it to `$.identifier`.
 
