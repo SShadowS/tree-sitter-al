@@ -180,6 +180,8 @@ controladdin_keyword: $ => prec(10, kwCases('controladdin',
 
 **The whitelist is load-bearing — never "simplify" these to `kw()`.** `kw()` compiles to a case-*insensitive* regex, which would claim every case permutation and steal spellings that AL code legitimately uses as identifiers. Real AL declares `eNuM: Decimal;` as a variable; `eNuM` is absent from `enum_keyword`'s whitelist precisely so it stays an `identifier`. Converting the 13 compound keywords to `kw()` fails `test/corpus/enum_as_identifier_test.txt`.
 
+**The 13 `kwCases()` rules are exactly the object-declaration keywords, and nothing else:** `codeunit`, `controladdin`, `dotnet`, `enum`, `enumextension`, `pagecustomization`, `pageextension`, `permissionset`, `permissionsetextension`, `profileextension`, `reportextension`, `tableextension`, `xmlport`. That membership rule is a stronger check than the count, because it is falsifiable by inspection rather than by re-running a classifier. **A 14th entry that is not an object-declaration keyword is almost certainly a mistake** — `view_keyword` was miscounted into this set once precisely because it is not one.
+
 ## Attribute Handling
 
 Attributes are first-class statements (Rust/C# pattern) — siblings to declarations, not nested.

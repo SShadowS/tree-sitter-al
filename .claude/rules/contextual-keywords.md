@@ -43,6 +43,8 @@ controladdin_keyword: $ => prec(10, kwCases('controladdin',
 
 **Never replace `kwCases()` with `kw()`.** The spelling whitelist is load-bearing: `kw()` is case-*insensitive* and would claim every permutation, stealing spellings AL code uses as identifiers (`eNuM: Decimal;` is a real variable declaration, and `eNuM` is deliberately absent from `enum_keyword`'s list). `test/corpus/enum_as_identifier_test.txt` catches this.
 
+**The 13 `kwCases()` rules are exactly the object-declaration keywords, and nothing else:** `codeunit`, `controladdin`, `dotnet`, `enum`, `enumextension`, `pagecustomization`, `pageextension`, `permissionset`, `permissionsetextension`, `profileextension`, `reportextension`, `tableextension`, `xmlport`. That membership rule is a stronger check than the count, because it is falsifiable by inspection rather than by re-running a classifier. **A 14th entry that is not an object-declaration keyword is almost certainly a mistake** — `view_keyword` was miscounted into this set once precisely because it is not one.
+
 ### Node shape is uniform (since 4.0.0)
 
 A named rule whose whole body is a single token collapses *into* that token, so the token's visibility decides the node's shape. A bare `kw('word')` is a `token(PATTERN)`, which tree-sitter hides, giving a childless leaf; `alias(…, 'word')` makes it a visible STRING. The grammar used to mix both, so a consumer could not predict a keyword's shape. It no longer does:
