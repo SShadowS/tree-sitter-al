@@ -37,6 +37,30 @@ print_warning() {
 # Track overall status
 VALIDATION_FAILED=0
 
+# THE CAPTURE IDIOM, stated once — every step below that runs a tool and reads
+# its exit status must use it.
+#
+#   OUT=$(cmd 2>&1) && STATUS=0 || STATUS=$?      # correct
+#   OUT=$(cmd 2>&1); STATUS=$?                    # WRONG under `set -e`
+#
+# A bare `OUT=$(cmd)` assignment takes the exit status of the command
+# substitution, so `set -e` (line 6) aborts the script *at the assignment* the
+# moment the tool fails. The next line that reads `$?` never runs, the step's
+# own tailored error message never prints, and every later step is skipped — so
+# one failure hides all the others and the run tells you nothing about what
+# broke. The script still exits non-zero, so this is not a false pass; it is a
+# gate that cannot report. Five steps had this shape (2, 4, 5, 5b, 5c) and all
+# five are fixed; Step 8 was fixed earlier and Step 5d uses the `if cmd; then`
+# variant of the same thing. Do not add a sixth.
+
+# `--full` is honoured wherever it appears, not only as $1.
+RUN_FULL=0
+for arg in "$@"; do
+    case "$arg" in
+        --full) RUN_FULL=1 ;;
+    esac
+done
+
 # Start validation
 echo -e "${BLUE}Starting comprehensive grammar validation...${NC}"
 START_TIME=$(date +%s)
@@ -53,18 +77,34 @@ fi
 
 # Step 2: Run test suite
 print_header "Step 2: Running Test Suite"
-TEST_OUTPUT=$(tree-sitter test 2>&1)
-TEST_EXIT_CODE=$?
+TEST_OUTPUT=$(tree-sitter test 2>&1) && TEST_EXIT_CODE=0 || TEST_EXIT_CODE=$?
 
 if [ $TEST_EXIT_CODE -eq 0 ]; then
-    # Extract test statistics
-    TOTAL_TESTS=$(echo "$TEST_OUTPUT" | grep -oE '[0-9]+ (of [0-9]+ )?parsed)' | grep -oE '[0-9]+' | tail -1)
-    PASSED_TESTS=$(echo "$TEST_OUTPUT" | grep -cE '✓|passed' || true)
-    
-    if [ -n "$TOTAL_TESTS" ]; then
-        print_success "All tests passed ($PASSED_TESTS/$TOTAL_TESTS)"
+    # Report the denominator, and fail if it cannot be read.
+    #
+    # The old extraction was `grep -oE '[0-9]+ (of [0-9]+ )?parsed)'`, which
+    # hunts for the substring `parsed)`. `tree-sitter test` has never printed
+    # that, so TOTAL_TESTS was always empty and this step printed a bare
+    # "All tests passed" with no number — a pass over an unknown amount of work.
+    # The real summary line is:
+    #   Total parses: 1550; successful parses: 1550; failed parses: 0; …
+    # An unreadable summary fails: without it there is no evidence that any test
+    # ran, and "0 tests passed" must never look like "all tests passed".
+    TOTAL_TESTS=$(echo "$TEST_OUTPUT" | sed -n 's/.*Total parses: *\([0-9][0-9]*\);.*/\1/p' | tail -1)
+    FAILED_TESTS=$(echo "$TEST_OUTPUT" | sed -n 's/.*failed parses: *\([0-9][0-9]*\);.*/\1/p' | tail -1)
+
+    if [ -z "$TOTAL_TESTS" ]; then
+        print_error "Test suite exited 0 but its summary line could not be read — cannot confirm any test ran"
+        echo "$TEST_OUTPUT" | tail -3
+        VALIDATION_FAILED=1
+    elif [ "$TOTAL_TESTS" -eq 0 ]; then
+        print_error "Test suite ran 0 parses — the corpus is missing or was not discovered"
+        VALIDATION_FAILED=1
+    elif [ -n "$FAILED_TESTS" ] && [ "$FAILED_TESTS" -ne 0 ]; then
+        print_error "Test suite exited 0 but reports $FAILED_TESTS failed parse(s) of $TOTAL_TESTS"
+        VALIDATION_FAILED=1
     else
-        print_success "All tests passed"
+        print_success "All tests passed ($TOTAL_TESTS parses)"
     fi
 else
     print_error "Some tests failed"
@@ -145,7 +185,15 @@ for test_file in test/corpus/*.txt; do
     fi
 done
 
-if [ ${#ERROR_MISSING_FILES[@]} -eq 0 ]; then
+# The census prints its denominator, so the denominator must be asserted. With
+# no glob match the loop body still runs once on the literal string
+# `test/corpus/*.txt`, `[ -f ]` is false, and the counter stays 0 — a renamed,
+# moved or unmounted corpus directory then printed
+# "No unexpected ERROR or MISSING nodes in 0 test files" and passed.
+if [ "$TEST_FILE_COUNT" -eq 0 ]; then
+    print_error "No test corpus files found — test/corpus/*.txt matched nothing, so nothing was censused"
+    VALIDATION_FAILED=1
+elif [ ${#ERROR_MISSING_FILES[@]} -eq 0 ]; then
     print_success "No unexpected ERROR or MISSING nodes in $TEST_FILE_COUNT test files (${#DELIBERATE_ERROR_FIXTURES[@]} deliberate-negative fixtures exempt)"
 else
     print_error "Found unexpected ERROR/MISSING nodes in ${#ERROR_MISSING_FILES[@]} test files:"
@@ -162,22 +210,31 @@ fi
 # Step 4: Check for orphaned rules
 print_header "Step 4: Checking for Orphaned Rules"
 if [ -f "tools/find_unused_definitions.py" ]; then
-    ORPHAN_OUTPUT=$(python3 tools/find_unused_definitions.py 2>&1)
-    ORPHAN_EXIT_CODE=$?
-    
+    ORPHAN_OUTPUT=$(python3 tools/find_unused_definitions.py 2>&1) && ORPHAN_EXIT_CODE=0 || ORPHAN_EXIT_CODE=$?
+
     if [ $ORPHAN_EXIT_CODE -eq 0 ]; then
-        # Check if there are any unused rules in the output
-        if echo "$ORPHAN_OUTPUT" | grep -q "Unused rules:"; then
-            UNUSED_COUNT=$(echo "$ORPHAN_OUTPUT" | grep -A1 "Unused rules:" | grep -oE '[0-9]+' | head -1)
-            if [ "$UNUSED_COUNT" = "0" ]; then
-                print_success "No orphaned rules found"
-            else
-                print_warning "Found $UNUSED_COUNT orphaned rules"
-                echo "$ORPHAN_OUTPUT" | grep -A20 "Unused rules:" | head -20
-                VALIDATION_FAILED=1
-            fi
+        # find_unused_definitions.py always exits 0 on a successful run, so the
+        # verdict rests entirely on reading its report — which makes the read
+        # itself the gate. Both numbers must be present and the denominator must
+        # be non-zero. Previously a missing `Unused rules:` label fell through to
+        # a bare `print_success`, so any drift in the tool's output format
+        # silently turned this step into a pass.
+        RULE_TOTAL=$(echo "$ORPHAN_OUTPUT" | sed -n 's/^ *Total rule definitions: *\([0-9][0-9]*\).*/\1/p' | head -1)
+        UNUSED_COUNT=$(echo "$ORPHAN_OUTPUT" | sed -n 's/^ *Unused rules: *\([0-9][0-9]*\).*/\1/p' | head -1)
+
+        if [ -z "$RULE_TOTAL" ] || [ -z "$UNUSED_COUNT" ]; then
+            print_error "Orphan report unreadable — expected 'Total rule definitions: N' and 'Unused rules: N'"
+            echo "$ORPHAN_OUTPUT" | head -15
+            VALIDATION_FAILED=1
+        elif [ "$RULE_TOTAL" -eq 0 ]; then
+            print_error "Orphan detection examined 0 rule definitions — it cannot have checked anything"
+            VALIDATION_FAILED=1
+        elif [ "$UNUSED_COUNT" -ne 0 ]; then
+            print_error "Found $UNUSED_COUNT orphaned rule(s) among $RULE_TOTAL rule definitions"
+            echo "$ORPHAN_OUTPUT" | grep -A20 "Unused rules:" | head -20
+            VALIDATION_FAILED=1
         else
-            print_success "No orphaned rules found"
+            print_success "No orphaned rules among $RULE_TOTAL rule definitions"
         fi
     else
         print_error "Orphan detection script failed"
@@ -204,8 +261,7 @@ fi
 # still fails the build.
 print_header "Step 5: Checking for Duplicate Rule Keys"
 if [ -f "tools/analyze_duplicates.py" ]; then
-    DUPLICATE_OUTPUT=$(python3 tools/analyze_duplicates.py 2>&1)
-    DUPLICATE_EXIT_CODE=$?
+    DUPLICATE_OUTPUT=$(python3 tools/analyze_duplicates.py 2>&1) && DUPLICATE_EXIT_CODE=0 || DUPLICATE_EXIT_CODE=$?
 
     if [ $DUPLICATE_EXIT_CODE -eq 0 ]; then
         print_success "$DUPLICATE_OUTPUT"
@@ -221,8 +277,7 @@ fi
 # Step 5b: Check field-shape invariants in node-types.json
 print_header "Step 5b: Checking Field-Shape Invariants"
 if [ -f "tools/check-field-types.py" ]; then
-    FIELD_TYPES_OUTPUT=$(python3 tools/check-field-types.py 2>&1)
-    FIELD_TYPES_EXIT_CODE=$?
+    FIELD_TYPES_OUTPUT=$(python3 tools/check-field-types.py 2>&1) && FIELD_TYPES_EXIT_CODE=0 || FIELD_TYPES_EXIT_CODE=$?
 
     if [ $FIELD_TYPES_EXIT_CODE -eq 0 ]; then
         print_success "$FIELD_TYPES_OUTPUT"
@@ -258,10 +313,15 @@ elif [ -z "$FIELDWALK_TS_DIR" ]; then
     print_warning "No vendored tree-sitter runtime in .cache/ - skipping fieldwalk compile check (run bindings/c/build.sh once to fetch it)"
 else
     FIELDWALK_BIN=$(mktemp -u)
+    # Two bugs stacked here: the bare assignment aborted the script under
+    # `set -e` on a compile failure, and even without that, `if [ $? -eq 0 ]`
+    # on the NEXT line read the status of the assignment rather than of the
+    # compiler. Either way the "failed to compile" branch below was dead.
     FIELDWALK_OUTPUT=$("$FIELDWALK_CC" -O0 -o "$FIELDWALK_BIN" \
         tools/fieldwalk.c src/parser.c src/scanner.c "$FIELDWALK_TS_DIR/src/lib.c" \
-        -I"$FIELDWALK_TS_DIR/include" -I"$FIELDWALK_TS_DIR/src" -Isrc 2>&1)
-    if [ $? -eq 0 ]; then
+        -I"$FIELDWALK_TS_DIR/include" -I"$FIELDWALK_TS_DIR/src" -Isrc 2>&1) \
+        && FIELDWALK_EXIT_CODE=0 || FIELDWALK_EXIT_CODE=$?
+    if [ "$FIELDWALK_EXIT_CODE" -eq 0 ]; then
         print_success "fieldwalk compiles against the current parser"
         rm -f "$FIELDWALK_BIN" "$FIELDWALK_BIN.exe"
     else
@@ -312,24 +372,80 @@ else
     echo "Skipping: no baseline yet (run 'python -m tools.query_coverage.qc accept' to create one)"
 fi
 
-# Step 6: Run parsing test on AL files (optional, can be slow)
-print_header "Step 6: AL File Parsing Test (Optional)"
-if [ -f "parse-al-parallel.sh" ] && [ "$1" = "--full" ]; then
-    echo "Running full AL file parsing test..."
-    PARSE_OUTPUT=$(./parse-al-parallel.sh 2>&1 | tail -5)
-    echo "$PARSE_OUTPUT"
-    
-    # Extract success rate
-    if echo "$PARSE_OUTPUT" | grep -q "Success rate:"; then
-        SUCCESS_RATE=$(echo "$PARSE_OUTPUT" | grep "Success rate:" | grep -oE '[0-9]+\.[0-9]+')
-        if (( $(echo "$SUCCESS_RATE > 90" | bc -l) )); then
-            print_success "AL parsing success rate: $SUCCESS_RATE%"
-        else
-            print_warning "AL parsing success rate: $SUCCESS_RATE% (below 90%)"
-        fi
-    fi
-else
+# Step 6: Parse a real AL corpus (opt-in, --full)
+#
+# THIS STEP NEVER PARSED A FILE. Five independent defects, each of which alone
+# makes it unable to fail — recorded so none of them comes back:
+#
+#   1. It invoked `./parse-al-parallel.sh` with NO ARGUMENTS. That script treats
+#      a zero-argument call as a help request: it printed usage and exited 0.
+#      So the whole step ran against usage text, never against AL.
+#   2. `$( … | tail -5 )` — a pipeline's status is the LAST command's, so the
+#      captured status was always `tail`'s 0. A crashed run was invisible.
+#   3. `grep -q "Success rate:"` had NO `else`. When the string was absent —
+#      which, per (1), was always — the check was skipped in silence and the
+#      step passed.
+#   4. A rate at or below the threshold called `print_warning`, which does not
+#      set VALIDATION_FAILED. A *detected* 50% success rate still passed.
+#   5. The threshold was 90% on a project that holds 100%: 1,382 broken files
+#      out of 15,358 would have gone green.
+#
+# Now: real arguments, the script's own exit status, every number read and
+# reconciled, and any shortfall fails. The rate is compared in tenths of a
+# percent so there is no `bc` dependency (parse-al-parallel.sh deliberately
+# avoids one, and prints exactly one decimal place).
+#
+# TRAILING SLASH ON THE CORPUS PATH IS LOAD-BEARING. BC.History is frequently a
+# symlink or an NTFS junction, and `find BC.History -name '*.al'` does not
+# descend into one — it yields 0 files — while `find BC.History/ …` yields all
+# 15,358. Measured in this worktree, where BC.History is a junction.
+#
+# A corpus that is absent is an explicit, loud skip: BC.History is gitignored
+# and a fresh clone does not have it. A corpus that is PRESENT and parses badly
+# now fails the run.
+print_header "Step 6: AL File Parsing Test (--full only)"
+AL_PARSE_CORPUS="${AL_PARSE_CORPUS:-./BC.History/}"
+AL_PARSE_MIN_TENTHS="${AL_PARSE_MIN_TENTHS:-1000}"   # 1000 = 100.0%, the project's recorded state
+
+if [ "$RUN_FULL" -ne 1 ]; then
     echo "Skipping AL file parsing test (use --full to include)"
+elif [ ! -f "parse-al-parallel.sh" ]; then
+    print_error "parse-al-parallel.sh not found — --full was requested and cannot be honoured"
+    VALIDATION_FAILED=1
+elif [ ! -d "$AL_PARSE_CORPUS" ]; then
+    print_warning "AL corpus not present ($AL_PARSE_CORPUS) — skipping; set AL_PARSE_CORPUS to point at one"
+else
+    echo "Parsing $AL_PARSE_CORPUS ..."
+    PARSE_OUTPUT=$(./parse-al-parallel.sh "$AL_PARSE_CORPUS" . 2>&1) && PARSE_EXIT_CODE=0 || PARSE_EXIT_CODE=$?
+    echo "$PARSE_OUTPUT" | tail -12
+
+    PARSE_TOTAL=$(echo "$PARSE_OUTPUT" | sed -n 's/^Total files *: *\([0-9][0-9]*\).*/\1/p' | tail -1)
+    PARSE_OK=$(echo "$PARSE_OUTPUT"    | sed -n 's/^Parsed OK *: *\([0-9][0-9]*\).*/\1/p'   | tail -1)
+    PARSE_ERR=$(echo "$PARSE_OUTPUT"   | sed -n 's/^Errors *: *\([0-9][0-9]*\).*/\1/p'      | tail -1)
+    # Tenths: "100.0%" -> 1000. A summary without the decimal place does not
+    # match and lands in the unreadable branch below rather than yielding an
+    # empty string that a later comparison would have swallowed.
+    PARSE_RATE=$(echo "$PARSE_OUTPUT" | sed -n 's/^Success rate *: *\([0-9][0-9]*\)\.\([0-9]\)%.*/\1\2/p' | tail -1)
+
+    if [ -z "$PARSE_TOTAL" ] || [ -z "$PARSE_OK" ] || [ -z "$PARSE_ERR" ] || [ -z "$PARSE_RATE" ]; then
+        print_error "AL parse run produced no readable summary (exit $PARSE_EXIT_CODE) — it did not parse the corpus"
+        echo "$PARSE_OUTPUT" | tail -20
+        VALIDATION_FAILED=1
+    elif [ "$PARSE_TOTAL" -eq 0 ]; then
+        print_error "AL parse run examined 0 files under $AL_PARSE_CORPUS (symlinked corpus needs a trailing slash)"
+        VALIDATION_FAILED=1
+    elif [ $(( PARSE_OK + PARSE_ERR )) -ne "$PARSE_TOTAL" ]; then
+        print_error "AL parse counts do not reconcile: $PARSE_OK parsed + $PARSE_ERR errors != $PARSE_TOTAL files"
+        VALIDATION_FAILED=1
+    elif [ "$PARSE_EXIT_CODE" -ne 0 ] || [ "$PARSE_ERR" -ne 0 ]; then
+        print_error "AL parsing failed: $PARSE_ERR error file(s) of $PARSE_TOTAL (parse-al-parallel.sh exit $PARSE_EXIT_CODE)"
+        VALIDATION_FAILED=1
+    elif [ "$PARSE_RATE" -lt "$AL_PARSE_MIN_TENTHS" ]; then
+        print_error "AL parsing success rate ${PARSE_RATE%?}.${PARSE_RATE: -1}% is below the ${AL_PARSE_MIN_TENTHS%?}.${AL_PARSE_MIN_TENTHS: -1}% floor"
+        VALIDATION_FAILED=1
+    else
+        print_success "AL parsing: $PARSE_OK/$PARSE_TOTAL files parsed, 0 errors (${PARSE_RATE%?}.${PARSE_RATE: -1}%)"
+    fi
 fi
 
 # Step 7: Check for common issues
